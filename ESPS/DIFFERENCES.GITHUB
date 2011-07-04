@@ -1,0 +1,5 @@
+This file keeps track of the differences in how you might use the toolkit based on the 
+changes I made.
+
+
+1.  I've removed the bundled xview libraries.  Instead use system installed ones.
