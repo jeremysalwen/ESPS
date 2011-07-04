@@ -407,7 +407,6 @@ if test $MACH = LINUX
   X_INC="/usr/X11R6/include"
   X_R7_LIBS="-lXdmcp -lXau"
   WINLIBS="$X_LIB -lpthread"
-  XVIEW_TAR="../xview4linux.tgz"
   X_UTIL="-lutil"
   if ld -lXdmcp -lXau -o test$$ 2>/dev/null; then
     WINLIBS="$WINLIBS $X_R7_LIBS"
@@ -434,7 +433,6 @@ if test $MACH = MACOS
   WINLIBS="-L/usr/X11R6/lib -lX11"
   WINDOWS=" -DXWIN "
   XVIEW_B_OPT=" -bind_at_load"
-  XVIEW_TAR="../xview4macos.tgz"
   X_UTIL=""
   cd src/lib
   rm -f makefile
@@ -1225,15 +1223,7 @@ elif test $MACH = LINUX -o $MACH = MACOS; then
         XVIEW_LIB="-Wl,-Bstatic "$XVIEW_LIB" -Wl,-Bdynamic"
     fi
   else
-# If view isn't installed, we put our own copies in the esps library.
-# The source comes from http://www.physionet.org/physiotools/xview.
-    echo "Xview libraries not found in linker path.  Adding them to the"
-    echo "ESPS library directory"
-    tar zxf $XVIEW_TAR -C $ESPS_BASE lib || \
-        (echo "Error copying xview libraries to $ESPS_BASE"; exit 1)
-    XVIEW_LIB="$ESPS_BASE/lib/libxview.a $ESPS_BASE/lib/libolgx.a"
-    ranlib $ESPS_BASE/lib/libxview.a
-    ranlib $ESPS_BASE/lib/libolgx.a
+    echo "Error: Xview libraries not found in linker path."; exit 1
   fi # [ -n "$XV_STAT_OR_DYN" ]
 XVIEW_LIB="$XVIEW_LIB $X_UTIL $WINLIBS"
 echo XVIEW_LIB is $XVIEW_LIB
@@ -1241,10 +1231,8 @@ echo XVIEW_LIB is $XVIEW_LIB
   if echo "#include <xview/xview.h>" |cpp >/dev/null 2>&1 ; then
     echo "Xview include files present in include path, we don't need to add them"
   else
-    echo "Xview include files not found in path, adding them to the ESPS"
+    echo "Error: Xview include files not found in path,"; exit 1
     echo "include directory"
-    tar zxf $XVIEW_TAR -C $ESPS_BASE include || \
-        (echo "Error copying xview include files to $ESPS_BASE"; exit 1)
   fi
   XVIEW_INC="$SINCP"
 else
