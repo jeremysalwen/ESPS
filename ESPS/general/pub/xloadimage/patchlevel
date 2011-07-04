@@ -1,7 +1,0 @@
-/* this defines the version and patchlevel of this version of xloadimage
- */
-
-/* @(#)patchlevel	1.1  10/13/90 */
-
-#define VERSION    "1"
-#define PATCHLEVEL "06"
