@@ -1,0 +1,1262 @@
+ENTROPIC RESEARCH LABORATORY
+
+
+
+
+
+
+
+ESPS APPLICATIONS NOTE: Filtering Sampled Data
+
+
+
+
+
+Brian Sublett and David Burton
+
+Revised by: Derek Lin
+
+
+
+
+
+Entropic Research Laboratory, Inc.
+
+600 Pennsylvania Ave., S.E. Suite 202
+
+Washington, DC 20003
+
+(202) 547-1420
+
+
+
+
+
+
+
+1 .  INTRODUCTION
+
+
+
+
+
+	The Entropic Signal Processing System (ESPS) contains a variety of 
+programs used in the digital filtering of sampled data. This document 
+introduces the reader to programs that deal with filtering and 
+illustrates their use through some common examples.
+
+
+
+	Digital filters are characterized by their coefficients.   In ESPS, 
+these coefficients are usually stored in FEAFILT (5-ESPS) files. Programs 
+that create FEAFILT (5-ESPS) files are called filter design programs.   
+These are discussed in Section 2.   Programs that use FEAFILT (5-ESPS) 
+files to perform the digital filtering operation are called filtering 
+programs, and Section 3 describes these programs. Finally, Section 4 
+discusses programs used to calculate and plot the frequency response or 
+transfer function of the coefficients in a FEAFILT (5-ESPS) file.
+
+
+
+
+
+1 .1 .  User Level Programs
+
+
+
+	ESPS includes the following user level programs that support the 
+filtering of sampled data. Each of these programs is described in this 
+document.
+
+
+
+notch_filt (1-ESPS) - Design a second order notch filter.
+
+wmse_filt (1-ESPS)- Design a FIR filter with minimum weighted MS error.
+
+win_filt (1-ESPS) - Design a FIR filter by the Kaiser windowing method.
+
+pkmc_filt(1-ESPS) - Design a FIR filter by Parks-McClellan method.
+
+cb_filt (1-ESPS) - Design a FIR filter by constraint-based method.
+
+iir_filt (1-ESPS)- Design a Recursive (IIR) filter by various methods.
+
+xpz (1-ESPS)   - Interactive Pole/Zero filter design.
+
+zero_pole (1-ESPS) - Convert ASCII zero and pole locations to an ESPS 
+FEAFILT (5-ESPS) file.
+
+impulse_resp (1-ESPS) - Compute unit impulse responses of filters in 
+FEAFILT (5-ESPS) file.
+
+atofilt (1-ESPS)- Convert ASCII files to an ESPS FEAFILT (5-ESPS) file.
+
+filter2 (1-ESPS)- Perform digital filtering on a sampled data file.
+
+fft_filter (1-ESPS)- Perform FIR digital filtering using frequency 
+domain convolution.
+
+sfconvert (1-ESPS)- Converts sampling frequency in a sampled data file.
+
+filtspec (1-ESPS)- Generate spectral record file for specified records 
+in a FEAFILT (5-ESPS) file.
+
+
+
+
+
+1 .2 .  Library Functions
+
+
+
+	The following ESPS library functions support the use of filters. 
+Library functions are not discussed in this document. The user should 
+refer to the appropriate Section 3 manual page for further help with 
+filtering library functions.
+
+
+
+init_feafilt_hd (3-ESPS)- Initialize a FEA file header for subtype 
+FEAFILE.
+
+allo_feafilt_rec (3-ESPS)- Allocate memory for a FEAFILT (5-ESPS) file 
+record.
+
+block_filter2 (3-ESPS)- Filter data from a file or memory
+
+get_feafilt_rec (3-ESPS)- Get the next data record from an ESPS FEAFILT 
+(5-ESPS) file.
+
+interp_filt (3-ESPS)- Perform interpolation filtering on a data array.
+
+print_feafilt_rec (3-ESPS)- Print an ESPS FEAFILT (5-ESPS) record.
+
+put_feafilt_rec (3-ESPS)- Put an ESPS FEAFILT (5-ESPS) record into a 
+file.
+
+pz_to_co (3-ESPS)   - Convert pole or zero locations to filter 
+coefficients.
+
+
+
+
+
+2 .  FILTER DESIGN
+
+
+
+	There are two kinds of filters often discussed in the literature 
+and text books:   finite impulse response (FIR) and infinite impulse 
+response (IIR). FIR filters have only numerator coefficients, and are 
+sometimes called moving-average or all-zero filters. IIR filters have 
+denominator (and possibly numerator) coefficients, and are also called 
+recursive filters.   ESPS programs provide design support for both types 
+of filters, and this section describes those programs that calculate 
+filter coefficients and store them in FEAFILT (5-ESPS) files.
+
+
+
+	These programs use ESPS parameter files as means of user interface. 
+Typically such parameter files contain parameters such as sampling rate, 
+desired band edges, values, and weighting factors, etc... In IIR filter 
+design, four types of filter designs are available: lowpass, highpass, 
+bandpass, and bandstop. Their bandedges are controlled by only 4 
+parameters. Eparam and xeparam(1-ESPS) may be used to invoke the IIR 
+design program to prompt user for parameter values. 
+
+
+
+	In FIR filter design, however, N-band filter design is possible, 
+and the number of parameters for bandedges, desired band values vary with 
+N.   Although eparam and xeparam(1-ESPS) can be invoked to prompt for 
+parameter values, the default parameter file templates under the 
+directory $ESPS_BASE/lib/params are pre-written and fixed to parameters 
+applicable for either 2 or 3 band FIR filters.   Therefore, customize 
+these template parameter files to suit your needs. The cover shell script 
+xfir_filt in the directory $ESPS_BASE/bin is a good example for 
+interactive filter design tool based on ESPS parameter file processing 
+and XIG interface. (See ESPS Application Notes: X Interface Generation 
+in ESPS and xwaves+)
+
+
+
+
+
+2 .1 .  notch_filt
+
+
+
+	The program notch_filt (1-ESPS) designs a second order IIR filter 
+that removes or "notches out" a narrow region in the frequency domain 
+and passes all other frequencies. This is done by placing a zero on the 
+unit circle in the Z-plane at a point corresponding to this notch 
+frequency, and then placing a pole very close to it and just inside the 
+unit circle.   The complex conjugates of this pole and zero are also 
+included to guarantee a filter with real coefficients. The frequency 
+response will therefore be zero when evaluated at the zero frequencies, 
+but nearly everywhere else on the unit circle, the effects of the poles 
+and zeroes will cancel.
+
+
+
+	To use notch_filt, the user must specify the sampling frequency, 
+the notch frequency, the notch bandwidth, and, of course, the output file 
+name. The notch bandwidth is defined as the distance (in the frequency 
+domain) between the -6 dB. points on either side of the notch. The three 
+critical frequencies may be specified on the command line or in a 
+parameter file. If all three are specified on the command line, no 
+parameter file is necessary.
+
+
+
+2 .1 .1 .  notch_filt Example.
+
+
+
+	To illustrate the use of notch_filt, a filter will be designed to 
+remove 120 Hz noise from 8 kHz. sampled data. The notch bandwidth will 
+be 20 Hz. The command for this is:
+
+
+
+           notch_filt -s8000 -n120 -b20 notch120.filt
+
+
+
+	The response for the resulting filter (in the file notch120.filt) 
+is shown in Figure 2-1. The commands used to obtain the plot in Figure 
+2-1 are covered in Section 4.
+
+
+
+
+
+
+
+
+
+2 .2 .  wmse_filt
+
+
+
+
+
+          The program wmse_filt (1-ESPS) designs an FIR filter of specified 
+length using the weighted mean-square-error criterion.   The user 
+specifies a desired frequency response and a weighting function and the 
+program finds the set of filter coefficients whose response minimizes 
+the mean square error with respect to the desired response, when weighted 
+by the weighting function.   In other words, for desired response D(f) 
+and weighting function W(f), the program finds the coefficients of the 
+filter H(f) which minimizes:
+
+ If uniform weighting is used (i.e. W(f) = 1), the solution to the above 
+equation will simply be the Inverse Discrete Fourier Transform of D(f), 
+truncated to the desired number of coefficients.
+
+
+
+	The user may specify the desired response and weighting function in 
+one of two modes: band and points.
+
+
+
+	In "band mode" the program assumes that the desired response and 
+the weighting function are constant throughout a set of adjacent 
+frequency bands from zero to half the sampling frequency. Bands are 
+specified by parameters in a parameter file.
+
+
+
+	In "points mode" the program allows the desired response and 
+weighting function to be arbitrarily shaped and to be specified at a 
+number of uniformly spaced points from zero to half the sampling 
+frequency.   The number of points must be one plus a power of two. The 
+point values of the desired response and the weighting function are 
+specified in two ASCII files. The first number in each of these files is 
+an integer telling how many point values are in the file, and the point 
+values follow.
+
+
+
+	Among ESPS FIR design programs, this is the fastest and the most 
+numerically stable program. However, due to the Gibbs phenomenon, 
+overshoot in the passband near the transition bandedges exists.
+
+
+
+
+
+2 .2 .1 .  Band Mode Example
+
+
+
+	To illustrate the "band mode" of operation, a simple bandpass filter 
+will be designed. The following command reads design parameters from a 
+parameter file.
+
+
+
+           wmse_filt -P param1.wmse band_pass1.filt
+
+
+
+The parameter file is shown below. In this example, it creates a bandpass 
+filter with passband edges at 1000 and 2000 Hz.
+
+
+
+Content of the parameter file param1.wmse:
+
+
+
+	float samp_freq = 8000: "Sampling frequency:";
+
+	int filt_length = 201: "filter length - odd:";
+
+	int nbands = 3: "Number of bands:";
+
+	float band_edge1 = 0;
+
+	float band_edge2 = 1000;
+
+	float band_edge3 = 2000;
+
+	float band_edge4 = 4000;
+
+	float band1_des = 0: "desired value for band1:";
+
+	float band2_des = 1 "desired value for band2:";
+
+	float band3_des = 0 "desired value for band3:";
+
+	#uniform weighting
+
+	float band1_wt = 1: "weighting value for band1:";
+
+	float band2_wt = 1: "weighting value for band2:";
+
+	float band3_wt = 1: "weighting value for band3:";
+
+
+
+
+
+The response for this filter is shown in Figure 2-2.
+
+
+
+	Incidentally, it may be easier to use eparam or xeparam(1-ESPS) with 
+wmse_filt(1-ESPS) to prompt for design parameters. By default, the 
+parameter file $ESPS_BASE/lib/params/Pwmse_filt contains design 
+parameters for a 3-band filter. You may use this as a template and 
+construct a parameter file for designing a N-band filter. See next 
+example for constructing a 5-band filter.
+
+
+
+	You can obtain better stop band rejection by allowing the filter 
+response to rolloff more slowly than in the above example. This can be 
+accomplished with wmse_filt by specifying transition bands on either side 
+of the passband, where the error is weighted with a factor of zero. This 
+allows the filter design algorithm to concentrate the zeroes in the 
+regions of interest since the error in the transition region can grow 
+arbitrarily large without affecting the total weighted error. Note that 
+the desired response function is the same in this example as in the one 
+above, even though it is specified by using more bands.
+
+
+
+           wmse_filt -P param2.wmse band_pass1.filt
+
+
+
+The parameter file is shown below. In this example, it creates a bandpass 
+filter with passband edges at 1000 and 2000 Hz, a 100 Hz transition region 
+is provided on either side of the passband with zero error weighting.
+
+
+
+Content of the parameter file param2.wmse:
+
+
+
+	float samp_freq = 8000: "Sampling frequency:";
+
+	int filt_length = 201: "filter length - odd:";
+
+	int nbands = 5: "Number of bands:";
+
+	float band_edge1 = 0;
+
+	float band_edge2 = 900;
+
+	float band_edge3 = 1000;
+
+	float band_edge4 = 2000;
+
+	float band_edge5 = 2100;
+
+	float band_edge6 = 4000;
+
+	float band1_des = 0: "desired value for band1:";
+
+	float band2_des = 0 "desired value for band2:";
+
+	float band3_des = 1 "desired value for band3:";
+
+	float band4_des = 0 "desired value for band4:";
+
+	float band5_des = 0 "desired value for band5:";
+
+	float band1_wt = 1: "weighting value for band1:";
+
+	float band2_wt = 0: "weighting value for band2:";
+
+	float band3_wt = 1: "weighting value for band3:";
+
+	float band4_wt = 0: "weighting value for band4";
+
+	float band5_wt = 1: "weighting value for band5:";
+
+
+
+          The response for this filter is shown in Figure 2-3.   Note 
+that the passband ripple has been reduced and the stop band attenuation 
+has been increased by about 30 dB.
+
+
+
+
+
+
+
+
+
+2 .2 .2 .  Points Mode Example.
+
+
+
+	In this section, a more complicated filter will be designed using 
+the  "points  mode" method. Suppose a filter with the amplitude response 
+described as follows: over 0 to 8200 Hz, the amplitude response is 
+proportional to frequency with a slope of +(1/820); over 8201 to 9200 
+Hz, with the slope of -(1/100); over 9201 to 10000Hz, the amplitude 
+response is zero. And suppose the error weight over 0 to 8200 Hz is 1; 
+over 8201 to 9200 Hz, 0; over 9201 to 10000 Hz, 1. This is a 
+differentiator and could be used as an FM demodulation filter. 
+
+
+
+	Before the filter can be designed, ASCII files must be created 
+containing the desired response and the weighting function. For best 
+results, the number of points in these functions should be large. These 
+ASCII files can be created easily by using a simple awk (1) command ( or 
+Masscomp utilities gas (1G) and af (1G).   ).   
+
+
+
+       cat  >  fm_des   (This puts the number of points at the beginning 
+of the file.)
+
+       1025
+
+       ^d
+
+       awk '{x=0;print x;for(i=1;i<820;i++) print x+=0.012195121}' - >> 
+fm_des
+
+       <ret>
+
+       ^d
+
+       awk '{x=10;print x;for(i=1;i<100;i++) print x+=-0.1}' - >> fm_des
+
+       <ret>
+
+       ^d
+
+       awk '{for(i=0;i<105;i++) print x=0}' - >>fm_des
+
+       <ret>
+
+       ^d
+
+
+
+
+
+	The weighting function is created below. The transition band 
+receives low weighting to improve performance in the pass band and stop 
+band.
+
+
+
+       cat  >  fm_wt
+
+       1025
+
+       ^d
+
+       awk '{for(i=0;i<820;i++) print x=1}' - >> fm_wt
+
+       <ret>
+
+       ^d
+
+       awk '{for(i=0;i<820;i++) print x=0.1}' - >> fm_wt
+
+       <ret>
+
+       ^d
+
+       awk '{for(i=0;i<820;i++) print x=1}' - >> fm_wt
+
+       <ret>
+
+       ^d
+
+
+
+
+
+The filter is designed with the following command:
+
+
+
+           wmse_filt -c "FM demodulator." -n 401 -d fm_des -w fm_wt 
+fm_demod.filt
+
+
+
+The comment string following the -c option will be copied into the 
+comment portion of the output file header.   The response for this filter 
+is shown on a linear scale in Figure 2-6.
+
+
+
+
+
+
+
+2 .3 .  win_filt
+
+
+
+	The program win_filt(1-ESPS) allows you to design a FIR filter by 
+the Kasier windowing method. This method windows the ideal frequency 
+response with the Kaiser window which controls the sharpness of the 
+design filter. Windowing technique in FIR design often requires long 
+filter length to meet the requirement of a sharp filter.
+
+
+
+	The ideal frequency response of the filter is described by the 
+parameters in a parameter files. To illustrate its usage, suppose a 
+highpass filter with the cutoff frequency at 1500 Hz, sampled at 8000 
+Hz. Since the parameter template in $ESPS_BASE/lib/params is in a form 
+of 2-band filter, we'll use eparam(1-ESPS) to invoke win_filt.
+
+
+
+	eparam win_filt high.filt
+
+
+
+	Sampling frequency: [8000] :
+
+	Number of bands: [2] :
+
+	ransition bandwidth: [100] :
+
+	rejection in dB from one band to another: [20] :
+
+	band_edge1 [0] :
+
+	band_edge2 [1000] :1500
+
+	band_edge3 [4000] :
+
+	desired value for band1: [1] :0
+
+	desired value for band2: [0] :1
+
+
+
+We required the transition bandwidth of 100 Hz and stopband response to 
+be at least 20 dB down from passband. The filter response is shown below 
+in Figure 2.5
+
+
+
+
+
+
+
+2 .4 .  pkmc_filt
+
+
+
+	The design method is based on the Parks-McClellan algorithm. The 
+resulting filter minimizes the maximum weighted approximation error. In 
+other words, for desired response D(f) and error weighting function W(f), 
+the program finds the coefficients of the filter H(f) which minimizes:
+
+One of the four standard FIR types is produced.   For a filter with 
+multiple stopbands and passbands, the Type 1 (symmetric and odd length) 
+or Type  2  (symmetric and even length) filter is designed. For a 
+differentiator or a Hilbert Transformer, the Type 3 (anti-symmetric and 
+odd length) or the Type 4 (anti-symmetric and even length) filter is 
+designed.
+
+
+
+	The Parks-McClellan algorithm is known to run to numerically 
+difficulty, especially if the filter length is over 100. However, since 
+the algorithm can distribute error equally among passband and stopband 
+by equirippling to avoid excessive overshoot near transition bandedges, 
+filter designed by this method is preferred for certain application.
+
+
+
+	Suppose a differentiator in Section 2.2.2 - over the 0 to 8200 Hz 
+region, the amplitude response is proportional to frequency with a slope 
+of +(1/820); over 8201 to 9200 Hz, with the slope of -(1/100); over 9201 
+to 10000Hz, the amplitude response is zero. And suppose the error weight 
+over 0 to 8200 Hz is 1; over 8201 to 9200 Hz, 0; over 9201 to 10000 Hz, 
+1. A parameter file, param.diff based on the template, $ESPS_BASE/lib/
+params/Ppkmc_filt, follows:
+
+
+
+	string filt_type = "DIFFERENTIATOR": "Desired FIR kind:": 
+{"MULTIBAND",\ "DIFFERENTIATOR", "HILBERT"};
+
+	int filt_length = 55: "Filter length:";
+
+	float samp_freq = 20000: "Sampling frequency:";
+
+	int nbands = 2: "Number of bands:";
+
+	float band1_edge1 = 0: "Left bandedge for band 1:";
+
+	float band1_edge2 = 8200: "Right bandedge for band 1:";
+
+	#slope is measured against normalized frequency axis
+
+	float band1_des = 24.390244: "Value for band 1, or slope for 
+differentiator";
+
+	float band1_wt = 1: "Weight for band 1";
+
+	float band2_edge1 = 9200: "Left bandedge for band 2:";
+
+	float band2_edge2 = 10000: "Right bandedge for band 2:";
+
+	float band2_des = 0: "Value for band 2";
+
+	float band2_wt = 1: "Weight for band2";
+
+
+
+The command,
+
+
+
+	pkmc_filt -Pparam.diff fm_demod2.filt
+
+
+
+gives the FIR filter with the response shown in figure 2-6
+
+
+
+
+
+
+
+
+
+2 .5 .  cb_filt
+
+
+
+	The program designs a FIR filter by applying the Simplex algorithm 
+to solve a constraint-based problem. This is a public domain program with 
+ESPS interface added. (See its man page for the source.) 
+
+
+
+	The main feature of this program is to design a FIR filter with a 
+nearly flat passband. However, due to its generality, it requires high 
+computational time and sometimes runs into numerical ill condition. If 
+no feasible solution is found, relax constraints accordingly or consider 
+other FIR design alternatives.
+
+
+
+	Suppose a lowpass filter of sampling rate 8000 Hz, with passband 
+from 0 to 1800 Hz, stopband from 2000 to 4000. It is desired that passband 
+be nearly as flat as possible and filter length be between 91 and 55 taps.
+
+
+
+	Please see the man page for parameter usage details. Brief comments 
+are included in the following parameter file for our design example.
+
+
+
+	#largest and smallest filter length
+
+	int filt_length_L = 91;
+
+	int filt_length_S = 55;
+
+	float samp_freq = 8000;
+
+	#number of specs
+
+	int nspec = 5;
+
+	string model = "cosine";
+
+	string push_direction = "neither";
+
+
+
+	#Upper bound and bandedge specs for passband
+
+	string spec1_type = "limit";
+
+	string spec1_sense = "+";	
+
+	float spec1_edge1 = 0.000000;
+
+	float spec1_edge2 = 1800;
+
+	float spec1_bound1 = 1.000000;
+
+	float spec1_bound2 = 1.000000;
+
+	string spec1_hug = "hugged";
+
+	string spec1_interp = "arithmetic";
+
+
+
+	#Lower bound and bandedge specs for passband
+
+	string spec2_type = "limit";
+
+	string spec2_sense = "-";
+
+	float spec2_edge1 = 0.000000;
+
+	float spec2_edge2 = 1800;
+
+	float spec2_bound1 = 0.90000;
+
+	float spec2_bound2 = 0.90000;
+
+	string spec2_hug = "not hugged";
+
+	string spec2_interp = "arithmetic";
+
+
+
+	#Upper bound and bandedge specs for stopband
+
+	string spec3_type = "limit";
+
+	string spec3_sense = "+";
+
+	float spec3_edge1 = 2000;
+
+	float spec3_edge2 = 4000;
+
+	float spec3_bound1 = 0.100000;
+
+	float spec3_bound2 = 0.100000;
+
+	string spec3_hug = "not hugged";
+
+	string spec3_interp = "arithmetic";
+
+
+
+	#Lower bound and bandedge specs for stopband
+
+	string spec4_type = "limit";
+
+	string spec4_sense = "-";
+
+	float spec4_edge1 = 2000;
+
+	float spec4_edge2 = 4000;
+
+	float spec4_bound1 = 0;
+
+	float spec4_bound2 = 0;
+
+	string spec4_hug = "hugged";
+
+	string spec4_interp = "arithmetic";
+
+
+
+	#Near flatness constraint spec on passband
+
+	string spec5_type = "concave";
+
+	string spec5_sense = "-";
+
+	float spec5_edge1 = 0;
+
+	float spec5_edge2 = 1800;
+
+
+
+The command,
+
+
+
+	cb_filt -P param.cb lowpass.cb
+
+
+
+produces a filter with the spectral plot shown in figure 2.7.
+
+
+
+
+
+
+
+2 .6 .  iir_filt
+
+
+
+	The program iir_filt (1-ESPS) designs digital IIR filters by first 
+designing Butterworth, Chebyshev I, Chebyshev II, or elliptical analog 
+filters and then converting them to digital filters by using the bilinear 
+transformation.    Iir_filt   supports the design of low pass (LP), high 
+pass (HP), bandpass (BP), and band stop (BS) filters. The user must 
+specify the sampling frequency, the filter type (e.g. Butterworth), 
+filter response type (e.g. low pass), pass/stopband edges, passband 
+deviation tolerance, and stopband attenuation characteristic.   These 
+design parameters are specified in a parameter file, but the easiest way 
+to design IIR filters is by invoking iir_filt with the eparam or 
+xeparam(1-ESPS) command.   By doing this, the user is prompted for all 
+the design parameters.
+
+
+
+	Suppose a bandpass filter of 8000 Hz sampling rate. Its desired 
+passband amplitude is equal to 1 and with maximum deviation of 1 dB over 
+the region of 1000 to 2000 Hz. The stopband regions over 0 to 900 Hz and 
+2100 to 4000 Hz are required to have at least 30 dB attenuation from the 
+passband.
+
+
+
+The following command designs such filter.
+
+
+
+	eparam iir_filt iir.filt
+
+
+
+	Desired filter type: [ELLIPTICAL]  (Choices are: BUTTERWORTH 
+CHEBYSHEV1 CHEBYSHEV2 ELLIPTICAL):
+
+	Desired filter reponse [LP]  (Choices are: LP HP BP BS):BP
+
+	Desired sampling frequency. [8000] :
+
+	Stopband frequency 1 [1100] :900
+
+	Passband frequency 1 [1000] :
+
+	Passband frequency 2 [2100] :2000
+
+	Stopband frequency 2 [2000] :2100
+
+	Desired maximum pass band loss (dB). [1] :
+
+	Desired minimum stop band attenuation (dB). [20] :30
+
+	Desired pass band gain. [1] :
+
+
+
+The response is in figure 2-8.
+
+
+
+
+
+
+
+2 .7 .  xpz
+
+
+
+	The program xpz (1-ESPS) designs filters by allowing the user to 
+arbitrarily place poles and zeros. The pole and zero locations can be 
+specified by interactively placing poles and zeros on the complex Z-plane 
+by using the mouse, or by using a text editor window to specify their 
+real and imaginary parts. Changes in filter characteristics are 
+immediately displayed in the filter response window. See the manual page 
+for more information.
+
+
+
+
+
+2 .8 . zero-pole
+
+
+
+	The program zero_pole(1-ESPS) allows the user to design a filter by 
+arbitrary placement of poles and zeros in the complex plane. The user 
+simply specifies the pole and zero locations in one or two ASCII files, 
+and the program computes the coefficients and deposits them in a FEAFILT 
+(5-ESPS) file.
+
+
+
+	The zero_pole program will be demonstrated by converting an analog 
+Butterworth filter to its discrete equivalent by using the bilinear 
+transformation. [1] The analog filter is a sixth-order low-pass filter 
+with a 3-dB corner frequency at one eighth the sampling rate.    After 
+the transformation, in the Z-domain this filter has six zeroes at -1, 
+and poles at the following locations:
+
+
+
+               p0 = 0.597716978 + 0.577350268 i        p5 = p0 conjugate.
+
+               p1 = 0.471404518 + 0.333333333 i        p4 = p1 conjugate.
+
+               p2 = 0.420143458 + 0.108741129 i        p3 = p2 conjugate.
+
+
+
+The filter is then designed with the following command:
+
+
+
+           zero_pole -c "Sixth order Butterworth." -g 1  butter6.filt  
+butter6  butter6
+
+
+
+	The -g option is used above to insure that the filter coefficients 
+are normalized to have unity gain at 0 Hz. The ASCII file butter6 is 
+shown below. Note that if zero and pole locations are both to be read 
+out of the same file, it must be given twice on the command line. Also, 
+for any pole or zero off of the real axis, the complex conjugate is 
+automatically included and therefore should not be listed in the input 
+ASCII file.
+
+
+
+Contents of butter6:
+
+
+
+       6
+
+       -1.0  0.0
+
+       -1.0  0.0
+
+       -1.0  0.0
+
+       -1.0  0.0
+
+       -1.0  0.0
+
+       -1.0  0.0
+
+       3
+
+       0.597716978  0.577350268
+
+       0.471404518  0.333333333
+
+       0.420143458  0.108741129
+
+
+
+
+
+2 .9 .  impulse_resp
+
+
+
+	The program impulse_resp (1-ESPS) is used to calculate the impulse 
+response of a filter. A specified number of points on the impulse 
+response are calculated and written either to an output FEAFILT (5-ESPS) 
+file, to be used as an FIR filter, or to an FEA_SD (sampled data) file 
+for plotting in the time domain. As an example, the bandpass IIR filter 
+designed in the Section 2.7, iir.filt, will be converted to an FIR filter 
+using impulse_resp.
+
+
+
+	impulse_resp -n 100 iir.filt fir.filt 
+
+
+
+	The response for this filter is shown in Figure 2-9. If the user 
+wishes to plot the impulse response in the time domain, the following 
+command should be used to obtain a sampled-data FEA_SD file:
+
+
+
+           impulse_resp  -s  -n 100  iir.filt  iir.sd
+
+
+
+This file is plotted in Figure 2-9 using plotsd (1-ESPS)
+
+.
+
+
+
+
+
+2 .10 .  atofilt
+
+
+
+
+
+	The program atofilt (1-ESPS) is used to convert a set of known 
+filter coefficients into a FEAFILT (5-ESPS) file. The coefficients may 
+be placed in one or two ASCII files, or may be typed in directly from 
+the standard input. The user is strongly advised to use the comment 
+facility of this program to record information about the coefficients in 
+the file header.
+
+
+
+An example command line would be:
+
+
+
+           atofilt  filter1.filt  filter1.num  filter1.den
+
+
+
+Since the -c option is not used above, the user will be prompted for his 
+comments.
+
+
+
+
+
+3 .  FILTERING PROGRAMS
+
+
+
+
+
+	This section describes the three programs that may be used to filter 
+sampled data:   filter2 (1-ESPS), fft_filter (1-ESPS), and sfconvert (1-
+ESPS). Fft_filter (1-ESPS) works with FIR filters only, but filter2 (1-
+ESPS) works with both IIR and FIR filters. 
+
+
+
+
+
+3 .1 .  filter2
+
+
+
+	The program filter2 (1-ESPS) is used to perform a digital filtering 
+operation on sampled data.   The program implements FIR or IIR filters 
+and may read its coefficients from a FEAFILT (5-ESPS) file, or from a 
+parameter file.
+
+
+
+	If lowpass.filt is a FEAFILT filter file and speech.sd is a FEA_SD 
+file, then, the command,
+
+
+
+         filter2 -F lowpass.filt speech.sd speech.out
+
+
+
+output the file speech.out which is the filtered result.
+
+
+
+	Instead of a FEAFILT file, It is possible to give filter 
+coefficients to filter2(1-ESPS) in an ASCII form by means of parameter 
+file. See the man page for details. The following command reads IIR 
+filter coefficients from a parameter file and filters the data. Note that 
+the filter must be named on the command line to extract the correct set 
+of coefficients from the parameter file.
+
+
+
+           filter2  -P params.filt  -f low_pass  speech.sd  filt_speech.sd
+
+
+
+The parameter file params.filt is shown below. In this example the 
+filtering operation begins at the 10,000th point in the input file and 
+processes 20,000 points.
+
+
+
+       Contents of params.filt:
+
+
+
+	# Don't do the whole file.
+
+	int start = 10000 : "Starting point for analysis.";
+
+	int nan = 20000 : "Number of points to process.";
+
+	# Define the filter.  from a lowpass elliptical filter of 1000 Hz 
+passband frequency,
+
+	#    1100 Hz stop band frequency, 1 dB max deviation over passband, 
+20 dB
+
+	#    down on stopband, sampling rate 8000 Hz.
+
+	int low_pass_psiz = 2;
+
+	int low_pass_zsiz = 2;
+
+	float low_pass_zeros = { 0.11777, 0.99304, 0.62917, 0.7772}
+
+	float low_pass_poles = { 0.63655, 0.36316, 0.67707, 0.68036}
+
+	float low_pass_gain = 0.1019;
+
+
+
+
+
+
+
+3 .2 .  fft_filter
+
+
+
+	The program fft_filter (1-ESPS) implements FIR filtering operations 
+on sampled data by performing the convolution in the frequency domain 
+rather in the time domain as filter does.   This algorithm is 
+computationally more efficient than that used by filter2 when the number 
+of filter coefficients is large. If N is the number of data points to 
+process and N is the size of the filter, the regular filtering algorithm 
+require on the order of N*N multiplications. By contrast, the algorithm 
+used by fft_filt requires only about 2N logN +N multiplications. [1] In 
+experimental results on a Masscomp 5610 s2st1m, filtering 100,000 
+samples, fft_filter required only one eighth as much time as filter2 to 
+implement a 401 point filter and 25 % less time to implement a 51 point 
+filter. In implementing an 11 point filter, however, fft_filter was only 
+half as fast as filter2.
+
+
+
+	The command below illustrates the use of fft_filter.   Note that if 
+the -F option is used to specify the filter coefficients and the -p option 
+is used to specify the range of data points, no parameter file is 
+necessary. The command below causes all of the data in the file to be 
+processed.
+
+
+
+           fft_filter -F low_pass.filt -p1:  input.sd  output.sd
+
+
+
+
+
+
+
+3 .3 .  sfconvert
+
+
+
+	This program does sampling frequency conversion for input sampled 
+data file.    By   default,   the   program   designs   a   lowpass 
+interpolation/decimation filter using the Kaiser windowing method.   A 
+trade-off between the computational time and the output accuracy is 
+balanced by specifying the filter transition bandwidth and stopband 
+rejection ratio.
+
+
+
+	The following example converts a CD-quality signal sampled at 44.1 
+KHz to a telephone-quality signal sampled at 8 KHz. The output signal is 
+band-limited to 3.5 KHz, instead of the 4 KHz Nyquist rate, by specifying 
+the corner frequency on the command line.
+
+
+
+           sfconvert -s 8000 -c 3500 music44_1.sd music8.sd
+
+
+
+
+
+4 .  FILTER SPECTRAL RESPONSES
+
+
+
+	The program filtspec (1-ESPS) is used to find the frequency response 
+of a filter. The program reads coefficients from a FEAFILT (5-ESPS) file 
+and produces an output FEA_SPEC (5-ESPS) file. The program plotspec (1-
+ESPS) can then be used to plot the response on a terminal or printer.
+
+
+
+	Suppose a FEA_FILT filter file iir.filt. To plot the response with 
+y-axis in linear scale, the following command is used:
+
+
+
+         filtspec -ml  iir.filt iir.spec
+
+         plotspec iir.spec
+
+
+
+Or the following command may be used.
+
+
+
+         filtspec -ml iir.filt - | plotspec - 
+
+
+
+Filtspec(1-ESPS) writes the result to standard input which then is pipe 
+to plotspec(1-ESPS) as standard input.
+
+
+
+
+
+
+
+5 .  REFERENCES
+
+
+
+1.   Steven A. Tretter, Descrete-Time Signal Processing, John Wiley & 
+Sons (1976).
+
+

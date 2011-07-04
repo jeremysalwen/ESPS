@@ -1,0 +1,7 @@
+waves make_panel name misc columns 3 title "Miscellaneous xwaves Controls" icon_title Controls file controls.WM loc_x 665 loc_y 0
+
+call commandname defwavmen.WC
+
+return
+
+# @(#)xw_init.WC	1.5 9/9/93

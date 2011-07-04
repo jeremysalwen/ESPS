@@ -1,0 +1,5 @@
+# @(#)Pmux	1.1	7/25/91	ERL
+# default parameter file for mux
+int	start ?= {1}: "First point(s) to process in input files";
+int	nan ?= {0}: "Number of points; 0 means continue to EOF";
+string	make_complex ?= "NO": "Combine pairs of real channels to make complex channels?": {"NO", "YES"};

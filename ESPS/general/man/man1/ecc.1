@@ -1,0 +1,47 @@
+.\" @(#)ecc.1	1.2 7/23/93 ESI
+.\" Copyright (c) 1987, 1990Entropic Speech, Inc. All Rights Reserved.
+.TH ECC 1\-ESPS 7/23/93
+.SH NAME
+.nf
+ecc \- compile simple ESPS programs 
+elint \- run lint on simple ESPS programs
+.SH SYNOPSIS
+.B ecc
+[
+.BI "cc options"
+]
+.I files
+.br
+.B elint
+[
+.BI "lint options"
+]
+.I files
+.SH DESCRIPTION
+.PP
+\fIecc\fR is used just like \fIcc\fR(1) to compile
+simple ESPS programs.   \fIecc\fR supplies the correct
+location of the ESPS include files to \fIcc\fR using the \fB-I\fR option
+and supplies the correct library names on the \fIcc\fR command line.  The
+generated \fIcc\fR command is printed on standard output.  
+.PP
+\fIelint\fR is used to run \fIlint\fR(1) on ESPS programs.  The
+program supplies the correct include file directories and lint library
+names to \fIlint\fR.
+.PP
+All of these program also search the Unix math library (-lm).
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read.
+.SH "ESPS HEADERS"
+.PP
+ESPS data files are not read or written.
+.SH "WARNINGS"
+.PP
+No error messages are produced by these programs.  Various error and
+warning messages are possible from the C compiler or the loader.
+.SH "AUTHOR"
+.PP
+Alan Parker
+
+

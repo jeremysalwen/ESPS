@@ -1,0 +1,13 @@
+#! /bin/sh
+#  test script for xprompt @(#)xtext.test	1.3 1.3 ESI
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+echo "Running xtext to pop up psps output for a complex FEA_SD file"
+echo %testsd -tlong_cplx -p40 foo.sd
+testsd -tlong_cplx -p40 foo.sd
+echo %xtext -i xtext_test psps -l foo.sd 
+xtext -i xtext_test psps -l foo.sd &
+echo "Running xtext to pop up the xtext source"
+xtext -F xtext.c &
+echo "Running xtext to pop up the demo readfile"
+xtext -F $ESPS_BASE/demo/README &

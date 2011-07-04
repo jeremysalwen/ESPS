@@ -1,0 +1,366 @@
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o message.o message.c
+message.c: In function ‘restart_d_clock’:
+message.c:353: warning: passing argument 2 of ‘notify_set_itimer_func’ from incompatible pointer type
+gcc -c -DPW_PLOT   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC xreticle.c
+xreticle.c: In function ‘do_x_numbers’:
+xreticle.c:541: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xreticle.c:546: warning: passing argument 1 of ‘xv_ttext’ makes integer from pointer without a cast
+xreticle.c: In function ‘do_x_label’:
+xreticle.c:569: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xreticle.c: In function ‘do_y_numbers’:
+xreticle.c:595: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xreticle.c:599: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:604: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xreticle.c: In function ‘draw_reticle’:
+xreticle.c:695: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:697: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:699: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:701: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:748: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:750: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:777: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:779: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:787: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:789: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:796: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:798: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c: In function ‘central_marks’:
+xreticle.c:831: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xreticle.c:837: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o pole_methods.o pole_methods.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xcolormap.o xcolormap.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xversion.o xversion.c
+xversion.c: In function ‘set_pvd’:
+xversion.c:38: warning: incompatible implicit declaration of built-in function ‘strcpy’
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o globals.o globals.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xnotice.o xnotice.c
+xnotice.c:35: warning: initialization makes integer from pointer without a cast
+xnotice.c: In function ‘kill_notice’:
+xnotice.c:57: warning: assignment makes integer from pointer without a cast
+xnotice.c: In function ‘show_notice’:
+xnotice.c:99: warning: comparison between pointer and integer
+xnotice.c:115: warning: passing argument 1 of ‘notify_set_itimer_func’ makes integer from pointer without a cast
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xp_stubs.o xp_stubs.c
+rm -f xlibsigw.a
+cp /usr/esps/lib/waves/xlibsig.a xlibsigw.a
+ar r xlibsigw.a   message.o  xreticle.o pole_methods.o xcolormap.o xversion.o globals.o xnotice.o xp_stubs.o
+ranlib xlibsigw.a
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o paste.o paste.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xplot_data.o xplot_data.c
+xplot_data.c: In function ‘print_y’:
+xplot_data.c:211: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xplot_data.c:214: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xplot_data.c: In function ‘plot_waves’:
+xplot_data.c:356: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xplot_data.c:491: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:491: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:491: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:491: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:491: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:491: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:491: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:491: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:491: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:491: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:506: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:506: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:506: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:506: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:506: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:506: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:506: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:506: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:506: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:506: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:513: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:513: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:513: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:513: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:513: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:513: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:513: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:513: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:513: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:513: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:520: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:520: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:520: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:520: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:520: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:520: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:520: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:520: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:520: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:520: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:531: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:531: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:531: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:531: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:531: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:531: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:531: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:531: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:531: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:531: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:534: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:534: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:534: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:534: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:534: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:534: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:534: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:534: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:534: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:534: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:538: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:538: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:538: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:538: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:538: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:538: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:538: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:538: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:538: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:538: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:541: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:541: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:541: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:541: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:541: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:541: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:541: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:541: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:541: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:541: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:544: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:544: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:544: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:544: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:544: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:544: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:544: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:544: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:544: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:544: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xplot_data.c:586: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o tag_methods.o tag_methods.c
+tag_methods.c: In function ‘tag_plot_waves’:
+tag_methods.c:127: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+tag_methods.c:203: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:203: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:203: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:203: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:203: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:210: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:210: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:210: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:210: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:210: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:218: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:218: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:218: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:218: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:218: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:225: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:225: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:225: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:225: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:225: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:232: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:232: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:232: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:232: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:232: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:243: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:243: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:243: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:243: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:243: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:246: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:246: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:246: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:246: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:246: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:250: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:250: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:250: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:250: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:250: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:253: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:253: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:253: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:253: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:253: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:256: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:256: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:256: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:256: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:256: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+tag_methods.c:302: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xwaves.o xwaves.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o view_utils.o view_utils.c
+view_utils.c: In function ‘view_state_to_event’:
+view_utils.c:521: warning: assignment makes integer from pointer without a cast
+view_utils.c:1641:12: warning: extra tokens at end of #undef directive
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o browser.o browser.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xcursors.o xcursors.c
+xcursors.c: In function ‘plot_cursors’:
+xcursors.c:351: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xcursors.c: In function ‘plot_markers’:
+xcursors.c:389: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xcursors.c:396: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xcursors.c:418: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xcursors.c: In function ‘plot_hmarkers’:
+xcursors.c:456: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xcursors.c:464: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xcursors.c: In function ‘plot_scrollbar’:
+xcursors.c:571: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xcursors.c:574: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xcursors.c:578: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xcursors.c:582: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xcursors.c: In function ‘plot_time_bar’:
+xcursors.c:699: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xcursors.c:702: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xesps.o xesps.c
+xesps.c: In function ‘run_any_prog’:
+xesps.c:621: warning: passing argument 2 of ‘notify_set_wait3_func’ from incompatible pointer type
+xesps.c: In function ‘run_esps_prog_get_pid’:
+xesps.c:856: warning: passing argument 2 of ‘build_filename’ makes pointer from integer without a cast
+xesps.c:859: warning: passing argument 2 of ‘build_filename’ makes pointer from integer without a cast
+xesps.c:886: warning: passing argument 2 of ‘build_filename’ makes pointer from integer without a cast
+xesps.c:889: warning: passing argument 2 of ‘build_filename’ makes pointer from integer without a cast
+xesps.c:970: warning: passing argument 2 of ‘notify_set_wait3_func’ from incompatible pointer type
+xesps.c: At top level:
+xesps.c:1218: warning: useless storage class specifier in empty declaration
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xmenus.o xmenus.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xmethods.o xmethods.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xoverlays.o xoverlays.c
+xoverlays.c:197:12: warning: extra tokens at end of #undef directive
+xoverlays.c: In function ‘overlay_spectrograms’:
+xoverlays.c:257: warning: passing argument 1 of ‘xv_ttext’ makes integer from pointer without a cast
+xoverlays.c:262: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xoverlays.c: In function ‘general_overlay_print’:
+xoverlays.c:328: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xoverlays.c: In function ‘overlay_formants’:
+xoverlays.c:364: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xoverlays.c:380: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xoverlays.c: In function ‘formant_print’:
+xoverlays.c:430: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xoverlays.c: In function ‘overlay_poles’:
+xoverlays.c:459: warning: passing argument 1 of ‘xv_ttext’ makes integer from pointer without a cast
+xoverlays.c:465: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xoverlays.c: In function ‘pole_print’:
+xoverlays.c:516: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xoverlays.c: In function ‘e_reassign_formant’:
+xoverlays.c:1001: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xoverlays.c:1013: warning: passing argument 1 of ‘xv_ttext’ makes integer from pointer without a cast
+xoverlays.c:1019: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xoverlays.c: In function ‘overlay_replot_value’:
+xoverlays.c:1179: warning: passing argument 1 of ‘xv_ttext’ makes integer from pointer without a cast
+xoverlays.c:1181: warning: passing argument 1 of ‘xv_ttext’ makes integer from pointer without a cast
+xoverlays.c:1185: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xoverlays.c:1188: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xedit_data.o xedit_data.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xf0_methods.o xf0_methods.c
+xf0_methods.c: In function ‘print_f0_y’:
+xf0_methods.c:143: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xf0_methods.c:146: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xf0_methods.c: In function ‘plot_f0_waves’:
+xf0_methods.c:363: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:495: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:495: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:495: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:495: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:495: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:495: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:495: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:495: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:495: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:498: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:498: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:498: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:498: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:502: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:502: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:502: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:502: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:502: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:502: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:502: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:502: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:502: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:505: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:505: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:505: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:505: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:505: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:505: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:505: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:505: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:505: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:508: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:508: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:508: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:508: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:508: warning: passing argument 1 of ‘xv_rop’ makes integer from pointer without a cast
+xf0_methods.c:508: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:508: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:508: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:508: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xf0_methods.c:530: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xf0_methods.c:533: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xwaves_utils.o xwaves_utils.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xaddop.o xaddop.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o rpc.o rpc.c
+rpc.c: In function ‘meth_send’:
+rpc.c:179: warning: assignment makes integer from pointer without a cast
+rpc.c:183: warning: assignment makes integer from pointer without a cast
+rpc.c: In function ‘meth_start_attachment’:
+rpc.c:257: warning: assignment makes integer from pointer without a cast
+gcc -c   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC -DLBIN=\"/usr/esps/bin\" play_data.c
+play_data.c: In function ‘clear_dac_callbacks’:
+play_data.c:567: warning: passing argument 2 of ‘notify_set_itimer_func’ from incompatible pointer type
+play_data.c: In function ‘set_dac_callbacks’:
+play_data.c:601: warning: passing argument 2 of ‘notify_set_itimer_func’ from incompatible pointer type
+gcc -c   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC  playrec.c
+gcc -c   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC  nplay.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xspect.o xspect.c
+xspect.c: In function ‘print_spect_x’:
+xspect.c:1540: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xspect.c: In function ‘print_spect_y’:
+xspect.c:1621: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xspect.c: In function ‘plot_spect_cursors’:
+xspect.c:1780: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xspect.c:1783: warning: passing argument 1 of ‘xv_vector’ makes integer from pointer without a cast
+xspect.c: In function ‘e_move_contour’:
+xspect.c:2247: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+xspect.c: In function ‘e_modify_intensity’:
+xspect.c:2316: warning: passing argument 1 of ‘xv_text’ makes integer from pointer without a cast
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o view_setter.o view_setter.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o odd_objects.o odd_objects.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o text_utils.o text_utils.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xpanels.o xpanels.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o xserver.o xserver.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o ibm_stub.o ibm_stub.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o dac.o dac.c
+gcc   -I../h -DFOR_XVIEW  -DWAVES_BINS -DLINUX_OR_MAC -DSCCS -DNO_LIC -I/usr/esps/include -DLINUX   -DNO_LIC   -c -o keymapper.o keymapper.c
+gcc     -o xwaves paste.o xplot_data.o tag_methods.o xwaves.o view_utils.o browser.o xcursors.o xesps.o xmenus.o xmethods.o xoverlays.o pole_methods.o xedit_data.o xf0_methods.o xwaves_utils.o xaddop.o rpc.o play_data.o playrec.o nplay.o xspect.o view_setter.o odd_objects.o text_utils.o  xpanels.o xserver.o ibm_stub.o dac.o keymapper.o \
+	/usr/esps/lib/waves/libdsigproc.a  /usr/esps/lib/waves/xlibsig.a \
+		xlibsigw.a /usr/esps/lib/libexv.a /usr/esps/lib/libhdrw.a /usr/esps/lib/libespsg.a -Bstatic -lxview -lolgx -Bdynamic -lutil -L/usr/X11R6/lib -L/usr/lib -lX11 -lpthread -lXdmcp -lXau -lm -lXt   
+/usr/esps/lib/libhdrw.a(genhd.o): In function `get_genhd_afile':
+/home/stepheni/ESPS/general/src/lib_header/genhd.c:497: warning: the use of `mktemp' is dangerous, better use `mkstemp' or `mkdtemp'

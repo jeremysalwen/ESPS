@@ -1,0 +1,3 @@
+kill name signal file files/signal2.sd
+make name signal file files/signal2.sd start 0 duration 1.25 loc_x 10 loc_y 180 height 220 width 550
+#@(#)mk_wform2.WC	1.2 3/16/92 ERL

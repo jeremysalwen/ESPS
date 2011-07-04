@@ -1,0 +1,112 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)readheader.3	1.7 5/1/98 ESI
+.TH READ_HEADER 3\-ESPSu 5/1/98
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+read_header \- read in an ESPS file header
+.SH SYNOPSIS
+.ft B
+struct header * 
+.br
+read_header (fd)
+.br
+FILE *fd;
+.ft
+.SH DESCRIPTION
+.I read_header
+allocates memory for an ESPS file header, reads in the header from 
+the stream \fIfp\fR and returns a pointer to it.     The file stream
+pointer, \fIfd\fR, is left pointing to the first data record.   
+.PP
+If the
+file does not begin with an ESPS header, then \fIread_header\fR checks
+to see if the file begins with a Sphere header (as used on the NIST
+CD-ROM database).  If the file is a Sphere file, then the Sphere header
+is processed and an ESPS FEA_SD header is created with the appropriate
+values filled in.   The function returns a pointer to this new ESPS
+header.  ESPS Esignal files [1] are handled in the same way,
+as are files in certain RIFF WAVE (``PC .wav'') formats [2]:
+.I read_header
+checks for the presence of an Esignal or WAVE header
+and, if it finds one, converts it as nearly as possible to an
+equivalent FEA header.
+(In the case of the WAVE format, only 16-bit PCM files are supported,
+though multi-channel files are allowed.)
+The constructed FEA header contains a special generic header
+item that enables the ESPS data input functions
+(such as
+.IR get_fea_rec (3\-ESPS)
+and
+.IR get_feasd_recs (3\-ESPS))
+to give special treatment to the data if necessary.
+In this way an ESPS program can read Sphere files or ESPS
+files, without any prior knowledge of the file type.
+.PP
+If the file does not begin with either an ESPS header or a Sphere,
+Esignal, or WAVE header,
+then the Unix environment variable \fBDEF_HEADER\fR is checked.
+If this variable is defined, it is assumed to be the filename of a
+default ESPS header to apply to the file.   The header named by
+\fBDEF_HEADER\fR is processed and then is returned by \fIread_header\fR
+in the usual way.   The file stream pointer is left pointing to the
+first data record.
+.PP
+An ESPS header can be followed by a \fIforeign header\fR, which is an
+arbitrary block of data of known size between the ESPS header and the
+data records.  This is usually a non-ESPS file header that was on a file
+converted to ESPS by \fIaddfeahd\fR(1\-\s-1ESPS\s+1) 
+or \fIbtosps\fR(1\-\s-1ESPS\s+1) with the \fB-F\fR
+option.
+If, after the ESPS header has been processed, it is found to contain the
+generic header items \fIforeign_hd_length\fR and \fIforeign_hd_ptr\fR,
+and \fIforeign_hd_length\fR is greater than zero, \fIread_header\fR
+will read an additional \fIforeign_hd_length\fR bytes into a block of
+newly allocated memory.   The header item \fIforeign_hd_ptr\fR will be
+set to point to this block of memory containing the foreign header.
+(The generic item \fIforeign_hd_length\fR is a long, so it must be cast
+to (char *) before use.)  As in the other cases, the file stream pointer
+\fIfd\fR will be left pointing to the first data record after the
+foreign header.   
+.PP
+Note that if a default header, picked up by the \fBDEF_HEADER\fR
+environment variable mechanism contains \fIforeign_hd_length\fR and it
+is greater than zero, then that many bytes will be skipped at the
+beginning of the raw file and saved into the foreign header.    In this
+way, one can have a default header for non-ESPS files and also specify a
+foreign header size for any ESPS programs.   Note that
+\fIforeign_hd_length\fR can be set with the 
+program \fIaddgen\fR(1\-\s-1ESPS\s+1).
+.PP
+.I read_header 
+returns NULL if an I/O error occurs, or if any of the above processing
+fails to yield a valid ESPS header.  
+.SH EXAMPLE
+in_fd = fopen (inputfile, "r");
+.br
+if ((in_hd = read_header (in_fd)) == NULL) \fIerror...\fR
+.br
+in_hd->common.type 	/* is equal to type of header */
+.SH DIAGNOSTICS
+There are a number of error messages might be output to stderr 
+if parts of the header are bad.
+.SH BUGS
+None known.
+.SH REFERENCES
+.PP
+[1] ``The Esignal File Format'',
+Entropic Research Laboratory, Inc., 1995.
+.br
+[2] ``Multimedia Programming Interface and Data Specifications 1.0'',
+IBM Corporation and Microsoft Corporation, 1991.
+.SH SEE ALSO
+.IR new_header (3\-ESPSu),
+.IR write_header (3\-ESPSu), 
+.br
+.IR copy_header (3\-ESPSu),
+.IR get_fea_rec (3\-ESPS),
+.br
+.IR get_feasd_recs (3\-ESPS).
+.SH AUTHOR
+Original version by Joe Buck.
+.br
+Modified by Alan Parker for new header structures.

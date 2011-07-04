@@ -1,0 +1,198 @@
+
+
+
+SDCOMP(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     sdcomp - listening program to compare two sampled data files
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     ssssddddccccoooommmmpppp [ ----bbbb _s_h_i_f_t-_v_a_l_u_e ] [ ----cccc _c_h_a_n_n_e_l ] [ ----dddd _d_e_l_a_y ]  [   ----
+     {{{{ffffpppprrrrssss}}}} _r_a_n_g_e ] [ ----gggg _g_a_i_n ] [ ----iiii ] [ ----RRRR _n_r_e_p_e_a_t ] [ ----nnnn _s_t_e_p ]
+     [ ----wwww _w_i_d_t_h ] [ ----xxxx _d_e_b_u_g-_l_e_v_e_l ] _s_d_f_i_l_e [ _s_d_f_i_l_e ... ]
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     _S_d_c_o_m_p cycles through one or more ESPS FEA_SD(5-ESPS)  files
+     playing  a  portion  from  each  file  by means of the local
+     play(1-ESPS) program.  _S_d_c_o_m_p assumes that  the  local  play
+     program has the same command line options as _m_c_p_l_a_y.
+
+     After _s_d_c_o_m_p starts and after a portion is played from  each
+     file, the user is prompted for the next action.  The follow-
+     ing commands are then accepted (<CR> refers to the  "return"
+     key):
+
+          <CR>      play next portion from each file
+          r<CR>          repeat current portion from each file
+          b<CR>          back up and play previous portion from each file
+          c<CR>          continue playing portions without stopping for commands
+          q<CR>          quit
+
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     The ESPS parameter file processing is the same as  that  for
+     _m_c_p_l_a_y.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+     ESPS headers are treated as in _m_c_p_l_a_y.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The flags bbbbccccggggiiiirrrrwwwwxxxx are passed to the local play program every
+     time  that  program  is invoked.  In addition, the following
+     options are supported:
+
+     ----{{{{pppprrrrssssffff}}}} _r_a_n_g_e
+          Selects the first portion that will be played from each
+          file,  with  syntax as in _m_c_p_l_a_y. The default is ----ssss0:1.
+          If the part of the range specification after the  colon
+          is  omitted  (giving  only  the  starting  point),  the
+          defaults are as follows:
+
+               ----pppp<start>:+7999
+               ----rrrr<start>:+7999
+               ----ssss<start>:+1
+               ----ffff<start>:+79
+
+          These give approximately the  same  length  (1  second)
+          when  the  sampling  frequency  is  8000  Hz.,  but not
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+SDCOMP(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+          otherwise.
+
+          The effect of the ---- {{{{ppppssssrrrrffff}}}}  option  is  to  select  the
+          starting  position  and  length  of  the portion.  This
+          length remains in effect for subsequent  portions  that
+          are  played, while the starting positions of subsequent
+          portions are determined by the ----nnnn option.  Note that ----pppp
+          and ----rrrr are synonyms.
+
+     ----dddd _d_e_l_a_y
+          If ----dddd is not specified, _s_d_c_o_m_p passes all the  filename
+          arguments  to  one  invocation of the play program each
+          time a portion is played from the files.   If   ---- dddd  is
+          specified,  then  each filename is passed to a separate
+          invocation of the play program, which is followed by  a
+          pause  of  _d_e_l_a_y seconds.  (Note that specifying ----dddd0000 is
+          not equivalent to omitting the option entirely.)
+
+     ----wwww _w_i_d_t_h [100]
+          This option defines  the  frame  width.  The  width  is
+          ignored unless the ----ffff option is also specified.
+
+     ----nnnn _s_t_e_p
+          Selects the amount by which the  starting  position  is
+          changed  from one portion of each file to the next por-
+          tion of each file.  If the _s_t_e_p is less than  the  por-
+          tion length (determined by ----{{{{pppprrrrssssffff}}}} ), the portions will
+          overlap.  If it is greater than the portion length, the
+          portions  played  will skip segments of the files.  The
+          _s_t_e_p must be expressed in the same units as the  _r_a_n_g_e.
+          That  is, if _r_a_n_g_e is specified with ----pppp or ----rrrr (points),
+          the _s_t_e_p is assumed to be points, etc.  The default for
+          _s_t_e_p equals the length of the initial portion specified
+          by the ----{{{{pppprrrrssssffff}}}} option.
+
+
+
+FFFFUUUUTTTTUUUURRRREEEE CCCCHHHHAAAANNNNGGGGEEEESSSS
+     The user should be able to change the order in  which  files
+     are played.
+
+     There should be an option that causes _s_d_c_o_m_p to  select  the
+     order  in which files are played and report that order after
+     all of the speech has been played.
+
+     The user should be able  to  change  the  position,  portion
+     length, and step size dynamically.
+
+     The user should be able to specify a separate gain (---- gggg)  or
+     shift-value (----bbbb) for each input file.
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+
+
+
+
+SDCOMP(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     play(1-ESPS), FEA_SD(5-ESPS)
+
+WWWWAAAARRRRNNNNIIIINNNNGGGGSSSS
+BBBBUUUUGGGGSSSS
+     _A _r_a_n_g_e or _s_t_e_p value in seconds is  restricted  to  integer
+     values (this reflects a bug in _p_l_a_y ).
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Manual page by John Shore; program by Rodney Johnson
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+
+

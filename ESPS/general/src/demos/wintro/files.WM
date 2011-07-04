@@ -1,0 +1,19 @@
+"Speech Data" @mk_wform1.WC
+
+"Speech Spectrogram" @mk_spgm1.WC
+
+"Image Display" @mk_image.WC
+
+"Real Signal"  @mk_wform.WC
+
+"Real Spectrum"     @mk_spgm.WC
+
+"Complex Signal" @mk_wform2.WC
+
+"Complex Spectrum" @mk_spgm2.WC
+
+"Uncle Al"     @mk_albert.WC
+
+# @(#)files.WM	1.2 3/16/92 ERL 
+
+

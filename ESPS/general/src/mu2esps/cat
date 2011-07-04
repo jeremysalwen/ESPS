@@ -1,0 +1,132 @@
+
+
+
+MU2ESPS(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     mu2esps - convert a headerless mu-encoded file  to  an  ESPS
+     file
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     mmmmuuuu2222eeeessssppppssss [ -_s ] [ ----xxxx _d_e_b_u_g__l_e_v_e_l ] _i_n_f_i_l_e _o_u_t_f_i_l_e
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     _M_u_2_e_s_p_s converts a headerless, mu-encoded file into an  ESPS
+     sampled  data file.  The sampling frequency is assumed to be
+     8000 samples/second.  The program _a_d_d_g_e_n (1 - ESPS)  can  be
+     used  to  change  the ESPS header value (_r_e_c_o_r_d__f_r_e_q) if the
+     data has a different sampling frequency.
+
+     If _i_n_f_i_l_e is replaced by  "-", _m_u_2_e_s_p_s will read from  stan-
+     dard input, and if _o_u_t_f_i_l_e is replaced by "-", standard out-
+     put is written.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following options are supported:
+
+     ----ssss    This option is only available on  SUN  platforms.   It
+          indicates  _i_n_f_i_l_e  has  a  SUNOS 4.1 audio file header.
+          This causes _m_u_2_e_s_p_s to skip the header  before  reading
+          and converting the data.
+
+     ----xxxx _d_e_b_u_g__l_e_v_e_l
+          If _d_e_b_u_g__l_e_v_e_l is positive, _m_u_2_e_s_p_s  prints  diagnostic
+          messages.   The  default level is zero, which causes no
+          debug output.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRR
+     A FEA_SD (5-ESPS) header is written.
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     This program does not access the parameter file.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     This program does not access common.
+
+DDDDIIIIAAAAGGGGNNNNOOOOSSSSTTTTIIIICCCCSSSS
+     None.
+
+WWWWAAAARRRRNNNNIIIINNNNGGGGSSSS
+     _m_u_2_e_s_p_s (1-ESPS) maps the mu-encoded values into  the  range
+     -8059 to 8059. If the original linear data had a full 16 bit
+     dynamic range, the output data can be  scaled  up  by  using
+     _c_o_p_y_s_d (1-ESPS).
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     _m_u__t_o__l_i_n_e_a_r (3-ESPS), _l_i_n_e_a_r__t_o__m_u (3-ESPS),
+     _p_l_a_y (1-ESPS), _e_s_p_s_2_m_u (1-ESPS)
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+MU2ESPS(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+BBBBUUUUGGGGSSSS
+     None known.
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Manual page and code by David Burton.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+

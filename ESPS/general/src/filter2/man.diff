@@ -1,0 +1,275 @@
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)filter2.1	1.9 9/1/98 ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH FILTER2 1\-ESPS 11/19/92
+.SH NAME
+.nf
+filter2 \- Performs digital filtering on a sampled data file.
+filter \- same as \fIfilter2\fR
+.fi
+.SH SYNOPSIS
+.B filter[2]
+[
+.BI \-P " param_file"
+]
+[
+.BI \-p " range"
+]
+[
+.BI \-r " range"
+]
+[
+.BI \-d " data_type"
+]
+[
+.BI \-f " filter_string"
+]
+[
+.BI \-F " filt_file"
+]
+[
+.BI \-x " debug_level"
+]
+[
+.B \-z 
+]
+.I input.sd output.sd
+.SH DESCRIPTION
+.PP
+The program \fIfilter2\fR performs a digital filtering operation on 
+the input sampled data FEA_SD(5\-\s-1ESPS\s+1) file, 
+\fIinput.sd\fR, and produces an output sampled data file, \fIoutput.sd\fR.
+The output sampled data file is of the type FEA_SD(5\-\s-1ESPS\s+1).
+.PP
+If \fIinput.sd\fR is replaced by "-", the standard input is  read.
+If  \fIoutput.sd\fR  is  replaced  by  "-", the standard output is
+written.  If \fIinput.sd\fR is  missing  from  the  command  line,
+\fIfilter2\fR gets its name from ESPS Common.
+.PP
+This program may implement either finite impulse response (FIR) or
+infinite impulse response (IIR) filters.  The filter data may come
+from a FEA_FILT file specified by the \fB\-F\fR option, or it may also be
+supplied in the parameter file by the \fB\-P\fR option.  
+Currently, only real filters are supported.
+.PP
+In the IIR system, the filter is realized by cascading the second order 
+sub-systems of pairs of poles and zeros and their complex conjugate
+counterparts.  Each sub-system is implemented in the direct form II.  
+This is to insure the numerical stability of the system.
+.PP
+In the 
+case when only the numerator and denominator coefficients of H(z) are
+available, the program will implement the IIR system in the direct 
+form using these coefficients. However, this implementation is 
+numerically unstable.
+.PP
+In FIR system, the filter is realized in the direct form.
+.PP
+All data samples occurring before the first sample in the input file 
+are assumed to be zero.
+.PP
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-P " param_file"
+uses the parameter file 
+\fIparam_file\fR instead of the default, which is \fIparams\fR.
+.TP
+.BI \-r " first:last"
+.TP
+.BI \-r " first:+incr"
+Determines the range of points from input file for filtering.  In
+the first form, a pair of unsigned integers gives the first and last points
+of the range.  If \fIfirst\fR is omitted, 1 is used.  If \fIlast\fR is
+omitted, the last point in the file is used.  The second form is equivalent
+to the first with \fIlast = first + incr\fR.
+.TP
+.BI \-p " "
+Same as the \fB-r\fR option.
+.TP
+.BI \-d  " data_type \fR[input data type]\fR"
+This option specifies the data type of \fIoutput.sd\fR.  Available data types
+are DOUBLE, FLOAT, LONG, SHORT, BYTE, DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX,
+SHORT_CPLX, and BYTE_CPLX.  By default, output data type is the same as
+the input data type.  
+.TP
+.BI \-f " filter_string \fR[filter]\fR"
+If the coefficients are being read from the parameter file, then
+\fIfilt_string\fR is the body of the name of the variable that contains
+filter coefficients.  See the \fBESPS_PARAMETERS\fR section.  For example,
+if this option is applied as \fI-f myfilter\fR, then the value of the
+\fImyfilter_psiz\fR variable in the parameter file will be taken as the
+number of poles.
+.IP
+If the coefficients are being read from a FEA_FILT file, then
+\fIfilter_string\fR is the number of the filter record to use.
+The default name in this case is 1, the first record in the file.
+.TP
+.BI \-F " filt_file"
+Read the coefficients from the
+.IR FEA_FILT (5\-ESPS)
+file \fIfilt_file\fR
+rather than from the parameter file.
+.TP
+.BI \-x " debug_level \fR[0]\fR"
+If \fIdebug_level\fR is positive, \fIfilter\fR prints debugging 
+messages and other information on the standard error
+output.  The messages proliferate as the \fIdebug_level\fR
+increases.  If \fIdebug_level\fR is 0 (the default), no messages are
+printed.
+.TP
+.BI \-z " "
+By specifying \fB\-z\fR,
+the output \fIstart_time\fR generic value is reduced by the value of the
+\fIdelay_samples\fR generic header value of input filter file, 
+divided by the sampling rate of input sampled data. 
+This often helps time align a filtered
+signal with the input signal.  If \fIdelay_samples\fR is not defined 
+in the input file header, a value of 0 is assumed.
+.SH ESPS PARAMETERS
+The following parameters are read from the parameter file:
+.TP
+.I start - integer
+The first point in the input sampled data file that is processed.
+The samples are assumed to be numbered starting with one so that
+setting \fIstart = 1\fR will cause processing to begin with the first sample.
+.TP
+.I nan - integer
+The number of points in the sampled data file to process.  A value 0 indicates
+to process the entire file.
+.TP
+.I filter_file_name - string
+The FEA_FILT file name containing the filter data.  
+.PP
+If \fIfilter_file_name\fR file exists, the rest of the parameters are ignored.
+.TP
+.I filter_string_psiz - integer
+The number of poles in the transfer function for the filter without their
+complex conjugate counterparts.
+\fIfilter_string\fR is a string of characters specified by the \fB-f\fR 
+option.
+.TP
+.I filter_string_zsiz - integer
+The number of zeros in the transfer function for the filter without their
+complex conjugate counterparts.
+\fIfilter_string\fR is a string of characters specified by the \fB-f\fR 
+option.
+.TP
+.I filter_string_poles - float array
+An array of size \fI2*filter_string_psiz\fR representing 
+\fIfilter_string_psiz\fR poles without their complex conjugate counterparts.
+Each pole is represented by 2 numbers, the first and second numbers
+represent the real and imaginary parts of the pole, respectively.  For
+example, a system with four poles \fI[0.9, 0.1i], [0.9, -0.1i], [0.8, 0.2i],\fR
+\fI[0.8, -0.2i]\fR, can be stored in the parameter file by setting
+\fIfilter_string_poles = {0.9, 0.1, 0.8, 0.2}\fR. \fIfilter_string\fR is a string of characters specified by the \fB-f\fR option.
+.TP
+.I filter_string_zeros - float array
+An array of size \fI2*filter_string_zsiz\fR representing 
+\fIfilter_string_zsiz\fR poles without their complex conjugate counterparts.
+Each pole is represented by 2 numbers, the first and second numbers
+represent the real and imaginary parts of the pole, respectively.  \fIfilter_string\fR is a string of characters specified by the \fB-f\fR option.
+.TP
+.I filter_string_gain - float
+The overall gain for the pole-zero system of the IIR filter implemented by
+cascading its second order IIR sub-systems.  This variable is ignored in
+the FIR system.    If \fIfilter_string_gain\fR is not set, and if
+the numerator coefficient array is specified, its value is set to equal 
+to the first element of the numerator coefficient array.  Otherwise, the
+default value is 1.
+\fIfilter_string\fR is a string of characters specified by the 
+\fB-f\fR option.  
+.PP
+In the IIR system, the pole/zero parameter data is sufficient for the
+filtering operation. If the above pole/zero and gain parameters exist in 
+the parameter file, the following parameters are ignored.  
+Otherwise, the following numerator
+and denominator coefficient parameters must be supplied.
+.TP
+.I filter_string_dsiz - integer
+The number of denominator coefficients in the transfer function for the filter.
+\fIfilter_string\fR is a string of characters specified by the \fB-f\fR 
+option.
+.TP
+.I filter_string_den - float array
+The denominator coefficients.  They are specified in order starting with
+b0.  \fIfilter_string\fR is a string of characters specified by the \fB-f\fR option.
+.PP
+In the FIR system, the following parameters are necessary to define the
+filtering operation.
+.TP
+.I filter_string_nsiz - integer
+The number of numerator coefficients in the transfer function for the filter.
+\fIfilter_string\fR is a string of characters specified by the \fB-f\fR 
+option.
+.TP
+.I filter_string_num - float array
+The numerator coefficients.  They are specified in order starting with
+a0.  \fIfilter_string\fR is a string of characters specified by the \fB-f\fR option.
+.PP
+.SH ESPS COMMON
+.PP
+If the \fB-r\fR option is not used and ESPS Common processing is enabled,
+the following items are read from the ESPS Common File provided that no
+input file is given on the command line and provided that standard input
+is not used.
+.IP
+.I "filename - string"
+.IP
+This is the name of the input file.
+.IP
+.I "start - integer"
+.IP
+This is the starting point in the input file for filtering.
+.sp
+.I "nan - integer"
+.IP
+This is the number of points in the input file for filtering.
+A value of zero means the last point in the file.
+.sp
+.PP
+The following items are written into the ESPS Common file, provided
+ESPS Common processing is enabled and the output file is not <stdout>.
+.IP
+.I "start - integer"
+.IP
+A value of 1 is written to the Common file.
+.sp
+.I "nan - integer"
+.IP
+The number of points in the output file.
+.sp
+.I "prog - string"
+.IP
+This is the name of the program (\fIfilter2\fR in this case).
+.sp
+.SH ESPS HEADER
+The file header of \fIoutput.sd\fR will contain mostly the same 
+information as is contained in that of \fIinput.sd\fR,
+.PP
+The \fIstart_time\fR generic header item contains the starting time
+in seconds of the first point in the output file.  \fIstart_time\fR maybe
+changed by the \fB-z\fR option.  This helps time align a filtered signal
+with the input signal since the filter is causal.
+.PP
+.SH EXAMPLES
+Filters input sampled data file with a filter file \fIBworth.filt\fR.
+
+	\fIfilter2 -F Bworth.filt input.sd output.sd\fR
+
+.PP
+.SH REFERENCES
+Leland B. Jackson, \fIDigital Filters and Signal Processing\fP,
+Kluwer Academic Publishers, 1986
+.PP
+.SH SEE ALSO
+.PP
+.nf
+\fIblock_filter2\fP(3\-ESPS), \fInotch_filt\fP(1\-ESPS), \fIFEA_FILT\fP(5\-ESPS), 
+\fIatofilt\fP(1\-ESPS), \fIwmse_filt\fP(1\-ESPS), \fIiir_filt\fP(1\-ESPS), 
+\fIsfconvert\fP(1\-ESPS)
+.fi
+.PP
+.SH AUTHOR
+.PP
+Program and man page by Derek Lin

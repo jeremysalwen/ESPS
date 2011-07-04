@@ -1,0 +1,396 @@
+
+
+
+ME_SPEC(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     me_spec - Generate maximum-entropy  spectra  from  parameter
+     vectors.
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     mmmmeeee____ssssppppeeeecccc [ ----nnnn _n_u_m__f_r_e_q_s ] [ ----oooo _m_a_x__o_r_d_e_r ] [ ----rrrr _r_a_n_g_e ] [ ---- xxxx
+     _d_e_b_u_g__l_e_v_e_l ] [ ----GGGG ]
+     [ ----PPPP _p_a_r_a_m_s ] _i_n_p_u_t _o_u_t_p_u_t._s_p_e_c
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     _M_e__s_p_e_c reads spectral parameters and other information from
+     the input file and generates a corresponding spectral record
+     file containing  logarithmically  scaled  (in  dB)  maximum-
+     entropy spectral power densities.
+
+     The spectral  parameters  may  be  reflection  coefficients,
+     autoregressive-filter  coefficients, or any of several other
+     types of parameters; see _s_p_e_c__r_e_p in the Parameters  section
+     and the documentation for reps_rc(3-ESPS) for a list.  Other
+     required information includes the total power, the order  of
+     the  spectrum,  and  the  sampling  frequency.  These may be
+     obtained from the input file, or defaults may be  used;  see
+     the    descriptions    of    the    parameters    _m_a_x__o_r_d_e_r,
+     _s_a_m_p__f_r_e_q__n_a_m_e, _s_a_m_p__f_r_e_q, _p_o_w_e_r__f_i_e_l_d, and _p_o_w_e_r. FEA_ANA(5
+     - ESPS)  files  are suitable as input and are specially pro-
+     vided for, but any vector field of type  _f_l_o_a_t  in  any  FEA
+     file  may be treated as a vector of spectral parameters; see
+     _s_p_e_c__p_a_r_a_m__f_i_e_l_d and _s_p_e_c__r_e_p in the Parameters section.
+
+     The spectral values are computed for the specified number of
+     frequencies,  which must be at least 2.  The frequencies are
+     equispaced from 0 to half the sampling frequency.  There  is
+     an  option to compute the spectrum to a lower order than the
+     number of coefficients present in the analysis records.
+
+     One output record is written for each input  record  in  the
+     specified  range.  If ``-'' is given for the input file, the
+     standard input is read.  If ``-'' is given  for  the  output
+     file,  the  standard  output is written to.  The output file
+     can be plotted using the plotspec(1-ESPS) command.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following options are supported.  Values in brackets are
+     defaults.
+
+     ----nnnn _n_u_m__f_r_e_q_s [513]
+          Compute spectral values for this number of frequencies,
+          equispaced from 0 to half the sampling frequency.  Must
+          be at least 2.
+
+     ----oooo _m_a_x__o_r_d_e_r
+          Maximum-entropy spectra of at most this order  will  be
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+ME_SPEC(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+          computed,  even when more coefficients are available in
+          the analysis records.  The program converts  the  spec-
+          tral  parameters  to  reflection coefficients, carrying
+          the computation out to the actual order of the  parame-
+          ter  set  contained  in  the record.  In FEA_ANA files,
+          when ----GGGG has not been specified,  the  actual  order  is
+          given  by  the  header  item  _o_r_d_e_r__v_c_d, for records in
+          which the _f_r_a_m_e__t_y_p_e field is VOICED or TRANSITION, and
+          by  _o_r_d_e_r__u_n_v_c_d  in  other records.  In other files, or
+          when ----GGGG has been specified, the actual order is assumed
+          to  be  the  length  of  the field (or subsequence of a
+          field) named by the parameter  _s_p_e_c__p_a_r_a_m__f_i_e_l_d.  After
+          converting  the  parameters,  the program truncates the
+          sequence of reflection coefficients to length _m_a_x__o_r_d_e_r
+          and  computes a maximum_entropy spectrum from the trun-
+          cated sequence.
+
+          This procedure is _n_o_t equivalent to  simply  truncating
+          the  original parameter set, for example by specifing a
+          shorter field with _s_p_e_c__p_a_r_a_m__f_i_e_l_d.  The  latter  pro-
+          cedure  may  give  incorrect  results, depending on the
+          spectral representation (see _s_p_e_c__r_e_p in the Parameters
+          section).   For  example,  the  _m autoregressive filter
+          coefficients of order _m are not in general the same  as
+          the first _m autoregressive filter coefficients of order
+          _n (where _n>_m).
+
+     ----rrrr _f_i_r_s_t::::_l_a_s_t [(first in file):(last in file)]
+
+     ----rrrr _f_i_r_s_t::::++++_i_n_c_r
+          In the first form, a pair of unsigned  integers  speci-
+          fies  the  range  of  records  to be processed.  Either
+          _f_i_r_s_t or _l_a_s_t may be omitted; then the default value is
+          used.   If  _l_a_s_t  = _f_i_r_s_t + _i_n_c_r, the second form (with
+          the plus sign) specifies the same range as  the  first.
+          If  the  specified  range  contains  records not in the
+          file, _m_e__s_p_e_c complains and quits.
+
+     ----xxxx _d_e_b_u_g__l_e_v_e_l [0]
+          If _d_e_b_u_g__l_e_v_e_l is non-zero,  _m_e__s_p_e_c  prints  debugging
+          messages  and  other  information on the standard error
+          output.
+
+     ----GGGG    Even if the input  file  is  a  FEA_ANA  file,  it  is
+          treated  like  any  other FEA file.  Special processing
+          does not take place for determining filter  order  from
+          voicing  or  computing  average  power  from individual
+          pulse powers and durations in multipulse FEA_ANA files.
+          The  parameter  file must supply values for the parame-
+          ters _s_p_e_c__p_a_r_a_m__f_i_e_l_d, _s_p_e_c__r_e_p, _p_o_w_e_r__f_i_e_l_d or  _p_o_w_e_r,
+          and  _s_a_m_p__f_r_e_q__n_a_m_e  or _s_a_m_p__f_r_e_q.  The filter order is
+          taken to be  the  length  of  the  field  specified  by
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+
+
+
+
+ME_SPEC(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+          _s_p_e_c__p_a_r_a_m__f_i_e_l_d;  but  see  the  discussion  of the ----oooo
+          option.
+
+     ----PPPP _p_a_r_a_m_s[params]
+          The name of the parameter file.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     The ESPS common file is not referred to.
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     The following parameters are read as required.
+
+     _n_u_m__f_r_e_q_s - _i_n_t_e_g_e_r
+          The number of frequencies for which spectral values are
+          computed.   The value in the parameter file is not used
+          if a value is specified with the command-line option  ----
+          nnnn....  The  default  value and restrictions are as for the
+          argument of the option.
+
+     _m_a_x__o_r_d_e_r - _i_n_t_e_g_e_r
+          An upper bound on  the  order  of  the  maximum-entropy
+          spectra that will be computed.  The value in the param-
+          eter file is not used if a value is specified with  the
+          command-line option ----oooo.... See the discussion of ----oooo in the
+          Options section for the detailed interpretation of this
+          parameter.
+
+     _s_t_a_r_t - _i_n_t_e_g_e_r
+          The number of the first record to be processed,  count-
+          ing the first in the input file as number 1.  The value
+          in the parameter file is not used if a  starting  value
+          is given with the ----rrrr option.  The default value is 1.
+
+     _n_a_n - _i_n_t_e_g_e_r
+          The number of records to be processed.   The  value  in
+          the  parameter  file  is  not  used if the ----rrrr option is
+          specified.  By convention, a value of 0 means that  all
+          records from the starting record through the end of the
+          file are processed.  This also the default behavior  in
+          case  no  value is specified either on the command line
+          or in the parameter file.
+
+     _s_p_e_c__p_a_r_a_m__f_i_e_l_d - _s_t_r_i_n_g
+          The field containing  the  spectral  parameters.   This
+          must  be  explicitly  specified  in  the parameter file
+          unless the input file is a FEA_ANA file  and  the   ---- GGGG
+          option  is  not specified.  The default in that case is
+          "spec_param".  This parameter may  be  simply  a  field
+          name, or it may be of the form
+
+          _f_i_e_l_d-_n_a_m_e[[[[_g_r_a_n_g_e]]]],
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+
+
+
+
+
+ME_SPEC(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+          where _g_r_a_n_g_e is a general range  specification  accept-
+          able  to  _g_r_a_n_g_e__s_w_i_t_c_h(3 -ESPSu).  The bracketed range
+          specification specifies the indices of a subsequence of
+          the  elements of the named field that are to be used as
+          the spectral parameters.
+
+     _s_p_e_c__r_e_p - _s_t_r_i_n_g
+          A name or abbreviation for the type of spectral parame-
+          ters.  Acceptable values include "RC" (reflection coef-
+          ficients), "LAR" (log area ratios), "AUTO"  (normalized
+          autocorrelation  coefficients),  "AFC"  (autoregressive
+          filter coefficients),  "CEP"  (cepstrum  coefficients),
+          and  "LSF"  (line spectral frequencies).  See the docu-
+          mentation for reps_rc(_3-_E_S_P_S_s_p).  This  parameter  must
+          be  explicitly  specified  in the parameter file unless
+          the input file is a FEA_ANA file and the ----GGGG  option  is
+          not  specified.   The  default in that case is the con-
+          tents of the generic header item _s_p_e_c__r_e_p.
+
+     _p_o_w_e_r__f_i_e_l_d - _s_t_r_i_n_g
+          A field containing the total  power  of  the  spectrum.
+          Either  this  parameter  or  _p_o_w_e_r  must  be explicitly
+          specified in the parameter file unless the  input  file
+          is  a  FEA_ANA file and the ----GGGG option is not specified.
+          The default in that case is "raw_power".
+
+     _p_o_w_e_r - _f_l_o_a_t
+          A numerical value for the total power of the  spectrum.
+          This  value is used, and applies to all records, unless
+          the parameter _p_o_w_e_r__f_i_e_l_d is defined and names a  field
+          that  exists in the input file.  In that case, the con-
+          tents of the named field are used instead.
+
+     _s_a_m_p__f_r_e_q__n_a_m_e - _s_t_r_i_n_g
+          The name of a generic header  item  that  contains  the
+          sampling frequency.  Either this parameter or _s_a_m_p__f_r_e_q
+          must be explicitly  specified  in  the  parameter  file
+          unless  the  input  file  is  a FEA_ANA file and the ----GGGG
+          option is not specified.  The default in that  case  is
+          "src_sf".
+
+     _s_a_m_p__f_r_e_q - _f_l_o_a_t
+          A numerical value for  the  sampling  frequency.   This
+          values  is  used unless the parameter _s_a_m_p__f_r_e_q__n_a_m_e is
+          defined and names a generic header item that exists  in
+          the  input file.  In that case, the value of the header
+          item takes precedence.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+     The values _c_o_m_m_o_n._t_y_p_e, _v_a_r_i_a_b_l_e._r_e_f_e_r, and _h_d._f_e_a->_f_e_a__t_y_p_e
+     are  read  from the header of the input file.  The following
+     generic header items may also read if the input is a FEA_ANA
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 4G4        4
+
+
+
+
+
+
+ME_SPEC(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+     file:   _o_r_d_e_r__v_c_d,  _o_r_d_e_r__u_n_v_c_d,  _s_r_c__s_f,  _s_p_e_c__r_e_p  _f_r_m_l_e_n,
+     _s_t_a_r_t, _n_a_n, and _m_a_x_p_u_l_s_e_s.
+
+     The following parameters are written to the  header  of  the
+     FEA_SPEC   file:    _c_o_m_m_o_n._t_a_g,   _c_o_m_m_o_n._p_r_o_g,  _c_o_m_m_o_n._v_e_r_s,
+     _c_o_m_m_o_n._p_r_o_g_d_a_t_e, _v_a_r_i_a_b_l_e._r_e_f_e_r, _f_r_m_l_e_n (long), _s_f  (float),
+     _f_r_a_m_e__m_e_t_h  (CODED), _f_r_e_q__f_o_r_m_a_t (CODED), _s_p_e_c__t_y_p_e (CODED),
+     _c_o_n_t_i_n (CODED), _n_u_m__f_r_e_q_s (LONG).  For  input  FEA_ANA  (5 -
+     ESPS)  files,  _o_r_d_e_r__v_c_d  (LONG)  and _o_r_d_e_r__u_n_v_c_d (LONG) are
+     added to the output file header.   In  addition,  the  input
+     file is added as the source of the output file, and the com-
+     mand line is added as a comment.
+
+     The generic header item _s_t_a_r_t__t_i_m_e is written in the  output
+     file.    The   value  written  is  computed  by  taking  the
+     _s_t_a_r_t__t_i_m_e value from the header of the input file (or zero,
+     if  such  a  header item doesn't exist) and adding to it the
+     offset time (from the beginning of the input  file)  of  the
+     first  point  or  record  processed.  If _r_e_c_o_r_d__f_r_e_q doesn't
+     exist in the input file, it defaults to 1.  Otherwise, it is
+     copied  to  the  output  file  header.   This item gives the
+     number of records per second of original data analyzed.
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     _r_e_f_c_o_f (1-ESPS), _p_l_o_t_s_p_e_c (1- ESPS),  _r_e_p_s__r_c  (3 - ESPSsp),
+     FEA_SPEC (5-ESPS), ESPS (5-ESPS),
+
+DDDDIIIIAAAAGGGGNNNNOOOOSSSSTTTTIIIICCCCSSSS
+     me_spec: unknown option: -_l_e_t_t_e_r
+     Usage: me_spec [-n num_freqs][ - o  order][ - r  range][ - x
+     debug_level][-G][-P params] ana_file spec_file
+     me_spec: too many file names specified.
+     me_spec: too few file names specified.
+     me_spec: number of frequencies _n is less than 2.
+     me_spec: can't open _f_i_l_e_n_a_m_e: _r_e_a_s_o_n
+     me_spec: _f_i_l_e_n_a_m_e is not an ESPS file
+     me_spec: Can't start before beginning of file.
+     me_spec: Last record precedes first.
+     me_spec: Name of spec_param field not specified.
+     me_spec: Unrecognized spectral representation.
+     me_spec: Spectral representation not specified.
+     me_spec: Field _n_a_m_e and  symbol  "power"  undefined  or  not
+     float.
+     me_spec: Neither field nor default value  for  power  speci-
+     fied.
+     me_spec: Header item _n_a_m_e and symbol  "samp_freq"  undefined
+     or not float.
+     me_spec: No header-item name or default value  for  sampling
+     frequency.
+     me_spec: Input field _n_a_m_e undefined.
+     me_spec: Input field _n_a_m_e undefined or not float.
+     me_spec: Input field length _n too small.
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 5G5        5
+
+
+
+
+
+
+ME_SPEC(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+     me_spec: can't allocate memory--input spectral parameters
+     me_spec: can't allocate memory--lpc filter
+     me_spec: can't allocate memory--reflection coefficients
+     me_spec: unknown spectral parameter type
+
+     When _d_e_b_u_g__l_e_v_e_l!=0, the  reflection  coefficients,  average
+     raw power, location tag, and inverse filter coefficients are
+     listed for each record.
+
+BBBBUUUUGGGGSSSS
+     The _f_r_a_m_e__l_e_n field in an input FEA_ANA record,  defined  as
+     ``number of samples to synthesize from frame,'' is copied to
+     the  _f_r_a_m_e__l_e_n  field  in  a  spectral  record,  defined  as
+     ``number  of  samples in analysis window.''  This is invalid
+     if the FEA_ANA file was produced by a program for which  the
+     two are different.
+
+WWWWAAAARRRRNNNNIIIINNNNGGGGSSSS
+     In order to produce FEA_SPEC (5-ESPS) that can  be  overlaid
+     on  FEA_SPEC (5-ESPS) files produced by _f_f_t (1-ESPS), the ----GGGG
+     option should be used. This produces a generic FEA_SPEC (5 -
+     ESPS) file without the voicing information.
+
+FFFFUUUUTTTTUUUURRRREEEE CCCCHHHHAAAANNNNGGGGEEEESSSS
+AAAAUUUUTTTTHHHHOOOORRRR
+     S. Shankar Narayan.  Made SDS compatible by Joe Buck.   Ori-
+     ginally called _p_l_t_s_p_c, later _f_a_n_a_s_p_e_c. Modified for ESPS and
+     number of frequencies made variable by Rod Johnson, Entropic
+     Speech,  Inc.   Modified  for  FEA_ANA  files by John Shore.
+     Additions by Rod Johnson  to  accept  spec_reps  other  than
+     reflection  coefficients  and  to  accept  files  other than
+     FEA_ANA files.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 6G6        6
+
+
+

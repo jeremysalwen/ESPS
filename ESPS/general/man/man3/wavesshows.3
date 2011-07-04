@@ -1,0 +1,115 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)wavesshows.3	1.3 21 Jun 1993 ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH  WAVES_SHOW_SD 3\-ESPSu  21 Jun 1993
+.SH NAME
+
+.nf
+waves_show_sd \- displays user time-series data in an xwaves window
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+extern int debug_level;
+
+int
+waves_show_sd( samp_freq, start_time, data, length, type, 
+	num_channels, setting, name)
+double samp_freq;
+double *start_time;
+char *data;
+long length;
+int type;
+int num_channels;
+char *setting;
+char *name;
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+\fIWaves_show_sd\fR creates a temporary FEA_SD file from an array of 
+user time-series data, and displays it in an xwaves window by a call of
+\fIsend_xwaves2 (3-ESPS)\fR if an \fixwaves\fR program is running 
+in server mode.  A non-negative value is returned upon successful
+completion of the call.
+.PP
+This is useful in debugging some DSP code.  With this simple call,
+intermediate results can be examined.
+.PP
+The following are input parameters:
+.TP
+.I samp_freq
+The sampling frequency of time-series data.
+.TP
+.I start_time
+An array storing the starting time of time-series data.  Size of this 
+array is the number of channels in data.  If NULL value is specified,
+0 starting time is assumed.
+.TP
+.I data
+The user time-series data.  For single-channel data, \fIdata\fR is simply
+an array of sampled-data points.  For multi-channel data, \fIdata\fR
+is conceptually a 2-dimensional array with \fIlength\fR rows and
+\fInum_channels\fR columns.  \fIData\fR is cast to \fI(char *)\fR.
+.TP
+.I length
+Length of sampled-data points.
+.TP
+.I type
+Type of \fIdata\fR.  All ESPS supported data types are valid.
+.TP
+.I num_channels
+Number of channels.
+.TP
+.I setting
+This is a string of \fIxwaves\fR commands.  If NULL is specified, default
+\fIxwaves\fR behavior is expected; otherwise, use this argument to set 
+\fIxwaves\fR attributes.
+.TP
+.I name
+The name of FEA_SD file to be created.  If NULL is specified, \fIname\fR is
+set to a string containing the contents of the \fIunix\fR environment
+variable ESPS_TEMP_PATH, followed by '/wavesXXXXXX', where Xs are replace by
+current process ID.
+.PP
+.SH EXAMPLES
+.sp
+.nf
+int i, j, num_channels = 2;
+float *data, stuff1[1000], stuff2[1000];
+
+for( i=0, j=0; i<1000; i++, j+=2){
+  data[j] = stuff1[i];
+  data[j+1] = stuff2[i];
+}
+if( -1 == waves_show_sd(8000.0, NULL, data, 1000, FLOAT, 
+	num_channels, NULL, NULL))
+  error...
+.fi
+.sp
+.PP
+.SH ERRORS AND DIAGNOSTICS
+Program returns -1 with warning messages if \fIdata\fR is NULL,
+\fIlength<=0\fR, non-recognized \fItype\fR, or \fInum_channels<=0\fR.
+.PP
+.SH WARNING
+\fIWaves_show_sd\fR does not remove the temporary file created.  It is 
+programmer's responsibility to delete them.
+.SH FUTURE CHANGES
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+FEA_SD(5-ESPS), send_xwaves2(3-ESPS), xwaves(1-ESPS), e_temp_name(3-ESPS)
+.PP
+.SH AUTHOR
+Derek Lin
+.PP
+
+
+
+
+

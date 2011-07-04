@@ -1,0 +1,6 @@
+kill name image1  file files/sat.fspec
+waves set ref_size 180
+make name image1 file files/sat.fspec loc_x 140 loc_y 440
+image1 bracket 
+
+#@(#)mk_image.WC	1.2 3/16/92 ERL

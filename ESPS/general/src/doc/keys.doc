@@ -1,0 +1,462 @@
+
+
+
+
+
+
+
+                         ENTROPIC RESEARCH LABORATORY, INC.
+
+
+       TECHNICAL MEMORANDUM
+
+       SUBJECT: Living with the Entropic License Manager System
+
+       ID: ETM-S-91-xx:rap
+
+       VERSION: 1.2
+
+       DATE: 1/22/93
+
+       AUTHOR: Alan Parker
+
+       1 .  Introduction
+
+            Instead of requiring that a given software license be  associated
+       permanently  with a given CPU, Entropic uses a floating license system
+       that can assign software licenses dynamically as needed to any host on
+       a  network.   This  document describes how this system works, provides
+       guidelines for setting it up, and provides information to  help  solve
+       common problems.
+
+       1 .1 .  Goal of the License Manager System
+
+            The license manager system is a technical means  of  implementing
+       our  software  licensing  policy.    Our  current policy is to license
+       waves+ on a per-user basis and ESPS on a per-host basis.   In the case
+       of  waves+  the  license  manager will allow no more than the licensed
+       number of waves+ to be running at any  one  time  on  the  network.  A
+       waves+  license  is  checked out automatically when waves+ is run, and
+       checked back in when waves+  terminates.   In  the  case  of  ESPS,  a
+       license  must  be  checked out for a particular host before anyone can
+       run ESPS programs on that host.  Until the license is checked back in,
+       any  ESPS  programs  can  be  run on that host by any user (given that
+       ordinary Unix file permissions are appropriate).  The ESPS license  is
+       checked  out  for  a  host  in  one of two ways.  It can be explicitly
+       checked out by the user by using the command echeckout, or  simply  by
+       running an ESPS program.   If an ESPS program is run, and the required
+       license is not checked out on the host, then the program will  attempt
+       to  check  it out.  If that succeeds, then a license is checked out on
+       that host until it is freed by the user.
+
+            Our reasoning for the distinction between the  (per-user)  waves+
+       licensing  and  the  (per-host)  ESPS licensing is as follows:  Unlike
+       waves+, the typical ESPS program only runs for a short time period and
+       does  not  provide  an  environment  in  which the user remains for an
+       extended period.  Most ESPS programs are command line oriented and can
+       be used in Unix shell scripts.  Therefore, if we had each ESPS program
+       check out and free a license (as waves+ does) it would be possible for
+       scripts  to  fail in unpredictable ways, since a license might a taken
+       away between steps within the script.   Our solution  to  this  is  to
+
+
+
+
+
+
+
+
+
+
+       ETM-S-91-xx:rap                                                 page 2
+
+
+       have  a  program  which  checks out a license and one to free license.
+       During the time that a license is checked out for a  given  host,  any
+       ESPS  programs can be run on that host.    It does not matter how many
+       users there are on that host or how many of those  users  are  running
+       ESPS programs.
+
+            The Entropic License Manager System  consists  of  the  following
+       major components: elmd, elmadmin, echeckout, the license keys, and the
+       various ESPS user programs.
+
+       1 .2 .  How It Works
+
+            The license manager daemon (elmd) is started and left running for
+       as  long  as  any  Entropic programs are going to run.  It is normally
+       started at boot time and simply left running forever.   When a  client
+       program  requests  a license, the license manager checks the key files
+       and determines if any licenses of the requested type remain.   If  so,
+       then the count of available licenses is decremented and the requesting
+       process is granted permission to continue.
+
+            Client programs communicate with the  license  manager  with  the
+       same  facility  used  by  the network file system (NFS), so any system
+       that supports NFS should be able to run our license manager system.
+
+            The client programs can be on a different host than the one  run-
+       ning  the license manager daemon (elmd).  But in this case, the client
+       programs must know which host is running elmd.   This  information  is
+       passed  to  the  client  programs  via  the  Unix environment variable
+       ELM_HOST.   It is simply set to the name of the network  host  running
+       elmd.
+
+            As mentioned earlier, waves+ checks out a license each time it is
+       started  and  frees  that  license when it exits.   ESPS programs (all
+       other programs except waves+ and its attachments) check to see  if  an
+       ESPS license is checked out before they run, but they do not check out
+       the license themselves.   The program echeckout  checks  out  an  ESPS
+       license  and  then  holds  it (by putting itself into the background).
+       The license is freed by causing echeckout to exit.   A program is pro-
+       vided  to  do  this; efree.  Under certain conditions this program can
+       fail to find echeckout.  In this case, someone will have to  find  the
+       echeckout with ps and kill it manually.
+
+       1 .3 .  Network Timeout
+
+            The client programs (that is all ESPS programs and  waves+)  will
+       timeout  in a default 10 second interval if they cannot get a response
+       from the license manager daemon.   This should be enough time for  all
+       but  the busiest networks.  However, we have provided a means to allow
+       users to adjust  this  timeout  interval.   The  environment  variable
+       ELM_TIMEOUT can be set to the desired timeout interval (integer values
+       only).   So, for example, to set the timeout interval to 15 seconds do
+       setenv ELM_TIMEOUT 15.  (Or whatever works with your shell.)
+
+
+
+       Version 1.2                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-91-xx:rap                                                 page 3
+
+
+       1 .4 .  Waves Related ESPS Programs
+
+            There is a set of ESPS programs that provide  conversion  support
+       and  are included with the waves+ product.  These programs will run if
+       a network has a valid waves license installed.   No  license  need  be
+       explicitly  checked  out for these programs.  There is no limit to how
+       many hosts these programs can be used on.  These programs are: addfea,
+       addfeahd, addgen, bhd, btosps, comment, fea_element, featosd, formant,
+       hditem,  hdshrink, ils_esps, mu2esps, pplain,  psps,  sdtofea,  sgram,
+       sigtosd, testsd, splay, and tofspec.
+
+       1 .5 .  User Written Programs
+
+            User written programs compiled and linked with the ESPS libraries
+       will  be  under  the Entropic license manager system.   These programs
+       will only run if an ESPS license is checked out.   Also, if a site has
+       a  source  license  to  ESPS and recompiles any of the above mentioned
+       waves+ related programs, then they revert to the ESPS  license  rules;
+       that is they will only run if an ESPS license is checked out.
+
+       2 .  License Manager Setup
+
+            The product installation instructions give sufficient information
+       for  the  general  installation  of all of the software, including the
+       license manager system.   Before installing  the  software,  you  must
+       decide  which  host  is to run the license daemon (elmd).   While this
+       can be any host that is reachable on  your  network,  there  might  be
+       local  considerations  that make one host better or worse than others.
+       Often the central server machine (if there  is  one)  is  the  logical
+       choice.  Note  that  the license manager need not run on the same host
+       which stores the ESPS files.   A poor choice of a machine to run  elmd
+       on  would  be a machine behind several network bridges, one that tends
+       to be down often, or one that might be considered a  personal  machine
+       by a particular user.
+
+            Once you decide which host will run elmd, you need  to  get  keys
+       made  for  that  host.    Note that the keys are bound to a particular
+       host, so that once the keys are made, they and elmd cannot be moved to
+       another host (for obvious reasons).  Of course, if you have legitimate
+       reasons for moving elmd and the keys to another host, we will give you
+       new keys.   To install the keys, you must first run the program elmad-
+       min -c which generates a server code that you provide to us.  We  take
+       this  server  code,  along with the information about what you bought,
+       and generate a key.
+
+            The best way to communicate the server code to us is via email or
+       FAX.   It  is best if an actual Unix script listing of the elmadmin -c
+       output is sent.  This greatly reduces the chance for errors in copying
+       the  server  code.   Voice telephone can be used, but it is more error
+       prone.
+
+            After the keys are installed echeckout and waves+ should run  (if
+       the  proper  keys  were installed).   When running on a different host
+
+
+       Version 1.2                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-91-xx:rap                                                 page 4
+
+
+       than elmd is running on, then the environment variable  ELM_HOST  must
+       be set to the hostname of the host running elmd.
+
+       2 .1 .  ELMD Initialization
+
+            The license manager daemon, elmd, will  not  issue  licenses  for
+       about  three  minutes after it first starts up.   If you try and run a
+       program during this interval, you will get  a  message  informing  you
+       that  the  daemon  is  initializing and to try again in a few minutes.
+       The reason for this is to allow an instance of the daemon to  resynch,
+       in the event that it restarts while licenses are checked out.
+
+       2 .2 .  A Word About the ESPS Program Files
+
+            One advantage of this license manager  system  is  that  you  can
+       store  the  ESPS  program files on as many machines on your network as
+       you see fit, since the number of copies stored is independent  of  how
+       many  copies  may  run.   A  reason to store the files is to avoid NFS
+       latencies resulting from dragging large binaries across  the  network.
+       This  is   tradeoff of performance and disk usage that must be made at
+       each site.  Also, individual users can choose to store copies of  cer-
+       tain programs locally.
+
+       3 .  Trouble Shooting Chart for License Keys
+
+       3 .1 .  Errors When Entering Keys:  (Messages from elmadmin -c)
+
+            Key directory does XXXX does not exist.
+
+            This means that the directory where the keys will be stored  does
+       not exist.  This indicates a major problem with the ESPS installation.
+       The directory is esps/lib/keys under the ESPS root.
+
+            Key create error: XXXX is not a directory.
+
+            The key could not be stored because the filename which should  be
+       a  directory  for  holding  the  keys, is not a directory.  This would
+       indicate a serious problem with the ESPS installation.
+
+            Error generating server code
+
+            This is usually caused by  network  related  problems.     Please
+       check  to  see that the system has a hostname assigned to it.  Use the
+       Unix command hostname.  If it prints out nothing,  then  consult  with
+       your  system administrator.  In order to run elmd the system must have
+       a hostname and network address.   If the system does have a  hostname,
+       there must be an entry in the host table (usually /etc/hosts) for that
+       hostname. Try and see if you can open a network  connection  to  your-
+       self.   That  is  if  your  hostname  is fred, then see if telnet fred
+       works.   If this fails, then your network is not properly configured.
+
+            Error writing key
+
+
+
+       Version 1.2                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-91-xx:rap                                                 page 5
+
+
+            The user running elmadmin -c does not have  write  permission  on
+       the  key  directory.    The key should be installed by the same userid
+       that owns the ESPS files (usually the user that read  in  the  product
+       tape).
+
+            Invalid Key
+
+            This means that the key as entered is  incorrect.   Double  check
+       the key.   Also double check the server code.
+
+       4 .  Run-time Problems after Entering the Key
+
+       4 .1 .  Problems with echeckout or waves:
+
+            License manager on  server  hostname  initializing.   Please  try
+       again in x minutes.
+
+            When the license manager daemon first starts it  will  not  grant
+       requests  for  about  three minutes.  This allows time for any clients
+       that might be running to check in with the daemon in the event that it
+       exited while client programs were running.
+
+            Invalid hostname:  hostname.   Check  your  ELM_HOST  environment
+       variable..
+
+            The hostname specified by ELM_HOST  is not a  valid  hostname  on
+       your network.
+
+            Sorry, but there is no ESPS license checked  out  on  this  host.
+       You  must  first  run  echeckout  to get a license for this host.  See
+       echeckout(1-ESPS).
+
+            You have tried to run a program which requires an ESPS license to
+       be  checked  out  and  no  license  is checked out on this host.   Run
+       echeckout first.
+
+            Unable to find an Entropic license  server.   You  have  ELM_HOST
+       defined  to  hostname.  Be sure that elmd is running on host hostname,
+       or correct ELM_HOST.  Note: In this version of the software,  you  can
+       leave  ELM_HOST  undefined and force the client programs to locate the
+       server on your network.  In general, better performance is achieved by
+       defining ELM_HOST, however.
+
+            This means that the client could not  find  an  Entropic  license
+       manager  daemon.   Could  be that it isn't running, or the environment
+       variable ELM_HOST is incorrectly  defined.   You  can  leave  ELM_HOST
+       undefined  to  force  the  client  to  find  the daemon, but we do not
+       currently recommend that.
+
+            Unable to find an Entropic license server.  Be sure elmd is  run-
+       ning  on  the  host system for which the license keys were issued for.
+       If you know the name of the host running elmd, then  try  setting  the
+       environment variable ELM_HOST to that hostname.
+
+
+       Version 1.2                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-91-xx:rap                                                 page 6
+
+
+            This is the message that you'll get if ELM_HOST is undefined  and
+       the client program cannot find a license daemon on your network.
+
+            Network or system error, code: xx.  Perhaps your network  is  not
+       running.   Contact Entropic if you cannot resolve this.
+
+            You'll get this message if your  network  is  working  correctly.
+       It  will  also  be given for other various errors. A common problem is
+       running out of socket connections (error code -8).  On Sun systems, we
+       find that the maxusers kernel parameter should be set to 32 for a sys-
+       tem running X windows, NFS, and applications like waves+.    A  server
+       system  with multiple users or a number of NFS mounts should have this
+       parameter even larger, say 64.   Note this  this  parameter  does  not
+       really  control the number of users, but instead is used to size vari-
+       ous kernel data structures.   The  Sun  documentation  says  that  you
+       should  allow  1  for each real users, each window, and each NFS mount
+       and client.   Remember to allow for possible network users and  remote
+       X windows.  If you cannot resolve this, please call us for help.
+
+            Sorry, no waves+ licenses currently are available.
+
+            You have tried to run (x)waves+ and  no  licenses  are  currently
+       available.   You can use elmadmin -l to see where they are being used.
+
+            Sorry, but your license has expired.
+
+            Your license has expired.  This would happen for a trial  system,
+       or  some  kind of special deal.   If you didn't expect your license to
+       expire, then call us.
+
+            Sorry, but you do not seem to have a license for waves+.  Is  the
+       key file installed and readable? The key file should be filename.
+
+            The license system cannot find a key for the program you are try-
+       ing  to  run.  Either you don't have a license, or something is wrong.
+       If you think you should have a license, have you  installed  your  key
+       from us?  The filename printed out by the error message is the path to
+       the keyfile itself.   See if the modes on this file make  it  readable
+       by anyone who might try and run the Entropic software. If the key file
+       is there and readable, then it is possible that  you  were  given  the
+       wrong  type  of keys (for example Sun3 keys on a Sun4).  Call Entropic
+       for help if you cannot resolve this.
+
+            Sorry, you do not have a license for this feature.   Please  con-
+       tact Entropic if you think this is an error.
+
+            You have tried to run a program requiring a special license  key.
+       The  license  system cannot find the required key.  At this time, this
+       message only comes from the programs  mbuttons  and  fbutons.    These
+       programs should run if you have either an ESPS or waves+ license.
+
+            License manager authorization failure,  possibly  the  daemon  is
+       running on the wrong machine.
+
+
+       Version 1.2                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-91-xx:rap                                                 page 7
+
+
+            This means that the license manager is running on a machine other
+       than  that which the keys were made for, or the network address of the
+       machine has changed since the keys were made.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       Version 1.2                      ERL                           1/22/93
+
+
+

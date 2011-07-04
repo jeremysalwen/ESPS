@@ -1,0 +1,726 @@
+
+
+
+SELECT(1-ESPS)				    ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     select - applies arbitrary	queries	to select records from FEA files
+
+     eselect - applies arbitrary queries to select records from	FEA files
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     sssseeeelllleeeecccctttt [ ----nnnn ] [ ----cccc	] [ ----qqqq _q_u_e_r_y ] [ ----eeee _e_x_p_r_e_s_s_i_o_n ]  [   ----	ffff
+     _f_o_r_m_a_t _s_t_r_i_n_g ] [ ----llll _l_o_g ]	[ ----oooo _o_u_t_p_u_t ] [	_i_n_p_u_t_1 _i_n_p_u_t_2 ...
+     ]
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     This program is stored under the name _s_e_l_e_c_t and _e_s_e_l_e_c_t  in
+     order  to avoid a name conflict with the _k_s_h builtin command
+     _s_e_l_e_c_t.
+
+     _S_e_l_e_c_t  applies  selection	 criteria  to  FEA  files.    The
+     selected  records	may  be	 printed  and  may appended to an
+     internal record buffer, which  in	turn  may  be  output  to
+     another FEA file.	The selection criteria are specified as	a
+     set of queries, with each query being  a  condition  on  the
+     fields in the FEA record.
+
+     _S_e_l_e_c_t operates in	two modes:  non-interactive and	 interac-
+     tive.   The  non-interactive mode applies when the	----qqqq and ----oooo
+     options are used.	In this	 case,	the  specified	query  is
+     applied  to  all of the _i_n_p_u_t files and the selected records
+     are written to _o_u_t_p_u_t.
+
+     In	interactive mode (no ----qqqq	option), _s_e_l_e_c_t	prompts	the  user
+     for  commands  (see below).  Alternatively, a file	of selec-
+     tion commands can be used as standard input (e.g.,	_s_e_l_e_c_t	<
+     _c_o_m_m_a_n_d__f_i_l_e).   Command  files can also be invoked interac-
+     tively.
+
+     The following options are interpreted by _s_e_l_e_c_t:
+
+     ----nnnn	   No source files or comments about queries are added to
+	  the  headers of output files.	 Normally, the headers of
+	  output files are expanded  to	 include  the  the  input
+	  files	 as sources and	the selection queries as comments
+	  in the _v_a_r_i_a_b_l_e._c_o_m_m_e_n_t field.  The ----nnnn option	 disables
+	  this	and  results in	faster operation, especially when
+	  the output file already exists and is	large.
+
+     ----cccc	   By default, comparisons involving  feature  fields  of
+	  type	coded  are case	insensitive.   When the	----cccc option
+	  is used, these comparisons are case sensitive.
+
+     ----qqqq	_q_u_e_r_y
+	  Apply	the _q_u_e_r_y  to  the  _i_n_p_u_t  files  and  write  the
+	  selected records to _o_u_t_p_u_t (see ----oooo).
+
+
+
+
+	Copyright Entropic Research Laboratory,	Inc. 1G1	1
+
+
+
+
+
+
+SELECT(1-ESPS)				    ENTROPIC RESEARCH LAB
+
+
+
+     ----eeee	_e_x_p_r_e_s_s_i_o_n
+	  Execute the _e_v_a_l command on the input	 file  and  print
+	  the  result  to standard output.   For details, see the
+	  _e_v_a_l command below.
+
+     ----ffff	_p_r_i_n_t_f _f_o_r_m_a_t _s_t_r_i_n_g
+	  This option allows the specification of a _p_r_i_n_t_f format
+	  string  to  be used to output	the values resulting from
+	  use of the ----eeee	option.	 The  string  can  be  any  valid
+	  _p_r_i_n_t_f  format  string,  except that only the	following
+	  character escapes are	handled: \n, \t, \b, \r,  \f,  \\
+	  (to  enter  a	slash),	and \' (to enter a single quote).
+	  (Note	in particular, that \ddd is not	 handled.)   Keep
+	  in  mind that	the value being	displayed is typed _d_o_u_b_l_e
+	  inside of the	program.  So use of an incompatible  out-
+	  put specification will result	in garbage dispplay.  For
+	  example  the	following  option  might  be   used:   ----ffff
+	  ''''VVVVaaaalllluuuueeee::::\\\\tttt%%%%eeee\\\\nnnn''''  or  ----ffff  AAAAnnnnyyyy  ssssttttrrrriiiinnnngggg:::: %%%%ffff uuuunnnniiiittttssss\\\\nnnn''''.   The
+	  specification	string should contain at most one  output
+	  format  control  appropriate for double values (%e, %f,
+	  %g).
+
+     ----oooo	_o_u_t_p_u_t
+	  Specifies an output file.  This option must be used  if
+	  the ----qqqq option	is used, and it	cannot be used unless one
+	  or more input	files are specified on the command line.
+
+     ----llll	_l_o_g
+	  All user commands, together with  all	 terminal  output
+	  from _s_e_l_e_c_t, will be recorded	on a file named	_l_o_g.
+
+     Each command to _s_e_l_e_c_t consists of	one or two keywords  fol-
+     lowed  by arguments.  The keywords	may be abbreviated.  Your
+     unix interrupt character (_e._g. ^C)	will always terminate the
+     current  command.	 Required  portions  of	 the keywords are
+     shown in capital letters in the description below;	_s_e_l_e_c_t is
+     not sensitive to case.  An	EOF is equivalent to a WWWWrrrriiiitttteeee fol-
+     lowed by a	QQQQuuuuiiiitttt....
+
+     Tagged and	segment	labelled input files involve some special
+     handling  in  order  to make it possible to associate output
+     records with the sampled  data  files  to	which  the  input
+     records  refer.   If  the output file does	not exist, and if
+     there is only one tagged input file, then the output file is
+     also  tagged,  with  the  tags  being pointers into the same
+     refer file	as specified in	the input file.	  If  the  output
+     file  does	 not  exist,  and if there are two or more tagged
+     input files, the output file is segment  labelled,	 and  all
+     tagged  records  written to the output file are converted to
+     segment labelled.	For the	case of	an existing output  file,
+     see  the  note under BUGS below.  For more	information about
+     taggged and segment labelled FEA files, see FEA (5-ESPS).
+
+
+
+	Copyright Entropic Research Laboratory,	Inc. 2G2	2
+
+
+
+
+
+
+SELECT(1-ESPS)				    ENTROPIC RESEARCH LAB
+
+
+
+     @@@@_c_o_m_f_i_l_e
+	  This command causes _s_e_l_e_c_t to	read  commands	from  the
+	  file	_c_o_m_f_i_l_e	 ,  rather  than from the standard input.
+	  When end-of-file is  reached,	 _s_e_l_e_c_t	 resumes  reading
+	  from	the standard input.  Command files may be nested;
+	  the maximum nesting depth is three.  Command files  are
+	  aborted  (all	 remaining  commands  are  skipped) if an
+	  error	or user	interrupt occurs while the  command  file
+	  is being read.
+
+     !!!!_c_o_m_m_a_n_d
+	  Shell	escape.	 A shell is forked off	to  execute  _c_o_m_-
+	  _m_a_n_d.	  The  command	output does not	appear in the log
+	  file.	 The exclamation  point	 must  be  in  the  first
+	  column.  A "#" character is not considered a comment in
+	  _c_o_m_m_a_n_d, since the command may require that character.
+
+     CCCCLLLLEEEEaaaarrrr
+	  If the record	buffer has been	changed	 since	the  last
+	  write,  a  warning  is printed and the user is asked to
+	  confirm.   If	the user answers the confirmation request
+	  with "yes", the the record buffer is cleared.
+
+     CCCCLLLLOOOOsssseeee
+	  Closes the log file, if any.
+
+     EEEEVVVVaaaallll _Q_U_E_R_Y
+	  Prints the value of the _Q_U_E_R_Y	 expression  (see  SYNTAX
+	  DETAILS)  for	each record in the input set.  The record
+	  number relative to the input file and	relative  to  the
+	  set  of  input  files	 (if there is more than	one input
+	  file)	is also	printed.
+
+     FFFFrrrroooommmm _i_n_p_u_t_1, _i_n_p_u_t_2, ...
+	  Closes an existing input files, if any  are  open,  and
+	  opens	the new	ones.  All input files must be FEA files.
+	  Note that an initial set of input files can  be  speci-
+	  fied on the command line.
+
+     HHHHEEEEAAAAddddeeeerrrr _f_l_a_g_s
+	  Prints the headers of	the current set	of  input  files,
+	  using	 _p_s_p_s(1-ESPS) with the ----xxxx flag.	 The _p_s_p_s flags	----
+	  ffffrrrrhhhhvvvv may  also  be  specified.   The	outputs	 are  run
+	  through the _m_o_r_e program (unless PAGER is set	to a dif-
+	  ferent program name; see ENVIRONMENT).  The  output  is
+	  not written to the log file.
+
+     HHHHEEEELLLLpppp Prints a summary of the commands  accepted  by  _s_e_l_e_c_t.
+	  The  help  file is run through the _m_o_r_e program (unless
+	  PAGER	is set to a different program name; see	 ENVIRON-
+	  MENT).
+
+
+
+
+	Copyright Entropic Research Laboratory,	Inc. 3G3	3
+
+
+
+
+
+
+SELECT(1-ESPS)				    ENTROPIC RESEARCH LAB
+
+
+
+     LLLLoooogggg _l_o_g_f_i_l_e
+	  Specifies that the dialog with the user will	be  saved
+	  on  _l_o_g_f_i_l_e (equivalent to the ----llll command line option).
+	  If a log file	is already open,  the  old  log	 file  is
+	  closed  and  a new file is started.  If the argument is
+	  omitted, the command is equivalent to	Show Log.
+
+     SSSSeeeelllleeeecccctttt _Q_U_E_R_Y
+	  Processes the	input files one	at a  time,  selects  all
+	  records that satisfy the _Q_U_E_R_Y, and appends them to the
+	  record buffer. During	queries	that scan more than  1000
+	  records,  a  dot  will be printed for	each 1000 records
+	  scanned.  The	number of records selected from	each file
+	  and  the  total  number  selected  are printed when the
+	  select is complete or	interrupted.
+
+     SSSSHHHHoooowwww BBBBuuuuffffffffeeeerrrr
+	  Prints the records in	the record buffer. The output  is
+	  run  through the _m_o_r_e	program	(unless	PAGER is set to	a
+	  different program name; see ENVIRONMENT).
+
+     SSSSHHHHoooowwww FFFFIIIIeeeellllddddssss
+	  Prints the field definitions of _i_n_p_u_t.
+
+     SSSSHHHHoooowwww FFFFRRRRoooommmm _f_l_a_g_s
+	  Runs _p_s_p_s on the current set of input	 files.	  Any  of
+	  the  _p_s_p_s  flags  may	 be specified.	The output is run
+	  through the _m_o_r_e program (unless PAGER is set	to a dif-
+	  ferent program name; see ENVIRONMENT).
+
+     SSSSHHHHoooowwww LLLLOOOOgggg
+	  This command tells whether a	log  file  is  open,  and
+	  gives	its name if there is an	open file.
+
+     SSSSHHHHoooowwww LLLLAAAAsssstttt
+	  Prints the last record in the	select buffer.
+
+     SSSSHHHHoooowwww SSSSeeeelllleeeecccctttt _Q_U_E_R_Y
+	  Processes the	input files one	at a  time,  selects  all
+	  records  that	 satisfy  the _Q_U_E_R_Y, and prints	them. The
+	  number of records selected from each file and	the total
+	  number selected are printed.	The output is run through
+	  the _m_o_r_e program (unless PAGER is set	 to  a	different
+	  program  name;  see  ENVIRONMENT).   If this command is
+	  interrupted with one interrupt character, then printing
+	  of  the records is suspended,	but the	selection contin-
+	  ues.	The total records that match the  _Q_U_E_R_Y	 will  be
+	  printed as usual.   If the command is	interrupted for	a
+	  second time the  command  will  quit	without	 checking
+	  additional records.
+
+     SSSSHHHHoooowwww TTTToooo _f_l_a_g_s
+
+
+
+	Copyright Entropic Research Laboratory,	Inc. 4G4	4
+
+
+
+
+
+
+SELECT(1-ESPS)				    ENTROPIC RESEARCH LAB
+
+
+
+	  Runs _p_s_p_s on _o_u_t_p_u_t.	Any of	the  _p_s_p_s  flags  may  be
+	  specified.  The  output is run through the _m_o_r_e program
+	  (unless PAGER	is set to a different program  name;  see
+	  ENVIRONMENT).
+
+     SSSSIIIIzzzzeeee Prints the number of records in the record buffer.
+
+     TTTToooo	_o_u_t_p_u_t [ WWWWiiiitttthhhh _f_i_e_l_d_n_a_m_e_1, _f_i_e_l_d_n_a_m_e_2, ...]
+
+     TTTToooo	_o_u_t_p_u_t [ WWWWiiiitttthhhhoooouuuutttt _f_i_e_l_d_n_a_m_e_1, _f_i_e_l_d_n_a_m_e_2, ...]
+	  Specifies an	output	file.	If  an	output	file  has
+	  already  been	specified, _s_e_l_e_c_t closes it and	opens the
+	  new one provided that	the record buffer has not changed
+	  since	 the  last  write.  If the record buffer has been
+	  changed since	the last write,	a warning is printed  and
+	  no action is taken.  If the TO command is then repeated
+	  as the next command, the existing output file	is closed
+	  and  the  new	 one is	opened.	 Note that an output file
+	  can be specified on the command line.	 An  output  file
+	  cannot be specified until an input file has been speci-
+	  fied.	 Furthermore, the output file, if it exists, must
+	  have	a  compatible header with that of the first input
+	  file (same field definitions).  If the output	file does
+	  not exist, the WWWWiiiitttthhhh clause can be used to specify which
+	  fields from input records will be written to the output
+	  file,	 or  the  WWWWiiiitttthhhhoooouuuutttt  clause  can be used to specify
+	  which	fields to omit.
+
+     QQQQuuuuiiiitttt If the record	buffer has not	changed	 since	the  last
+	  write,  _s_e_l_e_c_t  exits.   If  the record buffer has been
+	  changed since	the last write,	a warning is printed  and
+	  the user is asked to confirm the command.   If the user
+	  responds to the confirmation request with  "yes",  then
+	  the  program	is  terminated without writing the output
+	  file.
+
+     UUUUnnnnddddoooo This command removes the records from	the record buffer
+	  resulting  from the last Select command.   This command
+	  can only be given between a Select and a  Write.   Undo
+	  cannot be undone.
+
+     VVVVeeeerrrrssssiiiioooonnnn
+	  Prints out the version number	and the	date of	the  last
+	  edit	(actually,  the	 date of the last modification of
+	  the SCCS database where _s_e_l_e_c_t is maintained).
+
+     WWWWrrrriiiitttteeee
+	  If _o_u_t_p_u_t does not exist (see	the TO	command),  it  is
+	  created and the contents of the record buffer	are writ-
+	  ten to it.  If  _o_u_t_p_u_t  exists,  the	contents  of  the
+	  record  buffer are appended.	The record buffer is then
+	  cleared.
+
+
+
+	Copyright Entropic Research Laboratory,	Inc. 5G5	5
+
+
+
+
+
+
+SELECT(1-ESPS)				    ENTROPIC RESEARCH LAB
+
+
+
+SSSSYYYYNNNNTTTTAAAAXXXX DDDDEEEETTTTAAAAIIIILLLLSSSS
+     A _Q_U_E_R_Y consists of an expression,	which has  the	following
+     form:
+
+     <expr> ::=	<value>
+	  | <field_name>{[<index>]}
+	  | <character_string>
+	  | $<external_function>
+	  | <function> (<field_name>)
+	  | <function> (<expr>)
+	  | ( <expr> )
+	  | <expr> <arith_op> <expr>
+	  | <expr> <rel_op> <expr>
+	  | - <expr>
+	  | <expr>
+
+
+     Here, <field_name>	is a FEA record	field name, <index> is an
+     integer value indicating an offset	from the beginning of the
+     field (used if the	field is not  a	 scaler),  <value>  is	a
+     numerical value, <character_string> is a character	string in
+     quotes ("), <function> is the name	of a  built  in	 function
+     (see  FUNCTIONS),	<rel_op>  is  a	 relational operator, and
+     <arith_op>	 is  a	arithmetic  operator   (defined	  below).
+     <external_function>  is the name of an external program that
+     is	called to implement some function on each  record.   This
+     is	 described  in	detail below.  The "{}"	brackets indicate
+     that  the	inclusion  of  field  index   is   optional.   If
+     <field_name>   is	 not  a	 scaler	 field,	 <field_name>  is
+     equivalent	to <field_name>[0] when	used in	an expression. An
+     <external_function> is always preceded by a dollar	sign ($).
+
+     If	a <field_name> is used in  an  expression  which  is  not
+     defined in	the current input file,	then a warning is printed
+     (once for each file) and zero is used as its  value.    This
+     is	 not  a	fatal error, because there might be several input
+     files open	that do	not have all of	the same fields.
+
+     The permitted relational are:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	Copyright Entropic Research Laboratory,	Inc. 6G6	6
+
+
+
+
+
+
+SELECT(1-ESPS)				    ENTROPIC RESEARCH LAB
+
+
+
+____________________________________________________
+		  |______________________<__r__e__l_____o__p__>_________________________|_
+		  | ==	 equals			 |
+		  | =	 equals			 |
+		  | !=	 not equals		 |
+		  | >	 greater than		 |
+		  | >=	 greater than or equal to|
+		  | <	 less than		 |
+		  | <=	 less than or equal to	 |
+		  | &&	 and			 |
+		  | &	 and			 |
+		  | ||	 or			 |
+		  | |	 or			 |
+		  |_______________________________|
+
+     The && has	precedence over	the || ; & and | are  treated  as
+     synonyms  for  &&	and  ||.    There  are no bitwise logical
+     operations.
+
+     The permitted arithmetic operators	are:
+			 ____________________
+			|     <arith_op>    |
+			|_______________________________________|_
+			| +   addition	    |
+			| -   subtraction   |
+			| *   multiplication|
+			| /   division	    |
+			|_^____e_x_p_o_n_e_n_t_i_a_t_i_o_n__|
+
+     The ^ operator has	the highest precedence and is right asso-
+     ciative.	The  / and * operators have the	next highest pre-
+     cedence and are left associative.	The  +	and  -	operators
+     have the lowest precedence	and are	also left associative.
+
+     If	<value>	is a numerical value (appropriate if the type  of
+     the  field	 is  a	numerical  type), it should be given in	a
+     corresponding format for C	constants.  If the field type  is
+     coded,  then  <value>  should  be	a quoted string	(upper or
+     lower case) that is one of	the legal values.
+
+     In	the case of coded field	types, the  default  behavior  is
+     for  the comparison to be case insensitive.  Comparisons can
+     be	made case sensitive by using the ----cccc option on the command
+     line.
+
+FFFFUUUUNNNNCCCCTTTTIIIIOOOONNNNSSSS
+     There are three types of functions	supported by _s_e_l_e_c_t.  One
+     type  of  function	 takes	as  its	domain a numerical value,
+     which can be given	as any expression that	_s_e_l_e_c_t	can  pro-
+     cess.   Another type of function operates on a <field_name>.
+     The third type of function	is the <external_function>.  This
+     form of function results in an external program being called
+
+
+
+	Copyright Entropic Research Laboratory,	Inc. 7G7	7
+
+
+
+
+
+
+SELECT(1-ESPS)				    ENTROPIC RESEARCH LAB
+
+
+
+     to	perform	some function on each record.	This  provides	a
+     very general capability, but since	the external program will
+     be	called for each	record processed it is much  slower  than
+     built in functions.
+
+     The available built in function are:
+
+		      __________________________
+		     |__F__u__n__c__t__i__o__n__s____o__n____E__x__p__r__e__s__s__i__o__n__s___|_
+		     | abs	 absolute value|
+		     | atan	 arc tangent   |
+		     | cos	 cosine	       |
+		     | exp	 exponent      |
+		     | int	 integer       |
+		     | log	 natural log   |
+		     | log10	 log base 10   |
+		     | sin	 sine	       |
+		     | sqrt	 square	root   |
+		     | tan	 tangent       |
+		     |__________________________|
+		_____________________________________
+	       |	 Functions on Fields	    |
+	       |_________________________________________________________________________|_
+	       | max	maximum	of elements in field|
+	       | mean	mean of	elements in field   |
+	       | min	minimum	of elements in field|
+	       | prod	product	of elements in field|
+	       | size	number of elements in field |
+	       |_s_u_m_____s_u_m__e_l_e_m_e_n_t_s__i_n__f_i_e_l_d_________|
+
+     The only legal argument for functions on fields is	a  single
+     <field_name>   without   an   index.    In	 this  case,  the
+     <field_name> refers to the	entire field.
+
+     If	<external_function> is	found  in  an  expression  _s_e_l_e_c_t
+     searches  the  users  current  PATH  for  a program with the
+     specified	name.	This  program  is  assumed  to	accept	a
+     single-record ESPS	FEA file as its	only argument and to out-
+     put a value (ASCII) on standard  output.  _S_e_l_e_c_t  creates	a
+     single-record  ESPS file from each	record in the input files
+     and calls <external_function> with	this file; the output  of
+     <external_function>  is then used within the query. An exam-
+     ple of the	source code for	an external function can be found
+     in	 the  _s_e_l_e_c_t  source  directory,  or in	/usr/sps/lib on	a
+     non-source	system.
+
+     There are several built in	field  names  that  have  special
+     meaning.  The are:
+
+
+
+
+
+
+
+	Copyright Entropic Research Laboratory,	Inc. 8G8	8
+
+
+
+
+
+
+SELECT(1-ESPS)				    ENTROPIC RESEARCH LAB
+
+
+
+_______________________________________________________________________________________
+ |______________________________________________B__u__i__l__t____i__n____F__i__e__l__d____N__a__m__e__s_______________________________________________|_
+ | tag	  built	in tag field of	the record			   |
+ | REC	  record number	(from 1)				   |
+ | FILE	  file name of the input file within the set of	input files|
+ |__________________________________________________________________|
+     The field name "tag" always refers	to the built in	tag field
+     of	 the  record.	(See  the  discussion of tags and segment
+     labelling under DESCRIPTION.)  The	name "REC" refers to  the
+     record  number  (from  1)	of the record in the set of input
+     files and the name	"FILE" refers  to  the	filename  of  the
+     input file	in the set of input files.
+
+EEEEXXXXPPPPRRRREEEESSSSSSSSIIIIOOOONNNN EEEERRRRRRRROOOORRRRSSSS
+     There are three types of expression errors.
+
+     The first type are	 syntax	 errors	 caught	 by  the  parser.
+     These  result result in a "syntax error" message followed by
+     the offending character.	In the current release,	the query
+     is	 usually  executed  anyway.   If the selected records are
+     not wanted, they can be removed from  the	buffer	with  the
+     UUUUNNNNDDDDOOOO command.  If the select is long (because the input file
+     is	large) then  the  select  can  be  interrupted	and  then
+     undone.   This will be improved in	a future release.
+
+     The other type of expression errors relate	to the	execution
+     of	 the  expression  itself.  These include use of	undefined
+     fields, undefined functions, field	indexes	 out  of  bounds,
+     arithmetic	 overflow  and	underflow,  and	 divide	 by zero.
+     Errors that cannot	change from one	record or one input  file
+     to	 the  next  are	considered fatal and terminate the SSSSEEEELLLLEEEECCCCTTTT
+     (or EEEEVVVVAAAALLLL or SSSSHHHHOOOOWWWW SSSSEEEELLLLEEEECCCCTTTT).	This type of error is  caused  by
+     trying  to	 call  an  undefined built in function or trouble
+     running an	external function.
+
+     The other errors described	above cause  the  termination  of
+     the  expression  for  the current record.	In most	cases the
+     expression	evaluates to zero.   In	 the  case  of	undefined
+     field  and	 index	out  of	 bounds, zero is returned and the
+     expression	continues.   In	the case of arithmetic	problems,
+     the  expression  is  terminated and zero is returned for the
+     expression.  The reason that these	errors are not	fatal  is
+     that  several input files might be	open and they do not have
+     to	all have the same fields.   A field might not be  defined
+     for one file of the input set, but	might be defined for oth-
+     ers.  Therefore, the query	should be allowed to process.	A
+     message is	printed, once for each file, in	the case of these
+     errors.   The  query  can	be  interrupted	 if  the  desired
+     results will not be achieved.
+
+     In	all cases a message is printed	stating	 what  action  is
+     being taken when errors are found.
+
+
+
+	Copyright Entropic Research Laboratory,	Inc. 9G9	9
+
+
+
+
+
+
+SELECT(1-ESPS)				    ENTROPIC RESEARCH LAB
+
+
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     The ESPS parameter	file is	not read by _s_e_l_e_c_t.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     ESPS Common file is not read or written by	_s_e_l_e_c_t.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+     _S_e_l_e_c_t reads the _c_o_m_m_o_n._t_y_p_e field	from the header	of  _i_n_p_u_t
+     (to  make	sure  that  it	is of type FEA), and it	reads the
+     field-defining information	as well. If output files  do  not
+     exist,  their headers are created with _c_o_p_y__h_e_a_d_e_r	(3-ESPS).
+     Unless the	----nnnn option is used, the headers	of  output  files
+     are  expanded  to include the the input files as sources and
+     the selection queries as comments	in  the	 _v_a_r_i_a_b_l_e._c_o_m_m_e_n_t
+     field.
+
+EEEENNNNVVVVIIIIRRRROOOONNNNMMMMEEEENNNNTTTT
+     The PPPPAAAAGGGGEEEERRRR environment variable determines what  paging  pro-
+     gram is used to break up large displays of	text. By default,
+     the _m_o_r_e program is used (however,	this may  be  changed  by
+     the installer).  To use a different pager (or if your system
+     doesn't have _m_o_r_e), set this environment  variable	 to  some
+     other value.  A full pathname is not required.  If	you don't
+     like paging, try setting PPPPAAAAGGGGEEEERRRR to _c_a_t.
+
+EEEEXXXXAAAAMMMMPPPPLLLLEEEESSSS
+     _T_h_i_s _c_o_m_m_a_n_d _g_a_t_h_e_r_s _a_l_l _v_o_i_c_e_d _f_r_o_m _t_h_e _i_n_p_u_t _f_i_l_e_s _i_n_t_o _a_l_l_v_o_i_c_e_d._f_e_a
+     select -q 'frame_type == "VOICED"'	-o allvoiced.fea *.fana
+
+     _T_h_i_s _c_o_m_m_a_n_d _a_p_p_l_i_e_s _a _c_o_m_m_a_n_d _f_i_l_e _o_f _q_u_e_r_i_e_s _o_n _f_i_l_e_1 _w_i_t_h _o_u_t_p_u_t _t_o _f_i_l_e_2
+     select -o file2 file1 < commands
+
+     Examples of queries:
+
+     select pulse_len =	90 & frame_type	= "VOICED"
+       _f_r_a_m_e__t_y_p_e _i_s _a _C_O_D_E_D _t_y_p_e
+
+     select (a = 3 & FILE = "f1") | (b = 4 & FILE = "f2")
+       _t_h_i_s _m_e_a_n_s _t_o _s_e_l_e_c_t _r_e_c_o_r_d_s _w_i_t_h _a = _3 _f_r_o_m _i_n_p_u_t _f_i_l_e
+       _f_1 _a_n_d _b	= _4 _f_r_o_m _i_n_p_u_t _f_i_l_e _f_2;	_a_s_s_u_m_i_n_g _t_h_a_t _t_h_e_r_e
+       _a_r_e _a_t _l_e_a_s_t _t_w_o	_i_n_p_u_t _f_i_l_e_s
+
+     select sqrt(gamma)/4 > alpha[3]
+       _I_f _g_a_m_m_a	_i_s _a _f_i_e_l_d _o_f _s_i_z_e _o_n_e,	_t_h_e_n _i_t_s _v_a_l_u_e _i_s _u_s_e_d _b_y _t_h_e _s_q_r_t
+       _f_u_n_c_t_i_o_n.   _I_f _g_a_m_m_a _i_s _a _f_i_e_l_d _o_f _g_r_e_a_t_e_r _t_h_a_n _s_i_z_e _o_n_e, _t_h_e_n _t_h_e
+       _e_l_e_m_e_n_t _i_s _u_s_e_d (_s_a_m_e _a_s	_s_a_y_i_n_g _g_a_m_m_a[_0]).
+
+     select sum(gamma) > mean(beta)
+       _T_h_e_s_e _f_u_n_c_t_i_o_n_s _o_p_e_r_a_t_e _o_n _e_n_t_i_r_e _f_i_e_l_d_s, _s_o _t_h_e	_f_i_e_l_d_n_a_m_e _h_e_r_e
+       _w_i_t_h_o_u_t _t_h_e _i_n_d_e_x _d_o_e_s _n_o_t _r_e_f_e_r	_t_o _o_n_l_y	_t_h_e _f_i_r_s_t _e_l_e_m_e_n_t; _i_t _r_e_f_e_r_s
+       _t_o _t_h_e _e_n_t_i_r_e _f_i_e_l_d.
+
+
+
+
+       Copyright Entropic Research Laboratory, Inc. 10G10      10
+
+
+
+
+
+
+SELECT(1-ESPS)				    ENTROPIC RESEARCH LAB
+
+
+
+     select sum(gamma) > mean(beta) && ($func1 > 45.6)
+       _s_u_m _a_n_d _m_e_a_n _a_r_e	_f_u_n_c_t_i_o_n_s _o_f _f_i_e_l_d_s.  $_f_u_n_c_1 _i_s	_a _u_s_e_r _s_u_p_p_l_i_e_d
+       _e_x_t_e_r_n_a_l	_p_r_o_g_r_a_m	_w_h_i_c_h _i_s _c_a_l_l_e_d	_f_o_r _e_a_c_h _r_e_c_o_r_d.
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     ESPS(5-ESPS), FEA(5-ESPS)
+
+FFFFUUUUTTTTUUUURRRREEEE CCCCHHHHAAAANNNNGGGGEEEESSSS
+     Provide a method to link in user-defined functions	 to  pro-
+     vide higher performance than external functions.
+
+WWWWAAAARRRRNNNNIIIINNNNGGGGSSSS
+     A number of warning and error message  are	 printed  in  the
+     event  of	various	expression errors.  Some errors	terminate
+     the query.
+
+BBBBUUUUGGGGSSSS
+     The following paragraph describes the way _s_e_l_e_c_t will handle
+     existing output files and input files with	tags:
+
+     If	the output file	exists and is segment  labelled,  and  if
+     there  is	one or more tagged input file, all tagged records
+     written  to  the  output  file  are  converted  to	  segment
+     labelled.	 If  the output	file exists and	is tagged, and if
+     there is one or more tagged input file, the output	 file  is
+     converted	from  tagged  to segment labelled, and all tagged
+     records written to	the output file	are converted to  segment
+     labelled.
+
+     This is not done in this version.	 The pre-existing  output
+     file  is  not changed, and	the tag	values copied into it may
+     be	meaningless (because the _r_e_f_e_r file might be different.
+
+     A syntax error in a query will terminate the  parse  of  the
+     query  and	 it will then run.   After it runs you will get	a
+     syntax error message.  If the select, selected records  that
+     you don't want, use the "undo" command to undo the	effect of
+     the most recent select operation.	Undo  can  only	 be  used
+     once  after  each select.	You can't undo an undo (except to
+     select again).
+
+     If	referenced fieldname is	a complex feature field, then the
+     real  part	 of that is used in the	expression.   Better sup-
+     port for complex types will be added in the next version.
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Manual page by John Shore and Alan	Parker
+     Program by	Alan Parker
+
+
+
+
+
+
+
+       Copyright Entropic Research Laboratory, Inc. 11G11      11
+
+
+

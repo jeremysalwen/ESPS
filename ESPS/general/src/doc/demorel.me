@@ -1,0 +1,47 @@
+.lo
+.ce 2
+.sp
+.b
+Release Notes for Waves+ Demos
+Document Version: 1.9 4/18/90
+.sh 1 "Introduction"
+.pp
+This tape contains one, two, or three 
+versions of a demo script for \fIwaves+\fR and
+ESPS.   Each version is in its own directory along with a number of required
+files.
+These demo scripts are somewhat timing dependent, and have not been
+tested on all possible configurations.    These versions of the demo
+scripts are intended for the Suntool version of \fIwaves+\fR.   Versions
+for the X window version are being prepared.
+.pp
+One of the demo scripts (\fIdemo.dsp\fR)
+requires a Sun with the AT&T DSP board
+installed.  \fIDemo.dsp\fP may not work quite right in various
+network configuration (due to timing issues), 
+but with a stand alone Sun 4, it works fine.
+.pp
+This demo speaks through the DSP board D/A.
+You should have 
+audio equipment connected to the DSP board before running this demo.
+This demo script requires about 10 megabytes of file space (due to the
+speech files). 
+.pp
+Another directory (\fIdemo.text\fR) does not require the DSP board
+since it displays descriptive text on the display screen in a window.  
+This demo also runs correctly without full ESPS.
+This directory requires about 3 megabytes of file space. 
+.pp
+This demo often fails on a Sun 3 running OS 3.X since it hits a suntools
+bug.
+.pp
+For use with Sparcstation 1 computers with the built in codec and
+speaker, there is \fIdemo.sparc\fR.   This is like the DSP demo above,
+but it uses the built in codec for speech output.  See the README file
+in this directory for more information.
+.sh 1 "Running the Demos"
+.pp
+First be sure ESPS and \fIwaves+\fR are properly installed.   Then
+simply follow the instructions given in the README file in each demo
+directory.   Please note that you must have write permission in the
+demo directory when you run the demo scripts.

@@ -1,0 +1,304 @@
+.\" Copyright (c) 1987, 1988 Entropic Speech, Inc. All rights reserved.
+.\" @(#)scatplot.1	3.13  03 Apr 1997  ESI
+.TH SCATPLOT 1-ESPS 03 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+scatplot - make a scatter plot
+.SH SYNOPSIS
+.B scatplot
+[
+.BI \-e " range"
+] [
+.BI \-r " range"
+] [
+.BI \-s " symbols"
+] [
+.BI \-t " text"
+] [
+.BI \-x " debug_level"
+]
+.br
+[
+.BI \-H " text"
+] [
+.BI \-T " device
+] [
+.BI \-V " text"
+] [
+.BI \-X " range"
+] [
+.BI \-Y " range"
+] [
+.BI \-W " generic window system options"
+] 
+.I file1
+[
+.I file2
+] . . .
+.SH DESCRIPTION
+.PP
+.I Scatplot
+makes a scatter plot of pairs of elements from multiple ESPS files
+.I file1, file2, . . . .
+When used as a file name, ``\-'' denotes standard input.
+.PP
+By default,
+the output is in Unix GPS (``Graphics Primitive String'') format
+and is displayed on the Masscomp or Sun display, but with the
+.B \-T
+option, this may be sent to the standard output,
+obtained in Tektronix format rather than GPS,
+or plotted on a hardcopy device.
+.PP
+On a Sun workstation, this program must be run from within the
+\fISuntools\fR window system.  The plot will appear in a new window,
+which can be moved, resized, closed (reduced to an icon), and removed by
+using the functions on the \fISuntools\fR menu.   To get this menu, move
+the mouse cursor to the title bar of the plot window and press the right
+mouse button.
+.PP
+If the \fB\-r\fP option is omitted, then the entire contents
+of all files are plotted.
+.PP
+The \fB\-e\fP option specifies which elements to plot.  An even
+number of elements must always be given since there are no default
+elements to plot.  The first pair of elements is associated with the first
+file, the second pair with the second file, and so
+on up to the last file or until no other pair of elements remains, in
+which case the last pair of elements is associated with the remaining
+files.  The first element in the pair is plotted as the abscissa
+and the second element as the ordinate.  Default symbols are used
+to distinguish between multiple files, but they can be overridden by
+the \fB\-s\fP option.  
+.PP
+.I Scatplot
+finds the maximum and minimum of the
+.I x
+values and the
+.I y
+values in the specified ranges of the input files
+and computes appropriate scales
+This automatic scaling can be overridden by the
+.B \-X
+and
+.B \-Y
+options.
+.PP
+On Masscomp systems the color and line style of output to ``gps'' or ``mcd'' depend on the
+environment variable BUNDLE.  The default is GPS bundle number 20, which
+gives solid lines on monochrome displays.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-e " elements"
+Determine which elements within a record to plot.
+The elements may be separated by commas, or, more generally,
+any construct acceptable to
+.IR grange_switch (3-ESPSu)
+may be used, as long as the number of elements specified is even.
+The first pair of elements is associated with the first
+file, the second pair with the second file, and so
+on up to the last file or until no other pair of elements remains,
+in which case the last pair of elements is associated with the remaining
+files.
+The first element in the pair is plotted as the abscissa
+and the second element as the ordinate.
+.TP
+.BI \-r " first:last"
+.TP
+.BI \-r " first:+incr
+Determines the range of records to be plotted.  In the first form, a
+pair of unsigned integers gives the first and last records of the range.  
+If 
+.I first
+is omitted, 1 is used.  If 
+.I last 
+is omitted, the last record in the file is used.  The second form is
+equivalent to the first with 
+.I "last = first + incr".
+.PP
+This option may be repeated.
+The first
+.B \-r
+option applies to the first input file, the second
+.B \-r
+option to the second input file, and so on.
+If there are more files than
+.B \-r
+options, then the last option applies to all remaining files.
+.TP
+.BI \-s " symbols \fR[\fPxo*abcdefghijklmnpqrstuvwyz\fR]\fP"
+Plot the scatter plot using the symbols specified.
+The first symbol is used for the first file,
+the second symbol for the second file,
+and so on up to the last file.
+There must be at least as many symbols as files.
+The default symbols are given in brackets.  
+.PP
+The positions of the symbols
+.I `x'
+and
+.I `o'
+have been modified so that the plotting point falls very close to
+the "center" of the character.  Other characters will not have their
+centers exactly at the plotting points.
+.TP
+.BI \-t " text"
+Print a line of text above the graph.
+.TP
+.BI \-x " level"
+If
+.I level
+is nonzero, debugging information is written to the standard error output.
+Default is 0 (no debugging output).
+.TP
+.BI \-H " text"
+Print a line of text below the graph.
+.TP
+.BI \-T " device"
+.I Device
+may be
+.BR gps ,
+.BR mcd ,
+.BR tek ,
+.BR suntools ,
+.BR hp ,
+or
+.BR hardcopy .
+The default is
+.BR \-Tmcd,
+which displays the output on the workstation graphics screen by piping it through
+.IR mcd (1)
+or
+.IR xmcd (1\-ESPS).
+The program \fImcd\fR is supplied by Masscomp for their systems, and by
+ESI for other workstations.
+Specifying
+.B \-Tgps
+sends output to the standard output in Masscomp Unix GPS format.
+Specifying
+.B \-Ttek
+causes output to be sent to the standard output in Tektronix 4000-series
+format.
+If
+.B \-Tsuntools
+is used, then the display will be forced to use \fIsuntools\fR window
+system (on Suns and Solbournes only), even if ESPS has been configured
+to use the X window system.   If ESPS is built for X, then it uses X for
+plotting by default.
+If
+.B \-Tmcd
+is used on a Masscomp and ESPS has been configured to use X windows,
+then the old SP-40 \fImcd\fR is used instead of X windows.
+Specifying
+.B \-Thardcopy
+plots it on a hardcopy device, if one was set up in the installation
+script.  Note that the word \fIimagen\fR was used for this option in
+previous versions.   It is still accepted, but \fIhardcopy\fR is meant
+to be more general.
+.B \-Thp
+produces output for an HP LaserJet printer.   Note that the output is
+produced on standard out and it is not spooled to the printer by this
+command.   Use of this option will result in about 750K bytes of output
+per page.   If the link to your LaserJet is slow, it might take
+several minutes to send it to the printer.    
+In a later version, this will be merged with the
+\fIhardcopy\fR option above for direct spooling.
+.TP
+.BI \-V " text"
+Print a line of text along the left side of the graph going upwards.
+.TP
+.BI \-X " low:high"
+Specifies lower and upper limits for the x-axis, disables
+automatic computation of limits.
+.TP
+.BI \-Y " low:high"
+Specifies lower and upper limits for the y-axis, disables
+automatic computation of limits.
+.TP
+.BI \-W
+This option is followed by a character
+string consisting of the generic window system options.   These options are
+passed onto \fImcd\fR or \fIxmcd\fR.   
+This option is used to pass along generic X window
+arguments to \fIxmcd\fR or Suntool arguments to \fImcd\fR on Suns.  This
+option might not have an effect on all systems.   For example, on a
+system running X windows, to cause the plot to appear at a particular
+screen location the following command could be used: 
+.br
+\fIscatplot -W "=300x250+50+200" file\fR.
+.br
+See \fImcd(1\-ESPS)\fR and \fIxmcd(1\-ESPS)\fR for details.
+.PP
+For Sun systems, this program will plot under either X windows, or
+Suntools.   By default, if the \fB-T\fR option is not used, it will 
+expect X windows.   To plot under Suntools you can use the \fB-Tsuntools\fR
+option.    If you always use Suntools, you can avoid using the \fB-T\fR
+option by defining the environment variable \fBEPLOTDEV\fR to be
+\fIsuntools\fR.  This will make the Suntools window system the default.
+This variable is ignored if the machine type is not Sun4, SUN3, or
+SUN386i.
+.SH EXAMPLES
+.TP
+\fBscatplot \-r\fI1:500\fP \-s\fIxo \fB\-e\fI5,6,15,19 file1 file2\fR
+makes a scatter plot (using the letter \fIx\fP for file1 and the
+letter \fIo\fP for file2) of element 5 versus element
+6 in \fIfile1\fP and of element 15 versus element 19
+in \fIfile2\fP across the record range 1 to 500. The plot is
+displayed on the graphics terminal.
+.TP
+.BI "scatplot \-Tgps " "<options> <files>"
+sends the plot to standard output in Masscomp Unix GPS
+(``Graphic Primitive String'') format.
+.TP
+.BI "scatplot \-Thardcopy " "<options> <files>"
+plots on the hardcopy plotter.
+.TP
+.BI "scatplot \-Ttek " "<options> <files>"
+sends the plot to standard output in Tektronix format and may be used to
+plot on a Tektronix terminal.
+.SH "ESPS PARAMETERS"
+.PP
+.I Scatplot
+does not read an ESPS parameter file.
+.SH "ESPS COMMON"
+.PP
+.I Scatplot
+does not read or write the ESPS common file.
+.SH "ESPS HEADERS"
+.PP
+.I Scatplot
+reads the following fields from the ESPS file headers:
+.I common.ndrec,
+.I common.tag.
+.SH DIAGNOSTICS
+.PP
+.nf
+scatplot: please give only one \-e option.
+scatplot: \-e option: even number of elements required.
+scatplot: please specify an element range with the \-e option.
+scatplot: data is not tagged in \fIfile\fP, cannot plot element 0.
+scatplot: please specify \fIn_symbols\fP symbols with the \-s option.
+scatplot: start point after end point.
+scatplot: only \fIn_points\fP in \fIfile\fP.
+scatplot: only \fIn_records\fP records read in \fIfile\fP.
+scatplot: calloc: could not allocate memory for \fIarray\fP.
+scatplot: d_mat_alloc: could not allocat memory \fImatrix\fP.
+scatplot: command line too long: truncating string.
+.fi
+.SH EXPECTED CHANGES
+.PP
+Allow range specifications of the form
+.IB "<field name>" [ "<range>" ]
+with FEA files.
+.SH SEE ALSO
+mlplot(1\-ESPS), genplot(1\-ESPS), fea_element(1\-ESPS),
+grange_switch(3\-ESPS).
+.SH AUTHOR
+.PP
+.nf
+Ajaipal S. Virdy
+Generalized by Rodney Johnson to allow independent ranges in the input
+files.
+.fi

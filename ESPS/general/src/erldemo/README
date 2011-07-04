@@ -1,0 +1,140 @@
+.lo
+.ce
+.b
+\s+4ESPS and WAVES+ DEMO\s-4
+.r
+.sp
+.ce
+.i
+\s+2Entropic Research laboratory, Inc\s-2
+.sp
+.lp
+\fBINTRODUCTION\fP
+.pp
+This demonstration software provides a brief introduction to
+Entropic's signal processing software -- the Entropic Signal
+Processing System (ESPS), and the waves+ graphics interface.
+.pp
+The demo has two parts: "waves+ intro" and "slide show". The waves+
+intro is a live demo that shows the software in action. The slide show
+is a sequence of fixed ESPS and waves+ images.  The demo has an
+optional voice narrative that describes what you see on the screen.  
+This option may not be supported on all systems (and it can be turned 
+off even on systems that support it).  Note that the text of the
+narrative is contained at the end of the file that is displayed 
+when the "About this demo..." button is pressed.  (This file usually
+is erldemos/edemo.about).  
+.sp
+.lp
+\fBSETTING UP THE DEMO\fP
+.pp
+The tape contains a single tar image: the directory "entropic".  This
+can be loaded anywhere; root privileges are not required.  Extract the
+directory with "tar xv".
+.pp
+By setting your umask to 022 ("umask 022") before reading the tar
+tape, anyone may execute the demo, but this is not necessary for a
+single user.  The demo only requires write permission in the directory
+/tmp, so changing the modes on the files to global read-and-execute
+permission only ("chmod -R 555 entropic") will not break the demo.
+.pp
+Machine specific instructions and restrictions are found in the README 
+in the "entropic" directory; general requirements and recommendations 
+are as follows:
+.sp
+.nf
+	1) color (8 planes) display for "slide show" (must).  A color display
+	   is highly desirable for the "waves+ intro" portion, as many things 
+	   will not work without one.  
+
+	2) 25 MB disk space (must) 
+
+	3) 16 MB memory highly recommended. You can try it with only 12 MB,
+	   but the audio and slides may loose sync. With less than 12 MB,
+	   things become sluggish and sometimes confusing; turn the audio off.
+
+	4) X11R4 or greater based window manager
+
+	5) swap space of at least 20 MB
+.sp
+.fi
+.pp
+A user must be standing in the "entropic" directory in order to run the demo. 
+If you want to make it easy for anyone to run the demo, put a script in
+/usr/local or /usr/local/bin that "cd"s to the "entropic" directory and 
+runs ENTROPIC. 
+.sp
+.lp
+\fBRUNNING THE DEMO\fP
+.pp
+To start the demo, change into the entropic directory ("cd entropic")
+and run the program ENTROPIC.  This will put up a command window from
+which the user can operate the demo.  
+.pp
+The top part of the control panel has buttons that present information
+about the demo, ESPS, waves+, and the Entropic Research Laboratory.
+.pp
+The bottom part of the control panel allows you to select various demo
+and audio options. By using the check boxes, you can select the live
+part, the slide show or both.  The "Single" and "Continuous" buttons
+determine whether the "Start Demo" button runs the demo once or 
+continuously.  The "Audio Output" buttons control the play back 
+options.  Once the options have been selected, clicking on the 
+"Start demo" button starts the demo.
+.pp
+A single run of the demo takes between 5 and 8 minutes, depending
+on the system.
+For more information about running the demo, see the file displayed 
+when the "About this demo..." button is pressed. 
+.sp
+.lp
+\fBCONFIGURATION CONSIDERATIONS\fP
+.pp
+The OpenLook fonts (supplied here) must be on your path before the demo
+will run. The ENTROPIC demo script tries to do this for you, but if the
+demo won't run and you see error messages in the ENTROPIC.log file (found
+on /tmp) about fonts, move to the "xview" directory and do the following 
+before running the ENTROPIC command:
+.sp
+.nf
+	source setxview.
+.sp
+.fi
+.pp
+In general, the performance of the demo varies as a function of the
+system configuration and load (CPU speed, disk speed, available
+memory, role of NFS, network traffic, swap space, other processes,
+etc.).  Since there is no foolproof method of synchronizing speech
+output with the actual appearance of particular windows; inadequate
+system resources may result not just in a slower demo, but in a
+confusing demo. If the demo is not smooth, try running it without 
+speech output.
+.sp
+.lp
+\fBGETTING HELP\fP
+.pp
+For more information or for help, please contact us:
+.sp
+.nf
+	Entropic Research Laboratory    
+	600 Pennsylvania Ave., S.E. 	  
+	Suite 202                       
+	Washington, D.C. 20003          
+	USA
+
+	Voice:     202-547-1420
+	FAX:       202-546-6648
+	Internet:  esps@wrl.epi.com
+	uucp:	     ...uunet!epiwrl!esps-info
+.sp
+.fi
+.lp
+Particular contacts are David Burton (burton@wrl.epi.com), 
+Alan Parker (parker@wrl.epi.com), and John Shore (shore@wrl.epi.com).
+
+
+(@(#)README	1.17 12/3/90)
+
+
+
+

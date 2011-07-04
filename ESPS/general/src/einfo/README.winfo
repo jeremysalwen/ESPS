@@ -1,0 +1,39 @@
+Program : winfo(1)
+Purpose : view waves+ technical bulletins and release notes.
+
+The top panel contains simple action buttons that are invoked by 
+a left mouse click: 
+
+ How to use winfo...  - displays this file
+
+ Run waves+ intro   - run the waves intro demo.
+                      You need to have an  waves+ license checked out
+		      for the demos to run properly.  
+
+ Entropic Root Window - sets the background to the Entropic background.
+			see elogo(1) for more info.
+
+The middle panel contains a simple action button and a selection button: 
+
+ QUIT      - quit winfo.
+
+ Program   - toggle between viewing and printing documents that 
+             can be selected from the bottom panel
+
+The bottom panel contains action menu buttons for different classes of
+documents.  Use the right mouse button to pull down the menu.
+Releasing the mouse over a selected item causes the (view or print)
+action selected in the middle panel to be invoked on the named
+document.
+
+NOTE:  if printing doesn't work...
+
+The "Print File" button uses elpr(1) to print.  If you print and nothing
+comes out check out the elpr(1) man page and setup environment variable
+ELPR as your system needs it.
+
+------
+
+Document: winfo help file 
+Date    : @(#)README.winfo	1.3 10/1/91
+

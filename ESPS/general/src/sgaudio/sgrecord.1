@@ -1,0 +1,202 @@
+.\" Copyright (c) 1996 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)sgrecord.1	1.2 3/28/97 ERL
+.ds ]W (c) 1996 Entropic Research Laboratory, Inc.
+.TH SGRECORD 1\-ESPS 3/28/97
+.SH NAME
+sgrecord - mono or stereo record to disk or pipe for native SGI Indigo A/D converter.
+.PP
+.SH SYNOPSIS
+.B sgrecord
+[
+.BI \-s " duration"
+] [
+.BI \-f " sample rate"
+] [
+.BI \-c " channel"
+] [
+.BI \-S
+] [
+.BI \-W " xwaves display args."
+] [
+.BI \-P
+] [
+.BI \-p " prompt string"
+] [
+.BI \-x " debug-level"
+] [
+.BI \-H
+] [[
+.BI \-o
+]
+.I file
+]
+.PP
+.SH DESCRIPTION
+.PP
+.PP
+\fISgrecord\fP provides mono or stereo sampling at selected rates up to at least 48kHz when
+recording to local disk.  Direct recording onto network disks is often
+feasible as well.  Output files have ESPS FEA_SD headers, or,
+optionally, no headers.  Output may optionally be directed to
+\fIstdout\fP.  \fISgrecord\fP has special adaptations that permit tight
+coupling with \fIxwaves\fP (see \fIINTERACTION WITH XWAVES\fP below).
+.PP
+When no output file is specified, \fIsgrecord\fP will, by default, write a FEA_SD file
+to standard output.  When stereo recording
+is selected (see the -c option) channels 0 and 1 alternate in the file, with
+channel 0 being first.  Note that processes consuming the output of
+\fIsgrecord\fP on a pipe must be able to keep up with the average aggregate
+sampling frequency.  Options are available to control the sampling rate, recording duration, prompting, header suppression, and immediate display by \fIxwaves\fP.
+.PP
+The SGI Indigo program \fIapanel\fP may be used to monitor the input level(s),
+set the input gain, and change the input source.  \fIApanel\fP should be started before
+\fIsgrecord\fP.  It may be left running indefinitely.
+.PP
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-s " duration" "\fR [10]"
+Specifies the maximum duration of the recording session in seconds.
+Recording may be interrupted before this time expires with SIGINT,
+SIGQUIT or SIGUSR1 (see below).  The default \fIduration\fP is 10 seconds.
+The upper limit is set only by disk space.
+.TP
+.BI \-f " frequency" "\fR [16000]"
+Specifies the sampling frequency.  The closest frequency to that
+requested will be selected from those available and the user will be notified
+if the selected value differs from that requested.  If -f is not
+specified, the default sampling frequency of 16kHz is used (assuming the
+standard Ariel crystal).
+.TP
+.BI \-c " channel" "\fR [1]"
+By default sgrecord samples and stores single-channel data from the left channel.
+Dual-channel (stereo) recording is selected by setting \fIchannel\fP to 2.
+.TP
+.BI \-S
+Enable the \fIxwaves\fP(1\-ESPS) "make" command via \fIsend_xwaves2\fP(3\-ESPS) when the
+requested recording time has elapsed or when recording is interrupted.  This 
+permits immediate examination of the recorded passage using \fIxwaves\fP.  
+See \fIINTERACTION WITH XWAVES\fP below.
+.TP
+.BI \-W
+The argument to this option will be appended to the \fIsend_xwaves\fP
+"make" command to permit display customization (e.g. via
+window location and size specifications).  See \fIINTERACTION
+WITH XWAVES\fP below.
+.TP
+.BI \-P
+Enable a prompt message when A/D has actually commenced.  The default message
+is a "bell ring" and the text "Start recording now ...."  This prompt may be changed
+with the \-p option.
+.TP
+.BI \-p " prompt string"
+\fIPrompt string\fP will be used as the alert that recording is commencing.  Specifying
+\-p forces -P.
+.TP
+.BI \-H
+Suppresses header creation.  A "bare" sample stream will result.  The default is
+to produce an ESPS FEA_SD file with one or two channels depending on the
+\-c option.
+.TP
+.BI \-x " debug_level"
+Setting debug_level nonzero causes several messages to be printed as
+internal processing proceeds.  The default is level 0, which causes no debug
+output.
+.TP
+.BI -o " output"
+Specifies a file for output.  Use of -\fIo\fP before the file designation is optional
+if the filename is the last command-line component.  If no output file is
+specified or if "-" is specified, output will go to \fIstdout\fP.
+.PP
+.SH "INTERACTION WITH XWAVES"
+.PP
+\fISgrecord\fP is designed to optionally use the server mode of \fIxwaves\fP(1\-ESPS) for
+display of its output file on completion of the record operation.
+This is implemented using \fIsend_xwaves2\fP(3\-ESPSu).  The following
+conditions must be met for this feature to work.  (1) \fIXwaves\fP must be
+running in the server mode. (2) The environment variables WAVES_PORT
+and WAVES_HOST must be correctly defined (see \fIespsenv\fP(1\-ESPS)).  (3)
+The record operation must be interrupted with a SIGUSR1 signal (e.g.
+via "kill \-16 pid," where pid is the process ID of the \fIsgrecord\fP
+process), or if \fIsgrecord\fP is not thus interrupted, the -\fIS\fP flag must have
+been set.  (4) Output must be to a file.
+.PP
+An example \fImbuttons\fP(1\-ESPS) script to implement a primitive record
+control panel follows:
+.PP
+.nf
+.na
+.ne 10
+"RECORD Mono"  exec sgrecord  -P -s60 -S -W"name $$ loc_y 150" \\
+                xx$$& echo $! > foo
+"RECORD Stereo" exec sgrecord -P -c2 -s60 -S -W"name $$ loc_y 150" \\
+                xx$$& echo $! > foo
+"STOP"          kill -16 `cat foo`
+"ERASE"         f=`cat foo` ; k=`echo $f 1 - p q | dc` ; \\
+		kill -2 $f ; rm -f xx$k ; send_xwaves kill name $k
+.fi
+.ad
+.PP
+Note how the -\fIW\fP option is used to name the display ensemble and to fix
+the vertical location of the waveform at the same place on consecutive
+invocations.  In general, the -\fIW\fP option can be used to augment the
+display generation as described under the "make" command in the \fIxwaves\fP
+manual.  Note that the "STOP" function is implemented with a "kill
+-16" (SIGUSR1).  This causes \fIsgrecord\fP to send the "make" command to
+\fIxwaves\fP.  If either kill -2 (SIGINT) or kill -3 (SIGQUIT) is sent to
+\fIsgrecord\fP, it will terminate gracefully, but will not send any messages
+to \fIxwaves\fP.  The -\fIS\fP option causes the \fIxwaves\fP display operation to occur
+even in the non-interrupted case (i.e. after 60 sec of recording).
+The above script is not robust, but may serve as a useful starting
+point for more serious attempts.
+.PP
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.PP
+.SH ESPS COMMON
+.PP
+ESPS Common is not read or written.
+.PP
+.SH WARNINGS
+.PP
+When output is to a file, the ESPS header, if it is present, will
+correctly reflect the absolute maximum sample value encountered during
+recording and the number of samples recorded.  If output is to a pipe,
+these values are not recorded in the header.
+.PP
+If the output of \fIsgrecord\fP goes to the terminal, bad things will
+happen to the terminal configuration and you may not be able to regain
+control of the terminal.  In this case, kill the window or kill the
+record process remotely from another window.
+.PP
+\fISgrecord\fP supports only the "native" SGI Indigo sampling rates.
+These are (in Hz): 48000 44100 32000 29400 24000 22050 16000 14700
+12000 11025 10667 9800 9600 8820 8000 7350 6857 6400 6300 6000 5880
+5512 5333 4900 4571 4200 4000 3675.  If an unsupported rate is
+requested, \fIsgrecord\fP records at the closest supported rate and
+issues a warning.
+.PP
+The maximum rate over the network is unpredictable in general, but we
+routinely achieve 16kHz stereo at Entropic Research Laboratory.  Of
+course rate limitations due to network speed will be less severe for
+single-channel recording.
+.PP
+.SH FILES
+.PP
+.SH BUGS
+.PP
+If another \fIsgrecord\fP operation is started while one is in
+progress, unpredictable results will occur.
+.PP
+.SH SEE ALSO
+.PP
+.nf
+SD(5\-\s-1ESPS\s+1), \fItestsd\fP(1\-\s-1ESPS\s+1), \fIcopysd\fP(1\-\s-1ESPS\s+1),
+\fIsgplay\fP(1\-\s-1ESPS\s+1), \fIsfconvert\fP(1\-\s-1ESPS\s+1), \fIsgram\fP(1\-\s-1ESPS\s+1)
+.fi
+.PP
+.SH AUTHORS
+.PP
+David Talkin at Entropic Research Laboratory.

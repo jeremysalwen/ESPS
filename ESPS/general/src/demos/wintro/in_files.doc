@@ -1,0 +1,21 @@
+			Input Files Control Panel
+			-------------------------
+
+DESCRIPTION
+-----------
+The "Input Files" control panel contains a button for several different types
+of data files. You can display a file by simply pushing one of the buttons.
+
+Not that the "Speech Data" and "Speech Spectrogram" displays are related
+(the spectrogram file is computed from the first second of the speech 
+data file), and that cursors in the two displays are linked. Similarly,
+the "Real" signal and spectrum displays are linked, and the "Complex"
+signal and spectrum displays are linked.
+
+To remove a display, either use the basic, window-manager supplied command,
+or the "kill window" command in the waves+ display menu (hold right
+mouse button down while in the data display).
+
+(@(#)in_files.doc	1.1 7/29/91 ERL)
+
+

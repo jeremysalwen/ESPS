@@ -1,0 +1,40 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)getarspect.3	1.4 20 Oct 1987 ESI
+.TH GET_ARSPECT 3\-ESPSsp 20 Oct 1987
+.ds ]W "Entropic Speech, Inc.
+.SH NAME
+get_arspect \- compute lpc spectra from lpc filter coefficients
+.SH SYNOPSIS
+.ft B
+get_arspect (c, order, res_power, samp_freq, y)
+.br
+int     order, samp_freq;
+.br
+float   c[], res_power, y[];
+.SH DESCRIPTION
+This routine computes the lpc power spectra from the lpc filter coefficients
+and the residual power.
+Input to this routine are 
+.B
+order
+lpc filter coefficients
+.B
+c[1]
+to
+.B
+c[order],
+the residual power
+.B
+res_power
+and sampling frequency
+.B
+samp_freq.
+A 1024-point fft is used to obtain the lpc power spectra at 1024 points
+on the unit circle.
+
+.SH BUGS
+None
+.SH SEE ALSO
+get_fft (3-ESPSsp).
+.SH AUTHOR
+Shankar Narayan

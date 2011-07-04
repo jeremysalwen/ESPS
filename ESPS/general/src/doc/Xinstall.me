@@ -1,0 +1,63 @@
+.lo
+.ce 2
+.b
+Installation Instructions for the ESPS/X11 Patch Kit
+.sp
+Document Version: 11/17/89 1.2
+.sh 1 "Introduction"
+.pp
+This document describes how to install the ESPS X11 patch kit for the
+ESPS distribution for Sun3 and Sun4 computers.   This kit can only be
+used with a Sun3 or Sun4 distribution of ESPS.
+.sh 1 "Getting Started"
+.pp
+Before using this kit, you should have ESPS installed (either the source
+or binary distribution) as described in the instructions enclosed with
+the regular distribution.   If you received this kit with an ESPS
+distribution (either an update or a new sale) install ESPS first, check
+it out and then install this kit.  
+.pp
+If you received this update kit by itself, then it is on a tape under
+the directory name \fIXpatch.sun3\fR or \fIXpatch.sun4\fR.   If you
+recevied it as part of an ESPS update or new shipment, then the
+Xpatch directory will be on the distribution media 
+after the ESPS directory.
+.pp
+This kit replaces the ESPS plotting programs with versions compiled for
+X11 on the Sun.   The kit contains a new binary for the program
+\fIimage\fR, and new versions of the plot scripts that support the other
+plot programs (\fIplotsd\fR, \fIplotspec\fR, etc).   It also contains a
+program called \fIxmcd\fR, which is used to convert GPS graphics codes
+to an X window.   
+.sh 1 "To Install"
+.pp
+Before starting the following steps you should be logged in as the same
+userid that owns the ESPS files, so that you can overwrite them.
+.pp
+To install this kit, read it into any directory on your system, although
+\fI/usr/esps\fR is a good place, since you can keep all ESPS related
+files together this way.   After reading in the Xpatch kit 
+directory 
+cd into \fIXpatch.sun3\fR or \fIXpatch.sun4\fR and type:
+\fBemake install\fR.   This runs a script that replaces a
+number of files with new ones from the patch kit.   The replaced files
+will be saved in a directory named \fIsavXXXXX\fR.   (XXXXX is some big
+number.) If these overwrites
+fail, then it is because you aren't the same userid that owns the
+files.
+.pp
+There are new manual pages for the plot programs included in the patch
+kit.  Note that these plot programs default to X windows, but they can
+still be used with Suntools, by using the -Tsuntools option on the plot
+programs, except for \fIimage\fR and \fIplotsgram\fR which use the -Tmcd
+option to force Suntools operation.
+.pp
+If ESPS is not installed at \fI/usr/esps\fR on your system, you will
+need to edit the shell scripts, \fIplotsd\fR, \fIplotspec\fR,
+\fIaplot\fR, \fImlplot\fR, \fIgenplot\fR, and \fIscatplot\fR.
+Near the top of these files, you will find two references to the full
+path \fI/usr/esps/lib\fR.  Change this path to reflect the way the ESPS lib
+directory is installed on your system.
+.sh 1 "For Help"
+.pp
+Call Entropic at 1 202 547-1420 (Eastern US timezone).

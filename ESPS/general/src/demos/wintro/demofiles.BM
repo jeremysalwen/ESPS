@@ -1,0 +1,27 @@
+# Menu for demo description pop up
+# @(#)demofiles.BM	1.3 11/5/91 ERL
+
+"rundemo.sh   (startup script)" xtext -F rundemo.sh
+
+"xw_init.WC   (initial xwaves+ command file)" xtext -F wcommands/xw_init.WC
+
+"wave_pro   (xwaves+ startup profile)" xtext -F files/wave_pro
+
+"wtry.WC (command file for initial displays)" xtext -F wcommands/wtry.WC
+
+"controls.WM (menu file for miscellaneous  controls" xtext -F menus/controls.WM
+
+"menus.WM   (menu file for reconfiguring menus)"   xtext -F menus/menus.WM
+
+"colors.WM  (menu file for colormaps)"  xtext -F menus/colors.WM
+
+"files.WM   (menu file for selecting input data files)" xtext -F menus/files.WM
+
+"demofiles.BM   (menu file for this panel)"	xtext -F menus/demofiles.BM
+
+
+
+
+
+
+

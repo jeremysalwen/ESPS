@@ -1,0 +1,2 @@
+#! /bin/sh
+echo $ESPS_BASE

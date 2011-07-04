@@ -1,0 +1,69 @@
+#! /bin/sh
+# @(#)do_demo	1.7 11/5/91 ERL
+# This script starts up a specific demo.  A crude file locking 
+# technique is used to reduce the probability that more than one
+# demo is run at the same time.  NOTE: the existence and name of 
+# this lock file is also exploited in the script edemos.sh
+
+# Arguments:
+#           $1 = temp directory
+#           $2 = demo directory
+
+demo_temp=$1
+demo_dir=$2
+
+# create temp directory if necessary, check that it is writable
+
+if test ! -d $demo_temp
+then
+  mkdir $demo_temp 2> /dev/null
+fi
+
+touch $demo_temp/foo.$$ 2> /dev/null
+
+if test -f $demo_temp/foo.$$
+ then
+   rm $demo_temp/foo.$$
+ else 
+   echo "$0($2): can't create $demo_temp or can't write in it; exiting. "
+   exit 1
+fi
+
+# check demo lock file
+
+lockfile=$demo_temp/demo.lock
+message=$demo_temp/errormess
+
+if [ -f $lockfile ]; then
+rm -f $message
+cat > $message << EOF
+Cannot run $demo_dir demo because it appears that another demo is running.
+If not, then please "rm $lockfile".
+EOF
+
+  xtext -Wp 0 0 -t "DEMO ERROR" -F $message &
+  exit 1
+fi
+
+# Some demos require that scripts know where the temp directory is
+# so we put its name in a temp file in the user's home directory
+
+rm -f $HOME/.demo_temp
+echo $demo_temp > $HOME/.demo_temp
+
+# Now, we create the lockfile and invoke the demo
+
+touch $lockfile
+
+cd $demo_dir
+
+echo ""
+echo "Running Entropic demo: $demo_dir"
+
+./rundemo $demo_temp
+
+rm -f $lockfile
+
+
+
+

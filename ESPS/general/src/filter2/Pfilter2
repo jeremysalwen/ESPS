@@ -1,0 +1,14 @@
+# @(#)Pfilter2	1.1 12/6/92 ERL
+int filter_psiz = 2;
+int filter_zsiz = 1;
+int filter_nsiz = 2;
+int filter_dsiz = 2;
+float filter_num = {1, 1};
+float filter_den = {1, -1};
+float filter_poles = {  1, 0, 1, 0};
+float filter_zeros ={  -1, 0};
+float filter_gain = 1;
+int start = 1: "starting sample position";
+int nan = 0: "number of samples to process, 0 means end of file";
+#string filter_file_name ?= "$ESPS_BASE/lib/filters/diff1.filt":        \
+#		"name of filter file";

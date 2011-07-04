@@ -1,0 +1,50 @@
+#+0849037826
+ps uaxg
+#+0849037829
+ps -el
+#+0849037834
+ps -ew
+#+0849037837
+ps -e
+#+0849037845
+ps -e | grep elm
+#+0849037848
+start_elmd
+#+0849037859
+tail $ESPS_BASE/lib/elm.log
+#+0849037865
+tail $ESPS_BASE/lib/elm51.log
+#+0849037868
+elmadmin -c
+#+0849037892
+elmadmin -c
+#+0849037908
+setenv ELM_HOST @sparc10
+#+0849037911
+echeckout
+#+0849037921
+xauth add hp700.entropic.com:0 MIT-MAGIC-COOKIE-1 fa4e64550186222040004cf8c82f5085
+#+0849037930
+/usr/openwin/bin/xauth add hp700.entropic.com:0 MIT-MAGIC-COOKIE-1 fa4e64550186222040004cf8c82f5085
+#+0849037934
+xwaves
+#+0849037950
+ls
+#+0849037953
+pwd
+#+0849037954
+cd
+#+0849037957
+suspend
+#+0849037996
+ps -e
+#+0849037999
+ps -e | grep elm
+#+0849038005
+efree
+#+0849038014
+kill 20834 20832
+#+0849040687
+cd
+#+0849040690
+exit

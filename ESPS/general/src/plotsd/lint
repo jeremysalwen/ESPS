@@ -1,0 +1,18 @@
+plotsd.c:
+plotsd.c(173): syntax error at or near symbol }
+plotsd.c(311): warning: pointer casts may be troublesome
+plotsd.c(311): warning: possible pointer alignment problem
+plotsd.c(401): syntax error
+plotsd.c(401): warning: main() returns random value to invocation environment
+plotsd.c(23): static variable sccs_id unused
+drawbox.c:
+plotdataf.c:
+plotscale.c:
+printtime.c:
+plotexscal.c:
+Lint pass2:
+get_fea_siz, arg. 3 used inconsistently	llib-lespsg.c(358)  ::  plotsd.c(179)
+get_fea_siz, arg. 4 used inconsistently	llib-lespsg.c(358)  ::  plotsd.c(179)
+exit value declared inconsistently	llib-lc(236)  ::  plotsd.c(397)
+put_sd_recf value declared inconsistently	llib-lespsg.c(215)  ::  plotsd.c(241)
+sccs_id defined( plotsd.c(23) ), but never used

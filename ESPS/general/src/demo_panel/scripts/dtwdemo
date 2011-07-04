@@ -1,0 +1,60 @@
+#! /bin/sh
+# @(#)dtwdemo	1.1 6/18/91 ERL - dtw demo
+#USE_ESPS_COMMON=off
+#export USE_ESPS_COMMON
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+
+if test `mach_type` = CONVEX
+ then
+  echo This script will fail if you do not have write permission on this directory.
+ else
+  if test ! -w . 
+    then
+	echo "You do not have write permission in this directory."
+	exit 1
+  fi
+fi
+# turn off params warnings
+#rm -f params; touch params
+echo " "
+echo "DTWDEMO: First make test signal by adding three swept sine waves"
+
+testsd -p10000 -f100 -C1000 -l1000 100.sd
+testsd -p10000 -f1200 -C1200 -l700 1200.sd
+testsd -p10000 -f2500 -C1500 -l300 - | addsd - 1200.sd - | addsd - 100.sd 3sine.sum.sd
+echo " "
+echo 'DTWDEMO: Display synthesized waveform (shown in upper left)'
+echo " "
+plotsd -W"=450x300+0+0" 3sine.sum.sd
+sleep 5
+echo "DTWDEMO: Divide signal into 4 frames, compute maximum entropy"
+echo 'DTWDEMO: spectrum analysis, and present as grey scale image (see lower left).'
+echo "DTWDEMO: This is the input test signal used in the dynamic time warping."
+echo " "
+refcof -l2000 -o7 -r1:8000 3sine.sum.sd - | tee test.seq | me_spec - - | \
+image -Ls -B0 -t"Time" -V"Frequency" -G-25:0 -D -W"=500x250+0+625" -&
+sleep 5
+echo "DTWDEMO: Divide signal into 5 frames and present as grey scale image"
+echo 'DTWDEMO: This is the reference before dynamic time warping (see upper right).'
+refcof -l2000 -o7 -r1:10000 3sine.sum.sd - | tee ref.seq | me_spec - - | \
+image -Ls -B0 -t"Time" -V"Frequency" -G-25:0 -D -W"=500x250+625+0" -&
+echo " "
+sleep 5
+echo "DTWDEMO: Compute distance bewteen reference and input signal, and"
+echo 'DTWDEMO: compute and display result of warping (see lower right).'
+echo " "
+echo "DTWDEMO:  %dtw reference.sequence input.sequence warped.sequence"
+echo " "
+echo "DTWDEMO:     dtw distance = `dtw ref.seq test.seq warped.sequence`"
+echo " "
+addgen -F -gsrc_sf -tdouble -v5 warped.sequence
+me_spec  warped.sequence - | image -Ls -B0 -t"Time" -V"Frequency" -G-25:0 -D -W"=500x250+625+625" -&
+echo "DTWDEMO: warping function is shown in upper left."
+echo " "
+pplain -e15 warped.sequence  | testsd -a - - | plotsd -W"=350x350+0+0" -&
+echo "DTWDEMO: 		All Done"
+rm -f 100.sd 1200.sd 3sine.sum.sd ref.seq test.seq warped.sequence
+echo " "
+
+

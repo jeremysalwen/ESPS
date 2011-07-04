@@ -1,0 +1,218 @@
+.lo
+.he '\fIwaves+\fP Version 1.2a''Page %'
+.ce 3
+\fBRelease Notes for \fIwaves\fP+ Version 1.2a\fR
+
+Document version: 1.1 5/18/89
+.sp 3
+.lp
+This document describes the changes from \fIwaves\fP+ Version 1.1 to 
+Version 1.2a, as well as known problems with 1.2a.
+.uh "Bug Fixes"
+.np
+The \fIdisplay\fP option for the \fIwaves\fP+ command \fIadd_espsf\fP
+is supposed to control whether or not the output file from external
+ESPS calls is displayed automatically by \fIwaves\fP+ when the
+external call completes.  This was not working, but has been fixed.
+.np
+Various fixes in \fIlabel\fP and \fIwaves\fP+ to avoid following a
+null pointer.
+.np
+Fixed a bug that could cause attachments to hang.
+.np
+Fixed the scaling of mouse positions to threshold values for the
+modify-contour operation (on spectrogram displays).  The feature did
+not work properly in small windows.
+.np
+Fixed a bug that sometimes caused garbage to be displayed in a
+spectrogram window that was resized while partly covered.
+.np
+Fixed a bit-order problem that affected spectrogram displays on the
+Sun 386i.
+.np
+Fixed a bug that caused the first command file called from another
+command file to be executed twice.
+.np
+Fixed \fIplay_file\fP from the file browser menu.  Previously it ran a
+play command from a wired-in path.  This has been changed to work like
+the other external play commands.  There is no wired in path, the
+globals \fIplay_prog\fP and \fIremote_path\fP are used for the
+command, and the command is printed if the global \fIverbose\fP is
+non-zero.
+.np
+\fIWaves\fP+ now looks for the default .wave_pro and default 
+\fIlabel\fP menu file in the correct location (/usr/esps/lib/waves).  
+.np
+The dummy (flat) formant-bandwidth signal created by the mark-formants
+operation now gets a proper ESPS FEA header when the spectrogram on which
+it is overlaid is an ESPS spectrogram.
+.np
+A bug was removed that caused core dumps when signals with empty buffers
+were plotted.  A warning message has been added for cases when an empty
+buffer is created by reading an unreasonably short segment of a signal.
+.np
+A bug was fixed that sometimes caused the horizontal axis numbering to
+be misaligned with a spectrogram.  This could occur when the global variable
+ref_start was set to a non-default value by a "set ref_start xxx" command
+or a "make ... start xxx" command.
+.np
+Some cases of unnecessary repainting of windows are now avoided,
+and at least one case has been fixed where a window that should have
+been repainted, wasn't.
+.np
+The default \fIadd_espst\fP external command ("Run psps on Segment")
+is no longer run on non-ESPS files.  If the default is changed, 
+the new command will be run on non-ESPS files using the \fB-s\fP
+option to define the marked segment.  
+.np
+\fIWaves\fP+ no longer core dumps on exit when the \fIdebug_level\fP
+is non-zero.  
+.np
+The \fB-E\fP option on \fIsgram\fP (1\-\s-1ESPS\s+1) was being
+ignored.  Also, the generic header item "pre_emphasis" was not being 
+written to the output file.  These both have been fixed.  
+.np
+The \fB-S\fP option on \fIaddfeahd\fP (1\-\s-1ESPS\s+1) has been fixed
+to work properly.  
+.uh "Other Changes"
+.lp
+.np
+A new user-level ESPS program \fIdspsgram\fP (1\-\s-1ESPS\s+1) has
+been added to the set of programs that use the AT&T DSP32 board (the
+other programs are \fIwrecord\fP and \fIwplay\fP).  \fIDspsgram\fP has
+the same interface (and function) as \fIsgram\fP, but it uses the
+DSP32 board rather than the workstation CPU to compute the
+spectrogram.  Thus, \fIdspsgram\fP is a fast version of \fIsgram\fP.
+Previously, spectrograms could be computed on the board only from
+\fIwaves\fP+.  Since \fIdspsgram\fP can be called directly from the
+UNIX shell, either locally or remotely via \fIrsh\fP (note that
+\fIdspsgram\fP works on pipes), the resulting capability provides a
+significant extension to the utility of the DSP32 board.
+\fIDspsgram\fP is shipped as part of the DSP32 support kit.  
+.np
+For installations that have the DSP32 board installed, a lock-file
+mechanism has been added to prevent interference between programs that
+try to use the board at the same time.  The programs \fIdspsgram\fP,
+\fIwplay\fP, \fIwrecord\fP, and \fIwaves\fP have all been modified to
+operate with this mechanism.  Furthermore, a \fIwaves\fP+ global
+\fIdsp32_wait\fP has been added to specify the number of seconds that
+a \fIwaves\fP+ spectrogram or play operation will wait before giving
+up if it finds that the board is in use.  The lock-file mechanism is
+needed now that the \fIdspsgram\fP is available and can be used to
+access the board remotely.  For more information, see the man pages.  
+.np
+\fIWaves\fP+ demos are now being shipped with \fIwaves\fP+.  Please
+see the separate release notes for the demos.  
+.np
+\fIWplay\fP was changed to accept AT&T SIGnal sampled data files.  A
+new option (\fB-a\fP) was added to attenuate or amplify the data so
+that the maximum file value is scaled to the D/A maximum if the
+maximum file value is stored in the header (this used to be a
+default).  Also the \fB-q\fP option was changed to behave more
+consistently.  \fIWaves\fP+ was changed to allow calling the external
+play command when the file is a SIGnal file (now that wplay accepts
+SIGnal file).
+.np
+Added a single-step feature, controlled by a global variable
+\fIcommand_step\fR, to command-file processing.  When in this
+single-step mode, \fIwaves\fP+ prints each command, executes it, and
+then pauses.
+.np
+The interpolating and dithering routines for spectrogram images have
+been rewritten with a view to speeding them up by avoiding floating-point
+computations.  A backup image is now kept for multiplane spectrograms,
+as well as for single-plane dithered spectrograms, so that they can be
+redisplayed without recomputation when uncovered after being covered.
+.np
+The external function calls controlled by the waves commands
+\fIadd_espst\fP and \fIadd_espsf\fP can now be called from spectrogram
+windows as well as waveform windows.  
+.np
+A new \fIwaves\fP+ option (\fB-W\fP) permits the specification of a
+file to read as the profile.  If called without \fB-W\fP, \fIwaves\fP+
+operates as before \- it first tries to read .wave_pro in your home
+directory, and then tries ESPS/lib/waves/.wave_pro.
+.np
+The default setting for the \fIwaves\fP+ global \fIverbose\fP has been
+changed from 0 to 1.  With the new setting, \fIwaves\fP+ prints a
+message naming the profile that was read, and it prints copies
+of any external shell commands that are run.  You can get the old 
+behavior by setting \fIverbose\fP to 0 manually or in your profile.  
+.np
+The naming of output files for external ESPS calls has been changed.
+Previously, the same name was used repeatedly.  This was a problem,
+not only because old results were overwritten, but because
+\fIwaves\fP+ would usually not recognize that the underlying file had
+changed and would therefore display a fresh copy of the old data
+instead of the new data.  Now, the string ".\fIN\fP" is inserted
+before any existing extension (or at the end if there is no
+extension), where \fIN\fP is incremented each time.  The naming of 
+output files for other purposes (e.g., editing) has been changed to
+this same behavior.  
+.np
+The default menu for \fIlabel\fP (/usr/esps/lib/waves/labelmenu) has
+been changed to use the ASCII symbols in the DARPA TIMIT continuous
+speech database.  \fILabel\fP also now prints an appropriate 
+message if no label menu file is found (either the default or one in
+the current directory).  In this case, a (poor) default is generated
+on the fly. 
+.np
+A "fuzz factor" was added to a test of whether a requested segment
+is contained in the buffer of already read data; the effect is to
+avoid some unnecessary rereading of data.
+.np
+The default spectrogram parameter file names have been changed 
+from nb_spect_params and wb_spect_params to nb_params and wb_params 
+(these changes are reflected in the default .wave_pro file). 
+.uh "Known Problems"
+.lp
+.np
+\fIWaves+\fR will try to write some temporary files to the directory
+that the input file comes from and you might not have write permission
+on this directory.  We consider this to be a bug.
+.np
+\fIWaves\fP+ aligns spectrograms and waveforms unreasonably when they
+do not have the same scale.  This is manifested whenever ganged
+scrolling occurs or when an align-and-rescale is performed from a
+waveform window (of differing time scale).
+.np
+If \fIwaves\fP+ runs out of file descriptors, it will crash
+faithfully.  
+.np
+Depending on the analysis window length, spectrograms will be computed
+on a segment that ends before the marked segment end (more noticeable
+with narrowband spectrograms).  See the discussion under BUGS in the
+\fIsgram\fP (1\-\s-1ESPS\s+1) man page.
+.np
+The option to disable saving of spectrogram fragments during editing
+operations may cause problems if it is set (this is the 0x8 option
+discussed under "OPTIONS").  The option is cleared in the default
+ESPS/lib/waves/.wave_pro, and it should be left that way in copies of
+the .wave_pro.  
+.np
+If any programs that use the DSP32 board terminate abnormally (e.g.,
+^C, system crash, bad bug, etc.), the DSP32 lock file can be left on
+/tmp (see "USING THE THE OPTIONAL DSP32 BOARD" in the \fIwaves\fP+
+manual).  The lock file will interfere with \fIwaves\fP+,
+\fIdspgram\fP, \fIwplay\fP, and \fIwrecord\fP until it is removed.
+.np
+The \fIeman\fP window popped up by clicking on the \fIwaves\fP+ HELP
+button must be exited manually ("quit" on the suntools menu) before
+\fIwaves\fP+ will exit properly.
+.np
+If external \fIwaves\fP+ commands are constructed to run remotely by
+means of \fIrsh\fP (e.g., when using the globals \fIplay_prog\fP and
+\fIsgram_prog\fP, or when using the commands \fIadd_espst\fP or
+\fIadd_espsf\fP), the command may block if run when \fIwaves\fP+ is
+running in the background.  This is a \fIunix\fP problem rather than a
+\fIwaves\fP+ bug, but it can be annoying.  It can sometimes be avoided
+by using the \fB-n\fP option (\fIrsh\fP hostname \fB-n\fP), but can
+always be worked around by bringing waves to the foreground.
+.np
+If "bracket markers" is selected from a waveform menu when the marked
+segment has zero-length, subsequent "zoom out" operations have no
+effect.  (One way to get a zero-length segment is to click the left
+mouse button without moving the mouse when the button is bound to
+"up/down move".)  The easiest way to recover from this is to do an
+"align and rescale" operation from any other signal window that is
+linked (time-synchronized) with the frozen one.  

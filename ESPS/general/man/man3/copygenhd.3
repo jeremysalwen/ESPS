@@ -1,0 +1,74 @@
+.\" Copyright (c) 1988, 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)copygenhd.3	1.5 30 Apr 1997 ESI
+.TH COPY_GENHD 3\-ESPSu 30 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+copy_genhd \- copy generic header items 
+copy_genhd_uniq \- copy generic header items and force unique names
+.SH SYNOPSIS
+.ft B
+#include <esps/esps.h>
+.sp .5
+.br
+int
+.br
+copy_genhd(dest, src, name)
+.br
+struct header *dest;
+.br
+struct header *src;
+.br
+char *name;
+.br
+.sp .5
+int
+.br
+copy_genhd_uniq(dest, src, name)
+.br
+struct header *dest;
+.br
+struct header *src;
+.br
+char          *name;
+.ft
+.SH DESCRIPTION
+.PP
+.I copy_genhd
+copies one or all of the generic header items from header \fIsrc\fR to
+header \fIdest\fR.  If \fIname\fP is NULL, all header items in
+\fIsrc\fR are copied; if an item by the same name already exists
+in \fIdest\fR, it is replaced by the corresponding item from
+\fIsrc\fP.  
+.PP
+If \fIname\fP is non-NULL, it is interpreted as the name of a
+single generic header item that is copied from \fIsrc\fP to
+\fIdest\fP.  If an item by the same name already exists in \fIdest\fR,
+it is replaced by the item from \fIsrc\fP.  If no item with the name
+\fIname\fP exists in \fIsrc\fP, then no action is taken.
+.PP
+The number of generic header items copied is returned by 
+\fIcopy_genhd\fP.  Thus, for example, zero is returned if 
+\fIname\fP is non-NULL and does not correspond to an existing 
+generic in \fIsrc\fP.  
+.PP
+\fICopy_genhd_uniq\fP works just like \fIcopy_genhd\fP except that 
+an item in \fIdest\fP is not replaced by a corresponding item with the
+same name from \fIsrc\fP.  Instead, the value is stored in \fIdest\fP
+with a unique generic header item name.  The name is created by 
+appending a suitable digit to the original name.  For details on the
+naming scheme, see \fIuniq_name\fP (3\-\s-1ESPS\s+1), which is used 
+in this case to generate the new name. 
+.SH DIAGNOSTICS
+None
+.SH BUGS
+None known.
+.SH SEE ALSO
+.PP
+.nf
+\fIadd_genhd\fP (3\-\s-1ESPS\s+1), \fIgenhd_list\fP (3\-\s-1ESPS\s+1), 
+\fIget_genhd_val\fP (3\-\s-1ESPS\s+1), \fIgenhd_type\fP (3\-\s-1ESPS\s+1),
+\fIcopy_header\fP (3\-\s-1ESPS\s+1), \fIuniq_name\fP (3\-\s-1ESPS\s+1)
+.fi
+.SH AUTHOR
+Man page by John Shore.  Code by Alan Parker and John Shore

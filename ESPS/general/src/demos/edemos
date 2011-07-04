@@ -1,0 +1,17 @@
+#! /bin/sh
+# @(#)edemos	1.9 1/16/93 ERL
+#
+# This is just a cover for the top level demos script; the cover
+# is used to call the top level script as a background process 
+# (otherwise the user might suspend the process and then hang the 
+# window manager) 	
+
+demo_script=`get_esps_base`/lib/edemos.sh
+
+#demo_script=./edemos.sh
+
+exec $demo_script &
+
+
+
+

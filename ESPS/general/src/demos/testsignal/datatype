@@ -1,0 +1,4 @@
+#! /bin/sh 
+# @(#)datatype	1.2 10/17/91 ERL
+# just returns the second argument (in calling context this is the type)
+echo $2

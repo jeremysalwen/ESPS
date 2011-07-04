@@ -1,0 +1,253 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)lloydcbk.1	3.2	11/2/87 ESI
+.TH LLOYDCBK 1\-ESPS 11/2/87
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+lloydcbk \- design a scalar quantization codebook by using lloyd's algorithm
+.SH SYNOPSIS
+.B lloydcbk
+[
+.BI \-x " debug_level"
+] [
+.BI \-P " params_file"
+] [
+.BI \-n " codebook_size"
+] [
+.BI \-c " convergence"
+] [
+.BI \-h " history"
+] [
+.BI \-o " description"
+] [
+.BI \-s " source_file"
+] [
+.BI \-d " distortion"
+] [
+.BI \-t " codebook_type"
+] [
+.BI \-e " element"
+] [
+.BI \-S " source_list"
+]
+.I " infile" 
+.I " outfile"
+.SH DESCRIPTION
+.PP
+.I Lloydcbk
+designs a scalar quantization codebook (
+.I outfile
+) from training data
+that is in an ascii file (
+.I infile.
+)
+.I Infile 
+must contain
+only one floating number
+per line.
+The distortion measure (
+.I distortion
+),
+the convergence threshold (
+.I convergence
+),
+the identity of the codebook (
+.I codebook_type
+),
+a description of the origin of the codebook (
+.I description
+),
+and the number of codewords in the codebook (
+.I codebook_size 
+)
+must be specified.
+A summary of the design process can be saved by specifying a
+.I history
+file name,
+the source(s) of the data can be saved by using
+.I source_file
+or 
+.I source_list,
+and a
+particular element value can be identified by using
+the 
+.I element
+flag.
+.PP
+If 
+.I infile
+is replaced by "\-",
+standard input is read and used as training data by 
+.I lloydcbk 
+to design a codebook.
+Similarly,
+if 
+.I outfile
+is replaced by "\-",
+the codebook is written to standard output.
+.PP
+Note that 
+.B \-h, \-o, \-s, \-t, \-e
+and 
+.B \-S
+are for recording keeping purposes only;
+they do not affect the design of the codebook.
+.SH ESPS PARAMETERS
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.PP
+.I cbk_size 
+(an integer),
+.I convergence
+(a float),
+and
+.I distortion
+(a string)
+may be specified in a 
+.I params
+file.
+If any of these are specified on the command line,
+the command line value over rides the 
+.I params 
+file value.
+.SH ESPS COMMON
+The common file is not accessed.
+.SH ESPS HEADER
+The header from each of the source files is
+stored in the SCBK header.
+.PP
+The following values are written to the header of the SCBK file:
+.I common.prog, common.vers, common.progdate, 
+.I  hd.scbk->convergence, hd.scbk->num_cdwds, hd.scbk->num_items, 
+.I hd.scbk->codebook_type, hd.scbk->element_num,
+and
+.I hd.scbk->distortion.
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-x " debug_level"
+.I debug_levels
+greater than 0 cause messages to be printed. The higher the 
+.I debug_level
+the greater the detail of the debug information.
+The default level is zero, which causes no debug output.
+.TP
+.BI \-P " params_file"
+Use the ESPS parameter file 
+.I params_file
+rather than the default parameter file,
+which is 
+.I params.
+.TP
+.BI \-n " codebook_size"
+Specifies the number of codewords in the codebook.
+It must be a positive number.
+.TP 
+.BI \-c " convergence"
+Convergence threshold (floating value) to use at each level of clustering.
+When 
+{1 - [(new total distortion)/(old total distortion)]}
+is less than 
+.I convergence,
+the clustering stops. If the current number of codewords is equal
+to 
+.I codebook_size,
+.I lloydcbk 
+is done, otherwise 
+.I lloydcbk 
+splits the current codewords and starts a new improvement loop.
+Reasonable convergence values are data dependent,
+but .001 is often reasonable.
+.TP
+.BI \-h " history"
+If a file name is specified, 
+.I lloydcbk 
+writes to it information about each iteration of clustering.
+.TP 
+.BI \-o " description"
+A description of the method used to generate the training
+data is written here and stored in the TYP_TEXT field of the output file
+header. If the 
+.B \-o 
+option is not specified,
+.I lloydcbk
+prompts the user for a description.
+The maximum length of this string is 32768
+characters. (Not supported yet)
+.TP 
+.BI \-s " source"
+The name of the ESPS file from which the training data was derived.
+Multiple sources may be specified by specifying them individually
+with separate 
+.B \-s 
+flags. The header of each source file is added to the codebook file's header.
+(Not supported yet)
+.TP
+.BI \-d " distortion"
+The distortion measure used in the clustering.
+Currently,
+only SQUARED_ERROR is supported.
+.TP
+.BI \-t " codebook_type"
+The name of the parameter, such as reflection coefficient, pulse power, etc.,
+that the codebook represents.
+Legal values are defined in <esps/header.h>, and they include
+RC_VCD_CBK= voiced reflection coefficients, RC_UNVCD_CBK = unvoiced 
+reflection coefficients, 
+RC_CBK = reflection coefficients, PP_CBK = pulse powers, 
+PD_CBK = pulse durations,
+FL_CBK = frame lengths, 
+EP_CBK = lpc error powers, PPR_CBK = pulse power ratios,
+PPD_CBK = pulse power differences, PDD_CBK = pulse duration differences, 
+LAR_UNVCD_CBK = unvoiced log area ratios, LAR_VCD_CBK 
+= voiced log area ratios,
+and LAR_CBK = log area ratios.
+.TP
+.BI \-e " element"
+The element of the
+.I codebook_type
+that is being processed.
+Legal values are integers greater than or equal to zero, and two negative 
+values that have special meaning.
+\-1 means all elements of the specified 
+.I codebook_type
+are used, and \-2 means
+that no record of element value is being kept.
+For 
+.I codebook_type's
+that imply two adjacent elements, such as PPR,
+the element value is the first of the two adjacent elements.
+.TP
+.BI \-S " source_list"
+An ascii file that lists all the sources of the input data may be specified.
+This file contains one source file per line.
+.I Lloydcbk
+opens this file, reads each source name,
+opens that file,
+and copies the header into the output SCBK file. (Not supported yet)
+.SH DIAGNOSTICS
+.PP
+A fatal error occurs if the specified source file does not exist, or 
+if it is not an ESPS
+file.
+.SH EXPECTED CHANGES
+.PP
+Additional distortion measures will be added.
+.SH SEE ALSO
+.PP
+lloyd(3-ESPS)
+.SH BUGS
+The 
+.B \-o, \-s, 
+and
+.B \-S
+options are not yet supported.
+.SH REFERENCES
+Y. Linde, A. Buzo, R.M. Gray,
+An Algorithm for Vector Quantizer Design
+IEEE Transactions on Communications,
+Vol. COM-28, No. 1, January, 1980
+.SH AUTHOR
+.PP
+Manual page and code by David K. Burton

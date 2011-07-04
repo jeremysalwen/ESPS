@@ -1,0 +1,58 @@
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)istypenume.3	1.2 16 May 1997 ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH  IS_TYPE_NUMERIC 3\-ESPSu  16 May 1997
+.SH NAME
+.nf
+name \- does type code represent a numeric data type
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+
+int
+is_type_numeric(type)
+    int type;
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+This function checks whether
+.I type
+is the numeric code for a numeric data type.
+It returns YES if
+.I type
+is equal to one of the constants BYTE, SHORT, LONG, FLOAT, DOUBLE,
+BYTE_CPLX, SHORT_CPLX, LONG_CPLX, FLOAT_CPLX, or DOUBLE_CPLX.
+It returns NO if
+.I type
+is a non-numeric type code (e.g. CODED, EFILE) or invalid.
+.SH EXAMPLES
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+None.
+.SH FUTURE CHANGES
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+.na
+.IR is_file_complex (3\-ESPSu)
+.IR is_field_complex (3\-ESPSu)
+.br
+.IR is_type_complex (3\-ESPSu)
+.IR cover_type (3\-ESPSu)
+.ad
+.SH AUTHOR
+.PP
+Rod Johnson
+
+
+
+

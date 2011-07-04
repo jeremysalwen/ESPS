@@ -1,0 +1,594 @@
+
+
+
+
+ESPS Version 5.0 Release Notes                        page 1
+
+
+               ESPS Version 5.0 Release Notes
+
+               Document version: 1.8 9/10/93
+
+1.  INTRODUCTION
+
+This document provides notes for release 5.0 of ESPS.  These
+release  notes  document  changes to ESPS since the revision
+4.2.  This document can be viewed conveniently  using  einfo
+(1-ESPS) or eversion (1-ESPS).
+
+This document does not attempt to explain  new  and  changed
+programs  in  detail.  Refer to the manual pages for all new
+and changed programs for complete details needed to use  the
+programs.
+
+Extensive changes were made in the  previous  release  (ESPS
+Version  4.2;  waves+ Version 3.1).  These changes were pri-
+marily aimed at correcting errors and  numerous  operational
+deficiencies  in  the  software.  Please refer to either the
+printed copy of these earlier release notes, or see the  on-
+line     version     in     $ESPS_BASE/doc/rel4.2.doc    and
+$ESPS_BASE/doc/wrel3.1.doc.
+
+2.  SUMMARY OF MAJOR CHANGES
+
+Major highlights include:
+
+   + major improvements to the filter design  and  filtering
+     programs
+
+   + new analysis and synthesis programs
+
+   + improved hardcopy output
+
+   + updated documentation
+
+3.  NEW PROGRAMS
+
+3.1.  ANALYSIS/SYNTHESIS PROGRAMS
+
+A new set of ESPS analysis/synthesis  programs  are  created
+for  ESPS 5.0 release.  These programs allow maximum control
+over analysis/synthesis parameters and  permit  experimenta-
+tion with intermediate results. They are intended to replace
+the older lpcana(1-ESPS) and lpcsynt(1-ESPS).  The following
+is  a  list  of  new ESPS 5.0 speech analysis/synthesis pro-
+grams:
+
+epochs
+     A pitch-epoch estimation  program.   Pitch  epochs  are
+     computed  by dynamic programming optimization algorithm
+     from speech residual.  Epochs also attempts to estimate
+
+
+
+
+
+
+
+
+
+
+ESPS Version 5.0 Release Notes                        page 2
+
+
+     the  voicing state of speech residual.  Use its various
+     parameters to control the estimation.
+
+formsy
+     This   is   n-formant   synthesizer.    Controls   over
+     bandwidths, synthesis rate, F0 and formant characteris-
+     tics are provided.
+
+get_f0
+     A faster F0 estimation  program  than  formant(1-ESPS).
+     Unlike  formant,  get_f0  has  a simple interface - one
+     FEA_SD input to produce one FEA file  output,  with  no
+     intermediate  files  produced.   In addition, get_f0 is
+     more flexible  in  controlling  F0  characteristics  by
+     means  of  various  parameters.  Highpass filtering for
+     input signal in formant is not automatically  performed
+     in get_f0 to save computational time.
+
+get_resid
+     A program to compute speech residual by inverse filter-
+     ing.   The  speech residual is required for pitch-epoch
+     estimation program epochs(1-ESPS).  Use  refcof(1-ESPS)
+     to  compute fixed-frame based LPC or reflection coeffi-
+     cients before inverse filtering.
+
+lp_syn
+     This synthesizes speech signal  from  either  a  direct
+     excitation  source  such  as speech residual, or from a
+     parametric source such as F0, RMS data.  Controls  over
+     parameter source, such as synthesis rate, are provided.
+
+mask This is a useful program to suppress/fade segments of a
+     FEA_SD  file  or  to mix segments of FEA_SD files.  For
+     example, a FEA_SD file containing pitch epoch  impulses
+     produced by epochs often misclassifies unvoiced regions
+     as voiced, you can  use  mask  to  suppress  the  pitch
+     epochs in unvoiced regions.
+
+ps_ana
+     This  computes   LP   parameters   pitch-synchronously.
+     Analysis  frames  are  based on the pitch-epoch impulse
+     files produced by epochs.  Output analysis results  are
+     periodically  resampled.   Ps_ana also computes F0 tra-
+     jectory pitch-synchronously.
+
+syntdemo
+     This is a demonstration shell  script  that  introduces
+     the  new  ESPS  analysis/synthesis  programs  and  also
+     serves as an general example of utilizing  xwaves,  the
+     signal visualization tool, and XIG (X-interface Genera-
+     tion), the X-Window user-interface customization facil-
+     ity,  for  interactive  DSP  programming.  You can find
+     this script in $ESPS_BASE/demo.
+
+
+
+
+
+
+
+
+
+
+ESPS Version 5.0 Release Notes                        page 3
+
+
+3.2.  NEW FILTER PROGRAMS
+
+cb_filt
+     desings a multiband FIR filter or a  differentiator  by
+     constraint-based   algorithm   based   on   Meteor:   A
+     constraint-based FIR filter design program,  Steiglitz,
+     Parks,  and  Kaiser,  IEEE Trans. on Signal Processing,
+     Vol 40, No.8, August, 1992.   This program  is  capable
+     of designing a nearly flat filter on its passband.
+
+pkmc_filt
+     designs an equi-ripple FIR  filter  by  Parks-McClellan
+     algorithm.   It  designs multiband filter, differentia-
+     tor, and Hilbert transformer.
+
+win_filt
+     designs a multi-band FIR filter using Kaiser  windowing
+     method.
+
+xfir_filt
+     This is a  shell  script  intended  as  an  example  of
+     extending  ESPS  programs  with  XIG  user interface to
+     build a customized filtering design  environment.   All
+     ESPS FIR programs are used.
+
+3.3.  OTHER NEW PROGRAMS
+
+ebanner
+     a cute program that converts ASCII text into   a   sam-
+     pled   data   waveform  whose   wide-band   spectrogram
+     image shows the ASCII text in  the  form   of   raster-
+     graphics   fonts.   The  characters  are represented as
+     a matrix of dots - some on and some off.  For each "on"
+     dot,  a  wavelet  with  the  correct  location  in  the
+     time-frequency  plane  is   generated.   All  of  these
+     wavelets are then summed to produce the output.
+
+meter
+     this is a X-window based  front-end  program  for  ESPS
+     recording  programs  to  control  and monitor recording
+     process.
+
+ps2frame
+     this program is used  to  convert  embedded  PostScript
+     files  produced  by the print graphic feature of xwaves
+     and other programs to a form that can be imported  into
+     IFrameMaker.    We believe that the embedded Postscript
+     files produced by our programs is legal PostScript, but
+     Frame  will not handle these files, because of the user
+     of BoundingBox: (atend)  near  the  top  of  the  file.
+     ps2frame replaces this with the real boundingbox infor-
+     mation that is located near the end of the file.
+
+
+
+
+
+
+
+
+
+
+
+ESPS Version 5.0 Release Notes                        page 4
+
+
+spec_subr
+     this is a new program for selecting frequency subranges
+     of  FEA_SPEC files.  The output is a FEA_SPEC file con-
+     taining the subset  of  the  data  in  the  input  file
+     corresponding  to a range of frequencies specified with
+     a command-line option. The output frequency  format  is
+     "ARB_FIXED"---frequencies  are listed explicitly in the
+     header.  A command running the program can be added  to
+     the xwaves menu to provide a frequency-zoom capability.
+
+xspecav
+     to be called from xwaves.  The new xspecav uses filter-
+     ing  operation  to  do  spectral averaging.  The filter
+     kernels can be one of the rectangular, hanning, hamming
+     window-  designed  FIRs.   The delay introduced by non-
+     causal filtering is offset  by  start_time  --  a  time
+     value  corresponding to filter delay is subtracted from
+     the original  start_time.   This  means  the  resulting
+     spectral  slice to which the cursor points comes from a
+     region of the original data windowed by one of the win-
+     dows, with its center corresponding to the time cursor.
+
+zst  a shell script which  sets  start  times  to  zero  and
+     adjusts corresponding label files, has been added.
+
+4.  CHANGES TO ESPS PROGRAMS
+
+addfea
+     there was a bug that caused core dumps on  some  archi-
+     tectures  when the length of the comment added with the
+     -c option was exactly 11.
+
+atosps
+     same fix as for fea_edit above.
+
+btosps
+     A bug was fixed that sometimes caused btosps to put  an
+     incorrect  value  for  the header item max_value in its
+     output file.
+
+classify
+     added parameter file processing and a default parameter
+     file.
+
+classify
+     added warning  message  if  0  determinant  of  inverse
+     covariance is found.
+
+fbuttons
+     added -s option to specify a  scrollable  list  in  the
+     panel.
+
+
+
+
+
+
+
+
+
+
+
+
+ESPS Version 5.0 Release Notes                        page 5
+
+
+fbuttons
+     added -q option to allow suppression  of  quit  button;
+     added  -Q option to allow arbitrary label for quit but-
+     ton; added -l option to allow command for execution  on
+     exit  via quit button; fixed some bugs in the placement
+     geometry; and program buttons labels not  appear  above
+     the buttons, to save space.
+
+fbuttons
+     -c and -h options were added.  If -c  is  specified,  a
+     set  of exclusive panel choice buttons is used for each
+     olwm submenu instead of a menu button with a  pull-down
+     menu.  By default the choice buttons are laid out vert-
+     ically.  If -h is used, they are laid out horizontally.
+
+fea_edit
+     fixed problem that fea_edit had with  files  containing
+     CHAR generic header items.
+
+feafunc
+     an additional function exp10 (ten-to-the-power, inverse
+     of log10) has been added.
+
+feafunc
+     minor changes were made to specify explicitly the value
+     returned  by  convention by LOG for zero arg.  This was
+     done for the benefit of the new function arr_op,  which
+     uses the LOG case of arr_func in computing powers.
+
+filter
+     this program has been removed and replaced by  filter2,
+     which  was  introduced  in  the  previous ESPS release.
+     Filter has been removed (it is unstable) and  the  name
+     filter is now linked to filter2.
+
+find_ep
+     bugs fixed: (1) the filename in the common file was not
+     updated  if the -w option was in effect; (2) one of the
+     debugging messages produced with the -x  option  showed
+     garbage  for the output file name; (3) if the -n option
+     was used with no filename in common, the program  would
+     produce  a  core  dump,  rather  than an error message,
+     before  exiting.    The   150   ms   lower   limit   on
+     "silence_req",  the  argument  of  the -s option, is no
+     longer enforced; it is just stated as a recommend lower
+     limit  in  the  manual  entry.  A missing -b option was
+     added to the Synopsis in the manual entry.
+
+image
+     a bug in the image program was fixed that  caused  core
+     dumps  when  a debug level of 2 or higher was specified
+     with the -x option.
+
+
+
+
+
+
+
+
+
+
+
+ESPS Version 5.0 Release Notes                        page 6
+
+
+mbuttons
+     If -c is specified, a set  of  exclusive  panel  choice
+     buttons is used for each olwm submenu instead of a menu
+     button with a pull-down menu.  By  default  the  choice
+     buttons  are  laid out vertically.  If -h is used, they
+     are laid out horizontally.
+
+mbuttons
+     added -Q option to allow arbitrary label for quit  but-
+     ton;  added -l option to allow command for execution on
+     exit via quit button.
+
+mu2esps
+     this program  can  now  handle  SUNOS  4.1  audio  file
+     headers.
+
+plot3d
+     Two plot3d bugs were fixed:  moving the  box  with  the
+     mouse  with  no  data  loaded  could cause a core dump;
+     sometimes the 3d cursors were drawn in the wrong  rela-
+     tion to the mouse position.   Major improvement is that
+     hardcopy output of the plot is now possible, in  either
+     PostScript  or  PCL.   A print setup panel is available
+     for selecting output type, scaling, and output device.
+
+plotfield
+     A bug was fixed in the  plotfield  script  that  caused
+     incorrect processing of command-line arguments when the
+     text argument of the -t option contained blanks.
+
+sfconvert
+     changed the default value of sfwin_len in  the  default
+     parameter  file  to  a  more  reasonable  value  of .01
+     (seconds).
+
+sgram
+     reversed the sense of the -z option  so  that  warnings
+     about zero power in frames are off by default.
+
+splay
+     a bug was fixed with caused the -a to  have  no  effect
+     unless  the  -b option was used also.  And if -a and -b
+     are both used, the -b option has no effect.
+
+srecord
+     modified to require an output file,  or  -  to  specify
+     standard output.
+
+tofspec
+     The tofspec program can now produce FEA_SPEC  files  in
+     "ARB_FIXED"  format---frequency  values  are not neces-
+     sarily uniformly spaced and are given  by  an  explicit
+     list  in  the header.  The frequencies may be specified
+
+
+
+
+
+
+
+
+
+
+ESPS Version 5.0 Release Notes                        page 7
+
+
+     by a command-line option or a parameter-file entry.
+
+vqasc
+     memory leak fixed.
+
+vqdesasc
+     added -l option as was added to vqasc in  version  4.2.
+     This  option  is  to  allow specification of input line
+     length to override compiled in default.
+
+wmse_filt
+     a FIR design program by minimum mean square error  cri-
+     teria,  no  longer  prompts user for design parameters.
+     It now supports standard ESPS parameter  file  process-
+     ing,  which  can  be  used  with  xeparam(1-ESPS),  and
+     eparam(1-ESPS).
+
+xfft xfft was changed to permit a -c option; a new parameter
+     file  PWfftc  was  created  to  facilitate  taking fft-
+     spectrograms of complex sampled data.
+
+5.  NEW AND CHANGED LIBRARY FUNCTIONS
+
+arr_func
+     modified to handle additional function, exp10,  inverse
+     of log10.  Use by feafunc program.
+
+arr_op
+     This a new library function for performing  element-by-
+     element  arithmetic  operations on arrays of any of the
+     ESPS numeric types.  The currently supported operations
+     are  addition,  subtraction,  multiplication, division,
+     forming a complex number from its  real  and  imaginary
+     parts, and raising a given number to a given power.
+
+exv_bbox
+     exv_bbox was extended to support exclusive panel_choice
+     buttons  for  submenus  instead  of  menu  buttons with
+     pull-down menus.  There are two new items in the param-
+     eter structure (typedef bbox_par):
+       int button_choice;            /* if true, show submenus as panel choice
+                                        items instead of button menus */
+       int choice_horizontal;        /* if true, panel choice items are
+                                        displayed horizontally */
+
+exv_bbox
+     added the following parameters for allowing the user to
+     put  an  arbitrary label on the QUIT button and to exe-
+     cute an arbitrary function when it is pressed
+               char *quit_label;     /* if non-NULL, name for QUIT button */
+               char *quit_data;      /* QUIT button data string */
+               void (*quit_data_proc)(); /* execution function for QUIT data data */
+     these changes are needed in order to support  analogous
+
+
+
+
+
+
+
+
+
+
+ESPS Version 5.0 Release Notes                        page 8
+
+
+     changes to fbuttons and mbuttons
+
+get_genhd_coded
+     A bug was fixed in the library function get_genhd_coded
+     for  items  with  more  than  one element, the returned
+     value consisted of repetitions of the first element.
+
+matinv
+     a bug in the determinant functions, determ and determ_d
+     was  fixed:  they would allocate memory and not free it
+     before returning.  The  problem  was  apparent  in  the
+     operation  of  the  classify  program, which would fail
+     with a memory allocation failure after classifying some
+     number  of records (a number depending on the number of
+     classes and the number of features used for classifica-
+     tion).
+
+read_header
+     a bug was fixed that could cause a program to fail when
+     reading a FEA_SPEC file with frequency format ARB_FIXED
+     by unnecessarily demanding the presence of a sf generic
+     header  item.   read_header was also modified to handle
+     version 1.7a of Sphere headers.
+
+waves_show_sd
+     this new library function allows  user  to  display  an
+     array  of  data  by  a  simple call and have the result
+     displayed in an xwaves window if xwaves is  running  in
+     server mode.
+
+6.  THE PUB DIRECTORY
+
+The directory $ESPS_BASE/pub contains full-source copies  of
+certain  relevant and useful public domain programs. You are
+free to use them and pass them on in any  manner  consistent
+with  restrictions  stated  by  their authors.  This release
+contains these programs:
+
+ghostscript
+     This is a GNU implementation of PostScript.   It can be
+     used to display PostScript files on the screen for cer-
+     tain PostScript translations.  We have included  it  to
+     make  the script ps2epsi available.  This script (which
+     uses ghostscript will take the PostScript file from the
+     new  print  option  on xwaves and plot3d and generate a
+     new file including a preview image.  This allows a  low
+     resolution  image of the PostScript file to be shown on
+     the screen when the file is imported into programs such
+     as FrameMaker.
+
+tpipe
+     This is a utility that splits a unix pipeline into  two
+     pipelines.   Stated differently, the output of one pipe
+
+
+
+
+
+
+
+
+
+
+ESPS Version 5.0 Release Notes                        page 9
+
+
+     can provide the intput to two others.  tpipe was  writ-
+     ten by David B. Rosen of Boston University.
+
+xgrabsc
+     A utility that allows you to grab arbitrary portions of
+     the  screen and output them in Postscript or many other
+     formats.  xgrabsc was written by Bruce Schuchardt.
+
+tek2ps
+     Written by Michael  Fischbein,  this  program  converts
+     tektronix graphics codes into Postscript.  This is used
+     by some of our plotting programs.
+
+shellforms
+     This is a utility to build  and  edit  forms.   It  was
+     written by Paul Lew.
+
+ghostscript
+     This is a GNU  implementation  of  PostScript.   It  is
+     included  here  because  it  includes a script that can
+     process a PostScript file as output by  the  new  print
+     graphics  feature  of ESPS and xwaves and add a preview
+     image.  This script is ps2epsi.   The  particular  ver-
+     sion of this script in our bin directory has been modi-
+     fied to refer the the ghostscript library  in  our  pub
+     directory.    If you desire to use the general features
+     of ghostscript, you will have to install  it  from  the
+     source.
+
+7.  KNOWN PROBLEMS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

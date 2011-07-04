@@ -1,0 +1,61 @@
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc. 
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)Makefile	1.4	6/29/93	ESI/ERL
+# 
+# Written by:  
+# Checked by:
+# Revised by:
+# 
+# Makefile for: frame
+# 
+
+
+CFLAGS = $(PROGCFLAGS) -O
+
+OBJS = frame.o
+SRCS = frame.c
+PROGNAME = frame
+MANNAME = frame.1
+PARAM = Pframe
+PARAMW = PWframe
+
+$(PROGNAME): $(SPSLIB) $(OBJS)
+	cc  $(CFLAGS) $(OBJS) $(SPSLIB) -lm -o $(PROGNAME)
+
+$(OBJS): $(SINC)/esps.h 
+
+install: $(PROGNAME)
+	-$(STRIP) $(PROGNAME)
+	-mv -f $(BINDIR)/$(PROGNAME) $(OLDBIN)/$(PROGNAME)
+	-chmod $(PROGMOD) $(OLDBIN)/$(PROGNAME)
+	mv -f $(PROGNAME) $(BINDIR)/$(PROGNAME)
+	chmod $(PROGMOD) $(BINDIR)/$(PROGNAME)
+	-diffmk $(MANDIR)/man1/$(MANNAME) $(MANNAME) man.diff
+	@echo diffmked man page left in man.diff
+	cp $(MANNAME) $(MANDIR)/man1/$(MANNAME)
+	chmod $(MANMOD) $(MANDIR)/man1/$(MANNAME)
+	-rm -f $(PARAMDIR)/$(PARAM)
+	cp $(PARAM) $(PARAMDIR)/$(PARAM)
+	chmod $(LIBMOD) $(PARAMDIR)/$(PARAM)
+	-rm -f $(PARAMDIR)/$(PARAMW)
+	cp $(PARAMW) $(PARAMDIR)/$(PARAMW)
+	chmod $(LIBMOD) $(PARAMDIR)/$(PARAMW)
+	
+clean:	
+	-rm -f $(OBJS) $(PROGNAME) test.sd lint
+	
+lint:	$(SRCS)
+	$(LINT) $(LINTFLAGS) $(SRCS) $(LINTLIB) > lint
+
+test:	$(PROGNAME)
+	-sh $(PROGNAME).test

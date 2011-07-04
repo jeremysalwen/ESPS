@@ -1,0 +1,5 @@
+#@(#)Pxfir_filt	1.5 7/19/93
+string filt_mthd ?= "EQUI_RIPPLE" : "Design method":{"EQUI_RIPPLE", "CONSTRAINT_BASED", "WEIGHTED_MS", "WINDOW_METH"};
+string filt_type ?= "LOWPASS":"Filter type (DIFFERENTIATOR is only available for EQUI_RIPPLE and CONSTRAINT_BASED, HILBERT is available for EQUI_RIPPLE)":{"LOWPASS","HIGHPASS","DIFFERENTIATOR","HILBERT","MULTIBAND"};
+int nbands ?= 2:"Number of bands (for MULTIBAND only):";
+float samp_freq ?= 8000: "Sampling frequency:";

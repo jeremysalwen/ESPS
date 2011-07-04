@@ -1,0 +1,1454 @@
+.\" Copyright (c) 1987-1990 AT&T, Inc.
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1990-1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)xwaves.1	1.14 9/24/98 ATT/ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH XWAVES 1\-ESPS 9/24/98
+.if t .ds - \(em\h'-0.5m'\(em
+.if n .ds - ---
+.if n .ds lq \&"\"
+.if t .ds lq \&``
+.if n .ds rq \&"\"
+.if t .ds rq \&''
+.\" Macro for chapter titles like "xlabel" or "xchart reference"
+.\" or "xmarks quick reference"<punctuation>.
+.de qI
+.ie '\\$2'' \&\\*(lq\fI\\$1\fP\\*(rq\\$3
+.el \&\\*(lq\fI\\$1\fP \\$2\\*(rq\\$3
+..
+.ds wD \fIwaves+ Manual\fP
+.ds wR \fIwaves+ Reference\fP
+.ds wT \fIIntroducing waves+\fP
+.ad l
+.SH "NAME"
+xwaves \- an interactive display program for X
+.SH SYNOPSIS
+.B xwaves
+[
+.B \-c
+] [
+.BI \-n " alternative_name"
+] [
+.BI \-p " socket_port"
+] [
+.B \-s
+] [
+.BI \-w " wave_pro"
+] [
+.BI \-x " debug_level"
+] [
+.I infile1 infile2 ...
+]
+.SH DESCRIPTION
+.PP
+This manual entry briefly describes
+.I xwaves,
+the central component of the speech analysis package
+.I waves+,
+but does not pretend to be a complete
+.I xwaves
+manual.
+For full details you will need to follow the references to the
+complete documentation in \*(wD and \*(wR.
+See \*(wT for a hands-on tutorial introduction.
+.SS Introduction
+.PP
+.I xwaves
+is an interactive program for display and manipulation of time-series data.
+It lets you, among other things,
+browse through lengthy signals,
+zoom in on selected portions to examine features in detail,
+cut and paste segments of the signal,
+do interactive spectral analysis and signal annotation,
+play back signals,
+compute and display speech formant frequencies and pitch contours,
+and perform other editing and display operations.
+Operations can be selected from menus with the mouse,
+activated by single keystrokes at the keyboard,
+or invoked through commands in an interpreted language.
+Commands can be entered manually via the control panel,
+supplied in command files,
+or sent to
+.I xwaves
+from other programs.
+Besides its many built-in capabilities,
+.I xwaves
+provides several modes for customization and functional extension.
+It implements most of its signal-processing functions
+by calling ESPS or other programs running somewhere on the local network.
+The graphical interface is based on the X Window System.
+.I xwaves
+displays can be generated and controlled
+by another UNIX process, and
+.I xwaves
+can be used as an interface to control another UNIX process.
+.PP
+.I xwaves
+is executed like any other UNIX process,
+and input files can be specified on the command line.
+However, there are many other ways of specifying input files,
+and output file names are never specified on the command line.
+The files, if any, specified on the command line are interpreted
+either as data to be displayed or as commands to be executed,
+depending on the file contents.
+If the first non-comment line (not starting with #) in the file
+is a line beginning with \*(lqwaves\*(rq,
+the file is interpreted as a command file.
+Up to 50 files can be specified on the command line.
+.SS The main control panel
+.PP
+The basic interface to
+.I xwaves
+is its
+.I main control panel.
+This contains text input items 
+that specify data file names, commands, and command-file names,
+and it contains buttons that access on-line help and control program flow
+in various ways.
+By default, the control panel appears
+in the upper left corner of the screen
+when startup is complete.
+The value of a text item can be modified
+by activating it with the left mouse button
+and then typing in or editing text.
+The new value does not take effect until
+.I entered
+by hitting the RETURN key (while the item is active).
+The panel buttons perform their functions immediately
+when selected with the left mouse button.
+The names of the panel items and brief explanations follow.
+For more complete explanations, see \*(lqThe
+.I xwaves
+main control panel\*(rq in \*(wD.
+.TP
+.B INPUT file:
+The relative or absolute pathname of a signal to be displayed.
+To read in and display a new signal, enter the file name here.
+.TP
+.B OUTPUT file:
+Specifies the names of output files to be created by the
+.B save segment in file
+and
+.B insert file
+functions (see \*(lqData window menu items\*(rq in \*(wD).
+An extension appropriate to the data type is automatically appended.
+A purely alphabetic name is used without modification
+(except for the appended extension).
+A name whose basename ends in a number increments the number
+after the output waveform segment is stored.
+A name preceded with \*(lq@\*(rq specifies a text file
+containing a list of output filenames.
+If
+.B OUTPUT file:
+is blank, the filename of the source signal is modified by insertion
+of a \*(lq.\*(rq followed by a number chosen to maintain uniqueness.
+A list of files generated during the current run
+can be browsed by clicking on the
+.B OUTPUT file:
+item with the right mouse button.
+.TP
+.B OBJECT name:
+The name by which to refer to an
+.I object
+or
+.IR "display ensemble" :
+a set of data display windows
+that are treated as a unit for certain purposes.
+The time cursors and markers of all display windows in an object
+are synchronized.
+If a new object name is specified, subsequently generated data display
+windows become part of a logically distinct and independent object.
+.TP
+.B COMMAND (or @file):
+A direct command in the
+.I xwaves
+command language or the pathname of a text file
+(preceded by the character \*(lq@\*(rq)
+containing commands to be executed.
+.TP
+.B PAUSE
+Clicking on this button with the mouse
+while commands are being executed from a command file
+causes the command file to suspend execution.
+The
+.B PAUSE
+button has no effect on commands coming from processes via the
+.IR send_xwaves (1\-ESPS)
+program or the
+.IR SendXwaves (3\-ESPS)
+library functions.
+.TP
+.B CONTINUE
+Clicking on this button causes
+.I xwaves
+to resume processing of a command file that was suspended by a
+.I pause
+or
+.I sleep
+command or by clicking on the
+.B PAUSE
+button.
+If the global variable
+.I command_step
+is non-zero,
+.B CONTINUE
+causes
+.I xwaves
+to execute only the next pending command and then pause again,
+allowing the user to single-step through a sequence of commands.
+.TP
+.B Attach:
+This collection of buttons provides a selection of auxiliary programs
+.RI ( attachments \*-see
+\*(lqThe attachments\*(rq in \*(wD)
+that can each be activated by pressing the corresponding button
+or deactivated by pressing the button again.
+.TP
+.B Overlay name:
+The relative or absolute name of any ESPS
+.I FEA
+file.
+Each element of each field in the file is overlaid as a separate track
+labeled with the field name and (if non-scalar) indices.
+By default the overlay is placed on the most recently created
+spectrogram display window, if any,
+and otherwise simply on the most recently created display window.
+You can override the default by following the overlaying file's name
+with the filename (separated by whitespace)
+of the window on which to place the overlay.
+.TP
+.B QUIT!
+Clicking on this item causes all modified or newly created signals to
+be saved and
+.I xwaves
+to exit.
+.TP
+.B waves MANUAL
+This pops up a copy of \*(wR
+in a searchable text window.
+.PP
+When a wildcard construct (e.g. \*(lq*\*(rq) is entered in
+.B INPUT file:
+or
+.BR Overlay: ,
+a window appears to the right of the main control panel
+containing a scrollable list of files matching the construct.
+A directory path generates a list of all files in the directory.
+If signals have been generated and saved in files,
+they are entered in a list that can be viewed by clicking on
+.B OUTPUT file:
+with the right mouse button.
+A file can be selected as input to the panel item
+with the left mouse button.
+The right button displays a menu of operations on the files.
+See \*(lqThe file browsers\*(rq in \*(wD for a list of the operations
+with explanations.
+.SS The miscellaneous controls panel
+.PP
+When you start
+.I xwaves,
+another panel normally appears to the right of the main control panel:
+.BR "Miscellaneous xwaves Controls" .
+This normally contains the 12 buttons listed below.
+However, the panel is fully customizable;
+it is just another panel created with the
+.I xwaves
+command
+.I make_panel
+(see
+.qI xwaves "command reference"
+in \*(wR),
+and you can change its functionality by editing the relevant files
+(see \*(lqThe init_file\*(rq under \*(lqChanging the
+.I xwaves
+environment\*(rq in \*(wD,
+\*(lqThe
+.I waves+
+directory structure\*(rq in \*(wD,
+and the discussions of the individual buttons
+under \*(lqThe miscellaneous controls panel\*(rq in \*(wD).
+.TP
+.B Add_op...
+Clicking on this button with the left mouse button pops up a new panel
+that lets you interactively specify new functions to be added to your
+menu lists.
+For a full description of the functionality of the window
+see the description of the
+.I xwaves
+command
+.I add_op_panel
+in the chapter
+.qI xwaves "command reference"
+of \*(wR.
+.TP
+.B Image Painting
+This button allows control of the appearance of spectrogram
+displays and their behavior when their windows are resized.
+.TP
+.B Audio extensions...
+Clicking with the left mouse button pops up a panel with a help file 
+and menus that you will need only if you purchased ETSM (an
+optional waves+ add-on product for time scale modified playback) or if
+you are using a third party DSP board (Ariel DSP 32C, LSI C30, or
+Townshend DATLink) for playback and/or recording.  The play and record
+program menus are using for controlling playback and recording sound
+with the 3rd party DSP boards as listed above.  The play menus lets you 
+select the play program
+.RI ( play_prog \*-see
+\*(lqUsing audio\*(rq in \*(wD) used by
+.I xwaves
+to play audio files.  If you are using
+native hardware for playback and recording, you will not need to use
+these menus.  
+.TP
+.B waves+ profile...
+Clicking with the left mouse button pops up a panel
+that lets you examine and change command configurations
+and the profile file
+.I .wave_pro.
+.TP
+.B Print setup...
+Clicking with the left mouse button pops up a panel that let you
+set the
+.I xwaves
+global variables that control printing.
+See \*(lqPrinting graphics\*(rq in \*(wD
+and
+.qI xwaves "symbols reference"
+in \*(wR
+for more information on printing and the individual variables.
+.TP
+.B Annotation...
+Clicking with the left mouse button pops up a panel
+that gives you detailed control over
+whether the following annotations on the data windows are displayed:
+ESPS field names, field values at the cursor position,
+and axis tick marks or grids.
+.TP
+.B Ganging...
+Clicking with the left mouse button pops up a panel
+that lets you control which of the following operations
+are performed simultaneously on all windows of an object
+and which affect only one window at a time:
+scrolling, zooming, and deletion of segments.
+.TP
+.B Colormap...
+Clicking with the left mouse button pops up a panel
+that lets you change the colors
+in which waveforms and spectrograms are displayed.
+.TP
+.B Toolbars...
+Clicking with the left mouse button pops up a panel
+that lets you add
+.I toolbar creators
+to the waveform and spectrogram menus.
+This means that an entry in the display menu lets you create a toolbar
+with functions that apply to a specific display.
+Several ready-to-use toolbars are available,
+and it is easy to create more yourself.
+See the help file available through the
+.B Toolbars...
+panel, and see the
+.B Toolbars...
+entry under \*(lqThe miscellaneous controls panel\*(rq in \*(wD.
+.TP
+.B Menu Changes...
+Clicking with the left mouse button pops up a panel
+that lets you change the waveform and spectrogram display menus
+by adding items or selecting predefined alternative menus.
+A help function is also provided.
+.TP
+.B Mouse bindings...
+Clicking with the left mouse button pops up a panel
+that lets you select the functions
+performed by the left and middle mouse buttons
+in waveform and spectrogram windows.
+See also \*(lqMouse button modes\*(rq in \*(wD.
+.TP
+.B Debug...
+Clicking with the left mouse button pops up a panel
+that lets you set
+.I xwaves
+global variables
+that control the verbosity of information and debugging messages
+and turn on single-stepping mode for command-file interpretation.
+See
+.qI xwaves "symbols reference"
+in \*(wR.
+.SS Data display windows
+.PP
+There are two major types of signal data display windows:
+.I waveform
+windows and
+.I spectrogram
+windows.
+Waveform windows display plots of single or multiple
+sampled-data and parameter tracks.
+Spectrogram windows display data as intensities or colors
+in the time-frequency plane.
+Each window has a frame that includes a title bar.
+If the right mouse button is pressed
+while the cursor is in the frame,
+the window system frame menu appears.
+The contents of this frame menu depend on the window manager,
+but common items allow the window to be iconized removed, resized, etc.
+.PP
+Inside the frame are three regions:
+a data display that fills most of the window,
+a scrollbar region just above it,
+and an information region just above the scrollbar.
+As the cursor moves in the data region,
+the corresponding time values
+are continually updated in the information region,
+and data values are updated either there or in the data region.
+Cursors in other windows of the same object (see
+.B OBJECT name:
+under \*(lqThe main control panel\*(rq above)
+move in synchrony.
+.PP
+Pressing the right mouse button while the cursor is in the
+data display region calls up a menu listing
+data- and display-manipulation options.
+The left and middle mouse buttons have several programmable
+functions, such as moving markers, playing segments, modifying 
+data, or any of the right-button menu items.
+Menu operations and
+.I xwaves
+commands permit changing the button semantics.
+The functions currently in effect are displayed in the frame title bar.
+There are four distinguished markers, two horizontal and two vertical,
+that can be positioned with the mouse pointer
+if an appropriate mouse-button function is enabled.
+To move the horizontal markers,
+hold down the shift key on the keyboard while operating the mouse;
+otherwise the vertical markers are moved.
+See \*(lqMouse button modes\*(rq in \*(wD for more information.
+.PP
+Mouse buttons pressed while in the scrollbar region
+cause the following operations:
+.I left
+moves the displayed point marked by the mouse pointer
+to the left window edge;
+.I right
+moves the displayed point at the left window edge
+to the position of the mouse pointer;
+.I middle
+centers the display window over the point in the data file
+proportional to the distance along the scrollbar
+at which the button was pressed.
+When the mouse pointer is in the scrollbar, the time readout changes
+to reflect not the time in the displayed portion of the file,
+but the time in the whole file,
+with the beginning corresponding to the left end of the scrollbar
+and the end of the file corresponding to the right end.
+The shaded portion of the scrollbar
+corresponds to the portion of the data file
+that is currently visible in the window.
+.PP
+In spectrogram windows
+the operations that can be bound to the left or middle mouse button
+include three that are inapplicable to waveform windows:
+.BR "mark formants" ,
+.BR "move contour" ,
+and
+.BR "modify intensity" .
+The latter is the default action of the middle button;
+it lets you modify the threshold and dynamic-range values
+that control the mapping
+from spectral density to display intensity or color;
+think of it as analogous to manipulating
+the brightness and contrast controls of a television set.
+For the other mouse button functions, see \*(lqMouse button modes\*(rq
+in \*(wD.
+.PP
+In a spectrogram window,
+data can be displayed at the \*(lqnatural scale\*(rq of one point per pixel,
+or it can be rescaled vertically or horizontally
+to accommodate changes in the height and width of the window.
+Scaling behavior is controlled by four global variables
+that can be set by an
+.I xwaves
+command or with the help of the
+.B Image Painting
+item of the miscellaneous controls panel.
+See the description of the panel item above, and see
+\*(lqScaling, interpolation, and zooming\*(rq under \*(lqData display windows\*(rq
+in \*(wD.
+.PP
+To determine the colors used for plotting waveforms and spectrograms
+and for drawing cursors, markers, axes, etc.,
+.I xwaves
+reads a colormap file, whose name is given by the global variable
+.I colormap.
+This can be initialized in the
+.I .wave_pro
+file and changed at any time by an
+.I xwaves
+command.
+The
+.B Colormap...
+button, mentioned above under \*(lqThe miscellaneous controls panel\*(rq,
+works by setting the variable to the name of one of several predefined
+colormap files.
+See \*(lqColormaps\*(rq in \*(wD to find out
+how to create your own colormap files. 
+.SS Data window menu items
+.PP
+Using
+.I xwaves
+commands, you can customize the contents of the menus that pop up
+when you press the right mouse button in the data region of an
+.I xwaves
+display window.
+You can do this separately for the waveform and spectrogram menus.
+There are commands for deleting and restoring menu items.
+With the
+.I add_op
+command, you can define new menu items
+that invoke arbitrary UNIX shell commands or
+.I xwaves
+commands.
+For full information, see \*(lqData window menu items\*(rq in \*(wD
+and the commands
+.I delete_item,
+.I delete_all_items,
+.I add_op,
+.I add_waves,
+and
+.I op
+under
+.qI xwaves "command reference"
+in \*(wR.
+In addition there are a number of \*(lqbuilt-in\*(rq menu operations
+that are present by default unless explicitly removed.
+See \*(lqData window menu items\*(rq in \*(wD for more information
+on the individual items.
+.PP
+.BR "play between marks" ,
+.BR "play window contents" ,
+.BR "play entire file" ,
+and
+.B "play to end of file"
+let you listen to various portions of a signal
+by sending them to a D/A converter.
+.BR "page ahead" ,
+.BR "page back" ,
+.BR "window ahead" ,
+and
+.B "window back"
+move the view in the display window
+forward or backward through the file.
+.B "align and rescale"
+rescales and repositions windows so that all other windows in an
+object align vertically with the selected window.
+.BR "bracket markers" ,
+.BR "zoom in" ,
+.BR "zoom out" ,
+and
+.B "zoom full out"
+expand or contract the time scale of the window,
+as suggested by the names.
+.B "spectrogram (W.B.)"
+and
+.B "spectrogram (N.B.)"
+create spectrograms of the portion of a signal delimited by the markers.
+.B "save segment in file"
+writes an output file containing the segment of the signal
+delimited by the markers.
+.B "delete segment"
+and
+.B "insert file"
+let you edit a signal by cutting and pasting.
+.B "Button Modes"
+lets you determine which functions are invoked
+by the left and middle mouse buttons.
+.B "kill window"
+removes the display window.
+(This is needed on systems where a window cannot be removed
+by using the window-manager frame menu.)
+.B "print graphic"
+and
+.B "print ensemble"
+output one or more display windows for printing.
+.SS Printing graphics
+.PP
+There are two built-in 
+.I xwaves
+menu operations for producing printable output:
+.B print graphic
+and
+.BR "print ensemble" .
+(There are also ordinary
+.I xwaves
+commands that perform the same functions.)
+.B "print graphic"
+renders a single display window in either Encapsulated PostScript
+or PCL (HP Laserjet code).
+.B "print ensemble"
+renders all display windows in an object in Encapsulated PostScript
+(only).
+The relative positions of the windows on the screen are preserved
+in the printed output.
+Some attachments (see \*(lqAttachments\*(rq below) can cooperate with
+.I xwaves
+to let
+.B "print ensemble"
+include windows created by the attachment in the output along with
+those created by
+.I xwaves
+itself.
+.PP
+There are several
+.I xwaves
+global variables that control various aspects of the printing,
+such as whether the output goes to a file or directly to a printer.
+See \*(lqPrinting graphics\*(rq in \*(wD
+for a list of the variables with explanations.
+The
+.B Print setup...
+button, mentioned under \*(lqThe miscellaneous controls panel\*(rq above,
+lets you set these variables.
+.SS The command language
+.PP
+The
+.I xwaves
+command language provides control over
+essentially the entire domain of actions available to
+.I xwaves
+and its attachments.
+The commands of this language subsume all the functions
+available through the mouse-oriented interface,
+and they provide a means for extending the command set
+and enhancing the interface.
+.I xwaves
+lets you assign values to symbols (variables) with the
+.I set
+command.
+It also has a large set of built-in symbols
+that affect its behavior in various ways (e.g. the colormap filename)
+or reflect various aspects of its state (e.g. the cursor position).
+These variables can be incorporated in commands you add yourself.
+For a full description of the syntax and use of
+.I xwaves
+commands, see \*(lqThe
+.I waves+
+command language\*(rq in \*(wD.
+For descriptions of the individual symbols and commands,
+see
+.qI xwaves "symbols reference"
+and
+.qI xwaves "command reference"
+in \*(wR.
+.PP
+.I xwaves
+distinguishes between
+.I "object commands,"
+which are directed to a particular object (display ensemble), and
+.I "global commands,"
+which are simply directed to
+.I xwaves
+itself.
+The syntax of simple
+.I xwaves
+commands is
+.LP
+.RS
+.nf
+.if t .ft I
+object  command  keyword  value  keyword  value ...
+.if t .ft P
+.fi
+.RE
+.LP
+where
+.I object
+is the name of the object to which the command is directed, and
+.I command
+is the name of the command to be executed.
+There may be any number of keyword\-value pairs, including zero.
+For a global command,
+.I object
+is \*(lqwaves\*(rq or is simply omitted.
+.PP
+For example, the simplest form of the command
+that creates a waveform display might look like
+.LP
+.RS
+.nf
+.if t .ft I
+waves make file speech.sd
+.if t .ft P
+.fi
+.RE
+.LP
+or simply
+.LP
+.RS
+.nf
+.if t .ft I
+make file speech.sd
+.if t .ft P
+.fi
+.RE
+.LP
+since
+.I make
+is a global command.
+The keyword
+.I file
+indicates that the following argument,
+.I speech.sd,
+is the name of the data file to be read and displayed.
+The command
+.I make
+has many other optional keywords that permit control of various window
+attributes, such as size, etc.
+The documentation for each command in \*(wR
+lists the keywords recognized by the command
+and explains the meaning of each.
+.PP
+For the command
+.I set,
+any variable name can be used as a keyword, and the following value
+is assigned to the variable.
+For example
+.LP
+.RS
+.nf
+.if t .ft I
+set colormap my_colormap
+.if t .ft P
+.fi
+.RE
+.LP
+assigns the value
+.I my_colormap
+to the variable
+.I colormap.
+.PP
+The command
+.I add_op
+lets you define new operations.
+For example
+.LP
+.RS
+.nf
+.if t .ft I
+add_op name my_op op "doit.sh _l_marker_time _r_marker_time"
+.if t .ft P
+.fi
+.RE
+.LP
+defines a new operation
+.I my_op
+that runs a shell script
+.I doit.sh.
+The keyword
+.I name
+identifies the following argument, \*(lqmy_op\*(rq,
+as the name of the operation;
+new items containing the name \*(lqmy_op\*(rq
+are added to the display window menus
+and will invoke the new operation when selected.
+The keyword
+.I op
+indicates that the following string
+\*(lqdoit.sh _l_marker_time _r_marker_time\*(rq
+is the definition of the new operation.
+In the definition,
+.I l_marker_time
+and
+.I r_marker_time
+are examples of variables
+whose values are to be substituted in the string.
+They are identified as such by the underscores (\*(lq_\*(rq)
+that precede them.
+.I l_marker_time
+and
+.I r_marker_time
+are built-in
+.I xwaves
+symbols that contain the times (in seconds)
+corresponding to the left and right marker positions
+(see
+.qI xwaves "symbols reference"
+in \*(wR).
+Thus, whenever the new operation is invoked,
+the values of the variables at that time
+are substituted in the definition string.
+Suppose the values are 0.25 and 0.35.
+Then
+.LP
+.RS
+.nf
+.if t .ft I
+doit.sh 0.250000 0.350000
+.if t .ft P
+.fi
+.RE
+.LP
+is executed as a shell command, running the script
+.I doit.sh
+with arguments that give the marker times.
+.PP
+There are several ways to convey commands to
+.I xwaves.
+.TP
+(1) The main control panel.
+Just type the command in the field
+.BR "COMMAND (or @file):" .
+.TP
+(2) Command files.
+You can store a number of commands in a file,
+and they can then be executed from
+.I xwaves.
+You can enter the file preceded by \*(lq@\*(rq in the field
+.B "COMMAND (or @file):"
+or, if the first line starts with the word \*(lqwaves\*(rq,
+enter it on the command line when starting
+.I xwaves.
+A command file that is always executed when
+.I xwaves
+is started is the file indicated by the
+.I init_file
+entry in the
+.I .wave_pro
+file.
+See
+.qI xwaves "initialization"
+below.
+.TP
+(3) The program \fIsend_xwaves\fP.
+.IR send_xwaves (1\-ESPS)
+is a program that takes an
+.I xwaves
+command string as a parameter and sends the command to
+.I xwaves.
+The program can easily be used to control
+.I xwaves
+from a UNIX shell script.
+.TP
+(4) C library functions.
+If you have the ESPS function library,
+you can write application programs in C,
+using the functions
+.IR SendXwavesNoReply (3\-ESPS)
+and
+.IR SendXwavesReply (3\-ESPS)
+to send commands to
+.I xwaves.
+.TP
+(5) Auxiliary panels.
+The command
+.I make_panel
+lets you build X window panels from which you can issue commands
+by pushing buttons or selecting from menus.
+See the command description under
+.qI xwaves "command reference"
+in \*(wR.
+.TP
+(6) Display window menus.
+As described above, you can associate
+.I xwaves
+commands with display-window menu items by using the command
+.I add_op.
+.TP
+(7) Keyboard bindings.
+With the command
+.I key_map
+you can bind an operation to a character on the keyboard
+to be executed when the key is pressed.
+See the command description under
+.qI xwaves "command reference"
+in \*(wR.
+.PP
+There is much more to be said about using
+.I add_op
+and about
+.I xwaves
+commands in general.
+See \*(lqThe
+.I waves+
+command language\*(rq in \*(wD.
+.SS xwaves initialization
+.PP
+Initial values for
+.I xwaves
+global variables and other symbols can be assigned in a profile file
+that is read when
+.I xwaves
+starts.
+By default this is a file named
+.I .wave_pro
+found in the user's home directory or, if not there, in the directory
+.I $ESPS_BASE/lib/waves.
+(However, see
+.B \-w
+under OPTIONS below.)
+See the
+.I .wave_pro
+in the latter directory for a fully commented example of a complete
+.I xwaves
+profile.
+The file contains lines of the form
+.LP
+.RS
+.nf
+.if t .ft I
+name value
+.if t .ft P
+.fi
+.RE
+.LP
+where
+.I value
+is a value to be assigned to the symbol
+.I name.
+For example, you could specify a non-default colormap at startup
+by including a line:
+.LP
+.RS
+.nf
+.if t .ft I
+colormap MyColormap
+.if t .ft P
+.fi
+.RE
+.LP
+The variables that have special meaning for
+.I xwaves
+are listed with explanations under
+.qI xwaves "symbols reference"
+in \*(wR.
+Some variables have meaning to
+.I xwaves
+attachments (see \*(lqAttachments\*(rq below)
+which get the values by communicating with
+.I xwaves.
+You can assign values to other variables
+for any convenient purpose\*-e.g. for use in
+.I add_op
+commands.
+.PP
+One important global variable is
+.I init_file.
+This is the name of an
+.I xwaves
+command file that is executed after the
+.I .wave_pro
+has been read; it allows more elaborate startup processing
+than is possible through simple assignments of values to variables.
+See
+.I $ESPS_BASE/lib/waves/commands/xw_init.WC
+for a default
+.I init_file.
+It is through the
+.I init_file
+that the contents of the
+.B "Miscellaneous xwaves Controls"
+panel is created.
+By specifying a different (modified)
+.I init_file
+in the
+.I .wave_pro,
+you can customize the panel contents,
+change the contents of the display-window menus,
+and otherwise modify the initial configuration of
+.I xwaves.
+See
+.qI "xwaves\fR's\fI" "initial state: the .wave_pro file"
+and \*(lqChanging the menu files\*(rq
+under \*(lqChanging the
+.I xwaves
+environment\*(rq in \*(wD for details and an example.
+.SS UNIX environment variables
+.PP
+There are numerous UNIX environment variables
+that affect the operation of ESPS programs and
+.I xwaves.
+For a list see
+.IR espsenv (1\-ESPS).
+Those that are important for
+.I xwaves
+are described in \*(lqThe UNIX environment variables\*(rq in \*(wD.
+Only two are mandatory.
+ELM_HOST must be set to the host name of the machine on your network
+that is running the Entropic license manager daemon.
+ESPS_BASE must be set to the top of the
+.RI ESPS/ waves +
+installation directory tree.
+In order to have easy access to the programs
+that are likely to be used in conjunction with
+.I xwaves,
+be sure that
+.I $ESPS_BASE/bin
+is in your UNIX PATH definition before running
+.I xwaves.
+.SS File formats
+.PP
+.I xwaves
+supports the use of different data file formats.
+The most natural way is to use ESPS
+.I FEA
+files.
+.I xwaves
+is tuned to these files and can handle them very easily.
+When
+.I FEA
+files are used,
+they can be either in machine native format or EDR format,
+which makes it easy to port signals between different systems.
+See \*(lqFile formats and \fIxwaves\fP\*(rq
+in \*(wD for details.
+On the other hand there are various ways to read
+.RI non- FEA
+files with
+.I xwaves.
+Like most ESPS programs,
+.I xwaves
+will directly read
+sampled-data files in the NIST
+.I Sphere
+format
+and many files in the new Entropic
+.I Esignal
+format.
+If
+.I xwaves
+does not recognize a file, it assumes it is headerless.
+If the UNIX environment variable DEF_HEADER is defined
+and points to a file with a valid
+.I FEA
+header,
+that header is used as a \*(lqvirtual\*(rq header for the headerless file.
+Thus, the data description in the file defined by DEF_HEADER
+should be valid for the input data.
+The ESPS conversion programs
+.IR btosps (1\-ESPS),
+.IR testsd (1\-ESPS),
+and
+.IR addfeahd (1\-ESPS)
+are useful in creating such headers.
+The
+.I xwaves
+global variable
+.I def_header
+can be used instead of the environment variable
+and can be changed while
+.I xwaves
+is running.
+Files that are headerless from the ESPS and
+.I xwaves
+viewpoint may in fact contain \*(lqforeign\*(rq headers.
+If a
+.I FEA
+header contains certain \*(lqgeneric header items\*(rq,
+a foreign header (i.e. a block of information at the head of the file)
+is skipped when reading data.
+(A copy is kept inside the
+.I FEA
+header, however, so that the foreign header
+can subsequently be exposed again.)
+See
+.IR read_header (3\-ESPS)
+for more details and for information about setting the relevant
+generics in the headers specified by DEF_HEADER or
+.I def_header.
+.SS UNIX, ESPS, and xwaves
+.PP
+The discussion of the command
+.I add_op
+under \*(lqThe command language\*(rq above showed a simple example
+of executing a UNIX shell command from within
+.I xwaves.
+See the discussion of
+.I add_op
+under \*(lqGlobal
+.I xwaves
+Commands\*(rq in \*(wD for more information and examples.
+In general, the mechanism can start a unix process to run an external
+program (while
+.I xwaves
+goes on its merry way).
+If output is to be displayed,
+.I xwaves
+is signaled
+when the forked process terminates.
+.PP
+In addition to
+.I add_op,
+there are more special facilities for calling ESPS programs from
+.I xwaves.
+.PP
+When built-in
+.I xwaves
+support for a DSP board is not used,
+external programs are used to generate spectrograms.
+In particular the program or command indicated by the global variable
+.I sgram_prog
+is invoked with appropriate command-line options.
+The default value is \*(lqsgram\*(rq,
+which calls the program
+.IR sgram (1\-ESPS),
+but
+.IR me_sgram (1\-ESPS)
+can be used instead, or any program or script
+that supports the right command-line options.
+See \*(lqESPS spectrogram computation\*(rq
+under \*(lqUNIX, ESPS, and \fIxwaves\fP\*(rq
+in \*(wD for details.
+.PP
+Support for the built-in audio of most workstation on which
+.I xwaves
+runs is built into
+.I xwaves
+and is used by default for audio output.
+However, you can specify other means of output by setting the
+.I xwaves
+global variable
+.I play_prog
+to a program or command
+that supports appropriate command-line options.
+See \*(lqUsing audio\*(rq in \*(wD for details.
+.SS Attachments
+.PP
+Attachments are programs that run as separate UNIX processes,
+but in close cooperation with
+.I xwaves.
+In fact they will not do anything useful unless
+.I xwaves
+is running.
+In general, attachments are used for tasks
+that require a specific user interface that cannot be realized with
+.I xwaves
+alone.
+These tasks require transfer of information between
+.I xwaves
+and the attachment.
+Attachments communicate with
+.I xwaves
+through the X server,
+using a communications protocol that is compatible with Tcl/Tk.
+.PP
+At the moment there are four standard
+.I xwaves
+attachments:
+.IR xlabel (1\-ESPS),
+.IR xspectrum (1\-ESPS),
+.IR xmarks (1\-ESPS),
+and
+.IR xchart (1\-ESPS). 
+These are described in corresponding chapters of \*(wD
+(\c
+.qI xlabel "" ,
+.qI xspectrum "" ,
+.qI xmarks "" ,
+.qI xchart "" )
+and \*(wR
+(\c
+.qI xlabel "reference" ,
+.qI xlabel "quick reference" ,
+etc.).
+.PP
+An attachment is normally started with the
+.I xwaves
+command
+.I attach
+or by clicking on a button in the
+.B Attach:
+field in the
+.I xwaves
+main control panel.
+It can also be started from the command line,
+but then you may have to worry about the command line options.
+The attachments are stopped when
+.I xwaves
+stops.
+.PP
+The attachments have their own command languages,
+which resemble that of
+.I xwaves.
+The individual commands are described
+in the \*(lq... reference\*(rq chapters of \*(wR.
+.PP
+The attachments do not have their own command-entry facilities.
+Instead, commands are sent to attachments via the
+.I xwaves
+command
+.I send.
+This can be issued in any of the usual ways, including
+.IR send_xwaves (1\-ESPS).
+Thus attachments can be controlled from UNIX shell scripts.
+For examples of the use of
+.I send,
+see \*(lqUsing the program \fIsend_xwaves\fP\*(rq
+and \*(lqAttachments and the command language\*(rq
+under \*(lqThe
+.I waves+
+command language\*(rq
+and the chapters on the individual attachments in \*(wD.
+.PP
+The attachment
+.IR xlabel (1\-ESPS)
+is a general-purpose signal segmentation and labeling program.
+It can be used to view multiple label/segmentation files
+simultaneously.
+Labels can be selected from a user-configurable menu
+or typed in directly from the keyboard.
+They are displayed in a window containing markers with attached labels
+in time alignment with a signal in an
+.I xwaves
+signal display window.
+.I xlabel
+is especially useful for comparing and generating
+multiple segmentations of the same signal
+when the label sequence is not known in advance.
+.PP
+.IR xspectrum (1\-ESPS)
+facilitates interactive
+power-spectrum analysis of data that is displayed in
+.I xwaves
+windows.
+Individual spectra displayed by
+.I xspectrum
+can be compared by overlaying them on a common plot.
+The spectrum analysis method and parameters
+can be varied by entering values in the
+.I xspectrum
+control panel.
+If a linear-prediction (maximum-entropy) spectrum-analysis method
+is used,
+.I xspectrum
+also supports inverse filtering of the selected data
+and formant/bandwidth estimation.
+.I xspectrum
+will also display \*(lqspectral slices\*(rq (single-frame power spectra)
+from data in
+.I xwaves
+spectrogram windows.
+.PP
+.IR xmarks (1\-ESPS)
+is specialized for assigning times in waveforms
+to pre-defined label sequences.
+It is specifically designed for labeling speech
+in that it supports labeling of sentence-like structures.
+Labels are supplied in a specific format
+in a file created before the attachment is run.
+.I xmarks
+lets you quickly place labels
+by clicking a mouse button in the signal window.
+.I xmarks
+automatically selects the next label to be placed.
+.PP
+.IR xchart (1\-ESPS)
+is an extension of
+.I xlabel
+that offers all the features of
+.I xlabel
+and provides an additional display mode.
+.I xchart
+was designed to manipulate displays of \*(lqcharts\*(rq.
+A chart is a collection of possibly overlapping
+signal-segment labels\*-for example, word hypotheses
+from a speech recognizer's \*(lqfront end\*(rq.
+Each segment label is associated with a character string
+called a
+.I symbol.
+.I xchart
+displays these symbols in a window below an
+.I xwaves
+signal display, possibly along with label files
+of the type described in the chapter on
+.I xlabel.
+.SH OPTIONS
+.PP
+The command-line options recognized by
+.I xwaves
+are the following.
+.TP
+.BI \-c
+Specifies that
+.I xwaves
+creates its colormap segment as STATIC,
+making it sharable with other applications on the same X server. 
+Since
+.I xwaves
+uses a rather large colormap, there may be interference
+if another application on the same X server
+(such as another copy of
+.IR xwaves )
+also tries to allocate a large colormap.
+If you must run more than
+.I xwaves
+on the same server, and you have colormap problems
+(flashing as you move the mouse or incorrect colors),
+start each
+.I xwaves
+with the
+.B \-c
+option and have them all load the same colormap via the
+.I .wave_pro
+file (see
+\*(lqChanging the
+.I xwaves
+environment\*(rq in \*(wD).
+They will then share the colormap segment.
+.IP
+A side effect of this option
+is that the colormap cannot be changed after the initial one is loaded.
+In addition, interactive alteration of the color threshold
+and contour marking via the mouse in spectrogram views
+do not work with STATIC colormaps.
+.TP
+.BI \-n " alternative_name"
+.I xwaves
+has an interprocess communication capability,
+which programs such as
+.IR send_xwaves (1\-ESPS)
+can use to send commands to
+.I xwaves
+and get results in reply.
+The communication method
+is based on communicating through the X server
+and is compatible with Tcl/Tk (version 4).
+When
+.I xwaves
+starts, it registers itself with the server
+that it is using for display.
+By default, it registers under the name \*(lqxwaves\*(rq,
+but a different name can be specified by means of this option.
+This might be done if, for example, it were necessary to run two
+.I xwaves
+processes at once on the same X display.
+.TP
+.BI \-p " socket_port"
+Specifies the INET domain socket port number to listen on
+when in \*(lqserver mode\*(rq (as a result of the
+.B \-s
+option or the
+.I enable_server
+command).
+See the comment under
+.B \-s
+concerning the phaseout of this server mode.
+.IP
+If this option is not used,
+and if the UNIX environment variable WAVES_PORT is defined,
+the port is set to the value of WAVES_PORT.
+If WAVES_PORT is not defined, a compiled-in default is used.
+The port number can be changed at any time through an
+.I xwaves
+command by setting the
+.I xwaves
+global variable
+.I socket_port
+(see the chapter
+.qI xwaves "command reference"
+in \*(wR);
+the change takes effect the next time the
+.I enable_server
+command is executed.
+.TP
+.BI \-s 
+Specifies that
+.I xwaves
+starts up in \*(lqserver mode\*(rq.
+This is equivalent to executing the
+.I xwaves
+command
+.I enable_server.
+When in server mode,
+.I xwaves
+listens on a socket for commands sent by external scripts or programs
+that use the
+.IR send_xwaves (3\-ESPS)
+library functions.
+In pre-5.0 versions of
+.I xwaves
+it was necessary to be in the server mode for the
+.IR send_xwaves (1\-ESPS)
+program to function.
+This is no longer true, since
+.IR send_xwaves (1\-ESPS)
+now uses a different communication protocol.
+In the current release
+this server mode is not needed by any Entropic-supplied programs
+and is provided only for compatibility with old user-written programs.
+For new programs, use the library functions
+.IR SendXwavesNoReply (3\-ESPS)
+and
+.IR SendXwavesReply (3\-ESPS).
+.TP
+.BI \-w " wave_pro"
+Specifies the startup profile to read.
+If this option is not used,
+.I xwaves
+attempts to read the file
+.I .wave_pro
+along the search path
+.I $HOME:$ESPS_BASE/lib/waves.
+That is, it first looks for a file
+.I .wave_pro
+in the user's home directory and then for
+.I $ESPS_BASE/lib/waves/.wave_pro.
+The search path used can be overridden by setting the UNIX
+environment variable WAVES_PROFILE_PATH before starting
+.I xwaves.
+The same search path is used for names supplied with the
+.B \-w
+option.
+.TP
+.BI \-x " debug_level"
+If the argument is positive,
+.I xwaves
+prints debugging messages on the standard error output.
+The number of messages increases with increasing values of
+.I debug_level.
+No messages are printed for a
+.I debug_level
+of 0.
+The value can be changed at any time through an
+.I xwaves
+command by setting the
+.I xwaves
+global variable
+.I debug_level
+(see the chapter
+.qI xwaves "symbols reference"
+in \*(wR).
+.SH SEE ALSO
+\*(wD,
+\*(wR,
+\*(wT,
+.br
+.IR addfeahd (1\-ESPS),
+.IR btosps (1\-ESPS),
+.IR espsenv (1\-ESPS),
+.br
+.IR me_sgram (1\-ESPS),
+.IR send_xwaves (1\-ESPS),
+.IR sgram (1\-ESPS),
+.br
+.IR testsd (1\-ESPS),
+.IR xchart (1\-ESPS). 
+.IR xlabel (1\-ESPS),
+.br
+.IR xmarks (1\-ESPS),
+.IR xspectrum (1\-ESPS),
+.br
+.IR SendXwavesNoReply (3\-ESPS),
+.IR SendXwavesReply (3\-ESPS),
+.br
+.IR read_header (3\-ESPS),
+.IR send_xwaves (3\-ESPS)
+.SH AUTHOR
+.PP
+Original program by David Talkin at AT&T Bell Laboratories.
+Later enhancements by Rod Johnson, Alan Parker, John Shore,
+David Talkin, and others at Entropic.
+This manual page largely extracted by Rod Johnson
+from \*(wD and earlier manual pages,
+all derived ultimately from Talkin's original documentation
+with many revsions and additions by
+David Burton, Joop Jansen, Rod Johnson, Alan Parker, John Shore, David Talkin,
+and others at Entropic.

@@ -1,0 +1,3 @@
+#@(#)Pxspecav	1.3 7/2/93 ERL
+string filter_type =? "WT_HANNING":"filter type used in averaging":{"WT_RECT","WT_HAMMING","WT_HANNING"};
+float block_size =? 10: "Number of blocks in averaging";

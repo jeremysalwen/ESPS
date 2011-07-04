@@ -1,0 +1,831 @@
+#!/bin/sh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1993  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)xfir_filt	1.8	7/30/97	ERL
+# 
+# Written by:  Derek Lin
+# Checked by:
+# Revised by:  David Burton - 7/30/97
+# 
+# Brief description: script cover for all ESPS FIR filter design programs.
+# 
+
+USE_ESPS_COMMON=off;export USE_ESPS_COMMON
+ESPS_VERBOSE=0;export ESPS_VERBOSE
+
+outfile=$1 
+paramfile=$2
+firkindfile='/tmp/firkind'
+queryfile='/tmp/Pquery'
+donefile='/tmp/done'
+pre_donefile='/tmp/pre_done'
+
+cnt='1 2 3 4 5 6 7 8 9 10'
+
+PARAM=`get_esps_base`/lib/params/Pxfir_filt
+#PARAM=./Pxfir_filt
+
+if test x$outfile = x
+then
+   echo "ERROR: Output file must be specified"
+   echo "Usage: xfir_filt feafilt_file [param_file]"
+   echo "feafilt_file: output ESPS FEA_FILT file"
+   echo "param_filt: the optional output parameter file created by xfir_filt for"
+   echo "            input to pkmc_filt or cb_filt"
+   exit
+fi
+
+exprompt -X0 -Y0 -P $PARAM -h xfir_filt $firkindfile 
+
+filt_mthd=`getparam -P $firkindfile  -p filt_mthd`
+filt_type=`getparam -P $firkindfile  -p filt_type`
+nbands=`getparam -P $firkindfile  -p nbands`
+samp_freq=`getparam -P$firkindfile  -p samp_freq`
+
+echo "#" > $queryfile
+echo "#" > $donefile
+echo "#" > $pre_donefile
+
+if test $filt_type = 'MULTIBAND'
+then
+	echo "WARNING: It is your responsibility to enter valid design"
+	echo "   parameters for a multiband filters.  Default settings"
+	echo "   do not work."
+fi
+
+if test $filt_mthd = 'CONSTRAINT_BASED'
+then
+#--------CONSTRAINT_BASED LOWPASS --------------------
+   if test $filt_type = 'LOWPASS'
+   then
+	cat >> $queryfile << END
+	int filt_length_L ?= 31: "Largest Length";
+	int filt_length_S ?= 21: "Smallest length";
+	float samp_freq ?= 8000;
+	int nspec = 5: "number of specifications";
+	string model ?= "cosine" : "model": {"cosine", "sine"};
+	string push_direction ?= "neither": "push direction": {"neither", "left", "right"};
+	string spec1_type ?= "limit":"spec type":{"concave", "limit"};
+	string spec1_sense ?= "+": "spec sense":{"+", "-"};
+	float spec1_edge1 ?= 0;
+	float spec1_edge2 ?= 1600;
+	float spec1_bound1 ?= 1;
+	float spec1_bound2 ?= 1;
+	string spec1_hug ?= "hugged":"spec hug": {"hugged", "not hugged"};
+	string spec1_interp ?= "arithmetic": "interpolation method": {"arithmetic", "geometric"};
+	string spec2_type ?= "limit":"spec type":{"concave", "limit"};
+	string spec2_sense ?= "-": "spec sense":{"+", "-"};
+	float spec2_edge1 ?= 0;
+	float spec2_edge2 ?= 1600;
+	float spec2_bound1 ?= 0.9;
+	float spec2_bound2 ?= 0.9;
+	string spec2_hug ?= "not hugged":"spec hug": {"hugged", "not hugged"};
+	string spec2_interp ?= "arithmetic":"interpolation method": {"arithmetic", "geometric"};
+	string spec3_type ?= "limit":"spec type":{"concave", "limit"};
+	string spec3_sense ?= "+": "spec sense":{"+", "-"};
+	float spec3_edge1 ?= 2000;
+	float spec3_edge2 ?= 4000;
+	float spec3_bound1 ?= 0.1;
+	float spec3_bound2 ?= 0.1;
+	string spec3_hug ?= "not hugged":"spec hug": {"hugged", "not hugged"};
+	string spec3_interp ?= "arithmetic":"interpolation method": {"arithmetic", "geometric"};
+	string spec4_type ?= "limit":"spec type":{"concave", "limit"};
+	string spec4_sense ?= "-": "spec sense":{"+", "-"};
+	float spec4_edge1 ?= 2000;
+	float spec4_edge2 ?= 4000;
+	float spec4_bound1 ?= -0.1;
+	float spec4_bound2 ?= -0.1;
+	string spec4_hug ?= "not hugged":"spec hug": {"hugged", "not hugged"};
+	string spec4_interp ?= "arithmetic":"interpolation method": {"arithmetic", "geometric"};
+	string spec5_type ?= "concave": "spec type": {"concave", "limit"};
+	string spec5_sense ?= "-": "spec sense": {"+", "-"};
+	float spec5_edge1 ?= 0;
+	float spec5_edge2 ?= 1600;
+END
+
+	exprompt -X10 -Y10 -P $queryfile  -h cb_filt $donefile
+	
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        cb_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+#--------CONSTRAINT_BASED HIGHPASS --------------------
+   if test $filt_type = 'HIGHPASS'
+   then
+	cat >> $queryfile << END
+	int filt_length_L ?= 31: "Largest Length";
+	int filt_length_S ?= 21: "Smallest length";
+	float samp_freq ?= 8000;
+	int nspec = 5: "number of specifications";
+	string model ?= "cosine" : "model": {"cosine", "sine"};
+	string push_direction ?= "neither": "push direction": {"neither", "left", "right"};
+	string spec1_type ?= "limit":"spec type":{"concave", "limit"};
+	string spec1_sense ?= "+": "spec sense":{"+", "-"};
+	float spec1_edge1 ?= 0;
+	float spec1_edge2 ?= 1600;
+	float spec1_bound1 ?= 0.1;
+	float spec1_bound2 ?= 0.1;
+	string spec1_hug ?= "hugged":"spec hug": {"hugged", "not hugged"};
+	string spec1_interp ?= "arithmetic": "interpolation method": {"arithmetic", "geometric"};
+	string spec2_type ?= "limit":"spec type":{"concave", "limit"};
+	string spec2_sense ?= "-": "spec sense":{"+", "-"};
+	float spec2_edge1 ?= 0;
+	float spec2_edge2 ?= 1600;
+	float spec2_bound1 ?= -0.1;
+	float spec2_bound2 ?= -0.1;
+	string spec2_hug ?= "not hugged":"spec hug": {"hugged", "not hugged"};
+	string spec2_interp ?= "arithmetic":"interpolation method": {"arithmetic", "geometric"};
+	string spec3_type ?= "limit":"spec type":{"concave", "limit"};
+	string spec3_sense ?= "+": "spec sense":{"+", "-"};
+	float spec3_edge1 ?= 2000;
+	float spec3_edge2 ?= 4000;
+	float spec3_bound1 ?= 1.0;
+	float spec3_bound2 ?= 1.0;
+	string spec3_hug ?= "not hugged":"spec hug": {"hugged", "not hugged"};
+	string spec3_interp ?= "arithmetic":"interpolation method": {"arithmetic", "geometric"};
+	string spec4_type ?= "limit":"spec type":{"concave", "limit"};
+	string spec4_sense ?= "-": "spec sense":{"+", "-"};
+	float spec4_edge1 ?= 2000;
+	float spec4_edge2 ?= 4000;
+	float spec4_bound1 ?= 0.9;
+	float spec4_bound2 ?= 0.9;
+	string spec4_hug ?= "not hugged":"spec hug": {"hugged", "not hugged"};
+	string spec4_interp ?= "arithmetic":"interpolation method": {"arithmetic", "geometric"};
+	string spec5_type ?= "concave": "spec type": {"concave", "limit"};
+	string spec5_sense ?= "-": "spec sense": {"+", "-"};
+	float spec5_edge1 ?= 2000;
+	float spec5_edge2 ?= 4000;
+END
+
+	exprompt -X10 -Y10 -P $queryfile  -h cb_filt $donefile
+	
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        cb_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+#--------CONSTRAINT_BASED MULTIBAND -------------------
+   if test $filt_type = 'MULTIBAND'
+   then
+	str="int filt_length_L ?= 31:"'"maximum filter length <= 128";'
+	echo $str >> $queryfile 
+	str="int filt_length_S ?= 21:"'"minimum filter length >= 1";'
+	echo $str >> $queryfile 
+	for i in $cnt
+	do
+	    if test $i -le $nbands
+	    then
+              str="float band"$i"_edge1 ?= 0.0: "'"left edge for band '$i'";'
+              echo $str >> $queryfile 
+              str="float band"$i"_edge2 ?= 0.0: "'"right edge for band '$i'";'
+	      echo $str >> $queryfile 
+              str="float band"$i"_upbound ?= 0: "'"upperbound for band '$i'";'
+	      echo $str >> $queryfile 
+              str="float band"$i"_lowbound ?= 0: "'"lowerbound for band '$i'";'
+	      echo $str >> $queryfile 
+	    fi
+	done
+	
+	exprompt -X10 -Y10 -P $queryfile -h cb_filt $pre_donefile
+
+	str="float samp_freq = $samp_freq;"
+	echo $str >> $donefile
+	str='string model = "cosine";'
+	echo $str >> $donefile
+	str='string push_direction = "neither";'
+	echo $str >> $donefile
+	filt_length_L=`getparam -P$pre_donefile -p filt_length_L`
+	filt_length_S=`getparam -P$pre_donefile -p filt_length_S`
+	str="int filt_length_L = $filt_length_L;"
+	echo $str >> $donefile
+	str="int filt_length_S = $filt_length_S;"
+	echo $str >> $donefile
+	echo " " >> $donefile
+
+# need to translate number of bands into number of specs,
+# add concavity constraint
+
+	i=0
+	for j in $cnt
+	do
+	    if test $j -le $nbands
+	    then
+           # + limit spec
+              i=`echo "$i 1 + p q"|dc`
+	      str="string spec"$i"_type = "'"limit";'
+	      echo $str >> $donefile
+	      str="string spec"$i"_sense = "'"+";'
+	      echo $str >> $donefile
+           #spec edges
+	      edge1=`getparam -P$pre_donefile -p"band"$j"_edge1"`
+	      str="float spec"$i"_edge1 = $edge1;"
+	      echo $str >> $donefile
+	      edge2=`getparam -P$pre_donefile -p"band"$j"_edge2"`
+	      str="float spec"$i"_edge2 = $edge2;"
+	      echo $str >> $donefile
+	   #spec upper bounds
+	      str="band"$j"_upbound"
+              up=`getparam -P$pre_donefile -p $str`
+	      str="float spec"$i"_bound1 = $up;"
+	      echo $str>> $donefile
+	      str="float spec"$i"_bound2 = $up;"
+	      echo $str>> $donefile
+	      str="string spec"$i"_hug ="'"hugged";'
+              echo $str >> $donefile
+	      str="string spec"$i"_interp ="'"arithmetic";'
+	      echo $str >> $donefile
+	      echo " " >> $donefile
+	   #concavity for passband
+              if test $up -ge 1
+              then
+	        i=`echo "$i 1 + p q"|dc`
+	        str="string spec"$i"_type ="'"concave";'
+	        echo $str >> $donefile
+                str="string spec"$i"_sense = "'"-";'
+	        echo $str >> $donefile
+	        str="float spec"$i"_edge1 = $edge1;"
+ 	        echo $str >> $donefile
+	        str="float spec"$i"_edge2 = $edge2;"
+ 	        echo $str >> $donefile
+	        up=0
+	      fi
+	      echo " " >> $donefile
+           # - limit spec
+	      i=`echo "$i 1 + p q"|dc`
+	      str="string spec"$i"_type = "'"limit";'
+	      echo $str >> $donefile
+	      str="string spec"$i"_sense = "'"-";'
+	      echo $str >> $donefile
+           #spec edges
+	      edge1=`getparam -P$pre_donefile -p"band"$j"_edge1"`
+	      str="float spec"$i"_edge1 = $edge1;"
+	      echo $str >> $donefile
+	      edge2=`getparam -P$pre_donefile -p"band"$j"_edge2"`
+	      str="float spec"$i"_edge2 = $edge2;"
+	      echo $str >> $donefile
+	   #spec lower bounds
+	      str="band"$j"_lowbound"
+              low=`getparam -P$pre_donefile -p $str`
+	      str="float spec"$i"_bound1 = $low;"
+	      echo $str>> $donefile
+	      str="float spec"$i"_bound2 = $low;"
+	      echo $str>> $donefile
+              str="string spec"$i"_hug ="'"not hugged";'
+              echo $str >> $donefile
+	      str="string spec"$i"_interp ="'"arithmetic";'
+	      echo $str >> $donefile
+	      echo " " >> $donefile
+	   fi
+	done
+	str="int nspec ="$i";"
+	echo $str >> $donefile
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        cb_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+#-----------CONSTRAINT-BASED DIFFRENTIATOR
+   if test $filt_type = 'DIFFERENTIATOR'
+   then
+	str="int filt_length ?= 16:"'"filter length <= 128";'
+	echo $str >> $queryfile 
+        str="float pass_edge ?= 2000: "'"passband edge";'
+        echo $str >> $queryfile 
+        str="float stop_edge ?= 3200: "'"stopband edge";'
+        echo $str >> $queryfile 
+        str="float slope ?= 1: "'"slope for differentiator";'
+        echo $str >> $queryfile 
+        str="float deviation ?= 0.01: "'"diviation on the passband";'
+        echo $str >> $queryfile 
+        str="float stop_upbound ?= 0.01: "'"upperbound for stopband";'
+        echo $str >> $queryfile 
+        str="float stop_lowbound ?= -0.01: "'"lowerbound for stopband";'
+        echo $str >> $queryfile 
+	
+	exprompt -X10 -Y10 -P $queryfile  $pre_donefile
+
+	str="float samp_freq = $samp_freq;"
+	echo $str >> $donefile
+	str='string model = "sine";'
+	echo $str >> $donefile
+	str='string push_direction = "left";'
+	echo $str >> $donefile
+	filt_length_L=`getparam -P$pre_donefile -p filt_length`
+	filt_length_S=$filt_length_L
+	str="int filt_length_L = $filt_length_L;"
+	echo $str >> $donefile
+	str="int filt_length_S = $filt_length_S;"
+	echo $str >> $donefile
+	echo " " >> $donefile
+
+# need to translate above into 4 specs,
+
+     # passband limit spec
+        str="string spec1_type = "'"limit";'
+        echo $str >> $donefile
+	str="string spec1_sense = "'"+";'
+	echo $str >> $donefile
+        str="string spec2_type = "'"limit";'
+	echo $str >> $donefile
+	str="string spec2_sense = "'"-";'
+	echo $str >> $donefile
+     #spec edges
+	str="float spec1_edge1 = 0;"
+	echo $str >> $donefile
+	str="float spec2_edge1 = 0;"
+	echo $str >> $donefile
+	pass=`getparam -P$pre_donefile -p pass_edge"`
+        str="float spec1_edge2 = $pass;"
+        echo $str >> $donefile
+        str="float spec2_edge2 = $pass;"
+        echo $str >> $donefile
+
+     #spec upper bounds
+        slope=`getparam -P$pre_donefile -p slope`
+        down=0
+	pass=`echo "5 k $pass $samp_freq / p q"|dc`
+        up=`echo "5 k $slope $pass * p q"| dc`
+        dev=`getparam -P$pre_donefile -p deviation`
+        down_dev=`echo "5 k $down $dev + p q"|dc`
+        up_dev=`echo "5 k $up $dev + p q"|dc`
+        str="float spec1_bound1 = $down_dev;"
+        echo $str>> $donefile
+        str="float spec1_bound2 = $up_dev;"
+        echo $str>> $donefile
+        str="float spec2_bound1 = $down;"
+        echo $str>> $donefile
+        str="float spec2_bound2 = $up;"
+        echo $str>> $donefile
+        str="string spec1_hug ="'"not hugged";'
+        echo $str >> $donefile
+        str="string spec1_interp ="'"arithmetic";'
+        echo $str >> $donefile
+        str="string spec2_hug ="'"hugged";'
+        echo $str >> $donefile
+        str="string spec2_interp ="'"arithmetic";'
+        echo $str >> $donefile
+        echo " " >> $donefile
+
+     # stopband limit spec
+        str="string spec3_type = "'"limit";'
+        echo $str >> $donefile
+        str="string spec3_sense = "'"+";'
+        echo $str >> $donefile
+        str="string spec4_type = "'"limit";'
+        echo $str >> $donefile
+        str="string spec4_sense = "'"-";'
+        echo $str >> $donefile
+     #spec edges
+        stop=`getparam -P$pre_donefile -p stop_edge"`
+        str="float spec3_edge1 = $stop;"
+        echo $str >> $donefile
+        str="float spec3_edge2 = 4000;"
+        echo $str >> $donefile
+        str="float spec4_edge1 = $stop;"
+        echo $str >> $donefile
+        str="float spec4_edge2 = 4000;"
+        echo $str >> $donefile
+
+     #spec lower bounds
+        up=`getparam -P$pre_donefile -p stop_upbound`
+        str="float spec3_bound1 = $up;"
+        echo $str>> $donefile
+        str="float spec3_bound2 = $up;"
+        echo $str>> $donefile
+        low=`getparam -P$pre_donefile -p stop_lowbound`
+        str="float spec4_bound1 = $low;"
+        echo $str>> $donefile
+        str="float spec4_bound2 = $low;"
+        echo $str>> $donefile
+        str="string spec3_hug ="'"not hugged";'
+        echo $str >> $donefile
+        str="string spec3_interp ="'"arithmetic";'
+        echo $str >> $donefile
+        str="string spec4_hug ="'"not hugged";'
+        echo $str >> $donefile
+        str="string spec4_interp ="'"arithmetic";'
+        echo $str >> $donefile
+        echo " " >> $donefile
+
+	str="int nspec =4;"
+	echo $str >> $donefile
+	str="int nspec_pushed = 2;"
+	echo $str >> $donefile
+	str="int spec1_pushed = 4;"
+	echo $str >> $donefile
+	str="int spec2_pushed = 3;"
+	echo $str >> $donefile
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        cb_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+#--------CONSTRAINT-BASED HILBERT TRANSFORMER
+   if test $filt_type = 'HILBERT'
+	then
+	echo "Can't do Hilbert transformer filter with constraint-based design"
+	exit
+   fi
+
+fi
+
+if test $filt_mthd = 'EQUI_RIPPLE'
+then
+#--------EQUIRIPPLE LOWPASS-----------------
+   if test $filt_type = 'LOWPASS'
+   then
+	cat >> $queryfile << END
+	string filt_type = "multiband": "Desired FIR kind:":{"MULTIBAND", "DIFFERENTIATOR", "HILBERT"};
+	float samp_freq ?= 8000;
+	int filt_length ?= 33: "Filter length:";
+	int nbands = 2: "Number of bands:";
+	float band1_edge1 ?= 0: "Left bandedge for band 1:";
+	float band1_edge2 ?= 1600: "Right bandedge for band 1:";
+	float band1_des ?= 1: "Value for band 1, or slope for differentiator";
+	float band1_wt ?= 1: "Weight for band 1";
+
+	float band2_edge1 ?= 2000: "Left bandedge for band 2:";
+	float band2_edge2 ?= 4000: "Right bandedge for band 2:";
+	float band2_des ?= 0: "Value for band 2";
+	float band2_wt ?= 1: "Weight for band2";
+END
+
+	exprompt -X10 -Y10 -P $queryfile -h pkmc_filt $donefile 
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        pkmc_filt -P$donefile $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+#--------EQUIRIPPLE HIGHPASS-----------------
+   if test $filt_type = 'HIGHPASS'
+   then
+	cat >> $queryfile << END
+	string filt_type = "multiband": "Desired FIR kind:":{"MULTIBAND", "DIFFERENTIATOR", "HILBERT"};
+	float samp_freq ?= 8000;
+	int filt_length ?= 33: "Filter length:";
+	int nbands = 2: "Number of bands:";
+	float band1_edge1 ?= 0: "Left bandedge for band 1:";
+	float band1_edge2 ?= 1600: "Right bandedge for band 1:";
+	float band1_des ?= 0: "Value for band 1, or slope for differentiator";
+	float band1_wt ?= 1: "Weight for band 1";
+
+	float band2_edge1 ?= 2000: "Left bandedge for band 2:";
+	float band2_edge2 ?= 4000: "Right bandedge for band 2:";
+	float band2_des ?= 1: "Value for band 2";
+	float band2_wt ?= 1: "Weight for band2";
+END
+
+	exprompt -X10 -Y10 -P $queryfile -h pkmc_filt $donefile 
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        pkmc_filt -P$donefile $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+#--------EQUIRIPPLE MULTIBAND -------------------
+   if test $filt_type = 'MULTIBAND'
+   then
+	str='int filt_length ?= 16:"filter length";'
+	echo $str >> $queryfile 
+	for i in $cnt
+	do
+	    if test $i -le $nbands
+	    then
+              str="float band"$i"_edge1 ?= 0.0: "'"left edge for band '$i'";'
+              echo $str >> $queryfile 
+              str="float band"$i"_edge2 ?= 0.0: "'"right edge for band '$i'";'
+	      echo $str >> $queryfile 
+              str="float band"$i"_des ?= 1: "'"desired value for band '$i'";'
+	      echo $str >> $queryfile 
+              str="float band"$i"_wt ?= 1: "'"weight for band '$i'";'
+	      echo $str >> $queryfile 
+	    fi
+	done
+
+	str='string filt_type = "MULTIBAND";'
+	echo $str >> $queryfile 
+	str="float samp_freq = $samp_freq;"
+	echo $str >> $queryfile 
+	str="int nbands = $nbands;"
+	echo $str >> $queryfile 
+
+	exprompt -X10 -Y10 -P $queryfile -h pkmc_filt $donefile 
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        pkmc_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+#--------EQUIRIPPLE DIFFERENTIATOR
+   if test $filt_type = 'DIFFERENTIATOR'
+   then
+	str='int filt_length ?= 21:"filter length";'
+	echo $str >> $queryfile 
+	str='float band1_edge2 ?= 2000:" Differentor passband frequency:";'
+	echo $str >> $queryfile 
+	str='float band2_edge1 ?= 3200:" Differentor stopband frequency:";'
+	echo $str >> $queryfile 
+	str='float band1_des ?= 1:" Differentor passband slope:";'
+	echo $str >> $queryfile 
+	str='float band1_wt ?= 1:" Differentor passband weight:";'
+	echo $str >> $queryfile 
+	str='float band2_wt ?= 1:" Differentor stopband weight:";'
+	echo $str >> $queryfile 
+
+	str='string filt_type = "DIFFERENTIATOR";'
+	echo $str >> $queryfile 
+	str="float samp_freq = $samp_freq;"
+	echo $str >> $queryfile 
+	str="int nbands = 2;"
+	echo $str >> $queryfile 
+	str='float band1_edge1 = 0.0;'
+	echo $str >> $queryfile 
+ 	nyquist=`echo $samp_freq \/ 2 | bc`
+ 	str="float band2_edge2 = $nyquist;"
+	echo $str >> $queryfile 
+	str='float band2_des = 0.0;'
+	echo $str >> $queryfile 
+
+	exprompt -X10 -Y10 -P $queryfile -h pkmc_filt $donefile 
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        pkmc_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+#--------EQUIRIPPLE HILBERT TRANSFORMER
+   if test $filt_type = 'HILBERT'
+   then
+	str="int filt_length ?= 41:"'"filter length";'
+	echo $str >> $queryfile 
+	str="float samp_freq = $samp_freq;"
+	echo $str >> $queryfile 
+	str='string filt_type = "HILBERT";'
+	echo $str >> $queryfile 
+	str="int nbands = 1;"
+	echo $str >> $queryfile 
+	str='float band1_edge1 = 0.0;'
+	echo $str >> $queryfile 
+	str='float band1_edge2 = 4000;'
+	echo $str >> $queryfile 
+	str='float band1_des = 1;'
+	echo $str >> $queryfile 
+	str='float band1_wt = 1;'
+	echo $str >> $queryfile 
+
+	exprompt -X10 -Y10 -P $queryfile -h pkmc_filt  $donefile 
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        pkmc_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+
+fi
+
+if test $filt_mthd = 'WEIGHTED_MS'
+then
+#--------WEIGHTED MEAN-SQUARED LOWPASS ---------
+   if test $filt_type = 'LOWPASS'
+   then
+	cat >> $queryfile << END
+	float samp_freq ?= 8000: "Sampling frequency:";
+	int filt_length ?= 201: "filter length - odd:";
+	int nbands = 2: "Number of bands:";
+	float band_edge1 ?= 0;
+	float band_edge2 ?= 1800;
+	float band_edge3 ?= 4000;
+	float band1_des ?= 1: "desired value for band1:";
+	float band2_des ?= 0: "desired value for band2:";
+	float band1_wt ?= 1: "weighting value for band1:";
+	float band2_wt ?= 1: "weighting value for band2:";
+END
+	
+	exprompt -X10 -Y10 -P $queryfile -h wmse_filt $donefile 
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        wmse_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+#--------WEIGHTED MEAN-SQUARED HIGHPASS ---------
+   if test $filt_type = 'HIGHPASS'
+   then
+	cat >> $queryfile << END
+	float samp_freq ?= 8000: "Sampling frequency:";
+	int filt_length ?= 201: "filter length - odd:";
+	int nbands = 2: "Number of bands:";
+	float band_edge1 ?= 0;
+	float band_edge2 ?= 1800;
+	float band_edge3 ?= 4000;
+	float band1_des ?= 0: "desired value for band1:";
+	float band2_des ?= 1: "desired value for band2:";
+	float band1_wt ?= 1: "weighting value for band1:";
+	float band2_wt ?= 1: "weighting value for band2:";
+END
+	
+	exprompt -X10 -Y10 -P $queryfile -h wmse_filt $donefile 
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        wmse_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+#--------WEIGHTED MEAN-SQUARED MULTIBAND -------------------
+   if test $filt_type = 'MULTIBAND'
+   then
+	str='int filt_length ?= 201:"filter length (odd number)";'
+	echo $str >> $queryfile 
+	for i in $cnt
+	do
+	    if test $i -le $nbands
+	    then
+              str="float band"$i"_des ?= 1: "'"desired value for band '$i'";'
+	      echo $str >> $queryfile 
+              str="float band"$i"_wt ?= 1: "'"weight for band '$i'";'
+	      echo $str >> $queryfile 
+	    fi
+	done
+	nbands1=`echo "1 $nbands + p q"|dc`	
+	for i in $cnt
+	do
+	    if test $i -le $nbands1
+	    then
+              str="float band_edge"$i" ?= 0.0: "'"the '$i'th bandedge";'
+              echo $str >> $queryfile 
+	    fi
+	done
+
+	str="float samp_freq = $samp_freq;"
+	echo $str >> $queryfile 
+	str="int nbands = $nbands;"
+	echo $str >> $queryfile 
+
+	exprompt -X10 -Y10 -P $queryfile -h wmse_filt $donefile 
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        wmse_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+
+   if test $filt_type = 'DIFFERENTIATOR'
+	then
+	echo "Can't do differentiator filter with weighted-MS design"
+	exit
+   fi
+   if test $filt_type = 'HILBERT'
+	then
+	echo "Can't do Hilbert transformer filter with weighted-MS design"
+	exit
+   fi
+
+
+fi
+
+if test $filt_mthd = 'WINDOW_METH'
+then
+#--------WINDOW_METH LOWPASS -------------------
+   if test $filt_type = 'LOWPASS'
+   then
+	cat >> $queryfile << END
+	float samp_freq ?= 8000: "Sampling frequency:";
+	int nbands = 2: "Number of bands:";
+	float band_edge1 ?= 0;
+	float band_edge2 ?= 1800;
+	float band_edge3 ?= 4000;
+	float band1_des ?= 1: "desired value for band1:";
+	float band2_des ?= 0: "desired value for band2:";
+	float rej_db ?= 20: "rejection in dB from one band to another:";
+	float trans_band ?= 100: "transition bandwidth:";
+END
+	exprompt -X10 -Y10 -P $queryfile -hwin_filt $donefile 
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        win_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+#--------WINDOW_METH HIGHPASS -------------------
+   if test $filt_type = 'HIGHPASS'
+   then
+	cat >> $queryfile << END
+	float samp_freq ?= 8000: "Sampling frequency:";
+	int nbands = 2: "Number of bands:";
+	float band_edge1 ?= 0;
+	float band_edge2 ?= 1800;
+	float band_edge3 ?= 4000;
+	float band1_des ?= 0: "desired value for band1:";
+	float band2_des ?= 1: "desired value for band2:";
+	float rej_db ?= 20: "rejection in dB from one band to another:";
+	float trans_band ?= 100: "transition bandwidth:";
+END
+	exprompt -X10 -Y10 -P $queryfile -hwin_filt $donefile 
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        win_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+#--------WINDOW_METH MULTIBAND -------------------
+   if test $filt_type = 'MULTIBAND'
+   then
+	for i in $cnt
+	do
+	    if test $i -le $nbands
+	    then
+              str="float band"$i"_des ?= 1: "'"desired value for band '$i'";'
+	      echo $str >> $queryfile 
+	    fi
+	done
+	nbands1=`echo "1 $nbands + p q"|dc`	
+	for i in $cnt
+	do
+	    if test $i -le $nbands1
+	    then
+              str="float band_edge"$i" ?= 0.0: "'"the '$i'th bandedge";'
+              echo $str >> $queryfile 
+	    fi
+	done
+	str='float rej_db ?= 20:"rejction ratio in dB";'
+	echo $str >> $queryfile 
+	str='float trans_band ?= 100:"transition bandwidth";'
+	echo $str >> $queryfile 
+
+	str="float samp_freq = $samp_freq;"
+	echo $str >> $queryfile 
+	str="int nbands = $nbands;"
+	echo $str >> $queryfile 
+
+	exprompt -X10 -Y10 -P $queryfile -h win_filt  $donefile 
+
+	if test x$paramfile != x
+	then
+             cp $donefile  $paramfile
+	fi	    	    
+        win_filt -P$donefile  $outfile
+	filtspec -ml $outfile - |plotspec - &
+   fi
+
+   if test $filt_type = 'DIFFERENTIATOR'
+	then
+	echo "Can't do differentiator filter with windowing design"
+	exit
+   fi
+   if test $filt_type = 'HILBERT'
+	then
+	echo "Can't do Hilbert transformer filter with windowing design"
+	exit
+   fi
+
+
+fi
+rm $queryfile 
+rm $firkindfile 
+rm $donefile
+
+
+
+
+

@@ -1,0 +1,74 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1993  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)xfft	1.10	6/28/93	ERL
+# 
+# Written by:  John Shore
+# Checked by:
+# Revised by:
+# 
+# Brief description: X cover for fft
+# 
+
+# This script computes and plots a maximum entropy spectrum, with 
+# interactive (X-Windows) prompting for the analysis parameters
+#
+# The script takes two arguments:
+#
+#	$1 = standard ESPS range argument (e.g., -r100:2000)
+#       $2 = name of ESPS sampled data file
+#
+# exprompt is used to fill out a form specifying the order and the 
+# window method; the FFT is then computed, displayed, and plotted. 
+#
+# It is often useful to add this to a xwaves+ menu via 
+#
+# add_espsn name xfft command xfft
+
+TEMP_DIR=$ESPS_TEMP_PATH
+
+if test x$TEMP_DIR = x
+  then 
+    TEMP_DIR=/usr/tmp
+fi
+
+# define temp files for parameters and spectrum
+
+range=
+complex=
+
+params=$TEMP_DIR/xfft$$.prm 
+case $# in
+0|4|5)
+	echo "Usage: xfft [-{pr} range] input.sd"
+	exit 1;;
+1)
+	input=$1
+	;;
+2)
+	range=$1
+	input=$2
+	;;
+3)
+	complex=$1
+	range=$2
+	input=$3	
+esac
+
+# prompt for parameters (except start, nan, frame_len, and step) 
+
+exprompt -h fft -P PWfft $params
+
+# compute and plot results
+
+{ fft -P$params $complex $range $input - | plotspec -r1 - ; rm -f $params ;} &
+

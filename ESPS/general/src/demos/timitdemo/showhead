@@ -1,0 +1,4 @@
+#! /bin/sh 
+# @(#)showhead	1.4 3/16/92 ERL
+xtext -t"Header for $1.wav" -i header epsps -lD files/$1.wav 
+

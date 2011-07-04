@@ -1,0 +1,60 @@
+#!/bin/sh
+# @(#)auto.test	1.4	1/19/93 ESI
+ESPSCOM=./espscom
+export ESPSCOM
+echo Test of AUTO
+echo " "
+echo "Make a test sampled data file ..."
+testsd -a- test.sd << EOD
+1 1 1 1 1 1 1 1 1 1
+2 2 2 2 2 2 2 2 2 2
+3 3 3 3 3 3 3 3 3 3
+EOD
+echo " "
+echo Compute Autocorrelations
+echo " "
+echo "auto -o10 -l10 test.sd - | psps -H -f raw_power -f spec_param -"
+echo " "
+auto -o10 -l10 test.sd - | psps -H -f raw_power -f spec_param -
+echo " "
+echo "Records 1, 2, and 3  should have autocorrelations ="
+echo .9, .8, .7, .6, .5, .4, .3, .2, .1, 0.
+echo " "
+echo "Record 1's power = 1, Record 2's = 4, Record 3's = 9."
+echo " "
+echo Now test overlapping frames
+echo " "
+echo "auto -l10 -S5 test.sd - | psps -H -r2:4 -f raw_power -f spec_param -"
+auto -l10 -S5 test.sd - | psps -H -r2:4 -f raw_power -f spec_param -
+echo "The spec_param arrays should be the following:"
+echo "
+Record 2: 
+spec_param:  
+  0:          0.88    0.75999999    0.63999999    0.51999998    0.40000001 
+  5:    0.31999999    0.23999999          0.16   0.079999998             0 
+
+Record 3: 
+spec_param:  
+  0:    0.89999998    0.80000001    0.69999999    0.60000002           0.5 
+  5:    0.40000001    0.30000001           0.2           0.1             0 
+
+Record 4: 
+spec_param:  
+  0:     0.8923077     0.7846154     0.6769231    0.56923079    0.46153846 
+  5:    0.36923078    0.27692309    0.18461539   0.092307694             0 
+"
+echo " "
+echo The powers should be 2.5, 4, and 6.5 for records 2, 3, and 4 respectively
+echo Generate sine + noise 
+echo "  testsd test1.sd"
+testsd test1.sd
+echo  "  testsd -T gauss -l 5 - | addsd - test1.sd test2.sd"
+testsd -T gauss -l 5 - | addsd - test1.sd test2.sd
+echo "Compute autocorrelations with and without structured covariance"
+echo "  The results should be close to each other"
+echo "auto test2.sd t2.auto"
+auto test2.sd t2.auto
+echo "auto -B test2.sd t2s.auto"
+auto -B test2.sd t2s.auto
+psps -l -f raw_power -f spec_param t2.auto
+psps -l -f raw_power -f spec_param t2s.auto

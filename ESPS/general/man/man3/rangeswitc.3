@@ -1,0 +1,277 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)rangeswitc.3	1.7 07 Aug 1991 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH RANGE_SWITCH 3\-ESPSu 07 Aug 1991
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+range_switch \- parse an integer range argument
+lrange_switch \- parse a long range argument
+frange_switch \- parse a floating range argument
+grange_switch \- parse a generic range argument
+fld_range_switch \- parse a field name and generic subrange
+trange_switch \- parse a time (in seconds) range argument
+.SH SYNOPSIS
+.ft B
+.nf
+
+#include <stdio.h>
+extern int debug_level;
+
+void
+range_switch (text, startp, endp, us)
+char *text;
+int *startp, *endp;
+int us;
+
+void
+lrange_switch (text, startp, endp, us)
+char *text;
+long *startp, *endp;
+int us;
+
+void
+frange_switch (text, startp, endp)
+char *text;
+double *startp, *endp;
+
+long *
+grange_switch (text, array_len)
+char *text;
+long *array_len;
+
+long *
+fld_range_switch(text, name, array_len, hd)
+char *text;
+char **name;
+long *array_len;
+struct header *hd;
+
+void
+trange_switch (text, hd, startp, endp)
+char *text;
+struct header *hd;
+long *startp, *endp;
+
+.ft
+.sp
+.fi
+.SH DESCRIPTION
+.PP
+These functions are used to parse range arguments.
+.PP
+For the functions \fIrange_switch\fP, \fIlrange_switch\fP,
+\fIfrange_switch\fP, and \fItrange_switch\fP, the \fItext\fP argument
+may have any of the forms a:b, a:+b, a:, :b, :, blank, or null. In the
+case of \fIrange_switch\fP and \fIlrange_switch\fP, a and b are
+integers.  In the case of \fIfrange_switch\fP and \fItrange_switch\fP,
+a and b are floating point numbers.  If the agument \fIus\fP is
+nonzero (indicating unsigned ranges) in \fIrange_switch\fP and
+\fIlrange_switch\fP, then the minus sign is considered a field
+separator (it can replace the colon) and only unsigned values are
+returned (thus we can have a-b, a-, -b, or -).
+.PP
+The values of a and b specify the start and end of a desired range.
+The functions \fIrange_switch\fP, \fIlrange_switch\fP, and
+\fIfrange_switch\fP return these values.  If If the start is specified
+(the input is in the form a:b or a:), then the corresponding value is
+returned via \fIstartp\fP.  If the end of the range is specified (the
+input is in the form a:b or :b) then the corresponding value is
+returned via \fIendp\fP.  For a null text argument, or one containing
+invalid characters, neither endpoint is set.  In the case of
+\fItrange_switch\fP, a and b are interpreted as time offsets into an
+ESPS file described by the header \fIhd\fP; the function obtains the
+\fIstart_time\fP and \fIrecord_freq\fP generics from \fIhd\fP,
+converts a and b into record numbers, and returns them via
+\fIstartp\fP and \fIendp\fP.
+.PP
+The form a:+b is equivalent to a:a+b for all functions.
+.PP
+.I Grange_switch
+is used to parse integer range arguments seperated by commas. Each
+field in the
+.I text
+argument is seperated by a ``,'' and may have any of the following
+forms, where a and b are integers: ``a:b'', ``a:+b'', or ``a''.  The
+minus sign is considered a field separator (it can replace the colon)
+and only unsigned values are returned (thus we can have a-b).
+.PP
+.I Grange_switch
+allocates memory for and returns a pointer to an array containing the
+elements selected.  The length of the array is returned in
+\fI*array_len\fP.
+.PP
+.I Fld_range_switch
+parses a range specification given in terms of a feature-file field
+name and an optional bracketed generic subrange specification.  The
+argument
+.I text
+must point to the beginning of a string, which may be of one of two forms:
+.TP
+.IB field_name \^[\^ grange \^]\^
+.TP
+.I field_name
+.LP
+where
+.I field_name
+has the form of a field name
+.RI ( i.e.
+the same as a C identifier)
+and
+.I grange
+is a general range specification acceptable to the function
+.IR grange_switch (3-ESPSu).
+Such strings are accepted on the command line by various programs and
+also occur in the
+.I srcfields
+arrays in feature-file headers
+and in the Ascii ``fieldfiles'' accepted by fea_deriv(1-ESPS).
+.PP
+The bracketed
+.I grange,
+if present, specifies a set of integers that refer to positions within
+the named field, counting the first as position zero.  The returned
+value of the function and the value assigned to
+.I *array_len
+are the same as for the function
+.I grange_switch()
+applied to the
+.I grange
+part of the
+.I text
+string.
+A copy of the
+.I field_name
+part of the
+.I text
+string is assigned to the string variable
+.I *name.
+.PP
+The argument
+.I hd
+is ignored unless the bracketed
+.I grange
+specification is omitted.
+In that case
+.I hd
+must point to a feature-file header containing a definition of the named field,
+and all positions in the field are implied.
+.SH EXAMPLES
+.I lrange_switch
+or
+.I range_switch
+may be used as follows:
+.sp
+.nf
+    start = default_start;
+    end = default_end;
+    range_switch (text, &start, &end, us);
+or
+    lrange_switch (text, &start, &end, us);
+.fi
+.sp
+.I Grange_switch
+may be used as follows:
+.sp
+.nf
+   char text[] = "1,3,5:+2,11";	   /* usually obtained from command line */
+   long	array_len;
+   long	*array;
+
+   array = grange_switch (text, &array_len);
+.fi
+.sp
+.I array_len
+will be set to 6 and on return,
+.I array
+will contain the following elements:
+.sp
+.nf
+	array[0] = 1
+	array[1] = 3
+	array[2] = 5
+	array[3] = 6
+	array[4] = 7
+	array[5] = 11
+.fi
+.sp
+.I Fld_range_switch
+may be used as follows.
+.sp
+.nf
+   char text[] = "spec_param[3,5:7]";
+   char *name;
+   long array_len;
+   long *array;
+
+   array = fld_range_switch(text, &name, &array_len, (struct header *) NULL);
+.fi
+.sp
+On return,
+.I name
+points to the beginning of a string containing "spec_param",
+.I array_len
+is set to 4, and
+.I array
+contains the elements
+.sp
+.nf
+	array[0] = 3
+	array[1] = 5
+	array[2] = 6
+	array[3] = 7
+.fi
+.sp
+Here is a second example for
+.I fld_range_switch.
+.sp
+.nf
+   char text[] = "spec_param";
+   char *name;
+   long array_len;
+   struct header *hd = read_header(input_file);
+   long *array;
+
+   array = fld_range_switch(text, &name, &array_len, hd);
+.fi
+.sp
+Suppose
+.I hd
+points to a feature-file header in which
+.I spec_param
+is defined as a field of size 10.
+Then on return
+.I name
+is as before,
+.I array_len
+is set to 10, and
+.I array
+contains the integers 0 through 9 in order.
+.SH SEE ALSO
+get_deriv_vec(3-ESPSu), FEA(5-ESPS), 
+.SH DIAGNOSTICS
+.PP
+If the bracketed 
+.I grange
+specification is omitted from the input string
+and the named field is not defined in the header,
+.I fld_range_switch
+returns (long *) NULL and assigns 0 to
+.RI * array_len.
+If
+.I fld_range_switch
+cannot allocate memory, it prints a message and the program exits.  If
+\fItrange_switch\fP is passed a null ESPS header, a warning is printed
+if \fIdebug_level\fP is positive.  In this case, or if the
+\fIstart_time\fP and \fIrecord_freq\fP generics are not present, 
+values of 0 and 1 are used respectively.  
+.SH BUGS
+None known.
+.SH FUTURE CHANGES
+Allow for negative values to be used in \fIgrange_switch\fP.
+.SH AUTHOR
+Man page by Ajaipal S. Virdy.
+Fld_range_switch added by Rodney Johnson.
+trange_switch by John Shore. 
+

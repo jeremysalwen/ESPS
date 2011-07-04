@@ -1,0 +1,660 @@
+
+
+
+
+ESPS Version 4.2 Release Notes                        page 1
+
+
+               ESPS Version 4.2 Release Notes
+
+                Document version: 1.4 2/1/93
+
+1.  INTRODUCTION
+
+This document provides notes for release 4.2 of ESPS.  These
+release  notes  document  changes to ESPS since the revision
+4.1.  This document can be viewed conveniently  using  einfo
+(1-ESPS) or eversion (1-ESPS).
+
+Note that when shipped as an update (i.e. not to new  custo-
+mers)  new  hardcopy  manuals are not provided.   The online
+documentation is up to date.  Please  refer  to  the  online
+manual  pages  for  all  programs and library functions men-
+tioned below.
+
+2.  SUMMARY OF MAJOR CHANGES
+
+This release is primarily a maintenance release and most  of
+the changes were bug fixes to programs and error corrections
+to the documentation.  Major highlights include:
+
+   + major improvements to the filter design  and  filtering
+     programs
+
+   + license manager startup delay reduced from 3 minutes to
+     1 minute
+
+   + automatic checkout of ESPS license when required
+
+   + e2sphere a license-free program added to  convert  ESPS
+     files to Sphere header files
+
+   + updated documentation
+
+3.  CHANGES TO USER-LEVEL ESPS PROGRAMS
+
+3.1.  CHANGES TO FILTER PROGRAMS
+
+In the ESPS 4.2 release, the  numerical  stability  of  many
+filter programs is improved.  The new filter2 program imple-
+ments an IIR filter in cascade form  of  second  order  sec-
+tions,  rather  than in direct form implementation as in the
+old filter program. The filt_spec  and  impulse_rs  programs
+have  been re-written for numerical stability for high order
+IIR filters.
+
+The    library    functions    block_filter2(3-ESPS)     and
+init_fdata(3-ESPS),  the  core functions of filter2, replace
+the old block_filter(3-ESPS) in the library.   The  function
+fil_spectrum(3-ESPS)  is  added to the library for computing
+filter spectral characteristics.
+
+
+
+
+
+
+
+
+
+
+ESPS Version 4.2 Release Notes                        page 2
+
+
+Chebyshev2 and elliptical  IIR  filter  design  methods  are
+added  in  the  iir_filt  program.   The  user-interface  of
+iir_filt is made easier than the previous release by requir-
+ing  only the input parameters of passband and stopband fre-
+quencies and loss characteristics.
+
+A binary sfconvert program has been written to  replace  the
+old  sfconvert  shell  script for sampling frequency conver-
+sion.  The new program allows user to have complete  control
+over  trade-off  between  computation efficiency vesus accu-
+racy.
+
+wmse_filt now stores correct number of bandedges in the ban-
+dedges generic header item.
+
+3.1.1.  SPECIFIC CHANGES TO FILTER PROGRAMS
+
+(1)  iir_filt - Major IIR filter improvements:
+
+     Elliptical and  Chebyshev II are now supported.
+
+     Only need  to  specify  stop/passband  frequencies  and
+     stop/passband loss for filter design.  No need to esti-
+     mate the order, no need to know what 3dB frequency (for
+     Butterworth),  or  critical frequency (for Cheveyshev1)
+     is, if the user is not  familiar  with  filter  design.
+     The  new  iir_filt  allows  a precise control on filter
+     characteristics.
+
+     The program computes the optimal filter order.  But the
+     user  has  an option of over-riding the filter order by
+     means of supplying his own filter order in the  parame-
+     ter file.
+
+     No array parameter  input.   This  means  you  can  run
+     iir_filt  with xwaves by the use of xeparam to design a
+     filter and process the data on the fly.
+
+     Maximum passband gain is normalized to  0dB.   The  old
+     iir_filt  has  its maximum passband amplitude different
+     from 0dB if the filter order is odd.
+
+(2)  wmse_filt - this  program  now  checks  for  a  license
+     checkout  before  the user enters the parameters.   The
+     header item nbands has been fixed to store the  correct
+     number of bandedges.
+
+(3)  filter2 - a new  numerically-stable  filtering  program
+     intended to replace the existing program filter.
+
+(4)  sfconvert - this is an all new program (the old  script
+     by  the  same  name  is gone).   It has a number of new
+     options and is much  faster  than  the  previous  shell
+
+
+
+
+
+
+
+
+
+
+ESPS Version 4.2 Release Notes                        page 3
+
+
+     script  version.    See the man page for details.  This
+     program is also linked to the name esfconvert to  avoid
+     a name clash on SGI machines by an SGI supplied program
+     named sfconvert.
+
+(5)  xsfconvert - XIG version of the new sfconvert.
+
+(6)  impulse_rs - improved the numerical stability.
+
+(7)  filtspec - improved the numerical stability.
+
+(8)  plotspec - improved the numerical stability.
+
+3.2.  CHANGES TO OTHER PROGRAMS
+
+(1)  vqasc - this program has a new option -l to specify the
+     maximum  length  of  input lines (removing a hard-coded
+     limit).
+
+(2)  vq - no longer limits the maximum codeword dimension to
+     1000.  Allocations are done dynamically as needed.
+
+(3)  lpcana - now uses anal_method correctly from the param-
+     eter file.
+
+(4)  exprompt - the output parameter file is now deleted  if
+     exit was not the result of clicking on DONE.
+
+(5)  me_spec - the parameters startrec and nrecs  have  been
+     changed  to  start  and nan to be consistent with other
+     ESPS programs.
+
+(6)  fea_stats - the standard  output  has  been  made  more
+     readable for non-stat files (changed output format from
+     %f to %e). An error message has been added to  indicate
+     if the covariance matrix is singular.
+
+(7)  refcof - the -S0 option has been fixed.
+
+(8)  psps - now prints the correct  bandedges  header  items
+     for  FIR  FT_FILT files.  This program is linked to the
+     name epsps to avoid a name clash with  a  Sun  supplied
+     psps (part of Open Windows).
+
+(9)  testsd - fixed sine drift problem.
+
+(10) acf - this program now  correctly  computes  the  start
+     time of the output file in cases where input files have
+     negative start times.
+
+(11) fftcep - this program now correctly outputs  both  real
+     and imaginary parts of the complex cepstrum.
+
+
+
+
+
+
+
+
+
+
+
+ESPS Version 4.2 Release Notes                        page 4
+
+
+(12) fea_stats - this program computes an inverse covariance
+     matrix     using    matrix_inv(3-ESPS).      The    old
+     matrix_inv(3-ESPS) had a broken singular matrix  check,
+     so  a  bad  inverse  covariance  matrix  was  generated
+     silently in the fea_stats output.
+
+(13) The following programs now place temporary files in the
+     directory   specified   by   the  environment  variable
+     ESPS_TEMP_PATH: acf, addfea,  auto  cross_cor,  dither,
+     frame,   lpcana,   mergefea,  refcof,  select,  setmax,
+     addgen, copysps, rem_dc, fea_stats, fea_edit, addclass,
+     and comment.
+
+(14) gpstohp - this is the GPS to HP Laserjet filter.   This
+     has  been  improved  so that it produces smaller output
+     files for a given plot.  In many cases the data sent to
+     the  printer  has  been  cut  in half.   This filter is
+     called by the plot programs when  the  -Thp  option  is
+     used.
+
+(15) plotsd - this program used to subsample (plot by simply
+     skipping  points)  if  the  number  of  points  to plot
+     exceeds the available number of pixels.  Now  the  pro-
+     gram plots the min and the max of a segment.  This pro-
+     duces plots that look just like xwaves.
+
+(16) plotsd - fixed to  work  with  ESPS  common  processing
+     turned off and removed the (now useless) -P option.
+
+(17) playtest - fixed man page to mention that script  lines
+     are  run twice.  Also the (nonfunctional) -n option has
+     been removed.
+
+(18) plot3d - after plot3d started up (on Suns), the initial
+     graph  was offset and scaled differently than the space
+     the cursor was moving in.  This was fixed by having the
+     plot  frame size established BEFORE the enclosed canvas
+     was created.
+
+(19) addfea - this program failed on SGI machines  when  the
+     -f option was not used.   It has been fixed.
+
+(20) tofspec - The -s option was added to  allow  specifica-
+     tion  of the generic header item sf in the output file.
+     This is a generally useful change as it permits control
+     over  the  frequency scale when the output is displayed
+     via xwaves.  This change (when coupled with an  xspecav
+     script  change) fixes the fairly serious xwaves display
+     bug that shows incorrect frequency scale  for  spectral
+     averages.   Note that there's a corresponding parameter
+     as well (sf).  If it is not present or has  zero  value
+     (also  the  default  of  -s),  then the old behavior is
+     used.
+
+
+
+
+
+
+
+
+
+
+ESPS Version 4.2 Release Notes                        page 5
+
+
+(21) send_xwaves - Implemented and  documented  blocking  in
+     send_xwaves.   This  permits  any  xwaves command to be
+     issued reliably from send_xwaves without concern  about
+     completion  of a previous command.  This new version of
+     send_xwaves must be used with the new version of xwaves
+     (3.1).   However, the old send_xwaves will work ok with
+     the new xwaves.
+
+(22) fft and fftinv -
+
+     Now both -S0 on the command line and step =  0  in  the
+     parameter  file  imply a step equal to the default; the
+     frame length.
+
+     Omitting the end of the range in the fft -r  option  is
+     now  equal to setting nan = 0 in the parameter file and
+     implies processing from the starting point through  the
+     end of the file.
+
+     The manual page has been fixed  to  document  nan  ade-
+     quately.
+
+     Previous version would not run on a pipe with nan =  0.
+     The  main  problem  with  nan = 0 on a pipe is that the
+     default frame length was the implied value of  nan:  in
+     this  case  the  length  of the range from the starting
+     sample to the end of the file.  That made it impossible
+     to  allocate  storage for a frame of data without first
+     reading the entire file.  We changed the default  frame
+     length  to  be  equal to the transform length (2 to the
+     power order), since that seemed like a more  reasonable
+     default  in  any  case.  Now fft will run on pipes with
+     nan = 0.
+
+     fftinv start_time calculation has been fixed.
+
+     fft scaling was wrong when frames overlap.  The scaling
+     of  spectral  values  has been revised to be consistent
+     with the total-power computation.  (The problem was not
+     so  much with overlapping frames as with a frame length
+     different from the transform length.)
+
+     fftinv needed  compensating  change  when  fft  scaling
+     fixed.   fftinv was changed to compensate for the scal-
+     ing change in fft
+
+     fftinv needlessly  requires  fft_length  generic.   Now
+     fftinv  determines  the  fft  length from the num_freqs
+     header item,  which  is  standard  in  FEA_SPEC  files,
+     rather than from the fft_length item, which is not.  If
+     the fft_length item is present, the program checks  for
+     the  condition (fft_length == num_freqs - 1) and prints
+     a warning in case of inconsistency.
+
+
+
+
+
+
+
+
+
+
+ESPS Version 4.2 Release Notes                        page 6
+
+
+     There is now a -t command-line option that controls the
+     data  type  of the output FEA_SD file and overrides the
+     data type implied by the input_data header  item.   Any
+     numeric  type  is  now  possible,  not  just  FLOAT and
+     FLOAT_CPLX.
+
+     Under some conditions, fft was writing a bad value  for
+     nan in the common file.  It now writes a more appropri-
+     ate value.
+
+     In the output of fft, the frame_meth header item is now
+     VARIABLE  instead  of FIXED, since a partial last frame
+     is possible, and since the scaling changes made it more
+     important  for  frame_len  to  indicate the actual data
+     length, exclusive of zero padding.  When input is not a
+     pipe,  it  would  be possible to check whether the last
+     frame has the same length as the rest and  to  indicate
+     frame_meth  FIXED  in  that  case;  this is not done at
+     present,  however.   The  fftinv  program  now  handles
+     frame_meth VARIABLE as well as frame_meth FIXED.
+
+(23) exprompt - fixed a floating point conversion error that
+     resulted  in  errors  when  entering floating values to
+     prompts  (for  example,  entering  204.8,  resulted  in
+     204.800003 being stored).
+
+(24) vqdes and vqdesasc - output files were incorrect in the
+     case of output going to stdout.  This has been fixed.
+
+(25) select - added -f option to allow  specification  of  a
+     printf  option to use with the -e option.   Previously,
+     %g was used.  This program is  also  linked  under  the
+     name  eselect  to avoid a name clash with the ksh built
+     in function called select.
+
+(26) getparam - a bug was fixed that caused the  program  to
+     exit  without  taking any action if an ESPS common file
+     does not exist.
+
+(27) mergefea -
+
+     The -u option did not work.  We changed the behavior of
+     the  -u  option  to be consistent with the man page and
+     changed the man page to be  consistent  with  what  the
+     program does when -u is not specified.
+
+     Mergefea  did  not  check  for  consistent  record_freq
+     values.   The program now writes a warning to stderr if
+     two  input  files  exist,  both   define   values   for
+     record_freq, and the values are different.  The message
+     can be suppressed by specifying -z on the command line.
+
+     The mergefea program now preserves the FEA file subtype
+
+
+
+
+
+
+
+
+
+
+ESPS Version 4.2 Release Notes                        page 7
+
+
+     code,  if any, in its second input file, and there is a
+     new -T option for forcing an arbitrary subtype code  in
+     the output.
+
+     The program issues a warning if it is given  two  input
+     files  in  which  different  values  of the record_freq
+     header item are defined; there is a command-line option
+     to suppress the warning.
+
+     Under some conditions, the -f option could cause  other
+     fields as well as those specified to be copied from the
+     first input file.  This is fixed.
+
+     The -u option would rename generic  header  items  from
+     the  second  input file rather than the first.  This is
+     fixed.
+
+     The -t option was inconsistent  with  regard  to  which
+     input  file was used as the source for tag values. This
+     is fixed.
+
+4.  NEW PROGRAMS
+
+(1)  e2sphere - new program that converts ESPS sampled  data
+     files to Sphere (NIST formatted) files; this program is
+     license-free (i.e., can run on any CPU)
+
+(2)  srecord - new  program  for  recording  data  from  the
+     SparcStation  8  bit  codecs.   This program also works
+     with the new Sun audio, but currently is limited  to  a
+     single channel.
+
+(3)  splay - this is an all new version of the play  program
+     for  the  SparcStation  8  bit  codec.    This  program
+     currently is only single channel and  was  written  for
+     the  single  channel  codec on the older SparcStations.
+     But it will work on the new higher quality  audio  such
+     as  the  SparcStation  10,  but  it  is limited to only
+     8000Hz and single channel.
+
+     A version of srecord and splay will be  available  soon
+     for the new Sun audio hardware.
+
+     SGI users note:  This release also includes sgplay  and
+     sgrecord.  These are full featured record and play pro-
+     grams using the SGI Indigo built-in audio.  These  pro-
+     grams can handle both channels at up to 48Khz.
+
+(4)  zero_pad - new program for adding  records  to  feature
+     files.   It is intended to be used with the filter pro-
+     gram in computing regressions.
+
+
+
+
+
+
+
+
+
+
+
+
+ESPS Version 4.2 Release Notes                        page 8
+
+
+(5)  v32play - new dual Surf board/FAB2 play program.   This
+     program  does  direct  from disk playback with the AT&T
+     VME FAB2 board, and the AT&T or  Heurikon  Surf  board.
+     In the case of the Surf board, the program can play two
+     channels.  This program replaces surf_play and wplay.
+
+(6)  v32record - record program for  AT&T  or  Heurikon  VME
+     Surf  board.   This  program  does not support the FAB2
+     board.
+
+5.  CHANGES TO LIBRARY FUNCTIONS
+
+(1)  matinv - fixed some numerical problems  resulting  from
+     use of floats vs. doubles.
+
+(2)  block_filter2 - new function for filtering.  See online
+     manual page.
+
+(3)  init_fdata - new function for  filtering.   See  online
+     manual page.
+
+(4)  fil_spectrum - a new function to  find  magnitude/phase
+     response from filter specifications.
+
+(5)  init_anafea_hd - did not add the  generic  header  item
+     filt_dsiz  and  filt_nsiz  when filters == YES.  Now it
+     does.
+
+(6)  strcov_auto  -  uninitialized  variable  fixed,   which
+     caused some programs (such as refcof to fail under cer-
+     tain circumstances).
+
+(7)  get_vqfea_rec, put_vqfea_rec - these no longer copy the
+     codebook  entries,  since marg_index(3-ESPS) is used in
+     allo_vqfea_rec(3-ESPS) to setup the pointers.
+
+6.  NEW LIBRARY FUNCTIONS
+
+(1)  sd_to_sphere - converts ESPS sampled  data  headers  to
+     Sphere  headers and converts ESPS sampled data files to
+     Sphere files.  This function can be  used  in  non-ESPS
+     programs  (i.e.  it does not require an ESPS license to
+     run).
+
+(2)  eopen2 - semantically the same as eopen(3-ESPS)  except
+     that,  unlike eopen, it does not exit if the file is of
+     the wrong type (not an ESPS file or  wrong  ESPS  suby-
+     type);  instead,  eopen2  outputs an error message, and
+     returns.  We had intended to change  the  semantics  of
+     eopen  to  work  this  way,  but it turns out that many
+     existing programs depend on the old behavior.
+
+
+
+
+
+
+
+
+
+
+
+
+ESPS Version 4.2 Release Notes                        page 9
+
+
+6.1.  LICENSE MANAGER CHANGES
+
+Changes have been made  to  the  way  the  Entropic  license
+manager system works.  They are:
+
+(1)  wcheckout has been removed
+
+(2)  wfree has been removed
+
+(3)  If an ESPS license is needed and  one  is  not  checked
+     out, an auto checkout will be attempted for you.
+
+(4)  ESPS programs  do  not  talk  to  the  central  license
+     server,  but  instead  talk  to  a  local daemon.  This
+     reduces network traffic  and  prevents  network  delays
+     from affecting programs.
+
+(5)  freewaves added to release a stuck xwaves license
+
+Normally, echeckout is run to checkout an ESPS license for a
+particular host.    If an ESPS program is run, but a license
+is not checked out on that host, then the program  will  try
+and  checkout  a license for you.  You will see a message if
+this is done - and you should be able to tell  if  it  fails
+for some reason.
+
+ESPS programs do not talk to the central license server, but
+instead  talk  to  a  local  daemon.   This  reduces network
+traffic and prevents network delays from affecting programs.
+
+7.  THE PUB DIRECTORY
+
+The directory $ESPS_BASE/pub contains full-source copies  of
+certain  relevant and useful public domain programs. You are
+free to use them and pass them on in any  manner  consistent
+with  restrictions  stated  by  their authors.  This release
+contains these programs:
+
+tpipe
+     This is a utility that splits a unix pipeline into  two
+     pipelines.   Stated differently, the output of one pipe
+     can provide the intput to two others.  tpipe was  writ-
+     ten by David B. Rosen of Boston University.
+
+xgrabsc
+     A utility that allows you to grab arbitrary portions of
+     the  screen and output them in Postscript or many other
+     formats.  xgrabsc was written by Bruce Schuchardt.
+
+tek2ps
+     Written by Michael  Fischbein,  this  program  converts
+     tektronix graphics codes into Postscript.  This is used
+     by some of our plotting programs.
+
+
+
+
+
+
+
+
+
+
+ESPS Version 4.2 Release Notes                       page 10
+
+
+shellforms
+     This is a utility to build  and  edit  forms.   It  was
+     written by Paul Lew.
+
+8.  KNOWN PROBLEMS
+
+(1)  exprompt - a bug causes all params in a Common file  to
+     be  included  in the output parameter file, even if not
+     defined in parameter file (but  only  if  Common  newer
+     than param_file)
+
+(2)  Due to new features  develped  for  filtering,  an  IIR
+     filter  file  version  less  than  1.87  should  be re-
+     designed with the new iir_filt  program,  which  allows
+     better  control  in filter characteristics.   These old
+     filter files (pre FEA_FILT) files will not work  -  and
+     will cause some programs to fail.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

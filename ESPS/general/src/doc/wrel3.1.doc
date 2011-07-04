@@ -1,0 +1,990 @@
+
+
+
+
+waves+ Version 3.1 Release Notes                      page 1
+
+
+              waves+ Version 3.1 Release Notes
+
+                Document Version: 1.1 2/1/93
+
+1.  INTRODUCTION
+
+This new release of waves+,  prepared  for  distribution  in
+January  1993, provides new features requested by our custo-
+mers.  It also provides fixes to many bugs  and  removal  of
+numerous annoyances.  In addition, the software and documen-
+tation improvements embodied in this release are part of the
+groundwork  for  significant feature enhancements to come in
+future releases.
+
+
+1.1.  Version 3.1 Release Highlights
+
+   + xchart: a new display  method  for  lattices  of  time-
+     series labels
+
+   + full editing and display support for aperiodically sam-
+     pled time series
+
+   + streamlined software license facilities
+
+   + improved control of output file destinations
+
+   + enhanced control over "server mode" operation
+
+   + greatly improved D/A and A/D (play and record) programs
+
+   + enhanced scrolling and random access in long data files
+
+   + xspectrum now permits FFT's of unlimited size
+
+   + fine-grained control of harmonic spectrum cursors
+
+   + enhanced xwaves startup environment and control panels
+
+   + updated documentation
+
+
+1.2.  Compatibility with Previous Versions
+
+Xwaves is backwards compatible with  Version  2.1  with  the
+following exceptions:
+
+The program xwaves now has only one  official  name.   Simi-
+larly, the attachments, xspectrum, xlabel, xchart and xmarks
+have only one official name each.  We provide  an  installa-
+tion  option  to  generate  symbolic  links  to  the various
+aliases (xvwaves, waves+, xwaves+, ...),  but  we  encourage
+you  to  join  us in eliminating this confusion once and for
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                      page 2
+
+
+all!  The name waves+ is now used only to refer to the  col-
+lection  of  programs and documentation comprising the whole
+product.
+
+xwaves is only available for use with the X  window  system.
+The Sunview version is no longer available.
+
+The display server potential of  xwaves  has  been  signifi-
+cantly  increased  by  allowing  send_xwaves  to  block  (by
+default) until the sent command is complete.  Shell  scripts
+that  counted  on non-blocking behavior should be changed by
+inserting the -B  command-line  option  in  the  send_xwaves
+calls.
+
+Wcheckout has been eliminated.  All  auxiliary  xwaves  pro-
+grams now run whether xwaves is running or not.  This should
+make life more pleasant, but if you have  old  UNIX  scripts
+that ran wcheckout, you should remove these calls.
+
+Filenames entered into xwaves no longer have "./"  automati-
+cally   prepended  to  the  internal  representation.   This
+behavior caused subquent references  to  files  loaded  into
+xwaves to be incorrect, since the user had no way of knowing
+that the name (as far as xwaves was concerned) had a leading
+"./".   This  fixes  apparent bugs in several commands (e.g.
+align) that reference specific files.  If you worked  around
+this  deficiency in your shell scripts or send_xwaves calls,
+you may need to remove the leading "./"  from  scripts  that
+reference these files.
+
+The programs wplay and wrecord have been replaced by v32play
+and v32record, respectively.  These provide dual-channel D/A
+and A/D with the AT&T/Heurikon SURF VME board,  and  provide
+single-channel play and record for the old AT&T dsp32 "FAB2"
+board.  The new programs read/write  directly  from/to  disk
+and have several other improvements.
+
+The  scope  of  the   xwaves   parameters   image_clip   and
+image_range  has  been  broadened to include adjustments for
+color/greyscale systems.  Formerly,  these  only  influenced
+the  intensity  mapping for monochrome dithered spectrograms
+and   images.    Since   they   now   provide   control   of
+color/greyscale  as well, you may discover that the settings
+in your personal .wave_pro profile or in the default profile
+found  in  $ESPS_BASE/lib/waves/.wave_pro  are  not  to your
+taste.  Increasing image_clip darkens the image;  decreasing
+image_range increases the contrast.
+
+You may now have to find some other reason to take long cof-
+fee  breaks; we've eliminated three.  Xwaves and the attach-
+ments can no longer hang up the mouse and monitor.  Previous
+versions  occasionally  did  this,  requiring  you  to login
+remotely or reboot your system to regain  control.   Another
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                      page 3
+
+
+impact   on   coffee  breaks  comes  from  the  new  program
+freewaves.  Previously, if xwaves exited ungracefully,  e.g.
+by  a  UNIX  kill command, the license was left occupied for
+three minutes.  It is now left for only 30 seconds,  and  if
+this  is  too long, just issue the freewaves command to free
+it immediately.  Finally, the license  control  daemon  elmd
+now  only requires one minute to initialize, rather than the
+three minutes required in Version 2.1.
+
+
+2.  NEW FEATURES
+
+The primary aim of the Version 3.1 release of waves+  is  to
+fix problems and ro make the overall operation of the system
+smoother.  This also lays the groundwork for major  enhance-
+ments  to  come  later in the Spring of 1993.  Entropic has,
+however added the new features listed below to Version 3.1.
+
+
+2.1.  xwaves
+
+The xwaves spectrogram  command  now  has  four  additional,
+optional  arguments.  The keywords height and width (in pix-
+els) permit specification of the presentation dimensions  on
+the  screen.  If horizontal and vertical rescale are enabled
+(with h_spect_rescale and v_spect_rescale), the  spectrogram
+will  be scaled to fit the requested dimensions.  If scaling
+is disabled, the spectrogram display will  either  clip  the
+data  image  or be limted in maximum size to the data image.
+The new keywords  range  and  threshold  provide  means  for
+specifying  the  intensity mapping parameters when the spec-
+trogram is created.  Previously, this was only available via
+the separate colormap command.
+
+A new time display mode has been added to xwaves.  When  the
+cursor  is  in  the  scrollbar  region  near  the top of the
+display, the time readout is now for the  whole  file.  This
+allows  accurate  direct  access  to any part of the signal.
+Note that the time/frequency cursor is now frozen  when  the
+mouse  is in the scrollbar region.  The "Time:" item changes
+to "Time(f):" when the mouse is  in  the  scrollbar  region.
+Thus: if it is necessary to scroll to a particular time in a
+long file: move the mouse pointer into the scrollbar region;
+move  it  right  or  left until the "Time(f):" display reads
+approximately the desired time; press the middle mouse  but-
+ton.  The desired time will then be centered in the display.
+
+The startup environment invoked by the .wave_pro entry
+    init_file  $ESPS_BASE/lib/waves/commands/xw_init.WC
+has been improved.  (This init_file is what  brings  up  the
+"Miscellaneous  xwaves  Controls"  button  panel.)   Changes
+include:
+
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                      page 4
+
+
+   + spectral averaging can be added to image menus
+
+   + hardcopy ESPS plots can be added to menus
+
+   + some buttons are now menu-buttons to provide shortcuts
+
+   + there's a quick way to turn rescale on and off
+
+   + when plot3d is added, server mode is enabled
+
+Xwaves now reads, displays, edits and writes ESPS tagged FEA
+files  correctly.   This means xwaves can be used to manipu-
+late any aperiodically-sampled time series.  It also  aligns
+these  correctly with other data types.  Thus, all ESPS sig-
+nal files, including those produced by programs like lpcana,
+may  now  be  displayed  correctly  using  xwaves.  The ESPS
+manual describes how to write ESPS tagged files from C  pro-
+grams.   If  you have aperiodic data in ASCII form generated
+by some non-ESPS process, you can build a tagged  ESPS  file
+acceptable  to  xwaves  and ESPS programs with a UNIX script
+like the following:
+
+-------------------------------------------------------------------------
+#!/bin/sh
+#
+# $1    data type: DOUBLE, FLOAT, LONG, or SHORT
+# $2    size: number of elements per record (columns), not counting tag
+# $3    src_sf: sampling frequency of the data to which the tags refer
+# $4    input: name of ASCII input file
+# $5    output: name of output tagged FEA file
+
+# The first column in the input file contains the "tags".  These are
+# sample (record) indices into the file from which the remaining columns
+# were derived.  This "source" file was sampled at "src_sf" samples per
+# second.  This script assumes the remaining columns are all of the data
+# type specified by $1.
+
+USE_ESPS_COMMON=off; export USE_ESPS_COMMON
+
+prog=$0
+
+case $# in
+5)
+    type=$1
+    size=$2
+    freq=$3
+    input=$4
+    output=$5
+    ;;
+*)
+    echo "Usage: $prog type size src_sf input_file output_file"
+    exit 1
+    ;;
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                      page 5
+
+
+esac
+
+# Pick a format string for reading data of the specified type with scanf.
+
+case $type in
+DOUBLE)
+    fmt="%lf"
+    ;;
+FLOAT)
+    fmt="%f"
+    ;;
+LONG)
+    fmt="%ld"
+    ;;
+SHORT)
+    fmt="%hd"
+    ;;
+*)
+    echo "$prog: can't handle type $type"
+    exit 1
+    ;;
+esac
+
+# Create a format file for use with addfeahd.
+
+fmtfile=/tmp/fmt$$
+cat >$fmtfile <<EOF
+Tag      LONG   1       %ld
+data     $type  $size   $fmt
+EOF
+
+# Create output file (untagged).
+# Tag data go into an ordinary field named "Tag".
+
+addfeahd -c "$0 $*" -a $fmtfile $input $output 2>/dev/null
+
+# Now make a couple of changes with fea_edit to turn the output file
+# into a tagged file:
+# 1) Change the "common.tag" flag to indicate a tagged file by changing
+#    the first 0 to 1 in the first line ("0 0 0 << do not edit >>") of the
+#    fea_edit display.
+# 2) Remove the field definition for "Tag".
+# (This oblique technique for generating tagged files from ESPS-external
+# data will not be necessary in future Entropic software releases.)
+
+EDITOR=ed; export EDITOR
+fea_edit $output <<EOF 2>/dev/null 1>&2
+1s/0/1/
+/Tag LONG/d
+w
+q
+
+EOF
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                      page 6
+
+
+# Put the "source sample frequency" in the header so the sample numbers
+# can (optionally) be used to determine time by programs using the data.
+
+addgen -g src_sf -t DOUBLE -v $freq $output
+
+# clean up
+
+rm -f $output.bak
+rm -f $fmtfile
+exit 0
+-------------------------------------------------------------------------
+
+
+The initial adjustments for the spectrogram threshold  level
+and displayed dynamic range may now be set on both color and
+monochrome systems using the image_clip and image_range glo-
+bals.  These are established in the .wave_pro profile or via
+an xwaves set command.  When the color map is adjusted using
+the  middle mouse button in the spectrogtram display window,
+the values of image_clip and image_range are updated accord-
+ingly.   The current value of them may be retrieved with the
+get attributes command.  Image_range  is  identical  to  the
+range  variable  settable  via  the colormap and spectrogram
+commands.  Image_clip is related to threshold via  the  for-
+mula:
+             threshold = 105 - image_clip - image_range
+This somewhat convoluted variable set was devised  to  main-
+tain backward compatability while providing a degree of con-
+trol needed by many users.
+
+
+2.2.  Auxiliary Programs
+
+All Entropic D/A conversion (play) programs, when used  with
+xwaves,  support  the  feature  that  repositions the signal
+display centered on the point at which the  playback  opera-
+tion  is  interrupted  by a left button press in the display
+window.  A simple modification to non-Entropic D/A programs,
+documented  in  the  splay  manual  page,  will provide this
+interrupt-and-reposition function for them as well.  To  use
+this  feature  on  a  long file, only a fraction of which is
+displayed in a xwaves window: Select a play  function,  like
+"play  entire  file",  from the data window menu.  Allow the
+playback to proceed until you hear the  point  of  interest.
+Immediately  press  the left button in the data window.  D/A
+will stop and the window will jump  to  roughly  center  the
+point of interest in the display.
+
+Send_xwaves will now wait for a command to  complete  before
+proceeding.   The utility of send_xwaves was previously lim-
+ited by its completely asynchronous  coupling  with  xwaves.
+Commands  via  send_xwaves are now executed and completed in
+the order in which they are given.  This feature extends  to
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                      page 7
+
+
+commands that involve other processes external to xwaves and
+to the attachments.  If  the  old  asynchronous  send_xwaves
+behavior  is desired, the interlock may be disabled with the
+-B send-xwaves command-line option.  See the new send_xwaves
+manual page.
+
+All Entropic A/D (record) programs  optionally  can  send  a
+display  message  to  xwaves  to  display  the  signal  just
+recorded.  This simplifies recording followed immediately by
+analysis  or editing.  To use this feature: Have xwaves run-
+ning in the server mode (e.g. start it with the -s  option).
+Issue a record command, like "srecord -S output.sd".  If the
+record operation is then interrupted or allowed  to  run  to
+completion,  the  data  just  collected  will  be  displayed
+immediately in an xwaves window.  See the srecord manual for
+more details.
+
+
+2.3.  Attachments
+
+There is a new attachment called xchart.  This  has  all  of
+the features present in the xlabel program, plus the ability
+to handle segment lattice displays.  These displays  consist
+of  multiple,  possibly overlapping, segment labels, such as
+might be generated by an automatic time-series labeling sys-
+tem, or a speech recognizer "front end".  See the new xchart
+manual page.
+
+Xspectrum now controls the highest visible  harmonic  cursor
+when  harmonic cursors are on.  The mouse cursor keeps jump-
+ing to higher and higher harmonics as the frequency  of  the
+fundamental is lowered, and to lower harmonics as the funda-
+mental is raised.  The maximum number  of  harmonic  cursors
+has  been increased to 20.  Thus, it is now possible to make
+extremely  accurate  fundamental  frequency   determinations
+using xspectrum.
+
+Xspectrum now provides  on/off  control  of  the  horizontal
+(magnitude) cursors.  It is often desirable to disable these
+when hard copies are being prepared.
+
+
+3.  ANNOYANCES REMOVED
+
+3.1.  xwaves
+
+Xwaves now has only one name: xwaves.  We no longer put  the
+names   waves,   xvwaves,   xwaves+,   waves+,  ...  in  the
+$ESPS_BASE/bin directory.  We also no longer supply a cover-
+ing  script  that attempts to determine the window system in
+use.  When you run xwaves, you will be  running  the  target
+binary  file  designed  for the window system named X.  Some
+installations may wish to  continue  to  link  the  multiple
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                      page 8
+
+
+names  to  xwaves, but Entropic has decided to cut the cord!
+We are sorry if this causes temporary inconvenience, but  it
+will simplify all our lives in the long run.  We were conti-
+nally finding that, through our fault or  theirs,  customers
+were  actually  running  the  wrong  version of our software
+because links had turned into copies, etc.  We suggest  uni-
+formly  changing  all  references in scripts, etc to xwaves.
+(Note, however, that command  files  interpreted  by  xwaves
+should continue to send messages to "waves" as before.)
+
+Xwaves now recognizes any homogeneous ESPS FEA file  with  a
+field called "F0" as a file containing fundamental-frequency
+(pitch) information.  These are now displayed using the  F0-
+specific  method, appropriate for such signals.  If the file
+also has a field called  "P(voice)"  or  "prob_voice",  this
+signal  element  will  be  used  to  enable the the waveform
+display of the F0 data.  Data records in which prob_voice is
+>  .5,  will  have F0 displayed.  This behavior was formerly
+only available when the pitch information was stored in  the
+AT&T SIGnal format.  The formant program now only optionally
+emits the extra SIGnal version of the pitch data  (i.e.  the
+.f0.sig file).
+
+The use of the UNIX environment variable DEF_HEADER and  the
+internal  xwaves variable def_header has been made more con-
+sistent and more clearly defined: If DEF_HEADER  is  defined
+before  xwaves  is  run, its value will be adopted by xwaves
+(def_header will be set to its value).  If def_header is set
+in  xwaves  AFTER  xwaves  is  started,  all programs run BY
+xwaves (i.e. as child processes) will inherit the new defin-
+ition.   Thus,  it  is possible to change def_header between
+calls to external programs (e.g. calls via D/A play commands
+or  add_espsf)  and  have the external ESPS programs use the
+new definition.
+
+The limit on the number of files that may  be  specified  on
+the  command  line as signals for xwaves to display has been
+raised from seven to 50.
+
+The data-display cursor now returns to its  pre-menu-display
+position after a window menu selection is performed.
+
+Xwaves now scales signals for D/A playback based on the gen-
+eric  header  item  max_val,  if  it is present, rather than
+based on only the maximum found in the display  buffer.   If
+max_val  is not present, xwaves assumes the maximum value is
+32767 and does not scale at all.
+
+It is no longer necessary to have fea_sd_special set to  get
+reasonable  behavior  on  non-short-integer  data  with  the
+built-in  boards  (or  external  program  calls,  for   that
+matter).   Thus,  one  can  display a floating-point file as
+floating point and still play it from within xwaves.  (It is
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                      page 9
+
+
+still necessary to set fea_sd_special to get spectrograms of
+non-short-integer data with the built-in boards).
+
+
+3.2.  Auxiliary Programs
+
+All Entropic play programs now read the input and send  out-
+put  to  the D/A simultaneously.  Previously, splay and some
+of the others, read the entire file before beginning, a par-
+ticularly annoying trait when the file was an hour long!
+
+Similarly,  all  Entropic  record  programs  send  the  data
+directly  to  disk  as  the data comes in from the A/D.  All
+record programs can write to stdout.
+
+The play programs (splay, sgplay,  s32cplay,  c30play,  ...)
+now read ESPS files or headerless files correctly from stan-
+dard input.  Thus, command sequences like
+                   testsd -C 1000 -s4 - | splay -
+will work as expected.
+
+Formant now permits specification of  an  output  directory,
+rather  than  requiring  that the output files it creates be
+placed in the same directory as the input  file.   This  was
+implemented  as an optional command-line argument "-O" where
+the directory path may be  specified.   Formant  still  gen-
+erates  several  files  with  names ending in .hp, .sd, same
+directory with the input file.  if "-O"  is  not  specified,
+the old behavior obtains.
+
+Formant now supports the standard  ESPS  range  [-r]  option
+making  it  easier  to integrate with xwaves add_espsf func-
+tions.  It still requires a covering  script  for  add_espsf
+implementation,  but  the operation is more efficient, since
+less copying will be required and the use of  copysd  is  no
+longer  necessary  to obtain the range limits.  See the for-
+mant manual page for examples.  The algorithms  embodied  in
+the  formant program will be reimplemented for greater speed
+and to provide a more regular I/O syntax in the Spring  1993
+release.
+
+Formant no longer forces the creation of a SIGnal file  con-
+taining  the F0 information, since xwaves now reads the ESPS
+version of this data correctly.  Thus only the  ".f0"  files
+are  created by default. These are now read and displayed by
+xwaves exactly as the ".f0.sig" files were.  Users requiring
+the  SIGnal  files  for  other  reasons  can  use  the  [-S]
+command-line option to enable the old behavior.
+
+Formant now uses the standard UNIX getopt() function to pro-
+cess  the  command  line,  making  it  insensitive to spaces
+between option switches and their arguments, etc.
+
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                     page 10
+
+
+Processing of commands sent to xwaves  via  send_xwaves  was
+overly  restrictive  about the format of the command string.
+Its unnecessary sensitivity to the presence  or  absence  of
+whitespace and newlines has now been eliminated.
+
+All xwaves file name specifications are  now  processed  for
+possible  UNIX  environment  symbols of the form $NAME.  All
+such symbols are now expanded correctly.
+
+Wcheckout has been eliminated.  If  the  user  has  a  valid
+waves+  license,  all  of  the  auxiliary programs will run,
+whether  xwaves  is  running  or  not.   All  references  to
+wcheckout in scripts, etc. may be eliminated.
+
+The program  wplay  has  been  replaced  by  a  new  program
+v32play. This new program provides D/A conversion via either
+the AT&T FAB2 dsp32 board  or  the  AT&T  or  Heurikon  SURF
+dsp32c board.  Unlike wplay, v32play reads its data directly
+from disk files (or stdin) during conversion,  and  is  thus
+much  faster  in  response.  It may also be used on files of
+unlimited length.  V32play behaves like  all  of  the  other
+Entropic  D/A  programs,  with respect to command-line argu-
+ments and UNIX signals (see eman v32play).   With  the  SURF
+board,  v32play  provides both single- and dual-channel out-
+put.
+
+The AT&T/Heurikon SURF record  program,  wrecord,  has  been
+replaced   by  the  program  v32record  which  performs  A/D
+directly to disk (unlike wrecord which  buffered  everything
+to  memory first).  V32record also records either single- or
+dual-channel signals.
+
+
+3.3.  Attachments
+
+As with xwaves, we have uniformly singled out names for  all
+of  the  attachments.   Thus,  we  retain  the names xlabel,
+xspectrum and xmarks.  All references to  these  attachments
+must  use  those names.  Optionally, your site may choose to
+symbolically link the old names (like xvlabel) to  the  now-
+standard  names.   However,  we  encourage  you  to make the
+change now.  We promise never to change the names again!
+
+Attachment of an xlabel window to a particular xwaves signal
+view  has  now  been correctly implemented.  When the xlabel
+display is created by a command like
+        send make  name foo   file foo.lab   signal foo.sd
+the xlabel window remains connected to the  foo.sd  display,
+regardless  of  other signals that may subsequently included
+in  the  foo  display  ensemble.   If  several  signals  are
+included  in  foo,  and  the original signal (foo.sd in this
+case) is removed, xlabel reverts  to  the  old  behavior  of
+attaching to the most recently created signal display.
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                     page 11
+
+
+The xspectrum "Window  Limits  From:"  panel  item  has  new
+choice  labels to more clearly reflect the semantics of this
+control item.
+Now: "Cursor +- step/2" and "Markers"
+Was: "Local" and "Host"
+
+Xspectrum no longer repositions the  markers  or  recomputes
+the  spectrum  if the "Window limits from:" item is changed.
+Formerly, if the markers had been  carefully  positioned  in
+preparation  for  a  new  spectrum computation, and the user
+then switched the limits source, the hand-set window  limits
+would be lost.
+
+
+4.  BUGS FIXED
+
+4.1.  xwaves
+
+Commands added to the xwaves menus by the add_espsf facility
+previously  did  not handle multiple output files correctly.
+Now, if a process creates several related output time series
+as  the  result of operations on an xwaves signal, these may
+all be displayed automatically.  (See the discussion of out-
+puts under the add_esps command in the xwaves manual.)
+
+Multiple views of the same  signal  in  xwaves  now  display
+correctly.   There  was a bug that caused incorrect displays
+to be generated if more than one view of the same signal was
+generated  in  the  display ensemble.  Now it is possible to
+have several views of the same signal displayed correctly at
+different scales.
+
+When xwaves was being used to manipulate  headerless  files,
+or  files  with  foreign headers, it would eventually use up
+all available file descriptors and  refuse  to  display  any
+more  files.   This has been corrected.  An unlimited number
+of cycles of load and destroy may now be performed  on  such
+files.
+
+The verbose startup messages issued by xwaves regarding  the
+use  of  DSP  hardware  were  often confusing (or just plain
+wrong).  These are now correct.
+
+The xwaves file-browser  windows  did  not  follow  symbolic
+directory links correctly.  This has now been corrected.
+
+The xwaves file-browser facility would fail to detect that a
+typed  specification  was a directory unless a final "/" was
+entered.  As a consequence, xwaves would load such nodes  as
+though  they  were  signals!   All  directory  nodes are now
+displayed as directories whether entered  with,  or  without
+the trailing "/".
+
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                     page 12
+
+
+When xwaves exited before a  "play"  command  was  complete,
+some types of internal DSP hardware were not reset correctly
+and would endlessly repeat fragments  of  the  output.   All
+play  operations  in  progress are now stopped before xwaves
+exits.
+
+Previously, the SGI Indigo internal "play"  function  locked
+out  xwaves  interaction for the duration of the play opera-
+tion.  This has now been fixed.  The workaround for this had
+been to use the external play program (sgplay) as the defin-
+ition for play_prog.  This has  the  disadvantage  of  being
+somewhat  slower,  so SGI users that resorted to this should
+now comment out the play_prog specifications in their
+
+
+4.2.  Auxiliary Programs
+
+A/D and D/A conversion on the SGI Indigo is now possible for
+all  Indigo  sample rates for stereo and mono files.  Previ-
+ously, a bug in our buffer specifications prevented  correct
+operation at frequencies over 24kHz.
+
+Dual-channel play on  SURF  from  within  xwaves  now  works
+correctly.  Several other play deficiencies in FAB2 and SURF
+xwaves play operations were also fixed.
+
+The xwaves-internal play function has been fixed  to  handle
+non-ESPS  files  correctly  when the played region is not in
+display window.  Formerly this could cause  extreme  distor-
+tion due to variances in data type or byte ordering.
+
+Xwaves now  handles  incorrect  colormap  names  gracefully.
+Previously,  it  would  load the current directory (!!) as a
+colormap if the specified  colormap  didn't  exist,  causing
+bizarre spectrogram displays.
+
+Single-record FEA_SPECT files may now be displayed as  spec-
+trograms.  Previously, this caused a core dump.
+
+There were several situations which caused  xwaves  to  exit
+without freeing the Entropic license.  This prevented subse-
+quent use of that license until after a three-minute timeout
+period.   This  has  now  been fixed for all cases except an
+explicit SIGKILL (e.g. via kill -9 <pid>).  A  new  command,
+freewaves, has been added to handle this latter case and the
+timeout period has been reduced to 30 seconds.
+
+Xwaves now  uses  the  output_dir  specification  much  more
+rationally:  If  the  user  specifies a fully qualified name
+(i.e as beginning with a directory, ./ or /)  output_dir  is
+ignored.   Output_dir  is only applied to automatically gen-
+erated names (e.g. temporary files) and those  output  files
+specified as simple base names by the user.
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                     page 13
+
+
+Simple filenames entered into xwaves  no  longer  have  "./"
+automatically  prepended.   This  behavior  caused  subquent
+references to files loaded  into  xwaves  to  be  incorrect,
+since  the  user had no way of knowing that the name (as far
+as xwaves was concerned) had a  leading  "./".   This  fixes
+apparent  bugs  in several commands (e.g. align) that refer-
+ence specific files.
+
+If the start and end time specifications for  a  spectrogram
+command  are  omitted,  the spectrogram will now be computed
+over the entire xwaves buffer interval automatically.   Pre-
+viously, if these were omitted, no spectrogram was computed.
+Users who resorted to the workaround of  setting  start  0.0
+and  end  10000  (or  some  such)  may  now revert to a more
+rational model if they wish.  In fact, if the file is  10000
+seconds long, the new xwaves will compute the whole spectro-
+gram, so be careful!
+
+In some cases the temporary files created during computation
+of  spectrograms  by  xwaves-external processes were getting
+crossed up so  that  the  spectrogram  that  was  eventually
+displayed was not of the desired signal.
+
+Formerly, spectrogram segments  saved  using  xwaves'  "save
+segment  in  file"  facility,  were  not saved correctly and
+could not be used  with  many  Entropic  programs  (such  as
+plotsgram).  This has been fixed.
+
+Quantization by xwaves of the start and end  times  sent  to
+external spectrogram programs would cause these to fail with
+messages about bad start and/or end times.  This was partic-
+ularly  troublesome  for  files  with start and/or end times
+greater than 99 sec.  The spectrogram programs (e.g.  sgram,
+s32csgram)  have relaxed their requirements by simply limit-
+ing the spectrogram computation to the file limits if neces-
+sary.   Also, the quantization of the time specifications by
+xwaves has been made much finer.
+
+Temporary waveform files created by the spectrogram  command
+are now placed in output_dir, and are automatically deleted.
+
+Previously, spectrogram computations launched by xwaves, but
+executed by an external program (such as sgram) were limited
+to signal segments that were buffered in xwaves.   That  is,
+if  an  external program is called to compute a spectrogram,
+the entire segment upon which it was to be based  needed  to
+be  present  in xwaves' display buffer. In Version 3.1, seg-
+ments of any size consistent with the  limits  of  the  file
+being  analyzed  may  now be specified for the start and end
+values to the spectrogram command.  Specifications exceeding
+the file limits will be automatically adjusted as necessary.
+
+
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                     page 14
+
+
+4.3.  Attachments
+
+The tendency for xwaves and the attachments to hang  up  the
+computer's  mouse  and  display  has  now  been  eliminated.
+Xwaves and the attachments can no longer "grab all input".
+
+The tendency for xwaves and the attachments  to  loose  syn-
+chronization  has been greatly reduced.  A new inter-process
+communication technique  has  been  implemented  that  makes
+interactions  faster  and  less error prone.  Problems elim-
+inated include: negative times being printed in  the  xlabel
+window; failure of label files to load correctly; lock up of
+attachments; and failure to execute commands.
+
+Previously, the xlabel and xmarks label displays  positioned
+themselves to overlap the signal view and obscured the lower
+part of its window.  This has been corrected.
+
+Xlabel now automatically inherits the current display ensem-
+ble  name  from xwaves.  This eliminates the "Object doesn't
+exist (can't add file ...)" message from xlabel  (unless  it
+is really true!).
+
+When  output_dir  is  specified,  xlabel  now   applies   it
+correctly.   Previously,  two  bugs  caused  bizarre  things
+(including core dumps) when  output_dir  was  specified  and
+xlabel was used.  Now, if the label file name is fully qual-
+ified (begins with ./ or /), it will be used unchanged.   If
+only a basename is specified, output_dir will be prepended.
+
+Xspectrum now responds correctly to the xwaves do_color set-
+ting.   When  black-and-white plots are requested by setting
+do_color 0, the xspectrum window is rendered accordingly and
+can  now  be  dumped  to a hardcopy printer/plotter.  Previ-
+ously, some xwaves colormaps caused all-black xspectum hard-
+copies.
+
+Xspectrum had a display instability when two or  more  spec-
+trum  displays  overlapped.  They could keep sending refresh
+messages to one  another  and  alternately  perform  "raise"
+operations   (forever!)   if   xspectrum_datwin_forward  was
+enabled.  This has been fixed.
+
+Xspectrum  occasionally  crashed  when  the  related  xwaves
+display object was killed.  This has been fixed.
+
+Xspectrum now permits computation of extremely  large  FFT's
+(limited  only by the user's patience and hardware).  A soft
+limit  is  still  implemented  via  the   xspectrum   global
+max_fft_size,  which  defaults  to 65536, to protect against
+accidents!  To change this, just send a command to xspectrum
+like
+              send set max_fft_size 1000000".
+
+
+
+
+
+
+
+
+
+
+waves+ Version 3.1 Release Notes                     page 15
+
+
+The xspectrum manual page had several errors regarding  max-
+imum window sizes, and it has also been corrected.
+
+
+5.  NOTES
+
+Smooth operation of xwaves is dependent upon the  configura-
+tion of your operating environment.  For an overview, please
+refer to the document $ESPS_BASE/xview/README  (also  avail-
+able  under  the  "Other Documents" item on the einfo menu).
+In particular, you may need to put the  following  items  in
+your $HOME/.Xdefaults file:
+
+        *Foreground:                    black
+        *Background:                    white
+        window.color.foreground:        black
+        window.color.background:        white
+        4Dwm*positionIsFrame:           T
+        4Dwm*positionOnScreen:          T
+        4Dwm*interactivePlacement:      F
+        4Dwm*clientAutoPlace:           false
+        Mwm*interactivePlacement:       False
+        Mwm*clientAutoPlace:            False
+        XView.ICCCMCompliant:           False
+
+This release of waves+ comes without a Sunview version.  The
+old program waves+, (alias svwaves, waves, svwaves+, ...) no
+longer exists.  Entropic no  longer  ships  or  maintains  a
+Sunview-compatible  version  of  xwaves.   We  strongly urge
+users of waves+ to try the new X version which  has  all  of
+the  features you are familiar with, is very robust, and has
+many new features never available under Sunview.
+
+Wplay and wrecord have  been  eliminated.   They  have  been
+replaced  by  a family of play and record programs with con-
+siderably enhanced capabilities.  See "eman play" and  "eman
+record".
+
+All programs are now linked "static".  Although this results
+in  larger  program  binaries,  it  should  greatly ease the
+installation and maintenance problems for xwaves and related
+programs.   Previously, it was necessary to either force the
+use of the graphics libraries shipped from Entropic  through
+use of the LD_LIBRARY_PATH UNIX environment variable, or run
+the risk of having version skews in  the  dynamically-loaded
+libraries.   These  complications have been eliminated.  All
+references to Entropic directories can be removed  from  the
+LD_LIBRARY_PATH definition (e.g. in .cshrc files).
+
+
+
+
+
+
+
+
+
+
+

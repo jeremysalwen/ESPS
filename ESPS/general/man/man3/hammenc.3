@@ -1,0 +1,40 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)hammenc.3	1.5 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH HAMM_ENC 3\-ESPSsp 18 Apr 1997
+.SH NAME
+hamm_enc \- code an integer between [0,15] with an (8,4)
+Hamming code.
+.SH SYNOPSIS
+.ft B
+int hamm_enc (data, code)
+.br
+int data;
+.br
+short *code;
+.PP
+.SH DESCRIPTION
+.PP
+.I hamm_enc
+encodes an integer 
+( 
+.I data
+)
+between [0,15] with a (8,4) Hamming code and returns it in
+.I code.
+This allows single error detection and double error detection.
+.SH DIAGNOSTICS
+.PP
+hamm_enc returns -1 if the input 
+.I data
+is less than 0 or greater than 15, and it returns 0 otherwise.
+.SH SEE ALSO
+.na
+.IR hamm_dec (3\-ESPSsp)
+.ad
+.SH REFERENCES
+[1] R. E. Hamming, Coding and Information Theory, Prentice-Hall, Inc., 
+Englewood Cliffs, New Jersey, 1980
+.SH AUTHOR
+Code by D. Burton, manual page by D. Burton

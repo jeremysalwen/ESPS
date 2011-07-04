@@ -1,0 +1,64 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)calloc.3	1.3 30 Apr 1997 ESI
+.TH CALLOC 3\-ESPSu 30 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+calloc_s \- call Unix memory allocator (calloc) for shorts
+.br
+calloc_i \- call Unix memory allocator (calloc) for ints
+.br
+calloc_l \- call Unix memory allocator (calloc) for longs
+.br
+calloc_f \- call Unix memory allocator (calloc) for floats
+.br
+calloc_d \- call Unix memory allocator (calloc) for doubles
+.SH "SYNOPSIS"
+.ft B
+#include <esps/esps.h>
+.PP
+.ft B
+.nf
+short *
+calloc_s(n)
+unsigned n;
+.sp
+int *
+calloc_i(n)
+unsigned n;
+.sp
+long *
+calloc_l(n)
+unsigned n;
+.sp
+float *
+calloc_f(n)
+unsigned n;
+.sp
+double *
+calloc_d(n)
+unsigned n;
+.fi
+.ft R
+.SH "DESCRIPTION"
+.PP
+These macros call \fIcalloc\fR(3C) to allocate a block of memory of size
+\fIn\fR of the correct type (depending on which macro was used).   Since
+calloc is called, the block is zero filled.
+.PP
+These macros are defined in \fI<esps/esps.h>\fR and should not be
+declared in your program.
+.SH EXAMPLE
+.PP
+.nf
+\fI/* get a zero filled block of 100 floats and shorts */\fR
+float *fptr;
+short *sptr;
+.sp
+fptr = calloc_f(100);
+sptr = calloc-s(100);
+.fi
+.SH DIAGNOSTICS
+.PP
+.SH "SEE ALSO"
+.PP
+malloc(3C), calloc(3C), \fImalloc\fR(3\-ESPSu)

@@ -1,0 +1,11 @@
+#@(#)Pwin_filt	1.2 6/22/93 ERL
+float samp_freq ?= 8000: "Sampling frequency:";
+int nbands ?= 2: "Number of bands:";
+float band_edge1 ?= 0;
+float band_edge2 ?= 1000;
+float band_edge3 ?= 4000;
+float band1_des ?= 1: "desired value for band1:";
+float band2_des ?= 0: "desired value for band2:";
+float rej_db ?= 20: "rejection in dB from one band to another:";
+float trans_band ?= 100: "transition bandwidth:";
+#int evenflag = 0: "odd/even length, 0: odd, 1: even";

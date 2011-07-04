@@ -1,0 +1,109 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc. All rights reserved.
+.\" @(#)zerofill.3	1.2	02 May 1997	ESI
+.TH ZERO_FILL 3\-ESPSsp 02 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.if t .ds - \(em\h'-0.2m'\(em
+.if n .ds - ---
+.SH NAME
+zero_fill \- fill a newly allocated or existing numeric array with zeros
+.SH SYNOPSIS
+.ft B
+.nf
+#include <esps/esps.h>
+
+char *
+zero_fill(num, type, destination)
+long	num;
+int	type;
+char    *destination;
+.fi
+.ft P
+.SH DESCRIPTION
+.PP
+The function puts a specified number of zeros of a specified data type
+into the result array,
+which can either be an existing array or be allocated by the function.
+.PP
+The argument
+.I num
+gives the number of zeros to put into the array.
+.PP
+The argument
+.I type
+is a code that indicates the data type.
+Legal values are the constants
+DOUBLE, FLOAT, LONG, SHORT, BYTE,
+DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX, SHORT_CPLX, and BYTE_CPLX
+defined in the include file
+.I esps/esps.h.
+.PP
+The argument
+.I destination
+must be either (char *) NULL
+or the starting location of the storage area for the zeros.
+If
+.I destination
+is NULL, the function will use
+.IR malloc (3C)
+to allocate an array to hold the zeros.
+.PP
+The value returned by
+.I zero_fill
+is a pointer to the starting location of the result array\*-\c
+equal to
+.I destination
+if that is non-NULL,
+and otherwise a pointer to the block of storage the function obtained from
+.I malloc.
+In either case the pointer must be cast to the proper type
+.RI ( e.g.
+(double *) if
+.I type
+is DOUBLE)
+before being used.
+.SH EXAMPLES
+.nf
+.ft I
+/*
+ * Zero out part of an existing array (elements a[200] through a[299]).
+ */
+.ft P
+    double  a[500];
+
+    (void) zero_fill(100, DOUBLE, (char *) &a[200]);
+
+.ftI
+/*
+ * Allocate storage with malloc and fill with zeros.
+ */
+.ft P
+    double_cplx *b;
+
+    b = (double_cplx *) malloc((unsigned) 100 * sizeof(double_cplx));
+    (void) zero_fill(100, DOUBLE_CPLX, (char *) b);
+
+.ft I
+/*
+ * Repeatedly initialize an array with zeros.
+ * This allocates storage the first time and thereafter reuses the same array.
+ * The size must not increase after the first time.
+ */
+.ft P
+    long    size = 100;
+    short   *c = NULL;
+
+    for ( . . . ) {
+        . . .
+        c = (short *) zero_fill(size, SHORT, (char *) c);
+        . . .
+    }
+    free((char *) c);
+.fi
+.SH BUGS
+.PP
+None known.
+.SH "SEE ALSO"
+arr_op(3-ESPSsp), type_convert(3-ESPSu), malloc(3C), free(3C)
+.PP
+.SH AUTHOR
+Rodney Johnson, ESI.

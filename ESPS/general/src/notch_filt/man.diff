@@ -1,0 +1,205 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)notchfilt.1	3.9	9/1/98 ESI
+.TH NOTCH_FILT 1\-ESPS 9/1/98
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+notch_filt \- design a second order notch filter.
+.SH SYNOPSIS
+.B notch_filt
+[
+.BI \-P " param_file"
+]
+[
+.BI \-x " debug_level"
+]
+[
+.BI \-s " samp_freq"
+]
+[
+.BI \-n " notch_freq"
+]
+[
+.BI \-b " band_width"
+]
+[
+.BI \-g " gain"
+]
+.I feafilt_file
+.SH DESCRIPTION
+.PP
+The program
+.I notch_filt
+designs an IIR notch filter and writes the coefficients to the
+.IR FEA_FILT (5\-ESPS)
+file
+.I feafilt_file.
+The user must specify the sampling frequency, the frequency of the notch center,
+and the desired notch bandwidth.  These parameters may be specified in the parameter
+file, or on the command line.
+The notch bandwidth 
+is defined as the distance in the frequency domain between
+the \-6 dB. points (magnitude) on either side of the notch.
+.PP
+If
+.I feafilt_file
+is "\-", the output goes to the standard output.
+.PP
+Use \fIfiltspec(1-ESPS)\fR to compute the actual filter response; use
+\fIplotspec(1-ESPS)\fR to view the response.  For example, 
+.PP
+\fIfiltspec feafilt_file - | plotspec -\fR
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-P " param_file"
+The file 
+.I param_file
+is used for the parameter file instead of the default, which is
+.I params.
+.br
+.TP
+.BI \-x " debug_level"
+A value of 0 (the default value) will cause
+.I notch_filt
+to do its work silently, unless there is an error.
+A nonzero value will cause various parameters to be printed out
+during program initialization.
+.br
+.TP
+.BI \-s " samp_freq"
+The value
+.I samp_freq
+is used for the sampling frequency instead of the value given in the 
+parameter file.
+.br
+.TP
+.BI \-n " notch_freq"
+The value
+.I notch_freq
+is used for the notch frequency instead of the value given in the 
+parameter file.
+.br
+.TP
+.BI \-b " band_width"
+The value
+.I band_width
+is used for the notch bandwidth instead of the value given in the 
+parameter file.
+The notch bandwidth is defined as the distance (in Hz.) between the \-6 
+dB points
+on either side of the notch frequency in the magnitude response spectra.
+.br
+.TP
+.BI \-g " gain"
+The d.c. gain of the filter.  The default is 1.0.
+.br
+.SH ESPS PARAMETERS
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.PP
+The following parameters are read from the parameter file if they are not
+entered on the command line.  If all three values are provided on the command
+line then the parameter file need not be provided.
+.sp .5
+.TP
+.I "samp_freq \- float"
+The value of the sampling frequency.
+.TP
+.I "notch_freq \- float"
+The value of the notch frequency.
+.TP
+.I "band_width \- float"
+The value of the notch bandwidth.
+The notch bandwidth is defined as the distance (in Hz.) between the -6 dB points
+on either side of the notch frequency in the magnitude response spectra.
+.sp .5
+.SH ESPS COMMON
+Esps Common is not processed.
+.sp .5
+.SH ESPS HEADER
+A new
+.IR FEA_FILT (5\-ESPS)
+header is created for the output file.
+The program fills in 
+values in the common part of the header
+as well as the generic header items associated with the
+.IR FEA_FILT (5\-ESPS)
+file type.
+.sp .5
+.TP
+.I max_num
+This value is always set to 3.
+.TP
+.I max_denom
+This value is always set to 3.
+.TP
+.I complex_filter
+These values are always set to NO.
+.TP
+.I define_pz
+This value is set to YES.
+.TP
+.I func_spec
+This value is set to BAND.
+.TP
+.I nbands
+This value is set to 3.
+.TP
+.I type
+This value is set to BS.
+.TP
+.I method
+This value is set to PZ_PLACE.
+.TP
+.I band edges
+There are six values entered in this array corresponding to the three frequency
+"bands".  The band edges of band #1 will be 0 Hz. and the lower \-6 
+dB. point.
+The band edges of band #2 are both set 
+to the notch frequency.  The band edges
+of band #3 will be the upper \-6 dB. point and half the sampling frequency.
+.TP
+.I gains
+There are three values in this 
+array corresponding to the three frequency "bands".
+The values are set to 
+.I gain,
+0.0, and
+.I gain.
+.LP
+In addition, three generic header items are added: \fIsamp_freq,
+notch_freq,\fR and \fIband_width\fR.
+.TP
+.I "samp_freq \- double"
+The sampling frequency is stored here.
+.TP
+.I "notch_freq \- double"
+The center frequency of the notch is stored here.
+.TP
+.I "band_width \- double"
+The 6 dB bandwidth of the notch is stored here. 
+.LP
+The fields \fInum_degree\fP and \fIdenom_degree\fP in the output
+records are always set to 3.  The filter pole and zero locations 
+are written to the output file.
+.sp .5
+.SH DIAGNOSTICS
+The program prints a message to the standard error output and exits if 
+.I nf
+is not less than one half the sampling frequency or if
+.I nf
++/\-
+.I bw/2
+does not fall in the range from zero Hz. to one half the sampling frequency.
+.SH SEE ALSO
+.IR FEA (5\-ESPS), 
+.IR FEA_FILT (5\-ESPS),
+.IR filter (1\-ESPS), 
+.br
+.IR wmse_filt (1\-ESPS),
+.IR xpz (1\-ESPS),
+.IR iir_filt (1\-ESPS)
+.SH AUTHOR
+Brian Sublett.  FEA_FILT modifications by Bill Byrne.

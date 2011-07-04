@@ -1,0 +1,52 @@
+Signals can be self describing in several dimensions:
+	the signal dimentionality
+	the form of the stored data
+	labels for signal elements
+	...
+
+This information might be put in the "description" variable of the header
+
+To handle all data associated with f0 and formant tracking the following
+signal types must be supported:
+	Periodic
+		one-dimensional shorts
+			binary
+			ascii
+		n-dimensional heterogeneous vectors
+			ascii
+		variable dimension heterogeneous vectors
+			ascii
+	Aperiodic
+		voicing and utterance boundary markers
+		hand segmentation data
+
+
+The raw data files:
+	Speech signal (periodic binary shorts)
+	F0 signal	(n-dimensional heterogeneous ascii)
+		frame number 	(%ld) (for direct readability)
+		f0		(%lf)
+		energy		(%lf) (in reference window)
+		max correlation	(%lf)
+		k1		(%lf)
+		voicing		(%ld)
+	LPC poles	(variable dimensional heterogeneous ascii)
+		frame number	(%ld)
+		energy		(%lf)	(in preemphasized and windowed data)
+		k1		(%lf)	(		"		)
+		number of poles	(%ld)	(this many freqs. and bws. follow)
+		frequencies	(%lf)
+		bandwidths	(%lf)
+
+	Formants	(n-dimensional heterogeneous)
+		frame number	(%ld)
+		energy from f0	(%lf)	(as in f0 above)
+		energy from LPC	(%lf)	(as in poles above)
+		max correlation
+		k1		(%lf)	(from f0 computation)
+		k1		(%lf)	(from pole computation)
+		voicing		(%ld)	(from f0 computation)
+		formants	(%lf)
+		bandwidths	(%lf)
+		
+		

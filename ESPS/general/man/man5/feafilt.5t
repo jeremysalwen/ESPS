@@ -1,0 +1,262 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)feafilt.5t	1.8 27 Sep 1997 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH FEA_FILT 5\-ESPS 27 Sep 1997
+.SH NAME
+ESPS FILT Feature File Subtype \- (.filt)
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/fea.h>
+#include <esps/feafilt.h>
+.fi
+.SH DESCRIPTION
+.PP
+The FEA_FILT filt is a subtype of the FEA file. 
+If \fIhd\fR is a   
+pointer to the header of such a file, then \fIhd\->hd.fea\->fea_type\fR
+== FEA_FILT.  Such files are created by calling 
+.I init_feafilt_hd
+(3\-ESPS) after 
+.I new_header
+(3\-ESPS).  
+The FEA_FILT file is meant to replace the FILT(5\-ESPS)
+file type.  
+.PP
+The header of a FEA_FILT file contains the following generic header
+items:  
+
+.PP
+.TS
+center, box, tab(;);
+c | c | c | c 
+l | l | l | l.
+Name;Size;Type;Enums
+=
+max_num;1;long;NULL
+max_denom;1;long;NULL
+complex_filter;1;coded;\fIfeafilt_yesno\fP
+define_pz;1;coded;\fIfeafilt_yesno\fP
+type;1;coded;\fIfeafilt_type\fP
+method;1;coded;\fIfeafilt_method\fP
+func_spec;1;coded;\fIfeafilt_func_spec\fP
+g_size;1;long;NULL
+nbits;1;long;NULL
+gains;nbands or npoints;float;NULL
+nbands;1;long;NULL
+bandedges;1+nbands;float;NULL
+npoints;1;long;NULL
+points;npoints;1;NULL;float;NULL
+wts;nbands or npoints;1;NULL;float;NULL
+.TE
+.PP
+In the above table, \fIfeafilt_yesno, feafilt_type, feafilt_method\fP and \fIfeafilt_func_spec\fP are
+arrays of the possible values the header item can take. They are defined in
+the FEA_FILT library support module.
+
+The coded header item \fIfunc_spec\fP  indicates that the filter design program may have
+its desired 
+gain function and its desired weighting function specified in two different
+ways.
+The "band" specification method indicates that the user specifies a series
+of non-overlapping frequency bands.  One gain value and one weighting value
+are entered for each band and the desired gain function and weighting function
+are assumed constant over each band. Those functions are undefined in the transition regions
+between the bands.
+.PP
+The "pointwise" specification method indicates that the user entered points
+on a desired gain function and on a desired weighting function directly.
+No assumptions are made about the behavior of either function
+between the points.
+.PP
+The header items have the following meaning:
+.IP max_num
+The dimension of the FEA_FILT record field \fInum_coeff\fP.
+.IP max_denom
+The dimension of the FEA_FILT record field \fIdenom_coeff\fP.
+.IP complex_filter
+This variable specifies whether or not the filter coefficients are complex
+valued; if they are not complex, the fields \fIim_num_coeff\fP and 
+\fIim_denom_coeff\fP are not included in the filter records.
+Valid values are YES and NO.
+.IP define_pz
+Specifies whether the fields \fIzero_dim, pole_dim, zeros\fP
+and \fIpoles\fP which describe pole and zero
+locations are included in the filter records.  Valid values are YES and NO.
+.IP type
+This is a classification of the shape of the filter response.  The possible values for
+this variable are currently FILT_LP (low pass),
+FILT_HP (high pass), FILT_BP (band pass), FILT_BS (band stop), and FILT_ARB (arbitrarily
+shaped).  
+.IP method
+This variable describes the filter design method used to calculate the coefficients.  
+The possible values are 
+are currently PZ_PLACE (arbitrary 
+pole-zero placement), PARKS_MC (Parks-McClellen method), and WMSE (weighted mean square error method).
+.IP func_spec
+This indicates whether the desired frequency response function was entered into
+the filter design program using the band method or the pointwise method.
+Currently supported values include BAND, POINT, and NONE.
+.IP g_size
+This is the grid size, which influences the resolution of the filter
+design algorithm.
+.IP nbits
+This gives the number of bits to which the coefficients have been quantized.
+A value of zero indicates that no quantization has taken place.
+.IP gains
+The number of gain values in FIR design used in either the 
+band and the  pointwise
+deisgn methods. The value will be either \fIbands\fP or
+\fIpoints\fP, depending on which method is used. 
+.IP nbands
+The number of points used in the specification of the the frequency
+function by bands.
+.IP bandedges
+This is a pointer to an array of band edges used in the specification of the
+desired gain and weighting functions when the specification method is by bands.
+The number of points in the array will be
+.I 1+nbands.
+The points are given as a fraction of the
+sampling frequency, and will therefore always range from 0.0 to 0.5.
+.IP npoints 
+The number of points used to define the desired frequency response of
+the filter when done in a pointwise specification.
+.IP points
+This is a pointer to an array of points used in the pointwise specification
+of the desired gain and weighting functions.
+The gain values and weighting values given in the
+.I gains
+and
+.I wts
+arrays are defined at these points.
+The number of points in the array will be 
+.I npoints.
+The points are given as a fraction of the
+sampling frequency, and will therefore always range from 0.0 to 0.5.
+.IP nwts
+Number of points in the array of weight values. 
+If the specification
+method is by bands then the number of weighting values will be equal to 
+.I nbands.
+If the specification method is pointwise, the number of weighting values
+will be equal to
+.I npoints.
+.IP wts
+This is a pointer to an array of weighting values.  
+
+.PP
+These header items are used in allocating memory for feafilt records.  
+Most programs that deal with FEA_FILT files will use the support routines
+(see \fIfeafilt_rec\fP(3\-ESPS)) provided in the ESPS library
+and will not have to use the above information directly.  
+
+The header of a FEA_FILT file also contains definitions for one or
+more of the following record fields:
+.PP
+.TS
+center, box, tab(;);
+c | c | c | c | c | c 
+l | l | l | l | l | l.
+Name;Size;Rank;Dimen;Type;Enums
+=
+num_size;1;0;NULL;long;NULL
+denom_size;1;0;NULL;long;NULL
+zero_dim;1;0;NULL;long;NULL
+pole_dim;1;0;NULL;long;NULL
+re_num_coeff;max_num;1;NULL;double;NULL
+im_num_coeff;max_num;1;NULL;double;NULL
+re_denom_coeff;max_denom;1;NULL;double;NULL
+im_denom_coeff;max_denom;1;NULL;double;NULL
+zeros;max_num;1;NULL;double_cplx;NULL
+poles;max_denom;1;NULL;double_cplx;NULL
+.TE
+.PP
+
+Pointers to structures of this type are returned
+by \fIallo_feafilt_rec\fP(3\-ESPS) and  
+\fIget_feafilt_rec\fP (3\-ESPS). \fIput_feafilt_rec\fP(3\-ESPS) 
+is used to read and write FEA_FILT data records.
+
+The FEA_FILT data structure is defined in \fI<esps/feafilt.h>\fP as
+follows:
+
+.TS
+l1 l1 l1 l.
+struct feafilt {
+ long *num_size; 	
+ long *denom_size;	
+ long *zero_dim;
+ long *pole_dim;
+ double	*re_num_coeff;	
+ double	*im_num_coeff;	
+ double	*re_denom_coeff;	
+ double	*im_denom_coeff;	
+ double_cplx *zeros;
+ double_cplx *poles;
+ struct	fea_data *fea_rec; /\(** pointer to FEA record \(**/
+};
+.TE
+The fields have the following meanings:
+.IP num_size
+The size of the numerator polynomial.
+.IP denom_size
+The size of the denominator polynomial.  
+.IP re_num_coeff
+The real part of the numerator polynomial coefficients.
+.IP im_num_coeff
+The imaginary part of the numerator polynomial coefficients.
+.IP re_denom_coeff
+The real part of the denominator polynomial coefficients.
+.IP im_denom_coeff
+The imaginary part of the denominator polynomial coefficients.
+.IP zeros
+The filter zero locations.
+.IP poles
+The filter pole locations.
+.PP
+If the value of the header item \fIcomplex_filter\fP is NO, 
+the pointers \fIim_num_coeff\fP and \fIim_denom_coeff\fP should be NULL.
+If the value of the header item \fIdefine_pz\fP is NO,
+the pointers \fIzero_dim, pole_dim, zeros\fP and \fIpoles\fP should be NULL.
+.PP
+The following conventions hold for storing pole and zero locations.
+If the filter is complex, i.e. \fIfilter_complex = YES\fP, 
+each pole adn zero location should be stored explicity in
+the fields \fIpoles\fP and \fIzeros\fP;
+\fIzero_dim\fP and \fIpole_dim\fP should 
+indicate how many of each type of location are stored.
+If the filter is real, i.e. \fIfilter_complex = NO\fP, 
+each real pole and zero location is stored, but only one of each 
+complex conjugate pair should be stored. As an example, a 
+real filter with 8 poles at locations 
+.br
+0.5, 0.5, 0.25+0.25i, 0.25-.25i, 0.25+0.25i, 0.25-.25i, 0.1+0.1i, 0.1-0.1i
+.br
+should be stored as
+.TS
+center,tab(;);
+l l.  
+poles[0].real=0.5;poles[0].imag=0.0
+poles[1].real=0.5;poles[1].imag=0.0
+poles[2].real=0.25;poles[2].imag=0.25
+poles[3].real=0.25;poles[3].imag=0.25
+poles[4].real=0.1;poles[4].imag=0.1
+pole_dim=5
+.TE
+Note that higher order roots are stored explicitly.
+.SH SEE ALSO
+.nf
+\fIinit_feafilt_hd\fP(3-ESPS), \fIallo_feafilt_rec\fP(3-ESPS),
+\fIget_feafilt_rec\fP(3-ESPS), \fIput_feafilt_rec\fP(3-ESPS),
+\fIFEA\fP(5-ESPS), \fIFEA_FILT\fP(5-ESPS)
+.SH RECORD ELEMENT FILE STRUCTURE
+.PP
+In order to use this (or any other) FEA file type with a generic ESPS
+program (one that operates on any file type) it is necessary to know the
+way that record elements are positioned in the file.   For a FEA file
+that information is obtained by running the program
+\fIfea_element\fR(1\-ESPS) on the file in question.
+.SH AUTHOR
+Manual page by Bill Byrne
+

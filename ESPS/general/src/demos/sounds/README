@@ -1,0 +1,24 @@
+This demo features operations on various curious sound files.  It is 
+controlled by the window in the upper right ("Sounds Demo Controls"). 
+
+The bottom part of the control panel contains menus with the names of
+various sounds.  Pop-down a menu with the right mouse button;
+releasing the mouse when over a particular name will select it.  After
+such a selection, the operation specified from the middle part of the
+panel will be performed on the selected sound.
+
+For example, if the "plot with spectrogram" button is down in the
+middle panel, and if you select "kookaburra" from the animals menu in
+the bottom panel, then three plots will be displayed: the time-domain
+waveform, an FFT of short segment from the beginning of the waveform
+(limits marked on the waveform), and a spectrogram.
+
+The demo tries to set up the default D/A output according to what
+hardware is available.  You can change this default by right-mousing
+the "Setup Output" button.
+
+When you have finished, press QUIT on the "Sounds Demo Controls" panel.  
+
+
+@(#)README	1.3 1/18/93 ERL
+

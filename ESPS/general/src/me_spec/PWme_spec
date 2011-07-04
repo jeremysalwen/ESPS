@@ -1,0 +1,12 @@
+# @(#)PWme_spec	1.2 12/8/92
+# default waves parameter file for me_spec
+int num_freqs ?= 513: "Number of frequencies in output records";
+int max_order ?= 1000: "Maximum order of output spectra";
+int start = 1: "First record to process";
+int nan = 0: "Number of records to process (0 means continue to end of file)";
+string spec_param_field ?= "spec_param": "Field containing spectral parameters";
+string spec_rep ?= "RC": "Spectral parameter representation (RC,LAR,AUTO,AFC,CEP,LSF)";
+string power_field ?= "raw_power": "Field containing total power";
+float power ?= 1.0: "Default power in case power_field not defined";
+string samp_freq_name ?= "src_sf": "header item containing sampling frequency";
+float samp_freq ?= 8000: "Default sampling frequency in case samp_freq_name undefined";

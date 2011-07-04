@@ -1,0 +1,11 @@
+"Set Color Map" MENU
+greyscale	set colormap greymap
+Color1	DEFAULT	set colormap Colormap
+COLOR2		set colormap COLORMAP
+TImap		set colormap TImap
+grey_neg	set colormap grey_neg
+"Set Color Map" END
+"Show Color Scale" @do_color.fspec
+
+# @(#)colors.WM	1.1 7/29/91 ERL 
+

@@ -1,0 +1,93 @@
+.lo
+.ce 2
+.b
+ESPS 3.2 HP Beta Release Notes
+.sp
+9/30/88 1.1
+.sh 1 "Introduction"
+.lp
+This document provides notes relevant to the HP Beta release 3.2 of
+ESPS.  Please read this document and the Installation Instructions
+completely before installing this release of ESPS.
+.sh 1 "Contents of this Kit"
+.lp
+The ESPS 3.2 installation kit contains magnetic media of the ESPS 3.2
+distribution.  This is a complete distribution; it is not an update.
+For HP systems, the only supported media at this time is standard 9
+track tape at 1600 BPI, in \fItar\fR format.
+.lp
+If you do not already have ESPS the the kit also contains a User's Manual,
+containing documents describing the use of the system and manual pages for
+all programs, library functions and file types.  If you do have ESPS, then
+the kit contains update pages for your User's Manual.  The documents
+provided are important, and should be read by all users of the system.
+They provide essential information about using and programming with ESPS.
+.sh 1 "Differences Between 3.2 and 3.2 HP Beta"
+.lp
+The only difference between this 3.2 HP Beta distribution and the
+previous ESPS 3.2 release for Sun, Masscomp, and Convex are changes to
+support the HP 800 and 300 systems.   The HP systems don't have
+\fIindex\fR(3) and \fIgetwd\fR.  These were added to the library.
+.sh 1 "Graphics on HP Systems"
+.lp
+Graphics on HP terminals or workstations is not supported by this
+release.    Most of the ESPS plot programs can produce Tektronix
+compatible output, so if your terminal is Tek 40X0 compatible, then you
+can plot.   If you use IBM compatible PCs for termanals with the HP,
+contact us and we can supply a public domain Tektronix emulator the PCs.
+.lp
+The first non-beta release of HP ESPS will support HP terminals.
+.sh 1 "Hardcopy of Graphics"
+.lp
+The ESPS plot programs can produce output for the Imagen laser printer
+using its Tektronix emulation mode.   If you have another type of
+printer or plotter that can plot tektronix plots streams then you should
+be able to use it as we use the Imagen.  If you use a postscript based
+printer (such as the Apple LaserWriter) we can supply a public domain
+tektronix to postscript emulator.   Call us if you want it.
+.lp
+If you use a HP Laser Jet, we can provide a GPS to HP raster converter.
+This allows our plot programs to work with the HP printer.  It is slow,
+since a large bitmap is downloaded to the printer.  Contact us if you
+want this.
+.lp
+To adapt another type of plotter to the plot programs, look at the install
+script under \fIesps_plot\fR.   Call us if you have
+questions.   In the next major release, we are going to provide a better
+way to specify the type of hardcopy plot device in the install script.
+.sh 1 "Data Acquisition"
+.lp
+This version of ESPS does not directly support data acquisition (speech
+input and output) on HPs.
+This package does include the source code to the speech
+input and output programs used on ESPS Masscomp systems.   If you have
+data acquisition hardware, you might be able to modify these programs
+for your hardware.  The speech input program is called \fImcplay\fR and
+the speech output program is called \fImcrecord\fR.
+.lp
+If you have another means of data acquisition that results in a binary
+file (of 16 bit integer data) you can use the ESPS program \fIbtosps\fR
+to turn that file into an ESPS sampled data file.   You can also use
+\fItestsd\fR with the -a option to produce an ESPS sampled data file
+from an ascii file.
+.lp
+The ESPS program \fIbhd\fR can be used to remove the ESPS header and
+leave behind just the binary data from an ESPS data file.   In the case
+of sampled data files, you can convert to the correct data type with
+\fIcopysd\fR first.
+.sh 1 "Known Problems"
+.lp
+The following problems are known in the ESPS HP beta kit.   These will
+be fixed in the first non-beta release.   Please report any other
+problems found.
+.np
+The program \fIlpcsynt\fR produces sometimes fails.
+.np
+The standard Unix program \fIdiffmk\fR is called by the installation
+script.  On HP systems, \fIdiffmk\fR will complain about \fBif syntax\fR
+if one of the two files doesn't exist.  This is the case the first time
+each program is installed.  On other Unix systems, a more reasonable,
+but harmless error message is produced.  No harm is done and the
+complaints should be ignored.
+.np
+The \fB-o\fR option on \fImlplot\fR doesn't work on some HP systems.

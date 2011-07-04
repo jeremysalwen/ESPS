@@ -1,0 +1,88 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)xfir_filt.1	1.3 4/4/97 ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH  XFIR_FILT 1\-ESPS 4/4/97
+.SH NAME
+
+.nf
+xfir_filt \- A cover script for ESPS filter design programs 
+using XIG interface
+.fi
+.SH SYNOPSIS
+.B
+xfir_filt
+.I outfile
+[
+.I paramfile
+]
+.SH DESCRIPTION
+This shell script is intended as an example of extending ESPS programs with 
+XIG user interface to build a customized filtering design environment.
+This example is far from perfect.  Free free to modify it to suit your
+needs.
+.PP
+Four FIR filter design programs are supported in this script: 
+\fIpkmc_filt\fR(1-ESPS), \fIcb_filt\fR(1-ESPS), \fIwmse_filt\fR(1-ESPS), 
+and \fIwin_filt\fR(1-ESPS) [1]. The XIG programs used to create X-window
+interface for parameter prompting are \fIexprompt\fR(1-ESPS) and
+\fIexpromptrun\fR(1-ESPS) [2].  Please see their man pages for usage
+details.
+.PP
+The program first pops up a window with the following parameters:
+.PP
+\fIfilt_method\fR: determines which FIR design algorithm or program to use.
+A value of "EQUI_RIPPLE" is to use the Parks-McClellan algorithm or the
+program \fIpkmc_filt\fR(1-ESPS).  A value of "CONSTRAINT_BASED" is to use
+the Simplex algorithm or the program \fIcb_filt\fR.  A value of 
+"WEIGHTED_MS" is to use minimum mean square error algorithm or the
+program \fIwmse_filt\fR(1-ESPS).  And a value of "WINDOW_METH" is to use
+the Kaiser windowing algorithm or the program \fIwin_filt\fR(1-ESPS).
+.PP
+\fIfilt_type\fR: determines the filter response type.  A value of
+"MULTIBAND" designs a multi-band filter.  Values of "LOWPASS" and "HIGHPASS"
+design a lowpass filter and a highpass filter.  A bandpass, or 
+bandstop filter design 
+interface can be constructed similarly.  "DIFFERENTIATOR" for a 
+differentiator, this is only available to \fIpkmc_filt\fR(1-ESPS) and
+\fIcb_filt\fR(1-ESPS).  "HILBERT" for Hilbert transformer, this is
+only available to \fIpkmc_filt\fR(1-ESPS).
+.PP
+WARNING: IF "MULTIBAND" IS SELECTED, IT IS YOUR RESPONSIBILITY TO ENTER
+VALID PARAMETER VALUES.  DEFAULT SETTINGS DO NOT WORK.
+.PP
+\fInbands\fR:  determines the number of bands in a multi-band filter 
+response type.  For examples, a lowpass filter has 2 bands, and a bandpass
+filter has 3 bands.
+.PP
+\fIsamp_freq\fR: This is the sampling rate of the filter.
+.PP
+Once the button "done" is pressed, the set of parameters determines 
+which program to use and parameters for that program is constructed 
+accordingly in a temporary file.  This file is then used by XIG programs
+such as \fIexprompt\fR(1-ESPS) to query for filter bandedge frequencies,
+band values, etc...   If the optional output parameter file name, 
+\fIparamfile\fR, is given on the command line, actual parameters used
+by the program is saved to it.
+.PP
+The filter is then designed and saved to \fIoutfile\fR.  Its filter response
+is calculated by \fIfiltspec\fR(1-ESPS) and plotted on screen by 
+\fIplotspec\fR(1-ESPS). 
+.PP
+.SH REFERENCES
+1. "ESPS Applications Note: Filtering Sampled Data".
+.PP
+2. "ESPS Applications Note: X Interface Generation in ESPS and \fIxwaves\fR"
+.PP
+.SH "SEE ALSO"
+\fIpkmc_filt\fR(1-ESPS), \fIcb_filt\fR(1-ESPS), \fIwmse_filt\fR(1-ESPS),
+\fIwin_filt\fR(1-ESPS), \fIiir_filt\fR(1-ESPS), \fIxeparam\fR(1-ESPS),
+\fIexprompt\fR(1-ESPS), \fIexpromptrun\fR(1-ESPS), \fIFEA_FILT\fR(5-ESPS)
+.PP
+.SH AUTHOR
+Derek Lin
+.PP
+
+
+
+
+

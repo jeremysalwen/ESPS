@@ -1,0 +1,680 @@
+.lo
+.de SM          \"macro to shrink left margin
+.br
+.nr $i \\n($i+\\$1i
+..
+.de RM          \"macro to restore original left margin
+.br
+.nr $i 0
+..
+.de MS		\"macro for main section (sans serif bold)
+.ft SB
+.nf
+\\$1
+.sp -.8
+.fi
+..
+.de SS		\"macro for sub-section (sans serif italics)
+.ft SI
+.nf
+\\$1
+.sp -.8
+.fi
+..
+.sc
+.he 'CONVERSION APPLICATIONS NOTE''page %'
+.fo '1.7'ERL8/16/91'
+.nf
+.ce 
+\s+4\fB ENTROPIC RESEARCH LABORATORY, INC.\fR\s-4
+.sp 1i
+.ce 100
+\s+1\fB
+
+ESPS APPLICATIONS NOTE: Converting Data to and from ESPS FEA Files
+\fP\s-1
+.sp .3i
+\fIJohn Shore \fP
+.sp .3i
+Entropic Research Laboratory, Inc.
+600 Pennsylvania Ave. S.E., Suite 202
+Washington, D.C. 20003
+(202)547-1420
+.sp .5i
+.fi
+.lp
+.sh 1 INTRODUCTION
+.lp
+ESPS and \fIwaves\fP+ are often used to display and manipulate
+"foreign data" \- data that is not contained in ESPS files.  In
+addition, many users process data using a combination of ESPS and
+non-ESPS programs.  This applications note discusses the various ESPS
+programs that are useful in this context.  The discussion includes:
+.ip \ \ \ \(bu
+Converting between ESPS files and pure binary or ASCII data
+.ip \ \ \ \(bu
+Reading headerless files without converting to ESPS
+.ip \ \ \ \(bu
+Reading files with foreign headers left in place
+.sh 1 "RELEVANT ESPS PROGRAMS"
+.lp
+There are 10 or so ESPS programs that are the main utilities for
+converting back and forth between ESPS files and ASCII or headerless
+binary data.  All of these are included in the ESPS subset shipped
+with \fIwaves\fP+.  A few other ESPS programs are relevant \- their
+main function is not related to data conversion, but they can be
+useful in special cases.  We shall mention all of these programs (as
+usual, use \fIeman\fP to see the manual page for any of them).  Here's
+the complete list (those included with \fIwaves\fP+ are marked with an
+asterisk):
+.sp .5
+.nf
+.ta 1.25i
+
+  \fIaddfea\fP* \-	adds a new FEA file field based  on ASCII data
+
+  \fIaddfeahd\fP* \-	adds an ESPS feature file header to non-ESPS binary or ASCII data
+
+  \fIaddgen\fP* \-	adds a generic header item to an existing  nor new ESPS file header
+
+  \fIbhd\fP* \-	behead an ESPS file
+
+  \fIbtosps\fP* \-	convert binary sampled data file to an ESPS FEA_SD file
+
+  \fIcomment\fP* \-	displays or appends to comment field in ESPS file headers
+
+  \fIdemux\fP \-	(demultiplex) extract real or complex channels from a FEA_SD file
+
+  \fIeman\fP* \-	displays or prints ESPS manual pages
+
+  \fIeparam\fP* \-	run an ESPS program with parameter prompts
+
+  \fIesps2mu\fP \-	convert an ESPS sampled data file to a headerless mu-encoded file
+
+  \fIfea2mat\fP* \-	converts FEA to MATLAB .mat 
+
+  \fIfea_edit\fP \-	feature file editor
+
+  \fIfea_element\fP* \-	prints binary format table for ESPS FEA files
+
+  \fIfea_print\fP \-	 print data from FEA records with user-controlled formatting
+
+  \fIfeafunc\fP \-	apply function, gain factor, additive constant, and type change to FEA fields
+
+  \fIfea_deriv\fP \-	derive a new FEA file containing elements from an existing one
+
+  \fIhditem\fP* \-	print an item from an ESPS header
+
+  \fIils_esps\fP* \-	convert an ILS sampled data file to an ESPS file
+
+  \fImat2fea\fP* \-	converts from MATLAB .mat to FEA
+
+  \fImergefea\fP \-	merge two FEA files so that output records contain fields from both
+
+  \fImux\fP \-	multiplex sampled-data files into a single multichannel or complex file
+
+  \fImu2esps\fP* \-	converts mu-encoded data to ESPS FEA_SD file
+
+  \fIpplain\fP* \-	print values from ESPS file in "plain format"
+
+  \fIepsps\fP* \-	print headers and data from ESPS file in "pretty format"
+
+  \fIselect\fP \-	applies arbitrary queries to select records from FEA files
+
+  \fItestsd\fP* \-	make test signal (sine wave, square wave, noise, pulses, ASCII input, etc.)
+
+  \fIxeparam\fP \-	run an ESPS program with X Window parameter prompts
+
+  \fIexprompt\fP \-	interactive ESPS parameter entry in a pop-up window
+
+  \fIexpromptrun\fP \-	interactive ESPS parameter entry and program run
+.sp .5
+.fi
+.sh 1 "STRUCTURE OF ESPS FEA FILES"
+.lp
+Before discussing particular cases of data conversion, it's helpful to
+recall some basic information about the structure of ESPS FEA files.  
+.lp
+ESPS FEA files are binary files containing an arbitrary length header
+followed by an arbitrary number of fixed-length data records.  The
+record length varies from file to file (depending on information in
+the header), but is constant within a given file.  Each record
+contains information in the form of a set of independent "fields" that
+can have different dimensions and numeric data types.  The names,
+dimensions, and data types for these fields are the same for every
+record in the file; this "self-description" information is stored in
+the type-specific part of the file header.  A FEA file may optionally
+be "tagged", in which case each record contains as its first element a
+LONG that points to a position in a distinguished external file
+(usually a sampled data file), whose name is stored in the current
+file header.
+.lp
+Normally, the data records in FEA files are written in
+\fItype_order\fP \- except for the optional tag (which always comes
+first), all doubles are written first, followed by floats, longs,
+shorts, and characters (bytes).  (This choice was made for efficiency,
+since the records can be read or written in blocks \- one for each data type \-
+and don't have to be dealt with a field at a time.)  An alternative is for
+the files to be in \fIfield_order\fR, which means that the data fields
+in each record appear in the order that the fields were defined.  In
+most cases, the user can choose the order by means of the \s-1UNIX\s+1
+environment variable FIELD_ORDER. If this variable is defined
+(and does not equal \fIoff\fR), then the files written are written in
+\fIfield_order\fP instead of \fItype_order\fP.  (The order is stored
+in the header, so that ESPS input routines can read files in either
+order).
+.lp
+The structure of a particular FEA file can be determined in two ways.
+One way is to obtain a full listing of the file header \- 
+use \fIepsps\fP \fB-vD\fP (list file with verbose information from the
+header, and no data).  Another way is to run \fIfea_element\fP on the
+file, which produces a table giving the structure of each record; for
+example: 
+.nf
+.ft CW
+.ta .2i 2i 3i 3.75i
+    
+	%fea_element test.fea
+	Name	Type	Size	Element
+	----	----	----	-------
+	voiced_fraction	FLOAT	1	1
+	raw_power	FLOAT	1	2
+	lpc_power	FLOAT	1	3
+	p_pulse_len	FLOAT	1	4
+	spec_param	FLOAT	10	5
+	frame_len	LONG	1	15
+	num_pulses	LONG	1	16
+
+.ft LR
+.fi
+.sh 1 "DEALING WITH BINARY DATA"
+.sh 2 "Converting from ESPS Files to Headerless Binary"
+.lp
+If the ESPS FEA header were were absent, a non-ESPS programs could read 
+and process the binary data provided that the structure of the file is
+known \- i.e., if the data types data order are known.  To create
+such a file is simple \- just behead it: 
+.nf
+.ft CW
+
+    %bhd test.fea test.nohead
+
+.fi
+.ft LR
+Furthermore, the structure of the resulting file is documented well by
+the output of \fIfea_element\fP (when run on the original ESPS file).
+Thus, to export a file for non-ESPS use, just supply the output of
+\fIbhd\fP as data and the output of \fIfea_element\fP as documentation.  
+.lp
+In some cases, the structure of the required non-ESPS file is
+pre-determined \- for example, you may write an ESPS program knowing
+that the output data (without header) will be used as input to a
+particular non-ESPS program.  In this case, by arranging the order in
+which the fields are defined (i.e., by arranging the order of calls to
+\fIadd_fea_fld\fP (3\-\s-1ESPS\s+1)), and by specifying that the
+output file be written in \fIfield_order\fP rather than
+\fItype_order\fP, you can produce FEA files that have the desired
+binary format.
+.sh 2 "Converting from Headerless Binary to ESPS Files"
+.lp
+If you have a headerless binary file with a known structure that is
+compatible with the definition of an ESPS FEA file (i.e., fixed length
+records, identical structure per record, etc.), a FEA file can be
+created by means of the program \fIaddfeahd\fP.  This program was
+designed to complement \fIfea_element\fP, in the sense that
+information about the structure of the input data is provided to
+\fIaddfeahd\fP in the form of an ASCII table of the same form as
+output by \fIfea_element\fP.  For example, if "fields" is an ASCII
+file containing the output from \fIfea_element\fP shown above (but
+without the first line giving column headings), then
+.nf
+.ft CW
+
+    %addfeahd fields test.nohead test.newfea
+
+.ft LR
+.fi
+will produce a FEA file "test.newfea" with the same binary data that
+was in "test.fea".
+.lp
+By default, the output of \fIaddfeahd\fP is written in \fItype_order\fP, which
+probably will result in the data order within each record being
+different than in the original file.  If you want to preserve the
+order, define the \s-1UNIX\s+1 environment variable FIELD_ORDER and
+set it to any value other than off, in which case \fIaddfeahd\fP (and
+other programs) will produce the file with data in the same order as
+the input file \- the resulting FEA file could be converted back into
+the original format by removing the ESPS header with \fIbhd\fP.
+.sh 3 "Adding Generic Header Items"
+.lp
+In order to use a FEA file produced by \fIaddfeahd\fP, you may need to
+add some generic header items that determine the behavior of
+processing programs.  For example, \fIwaves\fP+ bases the time
+synchronization of cursors on a generic header item \fIrecord_freq\fP
+that contains that number of FEA records per second.  These can be
+added using \fIaddgen\fP, for example:
+.nf
+.ft CW
+
+    %addgen -g record_freq -v 120 -t DOUBLE test.newfea
+
+.ft LR
+.fi
+You may prefer to use \fIeparam\fP, which results in your being
+prompted for the required information:
+.nf
+.ft CW
+
+    %eparam addgen test.newfea
+    Name of new generic header item [item1]: record_freq
+    Type of new generic header item [long]: double
+    Value of new generic header item [1000]: 120
+
+.ft LR
+.fi
+If you are running X, then 
+.nf
+.ft CW
+
+    %xeparam addgen test.newfea
+
+
+.ft LR
+.fi 
+will do the same thing but use an X window dialog box for prompting. 
+.lp
+A third alternative for running \fIaddgen\fP is to prepare 
+an ASCII parameter file containing the name, type, and value of the
+desired generic (say, in file "parameters"), and then running:
+.nf
+.ft CW
+
+    %addgen -P parameters test.newfea
+
+.ft LR
+.fi
+Such a parameter file could be prepared with any text editor, or by
+running \fIexprompt\fP on the system default parameter file for
+\fIaddgen\fP (usually /usr/esps/lib/Paddgen).  (For more information
+about ESPS parameters, see the technical note "Parameter and Common
+Files in ESPS".)
+.sh 3 "Converting Sampled Data to ESPS"
+.lp
+The conversion of a headerless binary sampled data file to an ESPS
+FEA_SD file can be accomplished as discussed above \- use
+"\fIaddfeahd\fP\fB -t\fP FEA_SD" to create the file (the \fB-t\fP is
+to set the FEA_SD subtype code), and then \fIaddgen\fP to set the
+sampling rate (\fIrecord_freq\fP) and starting time
+(\fIstart_time\fP).  This is an important special case, however, so we
+support it with a separate program, \fIbtosps\fP.  This program allows
+you to specify the sampling rate, the start time, the number of
+channels, and the data type of the data, and it produces a
+corresponding FEA_SD file.  For example:
+.nf
+.ft CW
+
+    %btosps -f 16000 -t double -T 1.2 -n 2 -c "data from run 3" sd.bare sd.feasd
+
+.ft LR
+or
+.ft CW
+
+    %eparam btosps sd.bare sd.feasd
+    Enter the sampling rate of the data [8000]: 16000
+    Enter the start time of the data [0]: 1.2
+    Enter the number of channels [1]: 2
+    Enter data type (double, float, long, short, byte, double_cplx,
+            float_cplx, long_cplx, short_cplx, byte_cplx) [SHORT]: double
+    Enter the number of leading bytes to skip [0]: 
+    Enter a comment describing the data origin [ ]: data from run 3
+
+.ft LR
+.fi
+The required comment is put in the header as an informal starting
+point for ESPS record keeping.  
+.sh 3 "Skipping non-ESPS Headers"
+.lp
+If the non-ESPS file has a non-ESPS header (i.e., it isn't a
+headerless binary file), the non-ESPS header can be ignored provided
+that you know its length \- both \fIaddfeahd\fP and \fIbtosps\fP have
+an option (\fB-S\fP) to skip a given number of leading bytes.  
+.sh 3 "Combining several non-ESPS Files"
+.lp
+If you have several non-ESPS binary files and wish to deal with them
+as a single FEA file, with each FEA record containing the union of the
+corresponding records in the non-ESPS files, convert both to FEA files
+using \fIaddfeahd\fP and then merge them using \fImergefea\fP or
+\fIfea_deriv\fP and \fImergefea\fP.
+.lp
+If the non-ESPS files contain single-channel sampled data and you wish
+to obtain a multichannel FEA_SD file, use \fIbtosps\fP followed by
+\fImux\fP (going the other way, use \fIdemux\fP and \fIbhd\fP). 
+.sh 2 "Tags"
+.lp
+Tags in FEA files are a historical holdover from our pre-FEA days, and
+they are somewhat of a sore thumb \- they are handled as a special
+case rather than as just another field.  That is why the tag always
+appears first in the record (regardless of whether \fItype_order\fP or
+\fIfield_order\fP was specified), and why the self-description does
+not include a field named "tag" (an item in the universal header
+section specifies whether or not tags are present).
+.lp
+In a later release, we will revise tags to become just another FEA
+field.  In the meantime, there is no easy way to import a binary file
+and have it be tagged.  When a tagged file is exported (via \fIbhd\fP),
+the first element in every record always contains the tag value.  
+.sh 2 "CODED Types"
+.lp
+One of the supported FEA data types is CODED.  This means that the
+information is an enumerated type \- a discrete set of symbolic
+values.  In the ESPS implementation, the values are stored in the FEA
+records as SHORTs.  The self-description (in the type-specific part of
+the header) contains an array of ASCII strings with the corresponding
+symbolic values.  Thus, if a FEA file has fields of type CODED, you
+should keep in mind that the beheaded file has SHORTs in the
+appropriate places.
+.lp
+When importing binary data, keep in mind that the current version of
+\fIaddfeahd\fP does not handle CODED types; although there's no
+problem with the data values themselves (which are SHORTs), there's no
+mechanism for specifying the ASCII strings that denote the symbolic
+values.  A workaround is to import the data specifying SHORT as the
+type, and then use \fIfea_edit\fP to edit the self-description of the
+FEA file produced by \fIaddfeahd\fP (change the data type for the
+field from SHORT to CODED, and add the list of symbolic values).
+.sh 1 "DEALING WITH ASCII DATA"
+.sh 2 "Converting from ESPS Files to ASCII"
+.lp
+Although \fIepsps\fP produces an ASCII listing of any ESPS file, and
+has various options for tailoring that listing, the data is always
+annotated in some way.  Thus, \fIepsps\fP is more useful for producing
+"pretty printed" text that people read than it is for producing ASCII
+data streams for other programs.  The latter function is supported by
+\fIpplain\fP, which produces unadorned ASCII data.  For example, here
+we produce and print 5 Gaussian noise values:
+.nf
+.ft CW
+
+    %testsd -p5 -T gauss - | pplain -
+    661.176 
+    206.604 
+    347.733 
+    -561.82 
+    432.024 
+
+.ft LR
+.fi
+By default, \fIpplain\fP produces data for all fields in every record,
+but there are options for restricting the output to particular
+records, particular fields, and particular elements within fields.
+.lp
+If what is desired is an ASCII stream that contains a function of the
+data in each FEA record (rather than the data itself), then the
+program \fIselect\fP can be used (\fIfeafunc\fP may also be useful).
+For example, suppose the FEA records in the file "speech.fea" include
+a vector field containing reflection coefficients ("rc") and a scalar
+field containing power ("power", and suppose you need to have for each
+record a stream containing the result of multiplying the square root
+of the power by the first reflection coefficient (don't ask me why!).
+Here's how to do it with select:
+.nf
+.ft CW
+
+    %select -e "sqrt(power)*rc[0]" speech.fea > data.ascii
+
+.ft LR
+.fi
+.lp
+Sometimes it is desirable to produce "pretty printed" text in a format
+other than that produced by \fIepsps\fP; for example, one might want
+one FEA record per line with selected field data in different columns.
+Such a function is provided by \fIfea_print\fP; an ASCII input file
+names the elements to be printed from each record and provides a
+corresponding (C program) format specification.  A common use of
+\fIfea_print\fP is to print one FEA record per line with selected
+field elements appearing in different columns.  For 
+For example, suppose that \fIstylefile\fP
+contains the following:
+.nf
+.ft CW
+
+    layout=example
+    header1= **************** OUTPUT ****************\\n
+    raw_power[0] power: %5.2f
+    frame_type[0] \ttype: %s
+    spec_param[0] \tRCs: %4.2f
+    spec_param[3,5:6]   %4.2f
+    spec_param[7]   %4.2f\\n
+
+.ft LR
+.fi
+Invoking this layout with a FEA_ANA file would result, for example, 
+in the following: 
+.nf
+.ft CW
+
+    %fea_print -r 10:14 -l example stylefile speech.fana
+    **************** OUTPUT ****************
+    power: 52.78    type: VOICED    RCs: 0.92  -0.36  -0.29  -0.04  -0.29
+    power: 55.71    type: VOICED    RCs: 0.92  -0.36  -0.29  -0.04  -0.29
+    power: 506.98   type: VOICED    RCs: 0.92  -0.36  -0.29  -0.04  -0.29
+    power: 154.47   type: UNVOICED  RCs: 0.31  -0.27  -0.22  -0.05  -0.19
+    power: 9143.28  type: UNVOICED  RCs: 0.31  -0.27  -0.22  -0.05  -0.19
+
+.ft LR
+.lp
+Most ESPS header items can be obtained in ASCII by means of
+\fIhditem\fP.
+.sh 2 "Converting from ASCII to ESPS Files"
+.lp
+To create a new FEA file from ASCII data or to add a new field to an
+existing FEA file, use \fIaddfea\fP.  Here's an example:
+.nf
+.ft CW
+
+    %echo "2 4 6 8 10 12" | addfea -f data -s 2 -c"create file" - foo
+    %echo "10 20 30" | addfea -f more_data -c"add some data" - foo
+    %epsps -H foo
+
+    Record 1: 
+    data:  
+      0:             2             4 
+    more_data:  10 
+
+    Record 2: 
+    data:  
+      0:             6             8 
+    more_data:  20 
+
+    Record 3: 
+    data:  
+      0:            10             12
+    more_data:  30 
+
+.ft LR
+.fi
+The first command created a new, three-record file with a field of
+size 2 named "data" in each record.  The second command added a
+second, scalar field ("more_data") in each record.
+.lp
+A second approach for converting from ASCII to FEA (but not 
+adding to an existing file) is to use \fIaddfeahd\fP.  This 
+is the same program that was discussed earlier in the context
+of creating an ESPS header for a file of binary data.  \fIAddfeahd\fP
+operates more-or-less the same way with ASCII data.  For example, 
+.nf
+.ft CW
+
+    %addfeahd fields.a test.ascii test.newfea
+
+.ft LR
+.fi
+will convert the ASCII file test.ascii to the FEA file test.newfea 
+according to the format specifications in fields.a, which might 
+look like this: 
+.nf
+.ft CW
+.ta .2i 2i 3i 3.75i
+    
+	voiced_fraction	FLOAT	1	%f
+	raw_power	FLOAT	1	%f
+	lpc_power	FLOAT	1	%f
+	p_pulse_len	FLOAT	1	%f
+	spec_param	FLOAT	10	%f
+	frame_len	LONG	1	%ld
+	num_pulses	LONG	1	%ld
+
+.ft LR
+.fi
+This looks just like the case for binary data, except that 
+there's an additional column giving the \fIfscanf\fP() format
+to use when scanning the data.  
+.sh 3 "ASCII Sampled Data" 
+.lp
+ASCII sampled data can be imported by means of \fIaddfea\fP (use
+-\fBT\fP FEA_SD to set the subtype, and \fIaddgen\fP to set the 
+\fIrecord_freq\fP generic), but \fItestsd\fP has an option (\fB-a\fP)
+that often is more convenient.  For example, here we create a complex
+FEA_SD file with three samples: 
+.nf
+.ft CW
+
+    %echo "5 6 10 11 15 16" | testsd -r 10000 -t double_cplx -a - foo.feasd 
+    %epsps -H foo.feasd
+        1: [    5.0000,    6.0000][   10.0000,   11.0000][   15.0000,   16.0000]
+
+.ft LR
+.fi
+\fITestsd\fP does not provide for multi-channel output; for this case, 
+use the \fIaddfea\fP/\fIaddgen\fP combination:
+.nf
+.ft CW
+
+    %echo "2 100 4 110 6 120 8 130" > data
+    %addfea -f samples -T FEA_SD -s 2 -t short data data.feasd 
+     addfea: Please enter comment, ended with blank line:
+    This is an example.
+
+    %addgen -g record_freq -t double -v 10000 data.feasd
+    %epsps -H data.feasd
+
+    Record 1: 
+    samples:  
+      0: 2 100 
+
+    Record 2: 
+    samples:  
+      0: 4 110
+
+    Record 3: 
+    samples:  
+      0: 6 120 
+
+    Record 4: 
+    samples:  
+      0: 8 130 
+
+.ft LR
+.fi
+.sh 1 "CONVERTING SAMPLED DATA FROM OTHER FORMATS"
+.lp
+Sampled data files written by STI's Interactive Laboratory System
+(ILS) system can be converted directly to ESPS FEA_SD files using
+\fIils2esps\fP.  Similarly, sampled data files written by Concurrent's
+(Masscomp's) Laboratory Work Bench (LWB) can be converted using
+\fIlwb2esps\fP.  
+.lp
+Conversions between headerless mu-encoded sampled data and ESPS FEA_SD
+files are available by means of \fImu2esps\fP and \fIesps2mu\fP. 
+.sh 1 "INFORMAL ASCII COMMENTS"
+.lp
+As illustrated in some of the examples above, most of the conversion
+programs insist on being provided with an ASCII comment, which is
+intended to describe the data being converted and thereby provide
+a starting point for the automatic record keeping facilities of the
+ESPS file system (see the Applications Note: "File Headers and Record
+Keeping in ESPS").  This comment can be provided directly on the
+command line (\fB-c\fP), indirectly through a prepared file
+(\fB-C\fP), or in response to a program prompt.  Additional comments
+can be added at any time using \fIcomment\fP.  
+.sh 1 "USING DEFAULT HEADERS FOR HEADERLESS FILES"
+.lp
+In some situations \- for example, the case of very large files \- it
+can be inconvenient to convert headerless files to ESPS in order to
+run ESPS programs on the data.  One can avoid this by always
+performing an "on-the-fly" conversion on a pipe, for example:
+.nf
+
+	btosps large.sd - | [esps-programs]
+
+or 
+
+   	addfeahd format large.data - | [esps-programs]
+
+.lp
+This can get clumsy (and it does consume extra processes), so ESPS 
+provides a general mechanism to put "virtual" or "default" headers
+in front of headerless binary data. 
+.lp
+In particular, if any ESPS program does not recognize an input file (to
+be precise, it's \fIread_header\fP (3\-\s-1ESPS\s+1) that's doing
+this), the file is assumed to be "headerless".  If in this case the
+\fIunix\fP environment variable DEF_HEADER is defined and points to a
+file with a valid ESPS header (whether or not there is data in that
+file is irrelevant), the header of that file is used as a "virtual"
+header for the headerless file.  Thus, the data description in the
+DEF_HEADER should be valid for the input data.  The ESPS conversion
+programs \fIbtosps\fP and \fIaddfeahd\fP are useful in creating such
+headers.  Here's an example that creates a 12 Khz FEA_SD header 
+and uses it to filter a headerless data file sg1.a1:
+.nf
+
+	%btosps -f 12000 -c "header for sg1" /dev/null k12.hd
+	%setenv DEF_HEADER `pwd`/k12.hd
+	. . . 
+	%filter -F data/sg1.filt  data/sg1.a1 sg1.a1.filt.sd
+	%send_xwaves make file sg1.a1.filt.sd
+
+.fi
+The last command sends an \fIxwaves\fP+ display server a command to
+display the filtered file.  Note that the output files are ESPS files
+(i.e., they have ESPS headers).  Note also that this approach is not
+limited to sampled data.  DEF_HEADER can point to any FEA header, and
+it will "do the right thing" with any FEA-eating program, provided
+that the header properly describes the data.
+.sh 1 "FILES WITH FOREIGN HEADERS" 
+.lp
+If data files have foreign headers, it can be convenient to leave them
+in place during ESPS processing, so that they are left when a final
+ESPS \fIbhd\fP is run.  To support this, \fIbtosps\fP, \fIaddfeahd\fP,
+and \fIbhd\fP have options to leave skipped data (the foreign header)
+in place, for example:
+.nf
+
+  btosps -S 512 -F for.sd - | filter -F esps.filt - - | bhd -F - for.filt.sd
+
+.fi
+The \fB-F\fP option on \fIbtosps\fP causes the 512 skipped bytes to be
+kept in place between the ESPS header and the data.  Actually, it is
+kept there by means of new generic header items in the ESPS header, so
+that it will be carried along by later programs (like \fIfilter\fP,
+above).  The \fB-F\fP option on \fIbhd\fP causes the foreign header to
+be left in place after the ESPS header is removed.  The result, in the
+above case, is a pipe that starts and ends with a file in the foreign
+format.
+.lp
+Foreign headers are kept in the ESPS header in the following manner:
+The generic header item \fIforeign_hd_length\fP contains the size (in
+bytes) of the foreign header.  If this item is present (and non-zero),
+\fIread_header\fP() will read this many additional bytes of data, put
+it into the header, and set an additional generic header item
+\fIforeign_hd_ptr\fP to point to it.  From that point on, the foreign
+header is just part of the ESPS header.  Note that one can use
+\fIaddgen\fP (1\-\s-1ESPS\s+1) to modify \fIforeign_hd_length\fP in
+the header specified by DEF_HEADER before calling an ESPS program.
+.lp
+With this mechanism, it is possible to write programs that 
+use the ESPS header and record I/O functions while still having
+access to the foreign header.  The procedure is simple: use 
+\fIread_header\fP() to read the ESPS header, and \fIget_genhd\fP() 
+to get the pointer to the foreign header.  

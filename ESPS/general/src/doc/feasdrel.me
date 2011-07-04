@@ -1,0 +1,123 @@
+.lo
+.ce 2
+RELEASE NOTES FOR ESPS BETA 4.0
+Document Version:1.1 of 11/7/89
+.sp 4
+.sh 1 "Introduction"
+.pp
+The major difference in this release from prior releases
+is the addition of a new ESPS file type for
+complex sampled data and the modification of certain user-level programs to
+operate properly on complex sampled data.  To do this in a way
+that faciliates the most general extensions to future uses of complex
+data, and to do it with software engineering practices consistent with
+existing ESPS modules, we decided to meet this requirement by means
+of a two step approach.  First, we extended ESPS feature (FEA) files
+to include complex numeric types as fundamental (i.e., built-in)
+types.  This means that the choices for field types now include
+DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX, SHORT_CPLX, and BYTE_CPLX.  (For
+details, see the man page for FEA (5\-\s-1ESPS\s+1).  Second, we
+designed and implemented a feature file subtype FEA_SD that supports
+multi-channel, complex data.  (For details, see FEA_SD
+(5\-\s-1ESPS\s+1).)  This new FEA_SD subtype will eventually replace
+the existing ESPS SD file type.  A new applications note has been
+written to explain the new FEA_SD file type and to guide conversion of
+existing SD programs.
+.sh 1 "Library Modifications"
+.pp
+The ESPS library was modified to allow complex types as built-in types
+for FEA fileds.  This involved modifying the FEA support functions
+such as \fIadd_fea_fld\fP, \fIallo_fea_rec\fP, \fIget_fea_rec\fP,
+\fIput_fea_rec\fP, etc.  Various other FEA utilities were likewise
+modified, inlcuding \fIarr_alloc, arr_free, marg_index, sizerec,
+zero_fill\fP, etc.  Some new utilities were written, including
+\fItype_convert\fP (arbitrary type conversions) \fIatoarray\fP (input
+ASCII data and convert to complex), \fIcover_type\fP (find data type
+that can store values from two input types), \fIis_file_complex\fP
+(obvious), \fIis_field_complex\fP (obvious), and \fIis_type_complex\fP
+(obvious).  New functions were also written to support the new FEA_SD
+file type, including \fIinit_feasd_hd\fP, \fIallo_feasd_recs\fP,
+\fIget_feasd_recs\fP, \fIget_feasd_orecs\fP, and \fIput_feasd_recs\fP.
+.pp
+The ESPS library was also modified to facilitate conversion of
+existing SD programs to FEA_SD, and to make it possible for FEA_SD
+programs to work properly on old-style SD files.  In particular, the
+SD support programs (e.g., \fIget_sd_recf\fP (1\-\s-1ESPS\s+1)) have
+been modified to work properly on FEA_SD files when possible.  For
+example, \fIget_sd_recf\fP will return a FLOAT sampled data array from
+a single-channel, non-complex FEA_SD file, even if the file has
+additional fields per record.  Likewise, \fIeopen\fP (1\-\s-1ESPS\s+1)
+has been modified to return an equivalent FEA_SD header if applied to
+an old-style SD file.  A new library routine \fIsdtofea\fP
+(3\-\s-1ESPS\s+1) is available to convert old-style SD headers to
+FEA_SD headers.
+.sh 1 "User-Level Programs"
+.pp
+Two new user-level programs have been written to support FEA_SD,
+\fImux\fP (1\-\s-1ESPS\s+1) and \fIdemux\fP (1\-\s-1ESPS\s+1).  
+The \fImux\fP program will multiplex input FEA_SD files into a single
+file containing multiple channels, and it will create complex files
+from pairs of input non-complex files.  The \fIdemux\fP program provides
+the opposite functions.  
+.pp
+The following sampled-data programs were modified to operate in full
+generality with complex sampled data (some do not work with multi-channel
+files): \fIfft\fP (1\-\s-1ESPS\s+1), \fIfftinv\fP (1\-\s-1ESPS\s+1),
+\fIcopysd\fP (1\-\s-1ESPS\s+1), and \fIaddsd\fP (1\-\s-1ESPS\s+1).
+The new program \fImultsd\fP (1\-\s-1ESPS\s+1) was implemented to
+multiply two FEA_SD files \ it, too, works properly on complex data.
+.pp
+The following general FEA programs were modified to operate in full
+generality on FEA files with complex fields: \fIpsps\fP
+(1\-\s-1ESPS\s+1), \fIpplain\fP (1\-\s-1ESPS\s+1), \fIfea_element\fP
+(1\-\s-1ESPS\s+1), \fIaddfeahd\fP (1\-\s-1ESPS\s+1), \fIaddfea\fP
+(1\-\s-1ESPS\s+1), \fImergefea\fP (1\-\s-1ESPS\s+1), \fIfeafunc\fP
+(1\-\s-1ESPS\s+1), and \fIcopysps\fP (1\-\s-1ESPS\s+1).  The main
+common thread among these is that they facilitate converting binary
+and ASCII data to and from FEA files, and they permit viewing of data
+from FEA files.
+.pp
+Some SD programs were converted to accept FEA_SD files but not to
+operate on complex or multi-channel data (e.g., \fIplotsd\fP
+(1\-\s-1ESPS\s+1), \fImlplot\fP (1\-\s-1ESPS\s+1)).  Others are still
+wired for old-style SD files.  Eventually, all ESPS SD programs will
+be converted.  Until then, we have provided the programs \fIfeatosd\fP
+(1\-\s-1ESPS\s+1) and \fIsdtofea\fP (1\-\s-1ESPS\s+1) for conversion
+in either direction.
+.pp
+\fIWaves\fP+ has been modified to recognize (non-complex) FEA_SD
+files, and to deal with them as it does with old-style SD files.  
+.sh 1 "Full Release of ESPS and \fIwaves\fP+"
+.pp
+Because FEA_SD is tied closely to fundamental changes in ESPS, we are
+delivering the resulting software as a full ESPS release that should
+be installed in place of the existing release.  The next official,
+full release of ESPS (expected in January, 1990) will contain all of
+these changes along with extensions \- for example, \fIwaves\fP+ will
+display complex files, all SD programs will be converted to FEA_SD,
+and more sampled data programs will be converted to operate on complex
+data.  Many non-FEA_SD improvements and bug fixes that have been
+developed for the next release are also included in the full release
+that is enclosed.  The most significant are these: ESPS file I/O now 
+uses machine-independent routines that can faciliate transport of ESPS
+files among machines with different numeric formats.  \fIImage\fP
+(1\-\s-1ESPS\s+1) has been modified extensively \- it has a Postscript
+output module, it can display in full color, it chooses multi-plane or
+single-plane display based on the hardware (with option override), it
+has an option to control the magnification factor for hard copy, and
+it has an option to override interpolation.  \fIPlotsgram\fP has been
+modified to exploit the new \fIimage\fP abilities.  \fICopysd\fP can
+now add a constant as well as scale.  \fIWaves\fP+ has a new, external
+ESPS call type (add_espsn) that permits calling an external ESPS
+program in the background (i.e., no output expected).  
+.pp
+This ESPS release should have no trouble with files created by any
+previous versions.  Note, however, that ESPS files created with the
+new release can not be read by programs in the previous ESPS release
+(this is due to the introduction of complex data and to the
+fundamental changes in ESPS I/O for machine independence).  
+
+
+
+
+

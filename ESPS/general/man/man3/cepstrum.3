@@ -1,0 +1,84 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\ @(#)cepstrum.3	1.2 21 Jun 1988 ESI
+.TH CEPSTRUM 3\-ESPSsp 21 Jun 1988
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+afc2cep \- transform autoregressive filter coefficients into cepstrum coefficients
+.PP
+cep2afc \- transform cepstrum coefficients into autoregressive filter coefficients
+.SH SYNOPSIS
+.ft B
+.br
+int 
+.br
+afc2cep (afc, cep, order)
+.br
+int order;
+.br
+float *afc,*cep;
+.sp
+.PP
+.ft B
+.br
+int
+.br
+cep2afc (cep, afc, order)
+.br
+int size;
+.br
+float *afc,*cep;
+.SH DESCRIPTION
+Each function transforms a set of coefficients that contain spectral
+information into an equivalent set of coefficients. 
+.PP
+.I Afc2cep
+transforms the input autoregressive filter coefficients (\fIafc\fR) 
+into the cepstrum coefficients (\fIcep\fR).
+\fIOrder\fR is the number of input
+and output parameters. 
+.PP
+.I Cep2afc
+transforms the \fIcep\fRs into
+\fIafc\fRs.
+\fIOrder\fR is the number of input and output parameters.
+.SH WARNINGS
+.PP
+The first cepstral coefficient = ln{sqrt[residual power]} is 
+not returned in the cep[] array by \fIafc2cep\fR, nor 
+is it passed into \fIcep2afc\fR. The first autregressive
+filter coefficient (= 1) is neither passed into \fIafc2cep\fR
+nor returned by \fIcep2afc\fR.
+.SH DIAGNOSTICS
+.PP
+None.
+.SH EXAMPLES
+.nf
+    /*
+     * Convert afc to cep
+    */
+	int size = 3;
+	static float afc[] = {.9, .5, .1};
+	float cep[3];
+
+	/* Ready to Convert */
+
+	(void)afc2cep(afc, cep, size);
+
+		.
+		.
+		.
+
+    /*
+     * Convert back to afc
+    */
+
+	(void)cep2afc(cep, afc, size);
+
+.fi
+.SH BUGS
+None known.
+.SH SEE ALSO
+.PP
+rc_reps(3-ESPSsp), spectrans(1-ESPS), transpec(1-ESPS)
+.SH AUTHOR
+Manual page and code by David Burton

@@ -1,0 +1,1005 @@
+.lo
+.if t .ds -- \(em\h'-0.5m'\(em
+.if n .ds -- ---
+.SJ "FEA_SD Files\*(--Feature Files for Sampled Data in ESPS"
+.AU "Rodney W. Johnson"
+.TM ETM-S-89-49:rwj 1.3 "1/22/93"
+.sh 1 "INTRODUCTION"
+.pp
+Originally ESPS used a special file type for storing sampled signal data.
+.(f
+\(co Copyright 1993 Entropic Research Lab, Inc. All rights reserved.  
+.)f
+This file type, the SD (``sampled-data'') file
+is one of several specialized file types
+that have been replaced with subtypes of the ESPS FEA (``feature'') file type.
+The new FEA subtype for sampled data, the FEA_SD file,
+is the subject of this note.
+See the
+.i FEA_SD (5-ESPS)
+and
+.i FEA (5-ESPS)
+manual sections for more details on the FEA_SD file type.
+.pp
+With the change from SD to FEA_SD,
+various new facilities become available for use with sampled-data files.
+In addition to the general facilities that apply to all FEA files,
+these include complex data types
+(now in fact supported for FEA files in general)
+and support for multichannel sampled data.
+The new facilities are detailed in the next section.
+.pp
+The third section mentions some user-level programs
+that create FEA_SD files or accept them as input.
+These include programs for converting between the SD and FEA_SD file types
+and programs for multiplexing and demultiplexing multichannel FEA_SD files.
+Actually  most programs that formerly created or accepted SD files
+now deal in the same way with at least one-channel real FEA_SD files.
+The ones mentioned explicitly in this section are the ones
+that so far have been significantly extended
+to deal with complex or multichannel data.
+Others that could usefully apply to complex or multichannel data
+will be added to the list.
+.pp
+Section 4 gives an overview of the format of a FEA_SD file,
+the special record structure used for holding FEA_SD sampled data in memory,
+and the support functions provided
+for setting up FEA_SD file headers and record structures and
+reading and writing FEA_SD files.
+.pp
+In most cases, existing SD files will
+.i not
+have to be converted to FEA_SD, although of course they could be
+converted with the program provided for that purpose.  Programs that
+accepted SD files before FEA_SD was introduced will continue to accept
+SD files even though they now accept FEA_SD files as well.  Steps
+described in the Section 5 have been taken to assure backward
+compatibility.  First, they make it easy to convert an existing
+program from SD to FEA_SD input without sacrificing the ability to
+accept SD files.  Secondly, they make it essentially automatic that
+new programs that take FEA_SD input will also accept SD files.
+.pp
+Section 6 of this note is a guide to conversion of existing programs
+so that they will use FEA_SD files instead of or in addition to SD files.
+.sh 1 "NEW FACILITIES"
+.pp
+.sh 2 "General Feature-File Facilities"
+.pp
+An ESPS FEA file consists of a header followed by a sequence of
+records, each of which consists of a number of named ``fields'' that
+may hold various types of numeric or nonnumeric data or arrays of such
+data.  A field is characterized by its name, data type, and array
+dimensions.  In a FEA_SD file there is a single field that holds all
+the sampled data.  The field is named "samples", it can have any
+numeric data type, and it has one dimension: the number of channels.
+There needn't be any other fields.  Each record contains one sample
+from each channel; thus in a single-channel file, each record may
+comprise merely a single sample.
+.pp
+FEA files are self-describing: the header of a FEA file contains a
+list of its fields with their names, data types, dimensions, and other
+information.  Powerful programs such as
+.i fea_edit (1-ESPS),
+.i select (1-ESPS),
+and
+.i fea_stats (1-ESPS)
+can operate on arbitrary FEA files by using the header information.
+These programs all can now accept FEA_SD files;
+to them, a FEA_SD file is just another FEA file
+that happens to have a field named "samples".
+Thus you can now edit an ASCII representation of a sampled-data file
+with your favorite text editor,
+run complex queries against the contents of such files,
+or compute inverse covariance matrices for multichannel sampled data.
+.pp
+New fields can be added to any FEA file\*(--see
+.i add_fea_fld (3-ESPSu)
+and
+.i addfea (1-ESPS).
+FEA_SD files can thus be created that contain other fields than "samples".
+When such additional fields are present,
+programs that read FEA_SD files will still work,
+ignoring the extraneous data.
+However, FEA_SD files with extra fields
+may be read less efficiently than ``pure'' FEA_SD files,
+since the extra fields complicate the record structure.
+.sh 2 "Complex Data Types"
+.pp
+FEA_SD files were introduced into ESPS at the same that complex data types
+were introduced for general FEA files.
+As a result, sampled-data files with complex data types are now possible.
+Formerly just 5 ESPS data types were possible for a sampled-data file:
+the 5 real numeric types.
+Now there are 5 more.
+For every real numeric type there is now a corresponding complex type,
+consisting of complex numbers
+whose real and imaginary parts are of that real type.
+For example the complex type corresponding to the real type
+.i short
+is defined by the C typedef
+.ip
+typedef struct {short	real, imag;}    short_cplx;
+.lp
+If
+.i z
+is a variable of this type, its real and imaginary parts are
+.i z.real
+and
+.i z.imag,
+which are variables of type
+.i short.
+.pp
+The complete list of numeric types is shown in the following table.
+A FEA_SD file can be of any one of these types.
+.sp
+.TS
+center, box, tab(;);
+c | c
+l | l
+l | l.
+code;type
+=
+DOUBLE;double
+FLOAT;float
+LONG;long
+SHORT;short
+BYTE;signed char
+DOUBLE_CPLX;double_cplx
+FLOAT_CPLX;float_cplx
+LONG_CPLX;long_cplx
+SHORT_CPLX;short_cplx
+BYTE_CPLX;byte_cplx
+.TE
+.sp
+(The symbols in caps, sometimes loosely referred to as ESPS types,
+actually stand for numeric codes defined in a header file.
+The lower-case forms are the ones used in writing declarations in C programs.
+See
+.i FEA (5-ESPS)
+for more information.)
+.sh 2 "Multichannel Data"
+.pp
+In a sense the SD file type provided for multichannel data in that
+the type-specific part of the SD header had a member
+.i nchan
+that was supposed to indicate the number of channels.
+But no programs were provided to support multichannel data,
+and probably no ESPS program ever set
+.i nchan
+equal to anything but 1 or 0 (which defaults to 1).
+In a FEA_SD file, as noted above, the number of channels is the size
+(number of items) of the field "samples".
+There are now ESPS programs for multiplexing and demultiplexing
+(see Section 3.2).
+These can form a multichannel FEA_SD file by multiplexing several
+single-channel files, extract channels from a multichannel file,
+and perform various other similar operation.
+.sh 1 "PROGRAMS THAT READ OR WRITE SAMPLED-DATA FILES"
+.sh 2 "File Conversion"
+.pp
+Two programs are available for converting between SD and FEA_SD files.
+The program
+.i sdtofea (1-ESPS)
+reads an SD file and writes a FEA_SD file containing the same data and
+(as nearly as possible) the same header information.
+The program
+.i featosd (1-ESPS)
+performs the inverse transformation (again, as nearly as possible).
+See the manual sections for detailed information.
+.sh 2 "Multiplexing and Demultiplexing"
+.pp
+The program
+.i mux (1-ESPS)
+can multiplex several single-channel or multichannel FEA_SD files into
+a single FEA_SD file with as many channels as all the input files taken
+together.
+It can also join pairs of real input channels
+into single complex output channels.
+.pp
+The program
+.i demux (1-ESPS)
+can extract a subset of the channels from its input file
+and either put them in separate single-channel output files
+or form a single output file with fewer channels than the input.
+It can also split complex input channels into pairs of real output channels.
+See the manual sections for these programs for more complete statements
+of the exact capabilities of these programs and for examples of their use.
+.sh 2 "Other Programs"
+.pp
+Most ESPS programs that formerly expected SD files as input will now
+accept at least single-channel, real FEA_SD files as well.
+Most ESPS programs that formerly produced SD files as output will now
+at least produce equivalent single-channel, real FEA_SD files instead.
+Many ESPS programs can reasonably be extended to perform useful operations
+that involve reading or writing complex or multichannel sampled data.
+Now that the basic infrastructure for complex and multichannel support
+is in place, these extensions are being done.
+The programs listed here are just the ones that have at this writing been
+extended with support or partial support for complex or multichannel
+sampled data.
+.pp
+.i testsd
+will now create single-channel FEA_SD files of any numeric data type,
+including the complex ones.
+It can generate complex exponentials, which may be damped or frequency-swept,
+and complex noise sequences with independent real and imaginary parts.
+It can also create a FEA_SD file containing arbitrary complex data given by
+numbers in an ASCII text file.
+.pp
+.i fft
+will now compute fast Fourier transforms of single-channel complex input data.
+.pp
+.i fftinv
+will now create single-channel complex output data as results of the inverse
+fast Fourier transform.
+.pp
+.i addsd
+and
+.i multsd
+will add or multiply single-channel FEA_SD files sample by sample.
+The input files may have arbitrary numeric types, including complex.
+.pp
+.i copysd
+will handle single-channel FEA_SD files of any real or complex type.
+.pp
+.i psps
+and
+.i pplain
+will print both real and complex FEA_SD files (as well as other file types).
+In
+.i psps
+output, complex numbers are formatted as bracketed pairs of real numbers.
+In
+.i pplain
+output the real and imaginary parts
+are simply printed in order as consecutive real numbers.
+.sh 1 "FEA_SD FILE STRUCTURE AND SUPPORT MODULE"
+.pp
+This section describes the structure of the header of a FEA_SD file
+(Subsection 4.1)
+and the external format of its records
+(Subsection 4.2).
+It also describes the support data structure that has been defined for holding
+sampled data in memory
+(Subsection 4.3)
+and the support functions that are provided for working with FEA_SD files
+using this structure.
+These include functions for initializing a FEA_SD file header,
+allocating an instance of the support structure,
+reading data from a FEA_SD file into the structure,
+and writing data from the structure to a FEA_SD file.
+.pp
+The support structure permits data to be read and written in blocks,
+rather than one sample at a time, provided certain conditions are
+met\*(--\c in particular, only the field "samples" may exist in the
+file, and the byte order of the data on the external file must match
+the native byte order of the machine.  There are provisions for
+automatic data-type conversion on input or output, but programs that
+do not actually cause conversions to be done do not incur the
+overhead.
+.pp
+Much of the information in this section is extracted from the
+.i FEA_SD (5-ESPS)
+manual section or (in Subsection 4.4) from the
+.i feasd_recs (3-ESPSu)
+manual section.
+See the manual sections themselves for complete details.
+.sh 2 "Header"
+.pp
+The SD manual section defines a type-specific header structure
+with over 20 items,
+many of which are relevant to only a few specialized programs.
+They are present because the SD file type was designed before
+generic header items (see
+.i add_genhd (3-ESPS),
+.i get_genhd (3-ESPS))
+were introduced in ESPS.
+In current ESPS, the preferred way of handling such specialized information
+is with generic header items, which programs that need them may use and
+other programs may ignore.
+The FEA_SD specification calls for only two mandatory header items and one
+predefined optional item.
+.pp
+The header of a FEA_SD file may contain the following generic header items.
+The first two are always present.
+The remaining one is not present in every file,
+but if present has the meaning given below.
+.pp
+.TS
+center, box, tab(;);
+c | c | c | c
+l | l | l | l
+l | l | l | l.
+Name;Size;Type;Enums
+=
+start_time;1 or no. of;double;NULL
+ ;  channels; ;
+record_freq;1;double;NULL
+_
+max_value;1 or no. of;double;NULL
+ ;  channels; ; 
+.TE
+.pp
+The items have the following meanings.
+.ip start_time
+Time corresponding to the first record in the file\*(--given in seconds.
+If
+.i start_time
+has more than one element, each applies to a separate channel.
+Separate starting times might be appropriate if, for example,
+samples from the various channels were recorded in rotation,
+rather than simultaneously.
+.ip record_freq
+The sampling frequency in Hz.
+.ip max_value
+This item is optional.
+If it is present, no sample may exceed this value in magnitude.
+It is permissible for all samples to be smaller\*(--that is,
+.i max_value
+is an upper bound rather than an exact maximum.
+For example, if the data are from an A/D converter,
+.i max_value
+may be used to indicate the maximum value
+that can be represented by the converter.
+In multichannel files,
+.i max_value
+may have one component for each channel
+or may be a single value applying to all channels.
+.lp
+The header of a FEA_SD file also contains a definition for one field
+given by the following table:
+.pp
+.TS
+center, box, tab(;);
+c | c | c | c | c | c 
+c | c | c | c | c | c.
+Name;Size;Rank;Dimen;Type;Enums
+=
+samples;no. of channels;1;NULL or {size};any numeric;NULL
+.TE
+.lp
+The field can be created by calling
+.i init_feasd_hd (3-ESPSu).
+.sh 2 "External Record Format"
+.pp
+When the size of the field "samples" is 1, there is a single channel;
+if no additional fields are present, each record is a single sample of
+the given type, and the part of the file after the header is just a
+sequence of such samples.  That is, the non-header part of the file is
+identical to that of an SD file of the same data type and containing
+the same data.  When the size is greater than 1, the file contains
+multi-channel data.  The data portion of the file is still just a
+sequence of samples when no additional fields are present.  However,
+the samples are conceptually grouped into vectors, each containing one
+sample from each channel.  In general, each record in the file
+contains such a vector.
+.pp
+Each complex item is represented externally by a consecutive pair of
+real items with the real part first.
+.sh 2 "Internal Record Format\*(--The Support Structure"
+.pp
+Most programs that deal with FEA_SD files will use the support
+routines in the ESPS library and will not directly use the information
+in the tables above.  (These routines are discussed in the next
+subsection.)  For example programs will usually define the "samples"
+field in a file header by calling the support function
+.i init_feasd_hd (3-ESPSu)
+rather than by calling
+.i add_fea_field (3-ESPSu)
+directly.
+.pp
+Programs that deal with FEA_SD files do so in terms of C structures of a
+particular type (struct feasd).  A structure of this type contains the
+location of a data array together with other information that provides
+convenient access to the data or is used by the FEA_SD support
+functions.  For example the read and write functions,
+.i get_feasd_recs (3-ESPSu),
+.i get_feasd_orecs (3-ESPSu),
+and
+.i put_feasd_recs (3-ESPSu),
+take pointers to such structures as parameters
+and either read data into the associated data array or write data from it.
+.pp
+Here is the definition of the
+.i feasd
+structure as given in
+.i <esps/feasd.h>:
+.nf
+.ta .5i 1i 1.75i
+
+    struct feasd {
+	short		data_type;
+	long		num_records, num_channels;
+	char		*data, *ptrs;
+    };
+.fi
+.lp
+The structure members have the following meanings.
+.ip data_type
+An integer code indicating the data type of the samples as stored in memory.
+Legal values are give by the ten type-code constants
+DOUBLE, FLOAT, etc. shown in the table in Subsection 2.2.
+They are defined in the include file
+.i esps/esps.h.
+This type need not match the data type
+of a FEA_SD file used for input or output;
+if the types are different,
+automatic type conversion takes place upon input or output.
+.ip num_records
+The number of consecutive records that may be stored in the data part
+of this
+.i feasd
+structure (see below).
+.ip num_channels
+The number of channels of sampled data.
+.ip data
+A pointer to the beginning of a data array for storing the sampled data from
+.i num_records
+elements of the type indicated by
+.i data_type.
+For single-channel data, the pointer
+.i data
+can simply be cast to an appropriate type and regarded as pointing to the
+beginning of a one-dimensional array of samples.
+The appropriate types are (char *) for BYTE data, (short *) for SHORT data,
+(double_cplx *) for DOUBLE_CPLX data, etc.
+For example, with declarations
+.ip
+.i
+struct feasd	*rec;
+.br
+short	*s_data;
+.r
+.ip
+suppose
+.i rec
+points to a
+.i feasd
+structure initialized to hold SHORT data.
+(So
+.i rec \->\c
+.i data_type ==\c
+.i SHORT .)
+Then, after the assignment
+.ip
+.i "s_data = (short *) rec\->data;"
+.ip
+sample number
+.i s
+may be accessed as
+.i s_data [\c
+.i s ].
+For multi-channel files,
+the storage is conceptually a 2-dimensional array with
+.i num_records
+rows and as many columns as there are channels.
+It is the purpose of the structure member
+.i ptrs,
+discussed next,
+to make access to the data
+as convenient as indexing an actual two-dimensional array.
+.ip ptrs
+When appropriately cast,
+.i ptrs,
+if not NULL, points to the first element of an array of
+.i num_records
+pointers,
+each of which points to the first element of a row of the data array.
+Appropriate types for the cast are (char **) for BYTE data, (short **) for
+SHORT data, etc.
+To continue the example begun above under
+.i data,
+suppose a declaration
+.ip
+.i short	**s_ptr;
+.ip
+and a cast
+.ip
+.i "s_ptr = (short **) rec\->ptrs;"
+.ip
+then sample number
+.i s
+of channel
+.i c
+can be accessed as
+.i s_ptr [\c
+.i s ][\c
+.i c ].
+The function
+.i allo_feasd_recs (3-ESPSu),
+which creates
+.i feasd
+structures, has a parameter that determines whether to set up the pointer
+array or to make the
+.i ptrs
+structure member NULL.
+.sh 2 "FEA_SD Support Functions"
+.pp
+There are five FEA_SD support functions:
+.ip
+.nf
+.i "init_feasd_hd  " "	\*(--\ initialize a FEA file header for subtype FEA_SD"
+.i "allo_feasd_recs" "	\*(--\ allocate memory for FEA_SD file records"
+.i "get_feasd_recs " "	\*(--\ get data records from an ESPS FEA_SD data file"
+.i "get_feasd_orecs" "	\*(--\ get overlapping data from an ESPS FEA_SD data file"
+.i "put_feasd_recs " "	\*(--\ write data records to an ESPS FEA_SD file"
+.fi
+.lp
+See the
+.i feasd_recs (3-ESPSu)
+manual entry for full documentation.
+.sh 3 "init_feasd_hd"
+.pp
+Before a newly created FEA file header (\c
+.i i.e.
+one obtained from
+.i new_header (3-ESPSu))
+can be used as a FEA_SD header, it must be initialized, preferably by
+.i init_feasd_hd.
+A call of this function has the form
+.ip
+init_feasd_hd(hd, data_type, num_channels, start_time, mult_st_t, record_freq)
+.lp
+The function takes a pointer
+.i hd
+to an ESPS FEA header and sets the item
+.i hd\->hd.fea\->fea_type
+in the FEA-specific part of the header equal to FEA_SD.
+(This is an integer code, defined in
+.i esps/fea.h,
+that identifies the file as a FEA_SD file).
+The function also initializes the header to define the field "samples".
+The argument
+.i data_type
+determines
+the data type of the field;
+legal values are given by the ten data-type constants
+BYTE, SHORT, LONG, etc.
+The integer argument
+.i num_channels
+gives
+the size of the field.
+The arguments
+.i start_time
+and
+.i record_freq
+initialize the required generic header items
+(see Subsection 4.1).
+The argument
+.i mult_st_t
+is a flag indicating whether there is 
+a starting time for each channel or just one for the entire file.
+If the value is YES,
+.i start_time
+points to the beginning of an array containing the values.
+If the value is NO,
+.i start_time
+is a pointer to a single element.
+By contrast,
+.i record_freq
+holds the actual value, not a pointer to it.
+The function returns a value 0 upon successful completion
+and a nonzero error code otherwise.
+.sh 3 "allo_feasd_recs"
+.pp
+Before a FEA_SD file can be read or written by the support functions,
+a
+.i feasd
+structure must be created.
+This is done by the function
+.i allo_feasd_recs.
+A call has the form
+.ip
+allo_feasd_recs(hd, data_type, num_records, data, make_ptrs)
+.lp
+.pp
+The function allocates memory for a 
+.i feasd
+structure and fills in values for the structure members.
+If requested, it will also allocate storage for the associated data array,
+the pointer array, or both.
+(See
+.i data
+and
+.i ptrs
+in the previous subsection.)
+The function allocates the data array if the argument
+.i data
+is (char *) NULL.
+If the argument is non-NULL,
+it should point to the beginning of a suitable block of storage,
+and the pointer value is simply copied into the
+.i data
+member of the structure.
+When the value of the argument
+.i make_ptrs
+is YES, the function creates
+the pointer array.
+When
+.i make_ptrs
+is NO,
+.i ptrs
+is made NULL.
+The dimensions of the array are determined by the argument
+.i num_records
+and the size of the "samples" field defined in the header
+.i *hd,
+which gives the number of channels.
+The
+.i data_type
+argument determines the data type of the array.
+Legal values are given by the ten data-type constants
+BYTE, SHORT, LONG, etc.
+The
+.i data_type
+and
+.i num_records
+members of the structure are filled in
+with the values of the corresponding function arguments.
+The returned value is a pointer to the structure upon successful completion,
+or NULL in case of failure.
+When the data area is supplied by the programmer, its size should be at least
+.i num_records
+*
+.i num_channels
+*
+.i typesiz (\c
+.i data_type ),
+where
+.i num_channels
+may be obtained as the value of
+.i get_fea_siz (\c
+"samples",
+.i hd, (\c
+.i short " *)
+.i NULL, (\c
+.i long " **)
+.i NULL ).
+.sh 3 "get_feasd_recs
+.pp
+With a
+.i feasd
+structure and a FEA_SD header in hand and a file open for reading,
+it is possible to read some data.
+The FEA_SD function analogous to the SD support functions
+.i get_sd_rec {\c
+.i dfs }
+is
+.i get_feasd_recs.
+A call has the form
+.ip
+get_feasd_recs(rec, start, num_records, hd, file)
+.lp
+The function attempts to read the next
+.i num_records
+FEA_SD records from stream
+.i file
+and store the contents of the "samples" fields
+in the the structure pointed to by
+.i rec,
+beginning with element (or row) number
+.i start.
+Usually
+.i start
+will be 0,
+for the first element or row;
+the argument is provided for occasions when
+one might wish to start reading into
+the data buffer at some point after the beginning.
+If any fields besides "samples" are present, their contents are ignored;
+they do, however, make reading slower.
+The sum
+.i "start + num_records"
+must not exceed
+.i rec\->num_records.
+The function returns the actual number of records read.
+In particular, it returns 0 at end of file.
+If the type of data in the file differs from
+.i rec\->data_type,
+the data are converted.
+If fewer than the requested number
+.i num_records
+of records are read, the deficit is made up with zero fill.
+.sh 3 "get_feasd_orecs"
+.pp
+To read overlapping or noncontiguous frames of sampled data, use the 
+FEA_SD function analogous to the SD support functions
+.i get_sd_orec {\c
+.i dfs },
+namely
+.i get_feasd_orecs.
+A call has the form
+.ip
+get_feasd_orecs(rec, start, framelen, step, hd, file)
+.lp
+Like
+.i get_feasd_recs,
+this function reads frames of sampled data from a FEA_SD file.
+However, while
+.i get_feasd_recs
+moves a full frame length between calls,
+.i get_feasd_orecs
+moves by an arbitrary step.
+.pp
+A frame consists of the data from the "samples" fields of
+.i framelen
+records of the file.
+Each frame after the first begins
+.i step
+records further along in the file than the previous frame;
+thus frames overlap when
+.i step<framelen,
+are exactly abutted when
+.i step==framelen,
+and are separated by gaps when
+.i step>framelen.
+Each call of the function stores a frame in a buffer
+that consists of a segment of the structure pointed to by
+.i rec,
+beginning with element or row number
+.i start
+(usually 0).
+The sum
+.i start+framelen
+must not exceed
+.i rec\->num_records,
+and any elements or rows preceding number
+.i start
+or following number
+.i start+framelen\-1
+are left unchanged by the function.
+All data read are converted, as necessary,
+from the type indicated in the header to the type indicated in
+.i rec\->data_type.
+If a read attempt yields fewer records than required
+(end of file),
+the deficit is made up by zero fill.
+The function returns the number of valid samples in the buffer.
+This equals
+.i framelen
+when the requested number of records are successfully read;
+otherwise it is some smaller number.
+.pp
+The buffer is assumed to contain data from a prior invocation of
+.i get_feasd_orecs
+or
+.i get_feasd_recs.
+Then, if
+.i step<framelen,
+the function drops the first
+.i step
+elements or rows of the buffer, shifts the next
+.i step
+positions toward the beginning, and attempts to read
+.I step
+more records to fill out the vacated positions at the end of the buffer.
+The returned value is the number of records read plus
+(\c
+.i framelen\-step ).
+.pp
+If
+.i step>=framelen,
+the function ignores the previous contents of the buffer, skips
+.i step\-framelen
+records in the file,
+and then attempts to read the next
+.i framelen
+records\*(--\c
+.i i.e.,
+after skipping a gap of
+.i step\-framelen
+records between frames,
+.i get_feasd_orecs
+operates like
+.i get_feasd_recs.
+Note that if
+.i step==framelen,
+the result is adjacent, non-overlapping frames such as
+.i get_feasd_recs
+produces.
+.sh 3 "put_feasd_recs
+.pp
+To write data, use the
+FEA_SD function analogous to the SD support functions
+.i put_sd_rec {\c
+.i dfs },
+namely
+.i put_feasd_recs.
+A call has the form
+.ip
+put_feasd_recs(rec, start, num_records, hd, file)
+.lp
+The function takes data from the structure pointed to by
+.i rec,
+starting with element (or row) number
+.i start
+(usually 0 for the first element or row).
+It puts the data into the "samples" fields of
+.i num_records
+FEA_SD records and writes the records to the stream
+.i file.
+Unlike
+.i get_feasd_recs
+and
+.i get_feasd_orecs,
+this function will not handle records containing fields other than "samples".
+Programs that need to write FEA_SD files with additional fields
+should use
+.i put_fea_rec (3-ESPSu).
+The sum
+.i start+num_records
+must not exceed
+.i rec\->num_records.
+If data type of the data in the file differs from the data type
+.i rec\->data_type,
+conversions are performed.
+The file should be an open FEA_SD file.
+The header must be written to the file before this function is called.
+The function returns 0 upon successful completion
+and a non-zero error code otherwise.
+.sh 1 "BACKWARD COMPATIBILITY"
+.pp
+Two changes in ESPS library modules other than FEA_SD support
+have been made to make it easier
+to get existing programs working with FEA_SD files in addition to SD files.
+.sh 2 "Using SD Support Functions with FEA_SD Files"
+.pp
+One set of changes involved the SD support functions:
+they were extended
+to work with single-channel FEA_SD files as well as SD files.
+For example
+.i get_sd_recd (3-ESPS),
+if called with a pointer to a FEA_SD header as its third argument,
+rather than a poiner to an SD header,
+will simply go ahead and read the data from the FEA_SD file.
+It will convert the data to
+.i double
+and put it in the same buffer it would use if reading from an SD file.
+(This is a one-dimensional
+.i double
+array, not a
+.i feasd
+structure.)
+Much code that works with SD files will thus now work wihout change
+with FEA_SD files.
+.sh 2 "Automatic Reading of SD Files as FEA_SD Files"
+.pp
+The other change involved the function
+.i eopen (3-ESPSu),
+which will open an ESPS file, read the header, and check the type.
+The new behavior occurs when the call has the form
+.ip
+eopen(prog_name, file_name, "r", FT_FEA, FEA_SD, &hdr, &strm)
+.lp
+That is, the calling program expects to read a FEA_SD file and wants
+.i eopen
+to check for file type FEA and subtype FEA_SD.
+If
+.i eopen
+finds an SD file instead,
+it will on the spot convert the SD header to a FEA_SD header
+and pass that out to the calling program instead of the SD header.
+Thus the calling program is fooled into thinking
+it is reading a FEA_SD file.
+This works because the format of the non-header part of an SD file
+is compatible with the FEA_SD format.
+Thus simply replacing the header suffices to convert an SD file to FEA_SD.
+The converted header is a new FEA_SD header that maintains ESPS
+record keeping by containing the original SD header as a source header.
+The conversion is done by the library function
+.i sdtofea (3-ESPSu).
+.sh 1 "PROGRAM CONVERSION"
+.pp
+With the enhancements to the SD support functions and
+.i eopen (3-ESPSu)
+covered in the previous section,
+very few changes are usually necessary for a ``minimal conversion'':
+making a program read single-channel, real FEA_SD files as well as
+SD files and write single-channel FEA_SD files instead of SD files.
+The strategy is to use the new
+.i eopen
+to open input sampled-data fies as FEA_SD files,
+but to use the existing calls on SD ``get'' and ``put'' functions,
+without change, for all reading of sampled data.
+Then all statements that allocate buffers and access the data can be
+left unchanged as well.
+.pp
+Near the beginning of the program put the lines
+.ip
+#include <esps/fea.h>
+.br
+#include <esps/feasd.h>
+.lp
+if they aren't there already.
+You should retain the line that includes
+.i esps/sd.h
+as long as any SD support functions are used.
+The line that includes
+.i esps/feasd.h
+is unnecessary if (\c
+.i "struct feasd" )
+is not mentioned and no FEA_SD support functions at all are used.
+This may be the case if the program uses sampled-data files only for input.
+.pp
+Change statements such as
+.ip
+filename = eopen(ProgName, filename, "r", FT_SD, NONE, &hdr, &strm);
+.lp
+to
+.ip
+filename = eopen(ProgName, filename, "r", FT_FEA, FEA_SD, &hdr, &strm);
+.lp
+Statements that open output files probably won't have to be changed.
+.pp
+Change instances of
+.i new_header (\c
+.i FT_SD )
+to
+.i new_header (\c
+.i FT_FEA ),
+and use
+.i init_feasd_hd (3-ESPSu)
+instead of
+.i set_sd_type (3-ESPSu).
+.pp
+Certain header items may have to be handled differently,
+notably the sampling frequency.
+For example, to get the sampling frequency of an input file,
+you will have to change something like
+.ip
+freq = hdr\->hd.sd\->sf;
+.lp
+into something like
+.ip
+freq = get_genhd_val("record_freq", hdr, 0.0);
+.pp
+If the program uses
+.i get_sd_recsize (3-ESPSu),
+use
+.i size_rec (3-ESPSu)
+instead.
+.pp
+A program converted in this way will read complex sampled data without
+complaint, but
+.i get_sd_recd (3-ESPSu),
+.i get_sd_recf (3-ESPSu),
+or
+.i get_sd_recs (3-ESPSu)
+will convert the data to
+.i double,
+.i float,
+or
+.i short,
+and converting complex data to a real type discards the imaginary part.
+(See
+.i type_convert (3-ESPSu).)
+Depending on the application, it may or may not be useful to allow the
+program to read complex data and discard the imaginary part.
+If you want to insert a check for complex data, the functions
+.i is_file_complex (3-ESPSu),
+.i is_field_complex (3-ESPSu),
+and
+.i is_type_complex (3-ESPSu)
+may be helpful.
+To check for multichannel data, remember that the number of channels is
+.ip
+get_fea_siz("samples", hdr, (short) NULL, (long) NULL)
+.pp
+Much more extensive changes are necessary if a program is to be not merely
+converted from SD to FEA_SD input/output but extended to deal in a useful
+way with complex and multichannel data.
+Then there will be no avoiding the need for a full-scale conversion
+to using
+.i feasd
+structures to hold data and replacing SD support functions with corresponding
+FEA_SD support functions.
+A look at the source code of
+.i fft (1-ESPS)
+and
+.i fftinv (1-ESPS)
+may be helpful.
+These programs have both been extended to deal with complex data in full
+generality.
+They can serve as examples of a program
+that reads both real and complex FEA_SD files
+and a program that writes such files.

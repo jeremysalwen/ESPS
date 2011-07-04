@@ -1,0 +1,63 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)muplay.1	1.1 4/2/90	ESI
+.TH MUPLAY 1\-ESPS 4/2/90
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+muplay \- play mu-encoded, headerless files through /dev/audio
+.SH SYNOPSIS
+.B muplay
+[
+.B \-x
+]
+.I infile1 
+[
+.I infile2, infile3, ...
+] 
+.SH DESCRIPTION
+.PP
+On a SPARCstation 1,
+.I muplay
+plays the named file(s) by using the built in speech codec.
+The data files must be mu-encoded,
+and the play back rate is fixed at 8000 samples/second.
+If \fIinfile1\fR is replaced by  "\-",
+.I muplay
+will read from standard input.
+.PP
+This program is based on the \fIsound\fP demo that Sun Microsystems Inc.
+distributes with the SPARCstation 1. 
+.SH OPTIONS
+The following options are supported:
+.TP
+.B \-x 
+By default, the internal speaker is used.
+If \fB\-x\fP is set,
+the signal output goes to the external headphone jack.
+A powered speaker can be plugged in for general purpose listening.
+.SH ESPS HEADER
+.PP
+None is read or written.
+.SH ESPS PARAMETERS
+.PP
+This program does not access the parameter file.
+.SH ESPS COMMON
+.PP
+This program does not access common.
+.SH DIAGNOSTICS
+.PP
+.I Muplay
+informs the user and quits if no input file is specified.
+.SH WARNINGS
+.PP
+Playing data that is not mu encoded results in a horrible noise.
+Remember that the SPARCstation 1 audio chip operates only
+at 8000 sample/second.
+.SH SEE ALSO
+\fIlinear_to_mu\fP (3\-\s-1ESPS\s+1), \fIesps2mu\fP (1\-\s-1ESPS\s+1),
+\fIsplay\fP (1\-\s-1ESPS\s+1), \fIwplay\fP (1\-\s-1ESPS\s+1)
+.SH BUGS
+.PP
+None known.
+.SH AUTHOR
+.PP
+Manual page and code by David Burton

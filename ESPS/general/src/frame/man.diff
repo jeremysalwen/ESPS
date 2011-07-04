@@ -1,0 +1,304 @@
+.\" Copyright (c) 1988, 1989, 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)frame.1	1.6 4/1/97 ESI
+.TH FRAME 1\-ESPS 4/1/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech,Inc.
+.SH NAME
+frame - create FEA records containing windowed sampled data frames
+.sp
+.SH SYNOPSIS
+.B frame
+[
+.BI \-P " param"
+] [
+.BI \-f " sd_field_name"
+] [
+.BI \-{pr} " range"
+] [
+.BI \-l " frame_len"
+] [
+.BI \-S " step"
+] [
+.BI \-w " window_type"
+] [ 
+.BI \-x " debug_level"
+]
+.I input output
+.sp
+.SH DESCRIPTION
+.PP
+.I Frame
+takes a single channel ESPS FEA_SD (sampled data) file, which contains
+one sample per record, and produces an ESPS FEA file
+.I output
+with each record containing one frame of 
+.I frame_len
+samples (see
+.B \-l
+option).
+The initial point of the first frame is determined by 
+the \fB\-p\fP option or by \fIstart\fP in the parameter file.  
+Initial points of any subsequent frames follow at equal intervals
+.I step
+(see
+.B \-S
+option).
+Thus the 3 cases
+.IR step " < " frame_len,
+.IR step " = " frame_len,
+and
+.IR step " > " frame_len,
+correspond to overlapping frames, exactly abutted frames,
+and frames separated by gaps.
+.PP
+The number of frames
+is the minimum sufficient to cover a specified range of
+.I nan
+points (see
+.B \-p
+option), given \fIframe_len\fP and \fIstep\fP.  The last frame in each file
+may overrun the range, in which case a warning is printed.  If a frame
+overruns the end of a file, it is filled out with zeros.
+.PP
+The sampled data in each frame optionally may be windowed using a
+window function specified by the \fB\-w\fP option or by \fIwindown_type\fP 
+in the parameter file.  To defer window processing, 
+use \fIwindow\fP (1\-\s-1ESPS\s+1).  
+.PP
+The output file is not of any special feature-file subtype.
+It is tagged FEA file containing a 
+.I float
+vector field of sampled data of length 
+.I frame_len.
+By default, the field name is "sd", but this can be 
+changed with the \fB\-f\fP option.  The tags in each record give the
+starting point of the frame in \fIinput\fP.  
+.PP
+If 
+.I input
+is "\-" then the input is read from the standard input and if
+.I
+output
+is "\-" then the output is directed to the standard output.
+.sp
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-P " param"
+uses the parameter file 
+.I param
+rather than the default, which is
+.I params.
+.TP
+.BI \-f " sd_field_name\fR [sd]\fP" 
+Specifies the name of the sampled 
+data field in \fIoutput\fP.
+.TP
+.BI \-{pr} " first" : "last"
+.TP
+.BI \-{pr} " first\-last"
+.TP
+.BI \-{pr} " first" :+ "incr"
+In the first two forms, a pair of unsigned integers specifies the range of
+sampled data to analyze.  If 
+.IR last " = " first " + " incr,
+the third form (with the plus sign) specifies the same range as the
+first two forms.  If 
+.I first
+is omitted, the default value of 1 is used.  If 
+.I last
+is omitted, then the entire file is processed.
+If the specified range contains points not in the file, zeros
+are appended. Both forms of the option override the values of 
+.I start
+and
+.I nan
+in the parameter file or ESPS Common file.  If the \fB\-p\fP option or
+\fB-r\fP options are not used, the range is determined from the ESPS
+Parameter or Common file if the appropriate parameters are present.
+Note that \fB-r\fP is a synonym for \fB-p\fP.  
+.TP
+.BI \-l " frame_len" "\fR [0]"
+Specifies the length of each frame.
+If the option is omitted, the parameter file is consulted.
+A value of 0 (from either the option or the parameter file)
+indicates that a single frame of length
+.I nan
+(see
+.BR \-p )
+is processed;
+this is also the default value in case
+.I frame_len
+is not specified either with the
+.B \-l
+option or in the parameter file.
+.TP
+.BI \-S " step" "\fR [" frame_len "\fR]"
+Initial points of consecutive frames differ by this number of samples.
+If the option is omitted, the parameter file is consulted,
+and if no value is found there, a default equal to
+.I frame_len
+is used (resulting in exactly abutted frames).  (The same default
+applies if \fIstep\fP is given a value of 0).  
+.TP
+.BI \-w " window_type" "\fR[RECT]"
+The name of the data window to apply to the data in each frame before
+computing reflection coefficients.  If the option is omitted, the
+parameter file is consulted, and if no value is found there, the
+default used is a rectangular window with amplitude one.  Possible
+window types include rectangular ("RECT"), Hamming ("HAMMING"),
+Hanning ("HANNING"), cosine ("COS4"), and triangular ("TRIANG"); see
+the window(3-ESPSsp) manual page for the complete list.
+.TP
+.BI \-x " debug_level" "\fR [0]"
+A positive value specifies that debugging output be printed on the
+standard error output.  Larger values result in more output.  The
+default is 0, for no output.
+.br
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not required to be present, as there are 
+default parameter values that apply.  If the parameter file 
+does exist, the following parameters are read:
+.TP
+.I "sd_field_name \- string"
+.IP
+This is the name of the sampled data field created in \fIoutput\fP.
+The default is "sd".  A parameter file value (if present) is overidden
+by the \fB\-f\fP option.  
+.TP
+.I "start - integer"
+.IP
+The first point in the input sampled data file that is processed.  A
+value of 1 denotes the first sample in the file.  This is only read
+if the \fB\-p\fP option is not used.  If it is not in the parameter
+(or Common) file, the default value of 1 is used.  
+.TP
+.I "nan - integer"
+.IP
+The total number of data points to process.  If 
+.I nan
+is 0, the whole file is processed.  
+.I Nan
+is read only if the \fB\-p\fP option is not used.  (See the 
+discussion under \fB\-l\fP).
+.TP
+.I "frame_len - integer"
+.IP
+The number of points in each frame.  This parameter is not read if the
+.B \-l
+option is specified.  A value of 0 indicates that a single frame of length
+.I nan
+is processed; this is also the default value in case
+.I frame_len
+is specified neither with the
+.B \-l
+option nor in the parameter file.
+.TP
+.I "step \- integer"
+Initial points of consecutive frames differ by this number of samples.
+This parameter is not read if the
+.B \-S
+option is specified.
+If the option is omitted and no value is found in the parameter file,
+a default equal to
+.I frame_len
+is used (resulting in exactly abutted frames).
+.TP
+.I "window_type \- string"
+The data window to apply to the data.
+This parameter is not read if the command-line option
+.B \-w
+is specified.
+If the option is omitted and if no value is found in the parameter file,
+the default used is "RECT", for a rectangular window with amplitude one.
+Other acceptable values include
+"HAMMING", for Hamming, and "TRIANG", for triangular;
+see the window(3-ESPSsp) manual page for the complete list.
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.SH ESPS COMMON
+.PP
+ESPS Common is read provided that Common processing is enabled and 
+that the 
+.I filename
+entry in Common matches 
+.I input,
+in which case parameters present in Common override values from
+the parameter file, which in turn may be overriden by command
+line options (see the discussion in ESPS PARAMETERS and under
+each option).   
+Common is not read if 
+.I input
+is standard input.  
+If 
+.I output
+is not standard output and 
+.I input
+is not standard input, the Common parameters 
+\fIfilename\fP (= input), \fIprog\fP (= frame), 
+.I start,
+and
+.I nan
+are written to ESPS Common.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback
+of Common processing is determined by the environment variable
+ESPS_VERBOSE, with 0 causing no feedback and increasing levels causing
+increasingly detailed feedback.  If ESPS_VERBOSE is not defined, a
+default value of 3 is assumed.
+.SH ESPS HEADER
+A new file header is created for the FEA_ANA file.  The sampled data header
+from the input header is added as a source in the output file header, and
+the command line is added as a comment.  Another comment gives the 
+name of the field created by \fIframe\fP.  The input file \fIinput\fP is
+set as the reference header for tags.
+.PP
+The program writes the usual values into the common part of the
+output header.  
+.I Frame
+creates and writes the following generic header items
+in the output file:
+.nf
+.sp
+start = \fIstart\fP (LONG)
+nan = \fInan\fP (LONG)
+frmlen = \fIframe_len\fP (LONG)
+src_sf = sample frequency of \fIinput\fP (FLOAT)
+step = \fIstep\fP (LONG)
+window_type = \fIwindow_type\fP (CODED) (not written for RECT window)
+start_time
+record_freq
+.fi
+.PP
+The value written for \fIstart_time\fP is computed by taking the
+\fIstart_time\fP value from the header of the input file (or zero, if
+such a header item doesn't exist) and adding to it the relative time
+from the first record in the file to the first record processed.  The
+generic header item \fIrecord_freq\fP is the number of output records
+per second of input
+.fi
+.SH  SEE ALSO
+.PP
+.nf
+\fIpwr\fP(1\-\s-1ESPS\s+1), \fIzcross\fP(1\-\s-1ESPS\s+1),\fIwindow\fP(1\-\s-1ESPS\s+1), 
+\fIplotsd\fP(1\-\s-1ESPS\s+1), \fIcopysd\fP(1\-\s-1ESPS\s+1), \fIcopysps\fP (1\-\s-1ESPS\s+1), 
+\fImake_sd\fP(1\-\s-1ESPS\s+1), \fIplotfield\fP(1\-\s-1ESPS\s+1), \fIFEA\fP(5\-\s-1ESPS\s+1), 
+\fISD\fP(5\-\s-1ESPS\s+1), \fIget_sd_orecf\fP(3\-\s-1ESPS\s+1)
+.nf
+.sp
+.SH BUGS
+.PP
+None known.
+.SH FUTURE CHANGES
+.PP
+Allow types other than float for the output field.  
+.SH  AUTHOR
+.PP
+Man page and program by John Shore (program based on the guts of 
+cross_cor.c by Rod Johnson)
+

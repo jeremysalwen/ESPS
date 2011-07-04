@@ -1,0 +1,74 @@
+Save profile
+------------
+Writes $HOME/.wave_pro (including the init_file) so that an xwaves
+started with the new profile will reflect the current globals, panels,
+and menus.  If $HOME/.wave_pro already exists and $HOME/.wave_pro_save
+does not exist, the old $HOME/.wave_pro is moved to
+$HOME/.wave_pro_save.
+
+Load profile
+------------
+Processes $HOME/.wave_pro (and runs the init_file).  This will set 
+waves+ globals to the values specified in the .wave_pro, and take 
+whatever actions are specified in the init_file (bringing up panels, 
+configuring menus, etc.).  
+
+Load system default profile
+---------------------------
+Processes $ESPS_BASE/lib/waves/.wave_pro (and runs the init_file specified
+there). 
+
+Restore profile to system default
+---------------------------------
+Copies $ESPS_BASE/lib/waves/.wave_pro to $HOME/.wave_pro.  If
+$HOME/.wave_pro already exists and $HOME/.wave_pro_save does not
+exist, the old $HOME/.wave_pro is moved to $HOME/.wave_pro_save.  
+
+Delete $HOME/.wave_pro_save
+---------------------------
+Just like it says.  
+
+Display globals
+---------------
+Puts up a window showing the current values of waves+ globals. 
+
+Display menus
+-------------
+Puts up a window showing a command file that results in the current 
+menu configurations.  
+
+Display add_ops
+---------------
+Puts up a window showing a command file that results in the current 
+add_ops.  
+
+Display panels
+--------------
+Puts up a window showing a command file that results in the current
+panels.  
+
+BUGS/PROBLEMS
+-------------
+
+When a saved profile involves panels, they are recreated on startup by
+running the waves+ make_panel command that created them originally.
+If the menu file that specified the panel no longer exists, that panel
+will not appear.  For example, if you select "Record->Sparc codec"
+from the play/record panel, you will get another panel with Start/Stop
+buttons.  The menu file for this panel is generated on the fly (by
+$ESPS_BASE/bin/nvurecord.sh) and then deleted.  It will therefore not
+appear if you save and restore.  To see the make_panel commands in
+this case, select "Dislay panels..." from the "waves+ profile..."
+panel.  
+
+Similarly, if you the paths of the panel menu files are no longer 
+valid (e.g., if you change machines), the panel menus won't be found 
+and the panels won't appear.  
+
+After saving a profile and restarting, panels may come up in positions
+that are slightly different from their original positions.  This is
+due to the morass resulting from different window managers and X
+server implementations.  Sorry.
+
+# @(#)profile.help	1.2 6/29/93
+

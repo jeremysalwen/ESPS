@@ -1,0 +1,17 @@
+delete_all_items menu spect
+add_waves menu spect builtin "bracket markers"
+add_waves menu spect name "zoom full out" builtin "zoom full out"
+add_waves menu spect name "  --->>  " builtin "window ahead"
+add_waves menu spect name "  <<---  " builtin "window back"
+add_waves menu spect builtin "align & rescale" menu spect
+add_espst menu spect name "Show segment data" command epsps -H
+add_espst menu spect name "Segment statistics" command fea_stats
+add_espsn menu spect name "3D Plot" command plot3d -o R -w
+add_waves menu spect builtin "kill window"
+return
+
+# @(#)imagmen2.WC	1.2 2/5/92 ERL 
+
+
+
+

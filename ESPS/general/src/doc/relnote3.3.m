@@ -1,0 +1,343 @@
+.lo
+.ce 2
+.b
+ESPS 3.3 Release Notes
+.sp
+4/26/89 1.2
+.sh 1 "Introduction"
+.lp
+This document provides notes relevant to release 3.3 of ESPS.  Please
+read this document and the Installation Instructions completely before
+installing this release of ESPS.
+.sh 1 "Contents of this Kit"
+.lp
+The ESPS 3.3 installation kit contains magnetic media of the ESPS 3.3
+distribution.  This is a complete distribution; it is not an update to 3.2.
+For Masscomp systems the magnetic media is either a set of diskettes or one
+9 track tape.  For Sun systems the media is either a cartridge tape or one
+9 track tape.  In any of these cases, the media contains the source
+distribution in Unix \fItar(1)\fR format.
+.lp
+If you do not already have ESPS, the kit also contains a User's Manual,
+containing documents describing the use of the system and manual pages for
+all programs, library functions and file types.  If you do have ESPS, then
+the kit contains update pages for your User's Manual.  The documents
+provided are important, and should be read by all users of the system.
+They provide essential information about using ESPS.
+.sh 1 "A Comment About Masscomp Universes"
+.lp
+Masscomp provides a dual universe environment on their systems.  By
+using the \fIuniverse\fR command, a user can set his compilation
+environment to be either ATT System V, or Berkeley 4.2.   ESPS is to be
+installed under the UCB universe (command: \fIuniverse ucb\fR).  In most
+cases, since the library is created under ucb, user programs must also
+be compiled and linked under ucb.    You will notice one exception, our
+scripts and makefiles use the \fIlint\fR under att.  This is because lint has
+some problems under ucb.
+.sh 1 "Differences Between 3.2 and 3.3"
+.lp
+Please duplicate this section and make it available to all users of
+ESPS.  This information is needed by others than just the ESPS
+installer.
+.sh 1 "Previous 3.2 Versions"
+.lp
+There was a 3.2b and 3.2c distribution.  You may have initially received
+one of these.   Here are the changes from 3.2 to 3.2c:
+.sh 2 "New Programs"
+.lp
+There are several new programs.
+.np
+A new library function \fIlsqsolv\fR had been added.  See the manual
+page updated for details.
+.np
+Scripts to produce speech spectrograms have been added, \fIsgram\fR and
+\fIplotsgram\fR.  See the manual pages for details.
+.np
+\fIsfconvert\fR is a new program for converting the sample rate of
+sampled data files.
+.np
+\fIme_sgram\fR added. This program produces a maximum-entropy based SPEC
+file suitable for display as a spectrogram.
+.sh 2 "Other Changes"
+.lp
+For details on the following changes, please refer to the appropriate
+manual page.
+.np
+Changed \fIfea_edit\fR so that records are numbered from 1.
+.np
+Added the -h option to \fIbhd\fR, to remove the data and leave the
+header.
+.np
+Added support for external reference files in the data file header.  A
+pointer in the header can now refer to an ESPS or ASCII file external to
+the file itself.   See the History memo and \fIadd_genhd\fR(3-ESPS) for
+details.
+.np
+Modified \fIpsps\fR and \fIaddgen\fR for the external reference file
+support (EFILE and AFILE).
+.np
+Bug fixes in \fInotch_filt\fR and \fIfind_ep\fR.
+.np
+Bug fix in \fIplotsd\fR, relating to plotting a file that contains all
+records with a single value.
+.np
+Changed Sun \fImcd\fR and plot programs to accept standard Sunview
+options.
+The manual page for \fImcd\fR doesn't show that it accepts the Sun
+Sunview options, but it does.   See the Sunview Programmer's manual for
+a list of these options.
+.sh 1 "Changes in 3.3 since 3.2c"
+.np
+Version 3.3 supports ESPS on Hewlett Packard series 300 and 800
+computers.  
+.np
+A major change in 3.3 is that SPEC (spectral) files have been
+reimplemented as a subtype of feature files (the same will happen to
+SD and FILT files in future releases).  The new file type is
+called FEA_SPEC.  A support module has been added to the library to
+handle this file type.  Most programs that deal with old SPEC files
+have been changed to use new FEA_SPEC files.  A set of conversion
+programs are available to convert from SPEC to FEA_SPEC files and
+back; (\fIspectofea\fR and \fIfeatospec\fR).  SPEC files still work;
+that is they are still supported in the library and old SPEC files can
+be used by some programs.  To use an old SPEC file with a program that
+no longer handles old SPEC files, just use \fIspectofea\fR to convert.
+If you have your own programs that use SPEC files, you should convert
+them to FEA_SPEC files.  The following programs have been modified to
+handle FEA_SPEC files: \fIme_spec, filtspec, fftinv, fft, plotsgram,
+sgram, plotspec\fR and \fIme_sgram\fR.  The only programs that do not
+support FEA_SPEC files directly are \fIimage\fP and \fIdistort\fP;
+use \fIfeatospec\fP as appropriate (these two programs will change to
+FEA_SPEC in the next release).  
+.np
+Another major change in ESPS for this release is that 3.3 supports
+\fIwaves\fP+, our optional interactive graphics interface for ESPS on
+Sun workstations.  Many programs were modified to maintain the generic
+header items \fIstart_time\fR and \fIrecord_freq\fR.  These are needed
+by \fIwaves\fP+ to time align data files when they
+are displayed.  A new library function,
+\fIupdate_waves_gen(3\-ESPS)\fR has been added to maintain these
+generics.  If you write a program that processes sample data, or a
+feature file, you should use this library function.  The following
+programs have been modified to maintain these header items: \fIaddsd,
+fea_deriv, lpcana, find_ep, me_spec, sf_convert, me_sgram, vq,
+filtspec, fftinv, frame, zcross, pwr, window, distort, refcof, filter,
+copysps, transpec, setrange, copysd, cross_cor, classify,\fR and
+\fIauto\fR.
+.np
+The following new user-level programs are available:
+.ip "\ \ \ \fIdither\fP"
+This program adds a digital halftone bit-map field to a FEA files.  
+It was developed for an intermediate version of other ESPS programs.  
+Version 3.3 ESPS does not require \fIdither\fP, but it is provided in
+case users want to get their hands on a dithered representation of 
+spectrograms or other images.  
+.ip "\ \ \ \fItofspec\fP"
+This program converts a FEA file to a FEA_SPEC file.  It is needed
+primarily by \fIwaves\fP+ users who wish to display arbitrary
+FEA data in spectrogram form.  
+.ip "\ \ \ \fIspectofea\fP
+Converts old-style SPEC files to FEA_SPEC.
+.ip "\ \ \ \fIfeatospec\fP"
+Converts FEA_SPEC files to old-style SPEC.  
+.np
+The program \fIsgram\fR has been replaced.  The older version was a
+shell script.  It is now a C program (i.e., faster, and also supports
+standard I/O).  Some options have changed.  If you use this, please
+check the man page.
+.np
+The library routine \fIwindow\fP (3\-\s-1ESPS\s+1) was changed to
+support additional window types HANNING and COS4.  Several user-level
+programs were changed to exploit this.  
+.np
+A new library routine \fIprint_feaspec_rec\fP has been added to
+support FEA_SPEC programming.  
+.np
+The semantics of \fIadd_genhd\fP (3\-\s-1ESPS\s+1) has changed so 
+that it is no longer an error to call on an existing header item.  
+If such a call is made, the old value is replaced with the new one.  
+.np
+A new library routine \fIget_genhd_val\fP has been added \- this 
+returns any item as a double and furthermore returns a default value 
+(a parameter) if the item is undefined.  
+.np
+A new library routine \fIinhibit_hdr_date\fP was added.  This causes 
+the next call on \fIwrite_header\fP to not change the date field.  
+\fIComment\fP (1\-\s-1ESPS\s+1) and \fIaddgen\fP (1\-\s-1ESPS\s+1)
+were changed to use this, so that the date field gives the date when
+the file was created.  
+.np
+The user-level programs \fIzcross\fP, \fIpwr\fP, and \fIwindow\fP were
+changed to copy all generics to the output file.  
+.np
+\fIHdshrink\fP (1\-\s-1ESPS\s+1) has been changed to move comments 
+from embedded headers only if a \fB-c\fP option is used.  
+.np
+A new generic header item has been added to \fIlpcana\fR output files:
+\fInominal_frame_size\fR. It contains the target frame length for 
+spectrum analysis; that is, the value specified by \fIlpc_frame_size\fR
+in the parameter file. \fILpcana\fR now writes 0 for the value of the
+\fIfrmlen\fR generic header item (it used to record \fIlpc_frame_size\fR).
+These changes were made to make \fIlpcana\fR output compatible with the
+new \fIme_spec\fR. 
+.np
+The following changes have been made to \fIrefcof\fR: fixed so that a
+frame truncated (e.g., at end of file) is handled as full frame.  That
+is, the optional window is applied as though the frame length is given
+by the size of the truncated frame.  \fIPrefcof\fR (default parameter
+file) - fixed to work properly with eparam (wrong default for analysis
+method)
+.np
+A bug in \fIframe\fR was fixed that caused a problem with
+\fIframe_len\fR == 0 and common was processed.
+.np
+\fIMcplay\fR was fixed so that the \fB-s\fR option handles
+fractional seconds.  Some error messages were also improved.
+.np
+The manual page for \fIread_params(3\-ESPS)\fR was fixed to correctly
+describe common processing.
+.np
+The library function \fIpc_to_lsf\fR was updated.   This has bug fixes.
+.np
+The programs \fIpwr\fR and \fIzcross\fR were updated
+to correct some error messages.
+.np
+\fILpcsynt\fR now looks in the \fInominal_frame_size\fR generic header
+to get information for synthesis; it used to look in \fIfrmlen\fR.  If
+you want to synthesis from old lpcana output files, you need to add
+the generic header item \fInominal_frame_size\fR.  This can be done
+easily by using \fIaddgen\fP.
+.np
+The program \fIme_sgram\fR has been changed to have options consistent
+with the new \fIsgram\fR program.  Also, it now allows non integer
+step sizes.
+.np
+\fIlpcsynt\fR updated to fix a bug which only shows up on
+Sun4 systems.
+.np
+The filter design program \fIwmse_filt\fR computes and stores in the
+header of the output file the filter delay time, as \fIsample_delay\fR.
+The programs \fIfilter\fR and \fIfft_filter\fR use this to correctly
+compute the \fIstart_time\fR generic in the filtered output file.
+The other filter design programs do not yet compute this and their
+man pages have been changed to mention this.  
+.np
+Numerous minor bug fixes and documentation changes.  
+.sh 1 "Waves+"
+.lp
+This release of ESPS fully supports the optional ESPS interactive graphics
+interface, \fIwaves+\fR.   \fIWaves+\fR currently runs only on Sun3 and
+Sun4 systems.   The \fIwaves+\fR distribution is in binary form
+and includes the following programs:
+.np
+\fIwaves+\fR - this is the main program for \fIwaves+\fR.   It requires
+the Suntools window environment to run.
+.np
+\fIspectrum\fR - this is an "attachment" for waves+.  It is an on-screen
+spectrum analyzer.
+.np
+\fIlabel\fR - this is a time series labeling attachment for waves+.
+.np
+\fIformant\fR - computes formant frequencies, bandwidths and voicing
+information.
+.lp
+The program \fIcmap\fP (1\-\s-1ESPS\s+1) didn't make it into this
+release.  It will be available shortly.  
+.lp
+For information about \fIwaves\fP+ and ESPS, see the \fIwaves\fP+ man
+page and the document "Waves+ Product Descriptions."  
+.sh 2 "Installing Waves+"
+.lp
+See the ESPS installation instructions for details on installing
+\fIwaves+\fR, but for the most part it is automatic when you install
+this release of ESPS (assuming you bought \fIwaves+\fR!).   In the case
+of Sun3, we supply two sets of binaries, one for the MC68881 floating
+point chip and one for the Sun3 FPA board.  You should use the one that
+matches your hardware.   The \fIwaves+\fR related programs and manual
+pages get installed into the standard ESPS locations.  Some related
+\fIwaves+\fR files, such as example parameter files and colormaps, get
+put into the ESPS library in a subdirectory named waves (\fIeg.\fR
+/usr/esps/lib/waves).
+.sh 1 "Postscript Support"
+.lp
+Postscript support for the ESPS plot programs is provided by a program
+that converts Tektronix plotting codes into Postscript.  This program is
+public domain (tek2ps) and is included in the directory
+\fIgeneral/pub/tek2ps\fR.   It is not installed by the installation
+script.  You should compile it and install it as you see fit for your
+system.  
+.lp
+The ESPS plot programs are all executed by a cover shell script
+(\fIplotsd, plotspec\fR, etc).   The actual output of the plot programs
+is an intermediate form that is piped to a program that turns it into
+GPS or Tektronix codes.   For hardcopy plotting, we pipe the Tektronix
+codes out to a laser printer capable of plotting these.   For a
+Postscript laser printer, the output must be piped through tek2ps and
+then spooled to the printer.  Edit the PLOTCOMMAND section of the
+install script to produce a file with the correct command line for your
+system (comment out all but one line in there).
+.sh 1 "Installing 3.3"
+.lp  
+If you already have ESPS 3.2 installed, there are several options
+about how to install 3.3.    If you want the target directory to remain
+the same as before, simply read the 3.3 sources into any directory you
+desire and follow the installation instructions.  Set the target
+directory path in the installation script to be the same as you used for
+3.2.   Please read the 3.3 sources into a clean directory; if you want
+it to be the same as you used for the 3.2 sources, then rename that
+directory to something like esps.old first.  Don't read the tape
+on top of the 3.2 sources, some names have changed and things might
+get confused.  
+.lp
+If you are short on file space, then you should probably delete the old
+3.2 sources and binaries first.  If you reinstall over the old version a
+copy of all binaries will be kept in the bin/old directory.  This will
+take many megabytes.
+.sh 1 "Graphics on Sun Systems"
+.lp
+All of the ESPS plot programs produce an intermediate plot stream
+output, which is then processed into Unix GPS format.  If the plot is to
+the displayed on the Sun screen, this is then processed by the ESPS
+program \fImcd\fR, which runs under Suntools.  \fIMcd\fR will create a
+window and display the plot in that window.   The window with the plot
+can be moved, resized, or reduced to an icon.   It is removed when no
+longer needed by using the \fBQUIT\fR item on the menu pulled down by
+clicking the mouse on the title bar (just like all tools under
+Suntools).
+.lp
+Do not write any programs which depend upon the intermediate output of
+our plot programs.  This will probably change in a future release.
+.sh 1 "Hardcopy of Graphics"
+.lp
+The ESPS plot programs can produce output for the Imagen laser printer
+using its Tektronix emulation mode.   If you have another type of
+printer or plotter that can plot tektronix plots streams then you should
+be able to use it as we use the Imagen.  If you use a postscript based
+printer (such as the Apple LaserWriter) we can supply a public domain
+tektronix to postscript emulator.   Call us if you want it.
+.lp
+To adapt another type of plotter to the plot programs, look at the install
+script under \fIesps_plot\fR.   Call us if you have
+questions.   In the next major release, we are going to provide a better
+way to specify the type of hardcopy plot device in the install script.
+.sh 1 "Data Acquisition on Suns"
+.lp
+This version of ESPS does not directly support data acquisition (speech
+input and output) on Suns, since there is no standard speech hardware
+used by Suns.   This package does include the source code to the speech
+input and output programs used on ESPS Masscomp systems.   If you have
+data acquisition hardware, you might be able to modify these programs
+for your hardware.  The speech input program is called \fImcplay\fR and
+the speech output program is called \fImcrecord\fR.
+.lp
+If you have another means of data acquisition that results in a binary
+file (of 16 bit integer data) you can use the ESPS program \fIbtosps\fR
+to turn that file into an ESPS sampled data file.   You can also use
+\fItestsd\fR with the -a option to produce an ESPS sampled data file
+from an ascii file.
+.lp
+The ESPS program \fIbhd\fR can be used to remove the ESPS header and
+leave behind just the binary data from an ESPS data file.   In the case
+of sampled data files, you can convert to the correct data type with
+\fIcopysd\fR first.
+

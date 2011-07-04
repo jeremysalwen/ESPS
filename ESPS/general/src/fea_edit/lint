@@ -1,0 +1,31 @@
+
+fea_edit.c
+==============
+(233)  warning: cptr redefinition hides earlier one
+(233)  warning: dptr redefinition hides earlier one
+(233)  warning: fptr redefinition hides earlier one
+(233)  warning: lptr redefinition hides earlier one
+(233)  warning: sptr redefinition hides earlier one
+(360)  warning: size redefinition hides earlier one
+(361)  warning: type redefinition hides earlier one
+(406)  warning: k redefinition hides earlier one
+(430)  warning: k redefinition hides earlier one
+(634)  warning: main() returns random value to invocation environment
+(1014)  warning: index_val unused in function fill_codes1
+(1091)  warning: buf redefinition hides earlier one
+warning: argument unused in function:
+    (929)  hd in fill_gencoded
+    (928)  name in fill_gencoded
+    (1009)  hd in fill_codes1
+    (1008)  name in fill_codes1
+    (1007)  size in fill_codes1
+warning: possible pointer alignment problem
+    (259)  	    (263)  	    (267)  
+    (271)  	    (280)  	    (396)  
+    (408)  	    (416)  	    (431)  
+    (437)  	    (491)  	    (506)  
+    (510)  	    (514)  	    (518)  
+    (526)  	    (587)  	    (591)  
+    (595)  	    (599)  	    (607)  
+    (678)  	    (680)  	    (682)  
+    (684)  	    (1040)  	

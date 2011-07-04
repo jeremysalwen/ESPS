@@ -1,0 +1,33 @@
+#!/bin/sh
+#@(#)test.script	3.5 5/24/91 ESI
+ESPSCOM=./espscom
+export ESPSCOM
+echo "Test script for zero_pole (1-ESPS)"
+echo  " "
+echo Make a file with the zeros in it
+cat > zeros << EOD
+2
+1 0
+0 0
+EOD
+echo " " 
+echo Make a file with the poles in it
+cat > poles << EOD
+1
+0 .9
+EOD
+echo " "
+echo Make the FILT file
+echo "zero_pole -ctest zeros poles zp.filt"
+zero_pole -ctest zeros poles zp.filt
+echo " "
+echo "Check results; the a's should = 1, -1, 0, 0, 0"
+echo "and the b's should = 1, 0, .81"
+echo "num_degree = 3 and denom_degree = 3"
+echo "zero_dim = 2 and pole_dim = 1"
+echo "fields zeros and poles should be present also"
+echo " "
+echo "psps -H zp.filt"
+psps -H zp.filt
+
+

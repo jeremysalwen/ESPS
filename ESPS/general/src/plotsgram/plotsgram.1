@@ -1,0 +1,303 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)plotsgram.1	1.2 25 Sep 1997 ESI/ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH PLOTSGRAM 1\-ESPS 25 Sep 1997
+.SH "NAME"
+plotsgram \- plots a FEA_SPEC file as a spectrogram
+.SH "SYNOPSIS"
+.B plotsgram 
+[
+.B \-x
+] [
+.BI \-T " device"
+] [
+.I image
+options
+]
+.I " input.spec"
+.SH "DESCRIPTION"
+.PP
+.I plotsgram
+calls the program \fIimage\fP (1\-\s-1ESPS\s+1)
+with appropriate options for displaying a FEA_SPEC file (\fIinput.spec\fP)
+produced by \fIsgram\fP (1\-\s-1ESPS\s+1) or 
+\fIme_sgram\fP (1\-\s-1ESPS\s+1) as a speech
+spectrogram.
+Various output devices may be specified by using the \fB\-T\fP
+option. See below for more details.
+By default, on single-plane displays, a halftoning algorithm is used
+to simulate a continuous grey scale
+with a varying density of black and white dots;
+on multiplane color displays,
+a multilevel grey-scale rendering is used. 
+.PP
+\fIPlotsgram\fP is a shell script 
+that uses \fIimage\fP (1\-\s-1ESPS\s+1), which 
+is why the parameter and Common files are not processed.
+.PP
+If "\-" is specified for the input file (\fIinput.spec\fR),
+standard input is used.
+.SH OPTIONS
+.PP
+.TP
+.B \-x
+Causes a debugging trace to be printed,
+including the command line that invokes
+.I image.
+.TP
+.BI \-T " device" 
+Specifies the output device format. Possible values are 
+.BR mcd ,
+.BR x11 ,
+.BR hardcopy ,
+.BR ras ,
+.BR imagen ,
+.BR postscript ,
+and
+.BR hp .
+The default value
+calls for displaying the image on the user's graphics terminal.
+A value of
+.B x11
+calls for use of the X Window System (Version 11),
+which is usually the default on systems where it is available.
+Otherwise the default is
+.BR mcd ,
+which calls for use of a system's native graphics system, if any,
+by piping it through
+.I mcd.
+The program \fImcd\fP is supplied by Masscomp
+for their systems
+and is supplied by ERL for Sun workstations.
+Specifying 
+.B \-Thardcopy
+causes the output to the spooled to a hardcopy device.  By default, this
+causes postscript output to be spooled to the spooler program named \fIlpr\fR. 
+If this is not correct for your system, you can change the meaning of 
+\fIhardcopy\fR by editing \fIplotsgram\fR (which is a shell script), 
+in \fI$ESPS_BASE/bin\fR.   Comments near the top of the script direct you to
+the lines to edit.
+Specifying
+.B \-Tras
+sends output to the standard output in Sun raster-file format;
+this may be viewed on the Sun by piping into the program
+.IR showras (ESPS-1).
+Specifying
+.BR \-Timagen ,
+.BR \-Tpostscript ,
+or
+.B \-Thp
+sends output to a local Imagen, PostScript, or Hewlett-Packard
+laser printer.
+The full resolution of the laser printer is used;
+this provides a higher-resolution display than a screen dump.
+.TP
+.IR image " options"
+Options other than the above are passed on to
+.I image.
+What follows is a list with brief comments.
+See the
+.IR image (1-ESPS)
+manual entry for more details.
+The forms shown in brackets, if any, are those with which
+.I plotsgram
+normally invokes
+.I image.
+Explicit entries on the
+.I plotsgram
+command line can override these
+and modify the program's behavior in other ways.
+.TP
+.BI \-e " grange"
+.PP
+\fB\-e "\fIfield-name\fB\^[\^\fIgrange\fB\^]\^"\fR
+.TP
+.BI \-e " field-name"
+This option specifies a set of elements within each record.
+.TP
+.BI \-l " low" : "high"
+.TP
+.BI \-l " low" :+ "incr"
+Sets the data values corresponding to the limits of the grayscale.
+.TP
+.BI \-o
+Changes the orientation of the image.
+.TP
+.BI \-p " range"
+.TP
+.BI \-r " range"
+.TP
+.BI \-s " range" "\fR [\-s:]"
+The range of the data to be displayed is specified by using
+these options.
+With
+.BR \-p ,
+the range is specified in terms of sample numbers (``points'')
+as referrd to by record tags.
+With
+.BR \-r ,
+the range is specified in terms of record numbers,
+counting the first in the file as number 1.
+With
+.BR \-s ,
+the range is specified in seconds.
+The default displays the entire file.
+On monitors,
+wide-band spectrograms look best when displayed in pieces that are 
+1 second or less in duration, and narrow-band spectrograms
+look best when displayed in pieces that are greater than 1 second.
+.PP
+\fB\-t \fItext \fR[\-t"Time (seconds)"]
+.RS
+Title to be printed at the bottom of the page.
+.RE
+.TP
+.BI  \-A " algorithm"
+Specifies the algorithm used for rendering grey-scale images.
+On multiplane color systems, the default is
+.I 16od1_2,
+which gives superior results but works only on such systems.
+On other systems, the default is the
+.I fs2
+halftoning algorithm, which uses black and white dots.
+.TP
+.BI \-B " scale" "\fR [\-B0]"
+Controls the sizes and spacing
+of tick marks and characters in axis labels and titles.
+The default value of 0 causes a reasonable scale to be selected for
+the particular output device.
+.PP
+\fB\-C "\fIfile-name\fB\^[\^\fIgrange\fB\^]\^"
+.TP
+.BI \-C " file-name"
+Reads a file containing triples of intensities (red, green, blue)
+and loads the color map used by
+.I image.
+.TP
+.B \-D
+Disables smoothing of intensities by linear interpolation;
+each data point appears
+as a rectangle with a sharp boundary and a uniform intensity.
+.TP
+.BI \-F " function"
+Apply a function to the data before the gray-scale algorithm is applied.
+.TP
+.BI \-G " low" : "high" "\fR [\-G\-30:0 \fIor\fR \-G\-25:0]"
+Normalize gains to enhance features in low-level spectrum records.
+.TP
+.BR \-L { prs } "\fR [\-Ls]"
+.IP
+Label the
+.IR x -axis
+in terms of
+.RB `` p oints''
+.RI ( i.e.
+tag values),
+.BR r ecord
+numbers, or
+.BR s econds.
+.TP
+.BI \-M " magnification"
+For laser-printer output
+renders each pixel of the image as an
+.IR m \(mu m
+block of device resolution cells, where
+.I m
+is the magnification.
+.TP
+.BI \-P " param"
+A parameter file is read by
+.I image.
+(Parameters
+.I startrec,
+.I nrecs,
+.I x_text,
+.I b_scale,
+.I gain_low_lim,
+.I gain_high_lim,
+.I label_units,
+and
+.I y_text
+have no effect since
+.I plotsgram
+calls
+.I image
+with command-line options that take precedence.
+The parameter
+.I device
+may cause confusion if included.)
+.TP
+.BI \-S " width" : "height"
+.TP
+.BI \-S " width"
+The size of the image in pixels.
+.PP
+\fB\-V \fItext \fR[\-V"Freq. (Hz.)"]
+.RS
+Title to be printed along the left edge of the page (running upward).
+.RE
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read by 
+.I plotsgram;
+but see
+.B \-P
+under Options.
+.SH ESPS COMMON
+.PP
+The ESPS Common file is not read by 
+.I plotsgram
+or by
+.I image.
+.SH ESPS HEADERS
+.PP
+None written.
+.SH "FUTURE CHANGES"
+.PP
+.IR plotsgram (1\-\s-1ESPS\s+1) 
+might be re-implemented as a C program, so that parameter file
+processing can be properly supported.
+.SH "SEE ALSO"
+.PP
+me_sgram(1\-ESPS), sgram(1\-ESPS), fft(1\-ESPS), image(1\-ESPS), refcof(1\-ESPS)
+.SH "DIAGNOSTICS"
+Some errors in command-line syntax are caught by
+.I plotsgram
+and result in one or more of the messages
+.IP
+Usage: plotsgram [\-x] [\-T device] [image(1-ESPS) options] input.spec
+.br
+plotsgram:
+.RI \-< letter >
+requires argument.
+.br
+plotsgram: No input file specified.
+.br
+plosgram:  Invalid output device type
+.RI < device >
+.PP
+The message
+.IP
+plotsgram:
+.RI < filename >
+is not a readable file.
+.PP
+is also possible.
+Some errors, including command-line syntax errors, are caught by
+.I image
+and result in
+.I image
+error messages.
+.SH "BUGS"
+.PP
+Escaped special characters, such as quotes,
+do not work as expected in the arguments to
+.B \-t
+and
+.BR \-V .
+.SH "AUTHOR"
+.PP
+Manual page and program by David Burton.
+Revised by Rod Johnson to accommodate revisions to
+.I image.

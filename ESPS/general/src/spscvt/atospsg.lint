@@ -1,0 +1,40 @@
+atospsg.c:
+
+atospsg.c
+==============
+(113)  warning: main() returns random value to invocation environment
+warning: possible pointer alignment problem
+    (176)  	    (184)  	
+fea_sup.c:
+
+fea_sup.c
+==============
+(450)  warning: rec_count set but not used in function cvt_fearec
+(861)  warning: index redefinition hides earlier one
+warning: argument unused in function:
+    (816)  hd in fill_gencoded
+    (815)  name in fill_gencoded
+    (856)  hd in fill_codes
+    (855)  name in fill_codes
+    (891)  hd in fill_codes1
+    (890)  name in fill_codes1
+    (889)  size in fill_codes1
+warning: possible pointer alignment problem
+    (149)  	    (153)  	    (157)  
+    (161)  	    (170)  	    (248)  
+    (260)  	    (268)  	    (285)  
+    (291)  	    (354)  	    (370)  
+    (374)  	    (378)  	    (382)  
+    (390)  	    (480)  	    (484)  
+    (488)  	    (492)  	    (500)  
+    (566)  	    (568)  	    (570)  
+    (572)  	    (921)  	
+
+
+==============
+name used but not defined
+    index   	atospsg.c(435)
+name defined but never used
+    dump_fea_head   	fea_sup.c(69)
+    print_rec   	fea_sup.c(549)
+    fill_codes   	fea_sup.c(859)

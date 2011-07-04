@@ -1,0 +1,6 @@
+kill name signal file files/signal2.fft
+make name signal file files/signal2.fft loc_x 600 loc_y 225 width 395
+
+signal bracket file files/signal2.fft start 0 end 1
+
+#@(#)mk_spgm2.WC	1.2 11/5/91 ERL

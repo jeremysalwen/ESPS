@@ -1,0 +1,143 @@
+.\" @(#)lpcsynt.1	3.9	02 Apr 1997
+.\" Copyright (c) 1997 Entropic Research Lab, Inc.; all rights reserved
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Research Lab, Inc.
+.TH LPCSYNT 1\-ESPS "02 Apr 1997"
+.SH "NAME"
+lpcsynt \- perform pitch-synchronous synthesis from FEA_ANA files
+.SH "SYNOPSIS"
+.B lpcsynt
+[
+.B \-x
+] [
+.BI \-P " param_file"
+]
+[
+.BI \-r " range"
+]
+[
+.BI \-p " range"
+]
+.I input_fea output_sd
+.SH DESCRIPTION
+.PP
+This program must be used with files with a format such as that
+created by \fIlpcana\fR(1\-ESPS).  Consider use of \fIlp_syn\fR(1\-ESPS).  
+While still
+supported, \fIlpcana\fR(1\-ESPS) and \fIlpcsynt\fR(1\-ESPS) should be considered obsolescent.
+.PP
+.I Lpcsynt
+takes as input an ESPS FEA_ANA(5\-ESPS) file 
+(\fIinput_fea\fR)
+containing analysis information, performs pitch-synchronous synthesis,
+and outputs the synthesized speech to an ESPS FEA_SD(5\-ESPS) file 
+.I output_sd.  
+The output file is written in short format.  
+.PP
+If "\-" is specified as the input file name, standard input is used;
+if "\-" is specified as the output file name, standard output is used.
+.SH OPTIONS
+The following options are supported:
+.TP
+.B \-x
+This option is specified for printing debugging message in the standard error.
+.TP
+.BI \-P " param_file"
+uses the parameter file 
+.I param_file
+rather than the default which is
+.I params.
+.TP
+.BI \-p " range"
+Selects a subrange of points to be synthesized, where the start and end
+points are defined with respect to the original SD file that is the
+source of the input FEA_ANA file.  The range is specified using the format 
+.I start\-end
+or
+.IR start:end
+or
+.IR start:+nan .
+Either 
+.I start
+or 
+.I end
+may be omitted, in which case the omitted parameter defaults respectively
+to the start or end of the input FEA_ANA file.  
+.TP
+.BI \-r " range"
+\fBr\fP is a synonym for \fBp\fP.
+.SH ESPS PARAMETERS
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.PP
+The following parameters are read from the params file:
+.sp
+.I "post_filt_num - float"
+.IP
+A three element vector specifying the numerator of a pole-zero
+post processing filter.
+If no values are specified in the parameter file,
+the vector [1., -1., 0] is used.
+.sp
+.TP
+.I "post_filt_den - float"
+.IP
+A three element vector specifying the denominator of a pole-zero
+post processing filter.
+If no values are specified in the parameter file,
+the vector [1., -.875, 0.] is used.
+.SH ESPS COMMON
+.PP
+ESPS Common is not processed.
+.SH ESPS HEADERS
+.PP
+The following parameters are read from the header of the input 
+FEA_ANA file:  
+.I start, nan, nominal_frame_size, and src_sf.
+.PP
+.I
+Synt
+writes the following header items in the output FEA_SD file:
+\fIsynt_order\fP (int), 
+\fIsynt_method\fP (coded),
+\fIsynt_interp\fP (coded),
+\fIsynt_pwr\fP (coded),
+\fIv_excit_method\fP (coded),
+and
+\fIuv_excit_method\fP (coded).
+.PP
+Also,
+.I src_sf
+is copied from the input header and used as 
+\fIrecord_freq\fP in the output FEA_SD file.
+.PP
+In addition,
+the generic header item \fIstart_time\fP (type DOUBLE)
+is written in the output file.  
+The value written is computed by taking the \fIstart_time\fP value from
+the header of the input file (or zero, if such a header item doesn't
+exist) and adding to it the offset time (from the
+beginning of the original sampled data file) of the first point written
+by \fIlpcsynt\fP (1\-\s-1ESPS\s+1).
+.SH COMMENTS
+The synthesizer implementation is very simple.  A single
+impulse is used as the excitation function for each pitch pulse in
+the case of voiced speech.  A gaussian white noise sequence is used as the
+excitation function when the frame is unvoiced.
+Linear interpolation is performed (for each pulse) on the
+reflection coefficients, prior to synthesis.
+.SH SEE ALSO
+lpcana (1\-ESPS), ESPS(5\-ESPS), FEA_ANA(5\-ESPS),
+.br
+FEA_SD(5\-ESPS).
+.SH "BUGS"
+.PP
+None known.
+.SH "AUTHOR"
+.PP
+S. Shankar Narayan. Slight mods by John Shore.  
+ESPS 3.0 modification by David Burton
+
+
+

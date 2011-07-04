@@ -1,0 +1,131 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)addclass.1	1.3 4/2/97 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH ADDCLASS 1\-ESPS 4/2/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.ds ]Y "\fBERL\fP
+.SH "NAME"
+addclass - add a FEA_VQ codebook record to a FEA_VQ codebook file
+.SH "SYNOPSIS"
+.B addclass 
+[
+.BI \-x " debug_level"
+] [
+.BI \-p " field_rep"
+] [
+.BI \-f " field"
+] [
+.BI \-r " record_num"
+] [
+.BI \-s " source_name" 
+] [
+.BI \-t " source_type"
+] [
+.BI \-n " signal_name"
+]
+.I " infile.cbk"
+.I " outfile.cbk"
+.SH "DESCRIPTION"
+.PP
+\fIAddclass\fR adds the \fB\-r\fR specified codebook record from
+\fIinfile.cbk\fR to \fIoutfile.cbk\fR. Note both \fIinfile.cbk\fR and
+\fIoutfile.cbk\fR are FEA_VQ files.  If the output codebook file
+doesn't exist, \fIaddclass\fR creates it.  If it does exist, in the
+process of updating it, \fIaddclass\fP creates a temporary file is
+created in the directory specified by the environment variable
+ESPS_TEMP_PATH (default /usr/tmp).  \fIAddclass\fR also fills in five
+fields in the output codebook record: \fIfield_rep, field,
+source_name, source_type,\fR and \fIsignal_name\fR.  Any previous
+contents of these fields is lost.
+.PP
+\fIField\fR contains the name of the field in the FEA file that
+was used as source data to design the codebook.
+\fIField_rep\fR is the \fIfield\fR's representation.
+For example, the \fIspec_param\fR
+field in FEA_ANA files has the following possible 
+\fIfield_rep\fR representations:
+AUTO, AFC, LSF, CEP, RC, and LAR.
+\fISource_name\fR contains the name of the source for the data.
+For speaker or speech recognition, this is the name of the speaker.
+\fISource_type\fR contains a category descriptor of the source.
+For example in speaker identification, \fIsource_type\fR could be either
+male or female.
+\fISignal_name\fR describes the type of signal that the source produced.
+In speaker identification, for example, this is the identity of the
+word that was spoken by the unknown speaker.
+Note that all of these parameters may take on a value
+of \fINONE\fR, and this is the default value.
+.PP
+\fIAddclass\fR also checks for equality among all the codebooks for
+the following parameters:
+\fIcodeword_dimen, cbk_struct, field,\fR and \fIfield_rep.\fR
+If each of these fields is not the same in all codebooks, then
+processing is stopped and an error message is printed.
+.PP
+If 
+.I infile1.fea
+is set equal to "\-", 
+standard input is used for the input file. 
+.SH OPTIONS
+.PP
+.TP
+.BI \-x " debug_level" " \fR[0]\fP"
+Values
+greater than 0 cause messages to print to \fIstderr\fR.
+.TP
+.BI \-p " field_rep" " \fR[NONE]\fP"
+A \fIfield\fR's representation may be specified by using this option.
+.TP
+.BI \-f " field" " \fR[NONE]\fP"
+Specifies the field in the codebook's input data file that
+the codebook represents.
+.TP
+.BI \-r " record_num" 
+Specifies an integer record number within \fIinfile.cbk\fR
+to copy to the output file. If no \fB\-r\fR value
+is specified, the last record in the input codebook is copied.
+.TP
+.BI \-s " source_name" " \fR[NONE]\fP"
+Specifies the source of the data that was used to design
+the codebook.
+.TP
+.BI \-t " source_type" " \fR[NONE]\fP"
+Specifies the source's category.
+.TP
+.BI \-n " signal_name" " \fR[NONE]\fP"
+Specifies the type of signal that the source produced.
+.SH "ESPS PARAMETERS"
+.PP
+The PARAMS file is not processed.
+.SH ESPS COMMON
+.PP
+The Common file is not processed.
+.SH ESPS HEADERS
+.PP
+\fIInfile.cbk\fR is added to the output header 
+as a source.
+.PP
+See FEA_VQ(5\-ESPS) for a description
+of the standard header items.
+.SH "FUTURE CHANGES"
+.PP
+.SH WARNINGS
+.PP
+\fIAddclass\fR warns and exits if the input and output file type is not
+correct.
+.SH "SEE ALSO"
+.PP
+vqdes(1\-ESPS), vq(1\-ESPS), FEA_DST(5\-ESPS), FEA_VQ(5\-ESPS),
+vqclassify(1\-ESPS), vqdst(1-ESPS)
+.SH "BUGS"
+.PP
+None known.
+.SH "AUTHOR"
+.PP
+Manual page by David Burton.
+Program by Alan Parker.
+
+
+
+

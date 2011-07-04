@@ -1,0 +1,7 @@
+# default params file for addgen
+# @(#)Paddgen	1.5	3/27/90 ESI
+string generic_name ?= "item1": "Name of new generic header item";
+string generic_type ?= "FLOAT": "Type of new generic header item":{"DOUBLE", "FLOAT", "LONG", "SHORT", "CHAR", "EFILE", "AFILE"};
+float gen_value_f ?= 10e2: "Value for real items";
+int gen_value_i ?= 99: "Value for integer items";
+string gen_value_s ?= "TEST": "Value for string items";

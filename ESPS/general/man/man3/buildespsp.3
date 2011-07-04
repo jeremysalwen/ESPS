@@ -1,0 +1,54 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)buildespsp.3	1.6 30 Apr 1997 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH BUILD_ESPS_PATH 3\-ESPSu 30 Apr 1997
+.SH NAME
+.nf
+build_esps_path \- builds a path to a file within the ESPS base directory
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+char *build_esps_path(char *path_inside_base)
+.ft
+.SH DESCRIPTION
+.PP
+Builds and returns a path by appending the ESPS base path provided by
+\fIget_esps_base(3\-\s-1ESPS\s+1)\fR  and the argument
+\fIpath_inside_base\fR.  If \fIpath_inside_base\fR does not start
+with a / then one will be provided. 
+A newly allocated string is returned, so deallocate it after use.
+.PP
+You might think that \fIfind_esps_file(3\-\s-1ESPS\s+1)\fR would do this, and it does.
+However, \fIfind_esps_file(3\-\s-1ESPS\s+1)\fR does not work with
+partial filenames. Hence this routine.
+.SH EXAMPLES
+.PP
+.nf
+
+build_esps_path("lib/tmac.an");
+build_esps_path("man/man");
+
+.fi
+.SH ERRORS AND DIAGNOSTICS
+.PP
+None known.
+.SH FUTURE CHANGES
+.PP
+None known.
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+None.
+.SH "SEE ALSO"
+.PP
+\fIfind_esps_file\fR (3\-\s-1ESPS\s+1u), 
+\fIfind_esps_file\fR (1\-\s-1ESPS\s+1), 
+\fIget_esps_base\fR (1\-\s-1ESPS\s+1),
+\fIget_esps_base\fR (3\-\s-1ESPS\s+1)
+.SH AUTHOR
+Ken Nelson wrote the routine and the man page.
+.PP

@@ -1,0 +1,105 @@
+.\" Copyright 1987 Entropic Speech Inc., all rights reserved
+.\"  @(#)xeparam.1	1.3 11/18/96 ERL
+.TH XEPARAM 1\-ESPS  11/18/96
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+xeparam \- run an  ESPS program generating the Parameter file using exprompt(1)
+.SH "SYNOPSIS"
+.B xeparam
+.I " program_name"
+.I " program_options"
+.SH "DESCRIPTION"
+.PP
+.I Xeparam
+runs the ESPS program
+.I program_name
+using a default parameter file for that program.  The user is prompted for
+all parameter values via xprompt(1), an X-Window interface tool that allows
+editing of parameter files. 
+All 
+.I program_options,
+which should include any required file names, are passed directly on 
+to
+.I program_name.
+.PP
+.I Xeparam
+may be used with any ESPS program that processes a parameter file, 
+i.e., with any ESPS program that has the \fB\-P\fP option.  For 
+example, the effect of running
+.nf
+
+    %xeparam refcof input.sd output.fana
+
+is the same as the direct call
+
+    %refcof -P \fIesps_params\fP/Prefcof input.sd output.fana
+
+.fi
+where
+.I esps_params
+is the directory containing the default parameter files, and 
+where Prefcof is the name of the default parameter file for 
+\fIrefcof\fP (1\-\s-1ESPS\s+1).  The directory 
+.I esps_params
+is chosen during ESPS installation and is known to
+.I xeparam.
+.PP
+If you use
+.I xeparam
+with an ESPS program that does not process a parameter file, 
+you will get a usage message issued by 
+.I program_name.
+.PP
+Since the default parameter files read form standard input,
+\fIxeparam\fR cannot in a case where the called ESPS program will read
+data from standard input (\fiIe.g.\fR the input file\-name is given as
+"\-").   Output to standard output is not affected.
+.SH "OPTIONS"
+.PP
+No options to 
+.I xeparam
+are supported currently.  All 
+.I program_options
+are passed on to
+.I program_name.
+.SH ESPS PARAMETERS
+.PP
+The ESPS Parameter file is not processed by 
+.I xeparam.
+It is processed by xprompt(1) and the ESPS programs invoked by
+.I xeparam.
+For details in each case, see the manual page for 
+.I program_name.  
+.SH "ESPS COMMON"
+.PP
+ESPS Common processing is temporarily disabled by 
+.I xeparam
+while
+.I program_name
+is executed. 
+.SH ESPS HEADERS
+.PP
+See the manual page for 
+.I program_name
+.SH "FUTURE CHANGES"
+.PP
+.SH "SEE ALSO"
+\fBeparam\f (1\-\s-1ESPS\s+1), \fIexprompt\fP (1\-\s-1ESPS\s+1), 
+\fIexpromptrun\fP (1\-\s-1ESPS\s+1)
+.PP
+In each case, see the manual page for 
+.I program_name.  
+.SH "BUGS"
+.PP
+.SH "FILES"
+.PP
+The default parameter files are located in the directory $ESPS_BASE/lib/params.
+Within this directory, the individual parameter files are named as
+"P\fIprogram_name\fP".
+.SH "REFERENCES"
+.PP
+
+.SH "AUTHOR"
+.PP
+manual page and program by John Shore
+

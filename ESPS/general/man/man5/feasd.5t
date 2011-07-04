@@ -1,0 +1,325 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc. All rights reserved.
+.\" @(#)feasd.5t	1.3	25 Sep 1997	ESI
+.TH FEA_SD 5\-ESPS 25 Sep 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.if t .ds - \(em\h'-0.5m'\(em
+.if n .ds - ---
+.SH NAME
+ESPS Sampled-Data Feature File Subtype \- (.fsd)
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/fea.h>
+#include <esps/feasd.h>
+.fi
+.SH DESCRIPTION
+.PP
+The FEA_SD file is a subtype of the FEA file.
+If
+.I hd
+is a pointer to the header of such a file, then
+.IR hd \-> hd.fea \-> fea_type "== FEA_SD."
+FEA_SD files are used for storing sampled data,
+such as the output of an A/D converter.
+The data may be of any  ESPS numerical data type,
+and multichannel data is supported.
+(Some ESPS programs, however, may require single-channel data.)
+.PP
+Typically the part of the file following the header
+is a simple stream of data values,
+and a record consists merely of a single sample value
+or (for multichannel data) a fixed number of samples.
+There are functions, such as
+.IR get_feasd_recs (3-ESPS)
+and
+.IR put_feasd_recs (3-ESPS),
+that can take advantage of this simple structure
+by reading or writing an entire multi-record array of data in one operation,
+rather than one record at a time.
+It is possible to create FEA_SD files with a more complicated record structure
+since
+.IR add_fea_fld (3-ESPS)
+can be used to add extra field definitions to any FEA file header.
+The function
+.IR get_feasd_recs (3-ESPS)
+will still work on such files, ignoring the extra fields,
+but will not work as fast as if the extra fields were not present.
+.PP
+Samples as stored in memory may have a different data type from their type
+as stored in the file.
+The input and output routines,
+.IR get_feasd_recs (3-ESPS)
+and
+.IR put_feasd_recs (3-ESPS),
+perform the necessary conversions automatically.
+.PP
+FEA_SD files must be untagged.
+(See
+.IR ESPS (5-ESPS)
+and
+.IR FEA (5-ESPS)
+for an explanation of tags and tagged FEA files.)
+.PP
+.IR init_feasd_hd (3-ESPSu)
+is used to create a FEA_SD header,
+after calling 
+.IR new_header (3-ESPSu)
+.PP
+.ne 15
+The header of a FEA_SD file may contain the following generic header items.
+The first 2 are always present.
+The remaining one is not present in every file,
+but if present has the meaning given below.
+.sp
+.TS
+center, box, tab(;);
+c | c | c | c
+l | l | l | l
+l | l | l | l.
+Name;Size;Type;Enums
+=
+start_time;1 or no. of;double;NULL
+ ;  channels; ;
+record_freq;1;double;NULL
+_
+max_value;1 or no. of;double;NULL
+ ;  channels; ; 
+.TE
+.sp
+.PP
+The items have the following meanings.
+.IP start_time
+Time corresponding to the first record in the file\*-given in seconds.
+If
+.I start_time
+has more than one element, each applies to a separate channel.
+Separate starting times might be appropriate if, for example,
+samples from the various channels were recorded in rotation,
+rather than simultaneously.
+.IP record_freq
+The sampling frequency in Hz.
+.IP max_value
+This item is optional.
+If it is present, no sample may exceed this value in magnitude.
+It is permissible for all samples to be smaller\*-that is,
+.I max_value
+is an upper bound rather than an exact maximum.
+For example, if the data are from an A/D converter,
+.I max_value
+may be used to indicate the maximum value
+that can be represented by the converter.
+In multichannel files,
+.I max_value
+may have one component for each channel
+or may be a single value applying to all channels.
+.PP
+The header of a FEA_SD file also contains a definition
+for one record field given by the following table:
+.PP
+.TS
+center, box, tab(;);
+c | c | c | c | c | c 
+c | c | c | c | c | c.
+Name;Size;Rank;Dimen;Type;Enums
+=
+samples;no. of channels;1;NULL or {size};any numeric;NULL
+.TE
+.PP
+The field can be created by calling
+.IR init_feasd_hd (3-ESPSu).
+When the size is 1, there is a single channel;
+if no additional fields are present,
+each record is a single sample of the given type,
+and the part of the file after the header is just a sequence of such samples.
+When the size is greater than 1, the file contains multi-channel data.
+In general, each record in the file contains a vector
+with as many components as there are channels.
+.PP
+Most programs that deal with FEA_SD files
+will use the support routines in the ESPS library
+and will not directly use the information in the tables above.
+The library routine
+.IR init_feasd_hd (3-ESPSu)
+creates the record field and the required generic header items.
+.PP
+Programs that deal with FEA_SD files do so in terms of structures of type
+(struct feasd) \*-pointers to structures of this type are returned by
+.I allo_feasd_recs,
+and the FEA_SD read and write routines,
+.I get_feasd_recs
+and
+.I put_feasd_recs,
+have parameters of type (struct feasd).
+Here is the definition of the
+.I feasd
+structure as given in
+.I <esps/feasd.h>:
+.nf
+.ta .5i 1i 1.75i
+
+    struct feasd {
+	short		data_type;
+	long		num_records, num_channels;
+	char		*data, *ptrs;
+    };
+.fi
+.PP
+The structure members have the following meanings.
+.IP data_type
+A code indicating the data type of the samples as stored in memory.
+Legal values are give by the type-code constants
+BYTE, SHORT, LONG, FLOAT, DOUBLE,
+BYTE_CPLX, SHORT_CPLX, LONG_CPLX, FLOAT_CPLX, DOUBLE_CPLX,
+defined in the include file
+.I esps/esps.h.
+(Codes for non-numeric ESPS types such as CHAR, CODED, EFILE, and AFILE
+are not allowed.)
+.IP num_records
+The number of consecutive records that may be stored in the data part
+of this
+.I feasd
+structure (see below).
+.IP num_channels
+The number of channels of sampled data.
+.IP data
+A pointer through which to access storage for the sampled data from
+.I num_records
+consecutive FEA_SD records.
+For single-channel files, the storage is just an array with
+.I num_records
+elements of the type indicated by
+.I data_type.
+The pointer
+.I data
+when cast to the appropriate type points to the first element of the array.
+The appropriate types are (char *) for BYTE data, (short *) for SHORT data,
+(double_cplx *) for DOUBLE_CPLX data, etc.
+For example, with declarations
+.IP
+.I struct feasd	*rec;
+.br
+.I short	*s_data;
+.IP
+suppose
+.I rec
+points to a
+.I feasd
+structure properly initialized to hold SHORT data.
+(So
+.IR rec \-> data_type == SHORT .)
+Then, after the assignment
+.IP
+.I "s_data = (short *) rec\->data;"
+.IP
+sample number
+.I s
+may be accessed as
+.IR s_data [ s ].
+For multi-channel files,
+the storage is conceptually a 2-dimensional array with
+.I num_records
+rows and as many columns as there are channels.
+If the number of channels is fixed and known in advance
+(say
+.IR num_channels ==3)
+then a declaration
+.IP
+.I short	(*s_arr)[3];
+.IP
+and a cast
+.IP
+.I s_arr = (short (*)[3]) rec\->data;
+.IP
+allow sample number
+.I s
+of channel
+.I c
+to be accessed as
+.IR s_arr [ s ][ c ].
+Unfortunately the constant 3 here cannot be replaced with a variable
+such as
+.IR rec \-> num_channels
+in legal C code.
+One procedure that works with a variable number of channels
+is to treat the data array as 1-dimensional and access sample number
+.I s
+of channel
+.I c
+as
+.IR s_data [ s * \c
+.IR rec \-> num_channels + c ],
+where
+.I s_data
+is defined as above.
+This way of accessing multichannel data is somewhat awkward;
+a more convenient method involves the structure member
+.I ptrs
+discussed next.
+.IP ptrs
+When appropriately cast,
+.I ptrs,
+if not NULL, points to the first element of an array of
+.I num_records
+pointers,
+each of which points to the first element of a row of the data array.
+Appropriate types for the cast are (char **) for BYTE data, (short **) for
+SHORT data, etc.
+To continue the example begun above under
+.I data,
+suppose a declaration
+.IP
+.I short	**s_ptr;
+.IP
+and a cast
+.IP
+.I s_ptr = (short **) rec\->ptrs;
+.IP
+then sample number
+.I s
+of channel
+.I c
+can be accessed as
+.IR s_ptr [ s ][ c ].
+The function
+.IR allo_feasd_recs (3-ESPSu),
+which creates
+.I feasd
+structures, has a parameter that determines whether to set up the pointer
+array or to make the
+.I ptrs
+structure member NULL.
+For single-channel data,
+.I ptrs
+should probably be made NULL except to avoid special-case code for
+single-channel data in cases where multichannel data must be handled as well.
+For multichannel data, the pointer array should probably be used except
+when considerations such as space limitations warrant forgoing the
+convenience.
+.PP
+Since the structure of the data storage depends on values in the file header,
+it is important to be sure that a given FEA_SD struct
+is consistent with the header of the file it is being used with.
+Specifically, all headers used with a given FEA_SD struct
+must have the same number of channels.
+.SH SEE ALSO
+.PP
+.nf
+init_feasd_hd(3-ESPSu), allo_feasd_recs(3-ESPS),
+get_feasd_recs(3-ESPSu), get_feasd_orecs(3-ESPS), 
+put_feasd_recs(3-ESPSu), get_genhd(3-ESPSu), 
+ESPS(5-ESPS), FEA(5-ESPS), SD(5-ESPS)
+.fi
+.SH RECORD ELEMENT FILE STRUCTURE
+.PP
+.SH FILES
+.PP
+.nf
+/usr/esps/include/esps/fea.h
+/usr/esps/include/esps/feasd.h
+.fi
+.SH FUTURE CHANGES
+.PP
+Support for tagged files.
+.SH AUTHOR
+Manual page by Rodney Johnson, ESI.

@@ -1,0 +1,9 @@
+#
+# @(#)Pbtosps	1.2 3/27/90 ESI
+#
+float sampling_rate =? 8000: "Sampling rate of the data";
+int nchan =? 1: "Number of channels";
+float start_time =? 0: "Start time of the data";
+char *data_type ?= "SHORT" : "Data type of input" : {"DOUBLE", "FLOAT", "LONG", "SHORT", "BYTE", "DOUBLE_CPLX", "FLOAT_CPLX", "LONG_CPLX", "SHORT_CPLX", "BYTE_CPLX"};
+int skip_bytes =? 0: "Number of leading bytes to skip";
+string comment ?= "": "Comment describing the data origin";

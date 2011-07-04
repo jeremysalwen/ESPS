@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+#  This material contains proprietary software of Entropic Speech, Inc.   
+#  Any reproduction, distribution, or publication without the prior	   
+#  written permission of Entropic Speech, Inc. is strictly prohibited.
+#  Any public distribution of copies of this work authorized in writing by
+#  Entropic Speech, Inc. must bear the notice			
+# 								
+#      "Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved."
+# 				
+#
+# test file for plotspec @(#)plotspec.tes	3.3 1/19/93 ESI
+
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+
+echo "Testing plotspec."
+echo "Making SPEC file with spectrum type ST_DB."
+testsd -f10 -p64 - | fft -l64 -o6 - tst.spec
+echo "Plot the spectrum."
+$1/plotspec tst.spec
+echo "Plot the cumulative distribution."
+$1/plotspec -d tst.spec
+echo "Making SPEC file with spectrum type ST_COMPLEX."
+testsd -f10 -p64 - | fft -l64 -o6 -c - tst.spec
+echo "Plot the spectrum."
+$1/plotspec tst.spec
+echo "Plot the cumulative distribution."
+$1/plotspec -d tst.spec
+echo "Plot in dB (-D option)."
+$1/plotspec -D tst.spec
+echo "Plot phase."
+$1/plotspec -F tst.spec
+rm tst.spec
+atofilt - - tst.filt << aArDvArK
+5
+1.0 0.9 -0.9 0.3 -0.1
+0
+aArDvArK
+echo "Testing -D option on files with spectrum types ST_DB, ST_CPLX, & ST_DB."
+echo "The following 3 should look the same."
+filtspec -n129 -s8000 -ml tst.filt - | $1/plotspec -D -
+filtspec -n129 -s8000 -mc tst.filt - | $1/plotspec -D -
+filtspec -n129 -s8000 -md tst.filt - | $1/plotspec -D -
+rm tst.filt

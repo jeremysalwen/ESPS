@@ -1,0 +1,41 @@
+# testfile for comment
+# @(#)testfile	3.2 10/1/91 ESI
+#
+ESPSCOM=/dev/null
+export ESPSCOM
+echo make sd file with testsd.
+testsd -p10 a.sd
+echo run comment on this file.  Should just show testsd command line.
+comment a.sd
+echo run comment -t on it.  Should show nothing.
+comment -t a.sd
+echo add comment
+comment -c hello a.sd
+comment a.sd
+echo add typtxt
+comment -t -c typtxt a.sd
+comment -t a.sd
+echo make embedded header
+copysd a.sd b.sd
+echo run comment -a
+comment -a b.sd
+echo run comment -t -a
+comment -t -a b.sd
+cat >xx <<XX
+file of comments
+line two
+last line
+XX
+echo add comment from file
+comment -C xx b.sd
+comment b.sd
+echo add typtxt from file
+comment -t -C xx b.sd
+comment -t b.sd
+echo do comment -a again
+comment -a b.sd
+echo add a final comment without date/time stamp
+comment -c"comment without date/time" -S b.sd
+comment b.sd
+rm xx a.sd b.sd
+echo done

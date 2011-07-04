@@ -1,0 +1,61 @@
+#!/bin/sh
+#@(#)test.script	3.5	6/13/91 ESI
+ESPSCOM=./espscom
+export ESPSCOM
+echo "Make a test sampled data file containing floats"
+echo "testsd -a- test.sd << EOD"
+testsd -a- test.sd << EOD
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+EOD
+echo " "
+echo "Filter the test data"
+echo "cat test.sd | fft_filter -PPfft_filter - - | psps -H - > test"
+cat test.sd | fft_filter -PPfft_filter - - | psps -H - > test
+echo " "
+echo "Compare test with reference data:"
+echo "diff test ref"
+cat > ref << EOD
+     1:      1.0000     3.0000     6.0000     6.0000     6.0000
+     6:      6.0000     6.0000     6.0000     6.0000     6.0000
+    11:      6.0000     6.0000     6.0000     6.0000     6.0000
+    16:      6.0000     6.0000     6.0000     6.0000     6.0000
+EOD
+echo " "
+diff test ref
+echo "If all is correct, there should be no differences"
+echo " "
+#
+echo "Make a test sampled data file containing shorts"
+echo "testsd -t SHORT -a- test.sd << EOD"
+testsd -t SHORT -a- test.sd << EOD
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+EOD
+echo " "
+echo "Filter the test data"
+echo "cat test.sd | fft_filter -PPfft_filter - - | psps -H - > test"
+cat test.sd | fft_filter -PPfft_filter - - | psps -H - > test
+echo " "
+echo "Compare test with reference data:"
+echo "diff test ref"
+cat > ref << EOD
+     1:       1      3      6      6      6      6      6      6      6      6
+    11:       6      6      6      6      6      6      6      6      6      6
+EOD
+echo " "
+diff test ref
+echo "If all is correct, there should be no differences"
+echo " "
+echo "Test using FEAFILT file: create filtfile"
+cat > numfile << EOD
+3
+1 2 3
+EOD
+atofilt -c" " numfile filtfile
+addgen -g samp_freq -tDOUBLE -v 8000.0 filtfile
+echo "cat test.sd | fft_filter -Ffiltfile - - | psps -H - > test"
+cat test.sd | fft_filter  -Ffiltfile - - | psps -H - > test
+echo " "
+diff test ref
+echo "If all is correct, there should be no differences"
+echo " "
+rm test ref test.sd espscom filtfile numfile

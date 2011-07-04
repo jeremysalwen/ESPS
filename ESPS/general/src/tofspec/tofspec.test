@@ -1,0 +1,135 @@
+#! /bin/sh
+#  @(#)tofspec.test	1.6	6/21/93	ESI
+# test script for tofspec
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+echo "-100 0 100" | testsd -a- - | frame - t1.fea
+tofspec -o-50:50 t1.fea t1.fspec
+echo " "
+echo "The following should show generics low_input = -100, high_input = +100,"
+echo "low_output = -50, high_output = 50:"
+hditem -i low_input t1.fspec
+hditem -i high_input t1.fspec
+hditem -i low_output t1.fspec
+hditem -i high_output t1.fspec
+echo " "
+echo "The following should show re_spec_vals -50, 0, +50"
+echo " "
+psps -H t1.fspec
+tofspec t1.fea t1.fspec
+echo " "
+echo "The following should show re_spec_vals -64, -7, +50"
+echo " "
+psps -H t1.fspec
+echo "1 10 100 1000 10000 100000 1000000" | testsd -a- - | frame - t2.fea
+echo " "
+echo "The following should show re_spec_vals from -64 to +63"
+echo " in units of approximately 20:"
+echo " "
+tofspec -o-64:63 -d t2.fea  - | psps -H -
+echo " "
+echo "-20 -20 -10 -2 0 10 20 30" | testsd -a- - - | frame - t1.fea
+echo " "
+echo "The following should show 3 values of -64, two others, then three"
+echo " values of +63:"
+echo " "
+tofspec -o-64:63 -i-10:10 t1.fea - | psps -H - 
+echo " "
+echo "The following should show -15 -15 -10 -2 0 10 20 25:"
+echo " "
+tofspec -S -o-15:25 t1.fea - | psps -H - 
+echo " "
+echo "Testing -F and -v options."
+echo "2 3 5 7 11 13 17 19 23" | testsd -a- - | frame - t.fea
+tofspec -S -FARB_FIXED -v"2,3,5,7,11,13,17,19,23" t.fea t.spec
+cat > t.asc <<aArDvArK1
+File: t.spec
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 1
+Data is  tagged.
+Data format is 0 doubles, 0 floats, 0 longs,
+0 shorts, and 9 chars (bytes).
+refer file: <stdin>
+comment text:
+ tofspec -S -FARB_FIXED -v2,3,5,7,11,13,17,19,23 t.fea t.spec 
+Source files: t.fea
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: FEA_SPEC, segment_labeled: NO, field_count: 1
+Item name: re_spec_val, type: BYTE, size: 9, rank: 1
+
+---Generic Part of Header---
+contin: (CODED) YES 
+ Possible coded values:
+ NO
+ YES
+frame_meth: (CODED) NONE 
+ Possible coded values:
+ NONE
+ FIXED
+ VARIABLE
+freq_format: (CODED) ARB_FIXED 
+ Possible coded values:
+ NONE
+ SYM_CTR
+ SYM_EDGE
+ ASYM_CTR
+ ASYM_EDGE
+ ARB_VAR
+ ARB_FIXED
+freqs[0]: (FLOAT) 2 3 5 7 11 13 17 
+freqs[7]: 19 23 
+ Size: 9
+high_input: (FLOAT) 23 
+high_output: (FLOAT) 50 
+low_input: (FLOAT) 2 
+low_output: (FLOAT) -64 
+nan: (LONG) 0 
+num_freqs: (LONG) 9 
+record_freq: (DOUBLE) 888.889 
+spec_type: (CODED) DB 
+ Possible coded values:
+ NONE
+ PWR
+ DB
+ REAL
+ CPLX
+src_sf: (FLOAT) 8000 
+start: (LONG) 1 
+start_time: (DOUBLE) 0 
+
+Record 1: tag: 1
+
+
+freq		re_spec_val	im_spec_val
+2.000000e+00	2.000000e+00
+3.000000e+00	3.000000e+00
+5.000000e+00	5.000000e+00
+7.000000e+00	7.000000e+00
+1.100000e+01	1.100000e+01
+1.300000e+01	1.300000e+01
+1.700000e+01	1.700000e+01
+1.900000e+01	1.900000e+01
+2.300000e+01	2.300000e+01
+
+aArDvArK1
+echo "The following should show at most small differences in"
+echo "spectral values and none in frequencies."
+psps -v t.spec \
+    | egrep -v \
+	'^File header date:|^Produced by:|^Hostname:path:|^Machine type:' \
+    | diff t.asc -
+echo "Done testing -F and -v"
+echo "generating shifted sine-wave files t3.fspec and t3.dfspec;"
+echo "view these via waves+; don't forget to emake clean later."
+echo "t3.fspec should have frequency scale to 149, t3.dfspec from 0 to 500."
+testsd -f160 -p675 - | frame -p1:500 -l 150 -S1 - t3.fea
+tofspec t3.fea t3.fspec
+echo "501 501 501 501 501 501 501 501 501 501" | testsd -a- -i t.sd
+testsd -f160 -i -p675 - | addsd -z - t.sd - | frame -p1:500 -l150 -S1 - t3.fea
+tofspec -s 1000 -d t3.fea t3.dfspec

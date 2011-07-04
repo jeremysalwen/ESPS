@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if test $# -eq 2 ; then
+   file=$2
+else
+   file=$1
+fi
+
+N=`psps -l -D -v $file | awk '($1 == "Dimensions:"){print $2; exit;}'`
+rate=`hditem -i record_freq $file`
+if test $? -ne 0 ; then
+    rate=16000
+fi
+
+esfconvert -v.01 -s44100 $* - | bhd - - | audioM -n$N
+
+# The alternative method below works well at sample rates that are
+# sub-multiples of 44100, and for some other rates.  It does not
+# appear to work correctly at 8kHz.
+
+#copysd $* - | bhd - - | audioM -n$N -f$rate

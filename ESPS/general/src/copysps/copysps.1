@@ -1,0 +1,341 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1990-1996 Entropic Research Lab, Inc. All rights reserved.
+.\" @(#)copysps.1	3.21 4/2/97 ESI/ERL
+.ds ]W (c) 1996 Entropic Research Laboratory, Inc.
+.TH COPYSPS 1\-ESPS 4/2/97
+.SH NAME
+copysps \- copies selected records of an ESPS file to a new ESPS file
+.SH SYNOPSIS
+.B copysps
+[
+.BI \-x " debug_level"
+] [
+.BI \-f
+] [
+.BI \-r " range"
+] [
+.BI \-g " gen_range"
+] [
+.BI \-s " time_range"
+] [
+.B \-z
+] [
+.I " infile"
+]
+.I " outfile"
+.SH DESCRIPTION
+.PP
+.I Copysps
+copies selected records of an ESPS file to another ESPS file.
+If 
+.I outfile
+exists, then the selected records of
+.I infile
+are appended to
+.I outfile
+provided that the input file and the output file are compatible (see
+below for details).
+If 
+.I outfile
+doesn't exist, it is created.
+Appending data to 
+.I infile
+is not allowed.  
+If \fIoutfile\fP is "\-", then stdout is used as output.  If a single
+file name is given on the command line, \fIcopysps\fP uses that name
+as the output file and retrieves the input file from ESPS Common (see
+EXAMPLES).
+Note that reading stdin is not supported.
+.PP
+For FEA_SD files, additional capabilites are offered by 
+\fIcopysd\fP (1\-\s-1ESPS\s+1), which permits scaling the data 
+and changing the numerical data type.  
+.PP
+If \fIoutfile\fP already exists, then \fIcopysps\fP checks the input
+file header and the output file header for compatibility.  Two ESPS
+files are considered compatible if they satisfy the following
+conditions:
+.IP "For ESPS FEA files:"
+Feature header items fea_type, field count, names, sizes, ranks,
+types, and enums must be the same in both files.  
+If a field is a
+derived field, then the names pointed to by srcfields must also agree
+in both files.  Since \fIcopysps\fP does not require compatibility of
+generic header items (indeed, none are copied from the input to the
+output file if the output file exists already), you should be careful
+when copying records of FEA_SD, FEA_ANA, FEA_SPEC, FEA_STAT, and FEA_VQ files.
+Refer to section 5 man pages for more information about 
+these special feature files. 
+.IP "For ESPS FEA_SD files:"
+The sampling rate of both files must be the same.  
+.IP "For ESPS SPEC files:"
+Spectral header items order_vcd, order_unvcd, spec_an_meth, dcrem,
+voicing, freq_format, spec_type, and contin must all be the same for
+both files.  If win_type, sf, spec_an_meth, or dcrem are not the same
+in both files, then a warning message is printed on stderr and in the
+comment field of the output file.  (Note: SPEC files are obsolete 
+and have been replaced by FEA_SPEC files.)  
+.IP "For ESPS FILT files:"
+Filter header items max_num, max_den, func_spec, nbands, npoints,
+nbits, type, bandedges, points, gains, and wts must all be the same
+in both files.
+.IP "ESPS SCBK files not supported, yet."
+.PP
+When updating an existing file without the \fB-f\fR option, a
+temporary file is generated in the directory specified by the
+environment variable ESPS_TEMP_PATH (default /usr/tmp).  The operation
+will be faster if the destination file is on the same file system as
+ESPS_TEMP_PATH.  This is not a significant difference unless the
+destination file is very large.
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-f
+This option causes a fast copy to be done.  This is done by appending
+the selected records onto the end of the destination file.
+Use of this option causes embedded headers not to be included in the
+output file.  Also, the command line is not saved as a comment in the
+output header (the output header size cannot change).  However, note
+that \fIcomment\fP(1\-ESPS) can always be used to add comments to an
+existing ESPS file.
+This option should not be used to produce archival files where the
+entire processing history is needed.
+.br
+.sp
+If the header version (\fIcommon.hdvers\fR) is not the same for the
+input and output file, then a fast copy is not done.  This is because
+the size or the exact format of the header might be different and the
+write may fail.   The program checks the versions, and simply turns
+the \fB\-f\fR flag off if the versions do not match.
+.sp
+Note that two segment labeled files are not compatible unless they both
+refer to the same set of sampled data files.  Also, if you use copysps
+to copy tagged records to a tagged file, it will become difficult to
+determine which file the output tags refer to in cases where the input
+file has tags refering to a different file than the tags in the output
+file.  To deal with such problems for now, use select instead of
+copysps.
+.TP
+.BI \-r " start:end"
+.TP
+.BI \-r " start:+incr
+Determines the range of data records to process.  In the first form, a
+pair of unsigned integers gives the first and last points of the range.  
+If 
+.I start
+is omitted, 1 is used.  If 
+.I end
+is omitted, the last point in the file is used.  The second form is
+equivalent to the first with 
+.I "end = start + incr".
+.TP
+.BI \-g " range"
+Select a "generic" range of records to be processed.  The default is
+all the records in \fIinfile\fP. (See
+.I grange_switch(3\-ESPS) 
+for full details of generic range specification.)
+.TP
+.BI \-s " start_time:end_time"
+.TP
+.BI \- " start_time:+time_incr
+Determines the range of records  to be copied from \fIinfile\fP by 
+in units of time (seconds).  In the first form, a pair of
+signed real numbers gives the start and end time of the range. If 
+.I start_time
+is omitted, the first record is used. 
+.I end_time
+is omitted, the last record in the file is used.  The second form is
+equivalent to the first with 
+.I "end_time = start_time + time_incr".
+.TP
+.BI \-x " debug_level"
+Only debug level 1 is defined in this version;
+this causes several messages to be printed.
+The default level is zero, which causes no debug output.
+.TP
+.B \-z
+Suppresses messages that inform the user when any of the input
+filename, the starting record, or number of records is taken from 
+ESPS Common (see ESPS COMMON).  
+.SH ESPS PARAMETERS
+The ESPS parameter file is not read.
+.SH ESPS COMMON
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+The following items are read from the ESPS Common File provided that
+only one input file or no input file is given on the command line and
+provided that standard input isn't used.  
+.IP
+.I "filename \- string"
+.IP
+This is the name of the input file.  If no input file is 
+specified on the command line, \fIfilename\fP is taken to be the
+input file.  If an input file is specified on the command line, 
+that input file name must match \fIfilename\fP or the other 
+items (below) are not read from Common. 
+.IP
+.I "start \- integer"
+.IP
+This is the starting point in the input file to begin copying.  It 
+is not read if the \fB\-r\fP option is used.  
+.sp
+.I "nan \- integer"
+.IP
+This is the number of points to copy from the input file.  It is not
+read if the \fB\-r\fP option is used.  A value of zero means the last
+point in the file.
+.sp
+.PP
+Again, the values of \fIstart\fR and \fInan\fR are only used if the
+input file on the command line is the same as \fIfilename\fP in the
+common file, or if no input file was given on the command line.  If
+\fIstart\fR and/or \fInan\fR are not given in the common file, or if
+the common file can't be opened for reading, then \fIstart\fR
+defaults to the beginning of the file and \fInan\fR defaults to the
+number of points in the file.
+.PP
+The following items are written into the ESPS Common file:
+.IP
+.I "start \- integer"
+.IP
+The starting point from the input file.
+.sp
+.I "nan \- integer"
+.IP
+The number of points in the selected range.
+.sp
+.I "prog \- string"
+.IP
+This is the name of the program (\fIcopysps\fP in this case).
+.sp
+.I "filename \- string"
+.IP
+The name of the input file.
+.PP
+These items are not written to ESPS COMMON if the output file is <stdout>.
+.SH ESPS HEADER
+If the output file is new (i.e. not appending to an existing file)
+then the source ESPS header structure is copied into the new file
+header (including generic header items).  For exiting output files,
+the input ESPS file name is added to the list of sources.  The command
+line and compatibility warnings, if any, are added in the comment
+field of the header.  
+.PP
+Also, if the output file is new and the generic header item
+\fIrecord_freq\fP exists in the input file, the generic header item
+\fIstart_time\fP is written in the output file.  The value written is
+computed by taking the \fIstart_time\fP value from the header of the
+input file (or zero, if such a header item doesn't exist) and adding
+to it the offset time (from the beginning of the input file) of the
+first record processed.  If \fIrecord_freq\fP doesn't exist in the
+input file, \fIstart_time\fP is not written in the output file.  If it
+exists in the input file header, the generic header item
+\fIrecord_freq\fP is copied to the output file header.  This item
+gives the number of records per second of original data analyzed.
+.PP
+If the output file already exists and it is is being appended to,
+\fIstart_time\fP is not modified and the \fIrecord_freq\fP
+values in the two files are checked for agreement. If they agree,
+no change is made to it; If they don't agree, the \fIrecord_freq\fP
+value is changed to zero.
+.PP
+In update mode, the input and the output files must both be in EDR (Entropic's
+external data representation) or the the machine's native format.
+.SH EXAMPLES
+.PP
+To copy records 1 to 5, 9, and 12 to 15 from \fIfile1.sps\fP to
+\fIfile2.sps\fP (assuming \fIfile2.sps\fP does not already exist),
+type the following:
+.sp
+.nf
+    % copysps -r1:5,9,12:15 file1.sps file2.sps
+.fi
+.sp
+Note that \fIfile1.sps\fP and \fIfile2.sps\fP can be any ESPS file.
+Only ESPS FEA, FILT, SPEC, or SCBK files can be updated (i.e. have data
+appended to them).  Continuing our example above, if \fIfile2.sps\fP
+is an ESPS FEA file, then we can append records from \fIfile3.sps\fP
+by typing:
+.sp
+.nf
+    % copysps file3.sps file2.sps
+.fi
+.sp
+If only \fIfile2.sps\fP is given on the command line, as in the following
+example:
+.sp
+.nf
+    % copysps file2.sps
+.fi
+.sp
+then \fIcopysps\fP gets the input file name from ESPS Common.
+.SH DIAGNOSTICS
+.PP
+A fatal error occurs if the input file does not exist, if it is not an ESPS
+file, or if a requested range includes records that do not exist.
+.PP
+.nf
+copysps: no output file specified.
+Usage: copysps [-x debug] [\-f] [\-r gen_range] [-z] [infile] outfile
+copysps: infile and outfile cannot be the same.
+copysps: input file name \fIinfile\fP taken from ESPS Common.
+copysps: fea_compat: feature fields in \fIinfile\fP and \fIoutfile\fP incompatible.
+copysps: cannot handle ESPS SCBK file type.
+copysps: cannot update ESPS file type code: \fItype_code\fP
+copysps: could not open \fIoutfile\fP for appending.
+copysps: could not open \fItemp_file\fP
+copysps: could not open \fIoutfile\fP for writing.
+copysps: only \fInum_rec\fP records in \fIinfile\fP
+copysps: record sizes in \fIinfile\fP and \fIoutfile\fP are different.
+copysps: calloc: could not allocate memory for dbuf.
+copysps: read error on \fIinfile\fP
+copysps: write error on \fItemp_file\fP
+copysps: seek error on \fIinfile\fP
+copysps: write error on \fIoutfile\fP
+copysps: could not rename \fItemp_file\fP to \fIoutfile\fP
+.fi
+If the versions of the headers do not match when the \fB\-f\fR flag is
+used, a message is printed and the \fB\-f\fR flag is turned off.
+.SH SEE ALSO
+.PP
+.nf
+\fIespsenv\fR (1\-\s-1ESPS\s+1), \fImergefea\fP (1\-\s-1ESPS\s+1), \fIaddfea\fP (1\-\s-1ESPS\s+1),
+\fIcopysd\fR(1\-ESPS), \fIcomment\fR(1\-ESPS), \fIselect\fR(1\-ESPS),
+\fIgrange_switch\fR(3\-ESPSu), fea(5\-ESPS), fea_ana(5\-ESPS),
+fea_stat(5\-ESPS), fea_vq(5\-ESPS), filt(5\-ESPS), 
+scbk(5\-ESPS), spec(5\-ESPS)
+.fi
+.SH BUGS
+.PP
+Owing to the way that \fIgrange_switch\fR is used, this might fail on very
+large files.
+.PP
+When a new output file is created, it will always be the same data
+format (either NATIVE or EDR) as the input.  This is considered a bug
+and will be changed in a future version.  Note that you can use \fIselect\fR to copy
+the file and convert from NATIVE to EDR.
+.PP
+\fICopysps\fP does not work correctly if the input and output files
+are not both in field order or both in type order.  For example, if
+the input file is in type order (the default) and the environment
+variable FIELD_ORDER is set to "on" before running \fIcopysps\fP, the
+output file will be garbage.  
+.PP
+Compressed Sphere files are not supported.  Files in Esignal format are
+not supported.
+.SH FUTURE CHANGES
+.PP
+Handle tagged and segment labeled FEA files properly.  
+.PP
+Revise to handle MIIO properly.  
+.SH AUTHOR
+.PP
+Ajaipal S. Virdy, Entropic Speech, Inc.

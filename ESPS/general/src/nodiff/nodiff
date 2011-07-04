@@ -1,0 +1,122 @@
+#! /bin/sh 
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)nodiff	1.6	11/26/91	ERL
+# 
+# Written by:  Bill Byrne
+# Checked by:
+# Revised by:
+# 
+# Brief description: nodiff - nth order difference
+# 
+USE_ESPS_COMMON=off; export USE_ESPS_COMMON
+ESPS_VERBOSE=0; export ESPS_VERBOSE
+USAGE="Usage: nodiff [-f field_name] [-o order] [-r range] [-x debug_level] fea.in fea.out"
+case $# in
+0|1)
+	echo "$USAGE"
+	exit 1 ;;
+esac
+
+prgm=nod
+infilename=
+outfilename=
+ORDER=1
+X_OPT=
+R_OPT=
+FLDNAME=spec_param
+
+letter_opt=
+for i in $*
+do
+	case $letter_opt in
+	-o)
+		ORDER=$i
+		letter_opt= ;;
+	-x)
+		X_OPT=-x$i
+		letter_opt= ;;
+	-f)
+		FLDNAME=$i
+		letter_opt= ;;
+	-r)	
+		R_OPT = -r$i
+		letter_opt= ;;
+	"")
+		case $i in
+		-o)
+			letter_opt=-o ;;
+		-o*)
+			ORDER=`echo $i | awk '{print substr($0, 3)}'`;;
+		-f)
+			letter_opt=-f ;;
+		-f*)
+			FLDNAME=`echo $i | awk '{print substr($0, 3)}'`;;
+		-r)
+			letter_opt=-r ;;
+		-r*)
+			R_OPT=-r`echo $i | awk '{print substr($0, 3)}'`;;
+		-x)
+			letter_opt=-x ;;
+		-x*)
+			X_OPT=-x`echo $i | awk '{print substr($0, 3)}'`;;
+		*) 	
+			if test $infilename
+			then 
+				outfilename=$i
+			else
+				infilename=$i
+			fi;;
+		esac
+	esac
+done
+
+FLDNAMEOUT="$FLDNAME"_d"$ORDER"
+
+case $ORDER in
+1 | 2 | 3 | 4 | 5)
+	FLTNAME=`get_esps_base`/lib/filters/diff$ORDER.filt;;
+*)
+	echo "nodiff: order $ORDER out of range - exiting."
+	exit 1 ;;
+esac
+
+if test ! -r $FLTNAME 
+then
+	echo "nodiff: can't find the difference file $FLTNAME"
+	exit 1
+fi
+
+case $infilename in 
+-) 
+	case $R_OPT in 
+	"")
+		cat > /tmp/nodiff_in$$ 
+		tofeasd  $X_OPT -f $FLDNAME /tmp/nodiff$$ - |\
+		filter   $X_OPT $R_OPT -F $FLTNAME - - |\
+		feafunc  $X_OPT -f samples -f $FLDNAMEOUT - - |\
+		mergefea $X_OPT -f $FLDNAMEOUT - /tmp/nodiff$$ $outfilename 
+		rm /tmp/nodiff$$ ;;
+	*)	
+		echo "nodiff: stdin not allowed with -r option - exiting."
+		exit 1 ;;
+	esac ;;
+*)
+	copysps $X_OPT $R_OPT $infilename /tmp/nodiff$$
+	tofeasd  $X_OPT -f $FLDNAME $infilename - |\
+	filter   $X_OPT $R_OPT -F $FLTNAME - - |\
+	feafunc  $X_OPT -f samples -f $FLDNAMEOUT - - |\
+	mergefea $X_OPT -f $FLDNAMEOUT - - |\
+	mergefea $X_OPT -f $FLDNAMEOUT - /tmp/nodiff$$ $outfilename 
+	rm /tmp/nodiff$$ ;;
+esac
+

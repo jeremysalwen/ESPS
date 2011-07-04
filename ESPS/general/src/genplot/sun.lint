@@ -1,0 +1,14 @@
+genplot.c:
+init.c:
+chrs.c:
+draw.c:
+gpsplot.c:
+tekplot.c:
+fearangesw.c:
+Lint pass2:
+sprintf value declared inconsistently	llib-lc(512)  ::  genplot.c(1451)
+sprintf value declared inconsistently	llib-lc(512)  ::  draw.c(126)
+sprintf value declared inconsistently	llib-lc(512)  ::  gpsplot.c(80)
+_flsbuf returns value which is always ignored
+sprintf returns value which is always ignored
+greek defined( chrs.c(155) ), but never used

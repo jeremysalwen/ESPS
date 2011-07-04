@@ -1,0 +1,130 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     nodiff - nth order difference program
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>nodiff</STRONG> <STRONG>[</STRONG> <STRONG>-o</STRONG> <EM>order</EM> ] [ <STRONG>-f</STRONG> <EM>field</EM>_<EM>name</EM> ] [ <STRONG>-r</STRONG> <EM>range</EM>  ]  [   <STRONG>-</STRONG> <STRONG>x</STRONG>
+     <EM>debug</EM>_<EM>level</EM> ] fea.in fea.out
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     <EM>Nodiff</EM> is a shell script which finds the  nth-order  differ-
+     ence  of  field  <EM>field</EM>_<EM>name</EM>  in  the  ESPS <STRONG><A HREF="../man5.html/FEA.5.html">FEA (5-ESPS)</A></STRONG> file
+     <EM>fea</EM>_<EM>in</EM> and writes the result to  the  output  file  <EM>fea</EM>.<EM>out</EM>.
+     The  name  of  the  field  in the output file is obtained by
+     appending one of _<EM>d1</EM>, ..., _<EM>d5</EM> to <EM>field</EM>_<EM>name</EM>,  in  agreement
+     with <EM>order</EM>.
+
+     The first order difference of <EM>field</EM>_<EM>name</EM> is computed element
+     -  by-element as <EM>field</EM>_<EM>name</EM>[<EM>i</EM>][<EM>recno</EM>] - <EM>field</EM>_<EM>name</EM>[<EM>i</EM>][<EM>recno</EM>-
+     <EM>1</EM>] for all elements <STRONG>i</STRONG> of the field  <EM>field</EM>_<EM>name</EM>.  The  second
+     order   difference   is  found  as  <EM>field</EM>_<EM>name</EM>[<EM>i</EM>][<EM>recno</EM>]  -<EM>2</EM>
+     <EM>field</EM>_<EM>name</EM>[<EM>i</EM>][<EM>recno</EM>-<EM>1</EM>] + <EM>field</EM>_<EM>name</EM>[<EM>i</EM>][<EM>recno</EM>-<EM>2</EM>].
+
+     <EM>Nodiff</EM> uses <STRONG><A HREF="../man1.html/tofeasd.1.html">tofeasd (1- ESPS)</A></STRONG>  to  translate  the  specified
+     field  in  the  input file into a <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD (5-ESPS)</A></STRONG> file.  The
+     output of <EM>tofeasd</EM> is piped to <STRONG><A HREF="../man1.html/filter.1.html">filter (1- ESPS)</A></STRONG>,  which  uses
+     predefined <STRONG><A HREF="../man5.html/FEA_FILT.5.html">FEA_FILT (5-ESPS)</A></STRONG> files to find the correct order
+     difference.  <STRONG><A HREF="../man1.html/feafunc.1.html">feafunc (1-ESPS)</A></STRONG> is used to give  the  filtered
+     data  the  correct field name, and <STRONG><A HREF="../man1.html/mergefea.1.html">mergefea (1-ESPS)</A></STRONG> is used
+     to combine the differenced data with the  original  data  to
+     form the output records.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following options are supported:
+
+     <STRONG>-o</STRONG> <EM>order</EM> [1]
+          determines which order  difference  to  compute;  valid
+          values  are 1 through 5.  The FEAFILT files <EM>diff1</EM>.<EM>filt</EM>,
+          ..., <EM>diff5</EM>.<EM>filt</EM> contain the  necessary  filter  coeffi-
+          cients.    They    are    found    in   the   directory
+          $ESPS_BASE/lib/filters.
+
+     <STRONG>-f</STRONG> <EM>field</EM>_<EM>name</EM> [spec_param]
+          name of the field whose difference is to be found.
+
+     <STRONG>-r</STRONG> <EM>range</EM> [1:last_in_file]
+          range of records to process.   Default  is  to  process
+          every  record  in the input file.  The <STRONG>-r</STRONG> option cannot
+          be used with standard input.
+
+     <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> [0]
+          If <EM>debug</EM>_<EM>level</EM>  is  positive,  debugging  messages  and
+          other  information  are  printed  on the standard error
+          output.  The messages proliferate  as  the  <EM>debug</EM>_<EM>level</EM>
+          increases.   If <EM>debug</EM>_<EM>level</EM> is 0 (the default), no mes-
+          sages are printed.
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     There is no paramter processing.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     Common files are not used.
+
+
+</PRE>
+<H2>ESPS HEADERS</H2><PRE>
+     All header information is copied from input to output. Addi-
+     tionally, <STRONG><A HREF="../man1.html/filter.1.html">filter (1-ESPS)</A></STRONG> adds information about the differ-
+     ence filter used.
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     None known.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man1.html/copysps.1.html">copysps (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/tofeasd.1.html">tofeasd (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/filter.1.html">filter (1-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man1.html/feafunc.1.html">feafunc (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/mergefea.1.html">mergefea (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/ESPS.5.html">ESPS (5-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man5.html/FEA.5.html">FEA (5-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD (5-ESPS)</A></STRONG>
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Program and man page by Bill Byrne.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

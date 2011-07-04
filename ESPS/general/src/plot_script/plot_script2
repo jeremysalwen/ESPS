@@ -1,0 +1,263 @@
+#! /bin/sh
+#-----------------------------------------------------------------------+
+#									|
+#   This material contains proprietary software of Entropic Speech,	|
+#   Inc.  Any reproduction, distribution, or publication without the	|
+#   prior written permission of Entropic Speech, Inc. is strictly	|
+#   prohibited.  Any public distribution of copies of this work		|
+#   authorized in writing by Entropic Speech, Inc. must bear the	|
+#   notice								|
+#									|
+#    "Copyright (c) 1987 Entropic Speech, Inc. All rights reserved."	|
+#									|
+#-----------------------------------------------------------------------+
+#									|
+#  cover function for mlplot and genplot				|
+#									|
+#  by Rodney W. Johnson, Entropic Speech, Inc.				|
+#									|
+#  This command file runs the C program mlplot or genplot, depending	|
+#  on the name by which the command file is invoked.  It pipes the	|
+#  output through various filter combinations selected by the -T	|
+#  option.								|
+#									|
+#-----------------------------------------------------------------------+
+# Sccs information: @(#)plot_script2	3.21 8/9/91 ESI
+
+
+PLOTDIR2=$PLOTDIR$
+IPR=$PLOTCOMMAND$
+SPSBIN=$SPSBIN$
+MCD=$MCD$
+XWIN=$XWIN$
+GPSTOHP=$SPSBIN/gpstohp
+
+MACH=`mach_type`
+BACKGROUND="&"
+
+if test $XWIN = YES
+then
+	case $MACH in
+	SUN3 | SUN4 | SUN386i)
+		if test x$EPLOTDEV = xsuntools
+	 	then
+	  		XWIN=NO
+			MCD=mcd
+		fi ;;
+	esac
+fi
+
+if test  $XWIN = YES
+ then
+  MACH=HP
+fi
+
+case $0 in
+mlplot)
+#    ICON=-imlplot.icon
+    XICON=" -iSINE "
+    TITLE="ESPS mlplot"
+    PLOT=$PLOTDIR2/mlplot ;;
+*/mlplot)
+#    ICON=-imlplot.icon
+    TITLE="ESPS mlplot"
+    XICON=" -iSINE "
+    PLOT=$PLOTDIR2/mlplot ;;
+genplot)
+#    ICON=-igenplot.icon
+    TITLE="ESPS genplot"
+    XICON=" -iSINE "
+    PLOT=$PLOTDIR2/genplot ;;
+*/genplot)
+#    ICON=-igenplot.icon
+    TITLE="ESPS genplot"
+    XICON=" -iSINE "
+    PLOT=$PLOTDIR2/genplot ;;
+esac
+
+
+device=$MCD
+nflag=no
+
+# Get command-line options and filenames.
+
+if test $device = mcd -a `mach_type` = M5600
+ then
+  MCD=mcd
+ else
+  MCD=$SPSBIN/$MCD
+fi
+
+WINOPT=" "
+prevarg=
+for i
+do
+    case $prevarg in
+    -T)
+	device=$i
+	case $device in
+	mcd|xmcd|mcdigh|suntools)
+	    command=$command" "gps ;;
+	postscript)
+	    command=$command" "tek ;;
+	*)
+	    command=$command" "$device ;;
+	esac
+	prevarg= ;;
+    -t)
+	command=$command" "\"$i\"
+	prevarg= ;;
+    -V)
+	command=$command" "\"$i\"
+	prevarg= ;;
+    -W)
+        WINOPT=$i
+        prevarg= ;;
+    "")
+	case $i in
+	-x)
+	    set -x
+	    prevarg= ;;
+	-T)
+	    command=$command" "$i
+	    prevarg=-T ;;
+	-T*)
+	    device=`echo $i | awk '{print substr($0, 3)}'`
+	    case $device in
+	    hp|mcd|mcdigh|xmcd|suntools)
+		command=$command" "-Tgps ;;
+	    postscript)
+	        command=$command" "-Ttek ;;
+	    *)
+		command=$command" "-T$device ;;
+	    esac ;;
+	-t)
+	    command=$command" "$i
+	    prevarg=-t ;;
+	-t*)
+	    command=$command" "-t" "\"`echo $i \
+				    | awk '{print substr($0, 3)}'`\" ;;
+        -W)
+            prevarg=-W ;;
+        -W*)
+	    WINOPT=`echo $i | awk '{print substr($0, 3)}'` ;;
+	-V)
+	    command=$command" "$i
+	    prevarg=-V ;;
+	-V*)
+	    command=$command" "-V" "\"`echo $i \
+				    | awk '{print substr($0, 3)}'`\" ;;
+	-n)
+	    command=$command" "$i
+	    nflag=yes ;;
+	-)
+	    BACKGROUND=" "
+	    command=$command" "$i 
+	    prevarg= ;;
+	
+	*)
+	    command=$command" "$i ;;
+	esac;;
+    esac
+done
+
+case $prevarg in
+-t)
+    echo $PLOT: -t requires argument.
+    exit 1 ;;
+-V)
+    echo $PLOT: -V requires argument.
+    exit 1 ;;
+-T)
+    echo $PLOT: -T requires argument.
+    exit 1 ;;
+esac
+
+
+SUN=NO
+case $MACH in
+SUN3)	SUN=YES
+	MCDOPT=-t" "\"$TITLE\""  "$ICON ;;
+SUN4)	SUN=YES
+	MCDOPT=-t" "\"$TITLE\""  "$ICON ;;
+SUN386i)	SUN=YES
+	MCDOPT=-t" "\"$TITLE\""  "$ICON ;;
+HP)	SUN=NO
+	MCDOPT=-t" "\"$TITLE\"" "$XICON ;;
+*)	MCDOPT=" "
+esac
+
+if test $device = suntools -a \( `mach_type` = SUN3 -o `mach_type` = SUN4 \)
+ then
+  XWIN=NO
+  SUNTOOLS=YES
+  MCD=mcd
+  device=mcd
+fi
+
+if test $device = mcd -a `mach_type` = M5600
+ then
+ XWIN=NO
+ SUNTOOLS=NO
+ MCD=mcd
+ MCDOPT=" "
+ BACKGROUND=" "
+fi
+
+if test $device = hp
+ then
+ XWIN=NO
+ SUNTOOLS=NO
+ MCD=$GPSTOHP
+ MCDOPT=" "
+ BACKGROUND=" "
+ WINOPT=" "
+fi
+
+
+# Build and execute command.
+
+command=$PLOT" "$command
+
+case $device in
+gps)
+    sh -c "$command" ;;
+hp|mcd|xmcd|mcdigh)
+    case $nflag in
+    yes)
+	sh -c "$command" ;;
+    no)
+    if test -n "$ESPS_TEMP_PATH"
+    then 
+	if test -d $ESPS_TEMP_PATH
+	  then
+	    tmp=$ESPS_TEMP_PATH/plot$$
+	  else
+	    tmp=/usr/tmp/plot$$
+	  fi
+        else
+	   tmp=/usr/tmp/plot$$
+        fi
+    	command=$command" >"$tmp
+    	eval "$command"
+    	if test -s $tmp
+     	then
+		command=cat" "$tmp"  | "$MCD" "$MCDOPT" "$WINOPT" "$BACKGROUND
+		eval "$command"
+     	else
+		rm -f $tmp
+		exit 1
+    	fi
+    	sleep 5
+    	rm -f $tmp
+    esac;;
+tek)
+    sh -c "$command" ;;
+postscript|hardcopy|imagen)
+    command=$command" | "$IPR
+    sh -c "$command" ;;
+no_mcd)
+    echo This version cannot plot on the screen.
+    echo Check installation parameters.
+esac
+exit 0

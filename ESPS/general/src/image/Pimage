@@ -1,0 +1,18 @@
+# @(#)Pimage	1.1	7/1/88	EPI
+# default parameter file for image
+float minlevel ?= 0: "max data level for solid white";
+float maxlevel ?= 40: "min data level for solid black";
+string orientation ?= "default": "default or rotated?";
+int startrec ?= 1: "first record to display";
+int nrecs ?= 0: "number of records to display";
+string x_text ?= "Time": "title at bottom";
+string algorithm ?= "fs2": "gray-scale method";
+int b_scale ?= 0: "scale for axis labels, titles, etc.";
+string function ?= "log": "function to apply to data";
+float gain_low_lim ?= -25: "rel. lower limit for gain normalization feature";
+float gain_high_lim ?= 0: "rel. upper limit for gain normalization feature";
+string record_spacing ?= "tag": "record spacing uniform or by tag?";
+int width ?= 500: "width of image in pixels";
+int height ?= 150: "height of image in pixels";
+string device ?= "mcd": "output device";
+string y_text ?= "Frequency": "title at side";

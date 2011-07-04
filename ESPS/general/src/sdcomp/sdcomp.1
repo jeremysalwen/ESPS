@@ -1,0 +1,191 @@
+.\" Copyright (c) 1987,1988,1989 Entropic Speech, Inc.; All rights reserved
+.\" @(#)sdcomp.1	3.3 03 Apr 1997 ESI
+.TH SDCOMP 1\-ESPS 03 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+sdcomp \- listening program to compare two sampled data files
+.SH "SYNOPSIS"
+.B sdcomp
+[
+.BI \-b " shift-value"
+] [ 
+.BI \-c " channel"
+] [
+.BI \-d " delay"
+] [
+.BI \-{fprs} " range"
+] [
+.BI \-g " gain"
+] [ 
+.BI \-i 
+] [
+.BI \-R " nrepeat"
+] [
+.BI \-n " step"
+] [
+.BI \-w " width"
+] [
+.BI \-x " debug-level"
+]
+.I sdfile
+[
+.I sdfile ...
+]
+.SH "DESCRIPTION"
+.PP
+.I Sdcomp 
+cycles through one or more ESPS FEA_SD(5\-ESPS) files playing a portion from 
+each file by means of the local play(1\-ESPS) program.
+.I Sdcomp
+assumes that the local play program has the same command line 
+options as 
+.I mcplay.  
+.PP
+After 
+.I sdcomp
+starts and after a portion is played from each file, the user is
+prompted for the next action.  The following commands are then 
+accepted (<CR> refers to the "return" key):
+.RS 5
+.nf
+
+<CR>		play next portion from each file
+r<CR>		repeat current portion from each file
+b<CR>		back up and play previous portion from each file
+c<CR>		continue playing portions without stopping for commands
+q<CR>		quit
+.fi
+.RE 
+
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file processing is the same as that for 
+.I mcplay.
+.SH ESPS HEADERS
+.PP
+ESPS headers are treated as in 
+.I mcplay.
+.SH OPTIONS
+.PP
+The flags
+.B bcgirwx
+are passed to the local play program
+every time that program is invoked.  In addition, the following
+options are supported:  
+.TP
+.BI \-{prsf} " range"
+Selects the first portion that will be played from each file, with 
+syntax as in
+.I mcplay.  
+The default is 
+.BR \-s 0:1.  
+If the part of the range specification after the colon is omitted
+(giving only the starting point), the defaults are as follows:
+.RS 5
+.nf
+
+	\fB\-p\fR<start>:+7999
+	\fB\-r\fR<start>:+7999
+	\fB\-s\fR<start>:+1
+	\fB\-f\fR<start>:+79
+.fi
+.RE
+.IP
+These give approximately the same length (1 second) when the 
+sampling frequency is 8000 Hz., but not otherwise.  
+.IP
+The effect of the 
+.B \-{psrf} 
+option is to select the 
+starting position and length of the portion.  This length remains 
+in effect for subsequent portions that are played, while the starting 
+positions of subsequent portions are determined by the
+.B -n
+option.  Note that \fB-p\fP and \fB-r\fP are synonyms. 
+.TP
+.BI \-d " delay"
+If
+.B \-d
+is not specified,
+.I sdcomp
+passes all the filename arguments to one invocation of the play program
+each time a portion is played from the files.  If
+.B \-d
+is specified, then each filename is passed to a separate invocation of
+the play program, which is followed by a pause of
+.I delay
+seconds.  (Note that specifying
+.B \-d0
+is not equivalent to omitting the option entirely.)
+.TP
+.BI \-w " width \fR[100]\fP"
+This option defines the frame width. The width is ignored unless the
+.B \-f
+option is also specified.
+.TP
+.BI \-n " step"
+Selects the amount by which the starting position is changed from 
+one portion of each file to the next portion of each file.  If the 
+.I step 
+is less than the portion length (determined by 
+.B \-{prsf}
+), the portions will overlap.  If it is greater than the portion length, 
+the portions played will skip segments of the files.  The 
+.I step
+must be expressed in the same
+units as the 
+.I range.  
+That is, if 
+.I range
+is specified with 
+.B \-p
+or 
+.B \-r
+(points), the
+.I step
+is assumed to be points, etc.  The default for 
+.I step
+equals the length of the initial portion specified 
+by the 
+.B \-{prsf}
+option.  
+
+
+.SH "FUTURE CHANGES"
+.PP
+The user should be able to change the order in which files are played. 
+.PP
+There should be an option that causes 
+.I sdcomp
+to select the order in which files are played and report that order 
+after all of the speech has been played.  
+.PP
+The user should be able to change the position, portion length, and
+step size dynamically.  
+.PP
+The user should be able to specify a separate gain
+.RB ( \-g )
+or shift-value
+.RB ( \-b )
+for each input file.  
+.SH "SEE ALSO"
+.PP
+play(1\-ESPS), FEA_SD(5\-ESPS)
+.SH "WARNINGS"
+.PP
+
+.SH "BUGS"
+.PP
+.I
+A 
+.I range
+or
+.I step 
+value in seconds is restricted to integer values (this reflects 
+a bug in 
+.I play
+).
+.SH "AUTHOR"
+.PP
+Manual page by John Shore; program by Rodney Johnson
+

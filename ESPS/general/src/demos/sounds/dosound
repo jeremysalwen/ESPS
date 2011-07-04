@@ -1,0 +1,31 @@
+#! /bin/sh
+# display new sound waveform and spectrogram
+# @(#)dosound	1.7 1/18/93 ERL
+
+demo_temp=`cat $HOME/.demo_temp`
+
+sdfile=files/audio/$1.sd
+
+specfile=$demo_temp/$1.fspec
+
+send_xwaves kill 
+
+sleep 1 
+
+send_xwaves make name sounds file $sdfile loc_x 0 loc_y 510 height 160
+
+sleep 1
+
+# tell xspectrum to generate FFT
+
+send_xwaves send make name sounds file $sdfile time .05
+
+play -q $sdfile
+
+sleep 1
+
+echo "Computing spectrogram..."
+
+send_xwaves sounds spectrogram file $sdfile type wideband loc_x 465 loc_y 207 start 0 end 1.0
+
+

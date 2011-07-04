@@ -1,0 +1,413 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)clip.1	1.2 4/2/97 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH CLIP 1\-ESPS 4/2/97
+.if n .ds - ---
+.if t .ds - \(em\h'-0.2m'\(em
+.SH "NAME"
+
+clip \- apply clipping or center clipping to FEA fields
+.SH "SYNOPSIS"
+.B clip
+[
+.BI \-c " range"
+] [
+.BI \-f " input_field"
+[
+.BI \-f " output_field"
+]] [
+.BI \-m " range"
+] [
+.BI \-r " range"
+] [
+.BI \-x " debug_level"
+] [
+.BI \-C " const_value"
+] [
+.BI \-P " params"
+]
+.I "input output"
+.SH "DESCRIPTION"
+.PP
+.I clip
+accepts a FEA file \fIinput\fP containing arbitrary fields.
+It produces a FEA file \fIoutput\fP with records that are copies of the
+input records except that there is a field
+.I output_field
+containing the results of applying specified clipping or ``center-clipping''
+operations to each element of the selected field
+.I input_field.
+It is possible to limit the the field elements to a given maximum or minimum
+(see the
+.B \-m
+option) or to replace all values in a given range with a given constant value
+(see
+.B \-c
+and
+.BR \-C ).
+The output field has the same size, rank, dimensions, and data type as
+.I input_field.
+If run on complex data, the program
+will simply treat the real and imaginary parts separately as real data.
+Normally,
+.I output_field
+is a new field, different from any in the input file.
+However, the output field may replace an existing field, including
+.I input_field.
+In that particular case, the program transforms the contents of
+.I input_field
+by applying the specified operations to each element.
+.PP
+If \fIinput\fP is "\-", standard input is used for the input file.
+If \fIoutput\fP is "\-", standard output is used for the output file.
+The input and output should not be the same file;
+however, it is okay to run the program as a filter by specifying "\-"
+for both input and output.
+.PP
+Note that the
+.B \-f
+option is used to specify both the input and output field names.
+If an output name isn't specified (the option is used once),
+the output name defaults to the input name followed by 
+the suffix "_CLIP".
+.PP
+.I clip
+preserves FEA subtype information\*-for example,
+if the input is a FEA_SPEC file, the output file header will contain the
+subtype code indicating a FEA_SPEC file,
+and the output file will in fact be a FEA_SPEC file
+if one precaution is observed.
+Namely, if the output field is one that the FEA subtype specification
+subjects to requirements,
+it is the user's responsibility to see that the requirements are not violated.
+It is always legitimate to add a new field with a name not mentioned in the
+subtype specification.
+.PP
+For scaling and shifting data, type conversion,
+and more general computations and transformations, see programs
+.IR copysd (1-ESPS),
+.IR copysps (1-ESPS),
+.IR feafunc (1-ESPS),
+and
+.IR select (1-ESPS).
+.SH OPTIONS
+.PP
+The following options are supported.  Default values are shown in brackets.
+.TP
+.BI \-c " ctr_min" : "ctr_max" "\fR [(none):(none)]"
+.TP
+.BI \-c " ctr_min" :+ "incr"
+In the first form,
+a pair of real numbers specifies a range for ``center-clipping.''
+(Decimal point and "e" followed by exponent are optional.)
+Input values between
+.I ctr_min
+and
+.I ctr_max
+are replaced in the output with
+a specified value
+.I const_value.
+That is the argument of the
+.B \-C
+option if
+.B \-C
+is specified.
+Otherwise
+.I const_value
+is taken from the parameter file, and if no value is found there,
+the default value of 0 is used.
+The second form specifies the same range as the first with
+.IR ctr_max " = " ctr_min " + " incr.
+If
+.B \-c
+is specified,
+.I ctr_min
+and
+.I ctr_max
+(or
+.I ctr_min
+and
+.IR incr )
+must both be given explicitly,
+and neither value is read from the parameter file.
+.TP
+.BI \-f " field_name" "\fR [samples]"
+.TP
+.BI \-f " field_name" "\fR [(input field name)_CLIP]"
+If this option is used once, it specifies the name of the source field
+\fIinput_field\fP in \fIinput\fP.  If it is used twice, the second
+time it specifies the name of the destination field \fIoutput_field\fP
+in \fIoutput\fP.  The default name for the input field is "samples".
+The default name for the output field is the input field
+followed by the suffix "_CLIP".
+If the output field has the same name as some field in the input file,
+the original contents of the field are lost.
+A warning message is normally printed in that case.
+However, if the output field is specified as "\-", the name of the input
+field is used instead, and the warning message is suppressed.
+.TP
+.BI \-m " clip_min" : "clip_max" "\fR [(minus infinity):(plus infinity)]"
+.TP
+.BI \-m " clip_min" :+ "incr"
+In the first form, a pair of real numbers specifies a range for clipping.
+(Decimal point and "e" followed by exponent are optional.)
+Input values of
+.I clip_min
+or less are replaced in the output with
+.I clip_min,
+and
+input values of
+.I clip_max
+or greater are replaced in the output with
+.I clip_max.
+Either
+.I clip_min
+or
+.I clip_max
+may be omitted, implying the default:  no clipping on that side.
+The second form specifies the same range as the first with
+.IR clip_max " = " clip_min " + " incr.
+If this option is specified, neither
+.I clip_min
+nor
+.I clip_max
+is read from the parameter file.
+.TP
+.BI \-r " start" : "last" "\fR [1:(last in file)]"
+.TP
+.BI \-r " start" :+ "incr"
+.TP
+.BI \-r " start"
+In the first form, a pair of unsigned integers specifies the range
+of records to be processed.
+Either
+.I start
+or
+.I last
+may be omitted; then the default value is used.
+If
+.IR last " = " start " + " incr,
+the second form (with the plus sign) specifies the same range as the first.
+The third form (omitting the colon) specifies a single record.
+The \fB\-r\fP overrides the values of \fIstart\fP and \fInan\fP from 
+the parameter file.
+The value of
+.I nan
+becomes 1 +
+.IR last " \- " start
+(first form), 1 +
+.I incr
+(second form), or 1 (third form).
+.TP
+.BI \-x " debug_level" "\fR [0]"
+A positive value specifies
+that debugging output be printed on the standard error output.
+Larger values result in more output.
+The default is 0, for no output.
+.TP
+.BI \-C " const_value" " \fR [0]"
+Input values in the range from
+.I ctr_min
+to
+.I ctr_max
+(see
+.BR \-c )
+are replaced with this value in the output.
+This option is ignored unless
+.B \-c
+is also specified or the parameter-file values
+.I ctr_min
+and
+.I ctr_max
+are given.
+This value overrides any value for
+.I const_value
+specified in a parameter file.
+If the option is not specified and no value is specified in a parameter file,
+the default of 0 is used.
+.TP
+.BI \-P " param" "\fR [params]\fP"
+The name of the parameter file.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file does not have to be present,
+since all the parameters have default values.
+The following parameters are read, if present, from the parameter file:
+.TP
+.I "ctr_min \- float"
+.TP
+.I "ctr_max \- float"
+.IP
+These are the limits of the interval for ``center-clipping'':
+the operation described under the
+.B \-c
+option.
+The values in the parameter file are ignored if the option is specified.
+If
+.B \-c
+is not specified,
+the parameter file must either contain both of these values or contain neither.
+In the former case center-clipping is done, and in the later case it isn't.
+.TP
+.I "clip_min \- float"
+.TP
+.I "clip_max \- float"
+.IP
+These are the limits of the inverval
+for the clipping operation described under the
+.B \-m
+option.
+The values in the parameter file are ignored if the option is specified.
+If
+.B \-m
+is not specified, then
+.I clip_min
+is used as a lower bound for clipping if present, and
+.I clip_max
+is used as an upper bound for clipping if present.
+.TP
+.I "const_value \- float"
+.IP
+This is the constant replacement value for the center-clipping operation
+as described under the
+.B \-c
+option.
+The value in the parameter file is ignored if the
+.B \-C
+option is specified or if center-clipping is not done.
+If
+.I const_val
+is not specified either with the
+.B \-C
+option or in the parameter file, the default value of 0 is used.
+.TP
+.I "input_field \- string"
+.IP
+This is the name of the selected data field in
+.I input.
+The default is "samples".  A parameter-file value (if present) is overridden
+by the first use of the \fB\-f\fP option.  
+.TP
+.I "output_field \- string"
+.IP
+This is the name of the field in
+.I output
+in which the result values are stored.
+The default name is that of \fIinput_field\fP with a suffix "_CLIP".
+A parameter file value (if present) is overridden by the second use of
+the \fB\-f\fP option.
+.TP
+.I "start \- integer"
+.IP
+This is the first record of \fIinput\fP to process.  The default is 1.
+It is not read if the \fB\-r\fP option is used.
+.TP
+.I "nan \- integer"
+.IP
+This is the number of records to process.  It is not read if the
+\fB\-r\fP option is used.  A value of zero means all subsequent
+records in the file; this is the default.
+.PP
+Remember that command line option values override parameter-file
+values.
+.SH "ESPS COMMON"
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overridden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+ESPS Common is not processed by 
+.I clip
+if \fIinput\fP is 
+standard input.  Otherwise, provided that the Common file is newer 
+than the parameter file, and provided that the \fIfilename\fP entry in 
+Common matches \fIinput\fP, the Common values for \fIstart\fP and 
+\fInan\fP override those that may be present in the parameter file. 
+.PP
+The following items are written into the ESPS Common file 
+provided that \fIoutput\fP is not <stdout>.  
+.IP
+.I "start \- integer"
+.IP
+The starting point from the input file.
+.sp
+.I "nan \- integer"
+.IP
+The number of points in the selected range.
+.sp
+.I "prog \- string"
+.IP
+This is the name of the program 
+.RI ( clip
+in this case).
+.sp
+.I "filename \- string"
+.IP
+The name of the input file \fIinput\fP.
+.SH ESPS HEADERS
+.PP
+The \fIoutput\fP header is a new FEA file header.  All generic header
+items are copied from the input header to the output header.  The
+generic header item \fIstart_time\fP is written with a value computed
+by taking the \fIstart_time\fP value from the header of the input file
+(or zero, if such a header item doesn't exist) and adding to it the
+relative time from the first record in the file to the first record
+processed.  The computation of \fIstart_time\fP depends on the 
+value of the generic header item \fIrecord_freq\fP in the input file.
+If this item is not present, \fIstart_time\fP is just copied from 
+the input file to the output.  
+.PP
+The items \fIstart\fP and \fInan\fP are rewritten (if they already
+exist) to contain the starting record number and number of records
+processed.
+As usual, the command line
+is added as a comment, and the header of \fIinput\fP is added as a
+source file to \fIoutput\fP.
+.SH "FUTURE CHANGES"
+.PP
+.SH "SEE ALSO"
+.PP
+.nf
+\fIaddfea\fP(1\-\s-1ESPS\s+1), \fIaddgen\fP(1\-\s-1ESPS\s+1), \fIcopysps\fP(1\-\s-1ESPS\s+1), 
+\fIcopysd\fP(1\-\s-1ESPS\s+1), \fIframe\fP(1\-\s-1ESPS\s+1), \fImergefea\fP(1\-\s-1ESPS\s+1),
+\fIpwr\fP(1\-\s-1ESPS\s+1), \fIselect\fP(1\-\s-1ESPS\s+1), \fIfeafunc\fP(1\-\s-1ESPS\s+1),
+FEA(5\-\s-1ESPS\s+1)
+.fi
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+If an unknown option is specified, if
+.B \-f
+is used more than twice, or if the number of file names is wrong,
+.I clip
+prints a synopsis of command-line usage and exits.
+The program exits with an error message if any of the following are true: 
+.I input
+does not exist or is not an ESPS FEA file; 
+.I input
+is the same as
+.I output
+(but not "\-");
+the \fIinput_field\fP does not exist in
+.I input;
+the data type of
+.I input_field
+is nonnumeric;
+a bad range is specified with
+.BR \-r .
+The program prints a warning and continues if an explicit
+.I output_field
+(that is, not specified as "\-") already exists in
+.I input.
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Manual page and program by by Rod Johnson,
+based on John Shore's
+.I feafunc.

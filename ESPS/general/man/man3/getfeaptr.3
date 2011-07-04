@@ -1,0 +1,64 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)getfeaptr.3	1.6 06 May 1997 ESI
+.TH GET_FEA_PTR 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+get_fea_ptr \- get pointer to storage for field in FEA file record 
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/fea.h>
+
+char *
+get_fea_ptr(rec, name, hd)
+struct fea_data *rec;
+char *name;
+struct header *hd;
+.fi
+.SH DESCRIPTION
+.I get_fea_ptr
+returns a pointer to the data associated with a field (\fIname\fR) 
+in the ESPS Feature
+file pointed to by \fIhd\fR at record \fIrec\fR.
+The function returns type (char *) and it must be coerced to the correct
+type.
+.PP
+If \fIname\fR is not a defined field name in the Feature file (or is
+NULL) the function returns NULL.
+.PP
+This function must be called after
+\fIallo_fea_rec\fR(3\-ESPSu) and need not be called more than once for any
+given record\-header set. 
+.SH EXAMPLE
+.nf
+short *sp;
+struct fea_data *rec;
+
+\fI/* allocate a record */\fR
+rec = allo_fea_rec(hd);
+
+\fI/* get a pointer to the data for "short1" */\fR
+sp = (short *)get_fea_ptr(rec,"short1",hd);
+
+\fI/* get a record */\fR
+if(get_fea_rec(rec,hd,file) == EOF) \fI eof ...\fR
+
+\fI/* access the data */\fR
+alpha = *sp + 100;
+.fi
+.SH DIAGNOSTICS
+.PP
+If \fIhd\fR does not point to a ESPS Feature file 
+or \fIrec\fR is NULL a message is printed and
+the program terminates with an exit 1.
+.SH BUGS
+None known.
+.SH "SEE ALSO"
+.nf
+allo_fea_rec(3\-ESPSu), add_fea_fld(3\-ESPSu), get_fea_deriv(3\-ESPSu),
+get_fea_rec(3\-ESPSu), put_fea_rec(3\-ESPSu), set_fea_deriv(3\-ESPSu),
+FEA(5\-ESPS)
+.fi
+.SH AUTHOR
+Alan Parker

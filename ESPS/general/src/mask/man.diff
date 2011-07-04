@@ -1,0 +1,118 @@
+.\" Copyright (c) 1996 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)mask.1	1.3 1/26/96 ERL
+.ds ]W (c) 1996 Entropic Research Laboratory, Inc.
+.TH  MASK 1\-ESPS 1/26/96
+.SH NAME
+
+.nf
+mask \- masks/fades out or mixes segments of sampled data file
+.fi
+.SH SYNOPSIS
+.B
+mask
+[
+.BI \-f " mask_field"
+][
+.BI \-s " subfile"
+][
+.BI \-x " debug_level"
+]
+.I maskfile
+.I infile
+.I outfile
+.SH DESCRIPTION
+\fIMask\fR is useful for fading or masking out selected segments of an
+utterance.  Both the input and output files, \fIinfile\fR and
+\fIoutfile\fR are FEA_SD files of SHORT data type.  The file
+\fImaskfile\fR is a FEA file with the field \fImask_field\fR that
+contains a masker to fade or mask out segments in \fIinfile\fR.  Data
+in \fIoutfile\fR is a result of the masker multiplied with the data in
+\fIinfile\fR.  The file \fIsubfile\fR is an optional FEA_SD file of
+SHORT data type with sampling frequency the same as \fIinfile\fR.  If
+\fIsubfile\fR is specified, the "masker" signal should be bounded in
+the range of 0 and 1, since it will be used to fade between the infile
+and subfile.  Each sampled data point in \fIoutfile\fR is the sum of
+the masker multiplied with the data point in \fIinfile\fR and (1 -
+masker) multiplied with the data point in \fIsubfile\fR.
+.PP
+\fIMask\fR is particularly useful for gating out the 
+unvoiced segments of an utterance or to substitute unvoiced regions from
+one version of an utterance into another utterance.  Use \fIget_f0(1-ESPS)\fR
+to obtain voicing estimate in the \fIprob_voice\fR field of its output
+file as decisions to mask out the unvoiced regions in \fIinfile\fR.
+.PP
+If the record frequency in \fIinfile\fR is larger than that in 
+\fImaskfile\fR, the masker in \fImaskfile\fR is interpolated
+linearly.  
+.PP
+If the starting times, as indicated by the generic header 
+item \fIstart_time\fR,
+and ending times are different for \fImaskfile\fR and \fIinfile\fR,
+\fIoutfile\fR starts with the later starting time and ends
+with the earlier ending time.  The substitution
+signal in \fIsubfile\fR must start no later than the the later staring time
+of \fIinfile\fR and \fImaskfile\fR, and end no earlier than the earlier 
+ending time of these files.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-f " mask_field \fR["prob_voice"]\fP"
+The field name in the input FEA file \fImaskfile\fR that contains masker
+signal
+for masking/fading data segments in \fIinfile\fR or mixing segments in 
+\fIinfile\fR
+and \fIsubfile\fR.  The default name is \fI"prob_voice"\fR
+as the field name for probablity of voicing for file produced by 
+\fIget_f0 (1-ESPS)\fR.  This field
+is a scalar field of FLOAT data type.  If the \fB-s\fR option is used,
+this field should be bounded between 0 and 1; otherwise, a warning message
+is sent to \fIstderr\fR, and an undefined result is produced.
+.TP
+.BI \-s " subfile"
+The file name of a FEA_SD file which will be mixed with that of 
+\fIinfile\fR in the proportion to the masker specified by the 
+\fImask_field\fR field in \fImaskfile\fR.
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If 
+.I debug_level
+is positive,
+.I mask
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the  
+.I debug_level
+increases.  If \fIdebug_level\fP is 0 (the default), no messages are
+printed.  
+.SH ESPS PARAMETERS
+No ESPS parameter processing is supported
+.PP
+.SH ESPS COMMON
+No ESPS common processing is supported
+.PP
+.SH ESPS HEADERS
+\fIMask\fR writes the usual generic header items \fIrecord_freq\fR and
+\fIstart_time\fR in the output file header.
+.PP
+.SH FUTURE CHANGES
+.PP
+.SH EXAMPLES
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+mergefea(1-ESPS)
+.PP
+.SH AUTHORS
+David Talkin, Derek Lin
+.PP
+
+
+
+
+

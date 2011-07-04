@@ -1,0 +1,100 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)addstr.3	1.5 09 May 1997 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH ADDSTR 3\-ESPSu 09 May 1997
+.SH NAME
+.nf
+addstr \- append a string to a null-terminated array of strings
+
+strlistlen \- return number of strings in a null-terminated array of strings
+
+.fi
+.SH SYNOPSIS
+.ft B
+.nf
+
+evoid
+addstr(str, arr)
+char	*str;
+char	***arr;
+
+int
+strlistlen(strlist)
+char **strlist;
+
+.SH DESCRIPTION
+.PP
+If the location
+.RI * arr
+to which
+.I arr
+points (typically a variable in the calling program) is not NULL, it
+must contain a pointer to the beginning of a block of storage
+allocated by
+.IR malloc (3C)
+or
+.IR calloc (3C)
+and containing a NULL-terminated string array \- that is, an array of
+elements of type (char *), the last of which is (char *) NULL.  Such
+arrays are used, for instance, to hold lists of field names in FEA
+file headers and to hold lists of values for CODED items in FEA file
+headers and generic header items.
+.PP
+If the location 
+.RI * arr
+to which
+.I arr
+points is NULL, then \fIaddstr\fP allocates the necessary initial 
+storage and assigns it to 
+.RI * arr.  
+.PP
+In both cases, the function then reallocates the storage with
+.IR realloc (3C)
+to hold one more element,
+inserts
+.I str
+as a new last element (overwriting the terminating NULL),
+and follows it with a new terminating NULL.
+The pointer in
+.RI * arr
+is updated to point to the beginning of the reallocated block.
+.PP
+The function \fIstrlistlen\fP returns the current number of 
+strings in the string array \fIstrlist\fP, and is intended for 
+use on string arrays maintained by \fIaddstr\fP.  
+.SH EXAMPLE
+.PP
+A program may allow a command-line option
+to be specified several times with different arguments.
+Here is one way to get a list of the arguments.
+(This is a quadratic algorithm and not recommended for building up
+extremely long arrays.)
+.nf
+
+extern int	optind;
+extern char	*optarg;
+int		ch;
+char		**fields = NULL;
+
+while ((ch = getopt(argc, argv, "f:\fI<other option letters>\fP") != EOF)
+	switch (ch)
+	{
+	case 'f':
+		addstr(optarg, &fields);
+		break;
+	\fI<other cases>\fP
+	}
+
+.fi
+.SH DIAGNOSTICS
+ESPS assertion failed:  can't reallocate memory for string array
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+\fIatoarrays\fP (3\-\s-1ESPSu\s+1), \fIlin_search\fP(3\-\s-1ESPSu\s+1), \fIlin_search2\fP (3\-\s-1ESPSu\s+1), 
+FEA (5\-\s-1ESPS\s+1), \fIgenhd_codes\fP (3\-\s-1ESPSu\s+1), \fIgenhd_list\fP(3\-\s-1ESPSu\s+1)
+.fi
+.SH AUTHOR
+Rodney Johnson, with mods by John Shore

@@ -1,0 +1,86 @@
+.\" Copyright (c) 1988 Entropic Speech, Inc. All rights reserved.
+.\" @(#)featospec.1	1.3	01 Apr 1997	ESI
+.TH FEATOSPEC 1\-ESPS 01 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+featospec \- convert FEA_SPEC file to SPEC file
+.SH "SYNOPSIS"
+.B featospec
+[
+.BI \-x " debug_level"
+]
+.I "input.fea output.spec"
+.SH "DESCRIPTION"
+.PP
+.I Featospec
+accepts an ESPS FEA_SPEC file
+.I input.fea
+and writes an ESPS SPEC file
+.I output.spec
+containing the same number of records with the same information in each record.
+If
+.I input.fea
+is "\-", standard input is used for the input file.
+If
+.I output.spec
+is "\-", standard output is used for the output file.
+.SH "OPTIONS"
+.PP
+The following option is supported:
+.TP 
+.BI \-x " debug_level"
+Positive values of
+.I debug_level
+cause debugging information to be printed.
+The default value is 0, which suppresses the messages.
+.SH "ESPS PARAMETERS"
+.PP
+No parameter file is read.
+.SH "ESPS COMMON"
+.PP
+The ESPS common file is not accessed.
+.SH ESPS HEADERS
+The output header is a new SPEC file header, with appropriate items
+copied from the input header.
+The information in the generic header items
+.I freq_format,
+.I spec_type,
+.I contin,
+.I num_freqs,
+and
+.I frame_meth
+and, if necessary,
+.I freqs,
+.I sf,
+and
+.I frmlen
+is copied into the like-named elements
+of the type-specific part of the output header.
+(See FEA_SPEC(5-ESPS) for details on
+when these last three items are required.)
+Input generic header items that are not so used are copied into
+generic header items in the output header.
+As usual, the command line is added as a comment, and the header of
+.I input.fea
+is added as a source file to
+.I output.spec.
+.SH "FUTURE CHANGES"
+.PP
+None planned.
+.SH "SEE ALSO"
+.nf
+\fISPEC\fP (5-ESPS), \fIFEA\fP (5-ESPS), \fIFEA_SPEC\fP(5-ESPS)
+.fi
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+.I Featospec
+exits with an error message
+if the command line contains unrecognized opions or too many or too
+few file names or
+if required header items in the input file are missing or of the wrong type.
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Manual page and program by Rodney Johnson. 

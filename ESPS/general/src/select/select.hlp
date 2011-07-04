@@ -1,0 +1,83 @@
+@(#)select.hlp	3.1 9/9/87 ESI
+
+@comfile 	- select will read commands from the file comfile
+
+!command 	- shell escape
+
+CLEar		- clear buffer
+
+CLOse		- close the log file, if any.
+
+EVal QUERY 	- print the value of the QUERY expression
+
+From files	- close input files, opens new ones
+
+HEAder flags 	- prints input headers with psps -x or listed flags
+
+HELp		- prints help file
+
+Log logfile 	- open logfile and log commands
+
+Select QUERY 	- adds selected records from input files to buffer 
+
+SHow Buffer 	- prints the records in the record buffer.
+
+SHow FIelds 	- prints the field definitions of input files
+
+SHow FRom flags	- run psps (with flags) on input files
+
+SHow LOg 	- print name of open log file
+
+SHow LAst 	- prints the last record in the select buffer
+
+SHow Select QUERY-displays selected records from input files
+
+SHow To flags	- runs psps (with flags) on output file
+
+SIze		- prints the number of records in the record buffer.
+
+To output [ (With|Without) fieldname1, fieldname2, ...]
+
+		- open an output file; if it's a new file, the with/without 
+		  clause can be used to restrict the fields stored
+
+Quit		- quit
+
+Undo		- undo the previous Select command 
+
+Version 	- prints out the version number and the date of select
+
+Write		- write buffer to output and clear buffer
+
+     QUERY SYNTAX
+
+A QUERY consists of an expression with the following form:
+
+<expr> ::= <value>
+     | <field_name>{[<index>]}
+     | <character_string>
+     | $<external_function>
+     | <function> (<field_name>)
+     | <function> (<expr>)
+     | ( <expr> )
+     | <expr> <arith_op> <expr>
+     | <expr> <rel_op> <expr>
+     | - <expr>
+
+<rel_op> = ==, >, >=, <, <=, &&, &, ||, |
+
+<arith_op> = +, -, *, /, ^, 
+
+     FUNCTIONS
+
+The available built in functions are:
+
+Functions on Expressions = abs, atan, cos, exp, int, log, log10, sqrt, tan
+
+Functions on Fields = max, mean, min, prod, size, sum
+
+    BUILT-IN FIELD NAMES
+
+Built in Field Names = tag, REC, FILE
+
+

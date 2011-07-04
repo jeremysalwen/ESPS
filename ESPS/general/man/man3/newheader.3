@@ -1,0 +1,74 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)newheader.3	1.7 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH NEW_HEADER 3\-ESPSu 18 Apr 1997
+.SH NAME
+new_header \- create a new, all zero ESPS header structure
+.SH SYNOPSIS
+.ft B
+struct header *
+.br
+new_header (type) 
+.br
+int type;
+.ft
+.SH DESCRIPTION
+.I new_header 
+allocates memory for a new ESPS header structure and returns a pointer
+to the header.   If \fItype\fR is zero, then only the part of the header
+common to all ESPS header types is allocated.   If \fItype\fR is one of the
+legal ESPS file types (as defined in \fI<esps/ftype.h>\fR) then the type
+specific part of type \fItype\fR is allocated.     If \fItype\fR is non-zero
+and not a legal ESPS file type, then the function returns NULL.
+.PP
+The current version number of \fI<esps/header.h>\fR is put in 
+\fIcommon.hdvers\fR and the type of the header is put in
+\fIcommon.type\fR.   The current machine type code is put into
+\fIcommon.machine_code\fR.
+.PP
+The case of \fItype\fR equal zero is intended primarily for use by the
+other header routines.  There is no function provided to 
+application programs to allocate the type specific part of the header.
+.PP
+If the Unix environment variable \fBESPS_EDR\fR is defined and has a
+value of \fIon\fR, then the header item \fIcommon.edr\fR is set to
+YES, which means that this data file will be written to the disk in
+Entropic's external data representation (EDR).  Otherwise the file is
+written in the 
+host machine's native data format.
+The default action is not to have
+\fBESPS_EDR\fR defined and to write files in native format.
+File written with \fIcommon.edr\fR \fIon\fR can be read by any ESPS
+implementation on any supported machine.   Files written in native
+format will be more efficient on some machines, but might not be
+usable on all ESPS implementations.   That is, all implementations can
+read both their own representation and EDR.   In addition, some
+implementations can read their own format, EDR, and other formats (for
+example SPARC and 680X0 machines can read files in EDR, their own
+native, SUN 386i, and the DEC DS3100 (MIPs CPU)).
+.pp
+If the program needs to force the output data representation format,
+then it can reset the value of \fIcommon.edr\fR.
+.pp
+This function is usually used to create a header that is to be written
+with \fIwrite_header(3)\fR.  If it is used to create a header that is
+immediately used with the ESPS input routines to read a file, then care
+must be taken to insure that all required header items are filled in.
+.SH EXAMPLE
+if (hd = new_header(FT_FEA) == NULL) \fIerror...\fR
+.br
+hd->common.type /* had better be FT_FEA */
+.SH DIAGNOSTICS
+None.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+\fIeopen\fP(3\-ESPSu), \fIcopy_header\fP(3\-ESPSu), \fIread_header\fP(3\-ESPSu),
+\fIwrite_header\fP(3\-ESPSu)
+.fi
+.SH AUTHOR
+Original version by Joe Buck.
+.br
+Modified by Alan Parker for new header structures.

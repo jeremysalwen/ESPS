@@ -1,0 +1,49 @@
+This demo features an interactive 3D plot coordinated with a 2D plot
+that uses color for the third dimension.  The 3D plot is displayed using
+the ESPS program plot3d.  The 2D plot is displayed using xwaves+.  
+Cursor coordination is achieved using the xwaves+ display server 
+capability.  The data are from a Mariner photo of Saturn.  
+
+Some things to try:
+
+CURSOR COORDINATION
+
+Move the mouse within the 3D box. A 3D cursor (with digital
+readouts) identifies each point; note the coordination with the 2D
+xwaves+ cursor.
+
+3D PERSPECTIVE
+
+Change the perspective of the 3D plot.  The are several ways to do
+this.  For example, with the mouse in the 3D display, press the middle
+mouse button and move the mouse around.  The bounding box will show
+the new perspective.  Replot the data by clicking on "plot" in the
+plot3d control window (you may have to bring the window forward) or
+via a menu operation available by pressing the right mouse button in
+the plot window.  Try the same thing with the left mouse button (the
+coordinate transformation is different.)  Detailed controls are
+available via the sliders and data entry items in the control panel.
+
+COLORMAP MANIPULATION
+
+Change colormaps via the "Set Color Map" pull-down menu (right mouse
+it) in the "Colors" control panel.  Put the mouse in the xwaves+ 2D
+(color) display.  Press the middle mouse button and move it around --
+this changes the mapping of intensity to colors.  To see the mapping,
+press the "Show Color Scale" button.  The vertical axis corresponds
+to intensity (the Z-axis in the 3D plot); the display shows the color
+assigned to each intensity level.  (The cursor is meaningless in 
+this display)
+
+THE DATA
+
+The data are from a picture of the occultation of 28 Sagittarii by
+Saturn on July 3, 1989 (look carefully, and you can see the moon
+through the rings).  The paicture is derived from a 110x78 pixel image
+taken with a bare CCD at the Cassegrain focus of the Yerkes 41"
+reflector and posted to the sci.astro newsgroup by Bob Loewenstein.
+
+@(#)README	1.5 11/5/91 ERL
+
+
+

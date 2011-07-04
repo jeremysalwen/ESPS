@@ -1,0 +1,951 @@
+.lo
+.he '\fI(x)waves+\fP Version 2.1 Release Notes''page %'
+.ce 3
+.b
+\fI(x)waves\fP+ Version 2.1 Release Notes
+.sp
+Document version: 1.25 11/7/91
+.sh 1 "INTRODUCTION"
+.lp
+This document provides notes relevant to release 2.1 of \fIwaves\fP+
+and \fIxwaves\fP+.  This note documents changes to \fIwaves\fP+ and
+\fIxwaves\fP+ since the revision 2.0c.  This document can be viewed
+conveniently using \fIwinfo\fP (1\-\s-1ESPS\s+1) or \fIeversion\fP
+(1\-\s-1ESPS\s+1).
+.lp
+Version 2.1 exploits various new items from the .wave_pro file.  
+.nf
+.b
+
+      It is important that all users delete or move any .wave_pro 
+      file from their home directory before using Version 2.1.
+      Old .wave_pro files will not enable many of the new features
+      now available in (x)waves.
+
+.r
+.fi
+.lp
+Personal preferences from old .wave_pro files should be merged into a
+fresh .wave_pro starting from a copy of $ESPS_BASE/lib/waves/.wave_pro
+(which is the profile obtained by default if none exists in the home
+directory).  This default profile file has comments which provide an
+explanation of the semantics of each settable attribute.
+.sh 1 "STATUS OF SUNVIEW \fIwaves\fP+"
+.lp
+This is the last release of Sunview \fIwaves\fP+, and it does not
+contain many of the improvements in \fIxwaves\fP+.  In contrast to
+\fIxwaves\fP+ this release of \fIwaves\fP+ is not greatly improved
+over the previous one. Version 2.1 of \fIxwaves\fP+ is greatly
+improved and we encourage users to switch to it.
+.sh 1 "SUMMARY OF MAJOR CHANGES"
+.lp
+The major distinguishing feature of \fIxwaves\fP+ Version 2.1 is the X
+Interface Generation (XIG) features for customizing and extending the
+user-interface.  By using a variety of simple ASCII configuration
+files, it is easy to produce highly-customized \fIxwaves\fP+/ESPS
+packages that meet personal or application-specific needs.  
+
+For a
+detailed example of this, look at the directory structure and files
+that comprise the new demos ($ESPS_BASE/newdemos).  The sources for
+one of these are provided in $ESPS_BASE/src_examples/xig/testsignal.
+.lp
+Here is a brief summary of the major changes that are in the 
+release.  
+.ip \ \ \ \(bu
+\fIxwaves\fP+ menus are fully-reconfigurable on startup, via
+command files, and by direct input; menu items can have arbitrary
+names, can invoke built-in (i.e., the original) functions, 
+can invoke arbitrary \fIwaves\fP+ commands or command scripts, 
+and can invoke external programs;
+.ip \ \ \ \(bu
+A new item (\fIinit_file\fP) in the .wave_pro specifies a command file
+to be executed after \fIxwaves+\fP starts up (before loading any files
+or executing a command file given on the command line); The default
+profile invokes a standard default initialization file that provides a
+convenient environment for certain changes to \fIxwaves\fP+ menus and
+globals.  
+.ip \ \ \ \(bu
+an arbitrary number of external ESPS calls (\fIadd_espsX\fP) 
+can be added to \fIxwaves\fP+ menus;
+.ip \ \ \ \(bu
+\fIxwaves\fP+ supports user-defined screen-button panels, with 
+buttons that execute arbitrary commands or command files;
+.ip \ \ \ \(bu
+\fIwaves\fP and \fIxwaves\fP will read NIST (Sphere) format 
+sampled-data files (e.g., the TIMIT database), and has improved
+support for files with "foreign" headers. 
+.ip \ \ \ \(bu
+\fIxspectrum\fP improvements: power/magnitude plots, harmonic cursors,
+additional high-resolution spectral analysis methods (Burg, Modified
+Burg, Fast Modified Burg, Structured Covariance, Fast Structured
+Covariance), multiple reference spectra, display of ARB_FIXED FEA_SPEC
+files, and more!
+.ip \ \ \ \(bu
+\fI(x)label\fP improvements: arbitrary fonts, "MOVE" label and
+"REPLACE" label modes, invocation of external shell commands with
+nearest nearest label and time arguments.
+.ip \ \ \ \(bu
+\fIxwaves\fP+ uses sockets to function as a "display server" 
+for local or remote scripts and programs;
+.ip \ \ \ \(bu
+\fIxwaves\fP+ spectrogram display improvements: complex spectrograms,
+horizontal rescaling (in addition to the vertical rescaling that was
+already implemented), interpolation disable (data displayed as
+rectangles), bracket markers, zooming, display of spectrograms
+with unequally spaced frequencies (ARB_FIXED).  
+.ip \ \ \ \(bu
+X versions of \fImarks\fP and \fIcmap\fP are included;
+.ip \ \ \ \(bu
+(\fIx\fP)\fIwaves\fP+ is now sensitive to various \fIunix\fP 
+environment variables that allow customized paths for menu files,
+command files, etc.  
+.ip \ \ \ \(bu
+Various new demos and examples are available.  Run "eman demos" to 
+get more information. 
+.ip \ \ \ \(bu
+Sunview and XView versions of \fIwaves\fP+ can be called from 
+a uniform cover script. 
+.ip \ \ \ \(bu
+Source code for an example attachment is included.  
+.sh 1 "PROGRAMS IN THE RELEASE"
+.lp
+This Section lists the various programs that are part of the Version
+2.1release.  Naturally, the release includes the \fI(x)waves\fP+ program
+itself.
+.sh 2 "\fIwaves\fP+ Attachments"
+.lp
+The following \fIwaves\fP+ attachments are included: 
+
+.nf
+.ta 1.0i
+  \fI(x)spectrum\fP \-	interactive spectrum analysis
+  \fI(x)label\fP \-	interactive labeling 
+  \fI(x)marks\fP \-	interactive labeling of pre-defined events
+.fi
+.sh 2 "(\fIx\fP)\fIwaves\fP+ Auxiliary Programs"
+.lp
+The "auxiliary programs" comprise a subset of ESPS programs that are
+used in conjunction with (\fIx\fP)\fIwaves\fP+.  Included are various
+programs that provide documentation, file conversion, user-interface
+extension, and limited signal processing functions.  For changes to 
+the auxiliary programs and more information about the new ones, 
+please see the ESPS release notes.  
+.lp
+In Version 2.1, the following are new auxiliary programs:
+.ip \fIerlsupport\fP
+A convenience function that automates filling out and e-mailing a
+bug report or support request
+.ip send_xwaves
+This program is used to send \fIxwaves\fP+ commands
+(including @<filename> to a running \fIxwaves\fP+ that is 
+operating in display server mode.  
+.ip \fIcnvlab\fP
+This program converts NIST Sphere (e.g., TIMIT) label files into
+\fIwaves\fP+ label files. 
+.ip \fImat2fea/fea2mat\fP
+These convert between MATLAB .mat files and ESPS FEA files. 
+.lp
+Here's the full list of Auxiliary programs:
+.nf
+
+.ta 1.25i
+  \fIaddfea\fP \-	adds a new FEA file field based  on ASCII data
+  \fIaddfeahd\fP \-	adds an ESPS feature file header to non-ESPS binary data
+  \fIaddgen\fP \-	adds a generic header item to an existing  nor new ESPS file header
+  \fIbhd\fP \-	behead an ESPS file
+  \fIbtosps\fP \-	convert binary sampled data file to an ESPS FEA_SD file
+  \fIcmap\fP \-	generate or edit a \fIwaves\fP+ colormap
+  \fIcnvlab\fP \-	 convert NIST label file (e.g., TIMIT) to \fIwaves\fP+ label file
+  \fIcomment\fP \-	displays or appends to comment field in ESPS file headers
+  \fIerlsupport\fP \-	send a bug report or support request to ERL.
+  \fIeman\fP \-	displays or prints ESPS manual pages
+  \fIeparam\fP \-	run an ESPS program with parameter prompts
+  \fIepsps\fP \-	(synonym for psps -- avoids openwin path problems)
+  \fIepsps2mu\fP \-	converts ESPS FEA_SD file to headerless mu-encoded data
+  \fIespsenv\fP \-	display relevant UNIX environment variables
+  \fIeversion\fP \-	displays current version of ESPS and \fIwaves\fP+
+  \fIfea2mat\fP \-	converts FEA to MATLAB .mat 
+  \fIfea_element\fP \-	prints binary format table for ESPS FEA files
+  \fIfeatosd\fP \-	convert ESPS FEA_SD file to old-style SD file
+  \fIformant\fP \-	compute formant frequencies,  formant bandwidths, and voicing
+  \fIfind_esps_file\fP \- finds full path to an ESPS or waves+ file
+  \fIget_esps_base\fP \- returns the name of the esps base directory
+  \fIhditem\fP \-	print an item from an ESPS header
+  \fIhdshrink\fP \-	remove embedded headers from an ESPS file
+  \fIils_esps\fP \-	convert an ILS sampled data file to an ESPS file
+  \fIlwb2esps\fP \-	convert a Laboratory Work Bench data file to ESPS FEA_SD
+  \fImat2fea\fP \-	converts from MATLAB .mat to FEA
+  \fIpplain\fP \-	print values from ESPS file in "plain format"
+  \fImu2esps\fP \-	converts mu-encoded data to ESPS FEA_SD file
+  \fIpsps\fP \-	print headers and data from ESPS file in "pretty format"
+  \fIpspsdiff\fP \-	differential ESPS file comparator
+  \fIsdtofea\fP \-	convert old-style ESPS SD file to FEA_SD
+  \fIsend_xwaves\fP \-	open connection to \fIxwaves\fP+ server and send commands
+  \fIsgram\fP \-	compute FFT-based narrow- or wide-band spectrogram
+  \fIsigtosd\fP \-	convert SIGnal sampled data file to ESPS
+  \fIsplay\fP \-	play sampled data using SPARCStation codec
+  \fItestsd\fP \-	make test signal (sine wave, square wave, noise, pulses, ASCII input, etc.)
+  \fItofeasd\fP \-	converts data from arbitrary FEA field to FEA_SD (sampled data) file
+  \fItofspec\fP \-	converts FEA data to FEA_SPEC file (for spectrogram-style displays)
+  \fIwcheckout\fP \-	checks out a \fIwaves\fP+ license
+  \fIwinfo\fP \-	X-based tool for reading waves+ technical and release notes
+  \fIwfree\fP \-	frees a \fIwaves\fP+ license
+  \fIwsystem\fP \-	detects window system being run by user
+  \fIxcmap\fP \-	generate or edit a \fIwaves\fP+ colormap (X Versions)
+  \fIxtext\fP \- 	popup X window containing text file or output of any
+			text producing command.
+.fi
+.sh 2 "DSP Board Programs"
+.lp
+\fIwaves\fP+ can exploit several DSP boards that provide speech I/O
+and fast computation of spectrograms.  DSP Support Kits are now 
+available for three boards:
+.ip \ \ \ \(bu
+AT&T DSP32 VME board (Fab 2 Board)
+.ip \ \ \ \(bu
+AT&T DSP32C VME board ("Surfboard")
+.ip \ \ \ \(bu
+Ariel S32C (S Bus Board)
+.lp
+The support kits all include a UNIX driver (with installation
+instructions), as well as standalone programs for 
+D/A conversion, A/D conversion, and spectrogram computations. 
+.sh 1 "SIGNIFICANT CHANGES TO \fI(x)waves\fP+"
+.lp
+While we will continue maintenance of \fIwaves\fP+ (i.e., the SunView
+version) with bug fixes and a few enhancements, major evolution of the
+system is now restricted to the X Version (\fIxwaves\fP+).  Thus,
+unless we specifically mention that a change applies to \fIwaves\fP+
+in these release notes, it applies only to \fIxwaves\fP+.
+.sh 2 "Non-ESPS Headers"
+.lp
+Both \fIwaves\fP+ and \fIxwaves\fP+ now read all NIST (Sphere) format
+sampled data files.  This is also the case for all ESPS programs that
+process sampled data.  Thus, (x)waves+ and ESPS can now be used
+directly on the following NIST databases: TIMIT, Air Travel
+Information System (ATIS), Extended Resource Management, TIDIGITS, and
+Resource Management.  Note that files \fIproduced\fP by
+(x)\fIwaves\fP+ and ESPS continue to be in ESPS format.
+.lp
+\fIxwaves\fP+ and ESPS also have improved support for dealing with files
+that have foreign headers.  For more information, see the ESPS release
+notes and the section "LOADING NON-ESPS FILES" in the \fIxwaves\fP+
+man page.  
+.sh 2 "Window-System Independent Cover Script"
+.lp
+The programs \fIwaves\fP, \fIwaves\fP+, \fIxwaves\fP, and
+\fIxwaves\fP+ are just links to a new cover script waves.\fIcover\fP
+(1\-\s-1ESPS\s+1) that checks the current window system and then
+invokes the right Sunview or XView version and puts it into the
+background.  The actual binaries are \fIsvwaves\fP (for Sunview) and
+\fIxvwaves\fP (for X).  If you choose to invoke \fIxvwaves\fP
+directly, you should make sure to put it in the background.  
+.lp
+Those who use \fIwaves\fP+ as a display server in the "old style" 
+(reading a pseudo-tty input rather than exploiting the
+\fIsend_xwaves\fP facilities) should make sure to invoke the 
+\fIwaves\fP+ binaries directly. 
+.sh 2 "Implementation of External Calls"
+.lp
+In the previous version, external calls (non-DSP spectrogram
+computations and calls resulting from \fIadd_espsf\fP or
+\fIadd_espst\fP) were implemented by executing \fIsystem\fP(3) and
+waiting for completion.  In Version 2.1 of \fIxwaves\fP+, a new
+mechanism has been implemented \- \fIxwaves\fP+ forks a process to run
+the external program and goes on its merry way.  When the forked
+process terminates, \fIxwaves\fP+ is signaled in those cases where a
+pending display action was waiting (e.g., the display of a spectrogram
+file).  The main advantage is that users can continue to interact with
+\fIxwaves\fP+ while the external program or programs are running.
+.sh 2 "New Default \fIxwaves\fP+ Menu Items"
+.ip "\fIwindow ahead\fP"
+.ip "\fIwindow back\fP"
+These two operations provide for display movement within a signal by
+an amount equal to the current window size.  In contrast, the existing
+operations "page ahead" and "page back" provide for movement by an
+amount specified by a display-independent global \fIref_step\fP.  The
+new operations are particularly convenient for informal scrolling
+through signals.  The operations are available for both waveform and
+spectrogram menus.
+.ip "\fIzoom full out\fP"
+This operations causes the entire signal to be displayed in 
+the current window.  If the buffer size is too small to 
+hold the signal, the full buffer is displayed.  (The buffer 
+size is determined by the global \fImax_buff_size\fP.)  
+.ip "\fIrepeat previous\fP"
+This is a selection that is now available as one of the bindings for
+the middle-mouse button on both waveform and spectrogram displays;
+when enabled, pressing the middle mouse button repeats the operation
+that was most-recently selected from the (right mouse) menu.  Once a
+menu operation has been selected in a window, it can thus be repeated
+rapidly without bringing up a menu each time.  For example, this
+feature provides a convenient means to obtain rapid, sequential
+zooming or panning.
+.sh 2 "New \fIxwaves\fP+ Commands"
+.ip \fIadd_espsX\fP
+The add_espsf, add_espst, and add_espsn commands can now each be used
+to add multiple items to a menu.  Previously there could be at most
+one \fIespsf\fP item, one \fIespst\fP item, and one \fIespsn\fP item
+at any one time; after being used once, an "add_" command would
+replace the menu item it had added before.  The commands now accept a
+new keyword "menu" to add an item selectively to the waveform window
+menu or the spectrogram window menu.  Items added by add_espsf can now
+produce multiple output files.  The names of the added items can now
+be arbitrary strings (previously they couldn't contain blanks).
+.ip \fIadd_waves\fP
+This is used to add new menu items \- both menu items that 
+invoke "built-in" commands (the functions on the default menus) and 
+menu items that invoke arbitrary \fIwaves\fP+ commands or command
+files.
+.ip \fIdelete_item\fP
+Used to delete specific menu items.
+.ip \fIdelete_all_items\fP
+Deletes all menu items (the first step in building a completely 
+custom menu).  
+.ip \fImake_panel\fP
+This creates a new window containing screen buttons.  A simple ASCII
+file is used to define the button labels and the waves+ command (or
+command file) to be executed if the buttons are pressed.  Articulation
+is provided for location, geometry, title, and icon title.
+.ip \fIclose_panel\fP
+Used to iconize a specific button panel.
+.ip \fIopen_panel\fP
+Used to open a specific button panel that has been iconized. 
+.ip \fIkill_panel\fP
+Destroys a specific button panel.
+.ip \fIzoom_full_out\fP
+New operation zooms out to full buffer.  
+.ip \fIenable_server\fP
+If \fIxwaves\fP+ is not operating as display server, it begins 
+doing so.  
+.ip \fIdisable_server\fP
+If \fIxwaves\fP+ is operating as display server, it stops doing so.
+.ip "\fIget attributes global\fP"
+In previous releases, the existing "get attributes" command was
+restricted to obtaining display parameters.  The new keyword "global"
+supports output of \fIwaves\fP+ globals.  Output of all or a named set
+of globals can be directed to a named file (as well as stdout), and is
+produced in a format suitable for inclusion in a .wave_pro file.
+The menus->globals buttons in the default startup environment produce
+a button panel that exploits the new feature to display and write 
+the full set of globals.  This feature is available for both
+\fIwaves\fP+ and \fIxwaves\fP+.  
+.ip "\fImake height\fP"  
+.ip "\fImake width\fP"
+The behavior of the keywords "height" and "width" in the command
+"make" has changed.  They now affect spectrogram displays as well as
+waveform displays, and they no longer have the side effect of setting
+the global variables "wave_height" and wave_width".  You can still set
+"wave_height" and wave_width" in the make command by using the full
+names; these globals still affect only waveform windows.
+.ip "\fIadd_espsf number\fP"
+The new keyword "number" has been added to \fIadd_espsf\fP (default
+1).  This specifies the number of output files expected from the 
+external program.  Appropriate file names are generated for the 
+command string and are all displayed when the external command
+terminates.  
+.ip \fIclose_ctlwin\fP
+.ip \fIopen_ctlwin\fP
+These iconize and open the \fIxwaves\fP+ control panel.  
+.ip auto_plot_limits
+Resets the globals \fIplot_max\fP and \fIplot_min\fP so that 
+automatic scaling (the default) takes place. 
+.sh 2 "New \fIxwaves\fP+ Globals"
+.ip \fIinit_file\fP
+This names an \fIxwaves\fP+ command file. If \fIinit_file\fP is
+present in the startup profile, the corresponding file is executed
+before any command-line files are processed.  When combined with the
+new features that provide user-defined menus and screen-button panels,
+the \fIinit_file\fP provides a mechanism for creating
+highly-customized \fIxwaves\fP+/ESPS packages that meet personal or
+application-specific needs.  The default \fIinit_file\fP is
+$ESPS_BASE/lib/waves/commands/xw_init.WC. 
+.ip \fIoutput_dir\fP
+The name of a writable directory to be used for all \fIxwaves\fP+ output
+files.  Do not define this global unless you want it used, and make
+sure that the named directory exists and is writable.  If
+\fIoutput_dir\fP is defined, all output files from \fIxwaves\fP+,
+\fIxspectrum\fP, and \fIxlabel\fP will go into this directory
+(including edited files, saved file segments, spectrogram output
+files, outputs from add_espsf, etc.).  It is OK to include environment
+variables in the path.  This global makes it possible to produce
+\fIxwaves\fP output when working in read-only directories. 
+.ip \fIremote_path\fP
+.ip \fIremote_input_path\fP
+.ip \fIremote_output_path\fP
+The semantics of \fIremote_path\fP has changed. It is now prefixed to
+the basename of files rather than to their full names (which might
+have included path specifications).  The semantics are extended by the
+existence of additional globals.  If \fIremote_input_path\fP is
+defined, it is prefixed to the basename of all input file names in
+external calls.  It overrides any definition of \fIremote_path\fP.
+Similarly, if remote_output_path is defined, it is prefixed to the
+basename of all output file names in external calls.  It overrides
+definitions of \fIremote_path\fP and \fIoutput_dir\fP.  
+.ip \fIsocket_port\fP
+This is the INET domain socket port number to be used when xwaves+ is
+operating as a display server (as the result of the \fIxwaves\fP+
+\fB-s\fP option or the enable_server command).  If set, socket_port
+overrides the WAVES_PORT environment variable or the value given by
+the \fB-p\fP option.
+.ip \fIspec_middle_op\fP
+middle_op text string corresponding to desired middle button operation
+for spectrogram menus.  must be one of: "up/down move", "move
+contour", "modify intensity", "play between marks", "repeat previous".
+This and the \fIspec_left_op\fP global are provided (by analogy with
+the waveform menu's \fIleft_op\fP and \fImiddle_op\fP) so that the
+mouse bindings can be set under \fIxwaves\fP+ command control.
+.ip \fIspec_left_op\fP
+text corresponding to desired left button opera- tion for spectrogram
+menus; must be one of: "up/down move", "move closest", "mark
+formants", "repeat previous"
+.ip \fIspect_interp\fP
+1 to cause linear interpolation in rescaled spectrogram displays; 0 to
+disable interpolation so that each discreet value is shown as a
+uniform rectangle.
+.ip \fIh_spect_rescale\fP
+1 to cause horizontal rescaling of spectrogram displays; 0 to cause
+fixed displays with 1-pixel per data record.  If data are interpolated,
+then the range of the interpolated data computed together is
+determined by \fIspect_rescale_scope\fP.
+.ip \fIv_spect_rescale\fP
+1 to cause vertical rescaling of spectrogram displays; 0 to cause
+fixed displays with 1-pixel per data record.
+.ip \fIspect_rescale_scope\fP
+determines whether horizontal rescaling of interpolated data is
+computed for the entire xwaves+ buffer (value is "buffer") or for just
+the current window width (value is "view").  Rescaling for the entire
+buffer can be quite slow if the ratio of the current view to the
+entire buffer is large, but has the advantage that horizontal
+scrolling is very fast once the new image is computed (since it is
+stored).  Rescaling just the current view is faster (and is the
+default), but has the disadvantage that the rescaling takes place
+every time the viewpoint is moved (i.e., scrolling is slower).
+In later releases, this global will also affect the rescaling of 
+non-interpolated data.  
+.ip \fIreticle_grid\fP
+This controls plotting of the part of the spectrogram-window reticle that
+lies within the spectrogram plotting area.  (The numbers around the
+edges are not affected.)  Set the value to 0 to disable plotting;
+non-zero (the default) gives the old behavior.
+.ip \fIplot_max\fP
+.ip \fIplot_min\fP
+These new globals provide a 
+limited means of overriding the automatic vertical scaling of plot
+data.  If they are zero (the default), for each trace \fIxwaves\fP+ finds
+the max and min in the entire buffer, and scales the plot so that the
+max and min appear at the top and bottom of the window (or window
+region, if there are multiple traces).  If \fIplot_max\fP (\fIplot_min\fP) is
+non-zero, \fIxwaves\fP+ will scale every new or refreshed plot so that the
+top (bottom) of the window or region corresponds to the fixed value.
+Values outside of the range are simply clipped by the top or the
+bottom of the display window (extending into the scrollbar).  (That is
+the plots for multiple traces are not limited to a region of the
+window as they are in the case of auto-scaling.  Yes, it can get very
+ugly!  But it provides some capability where none existed.  
+A new \fIxwaves\fP+ command -- \fIauto_plot_limits\fP -- was added as
+a convenient means for restoring xwaves+ to the mode in which 
+all plot limits are set automatically.  Note that the new 
+ESPS program \fIclip\fP (1\-\s-1ESPS\s+1) can be added to the 
+\fIxwaves\fP+ menu to achieve a similar effect.  
+.ip \fIctlwin_iconized\fP
+1 to cause \fIxwaves\fP+ to start up with its control window iconized;
+0 to come up open. 
+.ip \fIxlabel_ctlwin_x\fP
+.ip \fIxlabel_ctlwin_y\fP
+Control the initial position of the \fIxlabel\fP control panel. 
+.ip \fIxspectrum_ctlwin_x\fP
+.ip \fIxspectrum_ctlwin_y\fP
+Control the initial position of the \fIxspectrum\fP control panel. 
+.ip \fIxspectrum_datwin_x\fP
+.ip \fIxspectrum_datwin_y\fP
+.ip \fIxspectrum_datwin_height\fP
+.ip \fIxspectrum_datwin_width\fP 
+Control the initial position and size of the \fIxspectrum\fP spectral display.
+.ip \fIxspectrum_datwin_forward\fP
+A startup global that determines whether or not the \fIxspectrum\fP
+plot window will be brought forward each time a new spectrum 
+is computed. 
+.ip \fIxspectrum_max_lpc_order\fP
+A startup global that sets the maximum xspectrum LPC (maximum
+entropy) order.  
+.sh 2 "Spectrogram Display Improvements"
+.lp
+The previous version of \fIxwaves\fP+ would always automatically rescale
+spectrograms in the vertical dimension to accommodate changes in the
+height, but the horizontal scale was fixed at one pixel per data
+record, so that each vertical column of pixels always corresponded to
+one spectral slice computed by a DSP board or an ESPS program.  
+.lp
+The vertical rescaling code was revised to run 2-3 times faster than
+in the previous release.
+.lp
+In the current version, rescaling works in the horizontal dimension as
+well, and the program can automatically stretch or expand spectrograms
+in both dimensions when the window is resized, much as it does with
+waveform displays.  The operations "zoom in", "zoom out", "zoom full
+out", and "bracket markers" are on the default spectrogram menu; when
+horizontal rescaling is turned on, these operations and "align and
+rescale" work in the same way with spectrograms as with waveform
+displays.
+.lp
+Four global variables, \fIh_spect_rescale\fP, \fIv_spect_rescale\fP,
+\fIspect_rescale_scope\fP, and \fIspect_interp\fP, provide control
+over the rendering of \fIxwaves\fP+ spectrogram displays.
+.lp
+The global \fIh_spect_rescale\fP controls horizontal rescaling
+of spectrograms.  In particular, 
+.nf
+
+	set h_spect_rescale 0
+
+.fi
+yields the behavior of the previous version of \fIxwaves\fP+, fixed
+1-pixel-per-record horizontal scaling, and
+.nf
+
+	set h_spect_rescale 1
+
+.fi
+yields automatic horizontal rescaling.  
+.lp
+Similarly, the global \fIv_spect_rescale\fP controls vertical rescaling of
+spectrograms; 
+.nf
+
+	set v_spect_rescale 0
+
+.fi
+turns off vertical rescaling and fixes the vertical scale at one pixel
+for each frequency point computed by a DSP board or ESPS program, and
+.nf
+
+	set v_spect_rescale 1
+
+.fi
+restores automatic vertical rescaling.  When vertical rescaling is
+turned off, the tops of spectrograms are cut off in windows that are
+not high enough to hold them, and extra background is added above
+spectrograms in windows that are higher than necessary.
+.lp
+Normally, when horizontal or vertical rescaling is turned on,
+\fIxwaves\fP+ rescales by linearly interpolating values for pixels
+that do not correspond exactly to computed data points.  In the new
+version of \fIxwaves\fP+, a non-interpolated mode of rescaling is
+available as well;
+.nf
+
+	set spect_interp 0
+
+.fi
+turns interpolation off, and
+.nf
+
+	set spect_interp 1
+
+.fi
+restores interpolation.  The non-interpolated mode is a style similar
+to that selected by the -D option of \fIimage\fP (1\-\s-1ESPS\s+1).  Each
+computed spectral value is represented by a rectangle of uniform color
+or brightness; the edges of the rectangles are sharp, and there is no
+gradual gradation from one data point to another.
+.lp
+When interpolation has been turned on, rescaling in either dimension
+can create a rescaled image of the entire spectrogram data buffer or
+just the visible part.  This choice is determined by
+\fIspect_rescale_scope\fP;
+.nf
+
+	set spect_rescale_scope buffer
+
+.fi
+selects the entire buffer, and 
+.nf
+
+	set spect_rescale_scope view
+
+.fi
+selects just the visible part.  If "buffer" is selected, paging and
+scrolling operations are very rapid once the data have been computed,
+since the image resides on the X server and each operation uses a
+single X Window System library call to map a new portion of the image
+to the window.  However, the rescaling and interpolation calculation
+itself can be very expensive in terms of both time and server memory.
+Zooming in on a part of a spectrogram that is much shorter than the
+full buffer can initiate a lengthy operation that ties up the window
+system for several minutes and cannot be easily interrupted because
+the mouse becomes unresponsive.  It is quite possible to exceed the
+capacity of the server and crash the window system.  
+.lp
+Selecting "view" for \fIspect_rescale_scope\fP provides an alternative
+tradeoff between scrolling speed and image compute time.  In this
+mode, only the viewable data are interpolated and rescaled.  Since
+these are computed as the spectrogram is scrolled, scrolling is slower
+than in the case of "buffer".  But the time to compute the
+interpolated and rescaled data becomes less and less the more "zoomed
+in" you are.  To avoid nasty surprises, it is a good idea to keep
+"view" as the default for \fIspect_rescale_scope\fP.  It is likewise
+safer to set the global \fIzoom_ganged\fP to 0.
+.lp
+With interpolation turned off, a different rescaling process is
+used:  no backup image is created, and the entire rescaling operation
+is repeated whenever the window is repainted.  This can be slow at
+small scales, but is reasonably fast at scales at which individual
+rectangles are easy to pick out, since the time required depends more
+strongly on the number of rectangles than on their sizes.  With
+interpolation turned off, it is easy to zoom in on small portions of
+large spectrograms.  However, beware of then turning interpolation on
+without first zooming back out to a smaller scale, since anything that
+causes a refresh (uncovering an obscured part of a window, for
+example) can trigger an expensive interpolated rescaling.
+.lp
+The compiled in defaults (which also correspond to values in the 
+default .wave_pro) are:  
+.nf
+
+	spect_interp = 1
+	v_spect_rescale = 0
+	h_spect_rescale = 0
+	spect_rescale_scope = view
+
+.fi
+These produce the fastest painting behavior, with one bit in the image
+for each point in the spectrogram file.  The default \fIxwaves\fP+
+initialization command file (\fIinit_file\fP in the .wave_pro)
+provides a screen button ("Images") that brings up a panel with screen
+buttons that toggle the three globals that control scaling and
+interpolation.
+.lp
+Another significant change to the spectrogram display capability is
+that \fIxwaves\fP+ can now display spectrograms with nonlinear
+frequency scales (FEA_SPEC files in ARB_FIXED format).  The plots are
+made with linear record spacing, but a nonlinear vertical reticle
+scale, so if your files have more detail at, say, the lower
+frequencies, the plot will have an expanded scale at the lower
+frequencies.  Cursors are properly coordinated with other spectrograms
+with different vertical scales, the "Value" readout at the top gives
+the proper values, and overlays on such displays work properly.
+.sh 2 "\fIxwaves\fP+ as a Display Server"
+.lp
+\fIxwaves\fP+ can operate as a "display server", a term we use to
+describe a mode of operation in which xwaves+, in addition to
+operating under local control, listens on a network socket for xwaves+
+commands (including the invocation of command files). Such commands
+can be sent by arbitrary external shell scripts or C programs.  This
+feature, new with Version 2.1, blurs the distinction between external
+programs and xwaves+ attachments.
+.lp
+Operation as a display server is initiated on startup by means of the
+\fB-s\fP option, or after startup by means of the \fIenable_server\fP command.
+When in display server mode, \fIxwaves+\fP listens on an INET domain socket
+port for commands to execute.  The port number used is determined in
+the following order: (a) the global \fIsocket_port\fP as specified in the
+.wave_pro or by a direct "set" command.  Setting this global has no
+effect if \fIxwaves+\fP is already operating as a display server
+(e.g., if it was started with \fB-s\fP), but it determines the socket
+number used the next time server mode is started by
+\fIenable_server\fP; (b) the port specified by the command line option
+\fB-p\fP; (c) the contents of the the unix environment variable
+WAVES_PORT at the time \fIxwaves+\fP starts; (d) a compiled in
+default.
+.lp
+When in display server mode, \fIxwaves+\fP continues to operate normally via
+keyboard and mouse interactions. Operation in display server mode can
+be terminated by means of the command \fIdisable_server\fP.
+.lp
+External scripts can exploit an \fIxwaves+\fP display server by using
+\fIsend_xwaves\fP.  (One can also enter \fIsend_xwaves\fP commands
+directly in a shell window).  External C programs can exploit the
+display server by using the utility functions \fIopen_xwaves\fP
+(3\-\s-1ESPS\s+1), \fIsend_xwaves\fP (3\-\s-1ESPS\s+1),
+\fIclose_xwaves\fP (3\-\s-1ESPS\s+1), and \fIsend_xwaves2\fP.  For
+example, the \fIplot3d\fP (1\-\s-1ESPS\s+1) included in ESPS Version
+4.1 has an option that uses these functions to send
+cursor-coordination commands to an \fIxwaves\fP+ display, thereby
+providing coordinated 3D- and spectrogram-style displays.
+(3\-\s-1ESPS\s+1).
+.sh 2 "Position Independence; Environment Variables"
+.lp
+ESPS and \fI(x)waves\fP+ have been made "position independent".  
+In practice, this means that the system (or a link) no longer 
+has to be at /usr/esps.  Thus, root access is no longer required, and 
+it is easy to switch between different versions (e.g., between old
+and new release). 
+.lp
+To support position independence, and to support customization of 
+ESPS/\fI(x)waves\fP+ packages, various environment variables 
+have been defined.  The main ones are listed below (for details see 
+\fIespsenv\fP (1\-\s-1ESPS\s+1)).  The ones with names ending in
+"_PATH" are search paths for various types of files and have the same
+syntax as a Unix PATH variable: a list of directory pathnames separated
+by colons.  The general rule is that if a required file is specified
+by a full pathname (beginning with "/" or "./"), the name is simply
+used unchanged; otherwise \fIxwaves+\fP looks for the file in the
+directories listed in the appropriate environment variable, if it
+is defined, or else in the directories in a default search path.
+For example (see WAVES_INPUT_PATH below) if a user calls on
+\fIxwaves+\fP to display a signal by a name such as "/usr/myname/speech.sd"
+or "./speech.sd", precisely that name is used.  If the name is given
+simply as "speech.sd", the result depends on the search path.
+Suppose the value of the environment variable WAVES_INPUT_PATH is,
+say, "/usr/abc:./data:.".
+Then waves looks first for "/usr/abc/speech.sd"; if that doesn't exist,
+it looks for "./data/speech.sd"; as the final resort, it looks for
+"./speech.sd".
+If WAVES_INPUT_PATH is undefined, the search path is the default,
+".:$ESPS_BASE/lib/waves/files", so \fIxwaves+\fP looks first for
+"./speech.sd" and then for "$ESPS_BASE/lib/waves/files/speech.sd".
+For more information, see \fIfind_esps_file\fP (1\-\s-1ESPS\s+1),
+\fIfind_esps_file\fP (3\-\s-1ESPS\s+1u),
+and the macros in the include file $ESPS_BASE/include/esps/epaths.h.
+Here is the list of environment variables.
+.ip ESPS_BASE
+This should be set to the root of the ESPS (and \fIwaves\fP+) install
+tree.  If not defined, programs all use /usr/esps as a default. 
+.ip WAVES_INPUT_PATH
+This is the path used by \fIwaves+\fP and \fIxwaves+\fP to find all
+input signal files, label files, and label menu files.  If
+WAVES_INPUT_PATH is not defined, the default path used is
+".:$ESPS_BASE/lib/waves/files".
+.ip WAVES_LIB_PATH
+This is the path used by \fIwaves+\fP and \fIxwaves+\fP to find certain library
+files.  If WAVES_LIB_PATH is not defined, the default path used is
+"$ESPS_BASE/lib/waves".
+.ip WAVES_MENU_PATH
+This is the path used by \fIxwaves+\fP to find menu files used
+with the \fIxwaves+\fP command \fImake_panel\fP.  If WAVES_MENU_PATH is not
+defined, the default path used is ".:$ESPS_BASE/lib/waves/menus".
+.ip WAVES_COMMAND_PATH
+This is the path used by \fIwaves\fP+ and \fIxwaves+\fP to find
+command files.  If WAVES_COMMAND_PATH is not defined, the default path
+used is ".:$ESPS_BASE/lib/waves/commands".
+.ip WAVES_COLORMAP_PATH
+This is the path used by \fIwaves+\fP and \fIxwaves+\fP to find colormaps.  If
+WAVES_COLORMAP_PATH is not defined, the default path used is
+".:$ESPS_BASE/lib/waves/colormaps".
+.ip  WAVES_PROFILE_PATH
+This is the path used by \fIwaves+\fP and \fIxwaves+\fP to find the startup
+profile.  IF WAVES_PROFILE_PATH is not defined, the default path used
+is "$HOME:$ESPS_BASE/lib/waves".
+.ip WAVES_HOST
+This is the hostname of an \fIxwaves+\fP display server.  That is,
+\fIsend_xwaves\fP (1\-\s-1ESPS\s+1) \fIsend_xwaves\fP
+(3\-\s-1ESPS\s+1) attempt to send messages to an \fIxwaves+\fP process
+running on WAVES_HOST.  If WAVES_HOST is not defined, the local host
+is assumed.
+.ip WAVES_PORT
+This is the INET domain socket port number used by \fIsend_xwaves\fP
+(1\-\s-1ESPS\s+1) and \fIsend_xwaves\fP (3\-\s-1ESPS\s+1) when sending
+messages to an \fIxwaves+\fP display server.  It is also used by
+\fIxwaves+\fP in determining the port on which to listen.  If
+WAVES_PORT is not defined, than a compiled-in default is used.  This
+is the default socket that \fIxwaves+\fP listens on when started in
+server mode (\fB-s\fP).  If a non-default socket is to be used, it is
+specified to \fIxwaves+\fP, \fIsend_xwaves\fP (1\-\s-1ESPS\s+1), and
+\fIsend_xwaves\fP (3\-\s-1ESPS\s+1) by means of WAVES_PORT.  Note that
+\fIsend_xwaves\fP (1\-\s-1ESPS\s+1) and \fIxwaves+\fP also have a \fB-p\fP option that can
+be used to override WAVES_PORT.
+.ip  BBOX_QUIT_BUTTON
+If this variable is defined, it forces a "QUIT" button to be included
+at the top of every button panel created via \fIexv_bbox\fP
+(3\-\s-1ESPS\s+1).  This includes button panels created by
+\fImbuttons\fP (1\-\s-1ESPS\s+1), \fIfbuttons\fP (1\-\s-1ESPS\s+1),
+and the \fIxwaves+\fP command \fImake_panel\fP.  The variable has no
+effect if a quit button was specified directly using the \fB-q\fP
+option to \fImbuttons\fP or the \fIquit_button\fP keyword of the
+\fIxwaves+\fP command \fImake_panel\fP.
+.ip DEF_HEADER
+If this environment variable is defined when \fIwaves\fP+ or
+\fIxwaves\fP+ starts up, it specifies a default header to be used for
+headerless files (non-ESPS and non-SIGnal) files.  The global
+\fIdef_header\fP is effectively disabled.  If you want to set
+def_header dynamically (changing it while (\fIx\fP)\fIwaves\fP+ is
+running), don't set DEF_HEADER.
+.ip DSP_NO_LOCK
+If set, disables locking of the DSP by \fIwaves\fP+, \fIxwaves\fP+,
+and the record and play programs.
+.sh 2 "LICENSE MANAGER CHANGES"
+.lp
+Unlike the previous version, the environment variable \fBELM_HOST\fR
+must now always be defined.  It must always contain the hostname of the
+host running the Entropic License Manager (\fIelmd\fR).  It is best to
+have all users define this in their \fI.cshrc\fR (or equivalent).
+One other environment variable affects the license manager system:
+.ip ELM_TIMEOUT
+controls the length of time \fIxwaves\fP+ and ESPS programs wait while
+trying to contact the license server.   The default is 10 seconds.  Some
+adjustment may be required depending upon the nature of your network.
+.sh 2 "Other Significant \fIxwaves\fP+ Changes and Fixes"
+.np
+In addition to the digital time and frequency readouts in
+spectrogram windows, there is now a readout for the data value at the
+cursor position.  The digital readouts associated with overlays have
+been moved to avoid overlapping other readouts.
+.np
+\fIxwaves\fP+ and \fIxspectrum\fP attachment now properly handle ESPS
+spectrum files (FEA_SPEC files) in the ASYM_EDGE format, which allows
+displaying spectrograms with negative-frequency parts that result from
+analysis of complex time series.  (Formerly \fIxwaves\fP+ would
+display such spectrograms, but with an incorrect frequency scale.)
+.np
+The label for an iconized waveform or spectrogram window is now
+the signal name rather than "waves+".
+.np
+Startup messages about the profile and DSP boards are now suppressed
+if \fIverbose\fP is set to 0 in the .wave_pro.  
+.np
+The range option used in calling external programs had a bug 
+that could result in one-too-many records.  This has been fixed. 
+.np
+Many but (alas) not all of the multiple repaints have been suppressed.
+.np
+Although attachments are now much less important given the new
+capabilities of \fIsend_xwaves\fP (1\-\s-1ESPS\s+1) and \fIxwaves\fP+
+operating as a display server, a number of customers have asked for a
+source example of an attachment.  In this release we have included
+sources for \fIxspectrum\fP; see $ESPS_BASE/src_examples/waves/spectrum.
+.sh 1 "SIGNIFICANT CHANGES TO \fIxspectrum\fP"
+.lp
+.np
+There is now a choice of units for the ordinate of spectrum plots.  
+Control-panel buttons allow switching between dB, magnitude, or power.
+.np
+Harmonic cursors are now available in the spectrum plot.  They 
+are enabled/disabled via buttons on the control panel.  
+.np
+Six additional autoregressive (LPC, maximum entropy) spectrum analysis
+methods have been added to the choices in \fIxspectrum\fP.  The full
+eight methods are as follows (references are to the corresponding ESPS
+signal processing library routine):
+.nf
+
+    Autocorrelation Method (AUTOC) \- see \fIget_auto\fP (3\-\s-1ESPS\s+1)
+
+    Covariance Method (COV) \- see \fIcovar\fP (3\-\s-1ESPS\s+1)
+
+    Burg Method (BURG) \- see \fIget_burg\fP (3\-\s-1ESPS\s+1)
+
+    Modified Burg Method (MBURG) \- see \fIget_burg\fP (3\-\s-1ESPS\s+1)
+
+    Fast Modified Burg Method (FBURG) \- \fIget_fburg\fP (3\-\s-1ESPS\s+1)
+
+    Structured Covariance Method (STRCOV and STRCOV1) \- see \fIbestauto\fP (3\-\s-1ESPS\s+1), 
+    \fIstruct_cov\fP (3\-\s-1ESPS\s+1), and \fIgenburg\fP (3\-\s-1ESPS\s+1)
+
+    Vector Burg Method (VBURG) (fast approximation to structured 
+    covariance)  \- see \fIget_vburg\fP (3\-\s-1ESPS\s+1)
+
+.np
+Maximum order for LPC (maximum entropy) routines has been increased 
+from 30 to 200. 
+.np
+\fIxspectrum\fP now uses the signal (or object) name, rather than the
+string "spectrum", as the icon label for the spectrum plot window.
+.np
+\fIxspectrum\fP now works on FEA_SD files with FLOAT or DOUBLE data. 
+.np
+Global parameters are now inherited from \fIxwaves\fP+ rather than
+read from the user's profile. 
+.np
+Startup globals allow control over the position of the control window,
+position of the plot window, and size of the plot window.  
+.np
+\fIxspectrum\fP will now accept and display slices of spectrograms in
+ARB_FIXED format (unequally spaced frequencies).
+.np
+The user-interface in the plot window was improved by the 
+addition of a right button menu (left button is now a shortcut
+for save reference spectrum)  
+.np
+Up to 4 different reference spectra can be saved and kept in view 
+with separate cursors and readouts (up from 1).  Menu items are 
+available to erase the reference spectra and erase all spectra.  
+.np
+All of the \fIxspectrum\fP control parameters can be changed remotely
+from \fIxwaves\fP+ via a "send set" command.  Values shown in the
+control panel are changed accordingly.  
+.np
+Remote commands now include setting left and right frame limits 
+(host mode).  
+.np
+The default window type now depends on the analysis method \- Hanning
+for FFT methods, and rectangular for all LPC (maximum entropy)
+methods.  If a window type is changed, the change affects only the
+current analysis method.  When a different analysis method is 
+selected, the window type reverts to what was used the last time
+the analysis method was used.  
+.np
+By default, the \fIxspectrum\fP plot window is brought to the
+foreground every time a new spectrum is displayed.  This behavior can
+be changed by means of the new startup global
+\fIxspectrum_datwin_forward\fP.  
+.np
+No plot window is displayed until the first spectrum computation
+takes place.   
+.sh 1 "SIGNIFICANT CHANGES TO \fI(x)label\fP"
+.np
+\fIxlabel\fP now uses the object name instead of "label" as
+the icon label when a label window (not the control panel) is
+iconized.
+.np
+An arbitrary font can now be used in the label window for both
+\fIlabel\fP and \fIxlabel\fP.  In the case of \fIlabel\fP, the font is
+also used in the label menu.  
+.np
+Arbitrary shell commands can be added to the label menu.  The 
+commands are invoked with three arguments: (1) text string in the
+first label field of the closest label; (2) the name of the label file
+displayed under the cursor; (3) the time location of the label
+closest to the cursor.  This feature is available in both \fIlabel\fP
+and \fIxlabel\fP.  
+.np
+New MOVE and REPLACE commands make it easy to move and replace
+existing labels.  This feature is available in both \fIlabel\fP and
+\fIxlabel\fP.  
+.np
+Global parameters are now inherited from \fIxwaves\fP+ rather than
+read from the user's profile. 
+.np
+Startup globals allow control over the position of the control window. 
+.sh 1 "SIGNIFICANT CHANGES TO \fIformant\fP"
+.np
+A bug was fixed that prevented \fIformant\fP from working on ESPS 
+FEA_SD files that were not SHORTS.  \fIFormant\fP still assumes 
+SHORT data, but the ESPS files are now converted on input.  
+.np
+The \fIxwaves\fP+ display of "f0.sig" files from \fIformant\fP was 
+fixed so that the connect-the-dots mode operates correctly.  
+.sh 1 "OTHER CHANGES AND FIXES"
+.np
+A new unix environment variable DSP_NO_LOCK can be set to disable 
+the DSP file-locking mechanism. The \fIset_lock\fP() and
+\fIrem_lock\fP() functions that implement the locking were 
+documented.  
+.np
+The graphics problems with (Sunview) \fIwaves\fP+ (random dots) under 
+Sun OS 4.1 have been fixed.  
+.np
+Many X bugs were fixed (yeah, everyone says that).
+.sh 1 "WHAT HAPPENED TO MULTIPLE ATTACHMENTS?"
+.lp
+Certain scheduled features didn't make it into the release.  The most 
+important of these is multiple attachments.  We are still committed
+to doing this, it should be available before the end of the year.  
+If your application depends on it, please let us know and we will 
+schedule you for a maintenance update as soon as the feature is
+available.  
+.sh 1 "SOME KNOWN PROBLEMS"
+.lp
+Here are a few known problems related to the new features:
+.np
+If an attachment is started when another is running, the one running
+will be detached.  However, if the time between starting the two
+attachments is very short, the detach can fail and \fIxwaves\fP 
+can hang. 
+.np
+If a font is defined in a label menu, \fIxwaves\fP+ uses it in the 
+label window but not on the label menu. 
+.np
+Our fixes for "too many repaint operations" sometimes leaves portions
+of display windows blank.  This is easily fixed by a manual refresh.

@@ -1,0 +1,31 @@
+#! /bin/sh
+# @(#)spectrans.te	1.2	2/25/88 ESI
+echo "Creating SD file of alternating one and minus one"
+echo "echo ""1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1"" | testsd -a- alt.sd"
+echo "1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1" | testsd -a- alt.sd
+echo "Compute reflection coefficients then back to normalized autocorrelations"
+echo "refcof -o5 -p1:+9 -d alt.sd - | spectrans -m auto - alt.auto"
+refcof -o5 -p1:+9 -d alt.sd - | spectrans -m auto - alt.auto
+echo "spec_params of alt.auto should be -.9, .8, -.7, .6, -.5"
+echo "psps alt.auto"
+psps alt.auto
+echo "performing loop tests -- see test script for information"
+spectrans -mrc alt.auto org.rc
+echo "All loops should yield the following results"
+psps -H org.rc
+echo " "
+echo "spectrans -mafc org.rc - | spectrans -mrc - - | psps -H -"
+spectrans -mafc org.rc - | spectrans -mrc - - | psps -H -
+echo "spectrans -mauto org.rc - | spectrans -mrc - - | psps -H -"
+spectrans -mauto org.rc - | spectrans -mrc - - | psps -H -
+echo "spectrans -mcep org.rc - | spectrans -mrc - - | psps -H -"
+spectrans -mcep org.rc - | spectrans -mrc - - | psps -H -
+echo "spectrans -mlar org.rc - | spectrans -mrc - - | psps -H -"
+spectrans -mlar org.rc - | spectrans -mrc - - | psps -H -
+echo "spectrans -mlsf org.rc - | spectrans -mrc - - | psps -H -"
+spectrans -mlsf org.rc - | spectrans -mrc - - | psps -H -
+echo " "
+echo "One Final Loop Test"
+echo "spectrans -mlar org.rc - | spectrans -mcep - - | spectrans -mlsf - - |"
+echo "spectrans -mauto - - | spectrans -mrc - - | psps -H -"
+spectrans -mlar org.rc - | spectrans -mcep - - | spectrans -mlsf - - |spectrans -mauto - - | spectrans -mrc - - | psps -H -

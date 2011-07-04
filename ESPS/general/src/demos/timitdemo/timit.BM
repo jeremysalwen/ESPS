@@ -1,0 +1,7 @@
+"show text"    		showtext
+"show header"		showhead
+"play" 			play_timit
+"play backwards" 	backplay
+"plot with labels"	dotimit
+
+# @(#)timit.BM	1.1 7/25/91 ERL

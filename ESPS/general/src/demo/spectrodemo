@@ -1,0 +1,46 @@
+#! /bin/sh
+# @(#)spectrodemo	1.3 6/12/91 ESI
+#
+#
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+if test `mach_type` = CONVEX
+ then
+  echo This script will fail if you do not have write permission on this directory.
+ else
+  if test ! -w . 
+    then
+	echo "You do not have write permission in this directory."
+	exit 1
+  fi
+fi
+echo This demo shows how to use filter, fft, and image to display a
+echo speech spectrogram.  
+echo This must be run on a Masscomp or Sun graphics display
+if test `mach_type` = SUN3 -o `mach_type` = SUN4
+ then
+  echo Remove the plot by moving the mouse to the title bar, clicking
+  echo the right button, and selecting QUIT.
+fi
+echo Hit return to continue
+read a
+echo " "
+echo "Converting ASCII file to ESPS SD file"
+echo "   %atosps speech.asc speech.sd"
+atosps speech.asc speech.sd
+echo " "
+echo "Processing speech.sd..."
+echo " "
+echo '   %filter -p1:8000 -Ppreemp_params speech.sd - \
+    | fft -o6 -l32 -S10 -p1:2000000000 - - \
+    | image -t"Time (seconds)" -V"Freq. (Hz)" -s: -Afs2 -B0 -G-20:0 -  '
+
+filter -p1:8000 -Ppreemp_params speech.sd - \
+    | fft -o6 -l32 -S10 -p1:2000000000 - - \
+    | image -t"Time (seconds)" -V"Freq. (Hz)" -s: -Afs2 -B0 -G-20:0 - 
+
+echo " "
+echo 'On a multiplane color display, try changing "-Afs2" to "-A16od2"'
+echo 'or "-A16od3".'

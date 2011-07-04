@@ -1,0 +1,351 @@
+#! /bin/sh
+#-----------------------------------------------------------------------+
+#									|
+#   This material contains proprietary software of Entropic Speech,	|
+#   Inc.  Any reproduction, distribution, or publication without the	|
+#   prior written permission of Entropic Speech, Inc. is strictly	|
+#   prohibited.  Any public distribution of copies of this work		|
+#   authorized in writing by Entropic Speech, Inc. must bear the	|
+#   notice								|
+#									|
+#    "Copyright (c) 1987,1990 Entropic Speech, Inc. All rights reserved |
+#									|
+#-----------------------------------------------------------------------+
+#									|
+#  imlplot -- interactive & remote plotting using mlplot		|
+#									|
+#  by Rodney W. Johnson, Entropic Speech, Inc.				|
+#									|
+#  This program forms and displays a plot command line consisting	|
+#  essentially of the command name mlplot followed by the given		|
+#  options and file names.  It then prompts the user for the next	|
+#  actions.  The following commands are accepted (<CR> designates the	|
+#  return key).								|
+#									|
+#  <CR>		    no action (just redisplay plot command line and	|
+#		    prompt)						|
+#  m<CR>	    plot on Masscomp or Sun graphics display		|
+#  i<CR>	    plot on local Imagen laser printer			|
+#  r<CR>	    remote plot (epimass from epiwrl or vice versa)	|
+#  -option<CR>	    add or change plot command line option		|
+#  ~letter<CR>      remove plot command line option			|
+#  fg filename<CR>  save plot in file in ``gps'' format			|
+#  ft filename<CR>  save plot in file in Imagen (Tektronix) format	|
+#  s filename<CR>   append plot command line to file			|
+#  ?<CR>            list commands and options				|
+#  q<CR>	    quit						|
+#									|
+#-----------------------------------------------------------------------+
+# Sccs information: @(#)imlplot	3.4	3/5/92	ESI
+
+###The following is an ESI local feature for plotting on a remote plotter.
+##case `hostname` in
+##epiwrl)
+##    remotesite=epimass ;;
+##epimass)
+##    remotesite=epiwrl ;;
+##*)
+##    echo "Hostname not epimass or epiwrl; cannot determine remote site." ;;
+##esac
+
+optinfo='[-l int][-m{cpv}][-n][-o outdir][-{pr} range][-s int]
+	[-t text][-x debug level][-y range][-z][-L file.esps][-N]
+	[-V text][-X scale]'
+
+usage="Usage: imlplot $optinfo[file.sd ...]"
+opthelp="Options: $optinfo"
+
+cmdhelp1='Commands:  -option: add option; ~letter: remove option;'
+cmdhelp2='	<cr>: show plot cmd; "?": help; "q": quit'
+cmdhelp3='	"m": plot on screen with mcd; "i": Imagen;'
+cmdhelp4='	"fg" file: file gps; "ft" file: file tektronix;'
+cmdhelp5='	"s" file: save cmd.'
+
+loption=
+moption=
+noption=
+ooption=
+poption=
+roption=
+soption=
+toption=
+xoption=
+yoption=
+zoption=
+Loption=
+Noption=
+Voption=
+Xoption=
+
+MACH=`mach_type`
+if test $MACH = SUN3 -o $MACH = SUN4 -o $MACH = CONVEX
+ then
+   ECHO_N="echo -n"
+   RETURN_SUPRESS=""
+ else
+   ECHO_N=echo
+   RETURN_SUPRESS="\c"
+fi
+
+# Get command-line options.
+
+while :
+do
+    case $1 in
+    -l)
+        loption=$1$2
+        shift 2 ;;
+    -l*)
+        loption=$1
+        shift ;;
+    -m)
+        moption=$1$2
+        shift 2 ;;
+    -m*)
+        moption=$1
+        shift ;;
+    -n)
+        noption=$1
+        shift ;;
+    -o)
+        ooption=$1$2
+        shift 2 ;;
+    -o*)
+        ooption=$1
+        shift ;;
+    -p)
+        poption=$1$2
+        shift 2 ;;
+    -p*)
+        poption=$1
+        shift ;;
+    -r)
+        roption=$1$2
+        shift 2 ;;
+    -r*)
+        roption=$1
+        shift ;;
+    -s)
+        soption=$1$2
+        shift 2 ;;
+    -s*)
+        soption=$1
+        shift ;;
+    -t)
+        toption=-t" "\"$2\"
+        shift 2 ;;
+    -t*)
+        toption=-t" "\"`echo $1 | awk '{print substr($0, 3)}`\"
+        shift ;;
+    -x)
+        xoption=$1$2
+        shift 2 ;;
+    -x*)
+        xoption=$1
+        shift ;;
+    -y)
+        yoption=$1$2
+        shift 2 ;;
+    -y*)
+        yoption=$1
+        shift ;;
+    -z)
+        zoption=$1
+        shift ;;
+    -L)
+        Loption=$1$2
+        shift 2 ;;
+    -L*)
+        Loption=$1
+        shift ;;
+    -N)
+        Noption=$1
+        shift ;;
+    -V)
+        Voption=-V" "\"$2\"
+        shift 2 ;;
+    -V*)
+        Voption=-V" "\"`echo $1 | awk '{print substr($0, 3)}`\"
+        shift ;;
+    -X)
+        Xoption=$1$2
+        shift 2 ;;
+    -X*)
+        Xoption=$1
+        shift ;;
+    -*)
+        echo $usage
+        exit 1 ;;
+    *)
+        break ;;
+    esac
+done
+
+# What's left must be filenames.
+
+# Command interpretation loop.
+
+while :
+do
+    options="$loption $moption $noption $ooption $poption $roption $soption \
+	$toption $xoption $yoption $zoption $Loption $Noption \
+	$Voption $Xoption"
+    echo mlplot $options $*
+    $ECHO_N "imlplot: " $RETURN_SUPRESS
+    read command
+    while :
+    do
+        case $command in
+        "")
+            break ;;
+        m)
+            echo mlplot $options -Txmcd $* \
+                | sh -s
+            break ;;
+        i)
+            echo mlplot $options -Timagen $* \
+                | sh -s
+            break ;;
+### ESI local remote plot feature (broken).
+##        r)
+##            echo mlplot $options -Ttek $* \
+##                    "|" uux - $remotesite!ipr \
+##                            -Ltektronix -D\'\"prerasterization on\"\' \
+##                | sh -s
+##            break ;;
+        fg" "?*)
+            echo mlplot $options -Tgps $* \
+                    ">" `echo $command | awk '{print $2}'` \
+                | sh -s
+            break ;;
+        fg?*)
+            echo mlplot $options -Tgps $* \
+                    ">" `echo $command | awk '{print substr($1, 3)}'` \
+                | sh -s
+            break ;;
+        ft" "?*)
+            echo mlplot $options -Ttek $* \
+                    ">" `echo $command | awk '{print $2}'` \
+                | sh -s
+            break ;;
+        ft?*)
+            echo mlplot $options -Ttek $* \
+                    ">" `echo $command | awk '{print substr($1, 3)}'` \
+                | sh -s
+            break ;;
+        s" "?*)
+            echo mlplot $options $* \
+                >> `echo $command | awk '{print $2}'`
+            break ;;
+        s?*)
+            echo mlplot $options $* \
+                >> `echo $command | awk '{print substr($1, 2)}'`
+            break ;;
+        q)
+            exit 0
+            break ;;
+        \?)
+            echo $cmdhelp1
+            echo $cmdhelp2
+            echo $cmdhelp3
+            echo $cmdhelp4
+            echo $cmdhelp5
+            echo $opthelp
+            break ;;
+        -?*)
+            ltr=`echo $command | awk '{print substr($0, 2, 1)}'`
+            case $command in
+            -?" "*)
+                val=`echo $command | awk '{print substr($0, 4)}'` ;;
+            *)
+                val=`echo $command | awk '{print substr($0, 3)}'` ;;
+            esac
+            case "$ltr$val" in
+            [lmopstxyLVX])
+                echo Option \"-$ltr\" requires argument.
+                break ;;
+            [nzN]?*)
+                echo Option \"-$ltr\" takes no argument.
+                break ;;
+            esac
+            case $ltr in
+            l)
+                loption=-$ltr$val ;;
+            m)
+                moption=-$ltr$val ;;
+            n)
+                noption=-$ltr ;;
+            o)
+                ooption=-$ltr$val ;;
+            p)
+                poption=-$ltr$val ;;
+            s)
+                soption=-$ltr$val ;;
+            t)
+                toption=-$ltr" "$val ;;
+            x)
+                xoption=-$ltr$val ;;
+            y)
+                yoption=-$ltr$val ;;
+            z)
+                zoption=-$ltr ;;
+            L)
+                Loption=-$ltr$val ;;
+            N)
+                Noption=-$ltr ;;
+            V)
+                Voption=-$ltr" "$val ;;
+            X)
+                Xoption=-$ltr$val ;;
+            *)
+                echo Option \"-$ltr\" not recognized.
+                echo $opthelp ;;
+            esac
+            break ;;
+        ~?)
+            ltr=`echo $command | awk '{print substr($0, 2)}'`
+            case $ltr in
+            l)
+                loption= ;;
+            m)
+                moption= ;;
+            n)
+                noption= ;;
+            o)
+                ooption= ;;
+            p)
+                poption= ;;
+            s)
+                soption= ;;
+            t)
+                toption= ;;
+            x)
+                xoption= ;;
+            y)
+                yoption= ;;
+            z)
+                zoption= ;;
+            L)
+                Loption= ;;
+            N)
+                Noption= ;;
+            V)
+                Voption= ;;
+            X)
+                Xoption= ;;
+            *)
+                echo Option \"-$ltr\" not recognized. ;;
+            esac
+            break ;;
+        *)
+            echo $cmdhelp1
+            echo $cmdhelp2
+            echo $cmdhelp3
+            echo $cmdhelp4
+            echo $cmdhelp5
+            echo mlplot $options $*
+            $ECHO_N "imlplot: " $RETURN_SUPRESS
+            read command ;;
+        esac
+    done
+done

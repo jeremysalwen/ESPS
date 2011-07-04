@@ -1,0 +1,55 @@
+genplot.c:
+
+genplot.c
+==============
+(1623)  warning: main() returns random value to invocation environment
+warning: possible pointer alignment problem
+    (260)  	    (437)  	    (491)  
+    (817)  	    (826)  	    (1668)  
+    (1676)  	    (1684)  	    (1692)  
+init.c:
+chrs.c:
+draw.c:
+gpsplot.c:
+tekplot.c:
+fearangesw.c:
+
+fearangesw.c
+==============
+warning: possible pointer alignment problem
+    (108)  	    (109)  	    (110)  
+
+
+==============
+name used but not defined
+    mkdir   	init.c(65)
+name defined but never used
+    greek   	chrs.c(155)
+value type declared inconsistently
+    free   	llib-lc(353) :: fearangesw.c(163)
+function argument ( number ) used inconsistently
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(49)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(50)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(51)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(52)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(53)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(55)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(61)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(72)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(74)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(77)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(80)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(102)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(103)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(104)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(105)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(106)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(107)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(115)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(126)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(128)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(131)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(134)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(135)
+function returns value which is always ignored
+    sprintf	    _flsbuf	

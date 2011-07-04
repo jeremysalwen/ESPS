@@ -1,0 +1,330 @@
+
+
+
+
+
+
+
+                         ENTROPIC RESEARCH LABORATORY, INC.
+
+
+       TECHNICAL MEMORANDUM
+
+       SUBJECT: Machine Independent File I/O (MIIO) Module for ESPS
+
+       ID: ETM-S-88-3:rap
+
+       VERSION: 1.1
+
+       DATE: 4/13/90
+
+       AUTHOR: Alan Parker
+
+       1 .  Introduction
+
+            Previous versions of ESPS used C  structures  directly  for  file
+       input  and  output  of  the header and some data records. This has the
+       advantage of resulting in very simple code.  For example, to read  the
+       common part of the ESPS header, the following C statement was all that
+       was needed:
+
+       if (fread ((char *)ptr, 1, COMMON_SIZE, fd) == 0)
+               error("Error reading common part of header");
+
+       In this example, ptr is a pointer to the common  part  of  the  header
+       structure.
+
+            Despite this simplicity, doing file I/O with C structures had the
+       potential  to  cause  serious problems as we move ESPS to more machine
+       architectures.   A design goal of ESPS is that all data files are com-
+       patible  across  all  supported  machines.    This means that all ESPS
+       files will have the same bit level format at the file level.
+
+            The definition for the C language, does not bind the  implementor
+       to  allocating  members  of structures to any particular scheme.   The
+       members of a structure might be allocated in any order  convenient  to
+       the  compiler.    Since a pointer to the structure is used for the I/O
+       (by fread or fwrite) the data on the actual  file  will  be  an  exact
+       image of the in memory representation of the structure.    A data file
+       containing these structures cannot be used on another  machine  unless
+       its  compiler implements the structure exactly the same way.   Even if
+       we did not care about portability between different machine  architec-
+       tures,  there  is still the risk that within a given machine type, the
+       format of structures could change between compiler versions, resulting
+       in unusable ESPS data files (and very unhappy users).
+
+            Even if all C implementations allocated structures the same  way,
+       we  would still have problems since the basic C data types are not the
+       same size on all machines and numeric formats may vary  (all  machines
+       do not use the same floating point formats, for example).
+
+
+
+
+
+
+
+
+
+
+
+       ETM-S-88-3:rap                                                  page 2
+
+
+            Another difference between computer architectures that we must be
+       concerned about is byte order.   In some cases the byte with the lower
+       machine address contain the least significant part of multibyte  data,
+       and in other cases it contains the most significant part.  When binary
+       data files are moved between machines that differ in this respect, the
+       data  must be byte swapped.   For example this is the case between VAX
+       and Sun machines.
+
+            The document describes the solution to  these  problems  that  we
+       have implemented.
+
+       2 .  MIIO Module
+
+            For each supported machine type, there  is  a  machine  dependent
+       module  that  implements a set of input and output functions that know
+       how to read and write the standard ESPS data types  from  a  file  and
+       convert them to the machine's internal representation.  This module is
+       called the machine independent input/output module or MIIO.  There  is
+       an implementation of the MIIO module for each supported machine archi-
+       tecture.  The correct one  will  be  linked  in  when  ESPS  compiled;
+       depending on information in the installation script.
+
+            An ESPS program can write ESPS data files in one of two  formats;
+       either the machine's native format, or in ESPS external data represen-
+       tation (EDR).   Files in EDR formant can always be read  by  any  ESPS
+       implementation  on  any  supported  machine type.   Files written in a
+       machine's native format can always be read by that same  machine  type
+       and  perhaps  other  supported ESPS machines, but it is not guaranteed
+       that a native format file can be read on other machine types.
+
+            [note: EDR suggest the  Sun  XDR,  external  data  representation
+       scheme.    This  is similar in idea and we considered simply using the
+       XDR routines.   The reason that we didn't, was that we could not count
+       on  the  XDR  library  being  implemented on all machine types that we
+       needed and we wanted to put some ESPS specific features into the  rou-
+       tines.]
+
+       3 .  User Control of File Format
+
+            The default action is to write files in the machine's native for-
+       mat.   On  some  machines, this may result in faster execution time or
+       higher floating point precision (since conversions would not be done).
+
+            Otherwise, the user might desire to write his data files  in  EDR
+       format.   This  is a run-time decision that can be made by setting the
+       Unix environment variable ESPS_EDR to on. The actual  effect  of  this
+       environment  variable  is  in  the  library  routines  new_header  and
+       copy_header.   When a new header is created (either a empty one, or  a
+       copy  of  an  existing  one) the header item common.edr is initialized
+       (YES means the file is in EDR format, NO means it is  in  native  for-
+       mat).
+
+
+
+
+       Version 1.1                      ERL                           4/13/90
+
+
+
+
+
+
+
+       ETM-S-88-3:rap                                                  page 3
+
+
+            If the Unix environment variable ESPS_EDR is defined  and  has  a
+       value  of  on,  then  the  header item common.edr is set to YES, which
+       means that this data file will be written to the  disk  in  Entropic's
+       external  data representation (EDR).  Otherwise the file is written in
+       the host machine's native data format.
+
+            If the program needs to force the output data representation for-
+       mat,  then  it can reset the value of common.edr after the return from
+       new_header,  or  copy_header,  but  before  a  write_header  is  done.
+       Resetting  common.edr  after write_header, but before closing the file
+       will result in a garbage file.
+
+            Some programs might also have command line options to affect  the
+       mode of output files, as appropriate (conversion programs for example)
+       or be hard-coded for native or ESPS standard I/O.   In  any  case  the
+       MIIO  module will be used, but in the case of a native format file, it
+       will not do anything but straight I/O.   For  each  supported  machine
+       there  is  a  statement describing the expected effect on run-time and
+       precision of the conversions.
+
+            The ESPS standards have been chosen so that many common  machines
+       require  no conversions at all.  (Those with only machines that differ
+       from the standards might not agree, however.  But there  are  probably
+       more  680X0 and Sparc based machines being used for this type of work,
+       than any other single type.)  In fact, in the case  of  the  following
+       machines,  the  machine's  native  format  is identical to EDR format:
+       Sun3, Sun4 (all Sparcs),  Solbourne,  Masscomp/Concurrent,  Convex  in
+       IEEE  mode, Silicon Graphics, HP 300, HP 900, and Apple MAC II.    Sun
+       386i and DEC DS3100  native  format  files  are  different  than  EDR,
+       because of byte order differences.
+
+            This means that if your machines are in that first group, you  do
+       not  need  to  be  concerned with the difference between native format
+       files and EDR format.  If you machines are in the second group, or you
+       have  some  in  each group you do need to be concerned.    The current
+       implementation of MIIO on all supported machine types as of this  ver-
+       sion  of ESPS (4.0) will read files in native format from any of these
+       machines.   In other words, whether you write files in native  or  EDR
+       format  on  a  Sun  386i will not affect the ability to read them on a
+       Sun4.   The issue is where and when you pay the price  of  conversion.
+       If  you write the file on the Sun 386i in native format and read it on
+       a Sun4, then the conversion price  is  paid  when  reading.    If  you
+       expect  to  read  this  file  often  on a different machine type, then
+       perhaps you would be better off paying the conversion price when writ-
+       ing the file.
+
+       4 .  ESPS Data Types
+
+            This  section  describes  the  ESPS  data  types  as   they   are
+       represented  in  ESPS  data files.  Keep in mind, that the description
+       here applies to the representation on the file.  Once read into memory
+       by the ESPS program, the data is in the machine's internal representa-
+       tion; as it must be for the machine to operate on the data.
+
+
+       Version 1.1                      ERL                           4/13/90
+
+
+
+
+
+
+
+       ETM-S-88-3:rap                                                  page 4
+
+
+            ESPS programs use all of the data  types  supported  by  C.   The
+       exact  representation  of  these  data types will vary between machine
+       architectures and C implementations.  Since it is a goal of  ESPS  for
+       all  data  files  to be binary compatible across supported machines we
+       must define what these data types mean for ESPS data files.   In  ESPS
+       data types, a byte is 8 bits.
+
+            This table shows the basic ESPS data types and gives  their  for-
+       mats  in ESPS data files.  Additional built-in ESPS types may be added
+       to this list.
+
+
+                          ________________________________
+                          |_______ESPS_Data_Types_________|
+                          | Type    Size (bytes)   C type |
+                          |_______________________________|
+                          |double        8         double |
+                          |float         4         float  |
+                          |long          4         long   |
+                          |short         2         short  |
+                          |char          1         char   |
+                          |byte__________1_________char___|
+
+
+            Types in this table that are not standard C types are defined  as
+       typedefs in an ESPS header file.
+
+       4 .1 .  Numeric Formats
+
+            On ESPS data files, floating point values are  stored  using  the
+       IEEE  floating  point  format,  for  32  bit  single  precision values
+       (floats) and 64 bit double precision  (double).    Integer  types  are
+       stored  as  twos-compliment  integers  with  short being 16 bits, long
+       being 32 bits, and byte being 8 bits.  Character data (char) is stored
+       in ASCII, with one character in each 8 bit byte.
+
+       4 .2 .  Byte Order
+
+            The interpretation of byte-order differs among computer architec-
+       tures.   This  is  a  difference,  like  numeric formats, that will be
+       resolved by the machine dependent module. The ESPS standard byte-order
+       is that of the 680X0 processor.
+
+       5 .  Summary
+
+            This implementation of machine independent I/O  for  ESPS  allows
+       data  files  to  be  written either in the machine's native format for
+       maximum efficiency, or in a standard format for  maximum  portability.
+       In  the  current implementation all ESPS data files can be read by any
+       other supported implementation, but this is not guaranteed to be  true
+       of  all  future  versions.    It is guaranteed, however, that any ESPS
+       file written today in EDR format will be readable by any  future  ESPS
+       version.    It  is also guaranteed that some method of conversion will
+
+
+       Version 1.1                      ERL                           4/13/90
+
+
+
+
+
+
+
+       ETM-S-88-3:rap                                                  page 5
+
+
+       be available for native format files from some current available  host
+       to a future supported machine.
+
+            The ESPS application programmer does not  need  to  be  concerned
+       with  MIIO  functions  at  all.   They are all contained inside of the
+       header and data I/O routines.
+
+            It is important that ESPS programs only use the ESPS  header  and
+       record  I/O routines;  a program that uses fread for example, will not
+       correct read all ESPS data files from all other machine types.
+
+            See the manual pages for new_header and copy_header.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       Version 1.1                      ERL                           4/13/90
+
+
+

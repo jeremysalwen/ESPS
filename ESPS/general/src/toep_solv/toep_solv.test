@@ -1,0 +1,303 @@
+#!/bin/sh
+#
+#  This material contains proprietary software of Entropic Speech,
+#  Inc.  Any reproduction, distribution, or publication without the
+#  prior written permission of Entropic Speech, Inc. is strictly
+#  prohibited.  Any public distribution of copies of this work
+#  authorized in writing by Entropic Speech, Inc. must bear the notice
+#
+#   "Copyright (c) 1988 Entropic Speech, Inc.  All rights reserved."
+# 				
+#
+# test file for toep_solv  @(#)toep_solv.test	1.2  3/12/90  ESI
+
+echo "Testing toep_solv."
+echo "There should be no diff output."
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+
+echo "Testing toep_solv."
+echo "Making autocor file."
+atosps - test.fana <<aArDvArK
+{
+01 d
+02 6a1a
+03 Tue Jun 14 15:48:58 1988 
+04 1.59
+05 auto
+06 1.2
+07 3/2/88
+53 johnson
+08 1
+09 1
+0b 8
+0c 2
+0d 1
+10 test.sd
+12 auto -p1001:2000 -o4 test.sd test.ana spstoa chk.tmp/test.ana asc.fana 
+13 test.sd
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 4 1 
+
+@nan LONG 1 1000 
+@src_sf FLOAT 1 8000 
+@frmlen LONG 1 1000 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] AUTO 
+@order_vcd LONG 1 0 
+@maxraw LONG 1 1 
+@power CHAR 11 unwindowed 
+@start LONG 1 1001 
+@filters CODED 1 [ NO YES ] NO 
+@data_window CODED 1 [ WT_NONE WT_RECT WT_HAMMING WT_TRIANG ] WT_RECT 
+@order_unvcd LONG 1 4 
+@step_size LONG 1 1000 
+@maxpulses LONG 1 1 
+
+{
+01 9
+02 6a1a
+03 Tue Jun 14 15:08:15 1988 
+04 1.59
+05 testsd
+06 3.7
+07 12/2/87
+53 johnson
+08 1f40
+0b 1
+12 testsd -Tgauss test.sd 
+42 0
+43 2374.96
+44 8000
+20 0
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+56 seed 3 1
+58 1234567 
+56 level 2 1
+58 500 
+56 test_type 7 1
+57 SINE
+57 GAUSS
+57 PULSES
+57 ASCII
+58 1 
+}
+}
+
+#Tag 1001
+#frame_len	1000 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	257909 
+#lpc_power	0 
+#p_pulse_len	0 
+#spec_param	0.000633705 0.0376719 -0.0212606 -0.00151718 
+aArDvArK
+
+echo "Making cross-correlation file."
+atosps - test.ccor << aArDvArK
+{
+01 d
+02 6a1a
+03 Tue Jun 14 16:26:28 1988 
+04 1.59
+05 cross_cor
+06 3/14/88
+07 1.2
+53 johnson
+08 1
+0b 5
+0c 2
+10 filt.sd
+10 test.sd
+12 cross_cor -p502:1501 -p1001:2000 -o-1:3 filt.sd test.sd test.ccor spstoa chk.tmp/test.ccor asc.ccor 
+52
+0 0 0
+tag1 LONG 1 0 
+tag2 LONG 1 0 
+cross_cor FLOAT 5 1 
+
+@start1 LONG 1 502 
+@start2 LONG 1 1001 
+@window_type CODED 1 [ WT_NONE WT_RECT WT_HAMMING WT_TRIANG ] WT_RECT 
+@nan LONG 1 1000 
+@minlag LONG 1 -1 
+@maxlag LONG 1 3 
+@frame_len LONG 1 1000 
+@step LONG 1 1000 
+
+{
+01 9
+02 6a1a
+03 Tue Jun 14 15:14:09 1988 
+04 1.59
+05 filter
+06 3.5
+07 6/13/88
+53 johnson
+08 1d4c
+0b 1
+10 test.sd
+10 test.filt
+12 filter -Ftest.filt -p501:8000 test.sd filt.sd 
+42 0
+43 0
+44 8000
+20 8000
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+40 5 0 1.2 2 1.6 1 0.2 
+{
+01 9
+02 6a1a
+03 Tue Jun 14 15:08:15 1988 
+04 1.59
+05 testsd
+06 3.7
+07 12/2/87
+53 johnson
+08 1f40
+0b 1
+12 testsd -Tgauss test.sd 
+42 0
+43 2374.96
+44 8000
+20 0
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+56 seed 3 1
+58 1234567 
+56 level 2 1
+58 500 
+56 test_type 7 1
+57 SINE
+57 GAUSS
+57 PULSES
+57 ASCII
+58 1 
+}
+{}
+}
+{
+01 9
+02 6a1a
+03 Tue Jun 14 15:08:15 1988 
+04 1.59
+05 testsd
+06 3.7
+07 12/2/87
+53 johnson
+08 1f40
+0b 1
+12 testsd -Tgauss test.sd 
+42 0
+43 2374.96
+44 8000
+20 0
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+56 seed 3 1
+58 1234567 
+56 level 2 1
+58 500 
+56 test_type 7 1
+57 SINE
+57 GAUSS
+57 PULSES
+57 ASCII
+58 1 
+}
+}
+
+#tag1	502 
+#tag2	1001 
+#cross_cor	320103 525894 425969 270520 55412.5 
+aArDvArK
+
+echo "Making file for comparison with output."
+cat <<aArDvArK >test.asc
+File: <stdin>
+
+---Universal Part of Header---
+File type: FILT (Filter Coefficient File)
+Number of data records: unknown (input is pipe)
+Data is  tagged.
+comment text:
+ toep_solv test.fana test.ccor - 
+Source files: test.fana
+              test.ccor
+There is no reference header.
+
+Record 1: tag = 0
+filt_func: nsiz = 5, dsiz = 0
+{
+      a0:   1.201
+      a1:   2.004
+      a2:   1.597
+      a3:   0.9978
+      a4:   0.1985
+} / {
+      b0:   1.0
+}
+aArDvArK
+
+echo \
+"Running toep_solv.  Diff output, if any, should show only small differences."
+toep_solv test.fana test.ccor - \
+	| psps - \
+	| egrep -v '^File header date:|^Produced by:|Hostname:path:|Machine type:' \
+	| diff test.asc -
+rm test.fana test.ccor test.asc
+echo "Done testing toep_solv."

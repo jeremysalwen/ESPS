@@ -1,0 +1,13 @@
+#  test menu 1 for fbuttons @(#)menu1.test	1.1	5/20/91 ERL
+
+"more buttons"	exec mbuttons menu1.test
+"pull down" MENU
+	"menu item 1"	echo "you picked menu item 1"
+	"menu item 2" DEFAULT echo "you picked menu item 2 (the default)"
+	"menu item 3"	echo "you picked menu item 3"
+"pull down" END
+"test button 1"	echo "you pressed test button 1"
+"test button 2"	echo "you pressed test button 2"
+"external menu" MENU menu2.test
+"test button 3"	echo "you pressed test button 3"
+

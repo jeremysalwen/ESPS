@@ -1,0 +1,234 @@
+Test of -g option - 
+there should be 10 elements = 0, 38.26, 70.71, 92.39, 100,
+                             92.39, 70.71, 38.27, 0, -38.27
+addsd: WARNING - zero gain specified
+File: tst.sd
+
+---Common Part of Header---
+File type: SD (Sampled Data File)
+File header date: Fri Aug  7 17:19:35 1987 , header version: 1.46
+Produced by: addsd, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: 10
+Data is not tagged.
+Data format is 0 doubles, 1 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ testsd -Tsine -l100 -p100 test1.sd 
+ testsd -Tsine -l100 -p100 test1.sd 
+ addsd -p1:10 -g0 test1.sd test2.sd tst.sd 
+   Added samples from test2.sd to samples 1 - 10 of test1.sd.
+Source files: test1.sd
+              test2.sd
+There is no reference header.
+
+     1:      0.0000    38.2683    70.7107    92.3880   100.0000
+     6:     92.3879    70.7107    38.2683     0.0000   -38.2684
+ 
+Test of -p option - there should be 10 elements = 0
+File: tst.sd
+
+---Common Part of Header---
+File type: SD (Sampled Data File)
+File header date: Fri Aug  7 17:19:44 1987 , header version: 1.46
+Produced by: addsd, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: 10
+Data is not tagged.
+Data format is 0 doubles, 1 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ testsd -Tsine -l100 -p100 test1.sd 
+ testsd -Tsine -l100 -p100 test1.sd 
+ addsd -p1:10 -g-1 - test2.sd tst.sd 
+   Added samples from test2.sd to samples 1 - 10 of <stdin>.
+Source files: <stdin>
+              test2.sd
+There is no reference header.
+
+     1:      0.0000     0.0000     0.0000     0.0000     0.0000
+     6:      0.0000     0.0000     0.0000     0.0000     0.0000
+ 
+Test of -t option
+There should be 6 elements - all 0
+addsd: WARNING - truncating data in alt1.sd
+File: test3.sd
+
+---Common Part of Header---
+File type: SD (Sampled Data File)
+File header date: Fri Aug  7 17:20:00 1987 , header version: 1.46
+Produced by: addsd, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: 6
+Data is not tagged.
+Data format is 0 doubles, 1 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ testsd -a- alt1.sd 
+ testsd -a- alt2.sd 
+ addsd -t alt1.sd alt2.sd test3.sd 
+   Added samples from alt2.sd to samples 1 - 20 of alt1.sd.
+Source files: alt1.sd
+              alt2.sd
+There is no reference header.
+
+     1:      0.0000     0.0000     0.0000     0.0000     0.0000
+     6:      0.0000
+Test reuse -- there should be 20 zeros
+addsd: alt2.sd does not contain enough records; reusing data
+addsd: alt2.sd does not contain enough records; reusing data
+addsd: alt2.sd does not contain enough records; reusing data
+File: test3.sd
+
+---Common Part of Header---
+File type: SD (Sampled Data File)
+File header date: Fri Aug  7 17:20:10 1987 , header version: 1.46
+Produced by: addsd, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: 20
+Data is not tagged.
+Data format is 0 doubles, 1 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ testsd -a- alt1.sd 
+ testsd -a- alt2.sd 
+ addsd alt1.sd alt2.sd test3.sd 
+   Added samples from alt2.sd to samples 1 - 20 of alt1.sd.
+Source files: alt1.sd
+              alt2.sd
+There is no reference header.
+
+     1:      0.0000     0.0000     0.0000     0.0000     0.0000
+     6:      0.0000     0.0000     0.0000     0.0000     0.0000
+    11:      0.0000     0.0000     0.0000     0.0000     0.0000
+    16:      0.0000     0.0000     0.0000     0.0000     0.0000
+Testing STDIN
+There should be a PSPS listing with 10 zeros
+File: tst.sd
+
+---Common Part of Header---
+File type: SD (Sampled Data File)
+File header date: Fri Aug  7 17:20:20 1987 , header version: 1.46
+Produced by: addsd, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: 10
+Data is not tagged.
+Data format is 0 doubles, 1 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ testsd -Tsine -l100 -p100 test1.sd 
+ testsd -Tsine -l100 -p100 test1.sd 
+ addsd -p1:10 -g-1 - test2.sd tst.sd 
+   Added samples from test2.sd to samples 1 - 10 of <stdin>.
+Source files: <stdin>
+              test2.sd
+There is no reference header.
+
+     1:      0.0000     0.0000     0.0000     0.0000     0.0000
+     6:      0.0000     0.0000     0.0000     0.0000     0.0000
+ 
+ Testing STDOUT
+ There should be a PSPS listing with 10 zeros
+File: tst.sd
+
+---Common Part of Header---
+File type: SD (Sampled Data File)
+File header date: Fri Aug  7 17:20:30 1987 , header version: 1.46
+Produced by: addsd, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: 10
+Data is not tagged.
+Data format is 0 doubles, 1 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ testsd -Tsine -l100 -p100 test1.sd 
+ testsd -Tsine -l100 -p100 test1.sd 
+ addsd -p1:10 -g-1 test1.sd test2.sd - 
+   Added samples from test2.sd to samples 1 - 10 of test1.sd.
+Source files: test1.sd
+              test2.sd
+There is no reference header.
+
+     1:      0.0000     0.0000     0.0000     0.0000     0.0000
+     6:      0.0000     0.0000     0.0000     0.0000     0.0000
+ 
+Test when f2 has same number of points as f1
+There should be 100 points - all about zero
+First check psps header for 100 elements
+addsd: test3.sd does not contain enough records; reusing data
+addsd: test3.sd does not contain enough records; reusing data
+addsd: test3.sd does not contain enough records; reusing data
+File: <stdin>
+
+---Common Part of Header---
+File type: SD (Sampled Data File)
+File header date: Fri Aug  7 17:20:48 1987 , header version: 1.46
+Produced by: addsd, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: unknown (input is pipe)
+Data is not tagged.
+Data format is 0 doubles, 1 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ testsd -Tsine -l100 -p100 test1.sd 
+ testsd -a- zeros.sd 
+ testsd -Tsine -l100 -p100 test1.sd 
+ addsd -t -g-1 zeros.sd test1.sd test3.sd 
+   Added samples from test1.sd to samples 1 - 32 of zeros.sd.
+ addsd test1.sd test3.sd - 
+   Added samples from test3.sd to samples 1 - 100 of test1.sd.
+Source files: test1.sd
+              test3.sd
+There is no reference header.
+
+     1:      0.0000     0.0000     0.0000     0.0000     0.0000
+     6:      0.0000     0.0000     0.0000     0.0000     0.0000
+    11:      0.0000     0.0000     0.0000     0.0000     0.0000
+    16:      0.0000     0.0000     0.0000     0.0000     0.0000
+    21:      0.0000     0.0000     0.0000     0.0000     0.0000
+    26:      0.0000     0.0000     0.0000     0.0000     0.0000
+    31:      0.0000     0.0000     0.0001     0.0001     0.0001
+    36:      0.0000     0.0000     0.0000    -0.0001    -0.0001
+    41:     -0.0001    -0.0001    -0.0001     0.0000     0.0000
+    46:      0.0000     0.0001     0.0001     0.0001     0.0001
+    51:      0.0001     0.0000     0.0000     0.0000    -0.0001
+    56:     -0.0001    -0.0001    -0.0001    -0.0001     0.0000
+    61:      0.0000     0.0000     0.0001     0.0001     0.0002
+    66:      0.0002     0.0001     0.0001     0.0000    -0.0001
+    71:     -0.0001    -0.0002    -0.0002    -0.0002    -0.0001
+    76:     -0.0001     0.0000     0.0001     0.0001     0.0002
+    81:      0.0002     0.0002     0.0001     0.0001     0.0000
+    86:     -0.0001    -0.0001    -0.0002    -0.0002    -0.0002
+    91:     -0.0001    -0.0001     0.0000     0.0001     0.0001
+    96:      0.0002     0.0003     0.0003     0.0002     0.0001
+Test when f2 has more points than f1
+There should be 16 elements; they should all be about zero
+File: <stdin>
+
+---Common Part of Header---
+File type: SD (Sampled Data File)
+File header date: Fri Aug  7 17:20:57 1987 , header version: 1.46
+Produced by: addsd, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: unknown (input is pipe)
+Data is not tagged.
+Data format is 0 doubles, 1 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ testsd -Tsine -p16 -l100 test1.sd 
+ testsd -a- zeros.sd 
+ testsd -Tsine -l100 -p100 test1.sd 
+ addsd -t -g-1 zeros.sd test1.sd test3.sd 
+   Added samples from test1.sd to samples 1 - 32 of zeros.sd.
+ addsd test1.sd test3.sd - 
+   Added samples from test3.sd to samples 1 - 16 of test1.sd.
+Source files: test1.sd
+              test3.sd
+There is no reference header.
+
+     1:      0.0000     0.0000     0.0000     0.0000     0.0000
+     6:      0.0000     0.0000     0.0000     0.0000     0.0000
+    11:      0.0000     0.0000     0.0000     0.0000     0.0000
+    16:      0.0000
+ 
+DON'T FORGET TO CLEAN UP SD FILES

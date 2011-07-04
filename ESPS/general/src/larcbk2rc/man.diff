@@ -1,0 +1,129 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)larcbk2rc.1	3.2	11/11/87 ESI
+.TH LARCBK2RC 1\-ESPS 11/11/87
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+larcbk2rc - convert a scalar codebook that contains log area ratios to a  codebook containing reflection coefficients.
+.SH "SYNOPSIS"
+.B larcbk2rc
+[
+.BI \-x " debug_level"
+]
+.I "lar.scbk rc.scbk"
+.SH "DESCRIPTION"
+.PP
+.I Larcbk2rc
+takes an ESPS LAR SCBK file 
+.I lar.scbk
+and converts it to an ESPS RC SCBK file.
+.PP
+The input file 
+.I lar.scbk
+must be an ESPS SCBK file with \fIhd.scbk\->codebook_type = \fRLAR_{VCD 
+or UNVCD}_CBK. 
+Otherwise
+.I larcbk2rc
+exits with an error message.  
+.I Larcbk2rc
+creates and writes the ESPS RC SCBK output file 
+.I rc.scbk.  
+If "\-" is supplied in place of 
+.I lar.scbk,
+then standard input is used.  If "\-" is supplied in place of 
+.I rc.scbk,
+standard output is used.  
+.PP
+The header of 
+.I lar.scbk
+is included as a source in 
+.I rc.scbk
+and the 
+.I larcbk2rc
+command line is added as a comment.  
+.I Larcbk2rc 
+transforms the 
+.I enc
+and
+.I dec
+values in
+.I lar.scbk
+to reflection coefficients and stores them in 
+.I rc.scbk.
+The 
+.I code
+values 
+and 
+.IR final_pop []
+values are copied from
+.I lar.scbk
+to 
+.I rc.scbk.
+The values of 
+.I final_dist
+and
+.IR cdwd_dist []
+are set to \-1 in
+.I rc.scbk. 
+(See SCBK (5\-ESPS).)
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-x " debug_level"
+If 
+.I debug_level
+is positive,
+.I larcbk2rc
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the  
+.I debug_level
+increases.  If
+.I debug_level
+is 0, no messages are printed.  The default is 0.  
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read by 
+.I larcbk2rc.  
+.SH ESPS COMMON
+.PP
+The ESPS Common file is not read by 
+.I larcbk2rc.  
+.SH ESPS HEADERS
+.PP
+.I Larcbk2rc 
+reads the following values from the input SCBK file:
+.RS 5
+\fI
+.nf
+common.type
+common.ndrec
+\fP
+.RE
+.fi
+The following items are copied from the header of 
+.I lar.scbk\fR 
+to the header of 
+.I rc.scbk:
+.RS 5
+.nf
+\fI
+variable.comment
+hd.scbk\->num_cdwds
+hd.scbk\->element_num
+\fP
+.RE
+.fi
+The following values are set in the header of
+.I rc.scbk:
+.RS 5
+.nf
+\fIhd.scbk\->num_items\fP = 0
+\fIhd.scbk\->distortion\fP = \-1
+\fIhd.scbk\->convergence\fP = \-1
+\fIhd.scbk\->codebook_type\fP = RC_CBK, RC_UNVCD_CBK or RC_VCD_CBK
+depending on if \fIcodebook_type\fR of the input file is LAR_CBK,
+LAR_UNVCD_CBK, or LAR_VCD_CBK.
+.SH "AUTHOR"
+.PP
+Manual page by John Shore
+

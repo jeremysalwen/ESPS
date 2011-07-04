@@ -1,0 +1,51 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)dmatalloc.3	1.4 26 Oct 1987 ESI
+.TH D_MAT_ALLOC 3\-ESPSu 26 Oct 1987
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+d_mat_alloc \- memory allocator for a pointer to a matrix of doubles
+.SH "SYNOPSIS"
+.B #include <stdio.h>
+.br
+.B double **d_mat_alloc (nb_row, nb_col)
+.br
+.B unsigned nb_row;
+.br
+.B unsigned nb_col;
+.SH "DESCRIPTION"
+.PP
+.I d_mat_alloc
+allocates 
+.I nb_row
+by
+.I nb_col
+block of memory.  If successful,
+.I d_mat_alloc
+returns a pointer to a matrix of doubles
+otherwise it returns NULL.
+.SH "EXAMPLE"
+.PP
+unsigned	row_size, column_size;	/* dimension of memory block required */
+.br
+double	**matrix;		/* two-dimensional array */
+.br
+
+matrix = d_mat_alloc (row_size, column_size)
+.br
+if ( matrix != NULL )
+.br
+   /* successfully allocated memory block */
+.br
+else
+.br
+   /* could not allocate memory */
+
+.SH DIAGNOSTICS
+.PP
+None.
+.SH "BUGS"
+.PP
+None Known.
+.SH "AUTHOR"
+.PP
+Code by Bernard G. Fraenkel, Man page by Ajaipal S. Virdy.

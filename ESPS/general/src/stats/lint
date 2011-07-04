@@ -1,0 +1,32 @@
+
+
+==============
+name used but not defined
+    sqrt   	stats.c(224)
+name declared but never used or defined
+    fabs   	stats.c?(2)
+    floor   	stats.c?(2)
+    ceil   	stats.c?(2)
+    fmod   	stats.c?(2)
+    hypot   	stats.c?(3)
+    sin   	stats.c?(4)
+    cos   	stats.c?(4)
+    tan   	stats.c?(4)
+    asin   	stats.c?(4)
+    acos   	stats.c?(4)
+    atan   	stats.c?(4)
+    atan2   	stats.c?(4)
+    exp   	stats.c?(5)
+    log   	stats.c?(5)
+    log10   	stats.c?(5)
+    pow   	stats.c?(5)
+    sinh   	stats.c?(6)
+    cosh   	stats.c?(6)
+    tanh   	stats.c?(6)
+    gamma   	stats.c?(7)
+    j0   	stats.c?(8)
+    j1   	stats.c?(8)
+    jn   	stats.c?(8)
+    y0   	stats.c?(8)
+    y1   	stats.c?(8)
+    yn   	stats.c?(8)

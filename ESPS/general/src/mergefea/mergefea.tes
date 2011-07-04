@@ -1,0 +1,1135 @@
+#! /bin/sh
+# @(#)mergefea.tes	1.5 6/1/93 ESI
+# test script for mergefea
+
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+
+egpat='File header date:|Produced by:|Hostname:path:|Machine type:'
+
+echo "Testing MERGEFEA"
+
+cat > want.psps << ZAP
+File: merge.fea
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 3
+Data is  tagged.
+comment text:
+ mergefea -f raw_power -f sd -t -u sd.fea merge.fea 
+Source files: merge.fea
+              sd.fea
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 4
+
+---Generic Part of Header---
+frmlen:  100 
+frmlen1:  5 
+nan:  2147483647 
+record_freq:  1600 
+src_sf:  8000 
+start:  1 
+start_time:  0 
+step:  5 
+
+Record 1: 
+Tag: 1
+test:  10 
+test2:  1 
+raw_power:  11 
+sd:  
+  0:             1             2             3             4             5 
+
+Record 2: 
+Tag: 6
+test:  20 
+test2:  2 
+raw_power:  66 
+sd:  
+  0:             6             7             8             9            10 
+
+Record 3: 
+Tag: 11
+test:  30 
+test2:  30 
+raw_power:  171 
+sd:  
+  0:            11            12            13            14            15 
+
+ZAP
+
+rm -f frm.fea merge.fea asc.fea sd.fea
+
+echo " %echo \"1 2 3 4 5 6 7 8 9 10 11 12 13 14 15\" | testsd -a-  - | frame -l5 - frm.fea"
+
+echo "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15" | testsd -a-  - | frame -l5 - frm.fea
+
+echo " %pwr frm.fea - | mergefea -t - frm.fea sd.fea"
+
+pwr frm.fea - | mergefea -t - frm.fea sd.fea
+
+echo " %echo \"10 20 30\" | addfea -ftest -c"test" - asc.fea"
+
+echo "10 20 30" | addfea -ftest -c"test" - asc.fea
+
+echo " %echo \"1 2 30\" | addfea -ftest2 -c"test" - asc.fea"
+
+echo "1 2 30" | addfea -ftest2 -c"test" - asc.fea
+
+echo " %mergefea -f test -f test2 asc.fea merge.fea"
+
+mergefea -f test -f test2 asc.fea merge.fea
+
+echo " %addgen -g frmlen -v 100 -t long merge.fea"
+
+addgen -g frmlen -v 100 -t long merge.fea
+
+echo " %mergefea -f raw_power -f sd -t -u sd.fea merge.fea"
+
+mergefea -f raw_power -f sd -t -u sd.fea merge.fea
+
+echo " Running a diff on the actual and desired psps output."
+echo " There should be no differences."
+
+echo " %psps -l merge.fea
+	| egrep -v '$egpat'
+	| diff - want.psps"
+
+psps -l merge.fea \
+	| egrep -v "$egpat" \
+	| diff - want.psps 
+
+echo "Additional mergefea tests."
+
+echo "# Testing:  mergefea -T -t fea1 fea2 fea3"
+echo "# fea1 tagged; fea1 & fea2 have subtype codes"
+
+rm -f fea0 fea1 fea2 fea3 asc3
+echo "1 2 3 4 5 6 7 8 9 10 11 12" | testsd -a- - | frame -l3 -fone_a - fea1
+echo "101 102 103 104" | addfea -TFEA_SPEC -fone_b -c"test" - fea1
+addgen -F -gstart_time -tDOUBLE -v1.0 fea1
+addgen -gAA -tLONG -v170 fea1
+addgen -gAB -tLONG -v171 fea1
+echo "201 202 203 204" | addfea -ftwo_a -c"test" - fea2
+echo "211 212 213 214" | addfea -TFEA_ANA -ftwo_b -c"test" - fea2
+addgen -F -gstart_time -tDOUBLE -v2.0 fea2
+addgen -gAB -tFLOAT -v271 fea2
+addgen -gBB -tFLOAT -v287 fea2
+mergefea -TFEA_SD -t fea1 fea2 fea3
+cat > asc3 << aArDvArK
+File: fea3
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 6 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea -TFEA_SD -t fea1 fea2 fea3 
+Source files: fea2
+              fea1
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: FEA_SD, segment_labeled: NO, field_count: 4
+Item name: two_a, type: FLOAT, size: 1
+Item name: two_b, type: FLOAT, size: 1
+Item name: one_a, type: FLOAT, size: 3, rank: 1
+Item name: one_b, type: FLOAT, size: 1
+
+---Generic Part of Header---
+AA: (LONG) 170 
+AB: (FLOAT) 271 
+BB: (FLOAT) 287 
+frmlen: (LONG) 3 
+nan: (LONG) 2147483647 
+record_freq: (DOUBLE) 2666.67 
+src_sf: (FLOAT) 8000 
+start: (LONG) 1 
+start_time: (DOUBLE) 2 
+step: (LONG) 3 
+
+Record 1: 
+Tag: 1
+two_a:  201 
+two_b:  211 
+one_a:  
+  0:             1             2             3 
+one_b:  101 
+
+Record 2: 
+Tag: 4
+two_a:  202 
+two_b:  212 
+one_a:  
+  0:             4             5             6 
+one_b:  102 
+
+Record 3: 
+Tag: 7
+two_a:  203 
+two_b:  213 
+one_a:  
+  0:             7             8             9 
+one_b:  103 
+
+Record 4: 
+Tag: 10
+two_a:  204 
+two_b:  214 
+one_a:  
+  0:            10            11            12 
+one_b:  104 
+
+aArDvArK
+if epsps -v fea3 | egrep -v "$egpat" | diff asc3 -
+then echo "  OK"
+fi
+
+echo "# Testing:  cat fea2 | mergefea -f -t -u fea1 - fea3"
+echo "# fea2 shorter than fea1; fea1 & fea2 tagged"
+
+rm -f fea0 fea1 fea2 fea3 asc3
+echo "1 2 3 4 5 6 7 8 9 10 11 12" | testsd -a- - | frame -l3 -fonetwo_a - fea1
+echo "101 102 103 104" | addfea -fone_a -c"test" - fea1
+echo "111 112 113 114" | addfea -fone_b -c"test" - fea1
+echo "121 122 123 124" | addfea -fone_c -c"test" - fea1
+addgen -F -gstart_time -tDOUBLE -v1.0 fea1
+addgen -gAA -tLONG -v170 fea1
+addgen -gAB -tLONG -v171 fea1
+echo "17 18 19 20 21 22 23 24 25" | testsd -a- - | frame -l3 -fonetwo_a - fea0
+copysps -r2:3 fea0 fea2
+echo "212 213" | addfea -ftwo_b -c"test" - fea2
+addgen -F -gstart_time -tDOUBLE -v2.0 fea2
+addgen -gAB -tFLOAT -v271 fea2
+addgen -gBB -tFLOAT -v287 fea2
+cat fea2 | mergefea -fone_a -fone_c -t -u fea1 - fea3
+cat > asc3 << aArDvArK
+File: fea3
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 2
+Data is  tagged.
+Data format is 0 doubles, 6 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea -fone_a -fone_c -t -u fea1 - fea3 
+Source files: <stdin>
+              fea1
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 4
+Item name: onetwo_a, type: FLOAT, size: 3, rank: 1
+Item name: two_b, type: FLOAT, size: 1
+Item name: one_a, type: FLOAT, size: 1
+Item name: one_c, type: FLOAT, size: 1
+
+---Generic Part of Header---
+AA: (LONG) 170 
+AB: (FLOAT) 271 
+AB1: (LONG) 171 
+BB: (FLOAT) 287 
+frmlen: (LONG) 3 
+frmlen1: (LONG) 3 
+nan: (LONG) 2147483647 
+nan1: (LONG) 2147483647 
+record_freq: (DOUBLE) 2666.67 
+record_freq1: (DOUBLE) 2666.67 
+src_sf: (FLOAT) 8000 
+src_sf1: (FLOAT) 8000 
+start: (LONG) 1 
+start1: (LONG) 1 
+start_time: (DOUBLE) 2 
+start_time1: (DOUBLE) 1 
+step: (LONG) 3 
+step1: (LONG) 3 
+
+Record 1: 
+Tag: 1
+onetwo_a:  
+  0:            20            21            22 
+two_b:  212 
+one_a:  101 
+one_c:  121 
+
+Record 2: 
+Tag: 4
+onetwo_a:  
+  0:            23            24            25 
+two_b:  213 
+one_a:  102 
+one_c:  122 
+
+aArDvArK
+if epsps -v fea3 | egrep -v "$egpat" | diff asc3 -
+then echo "  OK"
+fi
+
+echo "# Testing:  cat fea1 | mergefea -f - fea2 fea3"
+echo "# fea1 & fea2 tagged"
+
+rm -f fea0 fea1 fea2 fea3 asc3
+echo "1 2 3 4 5 6 7 8 9 10 11 12" | testsd -a- - | frame -l3 -fonetwo_a - fea0
+copysps -r2:4 fea0 fea1
+echo "102 103 104" | addfea -fone_a -c"test" - fea1
+echo "112 113 114" | addfea -fone_b -c"test" - fea1
+echo "122 123 124" | addfea -fone_c -c"test" - fea1
+addgen -F -gstart_time -tDOUBLE -v1.0 fea1
+addgen -gAA -tLONG -v170 fea1
+addgen -gAB -tLONG -v171 fea1
+echo "17 18 19 20 21 22 23 24 25" | testsd -a- - | frame -l3 -fonetwo_a - fea2
+echo "211 212 213" | addfea -ftwo_b -c"test" - fea2
+addgen -F -gstart_time -tDOUBLE -v2.0 fea2
+addgen -gAB -tFLOAT -v271 fea2
+addgen -gBB -tFLOAT -v287 fea2
+cat fea1 | mergefea -fone_a -fone_b - fea2 fea3
+cat > asc3 << aArDvArK
+File: fea3
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 3
+Data is  tagged.
+Data format is 0 doubles, 6 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea -fone_a -fone_b - fea2 fea3 
+Source files: fea2
+              <stdin>
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 4
+Item name: onetwo_a, type: FLOAT, size: 3, rank: 1
+Item name: two_b, type: FLOAT, size: 1
+Item name: one_a, type: FLOAT, size: 1
+Item name: one_b, type: FLOAT, size: 1
+
+---Generic Part of Header---
+AA: (LONG) 170 
+AB: (FLOAT) 271 
+BB: (FLOAT) 287 
+frmlen: (LONG) 3 
+nan: (LONG) 2147483647 
+record_freq: (DOUBLE) 2666.67 
+src_sf: (FLOAT) 8000 
+start: (LONG) 1 
+start_time: (DOUBLE) 2 
+step: (LONG) 3 
+
+Record 1: 
+Tag: 1
+onetwo_a:  
+  0:            17            18            19 
+two_b:  211 
+one_a:  102 
+one_b:  112 
+
+Record 2: 
+Tag: 4
+onetwo_a:  
+  0:            20            21            22 
+two_b:  212 
+one_a:  103 
+one_b:  113 
+
+Record 3: 
+Tag: 7
+onetwo_a:  
+  0:            23            24            25 
+two_b:  213 
+one_a:  104 
+one_b:  114 
+
+aArDvArK
+if epsps -v fea3 | egrep -v "$egpat" | diff asc3 -
+then echo "  OK"
+fi
+
+echo "# Testing:  mergefea -u fea1 fea2 - | cat >fea3"
+echo "# fea1 tagged; fea1 & fea2 have subtype codes"
+
+rm -f fea0 fea1 fea2 fea3 asc3
+echo "1 2 3 4 5 6 7 8 9 10 11 12" | testsd -a- - | frame -l3 -fone_a - fea1
+echo "101 102 103 104" | addfea -TFEA_FILT -fone_b -c"test" - fea1
+addgen -F -gstart_time -tDOUBLE -v1.0 fea1
+addgen -gAA -tLONG -v170 fea1
+addgen -gAB -tLONG -v171 fea1
+echo "201 202 203 204" | addfea -ftwo_a -c"test" - fea2
+echo "211 212 213 214" | addfea -TFEA_SD -ftwo_b -c"test" - fea2
+addgen -F -gstart_time -tDOUBLE -v2.0 fea2
+addgen -gAB -tFLOAT -v271 fea2
+addgen -gBB -tFLOAT -v287 fea2
+mergefea -u fea1 fea2 - | cat >fea3
+cat > asc3 << aArDvArK
+File: fea3
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is not tagged.
+Data format is 0 doubles, 6 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea -u fea1 fea2 - 
+Source files: fea2
+              fea1
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: FEA_SD, segment_labeled: NO, field_count: 4
+Item name: two_a, type: FLOAT, size: 1
+Item name: two_b, type: FLOAT, size: 1
+Item name: one_a, type: FLOAT, size: 3, rank: 1
+Item name: one_b, type: FLOAT, size: 1
+
+---Generic Part of Header---
+AA: (LONG) 170 
+AB: (FLOAT) 271 
+AB1: (LONG) 171 
+BB: (FLOAT) 287 
+frmlen: (LONG) 3 
+nan: (LONG) 2147483647 
+record_freq: (DOUBLE) 2666.67 
+src_sf: (FLOAT) 8000 
+start: (LONG) 1 
+start_time: (DOUBLE) 2 
+start_time1: (DOUBLE) 1 
+step: (LONG) 3 
+
+Record 1: 
+two_a:  201 
+two_b:  211 
+one_a:  
+  0:             1             2             3 
+one_b:  101 
+
+Record 2: 
+two_a:  202 
+two_b:  212 
+one_a:  
+  0:             4             5             6 
+one_b:  102 
+
+Record 3: 
+two_a:  203 
+two_b:  213 
+one_a:  
+  0:             7             8             9 
+one_b:  103 
+
+Record 4: 
+two_a:  204 
+two_b:  214 
+one_a:  
+  0:            10            11            12 
+one_b:  104 
+
+aArDvArK
+if epsps -v fea3 | egrep -v "$egpat" | diff asc3 -
+then echo "  OK"
+fi
+
+echo "# Testing:  cat fea2 | mergefea -u fea1 - - | cat >fea3"
+echo "# fea2 tagged"
+
+rm -f fea0 fea1 fea2 fea3 asc3
+echo "101 102 103 104" | addfea -fone_a -c"test" - fea1
+echo "111 112 113 114" | addfea -fone_b -c"test" - fea1
+echo "121 122 123 124" | addfea -fone_c -c"test" - fea1
+addgen -F -gstart_time -tDOUBLE -v1.0 fea1
+addgen -gAA -tLONG -v170 fea1
+addgen -gAB -tLONG -v171 fea1
+echo "17 18 19 20 21 22 23 24 25 26 27 28" \
+	| testsd -a- - | frame -l3 -ftwo_a - fea2
+echo "211 212 213 214" | addfea -ftwo_b -c"test" - fea2
+addgen -F -gstart_time -tDOUBLE -v2.0 fea2
+addgen -gAB -tFLOAT -v271 fea2
+addgen -gBB -tFLOAT -v287 fea2
+cat fea2 | mergefea -u fea1 - - | cat >fea3
+cat > asc3 << aArDvArK
+File: fea3
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 7 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea -u fea1 - - 
+Source files: <stdin>
+              fea1
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 5
+Item name: two_a, type: FLOAT, size: 3, rank: 1
+Item name: two_b, type: FLOAT, size: 1
+Item name: one_a, type: FLOAT, size: 1
+Item name: one_b, type: FLOAT, size: 1
+Item name: one_c, type: FLOAT, size: 1
+
+---Generic Part of Header---
+AA: (LONG) 170 
+AB: (FLOAT) 271 
+AB1: (LONG) 171 
+BB: (FLOAT) 287 
+frmlen: (LONG) 3 
+nan: (LONG) 2147483647 
+record_freq: (DOUBLE) 2666.67 
+src_sf: (FLOAT) 8000 
+start: (LONG) 1 
+start_time: (DOUBLE) 2 
+start_time1: (DOUBLE) 1 
+step: (LONG) 3 
+
+Record 1: 
+Tag: 1
+two_a:  
+  0:            17            18            19 
+two_b:  211 
+one_a:  101 
+one_b:  111 
+one_c:  121 
+
+Record 2: 
+Tag: 4
+two_a:  
+  0:            20            21            22 
+two_b:  212 
+one_a:  102 
+one_b:  112 
+one_c:  122 
+
+Record 3: 
+Tag: 7
+two_a:  
+  0:            23            24            25 
+two_b:  213 
+one_a:  103 
+one_b:  113 
+one_c:  123 
+
+Record 4: 
+Tag: 10
+two_a:  
+  0:            26            27            28 
+two_b:  214 
+one_a:  104 
+one_b:  114 
+one_c:  124 
+
+aArDvArK
+if epsps -v fea3 | egrep -v "$egpat" | diff asc3 -
+then echo "  OK"
+fi
+
+echo "# Testing:  cat fea1 | mergefea -f - fea2 - | cat >fea3"
+echo "# no tags"
+
+rm -f fea0 fea1 fea2 fea3 asc3
+echo "101 102 103 104" | addfea -fone_a -c"test" - fea1
+echo "111 112 113 114" | addfea -fonetwo_b -c"test" - fea1
+echo "121 122 123 124" | addfea -fone_c -c"test" - fea1
+addgen -F -gstart_time -tDOUBLE -v1.0 fea1
+addgen -gAA -tLONG -v170 fea1
+addgen -gAB -tLONG -v171 fea1
+echo "201 202 203 204" | addfea -ftwo_a -c"test" - fea2
+echo "211 212 213 214" | addfea -fonetwo_b -c"test" - fea2
+echo "221 222 223 224" | addfea -ftwo_c -c"test" - fea2
+addgen -F -gstart_time -tDOUBLE -v2.0 fea2
+addgen -gAB -tFLOAT -v271 fea2
+addgen -gBB -tFLOAT -v287 fea2
+cat fea1 | mergefea -fone_c - fea2 - | cat >fea3
+cat > asc3 << aArDvArK
+File: fea3
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is not tagged.
+Data format is 0 doubles, 4 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea -fone_c - fea2 - 
+Source files: fea2
+              <stdin>
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 4
+Item name: two_a, type: FLOAT, size: 1
+Item name: onetwo_b, type: FLOAT, size: 1
+Item name: two_c, type: FLOAT, size: 1
+Item name: one_c, type: FLOAT, size: 1
+
+---Generic Part of Header---
+AA: (LONG) 170 
+AB: (FLOAT) 271 
+BB: (FLOAT) 287 
+start_time: (DOUBLE) 2 
+
+Record 1: 
+two_a:  201 
+onetwo_b:  211 
+two_c:  221 
+one_c:  121 
+
+Record 2: 
+two_a:  202 
+onetwo_b:  212 
+two_c:  222 
+one_c:  122 
+
+Record 3: 
+two_a:  203 
+onetwo_b:  213 
+two_c:  223 
+one_c:  123 
+
+Record 4: 
+two_a:  204 
+onetwo_b:  214 
+two_c:  224 
+one_c:  124 
+
+aArDvArK
+if epsps -v fea3 | egrep -v "$egpat" | diff asc3 -
+then echo "  OK"
+fi
+
+echo "# Testing:  mergefea -f -t -u fea1 fea2"
+echo "# fea2 exists; fea1 tagged; fea1 & fea2 have subtype codes"
+
+rm -f fea0 fea1 fea2 fea3 asc3
+echo "1 2 3 4 5 6 7 8 9 10 11 12" | testsd -a- - | frame -l3 -fone_a - fea1
+echo "101 102 103 104" | addfea -fonetwo_b -c"test" - fea1
+echo "111 112 113 114" | addfea -TFEA_VQ -fone_c -c"test" - fea1
+addgen -F -gstart_time -tDOUBLE -v1.0 fea1
+addgen -gAA -tLONG -v170 fea1
+addgen -gAB -tLONG -v171 fea1
+echo "201 202 203 204" | addfea -ftwo_a -c"test" - fea2
+echo "211 212 213 214" | addfea -TFEA_SD -fonetwo_b -c"test" - fea2
+addgen -F -gstart_time -tDOUBLE -v2.0 fea2
+addgen -gAB -tFLOAT -v271 fea2
+addgen -gBB -tFLOAT -v287 fea2
+mergefea -fone_a -t -u fea1 fea2
+cat > asc3 << aArDvArK
+File: fea2
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 5 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea -fone_a -t -u fea1 fea2 
+Source files: fea2
+              fea1
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: FEA_SD, segment_labeled: NO, field_count: 3
+Item name: two_a, type: FLOAT, size: 1
+Item name: onetwo_b, type: FLOAT, size: 1
+Item name: one_a, type: FLOAT, size: 3, rank: 1
+
+---Generic Part of Header---
+AA: (LONG) 170 
+AB: (FLOAT) 271 
+AB1: (LONG) 171 
+BB: (FLOAT) 287 
+frmlen: (LONG) 3 
+nan: (LONG) 2147483647 
+record_freq: (DOUBLE) 2666.67 
+src_sf: (FLOAT) 8000 
+start: (LONG) 1 
+start_time: (DOUBLE) 2 
+start_time1: (DOUBLE) 1 
+step: (LONG) 3 
+
+Record 1: 
+Tag: 1
+two_a:  201 
+onetwo_b:  211 
+one_a:  
+  0:             1             2             3 
+
+Record 2: 
+Tag: 4
+two_a:  202 
+onetwo_b:  212 
+one_a:  
+  0:             4             5             6 
+
+Record 3: 
+Tag: 7
+two_a:  203 
+onetwo_b:  213 
+one_a:  
+  0:             7             8             9 
+
+Record 4: 
+Tag: 10
+two_a:  204 
+onetwo_b:  214 
+one_a:  
+  0:            10            11            12 
+
+aArDvArK
+if epsps -v fea2 | egrep -v "$egpat" | diff asc3 -
+then echo "  OK"
+fi
+
+echo "# Testing:  cat fea1 | mergefea - fea2"
+echo "# fea2 exists; fea1 shorter than fea2"
+
+rm -f fea0 fea1 fea2 fea3 asc3
+echo "101 102" | addfea -fone_a -c"test" - fea1
+echo "111 112" | addfea -fone_b -c"test" - fea1
+addgen -F -gstart_time -tDOUBLE -v1.0 fea1
+addgen -gAA -tLONG -v170 fea1
+addgen -gAB -tLONG -v171 fea1
+echo "201 202 203 204" | addfea -ftwo_a -c"test" - fea2
+echo "211 212 213 214" | addfea -ftwo_b -c"test" - fea2
+addgen -F -gstart_time -tDOUBLE -v2.0 fea2
+addgen -gAB -tFLOAT -v271 fea2
+addgen -gBB -tFLOAT -v287 fea2
+cat fea1 | mergefea - fea2
+cat > asc3 << aArDvArK
+File: fea2
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is not tagged.
+Data format is 0 doubles, 4 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea - fea2 
+Source files: fea2
+              <stdin>
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 4
+Item name: two_a, type: FLOAT, size: 1
+Item name: two_b, type: FLOAT, size: 1
+Item name: one_a, type: FLOAT, size: 1
+Item name: one_b, type: FLOAT, size: 1
+
+---Generic Part of Header---
+AA: (LONG) 170 
+AB: (FLOAT) 271 
+BB: (FLOAT) 287 
+start_time: (DOUBLE) 2 
+
+Record 1: 
+two_a:  201 
+two_b:  211 
+one_a:  101 
+one_b:  111 
+
+Record 2: 
+two_a:  202 
+two_b:  212 
+one_a:  102 
+one_b:  112 
+
+Record 3: 
+two_a:  203 
+two_b:  213 
+one_a:  102 
+one_b:  112 
+
+Record 4: 
+two_a:  204 
+two_b:  214 
+one_a:  102 
+one_b:  112 
+
+aArDvArK
+if epsps -v fea2 | egrep -v "$egpat" | diff asc3 -
+then echo "  OK"
+fi
+
+echo "# Testing:  mergefea fea1 fea2"
+echo "# new file fea2; fea1 untagged"
+
+rm -f fea0 fea1 fea2 fea3 asc3
+echo "101 102 103 104" | addfea -fone_a -c"test" - fea1
+echo "111 112 113 114" | addfea -fone_b -c"test" - fea1
+echo "121 122 123 124" | addfea -fone_c -c"test" - fea1
+addgen -F -gstart_time -tDOUBLE -v1.0 fea1
+addgen -gAA -tLONG -v170 fea1
+addgen -gAB -tLONG -v171 fea1
+mergefea fea1 fea2
+cat > asc3 << aArDvArK
+File: fea2
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is not tagged.
+Data format is 0 doubles, 3 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea fea1 fea2 
+Source files: fea1
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 3
+Item name: one_a, type: FLOAT, size: 1
+Item name: one_b, type: FLOAT, size: 1
+Item name: one_c, type: FLOAT, size: 1
+
+---Generic Part of Header---
+AA: (LONG) 170 
+AB: (LONG) 171 
+start_time: (DOUBLE) 1 
+
+Record 1: 
+one_a:  101 
+one_b:  111 
+one_c:  121 
+
+Record 2: 
+one_a:  102 
+one_b:  112 
+one_c:  122 
+
+Record 3: 
+one_a:  103 
+one_b:  113 
+one_c:  123 
+
+Record 4: 
+one_a:  104 
+one_b:  114 
+one_c:  124 
+
+aArDvArK
+if epsps -v fea2 | egrep -v "$egpat" | diff asc3 -
+then echo "  OK"
+fi
+
+echo "# Testing:  mergefea -f -u fea1 - | cat >fea2"
+echo "# new file fea2; fea1 tagged; fea1 has subtype code"
+
+rm -f fea0 fea1 fea2 fea3 asc3
+echo "1 2 3 4 5 6 7 8 9 10 11 12" | testsd -a- - | frame -l3 -fone_a - fea1
+echo "101 102 103 104" | addfea -fone_b -c"test" - fea1
+echo "111 112 113 114" | addfea -fone_c -c"test" - fea1
+echo "121 122 123 124" | addfea -TFEA_SD -fone_d -c"test" - fea1
+addgen -F -gstart_time -tDOUBLE -v1.0 fea1
+addgen -gAA -tLONG -v170 fea1
+addgen -gAB -tLONG -v171 fea1
+mergefea -fone_a -fone_d -u fea1 - | cat >fea2
+cat > asc3 << aArDvArK
+File: fea2
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is not tagged.
+Data format is 0 doubles, 4 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea -fone_a -fone_d -u fea1 - 
+Source files: fea1
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 2
+Item name: one_a, type: FLOAT, size: 3, rank: 1
+Item name: one_d, type: FLOAT, size: 1
+
+---Generic Part of Header---
+AA: (LONG) 170 
+AB: (LONG) 171 
+frmlen: (LONG) 3 
+nan: (LONG) 2147483647 
+record_freq: (DOUBLE) 2666.67 
+src_sf: (FLOAT) 8000 
+start: (LONG) 1 
+start_time: (DOUBLE) 1 
+step: (LONG) 3 
+
+Record 1: 
+one_a:  
+  0:             1             2             3 
+one_d:  121 
+
+Record 2: 
+one_a:  
+  0:             4             5             6 
+one_d:  122 
+
+Record 3: 
+one_a:  
+  0:             7             8             9 
+one_d:  123 
+
+Record 4: 
+one_a:  
+  0:            10            11            12 
+one_d:  124 
+
+aArDvArK
+if epsps -v fea2 | egrep -v "$egpat" | diff asc3 -
+then echo "  OK"
+fi
+
+echo "# Testing:  cat fea1 | mergefea -f -t - fea2"
+echo "# new file fea2; fea1 tagged"
+
+rm -f fea0 fea1 fea2 fea3 asc3
+echo "1 2 3 4 5 6 7 8 9 10 11 12" | testsd -a- - | frame -l3 -fone_a - fea1
+echo "101 102 103 104" | addfea -fone_b -c"test" - fea1
+echo "111 112 113 114" | addfea -fone_c -c"test" - fea1
+echo "121 122 123 124" | addfea -fone_d -c"test" - fea1
+addgen -F -gstart_time -tDOUBLE -v1.0 fea1
+addgen -gAA -tLONG -v170 fea1
+addgen -gAB -tLONG -v171 fea1
+cat fea1 | mergefea -fone_c -t - fea2
+cat > asc3 << aArDvArK
+File: fea2
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 1 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea -fone_c -t - fea2 
+Source files: <stdin>
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 1
+Item name: one_c, type: FLOAT, size: 1
+
+---Generic Part of Header---
+AA: (LONG) 170 
+AB: (LONG) 171 
+frmlen: (LONG) 3 
+nan: (LONG) 2147483647 
+record_freq: (DOUBLE) 2666.67 
+src_sf: (FLOAT) 8000 
+start: (LONG) 1 
+start_time: (DOUBLE) 1 
+step: (LONG) 3 
+
+Record 1: 
+Tag: 1
+one_c:  111 
+
+Record 2: 
+Tag: 4
+one_c:  112 
+
+Record 3: 
+Tag: 7
+one_c:  113 
+
+Record 4: 
+Tag: 10
+one_c:  114 
+
+aArDvArK
+if epsps -v fea2 | egrep -v "$egpat" | diff asc3 -
+then echo "  OK"
+fi
+
+echo "# Testing:  cat fea1 | mergefea -u - - | cat >fea2"
+echo "# new file fea2; fea1 tagged"
+
+rm -f fea0 fea1 fea2 fea3 asc3
+echo "1 2 3 4 5 6 7 8 9 10 11 12" | testsd -a- - | frame -l3 -fone_a - fea1
+echo "101 102 103 104" | addfea -fone_b -c"test" - fea1
+echo "111 112 113 114" | addfea -fone_c -c"test" - fea1
+echo "121 122 123 124" | addfea -fone_d -c"test" - fea1
+addgen -F -gstart_time -tDOUBLE -v1.0 fea1
+addgen -gAA -tLONG -v170 fea1
+addgen -gAB -tLONG -v171 fea1
+cat fea1 | mergefea -u - - | cat >fea2
+cat > asc3 << aArDvArK
+File: fea2
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is not tagged.
+Data format is 0 doubles, 6 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea -u - - 
+Source files: <stdin>
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 4
+Item name: one_a, type: FLOAT, size: 3, rank: 1
+Item name: one_b, type: FLOAT, size: 1
+Item name: one_c, type: FLOAT, size: 1
+Item name: one_d, type: FLOAT, size: 1
+
+---Generic Part of Header---
+AA: (LONG) 170 
+AB: (LONG) 171 
+frmlen: (LONG) 3 
+nan: (LONG) 2147483647 
+record_freq: (DOUBLE) 2666.67 
+src_sf: (FLOAT) 8000 
+start: (LONG) 1 
+start_time: (DOUBLE) 1 
+step: (LONG) 3 
+
+Record 1: 
+one_a:  
+  0:             1             2             3 
+one_b:  101 
+one_c:  111 
+one_d:  121 
+
+Record 2: 
+one_a:  
+  0:             4             5             6 
+one_b:  102 
+one_c:  112 
+one_d:  122 
+
+Record 3: 
+one_a:  
+  0:             7             8             9 
+one_b:  103 
+one_c:  113 
+one_d:  123 
+
+Record 4: 
+one_a:  
+  0:            10            11            12 
+one_b:  104 
+one_c:  114 
+one_d:  124 
+
+aArDvArK
+if epsps -v fea2 | egrep -v "$egpat" | diff asc3 -
+then echo "  OK"
+fi
+
+echo "# Testing:  mergefea fea1 fea2 2>errmsg"
+echo "# fea1 & fea2 have different record_freq"
+
+rm -f fea0 fea1 fea2 fea3 asc3 errmsg
+testsd -r8000 -p12 fea1
+frame -l3 fea1 fea2
+mergefea fea1 fea2 2>errmsg
+if echo "mergefea: Warning: record_freq values 8000, 2666.67 differ." \
+	| diff - errmsg
+then echo "  OK"
+fi
+
+echo "# Testing:  mergefea -z fea1 fea2 2>errmsg"
+echo "# fea1 & fea2 have different record_freq"
+
+rm -f fea0 fea1 fea2 fea3 asc3 errmsg
+testsd -r8000 -p12 fea1
+frame -l3 fea1 fea2
+mergefea -z fea1 fea2 2>errmsg
+if diff errmsg /dev/null
+then echo "  OK"
+fi
+
+echo "# Testing: mergefea -a fea1 fea2 fea3"
+echo "# new file fea3"
+rm -f fea1 fea2 fea3 errmsg
+t1=0.6
+f1=1
+t2=0
+f2=2
+echo "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"|testsd -a - - |frame -l3 -ffea1 - fea1
+addgen -grecord_freq -tDOUBLE -v$f1 -F fea1
+addgen -gstart_time -tDOUBLE -v$t1 -F fea1
+echo "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"|testsd -a - - |frame -l3 -ffea2 - fea2
+addgen -grecord_freq -tDOUBLE -v$f2 -F fea2
+addgen -gstart_time -tDOUBLE -v$t2 -F fea2
+mergefea -a fea1 fea2 fea3 > errmsg
+cat > asc1 << aArDvArk
+File: fea3
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 6 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea -a fea1 fea2 fea3 
+Source files: fea2
+              fea1
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 2
+Item name: fea2, type: FLOAT, size: 3, rank: 1
+Item name: fea1, type: FLOAT, size: 3, rank: 1
+
+---Generic Part of Header---
+frmlen: (LONG) 3 
+nan: (LONG) 2147483647 
+record_freq: (DOUBLE) 2 
+src_sf: (FLOAT) 8000 
+start: (LONG) 1 
+start_time: (DOUBLE) 0.6 
+step: (LONG) 3 
+
+Record 1: 
+Tag: 4
+fea2:  
+  0:             4             5             6 
+fea1:  
+  0:             1             2             3 
+
+Record 2: 
+Tag: 7
+fea2:  
+  0:             7             8             9 
+fea1:  
+  0:             4             5             6 
+
+Record 3: 
+Tag: 10
+fea2:  
+  0:            10            11            12 
+fea1:  
+  0:             4             5             6 
+
+Record 4: 
+Tag: 13
+fea2:  
+  0:            13            14            15 
+fea1:  
+  0:             7             8             9 
+
+aArDvArk
+
+if epsps -v fea3 | egrep -v "$egpat" | diff asc1 -
+then echo " OK"
+fi
+
+echo "Done testing MERGEFEA"
+echo ""
+# rm -f frm.fea merge.fea asc.fea sd.fea want.psps
+# rm -f fea0 fea1 fea2 fea3 asc3
+# rm -f errmsg

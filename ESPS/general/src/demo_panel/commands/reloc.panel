@@ -1,0 +1,3 @@
+# @(#)reloc.panel	1.2 6/18/91 ERL - waves command script for self modifying panel
+waves make_panel name reloc cat file reloc.wb title Self-Alteration columns 6 loc_x 500 loc_y 400
+return

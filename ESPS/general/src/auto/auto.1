@@ -1,0 +1,317 @@
+.\" Copyright (c) 1987, 1989 Entropic Speech, Inc. All rights reserved.
+.\" @(#)auto.1	1.9	4/2/97 ESI
+.TH AUTO 1\-ESPS 4/2/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+auto \- Compute autocorrelation sequence of real data
+.SH "SYNOPSIS"
+.B auto
+[
+.BI \-l " frame_len"
+] [
+.BI \-o " order"
+] [
+.BR \- { pr } "\fI range\fP"
+] [
+.BI \-w " window_type"
+] [
+.BI \-x " debug_level"
+] [
+.BI \-P " params"
+] [
+.BI \-S " step_size"
+] [
+.B  \-B
+]
+.I sd.in
+.I fea_ana.out
+.SH "DESCRIPTION"
+.PP
+.I auto
+takes as input a single-channel, real ESPS sampled-data (FEA_SD or SD) file, 
+.I sd.in,
+and computes the positive-lag elements of the power-normalized
+autocorrelation function of one or more fixed-length segments to
+produce an ESPS FEA_ANA file
+.I fea_ana.out
+containing one or more records.  (The autocorrelation function for a
+real signal is even, so the negative lag elements are equal to the
+positive lag elements. That is, R[1] = R[\-1], R[2] = R[\-2], etc.)
+.PP
+All input frames have the same length (see \fB\-l\fR below).
+The initial points of successive frames are separated by the step size
+specified by \fB\-S\fR. Thus the three cases \fIstep < frame_len,
+step = frame_len\fR, and \fIstep > frame_len\fR,
+correspond to overlapping frames, exactly abutted frames,
+and frames separated by gaps (sometimes called underlapping frames).
+.PP
+In addition to the normalized autocorrelation values, each record
+contains the power corresponding to the input data segment, the length
+of the data segment, and the starting point for that record in the
+input sampled data file.  By default the power computed for each
+record is the power corresponding to the unwindowed data.  This can be
+changed to the power of the windowed data by using the \fIpower\fR
+parameter in the params file. See \fIpower\fR under \s-1\fBESPS
+PARAMETERS\fR\s+1 for more details.
+.PP
+By default, a lag-product form is used to compute the autocorrelation.
+If the \fB-B\fP is used, a structured covariance method is used.  
+This is usually provides a much better estimate, especially for 
+short, noisy data sequences.  
+.PP
+If the input file name
+.I sd.in
+is replaced by "\-", then \fIstdin\fR is read; similarly, if
+.I fea_ana.out
+is replaced by "\-", then the output is written to \fIstdout\fR.
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP
+.BI \-l " frame_len" " \fR[0]\fP"
+Specifies the length of each frame, and overrides the 
+.I frame_len
+value that may be in the parameter file.
+The number of frames processed
+is the largest number with the given length
+.RI ( frame_len )
+and spacing
+(see
+.BR \-S )
+that will fit within the range
+(determined by \fB\-p\fP option or
+.I start
+and
+.I nan
+in the parameter file or from ESPS Common).
+If 
+.I frame_len
+is zero, 
+.I auto
+sets the frame length
+equal to the total range \- i.e., a single frame is processed.
+This holds whether 
+.I frame_len
+comes from the \fB\-l\fP option or from the parameter file.  
+It also holds if the \fB\-l\fP option is not used and the
+.I frame_len
+parameter is not given in the parameter file.  
+.TP
+.BI \-o " order" " \fR[10]\fP"
+Specifies the order of the autocorrelation function.  Autocorrelation
+lags one through \fIorder\fR are stored for each record in the
+\fIspec_param\fR field of the FEA_ANA record.  If the number of data
+points in each frame (\fIframe_len\fR) is less than the \fIorder\fR,
+\fIauto\fR warns and exits.  The default order is 10.
+.TP
+.BI \-p " first" : "last"
+.TP
+.BI \-p " first" :+ "incr" 
+In the first form, a pair of unsigned integers specifies the range of
+sampled data to analyze.  If 
+.IR last " = " first " + " incr,
+the second form (with the plus sign) specifies the same range as the
+first.  If 
+.I first
+is omitted, the default value of 1 is used.  Both forms of the option
+override the values of
+.I start
+and
+.I nan
+in the parameter file or ESPS Common file.  If the \fB\-p\fP option is not
+used, the range is determined from the ESPS Common file if the appropriate
+parameters are present (see ESPS COMMON).  
+.TP
+.BI \-r " first" : "last"
+.TP
+.BI \-r " first" :+ "incr" 
+The
+.B \-r
+option is synonymous with
+.BR \-p .
+.TP
+.BI \-w " window_type" " \fR[RECT]\fP"
+Specifies the data window to apply to the data.  The default window
+type is a rectangular window with amplitude equal to one.  Possible
+window types include the following: rectangular("RECT"), Hamming
+("HAMMING"), Hanning ("HANNING"), cosine to the fourth power ("COS4"),
+and triangular ("TRIANG").  See the window(\3-ESPSsp) manual page for
+a complete list of window functions.
+.TP
+.BI \-x " debug_level" " \fR[0]\fP"
+Specifies that debugging output be printed on stderr; larger values
+of 
+.I debug_level
+result in more output.  The default is for no output.  
+.TP
+.BI \-P " param" " \fR[params]\fP"
+Specifies the name of the parameter file. The default name is
+\fIparams\fR.
+.TP
+.BI \-S " step_size" " \fR[frame_len]\fP"
+Initial points of consecutive frames differ by this number of samples.
+If this option is omitted, the parameter file is consulted, and if no
+value is found in the parameter file, a default equal to
+\fIframe_len\fR is used.  This results in exactly abutted frames.
+.TP
+.B \-B 
+Specifies that the "best" autocorrelation method be used -- i.e., a
+structured covariance method, rather than the standard lag-product
+algorithm.
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not required to be present, as there are 
+default parameter values that apply.  If the parameter file 
+does exist, the following parameters are read:
+.IP
+.I "start \- integer"
+.IP
+The first point in the input sampled-data file that is processed.  A
+value of 1 denotes the first sample in the file.  This is only read
+if the \fB\-p\fP option is not used.  If it is not in the parameter
+(or Common) file, the default value of 1 is used.  
+.sp
+.I "nan \- integer"
+.IP
+The total number of points to analyze.  If no value is given, the
+value is set equal to the total number of points in the input file
+minus \fIstart\fR + 1.  Both the parameter file value and the default
+value may be overridden by means of the \fB\-p\fP option.
+.sp
+.I "frame_len \- integer"
+.IP
+The number of points analyzed for each frame.  If no value is given,
+or the value is zero,
+the value is set equal to the range (i.e., so that only a single frame is
+processed).  This value is not read if the command line option \fB\-l\fP is
+used.  Both the parameter file value and the default value may be
+overridden by means of the \fB\-l\fP option.  To see how the number of
+frames is determined see the \fB\-l\fP option.
+.sp
+.I "step_size \- integer"
+.IP
+Initial points of consecutive frames differ by this number of samples.
+This parameter is not read if the \fB\-S\fR option is specified.
+If the option is omitted and no value is found in the parameter
+file,
+a default equal to \fIframe_len\fR is used (resulting
+in exactly abutted frames).
+.sp
+.I "order \- integer"
+.IP
+The order of the autocorrelation function.
+If no value is given in the file, a default value of 10 is used.
+This value is not read if the command line option
+\fB\-o\fP is used.
+.sp
+.I "window \- string"
+.IP
+Specify a data window to apply to the sampled data before computing the
+autocorrelation
+function.
+This value is not read if the command line option \fB\-w\fP
+is used.
+If the option is omitted and no value is found in the parameter file,
+the default used is a rectangular window with amplitude one.
+.sp
+.I "power \- string"
+.IP
+Specify the method for computing the power in each record.
+Two methods are supported:
+\fIunwindowed\fR (the default) and \fIwindowed\fR.
+For \fIunwindowed\fR,
+the power corresponding to the input data before any windowing
+is computed;
+for \fIwindowed\fR,
+the power corresponding to the windowed data is computed.
+.sp
+.I "strcov_auto \- string"
+.IP
+Specify whether ("yes") or not ("no") to use a structured covariance
+method rather than a lag-product method.  This parameter is not 
+read if the \fB-B\fP option is used.  The default is not to use 
+structured covariance.  
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.SH "ESPS COMMON"
+.PP
+It the \fB\-p\fP option is not used and ESPS Common is enabled, the
+parameters
+.I start
+(starting point) and 
+.I nan
+(number of points) are read from ESPS Common if they exist and 
+if the Common parameter
+.I filename 
+matches
+.I sd.in. 
+If Common processing is enabled and if
+.I fea_ana.out
+is not standard output, the Common parameters 
+.I "filename, prog, start, step_size, frmlen,"
+and
+.I nan
+are written to Common, where 
+.I filename
+is set to the input 
+.I sd.in.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overridden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.SH ESPS HEADERS
+.PP
+.I auto
+reads the value of 
+.I common.type
+from the input sampled-data file 
+.I sd.in.  
+.PP
+Relevant fields in the type-dependent portion of the 
+output file header are filled appropriately.  
+.PP
+Two generic header items that describe the processing 
+are written to the output file header:
+\fIdata_window \- coded\fR and \fIstep_size \- integer\fR.
+\fIdata_window\fR
+contains the name of the type of data window used on the data
+prior to the computation of the autocorrelation function;
+\fIstep_size\fR contains the number of points between consecutive frames.
+In addition,
+the generic header item \fIstart_time\fP (type DOUBLE) is written in
+the output file.  The value written is computed by taking the
+\fIstart_time\fP value from the header of the input file (or zero, if
+such a header item doesn't exist) and adding to it the offset time
+(from the beginning of the input file) of the first point processed
+plus one half of \fIframe_len\fP.  (Thus, \fIstart_time\fP is in the middle of
+the first frame, which is appropriate since the output data represent
+the entire frame; without this adjustment for \fIframe_len\fP,
+\fIwaves\fP+ displays would not line up properly.) 
+.SH "FUTURE CHANGES"
+.PP
+Add more data window types.
+.SH "SEE ALSO"
+.PP
+.nf
+refcof(1\-ESPS), cross_cor(1\-ESPS), me_spec(1\-ESPS), rem_dc(1\-ESPS), 
+transpec(1\-ESPS), spectrans(1\-ESPS), toep_solv(1\-ESPS), window(3\-ESPS), 
+FEA_SD(5\-ESPS), SD(5\-ESPS), FEA_ANA(5\-ESPS), ESPS(5\-ESPS), 
+\fIget_auto\fP (3\-\s-1ESPSsp\s+1), \fIstrcov_auto\fP (3\-\s-1ESPSsp\s+1)
+.fi
+.SH "BUGS"
+.PP
+None known.
+.SH "AUTHOR"
+.PP
+Manual page and program by Dave Burton.
+Conversion from SD to FEA_SD by Rod Johnson.  
+Structured covariance added by Shore. 
+
+

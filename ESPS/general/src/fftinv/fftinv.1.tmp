@@ -1,0 +1,94 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; all rights reserved
+.\" @(#)fftinv.1	1.6 12/13/88 ESI
+.TH FFTINV 1\-ESPS 12/13/88
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+fftinv \- Inverse Fast Fourier Transform of ESPS FEA_SPEC file to SD file
+.SH "SYNOPSIS"
+.B fftinv
+[
+.BI \-r " range"
+] [
+.BI \-x " debug_level"
+]
+.I specfile
+.I sdfile
+.SH "DESCRIPTION"
+.PP
+.I Fftinv
+takes an input ESPS spectral record file (FEA_SPEC) file, 
+.I specfile,
+and takes the Fast Fourier Transform of one or more records
+segments to produce an ESPS sampled data file (SD) file
+.I sdfile.
+If the input file name
+.I specfile
+is replaced by "\-", then stdin is read; similarily, if
+.I sdfile
+is replaced by "\-", then the output is written to stdout.
+.PP
+The input FEA_SPEC file must have spectral type SPTYP_CPLX and 
+frequency format SPFMT_ASYM_EDGE \- i.e., the full complex 
+spectrum is stored.  Such spectral records are produced 
+by \fIfft\fP (1\-\s-1ESPS\s+1) using the \fB\-c\fP option.  
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP
+.BI \-r " first" : "last"
+.TP
+.BI \-r " first\-last"
+.TP
+.BI \-r " first" :+ "incr"
+In the first two forms, a pair of unsigned integers specifies the range of
+sampled data to analyze.  If 
+.IR last " = " first " + " incr,
+the third form (with the plus sign) specifies the same range as the
+first two forms.  If 
+.I first
+is omitted, the default value of 1 is used.  If 
+.I last
+is omitted, then all records from 
+.I first
+are processed.
+.TP
+.BI \-x " debug_level\fR[0]\fP"
+Specifies that debugging output be printed on stderr; larger values
+of 
+.I debug_level
+result in more output.  The default is for no output.  
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read.
+.SH "ESPS COMMON"
+.PP
+The ESPS Common file is not read 
+or written.
+.SH ESPS HEADERS
+.PP
+The generic header item \fIstart_time\fP (type DOUBLE)
+is written in the output file.  
+The value written is computed by taking the \fIstart_time\fP value from
+the header of the input file (or zero, if such a header item doesn't
+exist) and adding to it the offset time (from the
+beginning of the input file) of the first point or record processed.
+.SH "FUTURE CHANGES"
+.PP
+.SH "SEE ALSO"
+.PP
+fft(1\-ESPS), plotsd (1\-ESPS), get_fft_inv (3\-ESPS), SD(5\-ESPS),
+FEA_SPEC(5\-ESPS), ESPS(5\-ESPS).
+.SH "BUGS"
+.PP
+.SH "REFERENCES"
+.PP
+J. W. Cooley and J. W. Tukey, "An Algorithm for the Machine Calculation of
+Complex Fourier Series," \fIMath. Computation\fP, Vol. 19, 1965, pp. 297-301.
+.sp
+Alan V. Oppenheim and Ronald W. Schafer, \fIDigital Signal Processing\fP.
+Englewood Cliffs, New Jersey: Prentice-Hall, Inc., 1975.
+.SH "AUTHOR"
+.PP
+manual page and program by John Shore, using library
+function by Shankar Narayan.
+

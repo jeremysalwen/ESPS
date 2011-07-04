@@ -1,0 +1,243 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)fearec.3	1.8 06 May 1997 ESI
+.TH FEA_REC 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+allo_fea_rec    \- allocate memory for an ESPS FEA file record
+copy_fea_rec	\- copy data from one ESPS FEA record to another
+get_fea_rec     \- get the next data record from an ESPS FEA data file
+print_fea_rec   \- print an ESPS FEA data record
+print_fea_recf  \- print fields in an ESPS FEA data record
+put_fea_rec     \- put an ESPS FEA data record onto the file
+free_fea_rec	\- free storage for a FEA record
+.SH SYNOPSIS
+.ft B
+.nf
+#include <esps/esps.h>
+#include <esps/fea.h>
+
+struct fea_data *
+allo_fea_rec(hd)
+struct header *hd;
+
+void
+copy_fea_rec(irec,ihd,orec,ohd,fields,trans)
+struct fea_data	    *ihrec;
+struct header	    *ihd;
+struct fea_data	    *orec;
+struct header	    *ohd;
+char  **fields;
+short **trans;
+
+int
+get_fea_rec(data, hd, file)
+struct fea_data *data;
+struct header *hd;
+FILE *file;
+
+void
+print_fea_rec(data, hd, file)
+struct fea_rec *data;
+struct header *hd;
+FILE *file;
+
+void
+print_fea_recf(data, hd, file, fields)
+struct fea_rec *data;
+struct header *hd;
+FILE *file;
+char *fields[];
+
+void
+put_fea_rec(data, hd, file)
+struct fea_rec *data;
+struct header *hd;
+FILE *file;
+
+void
+free_fea_rec(rec)
+struct fea_data *rec;
+.ft
+.sp
+.fi
+.SH DESCRIPTION
+.I allo_fea_rec
+allocates memory for an FEA file record and returns a pointer to it.
+Since the size of the allocated record depends on values in the data file
+header, it is important to be sure that a given FEA record is 
+consistent with the header of the file it is being used with.   The FEA
+data read/write routines use these same values in the header to determine
+the amount of data to read or write.   A mismatch could cause the program
+to fail in unpredictable ways.     It is possible to allocate only one 
+record, for both input and output, if the programmer is certain that the
+values of all header items
+are the same in both the input and output files.
+If the record is being allocated for a new file (to be written), then
+all fields in the Feature file must be created with
+\fIadd_fea_fld\fR(3\-ESPSu) before this function is called.
+.PP
+.I copy_fea_rec
+copies data from the feature record to which
+.I irec
+points into the one to which
+.I orec
+points.
+Since values in a file header determine the format of the record
+structure,
+.I irec
+and
+.I orec
+must be properly allocated according to the respective headers
+.I ihd
+and
+.I ohd
+before the function is called.
+The value of
+.I fields
+controls what data is copied.
+If
+.I fields
+points to the first element of a NULL-terminated array of field
+names, then the contents of the named fields are copied from
+.I irec
+to
+.I orec.
+If
+.I fields
+is (char **) NULL, then all fields defined in
+.I ihd
+are copied.
+Each field copied must have compatible definitions in the two
+headers.
+This means at the very least that the name and type are the same,
+and the size defined in
+.I ohd
+is no less than the size defined in
+.I ihd.
+The latter size fixes the number of elements copied, and they are simply
+copied in linear order.
+Thus, if the rank defined in
+.I ihd
+is greater than 1, the rank and dimensions defined in 
+.I ohd
+had better match those defined in
+.I ihd,
+or else the correspondence between array positions and subscripts
+will be scrambled.
+(For indexing of a field as a multidimensional array,
+see \fImarg_index\fR(3\-ESPSu).)
+If
+.I trans
+is not (long **) NULL, it must be an array containing translation
+tables for coded fields.
+In that case
+.IR trans [ i ]
+is ignored unless
+.IR field [ i ]
+names a coded field, and then
+.IR trans [ i ]
+must point to the beginning of a vector of long integers;
+a code
+.I c
+in the named field in
+.I irec
+is translated to
+.IR trans [ i ][ c ]
+in
+.I orec.
+If
+.I trans
+is (long **) NULL,
+codes are copied without translation.
+In that case information in coded fields will be corrupted unless
+corresponding
+.I enums
+arrays in the two headers contain the same strings in the same order.
+The function
+.IR fea_compat (3-ESPSu)
+will check field definitions in the two headers for compatibility and
+will create a translation table if one is needed.
+.PP
+.I get_fea_rec
+reads the next Feature file record from stream \fIfile\fR into the 
+data structure
+pointed to by \fIdata\fR.
+Values in the file header determine the format of the record structure,
+so it is important that \fIdata\fR be properly allocated using header
+\fIhd\fR.
+EOF is returned upon end of file.    A positive non-zero value is
+returned otherwise.
+.PP
+.I print_fea_rec
+prints the FEA record pointed to by \fIdata\fR onto the stream 
+\fIfile\fR.   The Feature file header is consulted for the defined
+fields and data types.
+.I print_fea_recf
+prints the FEA record pointed to by \fIdata\fR onto the stream 
+\fIfile\fR.
+The argument \fIfields\fR is a NULL terminated
+array of field names in the record.  Only those fields are printed.   If
+\fIfields\fR is NULL, then all fields are printed.   If any names in
+\fIfields\fR are not valid field names in this record, they are
+ignored.
+These functions are useful for debug output in programs which process
+FEA data files.
+.PP
+.I put_fea_rec
+writes a Feature file data record pointed to by \fIdata\fR onto the stream
+\fIfile\fR, which should be an open ESPS FEA file.   The header must
+be written out to the file before calling this function.   
+.PP
+.I free_fea_rec
+frees storage for a FEA data record. Most often
+used by library functions to avoid the accumulation of inaccessible
+temporary records.
+Use with CAUTION,
+it invalidated any pointers into the data arrays of
+the FEA record.
+.SH EXAMPLES
+.nf
+.if n .ta 33
+.if t .ta 3i
+struct fea_data *p;	
+struct header *ih;
+char *fields[] = {"alpha","beta",NULL};
+.sp .5
+ih = read_header(file);	/* read fea file header */
+p = allo_fea_rec(ih);	/* allocate record */
+if(get_fea_rec(p,ih,file) == EOF) \fIeof...\fR	/* read a record */
+.sp
+(void) print_fea_record(p,ih,stderr)	/* print the record (all fields) */
+(void) print_fea_recf(p,ih,stderr,fields)	/* print some fields (alpha & beta) */
+.sp
+struct fea_data *p;	
+struct header *oh;
+.sp .5
+oh = new_header(FT_FEA);	/* create file header */
+\fI ... fill in some values ... see add_fea_fld(3\-ESPSu) ...\fR
+write_header(oh,file);	/* write out header */
+p = allo_fea_rec(oh);	/* allocate record */
+\fI ... fill in desired data record values...\fR
+put_fea_rec(p,oh,file);	/* write data record */
+.fi
+.SH DIAGNOSTICS
+If \fIhd\fR does not point to a FEA header then a message is printed
+on stderr and the program terminates with exit 1.
+.I copy_fea_rec
+does not check the headers for compatibility; see
+.IR fea_compat (3-ESPS).
+In \fIget_fea_rec\fR, if an incomplete record is read a message is
+printed on the standard error output.
+In \fIput_fea_rec\fR, if an I/O error occurs during write, a message
+is output to standard error and the programs exits with status 1.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+add_fea_fld(3\-ESPSu), copy_header(3\-ESPSu), eopen(3\-ESPSu),
+fea_compat(3\-ESPSu), get_fea_ptr(3\-ESPSu), new_header(3\-ESPSu),
+read_header(3\-ESPSu), FEA(5\-ESPS), ESPS(5\-ESPS)
+.fi
+.SH AUTHOR
+Alan Parker

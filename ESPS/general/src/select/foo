@@ -1,0 +1,613 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     select - applies arbitrary	queries	to select records from FEA files
+
+     eselect - applies arbitrary queries to select records from	FEA files
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>select</STRONG> [ <STRONG>-n</STRONG> ] [ <STRONG>-c</STRONG>	] [ <STRONG>-q</STRONG> <EM>query</EM> ] [ <STRONG>-e</STRONG> <EM>expression</EM> ]  [   <STRONG>-</STRONG>	<STRONG>f</STRONG>
+     <EM>format</EM> <EM>string</EM> ] [ <STRONG>-l</STRONG> <EM>log</EM> ]	[ <STRONG>-o</STRONG> <EM>output</EM> ] [	<EM>input1</EM> <EM>input2</EM> ...
+     ]
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     This program is stored under the name <EM>select</EM> and <EM>eselect</EM>  in
+     order  to avoid a name conflict with the <EM>ksh</EM> builtin command
+     <EM>select</EM>.
+
+     <EM>Select</EM>  applies  selection	 criteria  to  FEA  files.    The
+     selected  records	may  be	 printed  and  may appended to an
+     internal record buffer, which  in	turn  may  be  output  to
+     another FEA file.	The selection criteria are specified as	a
+     set of queries, with each query being  a  condition  on  the
+     fields in the FEA record.
+
+     <EM>Select</EM> operates in	two modes:  non-interactive and	 interac-
+     tive.   The  non-interactive mode applies when the	<STRONG>-q</STRONG> and <STRONG>-o</STRONG>
+     options are used.	In this	 case,	the  specified	query  is
+     applied  to  all of the <EM>input</EM> files and the selected records
+     are written to <EM>output</EM>.
+
+     In	interactive mode (no <STRONG>-q</STRONG>	option), <EM>select</EM>	prompts	the  user
+     for  commands  (see below).  Alternatively, a file	of selec-
+     tion commands can be used as standard input (e.g.,	<EM>select</EM>	&lt;
+     <EM>command</EM>_<EM>file</EM>).   Command  files can also be invoked interac-
+     tively.
+
+     The following options are interpreted by <EM>select</EM>:
+
+     <STRONG>-n</STRONG>	   No source files or comments about queries are added to
+	  the  headers of output files.	 Normally, the headers of
+	  output files are expanded  to	 include  the  the  input
+	  files	 as sources and	the selection queries as comments
+	  in the <EM>variable</EM>.<EM>comment</EM> field.  The <STRONG>-n</STRONG> option	 disables
+	  this	and  results in	faster operation, especially when
+	  the output file already exists and is	large.
+
+     <STRONG>-c</STRONG>	   By default, comparisons involving  feature  fields  of
+	  type	coded  are case	insensitive.   When the	<STRONG>-c</STRONG> option
+	  is used, these comparisons are case sensitive.
+
+     <STRONG>-q</STRONG>	<EM>query</EM>
+	  Apply	the <EM>query</EM>  to  the  <EM>input</EM>  files  and  write  the
+	  selected records to <EM>output</EM> (see <STRONG>-o</STRONG>).
+
+     <STRONG>-e</STRONG>	<EM>expression</EM>
+	  Execute the <EM>eval</EM> command on the input	 file  and  print
+	  the  result  to standard output.   For details, see the
+	  <EM>eval</EM> command below.
+
+     <STRONG>-f</STRONG>	<EM>printf</EM> <EM>format</EM> <EM>string</EM>
+	  This option allows the specification of a <EM>printf</EM> format
+	  string  to  be used to output	the values resulting from
+	  use of the <STRONG>-e</STRONG>	option.	 The  string  can  be  any  valid
+	  <EM>printf</EM>  format  string,  except that only the	following
+	  character escapes are	handled: \n, \t, \b, \r,  \f,  \\
+	  (to  enter  a	slash),	and \' (to enter a single quote).
+	  (Note	in particular, that \ddd is not	 handled.)   Keep
+	  in  mind that	the value being	displayed is typed <EM>double</EM>
+	  inside of the	program.  So use of an incompatible  out-
+	  put specification will result	in garbage dispplay.  For
+	  example  the	following  option  might  be   used:   <STRONG>-f</STRONG>
+	  <STRONG>'Value:\t%e\n'</STRONG>  or  <STRONG>-f</STRONG>  <STRONG>Any</STRONG>  <STRONG>string:</STRONG> <STRONG>%f</STRONG> <STRONG>units\n'</STRONG>.   The
+	  specification	string should contain at most one  output
+	  format  control  appropriate for double values (%e, %f,
+	  %g).
+
+     <STRONG>-o</STRONG>	<EM>output</EM>
+	  Specifies an output file.  This option must be used  if
+	  the <STRONG>-q</STRONG> option	is used, and it	cannot be used unless one
+	  or more input	files are specified on the command line.
+
+     <STRONG>-l</STRONG>	<EM>log</EM>
+	  All user commands, together with  all	 terminal  output
+	  from <EM>select</EM>, will be recorded	on a file named	<EM>log</EM>.
+
+     Each command to <EM>select</EM> consists of	one or two keywords  fol-
+     lowed  by arguments.  The keywords	may be abbreviated.  Your
+     unix interrupt character (<EM>e</EM>.<EM>g</EM>. ^C)	will always terminate the
+     current  command.	 Required  portions  of	 the keywords are
+     shown in capital letters in the description below;	<EM>select</EM> is
+     not sensitive to case.  An	EOF is equivalent to a <STRONG>Write</STRONG> fol-
+     lowed by a	<STRONG>Quit.</STRONG>
+
+     Tagged and	segment	labelled input files involve some special
+     handling  in  order  to make it possible to associate output
+     records with the sampled  data  files  to	which  the  input
+     records  refer.   If  the output file does	not exist, and if
+     there is only one tagged input file, then the output file is
+     also  tagged,  with  the  tags  being pointers into the same
+     refer file	as specified in	the input file.	  If  the  output
+     file  does	 not  exist,  and if there are two or more tagged
+     input files, the output file is segment  labelled,	 and  all
+     tagged  records  written to the output file are converted to
+     segment labelled.	For the	case of	an existing output  file,
+     see  the  note under BUGS below.  For more	information about
+     taggged and segment labelled FEA files, see <STRONG><A HREF="../man5.html/FEA.5.html">FEA (5-ESPS)</A></STRONG>.
+     <STRONG>@</STRONG><EM>comfile</EM>
+	  This command causes <EM>select</EM> to	read  commands	from  the
+	  file	<EM>comfile</EM>	 ,  rather  than from the standard input.
+	  When end-of-file is  reached,	 <EM>select</EM>	 resumes  reading
+	  from	the standard input.  Command files may be nested;
+	  the maximum nesting depth is three.  Command files  are
+	  aborted  (all	 remaining  commands  are  skipped) if an
+	  error	or user	interrupt occurs while the  command  file
+	  is being read.
+
+     <STRONG>!</STRONG><EM>command</EM>
+	  Shell	escape.	 A shell is forked off	to  execute  <EM>com-</EM>
+	  <EM>mand</EM>.	  The  command	output does not	appear in the log
+	  file.	 The exclamation  point	 must  be  in  the  first
+	  column.  A "#" character is not considered a comment in
+	  <EM>command</EM>, since the command may require that character.
+
+     <STRONG>CLEar</STRONG>
+	  If the record	buffer has been	changed	 since	the  last
+	  write,  a  warning  is printed and the user is asked to
+	  confirm.   If	the user answers the confirmation request
+	  with "yes", the the record buffer is cleared.
+
+     <STRONG>CLOse</STRONG>
+	  Closes the log file, if any.
+
+     <STRONG>EVal</STRONG> <EM>QUERY</EM>
+	  Prints the value of the <EM>QUERY</EM>	 expression  (see  SYNTAX
+	  DETAILS)  for	each record in the input set.  The record
+	  number relative to the input file and	relative  to  the
+	  set  of  input  files	 (if there is more than	one input
+	  file)	is also	printed.
+
+     <STRONG>From</STRONG> <EM>input1</EM>, <EM>input2</EM>, ...
+	  Closes an existing input files, if any  are  open,  and
+	  opens	the new	ones.  All input files must be FEA files.
+	  Note that an initial set of input files can  be  speci-
+	  fied on the command line.
+
+     <STRONG>HEAder</STRONG> <EM>flags</EM>
+	  Prints the headers of	the current set	of  input  files,
+	  using	 <STRONG><A HREF="../man1.html/psps.1.html">psps(1-ESPS)</A></STRONG> with the <STRONG>-x</STRONG> flag.	 The <EM>psps</EM> flags	<STRONG>-</STRONG>
+	  <STRONG>frhv</STRONG> may  also  be  specified.   The	outputs	 are  run
+	  through the <EM>more</EM> program (unless PAGER is set	to a dif-
+	  ferent program name; see ENVIRONMENT).  The  output  is
+	  not written to the log file.
+
+     <STRONG>HELp</STRONG> Prints a summary of the commands  accepted  by  <EM>select</EM>.
+	  The  help  file is run through the <EM>more</EM> program (unless
+	  PAGER	is set to a different program name; see	 ENVIRON-
+	  MENT).
+
+     <STRONG>Log</STRONG> <EM>logfile</EM>
+	  Specifies that the dialog with the user will	be  saved
+	  on  <EM>logfile</EM> (equivalent to the <STRONG>-l</STRONG> command line option).
+	  If a log file	is already open,  the  old  log	 file  is
+	  closed  and  a new file is started.  If the argument is
+	  omitted, the command is equivalent to	Show Log.
+
+     <STRONG>Select</STRONG> <EM>QUERY</EM>
+	  Processes the	input files one	at a  time,  selects  all
+	  records that satisfy the <EM>QUERY</EM>, and appends them to the
+	  record buffer. During	queries	that scan more than  1000
+	  records,  a  dot  will be printed for	each 1000 records
+	  scanned.  The	number of records selected from	each file
+	  and  the  total  number  selected  are printed when the
+	  select is complete or	interrupted.
+
+     <STRONG>SHow</STRONG> <STRONG>Buffer</STRONG>
+	  Prints the records in	the record buffer. The output  is
+	  run  through the <EM>more</EM>	program	(unless	PAGER is set to	a
+	  different program name; see ENVIRONMENT).
+
+     <STRONG>SHow</STRONG> <STRONG>FIelds</STRONG>
+	  Prints the field definitions of <EM>input</EM>.
+
+     <STRONG>SHow</STRONG> <STRONG>FRom</STRONG> <EM>flags</EM>
+	  Runs <EM>psps</EM> on the current set of input	 files.	  Any  of
+	  the  <EM>psps</EM>  flags  may	 be specified.	The output is run
+	  through the <EM>more</EM> program (unless PAGER is set	to a dif-
+	  ferent program name; see ENVIRONMENT).
+
+     <STRONG>SHow</STRONG> <STRONG>LOg</STRONG>
+	  This command tells whether a	log  file  is  open,  and
+	  gives	its name if there is an	open file.
+
+     <STRONG>SHow</STRONG> <STRONG>LAst</STRONG>
+	  Prints the last record in the	select buffer.
+
+     <STRONG>SHow</STRONG> <STRONG>Select</STRONG> <EM>QUERY</EM>
+	  Processes the	input files one	at a  time,  selects  all
+	  records  that	 satisfy  the <EM>QUERY</EM>, and prints	them. The
+	  number of records selected from each file and	the total
+	  number selected are printed.	The output is run through
+	  the <EM>more</EM> program (unless PAGER is set	 to  a	different
+	  program  name;  see  ENVIRONMENT).   If this command is
+	  interrupted with one interrupt character, then printing
+	  of  the records is suspended,	but the	selection contin-
+	  ues.	The total records that match the  <EM>QUERY</EM>	 will  be
+	  printed as usual.   If the command is	interrupted for	a
+	  second time the  command  will  quit	without	 checking
+	  additional records.
+
+     <STRONG>SHow</STRONG> <STRONG>To</STRONG> <EM>flags</EM>
+
+	  Runs <EM>psps</EM> on <EM>output</EM>.	Any of	the  <EM>psps</EM>  flags  may  be
+	  specified.  The  output is run through the <EM>more</EM> program
+	  (unless PAGER	is set to a different program  name;  see
+	  ENVIRONMENT).
+
+     <STRONG>SIze</STRONG> Prints the number of records in the record buffer.
+
+     <STRONG>To</STRONG>	<EM>output</EM> [ <STRONG>With</STRONG> <EM>fieldname1</EM>, <EM>fieldname2</EM>, ...]
+
+     <STRONG>To</STRONG>	<EM>output</EM> [ <STRONG>Without</STRONG> <EM>fieldname1</EM>, <EM>fieldname2</EM>, ...]
+	  Specifies an	output	file.	If  an	output	file  has
+	  already  been	specified, <EM>select</EM> closes it and	opens the
+	  new one provided that	the record buffer has not changed
+	  since	 the  last  write.  If the record buffer has been
+	  changed since	the last write,	a warning is printed  and
+	  no action is taken.  If the TO command is then repeated
+	  as the next command, the existing output file	is closed
+	  and  the  new	 one is	opened.	 Note that an output file
+	  can be specified on the command line.	 An  output  file
+	  cannot be specified until an input file has been speci-
+	  fied.	 Furthermore, the output file, if it exists, must
+	  have	a  compatible header with that of the first input
+	  file (same field definitions).  If the output	file does
+	  not exist, the <STRONG>With</STRONG> clause can be used to specify which
+	  fields from input records will be written to the output
+	  file,	 or  the  <STRONG>Without</STRONG>  clause  can be used to specify
+	  which	fields to omit.
+
+     <STRONG>Quit</STRONG> If the record	buffer has not	changed	 since	the  last
+	  write,  <EM>select</EM>  exits.   If  the record buffer has been
+	  changed since	the last write,	a warning is printed  and
+	  the user is asked to confirm the command.   If the user
+	  responds to the confirmation request with  "yes",  then
+	  the  program	is  terminated without writing the output
+	  file.
+
+     <STRONG>Undo</STRONG> This command removes the records from	the record buffer
+	  resulting  from the last Select command.   This command
+	  can only be given between a Select and a  Write.   Undo
+	  cannot be undone.
+
+     <STRONG>Version</STRONG>
+	  Prints out the version number	and the	date of	the  last
+	  edit	(actually,  the	 date of the last modification of
+	  the SCCS database where <EM>select</EM> is maintained).
+
+     <STRONG>Write</STRONG>
+	  If <EM>output</EM> does not exist (see	the TO	command),  it  is
+	  created and the contents of the record buffer	are writ-
+	  ten to it.  If  <EM>output</EM>  exists,  the	contents  of  the
+	  record  buffer are appended.	The record buffer is then
+	  cleared.
+
+
+</PRE>
+<H2>SYNTAX DETAILS</H2><PRE>
+     A <EM>QUERY</EM> consists of an expression,	which has  the	following
+     form:
+
+     &lt;expr&gt; ::=	&lt;value&gt;
+	  | &lt;field_name&gt;{[&lt;index&gt;]}
+	  | &lt;character_string&gt;
+	  | $&lt;external_function&gt;
+	  | &lt;function&gt; (&lt;field_name&gt;)
+	  | &lt;function&gt; (&lt;expr&gt;)
+	  | ( &lt;expr&gt; )
+	  | &lt;expr&gt; &lt;arith_op&gt; &lt;expr&gt;
+	  | &lt;expr&gt; &lt;rel_op&gt; &lt;expr&gt;
+	  | - &lt;expr&gt;
+	  | &lt;expr&gt;
+
+
+     Here, &lt;field_name&gt;	is a FEA record	field name, &lt;index&gt; is an
+     integer value indicating an offset	from the beginning of the
+     field (used if the	field is not  a	 scaler),  &lt;value&gt;  is	a
+     numerical value, &lt;character_string&gt; is a character	string in
+     quotes ("), &lt;function&gt; is the name	of a  built  in	 function
+     (see  FUNCTIONS),	&lt;rel_op&gt;  is  a	 relational operator, and
+     &lt;arith_op&gt;	 is  a	arithmetic  operator   (defined	  below).
+     &lt;external_function&gt;  is the name of an external program that
+     is	called to implement some function on each  record.   This
+     is	 described  in	detail below.  The "{}"	brackets indicate
+     that  the	inclusion  of  field  index   is   optional.   If
+     &lt;field_name&gt;   is	 not  a	 scaler	 field,	 &lt;field_name&gt;  is
+     equivalent	to &lt;field_name&gt;[0] when	used in	an expression. An
+     &lt;external_function&gt; is always preceded by a dollar	sign ($).
+
+     If	a &lt;field_name&gt; is used in  an  expression  which  is  not
+     defined in	the current input file,	then a warning is printed
+     (once for each file) and zero is used as its  value.    This
+     is	 not  a	fatal error, because there might be several input
+     files open	that do	not have all of	the same fields.
+
+     The permitted relational are:
+
+
+
+
+
+
+
+
+
+
+
+
+
+____________________________________________________
+		  |<STRONG>______________________________</STRONG><EM>|</EM<STRONG>_</STRONG>
+		  | ==	 equals			 |
+		  | =	 equals			 |
+		  | !=	 not equals		 |
+		  | &gt;	 greater than		 |
+		  | &gt;=	 greater than or equal to|
+		  | &lt;	 less than		 |
+		  | &lt;=	 less than or equal to	 |
+		  | &amp;&amp;	 and			 |
+		  | &amp;	 and			 |
+		  | ||	 or			 |
+		  | |	 or			 |
+		  |______________________________<EM>|</EM>
+
+     The &amp;&amp; has	precedence over	the || ; &amp; and | are  treated  as
+     synonyms  for  &amp;&amp;	and  ||.    There  are no bitwise logical
+     operations.
+
+     The permitted arithmetic operators	are:
+			 ____________________
+			|     &lt;arith_op&gt;    |
+			|<STRONG>___________________</STRONG><EM>|</EM<STRONG>_</STRONG>
+			| +   addition	    |
+			| -   subtraction   |
+			| *   multiplication|
+			| /   division	    |
+			|_<STRONG>_</STRONG>___<STRONG>______________</STRONG><EM>|</EM>
+
+     The ^ operator has	the highest precedence and is right asso-
+     ciative.	The  / and * operators have the	next highest pre-
+     cedence and are left associative.	The  +	and  -	operators
+     have the lowest precedence	and are	also left associative.
+
+     If	&lt;value&gt;	is a numerical value (appropriate if the type  of
+     the  field	 is  a	numerical  type), it should be given in	a
+     corresponding format for C	constants.  If the field type  is
+     coded,  then  &lt;value&gt;  should  be	a quoted string	(upper or
+     lower case) that is one of	the legal values.
+
+     In	the case of coded field	types, the  default  behavior  is
+     for  the comparison to be case insensitive.  Comparisons can
+     be	made case sensitive by using the <STRONG>-c</STRONG> option on the command
+     line.
+
+
+</PRE>
+<H2>FUNCTIONS</H2><PRE>
+     There are three types of functions	supported by <EM>select</EM>.  One
+     type  of  function	 takes	as  its	domain a numerical value,
+     which can be given	as any expression that	<EM>select</EM>	can  pro-
+     cess.   Another type of function operates on a &lt;field_name&gt;.
+     The third type of function	is the &lt;external_function&gt;.  This
+     form of function results in an external program being called
+     to	perform	some function on each record.	This  provides	a
+     very general capability, but since	the external program will
+     be	called for each	record processed it is much  slower  than
+     built in functions.
+
+     The available built in function are:
+
+		      __________________________
+		     |<STRONG>_________________________</STRONG><EM>|</EM<STRONG>_</STRONG>
+		     | abs	 absolute value|
+		     | atan	 arc tangent   |
+		     | cos	 cosine	       |
+		     | exp	 exponent      |
+		     | int	 integer       |
+		     | log	 natural log   |
+		     | log10	 log base 10   |
+		     | sin	 sine	       |
+		     | sqrt	 square	root   |
+		     | tan	 tangent       |
+		     |_________________________<EM>|</EM>
+		_____________________________________
+	       |	 Functions on Fields	    |
+	       |<STRONG>____________________________________</STRONG><EM>|</EM<STRONG>_</STRONG>
+	       | max	maximum	of elements in field|
+	       | mean	mean of	elements in field   |
+	       | min	minimum	of elements in field|
+	       | prod	product	of elements in field|
+	       | size	number of elements in field |
+	       |_<STRONG>___</STRONG>____<STRONG>___</STRONG>_<STRONG>________</STRONG>_<STRONG>__</STRONG>_<STRONG>_____</STRONG>_______<EM>|</EM>
+
+     The only legal argument for functions on fields is	a  single
+     &lt;field_name&gt;   without   an   index.    In	 this  case,  the
+     &lt;field_name&gt; refers to the	entire field.
+
+     If	&lt;external_function&gt; is	found  in  an  expression  <EM>select</EM>
+     searches  the  users  current  PATH  for  a program with the
+     specified	name.	This  program  is  assumed  to	accept	a
+     single-record ESPS	FEA file as its	only argument and to out-
+     put a value (ASCII) on standard  output.  <EM>Select</EM>  creates	a
+     single-record  ESPS file from each	record in the input files
+     and calls &lt;external_function&gt; with	this file; the output  of
+     &lt;external_function&gt;  is then used within the query. An exam-
+     ple of the	source code for	an external function can be found
+     in	 the  <EM>select</EM>  source  directory,  or in	/usr/sps/lib on	a
+     non-source	system.
+
+     There are several built in	field  names  that  have  special
+     meaning.  The are:
+
+
+
+
+_______________________________________________________________________________________
+ |<STRONG>_________________________________________________________________</STRONG><EM>|</EM<STRONG>_</STRONG>
+ | tag	  built	in tag field of	the record			   |
+ | REC	  record number	(from 1)				   |
+ | FILE	  file name of the input file within the set of	input files|
+ |_________________________________________________________________<EM>|</EM>
+     The field name "tag" always refers	to the built in	tag field
+     of	 the  record.	(See  the  discussion of tags and segment
+     labelling under DESCRIPTION.)  The	name "REC" refers to  the
+     record  number  (from  1)	of the record in the set of input
+     files and the name	"FILE" refers  to  the	filename  of  the
+     input file	in the set of input files.
+
+
+</PRE>
+<H2>EXPRESSION ERRORS</H2><PRE>
+     There are three types of expression errors.
+
+     The first type are	 syntax	 errors	 caught	 by  the  parser.
+     These  result result in a "syntax error" message followed by
+     the offending character.	In the current release,	the query
+     is	 usually  executed  anyway.   If the selected records are
+     not wanted, they can be removed from  the	buffer	with  the
+     <STRONG>UNDO</STRONG> command.  If the select is long (because the input file
+     is	large) then  the  select  can  be  interrupted	and  then
+     undone.   This will be improved in	a future release.
+
+     The other type of expression errors relate	to the	execution
+     of	 the  expression  itself.  These include use of	undefined
+     fields, undefined functions, field	indexes	 out  of  bounds,
+     arithmetic	 overflow  and	underflow,  and	 divide	 by zero.
+     Errors that cannot	change from one	record or one input  file
+     to	 the  next  are	considered fatal and terminate the <STRONG>SELECT</STRONG>
+     (or <STRONG>EVAL</STRONG> or <STRONG>SHOW</STRONG> <STRONG>SELECT</STRONG>).	This type of error is  caused  by
+     trying  to	 call  an  undefined built in function or trouble
+     running an	external function.
+
+     The other errors described	above cause  the  termination  of
+     the  expression  for  the current record.	In most	cases the
+     expression	evaluates to zero.   In	 the  case  of	undefined
+     field  and	 index	out  of	 bounds, zero is returned and the
+     expression	continues.   In	the case of arithmetic	problems,
+     the  expression  is  terminated and zero is returned for the
+     expression.  The reason that these	errors are not	fatal  is
+     that  several input files might be	open and they do not have
+     to	all have the same fields.   A field might not be  defined
+     for one file of the input set, but	might be defined for oth-
+     ers.  Therefore, the query	should be allowed to process.	A
+     message is	printed, once for each file, in	the case of these
+     errors.   The  query  can	be  interrupted	 if  the  desired
+     results will not be achieved.
+
+     In	all cases a message is printed	stating	 what  action  is
+     being taken when errors are found.
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     The ESPS parameter	file is	not read by <EM>select</EM>.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     ESPS Common file is not read or written by	<EM>select</EM>.
+
+
+</PRE>
+<H2>ESPS HEADERS</H2><PRE>
+     <EM>Select</EM> reads the <EM>common</EM>.<EM>type</EM> field	from the header	of  <EM>input</EM>
+     (to  make	sure  that  it	is of type FEA), and it	reads the
+     field-defining information	as well. If output files  do  not
+     exist,  their headers are created with <STRONG><A HREF="../man3.html/copy_header.3.html">copy_header	(3-ESPS)</A></STRONG>.
+     Unless the	<STRONG>-n</STRONG> option is used, the headers	of  output  files
+     are  expanded  to include the the input files as sources and
+     the selection queries as comments	in  the	 <EM>variable</EM>.<EM>comment</EM>
+     field.
+
+
+</PRE>
+<H2>ENVIRONMENT</H2><PRE>
+     The <STRONG>PAGER</STRONG> environment variable determines what  paging  pro-
+     gram is used to break up large displays of	text. By default,
+     the <EM>more</EM> program is used (however,	this may  be  changed  by
+     the installer).  To use a different pager (or if your system
+     doesn't have <EM>more</EM>), set this environment  variable	 to  some
+     other value.  A full pathname is not required.  If	you don't
+     like paging, try setting <STRONG>PAGER</STRONG> to <EM>cat</EM>.
+
+
+</PRE>
+<H2>EXAMPLES</H2><PRE>
+     <EM>This</EM> <EM>command</EM> <EM>gathers</EM> <EM>all</EM> <EM>voiced</EM> <EM>from</EM> <EM>the</EM> <EM>input</EM> <EM>files</EM> <EM>into</EM> <EM>allvoiced</EM>.<EM>fea</EM>
+     select -q 'frame_type == "VOICED"'	-o allvoiced.fea *.fana
+
+     <EM>This</EM> <EM>command</EM> <EM>applies</EM> <EM>a</EM> <EM>command</EM> <EM>file</EM> <EM>of</EM> <EM>queries</EM> <EM>on</EM> <EM>file1</EM> <EM>with</EM> <EM>output</EM> <EM>to</EM> <EM>file2</EM>
+     select -o file2 file1 &lt; commands
+
+     Examples of queries:
+
+     select pulse_len =	90 &amp; frame_type	= "VOICED"
+       <EM>frame</EM>_<EM>type</EM> <EM>is</EM> <EM>a</EM> <EM>CODED</EM> <EM>type</EM>
+
+     select (a = 3 &amp; FILE = "f1") | (b = 4 &amp; FILE = "f2")
+       <EM>this</EM> <EM>means</EM> <EM>to</EM> <EM>select</EM> <EM>records</EM> <EM>with</EM> <EM>a</EM> = <EM>3</EM> <EM>from</EM> <EM>input</EM> <EM>file</EM>
+       <EM>f1</EM> <EM>and</EM> <EM>b</EM>	= <EM>4</EM> <EM>from</EM> <EM>input</EM> <EM>file</EM> <EM>f2</EM>;	<EM>assuming</EM> <EM>that</EM> <EM>there</EM>
+       <EM>are</EM> <EM>at</EM> <EM>least</EM> <EM>two</EM>	<EM>input</EM> <EM>files</EM>
+
+     select sqrt(gamma)/4 &gt; alpha[3]
+       <EM>If</EM> <EM>gamma</EM>	<EM>is</EM> <EM>a</EM> <EM>field</EM> <EM>of</EM> <EM>size</EM> <EM>one</EM>,	<EM>then</EM> <EM>its</EM> <EM>value</EM> <EM>is</EM> <EM>used</EM> <EM>by</EM> <EM>the</EM> <EM>sqrt</EM>
+       <EM>function</EM>.   <EM>If</EM> <EM>gamma</EM> <EM>is</EM> <EM>a</EM> <EM>field</EM> <EM>of</EM> <EM>greater</EM> <EM>than</EM> <EM>size</EM> <EM>one</EM>, <EM>then</EM> <EM>the</EM>
+       <EM>element</EM> <EM>is</EM> <EM>used</EM> (<EM>same</EM> <EM>as</EM>	<EM>saying</EM> <EM>gamma</EM>[<EM>0</EM>]).
+
+     select sum(gamma) &gt; mean(beta)
+       <EM>These</EM> <EM>functions</EM> <EM>operate</EM> <EM>on</EM> <EM>entire</EM> <EM>fields</EM>, <EM>so</EM> <EM>the</EM>	<EM>fieldname</EM> <EM>here</EM>
+       <EM>without</EM> <EM>the</EM> <EM>index</EM> <EM>does</EM> <EM>not</EM> <EM>refer</EM>	<EM>to</EM> <EM>only</EM>	<EM>the</EM> <EM>first</EM> <EM>element</EM>; <EM>it</EM> <EM>refers</EM>
+       <EM>to</EM> <EM>the</EM> <EM>entire</EM> <EM>field</EM>.
+
+     select sum(gamma) &gt; mean(beta) &amp;&amp; ($func1 &gt; 45.6)
+       <EM>sum</EM> <EM>and</EM> <EM>mean</EM> <EM>are</EM>	<EM>functions</EM> <EM>of</EM> <EM>fields</EM>.  $<EM>func1</EM> <EM>is</EM>	<EM>a</EM> <EM>user</EM> <EM>supplied</EM>
+       <EM>external</EM>	<EM>program</EM>	<EM>which</EM> <EM>is</EM> <EM>called</EM>	<EM>for</EM> <EM>each</EM> <EM>record</EM>.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man5.html/ESPS.5.html">ESPS(5-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA.5.html">FEA(5-ESPS)</A></STRONG>
+
+
+</PRE>
+<H2>FUTURE CHANGES</H2><PRE>
+     Provide a method to link in user-defined functions	 to  pro-
+     vide higher performance than external functions.
+
+
+</PRE>
+<H2>WARNINGS</H2><PRE>
+     A number of warning and error message  are	 printed  in  the
+     event  of	various	expression errors.  Some errors	terminate
+     the query.
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     The following paragraph describes the way <EM>select</EM> will handle
+     existing output files and input files with	tags:
+
+     If	the output file	exists and is segment  labelled,  and  if
+     there  is	one or more tagged input file, all tagged records
+     written  to  the  output  file  are  converted  to	  segment
+     labelled.	 If  the output	file exists and	is tagged, and if
+     there is one or more tagged input file, the output	 file  is
+     converted	from  tagged  to segment labelled, and all tagged
+     records written to	the output file	are converted to  segment
+     labelled.
+
+     This is not done in this version.	 The pre-existing  output
+     file  is  not changed, and	the tag	values copied into it may
+     be	meaningless (because the <EM>refer</EM> file might be different.
+
+     A syntax error in a query will terminate the  parse  of  the
+     query  and	 it will then run.   After it runs you will get	a
+     syntax error message.  If the select, selected records  that
+     you don't want, use the "undo" command to undo the	effect of
+     the most recent select operation.	Undo  can  only	 be  used
+     once  after  each select.	You can't undo an undo (except to
+     select again).
+
+     If	referenced fieldname is	a complex feature field, then the
+     real  part	 of that is used in the	expression.   Better sup-
+     port for complex types will be added in the next version.
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Manual page by John Shore and Alan	Parker
+     Program by	Alan Parker
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

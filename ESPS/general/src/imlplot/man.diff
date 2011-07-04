@@ -1,0 +1,140 @@
+.\" Copyright (c) 1987,1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)imlplot.1	3.4	4/1/97	ESI
+.TH IMLPLOT 1\-ESPS 4/1/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+imlplot \- interactive and remote plotting using mlplot
+.SH "SYNOPSIS"
+.B imlplot
+[
+.I mlplot options .\|.\|.
+] [
+.I file.sd  .\|.\|.
+]
+.SH "DESCRIPTION"
+.PP
+.I Imlplot
+forms and displays
+a plot command line consisting essentially of the command name
+.I mlplot
+followed by the given options and file names.
+It then prompts the user for the next action.
+The following commands are accepted (<CR> designates the
+.I return
+key).
+.TP 10
+<CR>
+no action (just redisplay current plot command line and prompt)
+.TP
+.BR m <CR>
+plot on \s-1MASSCOMP\s+1 or Sun graphics display using \fImcd\fR
+.TP
+.BR i <CR>
+plot on local Imagen laser printer
+.TP
+.BI \- option\fR<CR>
+add or change plot command line option
+.TP
+.BI ~ letter\fR<CR>
+remove plot command line option
+.TP
+.BI "fg " filename\fR<CR>
+save plot in file in ``gps'' format
+.TP
+.BI "ft " filename\fR<CR>
+save plot in file in Imagen (Tektronix) format
+.TP
+.BI "s " filename\fR<CR>
+append plot command line to file
+.TP
+.BR ? <CR>
+list commands and options
+.TP
+.BR q <CR>
+quit
+.PP
+The
+.I m
+command executes the plot command with the additional option
+.I \-Tmcd.
+The
+.I i
+command executes the plot command with the additional option
+.I \-Timagen.
+.PP
+On a Sun workstation, this program must be run from within the
+\fISuntools\fR window system.  The plot will appear in a new window,
+which can be moved, resized, closed (reduced to an icon), and removed by
+using the functions on the \fISuntools\fR menu.   To get this menu, move
+the mouse cursor to the title bar of the plot window and press the right
+mouse button.   Each time that the \fBm\fR command is used, a new plot
+window will be created.
+.SH OPTIONS
+.PP
+All
+.IR mlplot (1\-ESPS)
+options except
+.I "\-T device"
+are accepted on the
+.I imlplot
+command line and by the
+.I \-option
+interactive command.
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file processing is the same as that for 
+.I mlplot.
+.SH "ESPS COMMON"
+.PP
+The ESPS common file processing is the same as that for 
+.I mlplot.
+.SH "ESPS HEADERS"
+.PP
+ESPS headers are handled by
+.I mlplot.
+.SH DIAGNOSTICS
+.PP
+Diagnostics may be produced by any of the programs that
+.I imlplot
+executes; see the individual manual pages for
+.I mlplot
+and the other programs listed under ``See Also.''
+In addition,
+.I imlplot
+may produce the following messages directly.
+.PP
+.nf
+Usage: imlplot [\|.\|.\|.\|][file.sd\|.\|.\|.\|]
+Option \fIltr\fP requires argument.
+Option \fIltr\fP takes no argument.
+Option \fIltr\fP not recognized.
+Commands: \fIlist of commands.\fP
+Options: \fIlist of options.\fP
+.fi
+.\".SH "FUTURE CHANGES"
+.\".PP
+.SH "SEE ALSO"
+.PP
+\fImlplot\fP(1\-ESPS), \fIigenplot\fP(1\-ESPS), \fIgenplot\fP(1\-ESPS), 
+.\".SH "WARNINGS"
+.\".PP
+.SH "BUGS"
+.PP
+Knowledge of the options accepted by
+.I mlplot
+is wired in;
+.I imlplot
+may need to be changed if
+.I mlplot
+is changed.
+.PP
+The
+.I m
+command does not provide a convenient way to examine a multipage plot
+one page at a time within
+.I imlplot.
+
+.SH "AUTHOR"
+.PP
+Rodney W. Johnson
+

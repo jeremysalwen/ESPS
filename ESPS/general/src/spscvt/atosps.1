@@ -1,0 +1,71 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\"@(#)atosps.1	3.4 7/13/89 ESI
+.TH ATOSPS 1\-ESPS 7/13/89
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+atosps \- convert spstoa output back into an ESPS SD or FEA file
+.SH SYNOPSIS
+.B atosps
+.I infile
+.I outfile
+.SH DESCRIPTION
+.PP
+.I Atosps
+accepts a specially formatted ASCII file written by \fIspstoa\fP(\-ESPS)
+(possibly on a computer with different formats for data values)
+and produces an ESPS file.
+.PP
+If the first argument is "\-",
+.I atosps
+will read from the standard input.
+If the second argument is "\-",
+it will write to the standard output.
+The two programs
+.I atosps
+and
+.I spstoa
+are almost perfect inverses:
+integer and character values are represented exactly; float
+values retain seven significant digits; double precision values retain 15
+significant digits.
+.PP
+.I Atosps
+informs the user and quits if the input file does not exist or does not
+have proper syntax.
+.SH ESPS PARAMETERS
+.PP
+This program does not access the parameter file.
+.SH DIAGNOSTICS
+.nf
+Usage: atosps infile outfile
+atosps: \fIinfile\fP is empty.
+atosps: \fIinfile\fP has the wrong format.
+atosps: Unexpected EOF in \fIinfile\fP
+atosps: Type already set (\fItype_code\fP); bad file!
+atosps: Could not allocate memory for ESPS SD header.
+atosps: Could not allocate memory for ESPS FEA header.
+atosps: Bad file type code \fItype_code\fP.
+atosps: Bad tag code (\fItag_code\fP) in \fIinfile\fP
+atosps: zfunc syntax error in \fIinfile\fP
+atosps: syntax error in \fIinfile\fP: \fIline\fP, header level \fIhdrlev\fP
+atosps: syntax error in \fIinfile\fP: \fIline\fP, record \fIrecord_num\fP
+.fi
+.SH BUGS
+.PP
+.I Atosps
+is rigid about the format of the input file; it has no problem with
+files produced by
+.I spstoa
+but may have trouble if you edit the file (make sure to keep the same number
+of spaces). Fixing this might make the program unacceptably slow for large
+data files.
+.PP
+File creates by the current version of \fIatosps\fR 
+will always be in the machines's native data representation.    Unlike
+other ESPS programs, the value of the Unix environment variable
+\fBESPS_EDR\fR has no effect on the output file.
+.SH SEE ALSO
+spstoa(1\-ESPS)
+.SH AUTHOR
+Joe Buck and Alan Parker.  ESPS FEA file support by Ajaipal S. Virdy,
+Entropic Speech, Inc.

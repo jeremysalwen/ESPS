@@ -1,0 +1,56 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of
+# Entropic Research Laboratory, Inc. Any reproduction, distribution,
+# or publication of this work must be authorized in writing by Entropic
+# Research Laboratory, Inc., and must bear the notice:
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc.
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc.
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended
+# publication of this source code.
+#
+# @(#)createfiles	1.6   11/26/96     ESI/ERL
+#
+# Written by:
+# Checked by:
+# Revised by: David Burton
+#
+# Brief description:  This script creates files that are needed for the 
+# lpcdemo and various makeplots demos
+#
+
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+if test `mach_type` = CONVEX -o `mach_type` = SONY_RISC -o `mach_type` = SONY_68K
+ then
+  echo This script will fail if you do not have write permission on this directory.
+ else
+  if test ! -w . 
+    then
+	echo "You do not have write permission in this directory."
+	exit 1
+  fi
+fi
+
+echo Check out a license
+echeckout
+echo " "
+
+# Turn off parameter warning
+touch params
+
+# Create reflection coefficient file
+echo "Processing speech.sd to make speech.rc."
+echo "   %refcof -p1:15000 -l 100 -S 50 -w hanning -m mburg -o 10 speech.sd speech.rc"
+refcof -p1:15000 -l 100 -S 50 -w hanning -m mburg -o 10 speech.sd speech.rc 2> /dev/null
+
+# Create LSF file
+echo " "
+echo "Converting reflection coefficients (RC) to line spectral frequencies (LSF)"
+echo "   %spectrans -m lsf speech.rc speech.lsf"
+spectrans -m lsf speech.rc speech.lsf
+

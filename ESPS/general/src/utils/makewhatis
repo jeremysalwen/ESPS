@@ -1,0 +1,37 @@
+#! /bin/sh
+#
+#   This material contains proprietary software of Entropic
+#   Speech, Inc.  Any reproduction, distribution, or	
+#   publication without the the prior written permission of
+#   Entropic Processing, Inc. is strictly prohibited.  Any
+#   public distribution of copies of this work authorized in
+#   writing by Entropic Speech, Inc. must bear the notice
+#							
+# (c) Copyright 1986, 1987 Entropic Speech, Inc.; All rights reserved
+#
+# @(#)makewhatis	3.6 9/30/97 ESI
+#
+cat > getname.w <<\!
+/^\.TH/ {flag=1; TL=$0} 
+/SYNOPSIS/ {flag=0}
+/"SYNOPSIS"/ {flag=0}
+/DESSCRIPTION/ {flag=0}
+/"DESSCRIPTION"/ {flag=0}
+/^[^\.]/ {if (flag == 1) printf("%s\t%s\n",TL,$0) }
+!
+for i in man1 man3 man5
+do
+	awk -f getname.w $i/*.*
+done >whatis
+cat > whatis.sed <<\!
+s/\\\*-/-/
+s;\\;;g
+s/.TH [^ ]* \([^ 	]*\).*	\([^-]*\)/\2(\1)	/
+s/	 /	/g
+!
+sed -f whatis.sed whatis > whatis2
+expand -24,28,32,36,40,44,48,52,56,60,64,68,72,76,80,84,88,92,96,100 whatis2 | sort >whatis$$
+unexpand -a whatis$$ | awk 'NF > 5 {print $0}' | uniq  > whatis
+chmod 644 whatis
+rm whatis$$ whatis2 whatis.sed getname.w
+exit 0

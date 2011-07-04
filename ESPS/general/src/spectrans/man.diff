@@ -1,0 +1,106 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)spectrans.1	3.7 3/28/97
+.TH SPECTRANS 1\-ESPS 3/28/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+spectrans - transform spectral parameters in a FEA_ANA file
+.SH "SYNOPSIS"
+.B spectrans 
+[
+.BI \-x " debug_level"
+] [
+.BI \-w " grid_width"
+] [
+.BI \-m " spec_rep"
+] 
+.I " infile.fea outfile.fea"
+.SH "DESCRIPTION"
+.PP
+.I Spectrans
+transforms the spec_param field of a FEA_ANA file
+.I infile.fea
+to a different spectral representation and outputs the FEA_ANA file
+.I outfile.fea.  
+The output spectral representation is is determined
+by the \fB\-m\fP option.  If
+.I infile.fea
+is equal to "\-", 
+then standard input is used. If
+.I outfile.fea
+is equal to "\-", standard output is used.  
+If the 
+.B \-m
+option specifies the current spectral representation 
+of 
+.I infile.fea,
+.I spectrans
+exits with a warning message and without creating 
+.I outfile.fea.
+.PP
+See \fItranspec\fR(1\-ESPS)
+for transforming paramters from ordinary FEA(5\-ESPS)
+files.
+.SH OPTIONS
+.PP
+.TP
+.BI \-x " debug_level"
+.I Debug_levels 
+greater than 0 cause messages to print to stderr.
+.TP
+.BI \-w " grid_width"
+\fIGrid_width\fR is the nominal spacing (in Hz.) of the 
+grid used in the search for LSFs. It is used only during
+computation of LSF values, and if not specified, a default value
+of 4 Hz. is used. Reasonable values for \fIgrid_width\fR depend on the
+bandwidth of the original sampled data, but for 4 kHz. data,
+values between 2 and 62 Hz. are reasonable.
+.TP
+.BI \-m " spec_rep"
+.I Spec_rep
+is the type of spectral parameter to put in the output FEA_ANA file.
+Legal values are defined in 
+.I <esps/anafea.h>, 
+but they include the following:
+AUTO == normalized autocorrelations, RC == reflection coefficients,
+AFC == autoregressive filter coefficients, LAR == log area ratios, 
+CEP == cepstrum coefficients, and 
+LSF == line spectral frequencies.
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read by 
+.I spectrans.
+.SH ESPS COMMON
+.PP
+The ESPS Common file is not read by 
+.I spectrans. 
+.SH ESPS HEADERS
+.PP
+Values in the header of 
+.I outfile.fea
+are copied from  the values in the header of 
+.I infile.fea, 
+except for the spec_rep type.
+It takes on the 
+.B \-m
+specified value.  Also, if the parameter is being converted to LSFs,
+then a generic header item \fILSF_grid_width\fR of type double is
+added that contains the \fB\-w\fR value.
+.SH "FUTURE CHANGES"
+.PP
+Add AF (area functions) as 
+spectral parameters that are supported.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIrefcof\fP(1\-ESPS), \fIlpcana\fP(1\-ESPS), \fIme_spec\fP(1\-ESPS),
+\fIESPS\fP(5\-ESPS), \fIFEA_ANA\fP(5\-ESPS), \fItranspec\fP(1\-ESPS)
+.fi
+.SH "BUGS"
+.PP
+None known.
+.SH "AUTHOR"
+.PP
+Manual page and program by David Burton.  Converted to 
+ESPS 3.0 by John Shore.  
+
+

@@ -1,0 +1,129 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc. All rights reserved.
+.\" @(#)aplot.1	1.2	7/21/98 ESI
+.TH APLOT 1\-ESPS 7/21/98
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+aplot \- Plot an array of data in ASCII format.
+.SH SYNOPSIS
+.B aplot
+[
+.BI \-d
+] [
+.BI \-l
+] [
+.B \-z
+] [
+.BI \-W " generic window system options"
+] [
+.BI \-T " plot title"
+] [
+.I data_file
+]
+.SH DESCRIPTION
+.I aplot
+plots an array of ordered pairs <x, y>, stored in ASCII format.
+If
+.I data_file
+is ``\-'' or omitted, the standard input is read.
+.PP
+The plot is displayed in an X window.  The display has three pull down
+menus: \fBFile\fR, \fBViews\fR, and \fBHelp\fR.    The \fBFile\fR menu
+has two items: \fBPrint\fR and \fBQuit\fR.   \fBPrint\fR selects a
+dialog box that has controls to produce a PostScript output of the
+plot.   The \fBQuit\fR item causes the program to exit.
+.PP
+The \fBViews\fR menu has selectors that enable or disable display of
+the box around the plot, the horizontal grid, the vertical grid, any
+text (usually the file name and date), and the tick marks on the
+reticle.  This menu also has buttons to enable all of the above items,
+to redraw the original plot, and to refresh the plot as it is currently
+shown.
+.PP
+The \fBHelp\fR menu has two items: \fBon Plot Tool\fR and \fBAbout
+Plot Tool\fR.   These display a help file and version information.
+.SH "DATA FORMAT"
+.PP
+The
+.I data_file
+is expected to contain the following parameters, each
+separated by a blank.
+
+.RI < No_of_Samples >
+
+.RI < No_of_plots >
+
+.RI < x_axis_min >
+.RI < x_axis_max >
+.RI < x_axis_step >
+
+.RI < y_axis_min >
+.RI < y_axis_max >
+.RI < y_axis_step >
+
+followed by plot data (x and y values separated by blank).
+.PP
+Any
+.I Text
+following the data (after a blank line) is reproduced as plotter output.
+.PP
+In the case of multiple plots, the line thickness is varied to distinguish
+between different plots.
+.SH OPTIONS
+.PP
+Normally, a coninuous plot is generated.  However, the following
+options can be used, in the case of single plots:
+.TP
+.B \-d
+If this option is specified, there will be a dot for each <x, y>
+pair. However, there will be no continuous plot.
+.TP
+.B \-l
+If this option is specified, there will be a vertical line from <x,
+y_axis_min> to <x, y> for each <x, y> pair; the points themselves 
+will not be connected to each other.  
+.TP
+.B \-z
+If this option is specified,
+the vertical and horizontal grid lines are suppressed \- only tick
+marks are made on the graph.
+.TP
+.BI \-W
+This option is followed by a character
+string consisting of the generic window system options.   
+For example, on a
+system running X windows, to cause the plot to appear at a particular
+screen location the following command could be used: 
+.sp
+.br
+\fIaplot -W "=300x250+50+200" file\fR.
+.TP
+.BI \-T " title_string"
+This option allows the user to specify the title of the plot.
+The title is the string that goes in the window manager supplied title bar.
+.SH "ESPS PARAMETERS"
+No ESPS parameter file is read.
+.SH "ESPS COMMON"
+The ESPS common file is not read or written.
+.SH "ESPS HEADERS"
+No ESPS headers are processed, since the input and output are not ESPS
+files.
+.SH DIAGNOSTICS
+.nf
+aplot: unknown option \-\fIletter\fP
+Usage: aplot [\-d] [\-l] [\-z] [\-T title_string] [input_file]
+aplot: Cannot specify both \-d and \-l flags
+aplot: can't open \fIfilename\fP: \fIreason\fP
+aplot: EOF encountered
+.SH "SEE ALSO"
+.nf
+plotsd(1\-ESPS), plotspec(1\-ESPS), scatplot(1\-ESPS)
+.fi
+.SH AUTHOR
+.PP
+.nf
+Original: Shankar Narayan, Entropic Speech, Inc.
+Improvements: Rodney Johnson, Alan Parker, David Burton.
+.fi
+
+
+

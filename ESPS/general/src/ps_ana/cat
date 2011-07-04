@@ -1,0 +1,330 @@
+
+
+
+PS_ANA(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     ps_ana - pitch-synchronous linear-prediction analysis
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     ppppssss____aaaannnnaaaa [ ----PPPP _p_a_r_a_m__f_i_l_e ] [ ----ffff _o_u_t__f_0_f_i_l_e ] [ ----{{{{pppprrrr}}}} _r_a_n_g_e ] [
+      ----ssss _r_a_n_g_e ] [ ----oooo _o_r_d_e_r ] [ ----SSSS _f_r_a_m_e__s_t_e_p ] [ ----iiii _f_r_a_m_e__s_t_e_p ]
+     [ ----cccc _s_p_e_c__r_e_p ] [ ----mmmm _s_p_e_c__m_e_t_h_o_d ] [ ----wwww _w_i_n_d_o_w ] [ ----eeee _p_r_e_e_m_-
+     _p_h_a_s_i_s ] [ ----zzzz ] [ ----xxxx _d_e_b_u_g__l_e_v_e_l ] iiiinnnn____ddddaaaattttaaaa iiiinnnn____ppppuuuullllsssseeee oooouuuutttt____ffffiiiilllleeee
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     _P_s__a_n_a performs a pitch-synchronous LP  (linear  prediction)
+     analysis.   The input file _i_n__d_a_t_a is a speech signal stored
+     in a FEA_SD file.  The input file _i_n__p_u_l_s_e,  typically  gen-
+     erated  by  the  _e_p_o_c_h_s(_1-_E_S_P_S) program, is a FEA_SD(5-ESPS)
+     file that contains pitch pulse locations of _i_n__d_a_t_a.  Either
+     _i_n__d_a_t_a  or _i_n__p_u_l_s_e, but not both, may be "-", for standard
+     input.
+
+     The output file _o_u_t__f_i_l_e is a FEA file that  contains  spec-
+     tral  parameters  of  the  specified type.  Analysis results
+     such as signal RMS, F0, and voicing state can optionally  be
+     stored  in  the  _o_u_t__f_0_f_i_l_e indicated by the -_f option.  The
+     pitch-synchronously  derived  quantities  in   _o_u_t_f_i_l_e   and
+     _o_u_t__f_0_f_i_l_e  are periodically resampled at 200 Hz, unless the
+     frame step size is otherwise specified using the  ----SSSS  or  ----iiii
+     option.  In any case the periodic resampling is performed by
+     choosing the values of the pitch-synchronous parameters from
+     the  glottal epoch closest to the periodic sampling instant,
+     rather than by interpolation.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following options are supported:
+
+     ----PPPP _p_a_r_a_m__f_i_l_e [params]
+          uses the parameter  file  _p_a_r_a_m__f_i_l_e  rather  than  the
+          default, which is _p_a_r_a_m_s.
+
+     ----ffff _o_u_t__f_0_f_i_l_e
+          The output file  name  of  a  file  to  store  analysis
+          results  of signal RMS, F0 (fundamental frequency), and
+          voicing state.  These results are  periodically  resam-
+          pled at the same rate as those in the "out_file".
+
+     ----rrrr _f_i_r_s_t:_l_a_s_t
+
+     ----rrrr _f_i_r_s_t:+_i_n_c_r
+          Determines the range of points from input file.  In the
+          first form, a pair of unsigned integers gives the first
+          and last points of the range.  If _f_i_r_s_t is  omitted,  1
+          is  used.   If  _l_a_s_t  is omitted, the last point in the
+          file is used.  The second form  is  equivalent  to  the
+          first  with  _l_a_s_t  =  _f_i_r_s_t  +  _i_n_c_r.   If the range is
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+PS_ANA(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+          omitted, the entire file is processed.
+
+     ----pppp    Same as the ----rrrr option.
+
+     ----ssss _f_i_r_s_t:_l_a_s_t
+
+     ----ssss _f_i_r_s_t:+_i_n_c_r
+          Same function as the ----rrrr option, but specifies the range
+          of input data in seconds.
+
+     ----oooo _o_r_d_e_r [0]
+          Order for LP analysis.  The default value 0  means  the
+          program  will  choose  an order equal to _2 + (_F_s/_1_0_0_0),
+          where _F_s is the sampling frequency of  the  input  data
+          file _i_n__d_a_t_a.
+
+     ----SSSS _f_r_a_m_e__s_t_e_p [_0._0_0_5 * _s_a_m_p_l_i_n_g _f_r_e_q_u_e_n_c_y]
+          Specifies frame step in samples.
+
+     ----iiii _f_r_a_m_e__s_t_e_p [_0._0_0_5]
+          Specifies frame step in seconds.
+
+     ----cccc _s_p_e_c__r_e_p [RC]
+          Spectral  analysis  type.   Valid  value  is  "_R_C"  for
+          reflection  coefficients,  or  "_A_F_C" for autoregressive
+          filter  coefficients  (or  linear  prediction   coeffi-
+          cients).
+
+     ----mmmm _s_p_e_c__m_e_t_h_o_d [AUTOC]
+          Method to compute _s_p_e_c__r_e_p.  Valid value is "_A_U_T_O_C" for
+          autocorrelation method, or "_C_O_V" for covariance method.
+
+     ----wwww _w_i_n_d_o_w [HANNING]
+          Windowing  technique  used  in  the  spectral  analysis
+          method.   Valid  value is "_H_A_N_N_I_N_G", "_H_A_M_M_I_N_G", "_R_E_C_T",
+          or "_C_O_S_4", for Hanning, Hamming, rectangular, and  cos4
+          window, respectively.
+
+     ----pppp _p_r_e_e_m_p_h_a_s_i_s [0.95]
+          First-order preemphasis filter constant used before the
+          LPC analysis.  Note that the RMS values returned in the
+          optional _o_u_t__f_0_f_i_l_e are based on the preemphasized sig-
+          nal in the pitch-synchronous analysis window.
+
+     ----zzzz    This option reverses the signs of output  LPC  parame-
+          ters in _o_u_t_f_i_l_e.
+
+     ----xxxx _d_e_b_u_g__l_e_v_e_l [0]
+          If _d_e_b_u_g__l_e_v_e_l is  positive,  _p_s__a_n_a  prints  debugging
+          messages  and  other  information on the standard error
+          output.  The messages proliferate  as  the  _d_e_b_u_g__l_e_v_e_l
+          increases.   If  _d_e_b_u_g__l_e_v_e_l  is  0  (the  default), no
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+
+
+
+
+PS_ANA(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+          messages are printed.
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     The following ESPS parameters have the same meanings as  the
+     command-line options.
+
+     _s_t_a_r_t - _i_n_t_e_g_e_r
+
+          The first point in the input sampled data file that  is
+          processed.   A  value  of 1 denotes the first sample in
+          the file.  This is only read if the ----pppp  option  is  not
+          used.   If it is not in the parameter file, the default
+          value of 1 is used.
+
+     _n_a_n - _i_n_t_e_g_e_r
+
+          The total number of data points to process.  If _n_a_n  is
+          0, the whole file is processed. _N_a_n is read only if the
+          ----pppp option is not used.  (See  the  discussion  under  ----
+          ppppffffPPPP))))....
+
+      _f_r_a_m_e__s_t_e_p - _f_l_o_a_t
+          Analysis frame step interval to use when resampling the
+          output parameters.  Valid values are in the range [1/Fs
+          0.1].
+
+     _o_r_d_e_r - _i_n_t
+
+          See OPTIONS.
+
+     _s_p_e_c__r_e_p - _s_t_r_i_n_g
+
+          See OPTIONS.
+
+     _s_p_e_c__m_e_t_h_o_d - _s_t_r_i_n_g
+
+          See OPTIONS.
+
+     _w_i_n_d_o_w - _s_t_r_i_n_g
+
+          See OPTIONS.
+
+     _p_r_e_e_m_p_h_a_s_i_s - _f_l_o_a_t
+
+          See OPTIONS.
+
+     _p_e_r__s_t_e_p - _f_l_o_a_t
+
+          Step size in seconds for periodic analysis in  unvoiced
+          regions.
+
+     _p_e_r__w_s_i_z_e - _f_l_o_a_t
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+
+
+
+
+
+PS_ANA(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+          Window duration in seconds  for  periodic  analysis  in
+          unvoiced regions.
+
+     _p_s__w_s_i_z_e - _f_l_o_a_t
+
+          Window duration in fraction  of  voiced  pitch  period.
+          See also the _p_h_a_s_e parameter.
+
+     _s_t_a_b_i_l_i_t_y - _f_l_o_a_t
+
+          Stability factor in -dB.
+
+     _p_h_a_s_e - _f_l_o_a_t
+          This is a number between 0 and 1.  Value  0  means  the
+          location  of  the window center will be the same as the
+          epoch pulse location.  A value of 0.75,  (the  default)
+          causes  the  window to be centered in the middle of the
+          "closed glottis" region, assuming an "open quotient" of
+          0.5.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     No ESPS common parameter processing is supported.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+     The usual _r_e_c_o_r_d__f_r_e_q, _s_t_a_r_t__t_i_m_e header items, and all sup-
+     ported ESPS parameters are stored as generic header items.
+
+     The bandwidth of _i_n__d_a_t_a, usually one half of  its  sampling
+     frequency, is recorded as a generic header item _b_a_n_d_w_i_d_t_h of
+     DOUBLE type.
+
+FFFFUUUUTTTTUUUURRRREEEE CCCCHHHHAAAANNNNGGGGEEEESSSS
+EEEEXXXXAAAAMMMMPPPPLLLLEEEESSSS
+     The manual page for _e_p_o_c_h_s includes an  example  of  glottal
+     epoch  detection  such  as  might  be performed before using
+     _p_s__a_n_a.  Assuming  one  has  a  file  "spch.pe"   containing
+     impulses at the estimated instants of glottal closure, and a
+     speech file called "spch.sd",  the  following  command  will
+     produce  the  files  "spch.f0ps" and "spch.rc".  The ".f0ps"
+     file has F0 estimates obtained by inverting the  inter-pulse
+     intervals  from  the  ".pe"  file  and RMS computed from the
+     epoch-synchronous windows of preemphasized data used by  the
+     LPC analysis.
+
+     ps_ana -f spch.f0ps spch.sd spch.pe spch.rc
+
+EEEERRRRRRRROOOORRRRSSSS AAAANNNNDDDD DDDDIIIIAAAAGGGGNNNNOOOOSSSSTTTTIIIICCCCSSSS
+BBBBUUUUGGGGSSSS
+     None known.
+
+RRRREEEEFFFFEEEERRRREEEENNNNCCCCEEEESSSS
+     Talkin, D. and Rowley, J., "Pitch-Synchronous  analysis  and
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 4G4        4
+
+
+
+
+
+
+PS_ANA(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+     synthesis for TTS systems," _P_r_o_c_e_e_d_i_n_g_s _o_f _t_h_e _E_S_C_A _W_o_r_k_s_h_o_p
+     _o_n  _S_p_e_e_c_h  _S_y_n_t_h_e_s_i_s,  C.  Benoit,  Ed.,   Imprimerie   des
+     Ecureuils, Gieres, France, 1990.
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     lp_syn(1-ESPS), formant(1-ESPS), get_f0(1-ESPS),
+     epochs(1-ESPS), get_resid(1-ESPS), FEA(5-ESPS),
+     FEA_SD(5-ESPS)
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     David Talkin, Derek Lin
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 5G5        5
+
+
+
+
+
+

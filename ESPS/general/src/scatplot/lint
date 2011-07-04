@@ -1,0 +1,17 @@
+scatplot.c:
+
+scatplot.c
+==============
+warning: possible pointer alignment problem
+    (286)  	    (454)  	
+plotletter.c:
+draw_box2.c:
+
+draw_box2.c
+==============
+warning: argument unused in function:
+    (34)  xdp in draw_box
+    (34)  ydp in draw_box
+plotscale.c:
+printtime.c:
+plotexscal.c:

@@ -1,0 +1,33 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)idxok.3	1.6 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH IDX_OK 3\-ESPSu 18 Apr 1997
+.SH NAME
+idx_ok \- check that an index value is within range of a
+null-terminated array of character pointers
+.SH SYNOPSIS
+.ft B
+int
+.br
+idx_ok(index, array)
+.br
+int indent;
+.br
+char *array[];
+.ft
+.SH DESCRIPTION
+.I idx_ok
+checks that \fIindex\fR is a valid index into an array of character
+pointers, \fIarray\fR.  It returns true (1) 
+if the index is within range and false (0) if it is not.   It is
+assumed that the last element of \fIarray\fR points to a NULL string,
+therefore the length used for the check is one less than its true
+length.   This function is intended to be used with the arrays of type
+codes and methods declared in 
+.I <esps/header.h>.
+.SH SEE ALSO
+.nf
+ESPS(5\-ESPS), SD(5\-ESPS), SPEC(5\-ESPS), \fIlin_search\fP(3\-ESPSu)
+.fi
+.SH AUTHOR

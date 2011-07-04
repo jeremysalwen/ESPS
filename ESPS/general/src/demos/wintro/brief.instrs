@@ -1,0 +1,194 @@
+			Brief waves+ User Instructions
+			------------------------------
+
+
+MOUSE BUTTON SUMMARY
+-------------------
+
+* Region Marking: Left button down, drag through region, release button
+
+* waves+ Function Menu: Right button down in data display
+
+* Colormap Control: Middle mouse button down while in image display
+
+LOOKING AT WAVEFORMS
+--------------------
+
+Waveforms displays are single or multi-line displays, in which each display
+line consists of points connected by straight segments.
+
+
+A. The Waveform Window
+----------------------
+If for some reason the "signal.sd" waveform window isn't up now
+(look in the top frame of the display windows for file names),
+please bring it up by using the "Input Files" button. "signal.sd"
+lives under the "Real signal" button.
+
+The waveform window is a waves+ signal display window.  All such
+windows have three important components:  (1) the window titlebar and
+frame around the outside, (2) a narrow scrollbar region just under the
+titlebar, and (3) the main display area.
+
+Waveform window titlebars contain a lot of useful information.  For
+now, simply notice that it tells you the name of the signal file
+and the signal's sampling frequency (8 kHz in this case).
+
+
+A.1. The Data Cursor And The Left And Right Markers
+---------------------------------------------------
+
+Now move the mouse into the display area of the window, and move it
+back and forth.  You'll see a thin vertical line which tracks the
+mouse.  This is the signal cursor.  The current location in time of
+the cursor is shown in the titlebar, and the sample value at the
+cursor location is printed in the lower left of the display area.
+
+Move the cursor to the signal location at about .4 seconds. Now holding 
+the left mouse button down, move the cursor to the signal location at about
+.6 seconds and release the button.  You should see another
+vertical line at the point where you depressed the button, and a
+third one at the point where you released the button.  These two
+lines are the left and right markers.  Their locations in time are
+shown in the "L:" and "R:" fields in the titlebar.  These markers
+delimit a signal segment that can be played out to a speaker,
+stored in a file, deleted, and so forth.  The duration of this
+segment, in seconds, is shown in the "D:" field of the titlebar.
+
+
+A.2. Menus
+----------
+
+Many waves+ operations are performed using menus.  As usual, the
+window system menu pops up when you click right on the titlebar. 
+You should be familiar with most of the choices in this menu.  The
+operation of these choices are dependent on your operating system: 
+try out some of them and see how they work.  Notice that if you
+resize the waveform window the portion of the signal displayed in
+the window remains the same: only the size of the display changes.
+
+The other important menu is the waves+ signal display menu.  You can
+see this menu by clicking right on any point within the data
+display area of the waveform window.  For now, choose a point in
+signal.sd at about .5 seconds. Click right, and examine the menu that pops up.
+
+Most of the menu items should be self-explanatory.  Let's try one
+out:  the "ZOOM IN" selection.  Clicking right on this item
+provides an expanded view of the waveform.  Now take a look at the
+scrollbar, just under the titlebar.   The heavy horizontal line
+that extends across  a piece of the window has now shrunk. This bar
+shows the portion of the signal that is currently being displayed. 
+Right click again to recall the menu, and right click a second time
+to zoom in again.  The bar is now one half its former size.
+ 
+Move the cursor to one of the pulses (prominant positive peak) in
+the signal.  Hold the left button down, and advance to the next
+pulse.  Release the button.  You should be able to read the peak
+period and repetition frequency from the "D:" and "F:" fields in
+the titlebar.  You may need to strecth the window horizontally to 
+see the "F:" field. 
+
+
+A.3. Moving Around
+------------------
+
+The portion of the signal displayed in the window can be changed by
+clicking any mouse button when the cursor is in the scrollbar area. 
+(Remember, the scrollbar region is the one under the titlebar and above
+the data display.) Here's how the buttons work:
+
+MIDDLE          Press the middle button anywhere in the scrollbar, and
+                the displayed portion of the signal will end up centered
+                around the cursor in the scroll bar.  (The entire width
+                of the scrollbar represents the entire signal.  So the
+                center of the scrollbar represents the middle of the
+                signal, the left edge of the scroll bar represents the
+                beginning of the signal, etc.)
+
+LEFT            Press the left button anywhere in the scrollbar, and the
+                sample of the signal at the cursor in the display area,
+                not the scrollbar will move to the left edge of the
+                window.
+
+RIGHT           Press the right button anywhere in the scrollbar, and the
+                sample of the signal at the left edge will move to the
+                cursor location in the display area, not the scrollbar.
+
+Play around with these buttons now, to get a feel for how they
+work.  Here are three things to remember:
+
+*       These operations only work when the cursor is in the scrollbar
+        region.
+
+*       The left and right buttons have opposite effects: pressing the
+        left button and then the right button leaves you looking at
+        the portion of the signal you began with.
+
+*       The beginning of the signal can't be moved right of the left
+        edge of the window.  Nor can the end of the signal be moved
+        left of the right edge of the window.  Try this out.  You'll
+        see that the signal moves in the correct direction "as far as
+        it can" and no farther.
+
+A.4. Quick Review
+-----------------
+
+To review, when the cursor is in the display area of a waveform
+window, the left mouse button controls the left and right markers,
+and the right mouse button pops up the waves+ menu.  
+So what does the middle button do?  If you have audio output, it
+plays the portion of the signal between the left and right markers. 
+Don't worry about that now, but you may find it useful in other
+demos, or while using waves+ to do work.
+
+
+LOOKING AT IMAGE-STYLE DISPLAYS
+-------------------------------
+
+Waves+ has image-style displays also. If you don't have a display
+window called "signal.fft.spgm" on your monitor, bring it up by
+selecting "Real Spectrum" from the "Input Files" control panel.
+This window is called a image window.  It contains the result from
+doing an overlapped FFT analysis on the file "signal.sd". It is another 
+example of a waves+ signal display window.  Like the waveform window,
+it has a titlebar with useful information, a scrollbar, and a data 
+display area.  
+
+Move the mouse around inside of the image window, and notice
+what happens.  The image window has a cross-hair cursor,
+which specifies both time and frequency.  Notice that the time and
+frequency location of the cross hair is shown in the titlebar,
+along with the left and right marker locations, and the marked
+segment duration and "frequency".  (Sometimes the titlebar is not
+wide enough to show all this information, in which case the latter
+values may get truncated.)
+
+Another thing to note is that the cursor in the waveform window and
+the cursor in the spectrogram window move together:  the two
+cursors are always at the same point in time in their respective
+signals.  In waves+ parlance, the two cursors are "ganged" together
+because they are different views of the same object.  (Note the
+"OBJECT name" field in the control panel.) Try zooming in on a waves+ 
+image display by placing the mouse cursor in the data display part of 
+the window, holding the right mouse button down, and slecting "zoom in".
+Now try "align & rescale"; that puts the two displays on the same time 
+basis and vertically aligns them. 
+
+One last thing. place the mouse cursor in the lower left corner of the
+image display ("signal.fft.spgm") and hold down the middle mouse button.
+Now, still holding it down, move the mouse curosr up to the right. waves+
+give you inteactive control over the colormap.
+
+FOR MORE INFORMATION
+--------------------
+If you have a copy of the waves+ product, you can learn much more about 
+using it by doing the "waves+ Tutorial". If you only have this demo,
+try the other buttons the the "waves+ INTRO Demo" control panel. The "Colors"
+button allows you to try different colormaps, and the "Menu Changes" button
+allows you to interatively modify the waveform and image menus.
+
+
+( @(#)brief.instrs	1.5 8/7/91 ERL )
+
+
+

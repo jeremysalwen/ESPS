@@ -1,0 +1,302 @@
+.\" Copyright (c) 1991-1993 Entropic Research Laboratory, Inc.  All rights reserved.
+.\" @(#)arrfunc.3t	1.7 23 Sep 1997 ERL
+.ds ]W (c) 1991-1993 Entropic Research Laboratory, Inc.
+.if n .ds lq ""
+.if t .ds lq ``
+.if n .ds rq ""
+.if t .ds rq ''
+.if n .ds pi pi
+.if t .ds pi \(*p
+.TH ARR_FUNC 3\-ESPSsp 23 Sep 1997
+.SH NAME
+
+arr_func \- element-by-element functions on real and complex arrays
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/func.h>
+
+char *
+arr_func(func, num, source, src_type, destination, dest_type)
+int 	func;
+long	num;
+char	*source;
+int	src_type;
+char	*destination;
+int	dest_type;
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+The function
+.I arr_func
+takes
+.I num
+numeric values of type
+.I src_type,
+starting at the location
+.I source,
+and applies to each a function selected by the argument
+.I func.
+It stores the results, converted to
+.I dest_type,
+starting at the location
+.I destination
+if
+.I destination
+is non-NULL;
+otherwise it allocates space and stores the results there.
+In either case
+the returned value of the function is the starting location of the results.
+.PP
+The types are indicated by numeric codes
+that have symbolic names defined in the include file
+.I esps/esps.h.
+The following table shows the data type for each code.
+.PP
+.TS
+center, box, tab(;);
+c | c
+l | l
+l | l.
+code;type
+=
+BYTE;signed char
+SHORT;short
+LONG;long
+FLOAT;float
+DOUBLE;double
+BYTE_CPLX;byte_cplx
+SHORT_CPLX;short_cplx
+LONG_CPLX;long_cplx
+FLOAT_CPLX;float_cplx
+DOUBLE_CPLX;double_cplx
+.TE
+.DT
+.PP
+The result is as though the input values were converted to DOUBLE_CPLX,
+the computations done with complex arithmetic,
+and the result converted to the output type.
+However, a more direct method is actually used internally
+when the input and output types permit;
+for example, if these are both real, real arithmetic is used.
+Type conversions are done by
+.IR type_convert (3-ESPS).
+Briefly, conversion from complex to real discards the imaginary part,
+conversion from float or double to an integral type
+rounds rather than truncating,
+and conversion from one type to another type with a narrower numerical range
+may entail clipping; in the latter case a warning message is printed.
+See the
+.I type_convert
+manual page for more details on type conversions.
+.PP
+The
+.I source
+should be a pointer
+to a scalar or array element of the type indicated by
+.I src_type.
+The pointer must be cast to
+.RI ( "char *" )
+when passed as an argument to the function.
+Likewise,
+.I destination
+should be the result of casting a pointer to
+.RI ( "char *" ):
+either NULL or a pointer to the type indicated by
+.I dest_type.
+.PP
+The destination storage area, if supplied by the user,
+should not overlap the source storage area;
+otherwise storing to the destination may destroy a part of the source
+that has not yet been processed.
+.PP
+The returned value of the function
+should be cast to a pointer to the destination type.
+.PP
+The function to be applied is indicated by an integer code
+.I func.
+The possible values of
+.I func
+have symbolic names defined in the include file
+.I esps/func.h.
+These are
+.PP
+.TS
+center, tab(;);
+l l l l l.
+FN_NONE;FN_ABS;FN_ARG;FN_ATAN;FN_CONJ
+FN_COS;FN_EXP;FN_EXP10;FN_IM;FN_LOG
+FN_LOG10;FN_RE;FN_RECIP;FN_SGN;FN_SIN
+FN_SQR;FN_SQRT;FN_TAN;;
+.TE
+.DT
+.LP
+There is available a NULL-terminated string array
+.I function_types
+that contains the Ascii names of these symbols, minus the prefix "FN_".
+This is useful for getting a printable function name, given the integer code,
+or vice versa.
+For example
+.IR function_types [ FN_COS ]
+is the string "COS", and
+.IR lin_search ( "function_types,
+"COS") is the integer
+.I FN_COS.
+(See
+.IR lin_search (3-ESPSu),
+.IR lin_search2 (3-ESPSu).)
+The array is declared for the user as
+.LP
+.IR "extern char " * "function_types" [];
+.LP
+in the include file
+.I esps/func.h,
+and there is an initialized definition in
+.I arr_func.c,
+the ESPS library module that contains the function
+.I arr_func.
+.PP
+Notes on the individual functions follow.
+For
+.I ARG 
+(phase angle),
+.I ATAN,
+.I LOG,
+.I LOG10,
+and
+.I SQRT,
+the choices of principal values and branch cuts in the complex plane
+agree with those recommended by Penfield [1]
+and adopted in the first edition of Steele [2]
+(which differs in a few details from the second edition).
+.TP
+NONE 
+The identity function.
+Returns the input unchanged, except for type conversion.
+(But for plain type conversion, see
+.IR type_convert (ESPS-3sp)).
+.TP
+ABS 
+Absolute magnitude.
+.TP
+ARG 
+\*(lqArgument\*(rq, phase angle.
+The values range from \-\*(pi (not included) to \*(pi,
+which is the value for negative real numbers.
+The argument of a nonzero complex number
+.I z
+equals the imaginary part of log
+.I z.
+The value at 0 is arbitrarily taken to be 0.
+.TP
+ATAN 
+Arctangent.
+The function maps real numbers into the interval
+between \-\*(pi/2 and \-\*(pi/2, excluding the endpoints.
+In the complex plane, the function is singular at
+.I i
+and
+.I \-i,
+and there are two branch cuts: one along the positive imaginary axis above
+.I i,
+and one along the negative imaginary axis below
+.I \-i.
+Numbers on the first cut are mapped into values with real part \-\*(pi/2
+and positive imaginary parts.
+Numbers on the second cut are mapped into values with real part \*(pi/2
+and negative imaginary parts.
+The rest of the complex plane is mapped into the strip
+that comprises the complex numbers with real parts greater than \-\*(pi/2
+and less than \*(pi/2.
+.TP
+CONJ 
+Complex conjugate.
+.TP
+COS 
+Cosine.
+.TP
+EXP 
+Exponential.
+.TP
+EXP10
+Ten raised to the given power.
+.TP
+IM 
+Imaginary part.
+.TP
+LOG 
+Natural logarithm.
+The function is singular at 0, with a branch cut along the negative real axis.
+For the range of the imaginary part, see ARG above.
+.TP
+LOG10 
+Logarithm to base 10.
+.TP
+RE 
+Real part.
+.TP
+RECIP 
+Reciprocal.
+.TP
+SGN 
+Signum, \*(lqsign\*(rq.
+For a nonzero input
+.I z,
+the value is
+.RI z /| z |,
+and sgn 0 is 0.
+.TP
+SIN 
+Sine.
+.TP
+SQR 
+Square.
+.TP
+SQRT 
+Square root.
+The range is the right half plane, excluding the negative imaginary axis,
+but including the positive imaginary axis,
+which contains the values for negative real arguments.
+.TP
+TAN 
+Tangent.
+.SH EXAMPLE
+.nf
+.fi
+.SH "ERRORS AND DIAGNOSTICS"
+.PP
+When a function value is undefined or out of bounds,
+the results vary with the machine on which
+.I arr_func
+is run.
+On some machines, the function generates a floating-point exception;
+on others it yields a specially coded value (NaN, Infinity, etc.)
+that can be stored in a variable or printed out with
+.I printf.
+.SH "FUTURE CHANGES"
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.LP
+[1] P. Penfield Jr.,
+\*(lqPrincipal values and branch cuts in complex APL,\*(rq
+.I "APL Quote Quad"
+.B 12
+(No. 1), 248\-256 (Sept, 1981)
+.RI ( "APL 81 Conference Proceedings" ).
+.LP
+[2] Guy L. Steele, Jr.,
+.I "Common Lisp, the Language,"
+Digital Press, 1984.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIfeafunc\fR(1-ESPS), \fItype_convert\fR(3-ESPSsp), 
+\fIlin_search\fR(3-ESPSu), \fIlin_search2\fR (3-ESPSu)
+.fi
+.SH AUTHOR
+Rodney Johnson, ERL.

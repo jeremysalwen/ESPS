@@ -1,0 +1,119 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)putsym.3	1.7 21 Apr 1997 ESI
+.TH PUTSYM 3\-ESPSu 21 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech,, Inc.
+.SH "NAME"
+.nf
+putsym_f, putsym_i, putsym_s - put a parameter value into an ESPS Common file
+fputsym_f, fputsym_i, fputsym_s - put a parameter value into an arbitrary file
+.fi
+.SH "SYNOPSIS"
+.B #include <stdio.h>
+.br
+.B #include <esps/esps.h>
+.PP
+.B int putsym_f (symbol, value)
+.br
+.B char	*symbol;
+.br
+.B float value;
+.PP
+.B int putsym_i (symbol, value)
+.br
+.B char	*symbol;
+.br
+.B int value;
+.PP
+.B int putsym_s (symbol, value)
+.br
+.B char	*symbol;
+.br
+.B char *value;
+.PP
+.B int fputsym_f (symbol, value, file)
+.br
+.B char	*symbol;
+.br
+.B float value;
+.br
+.B char *file;
+.PP
+.B int fputsym_i (symbol, value, file)
+.br
+.B char	*symbol;
+.br
+.B int value;
+.br
+.B char *file;
+.PP
+.B int fputsym_s (symbol, value, file)
+.br
+.B char	*symbol;
+.br
+.B char *value;
+.br
+.B char *file;
+.SH "DESCRIPTION"
+.PP
+.I putsym_f,
+.I putsym_i,
+and
+.I putsym_s,
+all write the specified \fIsymbol\fP and its \fIvalue\fP
+into an ESPS Common file if Common processing is enabled.
+.PP
+ESPS Common processing may be disabled by setting the environment
+variable USE_ESPS_COMMON to "off".  The default ESPS Common file 
+is .espscom in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  
+If Common processing is disabled, then these functions simply return
+without doing anything.
+.PP
+.I fputsym_f,
+.I fputsym_i,
+and
+.I fputsym_s,
+all write the specified \fIsymbol\fP and its \fIvalue\fP into 
+an arbitrary named file \fIfile\fP.  Their behavior does 
+not depend on whether or not Common processing is enabled.  
+.PP
+In all cases, a return value of zero indicates success and a return
+value of -1 indicates error (i.e. the Common file or specified file
+could not be updated or created).
+.PP
+The output for all these functions is written in the same format as
+ESPS Parameter files (see [1] for more details).  (Definite
+assignments are used, without the optional prompt string and parameter
+limitations).  Values written with
+these functions can be read with \fIgetsym_xx\fP.
+.SH "EXAMPLE"
+.nf
+/* parameter values to store in an ESPS Common file */
+start = 5001;
+dcrem = "no";
+
+if (putsym_i ("start", start) != 0)
+   (void) fprintf (stderr, "could not write into ESPS Common file.\n");
+if (putsym_s ("dcrem", dcrem) != 0)
+   (void) fprintf (stderr, "could not write into ESPS Common file.\n");
+
+.fi
+.SH DIAGNOSTICS
+.PP
+.SH "BUGS"
+.PP
+.SH "SEE ALSO"
+.PP
+\fIread_params\fP (3\-\s-1ESPS\s+1), \fIsymerr_exit\fP
+(3\-\s-1ESPS\s+1), \fIgetsym\fP (3\-\s-1ESPS\s+1), \fIgetsymdef\fP
+(3\-\s-1ESPS\s+1), \fIsymtype\fP (3\-\s-1ESPS\s+1), \fIsymsize\fP
+(3\-\s-1ESPS\s+1), 
+.br
+\fIsymlist\fP (3\-\s-1ESPS\s+1), \fIsymdefinite\fP
+(3\-\s-1ESPS\s+1), \fIsymchoices\fP (3\-\s-1ESPS\s+1), \fIsymrange\fP
+(3\-\s-1ESPS\s+1), \fIsymprompt\fP (3\-\s-1ESPS\s+1),
+\fIsymerr_exit\fP (3\-\s-1ESPS\s+1)
+.SH "REFERENCES"
+[1] ETM-S-86-12:jtb, Parameter Files in the Speech Processing System
+.SH "AUTHOR"
+Ajaipal S. Virdy, Alan Parker, John Shore

@@ -1,0 +1,371 @@
+.\" Copyright (c) 1998 Entropic, Inc. All rights reserved.
+.\" @(#)bsdist.1	1.4 9/22/98 ERL
+.ds ]W (c) 1998 Entropic, Inc.
+.if n .ds - ---
+.if t .ds - \-\h'-0.2m'\-
+.TH BS_DIST 1\-ESPS 1.4
+.SH NAME
+bs_dist \- Computes the bark spectral distortion
+.SH SYNOPSIS
+.B bs_dist
+[
+.BI \-a
+] [
+.BI \-e " threshold"
+] [
+.BI \-m " distortionType"
+] [
+.BI \-{pr} " range1"
+[
+.BI \-{pr} " range2"
+]] [
+.BI \-x " debugLevel"
+] [
+.BI \-A
+] [
+.BI \-P " paramFile"
+]
+.I inFile1
+.I inFile2
+[
+.I outFile
+]
+.SH DESCRIPTION
+\fIbs_dist\fP(1\-ESPS) supports the measurement of the Bark Spectral Distortion
+(BSD) [1] given input data containing "smeared"
+critical-band spectrum estimates [1], as produced by \fIbarkspec\fP(1\-ESPS).
+\fIbs_dist\fP(1\-ESPS) applies
+perceptual weighting to the input filter bank data
+to compensate for \fIperceived\fP loudness by human listeners, which requires
+converting intensity levels in dBs to loudness level in phons.  This is
+followed by another perceptual transformation from loudness level in phons
+to \fIsubjective\fP loudness (sones).  These transformations are described
+in [1].
+.PP
+\fIbs_dist\fP accepts two
+input \fIFEA_SPEC\fP(5\-ESPS) files (\fIinFile1\fP and \fIinFile2\fP),
+and it processes the data found in the \fIre_spec_val\fP field.
+\fIbs_dist\fP computes distortion values for data in the
+frequency range from 0 to 4000 Hz.  Spectral values corresponding to
+frequency values outside this range are ignored, but data that
+only covers a subset of the 0 to 4kHz range is supported.
+To compute the BSD as described in [1] you need Bark spectral values
+for 15 bands with filter peak locations of
+1.5 bark, 2.5 bark,
+.if n \&...,
+.if t \&.\ .\ .\ ,
+15.5 bark.
+In this case
+the lower \-3dB frequency of the first band is 0.91 bark (about 91 Hz),
+and the upper \-3dB frequency of the 15th band is 15.91 bark (about 4232 Hz);
+these limits can be obtained by specifying the option
+.BR \-B " 0.91:15.91"
+when running
+.IR barkspec (1\-ESPS).
+.PP
+If either input file is "\-", standard input is used.  Note, however, that the
+input files cannot both be standard input.  If \fIoutFile\fP is "\-",
+standard output is used.  In performing the calculations, \fIinFile1\fP
+is assumed
+to be the reference file.
+.PP
+By default, an output \fIFEA\fP(5\-ESPS) file containing the
+frame-by-frame distortion values (data type FLOAT) is produced.
+The frame-by-frame values are the raw
+.nf
+\fB
+	BSDk =  SUMm { Ls(m) \- Ld(m) }^2
+\fP
+.fi
+where
+\fIBSDk\fP is the Bark Spectral Distortion for the \fIk\fPth frame,
+\fISUMm\fP is the sum from 0 to \fIM\-1\fP (the length of the vector),
+\fILs\fP is the set of loudness-derived values taken from the original or
+reference speech, and
+\fILd\fP is the set of loudness-derived values taken from the processed
+or distorted speech.
+.PP
+The overall BSD is an average taken over all frames scaled
+by the average Bark loudness in the reference signal:
+.nf
+\fB
+	BSD = { SUMk BSDk } / { SUMk SUMm { Ls(m)^2 } }
+\fP
+.fi
+where \fIL(s)\fP, \fIBSDk\fP, and \fISUMm\fP are as above,
+and \fISUMk\fP is the
+sum over all input frames.
+You can modify the computed BSD value by using the \fB\-e\fP option to
+set a lower threshold on the input power level for frames to include in the
+computation.
+.PP
+The average distortion value (in ASCII) can be sent to standard output
+by using the \fB\-a\fP option.  (This also inhibits the generation of
+an output file.) Both the distortion waveform and the total average
+distortion value can be produced by using the \fB\-A\fP option.  In
+this case, the average distortion value is written after the data file
+is written.
+.PP
+Accurate measurements require time-alignment and gain-normalization
+of the original input sampled data files.
+\fIfea_stats\fP(1\-ESPS) and \fIcopysd\fP(1\-ESPS)
+are useful for gain normalization.
+\fIxwaves\fP(1\-ESPS) is useful for measuring delay offsets, and
+\fIaddgen\fP(1\-ESPS) is useful for resetting start times.
+.PP
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-a
+Specifying this option tells \fIbs_dist\fP
+to send the final average distortion
+value to stdout, but do not write an output file.
+.TP
+.BI \-e " BSD threshold" "\fR [0.0]\fP"
+Specifies the value of a threshold to use in the BSD computation.
+If the input frames
+do not both
+exceed this threshold, the for this time frame
+is not included in the overall BSD computation.
+The specified value must be >= 0.0, and the default value is 0.0.
+The output distortion file includes values for all frames, however,
+regardless of the value set for this threshold.
+.TP
+.BI \-m " distortion type" "\fR [BSD]\fP"
+Specifies the type of distortion measure to compute.
+The only possible value at present is Bark Spectral Distortion (BSD).
+.TP
+.BI \-p " range"
+The option \fB\-p\fP is a synonym for \fB\-r\fP,
+and the allowed forms for the range are the same.
+.TP
+.BI \-r " first" : "last" "\fR [1:(last in file)]\fP"
+.TP
+.BI \-r " first" :+ "incr"
+.TP
+.BI \-r " first"
+This option specifies the range of data to analyze.
+In the first form, a pair of unsigned integers specifies
+the first and last records to analyze.  If
+.IR "last" " = " " first" " + " " incr",
+the second form (with the plus sign)
+specifies the same range as the first form.  If \fIfirst\fP
+is omitted, the default value of 1 is used.  If \fIlast\fP is
+omitted, the range extends to the end of the file.
+The third form (omitting the colon) specifies a single record.
+.IP
+This option may be used at most twice.
+If used once, it applies to both input files.
+If used twice, it applies to
+.I inFile1
+the first time and
+.I inFile2
+the second time.
+If two
+.B \-r
+options specify definite range sizes that are inconsistent,
+the program issues an error message.
+If the end of one range is unspecified,
+the size of the other range determines the number of records
+processed.
+If the ends of both ranges are unspecified,
+processing continues until one input file is exhausted.
+.TP
+.BI \-x " debug_level" "\fR [0]\fP"
+Setting this option makes \fIbs_dist\fP
+produce output to stderr.  Normally,
+this is used for debugging.  By default no output is generated.
+Increasing the \fIdebug_level\fP value increases the quantity of
+debug output.
+.TP
+.BI \-A
+Specifying this option tells \fIbs_dist\fP
+to send the final average distortion
+value to stdout, after the output data file is written.
+In this case, the \fIoutFile\fP must not be "\-".
+.TP
+.BI \-P " parameter file" "\fR [params]\fP"
+Use the specified \fIparameter file\fP rather than the default, which is
+\fIparams\fP.
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not required to be present, as there
+are default parameter values that apply.  If the parameter
+file does exist, the following parameters are read:
+.TP
+.I "start \- integer"
+.IP
+The first record in each input data file to process.
+A value of 1 denotes the first record in the file.
+The value may be either a single integer, applying to both input files,
+or an array with two elements, one for each input file.
+This is only read if the \fB\-p\fP and \fB\-r\fP options are not used.
+.TP
+.I "nan \- integer"
+.IP
+The total number of data records to process.
+If \fInan\fP is 0, processing continues
+until one input file is exhausted.
+\fINan\fP is read only if the
+\fB\-p\fP and \fB\-r\fP options are not used.
+.TP
+.I "distortion_type \- string"
+.IP
+Specifies the type of distortion to compute between the
+two input files.
+The only possible value at present is "BSD".
+This parameter is
+not read if the \fB\-m\fP option is specified.
+.TP
+.I "threshold \- float"
+.IP
+Specifies the value of a threshold to use in the BSD computation.
+This value must be >= 0.
+This parameter is
+not used if the MBSD is computed, or if the \fB\-e\fP is specified.
+.TP
+.I "perceptual_weights \- float"
+.IP
+An array that specifies the weights
+used in converting input Bark-spectral powers to phons.
+These are in linear form\*-multiplicative factors
+to be applied to powers;
+the program converts them to logarithmic form (dB) internally.
+The number of items supplied must be at least equal to the smallest of
+(1) the item \fInum_freqs\fP from \fIinFile1\fP,
+(2) the item \fInum_freqs\fP from \fIinFile2\fP,
+(3) the number of freqencies not exceeding 4 kHz.
+Any additional items are ignored.
+.IP
+If this parameter is not obtained from the parameter file,
+default values are based on the equation
+.if n \{\
+H(z) = (2.6 + z^-1)/(1.6 + z^-1)
+\}
+.if t \{\
+.ds m1 \v'-4p'\s-3\-1\s+3\v'4p'
+\fIH\fP(\fIz\fP) = (2.6 + \fIz\fP\*(m1)/(1.6 + \fIz\fP\*(m1)
+\}
+in Section IV.B of ref. [1].
+.IP
+There is no command-line option that overrides this parameter.
+.SH ESPS COMMON
+The ESPS common file is not used by this program.
+.SH ESPS HEADER
+.PP
+A new file header is created for the FEA output file.  The
+file headers from the input FEA data files are added as
+source files in the output file header, and the command line
+is added as a comment.
+.PP
+The program writes the usual values into the common part of
+the output header.  \fIbs_dist\fP writes the following values
+into the specified generic header items:
+.nf
+\fI
+	start = (LONG, size 2) starting points
+	nan = (LONG) number of points analyzed in file
+	distortion_type = (CODED) BSD
+	threshold = (FLOAT) \-e specified value
+\fP
+.fi
+which are added to the output FEA file header.
+.PP
+If the input files are both tagged feature files,
+then, for each file,
+the value of the header item \fIsrc_sf\fP is obtained if present,
+or \fIsf\fP if \fIsrc_sf\fP is not present.
+If the value is the same in both files,
+it is recorded in a generic header item \fIsrc_sf\fP
+added to the output header, and the output file is tagged.
+.PP
+If generic header items \fIrecord_freq\fP
+are present in both input files and have the same value,
+then the value is recorded in a header item \fIrecord_freq\fP
+in \fIoutFile\fP,
+and a generic header item \fIstart_time\fP (type DOUBLE)
+is also written in the output file.
+The value of \fIstart_time\fP is computed by taking
+the \fIstart_time\fP value from the header of \fIinFile1\fP
+(or zero, if such a header item doesn't exist)
+and adding to it the offset time (from the beginning of \fIinFile1\fP)
+of the first record processed.
+.PP
+A generic header item
+.nf
+\fI
+	perceptual_weights = (FLOAT array) weight factors
+\fP
+.fi
+is added to the output header;
+this contains the values of the weights used
+in converting input Bark-spectral powers to phons.
+See the description of the parameter with the same name;
+the default values are written
+if the parameter is not obtained from the parameter file.
+.SH FUTURE CHANGES
+.PP
+None contemplated.
+.SH BUGS
+None known.
+.SH WARNINGS
+.PP
+The program prints a synopsis of command-line usage and exits
+if an unknown option is specified,
+if \fB\-r\fP is used more than twice,
+or if the number of file names is wrong.
+It prints a warning and exits if both input files are standard input,
+if the same file is specified for both input and output,
+or, when \fB\-A\fP is used, if the output file is standard output.
+.PP
+The program prints a warning and exits
+unless the two input files either
+(1) have consistent values of \fIrecord_freq\fP or
+(2) are tagged and have consistent values for \fIsrc_sf\fP
+(or \fIsf\fP, when \fIsrc_sf\fP is not present).
+In the latter case,
+if the the tag values in the two selected ranges of records do not match,
+the program prints a warning and continues.
+.PP
+The program warns and exits if a \fB\-r\fP option
+specifies a starting record before the beginning of the file
+or specifies an empty range of records,
+or if two \fB\-r\fP options
+specify ranges with different explicit lengths.
+If the \fB\-e\fP option is used and the two input files do not have a
+\fItot_power\fP field, \fIbs_dist\fP warns and exists.
+.PP
+If the \fIspec_type\fP in either input file is neither DB nor PWR,
+\fIbs_dist\fP warns and exits.
+.PP
+If the generic header item values of \fIcontin\fP
+in the two input files don't match,
+or if the values of \fIfreq_format\fP are not both ARB_FIXED,
+the program warns and exits.
+The lists of frequencies in the two input headers
+must be in increasing order.
+Any frequencies greater than 4 kHz are dropped from both lists,
+and the longer is then truncated to the length of the shorter.
+If the resulting lists don't match, \fIbs_dist\fP warns and exits.
+.PP
+The program warns and exits
+if a parameter read from the parameter file has the wrong data type,
+or if an array \fIperceptual_weights\fP in the parameter file
+is too short or contains a non-positive element.
+.SH SEE ALSO
+.nf
+\fIaddgen\fP(1\-ESPS), \fIbarkspec\fP(1\-ESPS), \fIcopysd\fP(1\-ESPS),
+\fIdistort\fP(1\-ESPS), \fIfea_stats\fP(1\-ESPS), \fImbs_dist\fP(1\-ESPS),
+\fItofspec\fP(1\-ESPS), \fIxwaves\fP(1\-ESPS), \fIget_snr\fP(3\-ESPS),
+\fIFEA(5\-ESPS)\fP, \fIFEA_SPEC(5\-ESPS)\fP
+.fi
+.SH REFERENCES
+[1]
+S. Wang, A. Sekey, and A. Gersho,
+``An Objective Measure for Predicting Subjective Quality of Speech Coders,''
+\fIIEEE Journal On Selected Areas In Communications\fP,
+Vol. 10, no. 5, 819\-829 (June 1992).
+.SH BUGS
+None known.
+.SH AUTHOR
+Manual page by David Burton with revisions by Rodney Johnson.

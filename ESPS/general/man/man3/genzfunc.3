@@ -1,0 +1,73 @@
+.\" Copyright (c) 1987, 1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)genzfunc.3	1.8 29 Apr 1997 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH GENZFUNC 3\-ESPSu 29 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Research Laboratory, Inc.
+.SH NAME
+.nf
+add_genzfunc \- create generic header items to store a filter (zfunc)
+get_genzfunc \- obtain a filter (zfunc) from generic header items 
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+
+void
+add_genzfunc(name, filter, hd)
+char *name;		
+struct zfunc *filter;
+struct header *hd;	
+
+struct zfunc *
+get_genzfunc(name, hd)
+char *name;		
+struct header *hd;	
+.ft
+
+.SH DESCRIPTION
+.fi
+.I add_genzfunc
+creates three generic header items to store the information in the 
+zfunc 
+.I filter,
+and it stores the information in those header items.  
+.I get_genzfunc
+obtains information from three generic header items in \fIhd\fP,
+turns this into a zfunc, and returns a pointer to the zfunc.  
+The names of the generic header items are based on the "basename" 
+.I name.  
+The number of numerator coefficients
+and denominator coefficients are stored 
+as two values in "\fIname_\fPsiz" as shorts.
+These coefficients are normally the transfer function coefficients of
+a digital filter.
+The numerator coefficients are stored in "\fIname\fP_zeros" and the 
+denominator coefficients
+are stored in "\fIname\fP_poles" as floats.  
+.PP
+.I get_genzfunc
+returns NULL if "\fIname_\fPsiz" is not a defined SHORT generic header item
+or its size is not 2.  NULL is also returned if "\fIname\fP_zeros" 
+or "\fIname\fP_poles" is not a defined FLOAT generic or has a size 
+different from that specified in "\fIname_\fPsiz".  
+.SH EXAMPLE
+.PP
+.nf
+struct header *ana_ih; /*ANA input header*/
+struct header *fea_oh; /*FEA output header*/
+add_genzfunc("pre_emp", ana_ih->hd.ana->pre_emp, fea_oh);
+.PP
+.nf
+struct header *fea_ih; /*FEA input header*/
+struct header *ana_oh; /*ANA output header*/
+ana_oh->hd.ana->pre_emp = get_genzfunc("pre_emp", fea_ih);
+.fi
+.SH BUGS
+None known.
+.SH "SEE ALSO"
+.nf
+\fIgenhd_codes\fR(3-ESPSu), \fIgenhd_list\fR(3\-ESPSu), \fIgenhd_type\fR(3\-ESPSu)
+.fi
+.SH AUTHOR
+John Shore  

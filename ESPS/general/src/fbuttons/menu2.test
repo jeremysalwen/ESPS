@@ -1,0 +1,8 @@
+#  test menu 2 for fbuttons @(#)menu2.test	1.2	4/21/93 ERL
+#  this menu is included by reference in menu1.test
+
+"extern menu item 1"	echo "you picked extern menu item 1"
+"extern menu item 2"	echo "you picked extern menu item 2"
+"extern menu item 3"    echo "you picked extern menu item 3"
+"more buttons"	exec mbuttons menu1.test
+

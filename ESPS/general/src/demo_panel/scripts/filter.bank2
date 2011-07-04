@@ -1,0 +1,7 @@
+#!/bin/sh
+# @(#)filter.bank2	1.1 6/18/91 ERL - filter bank script for waves+ filters demo
+
+fft_filter -Ffilters/multiband.filt $1 $2 files/multiband.sd
+fft_filter -Ffilters/multiband2.filt $1 $2 files/multiband2.sd
+mux files/multiband.sd files/multiband2.sd  $3
+addgen -F -gstart_time -tdouble -v`hditem -istart_time files/multiband.sd` $3

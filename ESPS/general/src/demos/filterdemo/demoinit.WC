@@ -1,0 +1,56 @@
+waves delete_all_items menu all
+# @(#)demoinit.WC	1.11 11/17/92 ERL
+# reconfigure menus
+
+# add play commnads
+waves add_waves name "play between marks" builtin "play between marks"
+waves add_waves builtin "play entire file"
+
+# zooming 
+
+waves add_waves name "zoom to marks" builtin "bracket markers"
+waves add_waves builtin "zoom out"
+waves add_waves builtin "zoom full out"
+waves add_waves builtin "zoom in"
+waves add_waves builtin "window ahead"
+waves add_waves builtin "window back"
+waves add_waves builtin "kill window"
+
+# Add align and rescale
+
+waves add_waves builtin "align & rescale" 
+set h_spect_rescale 1
+set v_spect_rescale 1
+
+# plot3d 
+
+add_espsn menu spect name "3D plot" command plot3d -oR -w
+
+# spectral analysis
+
+add_waves menu wave builtin "spectrogram (W.B.)" 
+add_waves menu wave builtin "spectrogram (N.B.)" 
+
+add_espsf menu wave name "Custom FFT spectrogram" command expromptrun -h sgram -P PWsgram sgram 
+
+add_espsf menu wave name "MAXENT spectrogram" command expromptrun -h me_sgram -P PWme_sgram me_sgram
+
+# invoke a waves button panel to control the operations
+
+waves make_panel name filters columns 6 title "Filter Control Panel" icon_title filters file filters.WM loc_x 205 loc_y 0
+
+# bring up some sampled data
+
+sleep seconds .5
+
+waves make name filters file speech.sd loc_y 595 loc_x 0
+
+# set verbose to 1 so user can see the shell commands (?)
+
+set verbose 1
+
+return
+
+# @(#)demoinit.WC	1.11 11/17/92 ERL
+
+

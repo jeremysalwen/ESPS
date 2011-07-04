@@ -1,0 +1,172 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)filtspec.1	3.10	27 Sep 1997 ESI
+.TH FILTSPEC 1\-ESPS 27 Sep 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+filtspec \- compute spectral amplitude response from filter definition
+.SH SYNOPSIS
+.B filtspec
+[
+.BI \-x " debug_level"
+]
+[
+.BI \-r " range"
+]
+[
+.BI \-m " mode"
+]
+[
+.BI \-n " num_freqs"
+]
+[
+.BI \-s " sf"
+]
+.I input.filt
+.I output.spec
+.SH DESCRIPTION
+The program 
+.I filtspec
+reads records from a \fIFEA_FILT\fP(5\-ESPS) file and produces an
+\fIFEA_SPEC\fP(5-ESPS) 
+file containing the amplitude response expressed in either linear 
+or decibel units.
+If ``\-'' is given for the input file, standard input is read.
+If ``\-'' is given for the output file, standard output is written.
+The output file can be plotted using the
+\fIplotspec\fP(1-ESPS)
+command.
+.SH OPTIONS
+The following options are supported.  Values in brackets are defaults.
+.TP
+.BI \-x " debug_level
+If
+.I debug_level
+is non-zero,
+.I filtspec
+prints debugging messages and other information on the standard error output.
+.TP
+.BI \-r " first" : "last" "\fR [(first in file):(last in file)]"
+.TP
+.BI \-r " first" :+ "incr"
+In the first form, a pair of unsigned integers specifies the range
+of records to be processed.
+Either
+.I first
+or
+.I last
+may be omitted; then the default value is used.
+If
+.IR last " = " first " + " incr,
+the second form (with the plus sign) specifies the same range as the first.
+If the specified range contains records not in the file,
+.I filtspec
+complains and quits.  The default is to process all of the records in the file.
+.TP
+.BI \-m " mode" "\fR [d]"
+The string
+.I mode
+specifies whether the output spectral record contains the power spectrum
+in linear or decibel units, or a complex frequency spectrum.  Allowable values for
+.I mode
+are 
+.I l
+for linear, 
+.I d
+for decibel, and
+.I c
+for complex.  The default for 
+.I mode
+is
+.I d.
+.TP
+.BI \-n " num_freqs" "\fR [2049]"
+Compute spectral values for this number of frequencies, equispaced from 0
+to half the sampling frequency.  Must equal
+2\v'-.35'\s-3\fIn\fR\s+3\v'.35' + 1 for some positive integer \fIn\fR.
+.TP
+.BI \-s " sf" "\fR [1.0]"
+Specify the sampling frequency in the FEA_SPEC file header to be
+.I sf.
+If \fB\-s\fR is not specified on the command line,
+\fIfiltspec\fR looks for a sampling frequency value in the generic
+header item \fIsamp_freq\fR. If this generic header item exists,
+\fIfiltspec\fR uses the value found there as the sampling frequency.
+If \fIsamp_freq\fR does not
+exist or is type CHAR, the default value 1.0 Hz is used.
+.SH ESPS PARAMETERS
+The ESPS parameter file is not used.
+.SH ESPS COMMON
+The ESPS Common file is not used.
+.SH ESPS HEADERS
+The following values are read from the header of the FEA_FILT file:
+.I common.type,
+.I max_num,
+.I max_denom,
+.I common.ndrec,
+and the fields consulted by
+.I allo_spec_rec.
+.PP
+The following parameters are written to the header of the FEA_SPEC file:
+.I common.prog,
+.I common.vers,
+.I common.progdate.
+In addition, the following standard FEA_SPEC 
+generic header items are written:
+.I sf 
+(FLOAT),
+.I freq_format 
+(CODED),
+.I spec_type 
+(CODED),
+.I num_freqs 
+(LONG),
+.I frame_meth 
+(CODED),
+and
+.I contin
+(CODED).
+Also, the 
+following generic header items are copied or updated if they exist
+in the input file:
+\fIstart_time\fR (DOUBLE), \fIrecord_freq\fR (DOUBLE), and \fIsrc_sf\fR
+(DOUBLE).
+.SH SEE ALSO
+.nf
+\fIplotspec\fP(1\-ESPS), \fIallo_feaspec_rec\fP(3\-ESPSu), \fIwrite_header\fP(3\-ESPSu),
+\fIFEA_FILT\fP(5\-ESPS), \fIFEA_SPEC\fP(5\-ESPS), \fIESPS\fP(5\-ESPS).
+.fi
+.SH DIAGNOSTICS
+.PP
+filtspec: unknown option: 
+.RI \- letter
+.br
+Usage: filtspec [-x debug_level][-f range][-P param_file][-n num_freqs] filt_file spec_file
+.br
+filtspec: number of frequencies
+.I n
+is not 1 plus a power of 2.
+.br
+filtspec: number of frequencies
+.I n
+exceeds 16385.
+.br
+filtspec: can't open
+.I filename: reason
+.br
+filtspec: 
+.I filename
+is not an ESPS file
+.br
+filtspec: input file
+.I filename
+is not a FEA_FILT file.
+.br
+filtspec: bad range:
+.I n
+records in
+.I filename
+.br
+filtspec: EOF encountered.
+.SH AUTHOR
+Brian Sublett. Improved for ESPS 5.0 by Derek Lin.
+

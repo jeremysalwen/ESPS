@@ -1,0 +1,77 @@
+.\" Copyright 1987, 1990 Entropic Speech Inc., all rights reserved
+.\" @(#)addsourcef.3	1.5 29 Apr 1997 ESI
+.TH ADD_SOURCE_FILE 3\-ESPSu 29 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+add_source_file \- add a source file name and header to header
+.SH SYNOPSIS
+.ft B
+void add_source_file(hd, name, srchd)
+.br
+struct header *hd, *srchd;
+.br
+char *name;
+.ft
+.SH DESCRIPTION
+.I add_source_file
+inserts a source file name (\fIname\fR) and header (\fIsrchd\fR) 
+into the next available 
+.I variable.source 
+and 
+.I variable.srchead 
+positions in the header pointed to by \fIhd\fR.
+The fields \fIvariable.nnames\fR and \fIvariable.nheads\fR are 
+incremented.  Only pointers are copied, so the source fields must not be
+altered before \fIwrite_header\fR is called.   
+Note that either \fIname\fP or \fIsrchd\fP
+may be NULL. If \fIname\fP is NULL,
+the name "NONE" is added to \fIvariable.source\fP, and
+\fIsrchd\fP is added to \fIvariable.srchead\fP.
+If \fIsrchd\fP is NULL,
+\fIvariable.source\fP is updated with \fIname\fP, but
+\fIvariable.srchead\fP is left unchanged.
+.PP
+If the destination header does not have a foreign header (i.e.
+\fIforeign_hd_length\fR generic is not defined or it is zero) and the
+source header does have \fIforeign_hd_length\fR defined and greater than
+zero and \fIforeign_hd_ptr\fR defined and non-NULL these generics are
+copied from the source header to the destination header.   This has the
+side effect of causing the foreign header of a source file to become a
+foreign header of the destination header.   Since there can be only one
+foreign header in a file, only the first foreign header encountered by
+\fIadd_source_file\fR will be copied.
+.SH EXAMPLE
+.if n .ta 33
+.if t .ta 3i
+in_fd = fopen(in_name, "r");	/* get input file */
+.br
+out_fd = fopen(out_name, "w");	/* get output file */
+.br
+in_hd = read_header(in_fd);	/* read input header */
+.br
+out_hd = new_header(FT_ANA);	/* make new header 
+.br
+				   for output file */
+.br
+add_source_file(out_hd, in_name, in_hd);
+.br
+write_header(out_hd, out_fd);	/* write the new header */
+.SH DIAGNOSTICS
+There can be MAX_SOURCES included headers and source names.  
+If this is exceeded, then
+an error message is printed and the calling program is terminated.
+Therefore, application programs should be careful to compare 
+.I variable.nheads
+with MAX_SOURCES before trying to add a header and
+.I variable.nnames
+with MAX_SOURCES before trying to add a source name.
+.SH SEE ALSO
+.nf
+ESPS(5\-ESPS), \fIwrite_header\fR(3\-ESPSu), \fInew_header\fR(3\-ESPSu), 
+\fIread_header\fR(3\-ESPSu), \fIeopen\fR(3\-ESPSu), \fIadd_comment\fR(3\-ESPSu), 
+\fIcopy_header\fR(3\-ESPSu)
+.fi
+.SH AUTHOR
+Original version by Joe Buck.
+.br
+Modified by Alan Parker for new header structures.

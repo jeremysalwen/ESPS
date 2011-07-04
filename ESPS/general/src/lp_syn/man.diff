@@ -1,0 +1,252 @@
+.\" Copyright (c) 1996 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)lp_syn.1	1.5 1/26/96 ERL
+.ds ]W (c) 1996 Entropic Research Laboratory, Inc.
+.TH  LP_SYN 1\-ESPS 1/26/96
+.SH NAME
+
+.nf
+lp_syn \-  speech LPC synthesis from an excitation signal or a parametric source
+.fi
+.SH SYNOPSIS
+.B
+lp_syn
+[
+.BI \-P " param_file"
+] [
+.BI \-{pr} " range"
+] [
+.BI \-s " range"
+] [
+.BI \-i " int_const"
+] [
+.BI \-t " synth_rate"
+] [
+.BI \-f " f0_ratio"
+] [
+.BI \-u " up_ratio"
+] [
+.BI \-d " damp"
+] [
+.BI \-z
+] [
+.BI \-x " debug_level"
+]
+.BI lpfile
+.BI exfile
+.BI outfile
+.SH DESCRIPTION
+\fILp_syn\fR uses the LP (linear prediction) or reflection 
+coefficients stored in the file
+\fIlpfile\fR to synthesize a speech signal from an excitation source or a 
+parametric source in the file \fIexfile\fR.  \fILpfile\fR is a FEA
+file with the field \fIspec_param\fR to store the spectral coefficients
+and with the generic header item \fIspec_rep\fR specifying the type of spectral
+representation -- \fI"RC"\fR for reflection coefficients or \fI"AFC"\fR for
+LP coefficients.  \fIExfile\fR may be a FEA_SD file of SHORT data type as
+an excitation source, or a FEA file as a parametric source.  If \fIexfile\fR
+is a FEA file, it must contain three fields: \fIrms\fR for the frame RMS value,
+\fIF0\fR for the frame fundamental frequency, and \fIprob_voice\fR for the
+frame voicing state.
+.PP
+The synthesizer uses a Rosenberg-polynomial glottal-flow pulse, open-phase
+damping, and per-sample gain correction.
+.PP
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-P " param_file \fR[params]\fP"
+uses the parameter file 
+.I param_file
+rather than the default, which is \fIparams\fP. 
+.TP
+.BI \-r " first:last"
+.TP
+.BI \-r " first:+incr"
+Determines the range of frames from input file, \fIlpfile\fR.  In
+the first form, a pair of unsigned integers gives the first and last frame
+of the range.  If \fIfirst\fR is omitted, 1 is used.  If \fIlast\fR is
+omitted, the last frame in the file is used.  The second form is equivalent
+to the first with \fIlast = first + incr\fR.
+.TP
+.BI \-p " "
+Same as the \fB-r\fR option.
+.TP
+.BI \-s " first:last"
+.TP
+.BI \-s " first:+incr"
+Same function as the \fB-r\fR option, but specifies the range of input frames
+in seconds.
+.TP
+.BI \-i " int_const \fR[0.95]\fP"
+specifies the coefficient of a first-order integrator to be applied to
+the output if parametric source is used.  This constant is applied in
+the fricative regions only.  When synthesizing from residual
+excitation \fIint_const\fR would usually be set to 0.0.
+.TP
+.BI \-t " synth_rate \fR[1.0]\fP"
+specifies the time-scale modification rate.  This speeds up or slows
+down the rate of speech without distorting the pitch.  Use values less
+than 1.0 to slow the speech, use values more than 1.0 to speech it up.
+This can only be used during parametric source synthesis.
+.TP
+.BI \-f " f0_ratio\fR[1.0]\fP"
+specifies the output fundamental frequency scale factor if and only if
+parametric source is used.  The output fundamental frequency is
+multiplied by this factor.
+.TP
+.BI \-u " up_ratio \fR[1]\fP"
+specifies the upsampling ratio to use during synthesis from a parametric
+source.  This produces an output file with sampling rate of
+\fIup_ratio\fR times the value of \fIsrc_sf\fR generic header item in
+the input \fIlpfile\fR.  If \fIsrc_sf\fR does not exist in
+\fIlpfile\fR, a value of 2 times the value of \fIbandwidth\fR generic
+header in \fIlpfile\fR is assumed.  Valid values are integers greater or
+equal to one.
+.TP
+.BI \-d " damp \fR[0.1]\fP"
+specifies a parameter that controls the amount of open-glottal-phase
+damping that is applied to the lattice filter state vector when
+parametric source synthesis is performed.  When LP coefficients are
+computed using standard frame-synchronous analysis (e.g. hanning
+window; 25ms duration), it is usually best to set \fIdamp\fR to 0.0.
+When parameters are computed using \fIps_ana\fR, values greater than
+zero often improve the naturalness of the synthetic speech.
+.TP
+.BI \-z
+inverts the sign of input spectral parameters before using them for
+synthesis.
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If 
+.I debug_level
+is positive,
+.I lp_syn
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the  
+.I debug_level
+increases.  If \fIdebug_level\fP is 0 (the default), no messages are
+printed.  
+.SH ESPS PARAMETERS
+The following ESPS parameters have the same meanings as the command-line
+options supported
+.TP
+.I "start - integer"
+.IP
+The first frame in the input file \fIlpfile\fR that is processed.  A
+value of 1 denotes the first frame in the file.  This is only read
+if the \fB\-p\fP option is not used.  If it is not in the parameter
+file, the default value of 1 is used.  
+.TP
+.I "nan - integer"
+.IP
+The total number of frames in the file \fIlpfile\fR to process.  If 
+.I nan
+is 0, the whole file is processed.  
+.I Nan
+is read only if the \fB\-p\fP option is not used.  (See the 
+discussion under \fB\-p\fP).
+.TP
+.I int_const - float
+.PP
+.I synth_rate - float
+.PP
+.I f0_ratio - float
+.PP
+.I up_ratio - int
+.PP
+.I damp - float
+.PP
+.SH ESPS COMMON
+No ESPS common parameter processing is supported
+.PP
+.SH ESPS HEADERS
+The usual \fIrecord_freq\fR, \fIstart_time\fR header items, and all
+supported parameters are stored as generic header items.
+.PP
+.SH FUTURE CHANGES
+.PP
+.SH EXAMPLES
+The example shell script included below shows how one might use some
+of the analysis and synthesis programs supplied with ESPS.  The script
+takes one argument, the basename of a speech file with the extension
+".sd".  Read the comments in the script for details.
+.PP
+.nf
+.na
+.ne 10
+#!/bin/sh
+#
+# Determine the sample rate of the original speech file.
+sf=`hditem -i record_freq $1.sd`
+#
+# Establish the window size and frame step for periodic analyses.
+size=.02
+step=.005
+#
+# Get analysis step size and window length in samples.
+ssize=`echo $sf $size \\* p q | dc`
+sstep=`echo $sf $step \\* p q | dc`
+#
+# Standard rule-of-thumb computation for LPC order.
+order=`echo $sf 1000 / 2 + p q | dc`
+#
+# Compute reflection coefficients using a standard set of parameters
+refcof -z -r1:1000000 -e.97 -x0 -wHANNING -l$ssize -S$sstep \\
+       -o$order $1.sd $1.rc
+#
+# Get a high-resolution estimate of F0 and a reasonably accurate
+#  voicing-state estimate.
+get_f0 -i $step $1.sd $1.f0
+#
+# Compute the LPC residual (approximates the glottal flow derivative).
+get_resid -a 1 -i 0.0 $1.sd $1.rc $1.res
+#
+# Blank out the residual signal in the unvoiced regions.
+mask $1.f0 $1.res $1.resm
+#
+# Find the points of glottal closure in the voiced regions.
+epochs  -o $1.lab $1.resm $1.pe
+#
+# Perform epoch-synchronous LPC analysis.
+ps_ana -f $1.f02 -i $step -e .97 $1.sd $1.pe $1.rc
+#
+# Perform synthesis using these parameters.
+lp_syn $1.rc $1.f02 $1.syn
+#
+# Alternatively, the better F0 and voicing-state estimates from get_f0
+# can be used by merging them with the preemphasized RMS feature from
+# ps_ana:
+rm -f $1.f03
+mergefea -fF0 -fprob_voice  $1.f0 $1.f03
+mergefea -a -f rms $1.f02 $1.f03
+#
+# Perform synthesis using these new parameters.
+lp_syn $1.rc $1.f03 $1.syn2
+.fi
+.ad
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+.SH BUGS
+Synthesis using LPC (AFC) parameters does not work in the parametric
+excitation mode.  This will be fixed in the next release.  Synthesis
+using reflection coefficients (RC), does work in both modes.
+.SH REFERENCES
+Talkin, D. and Rowley, J., "Pitch-Synchronous analysis and synthesis
+for TTS systems," \fIProceedings of the ESCA Workshop on Speech
+Synthesis\fP, C. Benoit, Ed., Imprimerie des Ecureuils, Gieres, France,
+1990.
+.PP
+.SH "SEE ALSO"
+refcof (1-ESPS), get_resid (1-ESPS), mask (1-ESPS), get_f0 (1-ESPS),
+ps_ana (1-ESPS), transpec (1-ESPS)
+.PP
+.SH AUTHORS
+David Talkin, Derek Lin
+.PP
+
+
+
+
+

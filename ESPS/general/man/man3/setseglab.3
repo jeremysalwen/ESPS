@@ -1,0 +1,62 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)setseglab.3	1.4 22 Oct 1987 ESI
+.TH SET_SEG_LAB 3\-ESPSu 22 Oct 1987
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+set_seg_lab \- flag an ESPS FEA file as segment-labeled and
+define the necessary fields
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/fea.h>
+
+void
+set_seg_lab(hd,files)
+struct header *hd;
+char **files;
+.fi
+.ft
+.SH DESCRIPTION
+.I set_seg_lab
+flags an ESPS Feature file as \fIsegment-labeled\fR and defines the
+necessary fields.
+The fields defined are
+a coded field of size 1 named "source_file" and two
+long-integer fields of size 1 named "segment_start" and "segment_length".
+For each record these give the name of an ESPS file and the beginning
+record number and number of records of a segment in that file to which
+the feature record refers. 
+The item \fIsegment-labeled\fR in the FEA file header is set to YES.
+Flagging a FEA file as segment-labeled
+is incompatible with a value of YES for
+\fItag\fR
+in the common part of the header.
+.PP
+Since the file name is stored as a CODED data type (to conserve space,
+assuming that file names will repeat in segments) the list of possible
+values (file names) for the field "source_file" must be known when the
+header is written.    If this list is known when \fIset_seg_lab\fR is to
+be called, then it is passed to the function through \fIfiles\fR which
+is a pointer to an array of character pointers (or a pointer to an array
+of character strings).   If this list is not known when the function is
+called, NULL should be given for \fInames\fR and the list can be
+assigned to \fIhd.fea->enums[i]\fR, where \fIi\fR is the index into the header
+arrays corresponding to the field named "source_file".   (Use
+\fIlin_search2\fR(3\-ESPSu) to get \fIi\fR.)
+.PP 
+Since this function creates fields in the feature file and modifies
+the file header, it must be called before the header is written out
+with \fIwrite_header\fR(3\-ESPSu).
+.SH DIAGNOSTICS
+.PP
+If \fIhd\fR is not an ESPS Feature file a message is printed and the
+program terminates with exit 1.   
+.SH BUGS
+None known.
+.SH "SEE ALSO"
+add_fea_fld(3\-ESPSu),
+lin_search2(3\-ESPSu),
+FEA(5\-ESPS)
+.SH AUTHOR
+Alan Parker

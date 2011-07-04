@@ -1,0 +1,86 @@
+"animals" MENU
+  "kookaburra" kookaburra
+  "other bird" other_bird
+  "dog" dog
+  "rooster" rooster
+  "elephant" elephant
+  "monkey" monkey
+  "cow" moo
+  "cuckoo" cuckoo
+  "sea lion" sea_lion
+  "red wattle bird" red_wattle_bird
+  "whip bird" whip_bird
+  "TREK whales" pigs
+"animals" END
+
+"HAL" MENU
+  "perfectly" perfectly
+  "mission" mission
+  "muchbetter" muchbetter
+  "sorrydave" sorrydave
+  "justwhat" justwhat
+  "noquestion" noquestion
+  "mindgoing" mindgoing
+"HAL" END
+
+"Sound Effects" MENU
+  "toilet" flush
+  "zubetube" zubetube  
+  "alarm clock" MetalAlarm
+  "bong" bong
+  "bubbles" bubbles
+  "breaking glass" breaking_glass
+  "clink" clink
+  "cowbell" cowbell
+  "drip" drip
+  "gong" gong
+  "splat" splat
+  "whistle" whistle
+  "applause" applause
+  "breathing" breathing
+  "burp" burp
+  "bells" bells
+  "chirp" chirp
+  "computer" computer
+  "laugh" laugh
+  "laughter" laughter
+  "train" train
+  "Big Ben" BigBen
+  "cymbal" CrashCymbal
+  "whoosh" Whoosh
+  "car crash" crash
+  "wheee" wheee
+"Sound Effects" END
+
+"Music" MENU
+  "Dragnet" art1
+  "Hallelujah" hallelujah
+  "spacemusic" spacemusic
+  "The Doors" musicover
+  "Bach toccata" toccata
+  "steel echo" SteelyEchoC2
+  "something for dinner" something_for_dinner
+"Music" END
+
+"Speech Recognition Tests" MENU
+  "Clint Eastwood" clint_eastwood
+  "areyouagod" areyouagod
+  "Daffy" daffy_laugh
+  "Flintsones" flinstones
+  "Bullwinkle" hey_rocky
+  "i_am_a_wabbit" i_am_a_wabbit
+  "Captain Kirk" attack
+  "Max Headroom" max_headroom
+  "Road Runner" MeepMeep
+  "Buckaroo Banzai" nomatter
+  "Elmer Fudd" something_skewey
+  "Goofy" uh,_no,_no,..
+"Speech Recognition Tests" END
+
+"Computers" MENU
+  "does not compute" does_not_compute
+  "modanna computer" modanna_computer
+  "mail" youvegotmail
+"Computers" END
+
+# @(#)files.BM	1.2 8/20/91 ERL

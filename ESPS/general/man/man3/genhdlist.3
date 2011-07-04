@@ -1,0 +1,51 @@
+.\" Copyright (c) 1987, Entropic Speech, Inc. All rights reserved.
+.\" @(#)genhdlist.3	1.5 21 Dec 1989 ESI
+.TH GENHD_LIST 3\-ESPSu 21 Dec 1989
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+genhd_list \- returns a list of defined generic header items
+.SH "SYNOPSIS"
+.ft B
+#include <esps/esps.h>
+.PP
+.ft B
+char **
+.br
+genhd_list(size, hd)
+.br
+int *size;
+.br
+struct header *hd;
+.ft R
+.SH "DESCRIPTION"
+.I genhd_list
+returns a pointer to a NULL terminated array of character strings (really
+pointers) of the generic header item names in \fIhd\fR.
+The number of generic header items is returned through the pointer
+\fIsize\fR.
+If no generic header items have been defined, then NULL is returned and
+\fIsize\fR is returned as zero.
+.SH EXAMPLE
+.PP
+.nf
+char **array;
+int size;
+array = genhd_list(&size,hd);
+if (n >= 4) {
+\ \ printf("name: %s\\n",*array[3]);	\fI/* prints the name of the 4th item */\fR
+}
+.fi
+.SH DIAGNOSTICS
+.PP
+If \fIhd\fR is NULL the a message is printed and the program is
+terminated.   There is an internal check to insure that the number of
+defined header items is correct.   If this fails, a message is printed
+and the program terminates.  This indicates an error in the library
+software.
+.SH "SEE ALSO"
+.PP
+add_genhd(3\-ESPSu), get_genhd(3\-ESPSu),
+genhd_type(3\-ESPSu), copy_genhd(3\-ESPSu)
+.SH "AUTHOR"
+.PP
+Alan Parker

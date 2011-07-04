@@ -1,0 +1,8 @@
+# @(#)preemp_param	1.2 6/12/91 ESI
+# parameter file for preemphasis with filter(1-ESPS) program
+# for use with spectragram demo script
+#
+float	filter_num = {1.0, -1.0}: "Preemphasis filter numerator";
+float	filter_den = {1.0}: "Preemphasis filter denominator";
+int	filter_nsiz = 2: "Number of numerator coefficients";
+int	filter_dsiz = 0: "Number of denominator coefficients";

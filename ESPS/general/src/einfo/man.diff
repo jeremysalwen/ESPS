@@ -1,0 +1,59 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)einfo.1	1.4 7/23/93 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  EINFO 1\-ESPS 7/23/93
+.SH EINFO
+
+.nf
+einfo \- tool for reading Entropic technical and release notes. 
+winfo \- tool for reading Entropic waves+ technical and release notes. 
+.fi
+.SH SYNOPSIS
+.B
+einfo 
+documentnumber
+.br
+.B
+winfo 
+documentnumber
+.SH DESCRIPTION
+.PP
+Program einfo(1) (or winfo(1)) is a tool for reading Entropic technical bulletins and release notes.  We wrote this program to make it easier to disseminate new information to the users, and to save tons of paper in shipments.
+.PP
+If the X11 window system is running then einfo(1) will pop up a control panel
+with the names of the documents that you can read listed as buttons of the panel.  Just click on the document to read it.
+.PP
+If the X11 window system is NOT running then einfo(1) will list every document
+it knows about.  Type "einfo documentnumber" to view the desired document.
+.SH EXAMPLES
+.PP
+.nf
+
+# X11 not running example
+%einfo
+                List of ESPS/waves+ Documents
+
+		1  XView Fonts
+		2  ESPS Release Notes
+		3  waves+ Release Notes
+		4  Installation Instructions
+		5  ESPS Tech Notes
+		6        Introduction to ESPS
+		7        Parameter Files
+		8        File Conversions
+
+		To view one or more of these: einfo number
+
+%einfo 3
+
+.fi
+.PP
+.SH BUGS
+.PP
+None known.
+.SH "SEE ALSO"
+.PP
+\fBeman(1)\f , \fBelogo(1)\f
+.SH AUTHOR
+.PP
+Ken Nelson, John Shore

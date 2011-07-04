@@ -1,0 +1,35 @@
+delete_all_items menu wave
+add_waves menu wave builtin "play between marks" 
+add_waves menu wave builtin "play window contents" 
+add_waves menu wave builtin "play entire file" 
+add_waves menu wave builtin "play to end of file" 
+add_waves menu wave builtin "page ahead" 
+add_waves menu wave builtin "page back"
+add_waves menu wave builtin "window ahead" 
+add_waves menu wave builtin "window back"
+add_waves menu wave builtin "align & rescale" 
+add_waves menu wave builtin "bracket markers" 
+
+add_op name "bracket horiz. markers" menu wave command #_name set file _file plot_max _t_marker_yval plot_min _b_marker_yval 
+
+add_op name "show full amplitude" menu wave command #_name set file _file plot_max 0.0 plot_min 0.0
+
+add_waves menu wave builtin "zoom in" 
+add_waves menu wave builtin "zoom out" 
+add_waves menu wave builtin "zoom full out" 
+add_waves menu wave builtin "spectrogram (W.B.)" 
+add_waves menu wave builtin "spectrogram (N.B.)" 
+add_waves menu wave builtin "save segment in file" 
+add_waves menu wave builtin "delete segment" 
+add_waves menu wave builtin "insert file" 
+add_waves menu wave builtin "print graphic" 
+add_waves menu wave builtin "print ensemble" 
+add_waves menu wave builtin "kill window" 
+add_waves menu wave submenu buttons
+return
+
+# @(#)defwavmen.WC	1.10 11/13/95
+
+
+
+

@@ -1,0 +1,288 @@
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)plotspec.1	1.1 9/19/97 ERL
+.TH PLOTSPEC 1\-ESPS  9/19/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.if t .ds pi \(*p
+.if n .ds pi pi
+.SH NAME
+plotspec \- Plot spectral record files (.fspec)
+.SH SYNOPSIS
+.B plotspec
+[
+.BI \-d
+] [
+.BI \-l
+] [
+.BI \-r " range"
+] [
+.BI \-t " text"
+] . . . [
+.BI \-x " debug_level"
+] [
+.BI \-y " range"
+]
+.br
+[
+.BI \-D
+] [
+.BI \-F
+] [
+.BI \-W " generic window system options"
+] [
+.BI \-X " range"
+] [
+.BI \-Y " range"
+] 
+.I file.fspec
+.SH DESCRIPTION
+.PP
+.I plotspec
+plots records from ESPS spectral-feature-record (FEA_SPEC) files.
+These files can be created by the
+.I me_spec
+command.
+More than one record may be plotted, superposed on one set of axes.
+If the input file is ``\-'', the standard input is
+read.
+.PP
+The default action is to plot the contents of the
+.I re_spec_val
+field of the input records and,
+if the type is SPTYP_CPLX, the contents of
+.I im_spec_val
+as well.
+However, alternative output formats are available with the
+.BR \-d ,
+.BR \-D ,
+and
+.BR \-F
+options.
+When the spectrum type is SPTYP_REAL and a power is required,
+as with the
+.BR \-d
+and
+.BR \-D
+options,
+the square of
+.I re_spec_val
+is used.
+.PP
+The plot is displayed in an X window.  The display has three pull down
+menus: \fBFile\fR, \fBViews\fR, and \fBHelp\fR.    The \fBFile\fR menu
+has two items: \fBPrint\fR and \fBQuit\fR.   \fBPrint\fR selects a
+dialog box that has controls to produce a PostScript output of the
+plot.   The \fBQuit\fR item causes the program to exit.
+.PP
+The \fBViews\fR menu has selectors that enable or disable display of
+the box around the plot, the horizontal grid, the vertical grid, any
+text (usually the file name and date), and the tick marks on the
+reticle.  This menu also has buttons to enable all of the above items,
+to redraw the original plot, and to refresh the plot as it is currently
+shown.
+.PP
+The \fBHelp\fR menu has two items: \fBon Plot Tool\fR and \fBAbout
+Plot Tool\fR.   These display a help file and version information.
+.SH OPTIONS
+.PP
+The following options are supported.
+.TP
+.BI \-d
+Plot the power spectrum cumulative distribution function.
+.TP
+.BI \-l
+Plot frequencies on a logarithmic scale (labeled in decades).
+When the vertical scale is in dB, this option results in Bode-plot format.
+.TP
+.BI \-r " first" : "last"
+.TP
+.BI \-r " first" :+ "incr"
+.TP
+.BI \-r " frame"
+Range of records to be plotted.
+The default range is the entire file.
+In the first form, a pair of unsigned integers gives the first and last
+records of the range.
+The first frame in the file counts as number 1
+regardless of any reference file.
+If
+.I first
+is omitted, 1 is used.
+If
+.I last
+is omitted, the last record of the file is used.
+The second form is equivalent to the first with
+.IR last " = " first " + " incr.
+The third form is equivalent to
+.BI \-r " frame" : "frame."
+.TP
+.BI \-t " text"
+A line of text to be printed below the plot.  If this option is specified
+more than once, the lines are printed in the order given.
+.TP
+.BI \-x " debug_level"
+If
+.I debug_level
+is nonzero, debugging information is written to the standard error output.
+The higher the level, the more messages are written.
+Default is 0 (no debugging output).
+.TP
+.BI \-y " low" : "high"
+Data range.  Specifies spectral values for the lower and upper
+.IR y -axis
+limits.  If
+.I low
+or
+.I high
+is unspecified, the limit is determined from the file contents.
+The values are adjusted by
+.I plotspec
+in an attempt to make an esthetically pleasing plot.
+To specify exact limits, use
+.B \-Y
+instead.
+.TP
+.BI \-D
+Plot the logarithmically scaled power (in dB) regardless of whether
+the spectrum type is SPTYP_DB or not.
+The arguments of the
+.B \-y
+and
+.B \-Y
+options are interpreted in dB.
+.TP
+.BI \-F
+Plot the phase of complex data, rather than the real and imaginary parts.
+The input file must contain data of type SPTYP_CPLX.
+The vertical axis is scaled in radians, from \-\*(pi to \*(pi,
+and the
+.B \-y
+and
+.B \-Y
+options are ignored.
+.TP
+.BI \-W
+This option is followed by a character
+string consisting of X window geometry information to specify the size
+and location of the plot window.   The form of the string is
+\fI=width\fRx\fPheight+x+y\fR (any of \fI=\fR,
+\fIwidth\fRx\fPheight\fR, or \fI+x+y\fR can be omitted).
+For example, an initial position can be specified as \fI+100+0\fR, and
+an initial size can be specified as \fI=500\fRx\fP200\fR.
+.TP
+.BI \-X " low" : "high"
+.TP
+.BI \-X " limit"
+Frequency range.  Specifies frequency values for the lower and upper
+.IR x- axis
+limits.  If
+.I low
+or
+.I high
+is omitted, the limit is determined from the file contents.
+The second form is equivalent to
+.BR \-X " 0" : \fIlimit\fP
+if the header value
+.I freq_format
+is SPFMT_SYM_CTR or SPFMT_SYM_EDGE and to
+.BI \-X " \-limit" : "limit"
+otherwise.
+.TP
+.BI \-Y " range"
+Specifies exact lower and upper limits for the
+.IR y- axis.
+.PP
+.SH "ESPS PARAMETERS"
+The ESPS parameter file is not read.
+.SH "ESPS COMMON"
+The ESPS common file is not read or written.
+.SH "ESPS HEADERS"
+The following values are explicitly read
+from the header of the spectral-feature-record file:
+.I common.type,
+and the generic header items
+.I num_freqs
+and
+.I freq_format.
+In addition, the header is examined by the library routines
+.I allo_feaspec_rec,
+.I get_feaspec_rec,
+and
+.I put_feaspec_rec.
+.SH SUBROUTINES CALLED
+plotscale, drawbox, plot2data and printtime.
+.SH SEE ALSO
+me_spec(1\-ESPS), plotsd(1\-ESPS), FEA_SPEC(5\-ESPS)
+.SH DIAGNOSTICS
+.PP
+plotspec: unknown option:
+.RI \- letter
+.br
+Usage: plotspec [-d] [-l] [-r range] [-t text]... [-x debug_level][-y range]
+.br
+ [-D] [-F] [-X range] [-Y range] file.fspec 
+.br
+plotspec: Too many \-t options
+.br
+plotspec: no input file
+.br
+plotspec: more than one input file
+.br
+plotspec:
+.I filename
+is not an ESPS file.
+.br
+plotting records
+.I n1
+thru
+.I n2.
+.br
+plotspec: can't open temporary file.
+.br
+plotspec: EOF encountered before start reached.
+.br
+can't allocate memory for
+.I n
+points.
+.br
+plotspec: only freq formats
+SPFMT_SYM_EDGE, SPFMT_SYM_CTR, SPFMT_ASYM_EDGE, SPFMT_ASYM_CEN
+supported so far.
+.br
+plotspec: discrete distributions not yet supported.
+.br
+plotspec: \-s option not implemented yet.
+.br
+plotspec: \-d and \-F options incompatible.
+.br
+plotspec: \-F option requires complex data.
+.br
+plotspec: can't open temporary file.
+.br
+plotspec: freq format SPFMT_ARB_VAR not yet supported.
+.br
+plotspec: freq format SPFMT_ARB_FIXED not yet supported.
+.br
+plotspec: unrecognized freq format
+.I n.
+.br
+frequency out of range.
+.br
+data out of range.
+.br
+plotspec: no input records
+.br
+\-T option requires argument.
+.SH WARNINGS
+.PP
+To overlay FEA_SPEC files from
+.IR fft (1-ESPS)
+on FEA_SPEC files from
+.IR me_spec (1-ESPS),
+the
+.B \-G
+option of
+.I me_spec
+must be used.
+.SH BUGS
+.PP
+Frequency formats SPFMT_ARB_VAR and SPFMT_ARB_FIXED are not yet supported.

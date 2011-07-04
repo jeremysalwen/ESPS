@@ -1,0 +1,53 @@
+#
+#
+# testfile for mcplay
+# @(#)testfile	3.1 10/1/87 ESI
+echo In order to test mcplay, you must have your converters properly
+echo configured and wired to the clocks.
+echo
+echo Wire your speech output to d/a channel 0
+echo and connect clock zero from the EF-12 to the d/a clock input.
+echo
+echo Check the default names for the clock and converter device.
+echo The clock device might be /dev/dacp0/clk or /dev/dacp0/efclk \(for
+echo an EF-12M\).   If the default isn\'t what you need then change the
+echo entry in the install script and recompile play \(install play\).
+echo
+ESPSCOM=com
+export ESPSCOM
+rm -f com
+echo This should give a no input file message.
+echo % mcplay
+mcplay
+echo
+echo Make some input files
+testsd -s.25 -f400 a.sd
+testsd -s.25 -f 1000 b.sd
+rm -f com
+echo Should process both files
+echo % mcplay a.sd b.sd
+mcplay a.sd b.sd
+echo Run again with no name it should fail
+echo %mcplay
+mcplay
+echo Run with one file it should write common
+echo % mcplay a.sd
+mcplay a.sd
+echo This is the common file:
+cat com
+echo Run it again with no arguments so it will use common
+echo % mcplay
+mcplay
+echo
+echo Scale the data up two bits
+echo % mcplay -b-2 a.sd
+mcplay -b-2 a.sd
+echo
+echo Scale the data down two bits
+echo % mcplay -b2 a.sd
+mcplay -b2 a.sd
+echo Run it again with debug on
+echo % mcplay -x5 -b2 a.sd
+mcplay -x5 -b2 a.sd
+echo
+rm a.sd b.sd com

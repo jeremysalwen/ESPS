@@ -1,0 +1,24 @@
+What should be added:
+
+	* insert  mode in field  editing.  The  original  idea is that
+	  most of the fields should be short and  there  is no need to
+	  duplicate editor function in sf.  For novice user, they dont
+	  know fancy commands  anyway; for expert  user, sf is  useful
+	  only in  special  occasion.  This  delayed  the  addition of
+	  extra editing function  (insert mode, delete  word,  move by
+	  word, etc).
+
+What should not be added:
+
+	* Database function: I could not think of an  easy way so that
+	  sf can read  standard Unix database  files like /etc/passwd,
+	  /etc/ttys, any  idea?    It   will  be good   to have  these
+	  functions, but again, it violate Unix principle: "doing just
+	  one thing".
+
+Something to think about:
+
+	* scroll region
+	* multiple forms, chaining to different form files.
+	* range checking.
+	* pipe field data to Unix program and put result back.

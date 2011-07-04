@@ -1,0 +1,143 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)ebanner.1	1.3 11 Apr 1997 ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH  EBANNER 1\-ESPS 11 Apr 1997
+.SH NAME
+
+.nf
+ebanner \- create sampled data whose spectrogram image displays ASCII text 
+.fi
+.SH SYNOPSIS
+.B
+ebanner
+[
+.BI \-f " font"
+] [
+.BI \-l " low"
+] [
+.BI \-h " high"
+] [
+.BI \-r " sample_rate"
+] [
+.BI \-a " amplitude"
+] [
+.BI \-d " duration"
+] [
+.BI \-s " step"
+] [
+.BI \-x " debug_level"
+]
+.I "input.text output.sd"
+.SH DESCRIPTION
+.PP
+\fIEbanner\fP converts ASCII text into a sampled data waveform whose
+wide-band spectrogram image shows the ASCII text in the form of
+raster-graphics fonts.  The characters are represented as a matrix of
+dots \- some on and some off.  For each "on" dot, a wavelet with the
+correct location in the time-frequency plane is generated.  All of
+these wavelets are then summed to produce the output.
+.PP
+The intput file \fIinput.text\fP is a text file, and the output file
+\fIoutput.sd\fP an ESPS sampled data (FEA_SD) file of data type float.
+Standard input and standard output are not supported.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-f " font \fR[$ESPS_BASE/lib/fixedwidthfonts/cour.r.24]\fP"
+The spectral-domain image is rendered using (Sunview) fixed width
+fonts.  If \fIfont\fP is a full path to a file, that file is used as
+the font.  Otherwise, \fIebanner\fP searches for the font first
+relative to the current directory and then relative to
+$ESPS_BASE/lib/fixedwidthfonts.  This search path is overriden by the
+contents of the Unix environment variable EBANNER_FONTS, if it is
+defined.
+.TP
+.BI \-l " low \fR[.1]\fP"
+.TP
+.BI \-h " high \fR[.9]\fP"
+The \-\fBl\fP and \-\fBh\fP options specify the lower and upper
+frequency bounds of the top and bottom of the text display in terms of
+fractions of the Nyquist rate.  Thus, for a sample frequency of 16kHz,
+"\-\fBl\fP .2" means that the bottom of the descenders will be at
+1600Hz on the spectrogram.  These options permit positioning a string of text
+anywhere in the frequency range.  It's then a simple matter of adding
+two (or more) such signals together with \fIaddsd\fP (1-ESPS) in order 
+to create multiple lines of text in the spectrogram.
+.TP
+.BI \-r " sample_rate \fR[8000]\fP"
+This specifies the sampling rate of the output file. 
+.TP
+.BI \-a " amplitude \fR[500]\fP"
+This is the zero-to-peak amplitude of each in each individual wavelet.
+The worst case overall signal amplitude, assuming all vertical pixels
+in a font matrix are on and all components in phase, is therefore
+(\fIheight\fP * \fIamplitude\fP), where \fIheight\fP is the nominal
+character height specified in the font file.  This value is written
+as the \fImax_value\fP generic in the output header.  
+.TP
+.BI \-d " duration \fR[.02]\fP"
+The nominal duration of the wavelets (seconds).
+.TP
+.BI \-s " step \fR[.01]\fP"
+The time step between wavelets (dots in the matrix) (seconds).
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If \fIdebug_level\fP is positive, \fIebanner\fP prints debugging
+messages and other information on the standard error output.  The
+messages proliferate as \fIdebug_level\fP increases.  If
+\fIdebug_level\fP is 0 (the default), no messages are printed.
+.SH ESPS PARAMETERS
+.PP
+The ESPS parameter file is not used. 
+.SH ESPS COMMON
+.PP
+ESPS Common is not read. 
+.SH ESPS HEADERS
+.PP
+The output file is a FEA_SD file.  
+.SH FUTURE CHANGES
+.PP
+Automatic translation to the language of your choice.  
+.SH EXAMPLES
+.PP
+The following commands create and display a 8Khz sampled data
+file whose spectrogram reads "Hello, world!":
+.nf
+
+	% echo " Hello, world!" > hw
+	% ebanner hw hw.sd
+	% sgram hw.sd hw.fspec
+	% xwaves hw.sd hw.fspec
+
+.fi
+The following commands create and display a 16Khz sampled data file
+whose spectrum has two lines of text ("ebanner:", and "Hello, world!"):
+.nf
+
+	% echo "   ebanner:   " > eb
+	% echo " Hello, world!" > hw
+	% ebanner -r 16000 -l .6 eb eb.sd
+	% ebanner -r 16000 -l .1 -h .5 hw hw.sd
+	% addsd hw.sd eb.sd ebhw.sd
+	% sgram ebhw.sd ebhw.fspec
+	% xwaves ebhw.sd ebhw.fspec
+
+.fi
+.SH ERRORS AND DIAGNOSTICS
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+.SH AUTHOR
+.PP
+David Talkin
+
+
+
+
+

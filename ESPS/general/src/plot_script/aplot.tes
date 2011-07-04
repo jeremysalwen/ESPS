@@ -1,0 +1,33 @@
+#!/bin/sh
+#
+#  This material contains proprietary software of Entropic Speech, Inc.   
+#  Any reproduction, distribution, or publication without the prior	   
+#  written permission of Entropic Speech, Inc. is strictly prohibited.
+#  Any public distribution of copies of this work authorized in writing by
+#  Entropic Speech, Inc. must bear the notice			
+# 								
+#      "Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved."
+# 				
+#
+# test file for aplot @(#)aplot.tes	3.1 10/30/87 ESI
+
+echo "Testing aplot."
+$1/aplot - <<aArDvArK
+5
+2
+0 960 120
+0 600 120
+60 60
+60 540
+900 540
+900 60
+60 60
+180 180
+180 420
+780 420
+780 180
+180 180
+
+Test of aplot completed.
+Aplot OK.
+aArDvArK

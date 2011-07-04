@@ -1,0 +1,36 @@
+"3D PLOT"   MENU
+"DO DEMO"	 DEFAULT	do_demo	@DEMO_TEMP@ demo3d
+"3D PLOT Demo is ...." 	xtext -F demo3d/README &
+"3D PLOT"  END
+
+"TIMIT"   MENU
+"DO DEMO"	 DEFAULT	do_demo	@DEMO_TEMP@ timitdemo
+"TIMIT Demo is ...." 	xtext -F timitdemo/README &
+"TIMIT"  END
+
+"TEST SIGNALS"   MENU
+"DO DEMO"	 DEFAULT	do_demo	@DEMO_TEMP@ testsignal
+"Test Signal Demo is ...." 	xtext -F testsignal/README &
+"TEST SIGNALS"  END
+
+"FUNKY SOUNDS"   MENU
+"DO DEMO"	 DEFAULT	do_demo	@DEMO_TEMP@ sounds
+"Funky Sounds is ...." 	xtext -F sounds/README &
+"FUNKY SOUNDS"  END
+
+"waves+ INTRO"   MENU
+"DO DEMO"	 DEFAULT	do_demo	@DEMO_TEMP@ wintro
+"waves+ INTRO is ...." 	xtext -F wintro/help/README &
+"waves+ INTRO"  END
+
+"FILTERS"   MENU
+"DO DEMO"	 DEFAULT	do_demo	@DEMO_TEMP@ filterdemo
+"FILTERS is ...." 	xtext -F filterdemo/README &
+"FILTERS"  END
+
+# @(#)demo_menu	1.6 8/12/91 ERL
+
+
+
+
+

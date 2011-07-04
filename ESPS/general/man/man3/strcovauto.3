@@ -1,0 +1,86 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)strcovauto.3	1.2 02 May 1997 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH STRCOV_AUTO 3\-ESPSsp 02 May 1997
+.SH NAME
+.nf
+strcov_auto \- estimation of auto-correlation coefficients using structured covariance
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+
+extern debug_level;
+
+strcov_auto(data, lnt, r, order, matsiz, window_flag, alg, conv_test, max_iter)
+float   *data;
+int	lnt;
+double  *r;
+int	order;
+int	matsiz;
+int	window_flag
+char	alg;
+double	conv_test;
+int	max_iter;
+
+.ft
+.fi
+.SH DESCRIPTION
+\fIstrcov_auto\fP computes the auto-correlation coefficients of
+a given data sequence using the structured covariance method 
+method.  
+.PP
+\fIstrcov_auto\fP takes data of size
+.I lnt
+in array
+.I data
+as input, computes the sample covariance matrix of size
+\fImatsiz\fP, and then estimates the energy \fIr\fP[0] 
+and \fIorder\fP auto-correlation coefficients \fIr\fP[i] 
+using the structured covariance method (the computed data 
+\fIr\fP has size \fIorder\fP+1).  The parameter \fImatsiz\fP should
+be larger than \fIorder\fP; typically, \fImatsiz\fP = \fIorder\fP + 1;
+.PP
+If the parameter \fIwindow_flag\fP is non-zero, triangular window is
+applied to the sample data vectors in the computation of sample
+covariance matrix.
+.PP
+If the parameter \fIalg\fP is 'f' (the default), the structured
+covariance computation is performed by \fIstruct_cov\fP
+(3\-\s-1ESPS\s+1).  If the parameter \fIalg\fP is 'w', the structured
+covariance computation is performed by \fIgenburg\fP
+(3\-\s-1ESPS\s+1).  \fIstruct_cov\fP uses a fast, single channel
+algorithm developed by John Burg and programmed by Bernard Fraenkel.
+\fIgenburg\fP uses an older (but more general) algorithm
+\fIgenburg\fP (3\-\s-1ESPS\s+1) that was programmed by Daniel Wenger.
+.PP
+If the case of \fIalg\fP == 'f', the estimator terminates after
+\fImax_iter\fP iterations, or after the relative change in
+autocorrelation values falls below the convergence threshold
+\fIconv_test\fR.
+.PP
+If the external \fIdebug_level\fP is non-zero, various debugging 
+messages are printed.  Higher values yield more verbose output.  
+.SH BUGS
+None known
+.SH SEE ALSO
+\fIget_auto\fP(3\-\s-1ESPS\s+1sp), \fIgenburg\fP(3\-\s-1ESPS\s+1sp),
+\fIstruct_cov\fP(3\-\s-1ESPS\s+1sp), \fIget_vburg\fP(3\-\s-1ESPS\s+1sp), 
+\fIestimate_covar\fP(3\-\s-1ESPS\s+1sp),
+.br
+\fIget_fburg\fP(3\-\s-1ESPS\s+1sp)
+.SH FUTURE CHANGES
+The restriction on the size of \fIorder\fP should be changed.
+.SH REFERENCES
+.TP
+[1]
+J.P.Burg, D.G.Luenberger, D.L.Wenger, "Estimation of Structured
+Covariance Matrices" \fIProceedings of the IEEE\fP, Vol. 70, No. 9
+September 1982
+.TP
+[2]
+Shankar Narayan and J.P. Burg, "Spectral Estimation of Quasi-Periodic
+Data", \fIProceedings ICASSP 87\fP, pp. 944-947.  
+.SH AUTHOR
+program by Shankar Narayan; man page by John Shore

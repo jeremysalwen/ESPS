@@ -1,0 +1,42 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)einfo	1.9	10/13/97	ERL
+# 
+# Written by: Ken Nelson, John Shore
+# Checked by:
+# Revised by: David Burton for V5.2
+# 
+# Brief description: a paper saver and hopefully more convienent way to 
+#                    peruse the shipped ESPS/waves+ documentation.
+# 
+
+epath=`get_esps_base`
+
+if test -r $epath/doc/index.html
+then
+
+	echo "Open $epath/doc/index.html with your browser"
+	echo "to see the ESPS/waves+ documentation home page."
+else
+	echo "The environment variable ESPS_BASE is not set"
+	echo "correctly, or file permissions are wrong on "
+	echo "the file $ESPS_BASE/doc/index.html."
+fi
+
+
+
+
+
+
+
+

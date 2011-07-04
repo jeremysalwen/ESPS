@@ -1,0 +1,408 @@
+.\" @(#)formant.1	1.19 8/23/97  ESI
+.TH FORMANT 1\-ESPS 8/23/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ ERL
+.if t .ds - \(em\h'-0.5m'\(em
+.if n .ds - ---
+.SH "NAME"
+formant - speech formant and fundamental frequency (pitch) analysis
+.SH "SYNOPSIS"
+.B formant 
+[
+.BI \-p " preemphasis"
+] [
+.BI \-n  " num_formants" 
+] [
+.BI \-o  " lpc_order"
+] [
+.BI \-i  " frame_step"
+] [
+.BI \-w " window_duration"
+] [
+.BI \-W " window_type"
+] [
+.BI \-t " lpc_type"
+] [
+.BI \-F 
+] [
+.BI \-O " output_path"
+] [
+.BI \-r " range" 
+] [
+.BI \-S
+] [
+.BI \-f " ds_freq"
+] [
+.BI \-y " f0_max"
+] [
+.BI \-z " f0_min"
+] [
+.BI \-N " nom_f0_freq"
+] [
+.BI \-B " max_buff_bytes"
+] [
+.BI \-R " maxrms_duration"
+] [
+.BI \-M " maxrms_value"
+] [
+.BI \-x " debug_level"
+] 
+.I " infile"
+.SH "DESCRIPTION"
+.PP
+\fIFormant\fR estimates speech formant trajectories, fundamental
+frequency (F0) and related information.  In particular, for each
+frame of sampled data, \fIformant\fP estimates formant frequencies,
+formant bandwidths, pole frequencies corresponding to linear
+predictor coefficients, and voicing information (fundamental
+frequency, voiced/unvoiced decision, rms energy, first normalized
+autocorrelation, and the first reflection coefficient).
+.PP
+If only F0 analysis is desired, the new and better F0 estimation
+program \fIget_f0\fP(1\-ESPS) should be used, since it is faster, more
+accurate and more convenient to use.  \fIGet_f0\fR processes data in
+stream mode, and so has no constraints on the length of the input data
+sequence (or file).
+.PP
+Dynamic programming is used to optimize F0 and formant trajectory estimates
+by imposing frequency continuity constraints.  The formant frequencies
+are selected from candidates proposed by solving for the roots of the
+linear predictor polynomial computed periodically from the speech
+waveform.  The local costs of all possible mappings of the complex
+roots to formant frequencies are computed at each frame based on the
+frequencies and bandwidths of the component formants for each mapping.
+The cost of connecting each of these mappings with each of the
+mappings in the previous frame is then minimized using a modified
+Viterbi algorithm.
+.PP
+The input file
+.I infile
+is a sampled-data file\*-typically an ESPS FEA_SD file,
+though other formats are accpted as well (see
+.IR get_feasd_recs (3\-ESPS)).
+.I Formant
+produces various output files with the same file name body as
+\fIinfile\fP (the name body results from removing the last of any
+extensions\*-e.g., the name body of "foo.sd" is "foo"), but with
+different extensions.  Voicing information is stored in a FEA file
+with extension ".f0", formants and bandwidths are stored in a FEA file
+with extension ".fb", and pole frequencies are stored in an ASCII file
+with extension ".pole".  For details on these and related files that
+are relevant for use with \fIxwaves\fP, see "FILE FORMATS", below.
+The \fB\-O\fP option permits specification of an alternate output path
+in cases where it is undesirable or impossible to write in the input
+directory.
+.PP
+If the sampling frequency of the input speech file is greater than 10
+kHz (or the \fB\-f\fP specified value), \fIformant\fP downsamples the
+input file to the appropriate sampling rate and saves the results in
+an ESPS FEA_SD file with a ".ds" extension.  The input signal, possibly
+downsampled, is then high-pass filtered to remove low frequency rumble
+(cut-off at approximately 80 Hz), with the result stored in an ESPS FEA_SD
+file with a ".hp" extension. The ".hp" file is then used for the
+F0 and formant frequency estimates in the manner described above.
+.PP
+Preemphasis is applied prior to the linear prediction analysis in
+order to compensate partially for voice source and radiation
+characteristics.  The high-pass filtering is intended to provide a
+zero-mean signal for linear prediction analysis when there is a
+possibility of residual DC because the real zero of the preemphasis
+filter is within the unit circle.  For reliable F0 estimation based on
+cross correlations, it is essential that the DC and rumble be removed,
+which is another reason for the high pass filtering.
+.PP
+If ".ds" or ".hp" files already exist in the current directory when 
+\fIformant\fP is run, they are used directly and not re-computed.  
+This shortcut is intended to save time when analysis conditions 
+are varied.  It is, however, somewhat error prone so you should 
+be aware of what files are around.   
+.SH OPTIONS
+.PP
+.TP
+.BI \-d " debug_level" " \fR[0]\fP"
+Values
+greater than 0 cause messages to print to stderr.
+.TP
+.BI \-p " preemphasis" " \fR[.7]\fP"
+Specifies the pre-emphasis constant to use before linear predictor
+analysis. Possible values range from 0 to 1.
+.TP
+.BI \-n " num_formants" " \fR[4]\fP"
+Specifies the number of formants to attempt to track.  
+For adult speakers, 
+this
+number is normally less than or equal to the sampling frequency in kHz. 
+(after down sampling) divided
+by 2, and less than or equal to (\fIlpc_order\fP \- 4) / 2.
+Currently, a maximum of seven formants are supported.
+.TP
+.BI \-w " window_duration" " \fR[.049]\fP"
+Specifies the length of the data window in seconds over which the
+linear predictor analysis takes place.  Note that this default window
+size is intended for use with a cos**4 window.  The equivalent length
+for a hanning window would be about 25 ms.
+.TP
+.BI \-W " window_type" " \fR[cos**4]\fP"
+Specifies the type of data window to apply to the data prior to
+linear predictor analysis. Possible values are 0 (rectangular),
+1 (Hamming), 2 (cos**4) and 3 (hanning). 
+.TP
+.BI \-i " frame_step" " \fR[.01]\fP\"
+Specifies the step size in seconds between frames.  This determines
+the amount by which the onset of the data window is moved between
+analysis frames.
+.TP
+.BI \-o " lpc_order" " \fR[12]\fP"
+Specifies the order of the linear predictor analysis done in each
+frame. Maximum order is 30.
+.TP
+.BI \-f " ds_freq" " \fR[10000]\fP"
+Specifies the sampling frequency of the data to be used in the voicing
+and formant frequency analysis.  If \fIds_freq\fP is lower than the
+input file's sample frequency, the data is down sampled.  Othwewise,
+the input sample rate prevails.
+.TP
+.BI \-N " nom_f1_freq" \fR[500]\fP"
+Specifies the nominal value of the first formant frequency.  This
+value is used by the program to adjust the nominal values of all other
+formants and of the ranges over which the formants are permitted to
+exist.  The default value of 500Hz assumes that the vocal tract length
+is 17 cm and that the speed of sound is 34000 cm/sec.  Nominal F1
+values scale directly with sound velocity and inversely with
+vocal-tract length.
+.TP
+.BI \-t " lpc_type" " \fR[autocorrelation]\fP"
+Specifies the linear predictor analysis method.  Possible values
+include 0 (autocorrelation) and 1 (stabilized covariance).  If
+stabilized covariance method is chosen, however, \fIwindow_duration\fP
+(\fB\-w\fP) is set to .025, \fIpreemphasis\fR (\fB\-p\fP) is set to
+exp{\-1800*pi/samp_freq), and \fIwindow_type\fR (\fB\-W\fP) is set to
+rectangular.
+.TP
+.BI \-y " f0_max" " \fR[maximum F0 value]\fP"
+Specifies the maximum F0 value to search for.  Default is 500 Hz.
+.TP
+.BI \-y " f0_min" " \fR[minimum F0 value]\fP"
+Specifies the minimum F0 value to search for.  Default is 60 Hz.
+.TP
+.B \-S
+Enable the creation of \fISIGnal\fP files for the F0 estimates in
+addition to the normal ESPS files.  In previous versions of
+\fIformant\fP this was the default, since \fIxwaves\fP required files
+with \fISIGnal\fP headers to correctly invoke the special F0 display.
+\fIXwaves\fP now develops this display from the ESPS files.  Those who
+still desire the old behavior may reenable it with this option.
+.TP
+.BI \-r " range"
+Select a subrange of points to be processed, using the format
+.IR start\-end ,
+.I start:end 
+or
+.IR start:+count .
+Either the start or the end may be omitted; the beginning or the end
+of the file are used if no alternative is specified.  If no range is
+specified, the entire input file will be processed.
+.IP
+If multiple files were specified, the same range from each file is processed.
+This option was made available primarily so that \fIformant\fP could be
+used more easily with \fIadd_espsf\fP in \fIxwaves\fP.
+.TP
+.BI \-O " output_path" " \fR[<null>]\fP"
+A directory pathname where all output files created by \fIformant\fP will be
+placed.  If \fB\-O\fP is not specified, output files are placed in the
+same directory as the input file.
+.TP
+.B \-F 
+Only compute F0 and voicing information.  Pole frequency (".pole") and
+formant frequency (".fb") files are not computed or written.
+.TP
+.BI \-B " max_buff_bytes" " \fR[2000000]\fP"
+Maximum buffer size (in bytes) for holding input data signal.  Signals
+larger than this will be truncated.  At 16,000 samples/second, 2
+megabytes corresponds to 62.5 seconds of input data (represented as
+SHORTS).  Increasing \fImax_buff_bytes\fP will allow longer input data
+signals to be processed by \fIformant\fP.  The maximum buffer size
+that your system can support is a function of available memory, swap
+space size, and current system usage.
+.TP
+.BI \-R " maxrms_duration" " \fR[0]\fP"
+Window (in seconds) of past data over which the maximum rms energy is
+computed.  The maximum rms energy is needed when computing the
+probability of voicing for each cross_correlation frame
+(cross-correlation frames are fixed at .01 seconds each).  The value
+used is the maximum rms energy value from all of the frames in the
+preceeding maxrms_duration seconds of data.  If maxrms_duration is 0,
+the maximum rms energy used is a constant, independent of frame
+position; in this case, the value is the maximum of the rms energy of
+all frames from the start of the file to the end.  (The case with
+maxrms_duration == 0 corresponds to the previous behavior of
+\fIformant\fP, before \fB\-R\fP was added.)  The \fB\-R\fP option cannot be
+used at the same time as the \fB\-M\fP option.  
+.TP
+.BI \-M " maxrms_value" " \fR[0]\fP"
+Fixed value to use as the maximum rms energy value need when computing
+the probability of voicing for each cross_correlation frame.  The
+\fB\-M\fP option cannot be used at the same time as the \fB\-R\fP
+option.  If neither \fB\-R\fP nor \fB\-M\fP is used, the default is
+\fB\-R\fP0.
+.SH "EXAMPLES"
+.PP
+Here is a UNIX C-shell script that shows several featurs of
+\fIformant\fP and its use with \fIxwaves\fP.  This is designed as a
+tutorial example more than a serious proposal for getting work done!
+We suggest that if large amounts of data are to be processed,
+\fIformant\fP should be run in a "batch mode" and the results viewed
+with \fIxwaves\fP the next day.
+
+.nf
+
+#!/bin/csh
+# This script, which we shall call "formant_examp",
+# works around the idiosyncratic behavior of formant and provides an
+# xwaves plot of F0 and a spectrogram with estimated formants overlaid.
+# It is designed to be called via an "add_op" menu function from
+# xwaves.  When called this way, xwaves provides the script with
+# arguments specifying the interval to be analyzed, the input file and
+# an output file name.  This script uses the output file name for the
+# F0 estimates.  Assuming the script is made executable and placed
+# somewhere on your executable path, and that xwaves is running,
+# it can be added as a waveform menu item with a shell command like
+#
+# send_xwaves add_op name FTRACK menu wave op formant_examp _range_samp \
+#      _file _out.g.F0 _name _l_marker_time _r_marker_time
+
+# Create a scratch area.
+mkdir /tmp/fmt$$
+
+# Determine the name of the xwaves display ensemble.
+set ob = $4
+
+# Start a spectrogram computation.
+send_xwaves $ob spectrogram file $2 start $5 end $6
+
+# Now run the formant/F0 tracker.  Put all output files in /tmp.
+formant  -O /tmp/fmt$$ $1 $2
+
+# Overlay the formant tracks on the just-created spectrogram.
+send_xwaves $ob overlay file /tmp/fmt$$/*.fb.sig
+
+# Put the F0 (pitch) estimate file where xwaves expects to find it.
+mv /tmp/fmt$$/*.f0 $3
+
+# Remove all scratch files
+/usr/bin/rm -f /tmp/ob$$ /tmp/fmt$$/* ; rmdir /tmp/fmt$$
+
+.fi
+
+.SH "ESPS PARAMETERS"
+.PP
+ESPS parameter files are not processed.
+.SH ESPS COMMON
+.PP
+ESPS Common is not processed or written.
+.SH ESPS HEADERS
+.PP
+Standard ESPS record keeping is provided via embedded source file
+headers.
+.PP
+All output files have the generic \fIstart_time\fP, which gives 
+the starting time (in seconds) of the first record.  All FEA files 
+have the generic \fIrecord_freq\fP, which gives the number of records
+per second of original data.  
+.PP
+Analysis parameters that can be set by command line options are
+recorded as generics in the ".f0" file.  In particular, the following
+generics are included: \fIpreemphasis, window_duration,
+frame_step, lpc_order, lpc_type\fP, and \fIwindow_type\fP.
+.SH "FILE FORMATS"
+.PP
+The ".fb" file is an ESPS FEA file with two fields per record, with
+field size \fInum_formants\fP (\fB\-n\fP option).  The field \fIfm\fP
+stores the formant frequencies and the field \fIbw\fP stores the
+corresponding formant bandwidths.  Both fields have type DOUBLE.
+.PP
+The ".f0" file is an ESPS FEA file with the following five fields (all
+of type DOUBLE):  
+.nf
+
+	\fIF0\fP - estimate of fundamental frequency
+
+	\fIprob_voice\fP \- probability of voicing
+
+	\fIrms\fP \- rms in rectangular window
+
+	\fIac_peak\fP \- peak value of cross correlation at the estimated F0
+
+	\fIk1\fP \- ratio of the first two cross-correlation values
+
+.fi
+.PP
+The ".pole" file is an ASCII file.  After the ASCII header, the
+variable-length records each contain the following:
+.IP
+(1) The total number of values in the record.  This number is (2*N)+2,
+where N is the number of pole frequencies and bandwidths stored in
+items (4) and (5).
+.IP
+(2) The rms in the LPC analysis window (typically preemphasized).  
+.IP
+(3) Zero (yeah, not used). 
+.IP
+(4) N complex pole frequencies in Hz.
+.IP
+(5) N complex pole bandwidths in Hz.  
+.PP
+The data in the ".fb" file is also output in a SIGnal format file
+".fb.sig".  This is provided because \fIxwaves\fP has formant display
+and interaction facilities that are specially tuned for these files.
+Although the equivalent ESPS FEA file can also be viewed and modified
+through \fIxwaves\fP, the ".fb.sig" is often preferable, especially
+when formants are overlaid on spectrograms.  The need for the
+(anachronistic) SIGnal format files will be eliminated in the Spring
+1993 software update.  The FEA files are more convenient for use with
+standard ESPS tools (e.g., \fIepsps\fP, \fIselect\fP, \fIfea_stats\fP,
+\fIfea_edit\fP, \fIgenplot\fP, \fIclassify\fP, etc.).
+.SH "FUTURE CHANGES"
+.PP
+A complete rewrite is planned to provide much faster computation and
+the potential for pipelined operation.  (This has already been done
+for the F0 estimator\*-see \fIget_f0\fR(1-ESPS).)
+.PP
+Output file specifications will be normalized.  Automatic output
+filename generation will be eliminated.
+.PP
+The voicing decision will be integrated with the F0 estimation to
+improve accuracy and robustness.  This is the case for \fIget_f0\fR.
+
+.SH "SEE ALSO"
+.PP
+.nf
+\fIformsy\fP(1\-\s-1ESPS\s+1), \fIFEA\fP(5\-\s-1ESPS\s+1), \fIFEA_SD\fP(5\-\s-1ESPS\s+1), 
+\fIselect\fP(1\-\s-1ESPS\s+1), \fIfea_stats\fP(1\-\s-1ESPS\s+1), \fIpsps\fP(1\-\s-1ESPS\s+1), 
+\fIrefcof\fP(1\-\s-1ESPS\s+1), \fItranspec\fP(1\-\s-1ESPS\s+1), \fIclassify\fP(1\-\s-1ESPS\s+1),
+\fIget_feasd_recs\fP(1\-\s-1ESPS\s+1)
+.nf
+.SH "BUGS"
+.PP
+Sampled data are read in as SHORTs; hence, accuracy may be lost
+when processing FLOAT or DOUBLE data.  
+.PP
+The default LPC order and number of formants to track (\fB\-o\fP and \fB\-n\fP
+options) are only appropriate for 10kHz input data.  Unless specified,
+these should scale automatically with input sample frequency.  In a
+future program version, they will.
+.PP
+The interpretation of the start and end points (\fB\-r\fP option)
+may be off by 1 when the input is a NIST Sphere file.
+.SH "AUTHOR"
+.PP
+Code by David Talkin, AT&T Bell Laboratories; ESPS and other
+enhancements by John Shore.  Manual page by John Shore, David
+Burton and David Talkin.
+.SH REFERENCES
+.PP
+The F0 tracking algorithm implemented in \fIformant\fP is related to
+the one described in:
+.PP
+B.G. Secrest and G.R. Doddington, "An integrated pitch tracking
+algorithm for speech systems", \fIProceedings ICASSP83\fP, pp.
+1352-1355.  

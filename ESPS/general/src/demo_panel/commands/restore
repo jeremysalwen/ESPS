@@ -1,0 +1,33 @@
+# @(#)restore	1.3 6/20/91 ERL - waves command script for restoring to original menu
+waves set colormap Colormap
+delete_item menu wave name " --> <-- "
+delete_item menu wave name " <-- --> "
+delete_item name "  --->>  "
+delete_item name "  <<---  "
+delete_item name "page ahead"
+delete_item name "page back"
+delete_item name "run psps on segment"
+delete_item name "run pplain on seg't"
+delete_item menu wave name "insert file"
+delete_all_items
+add_waves builtin "play between marks"
+add_waves builtin "play window contents"
+add_waves builtin "play entire file"
+add_waves builtin "play to end of file"
+add_waves builtin "page ahead"
+add_waves builtin "page back"
+add_waves builtin "align & rescale"
+add_waves builtin "bracket markers" 
+add_waves builtin "zoom in" 
+add_waves builtin "zoom out"
+add_waves builtin "zoom full out" 
+add_waves builtin "window ahead" 
+add_waves builtin "window back" 
+add_waves builtin "spectrogram (W.B.)" menu wave
+add_waves builtin "spectrogram (N.B.)" menu wave
+add_waves builtin "save segment in file"
+add_waves builtin "delete segment"
+add_waves builtin "insert file"
+add_waves builtin "kill window"
+add_waves submenu "Button Modes"
+

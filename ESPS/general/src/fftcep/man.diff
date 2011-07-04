@@ -1,0 +1,537 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc.
+.\" Copyright (c) 1996 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)fftcep.1	1.5 01 Oct 1998 ESI/ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH FFTCEP 1\-ESPS 01 Oct 1998
+.SH "NAME"
+fftcep \- FFT-based complex cepstrum of ESPS sampled data 
+
+.SH "SYNOPSIS"
+.B fftcep 
+[
+.BI \-P " param"
+] [
+.BI \-r " range"
+] [ 
+.BI \-l " frame_len"
+] [
+.BI \-S " step"
+] [
+.BI \-w " window_type"
+] [
+.BI \-o " order"
+] [
+.BI \-F
+] [
+.BI \-R
+] [
+.BI \-e " element_range"
+][
+.BI \-z " zeroing_range"
+][
+.BI \-x " debug_level"
+] 
+.I sd_file 
+.I fea_file
+
+.SH "DESCRIPTION"
+.PP
+.I fftcep 
+takes an input ESPS sampled data (SD or FEA_SD) file,
+\fIsd_file\fP, and finds the complex cepstrum of one or more fixed length
+segments to produce an ESPS FEA file, 
+.I fea_file.  
+If the input file name 
+.I sd_file
+is replaced by "\-", stdin is read; similarly, if 
+.I fea_file
+is replaced by "\-", the output is written to stdout.
+The \fIFEA_SD\fP(5\-\s-1ESPS\s+1) files support complex
+sampled data, and \fIfftcep\fP will process complex input data,
+as well as multichannel data.
+.PP
+The complex cepstrum of a single frame is computed by obtaining the
+FFT of the (possibly windowed) data frame, computing the complex
+logarithm of this spectrum, and finding the inverse FFT of the log
+spectral data. The complex cepstrum of single channel input 
+is stored in the field \fIcepstrum_0\fP whose default data type 
+is FLOAT_CPLX.  If the input has \fIN\fP channels, the cepstral
+data corresponding to the \fPith\fP channel is stored in field
+\fIcepstrum_i\fP, where 0 <= \fIi\fP < \fIN\fP; the data in each
+channel is processed identically.
+.PP
+The \fB\-R\fP option specifies that the cepstrum rather than the complex
+cepstrum should be computed. In this case, the inverse FFT is performed on
+the log magnitude of the spectrum, rather than on the complex
+logarithm of the spectrum. Under the \fB\-R\fP option, the cepstrum of
+single channel data 
+is stored in the field \fIcepstrum_0\fP and its default data 
+type is FLOAT_CPLX. Field names for multichannel data are constructed
+as in the complex cepstrum case, and the data in each channel
+is processed identically.
+.PP
+When computing either the cepstrum or complex cepstrum, the 
+option \fB\-F\fP specifies that the imaginary
+part of the resulting data be discarded and only the real part be stored; 
+the field \fIcepstrum_0\fP then has type FLOAT.
+.PP
+All input frames have the same length
+.I frame_len
+(see the \fB\-l\fP option).  The
+initial point of the first frame is determined by the \fB\-r\fP option or by
+.I start
+in the parameter file.  Initial points of subsequent frames 
+follow at equal interval 
+.I step
+(see \fB\-S\fP option).  Thus the 3 cases 
+.I step 
+< 
+.I frame_len, 
+.I step 
+= 
+.I frame_len, 
+.I step 
+> 
+.I frame_len, 
+correspond 
+to overlapping frames, exactly abutted frames, and frames separated by
+gaps.
+.PP
+The number of frames is the minimum sufficient to cover a specified range of
+.I nan
+points (see \fB\-r\fP option), given 
+.I frame_len 
+and 
+.I step.  
+The last frame may
+overrun the range, in which case a warning is issued.  If a frame overruns
+the end of the input file, it is filled out with zeros.
+.PP
+The FFT cepstral routines used by \fIfftcep\fP return
+2^\fIorder\fP values (see \fIfft_cepstrum\fP(3\-\s-1ESPS\s+1)).  The default
+is always to store all 2^\fIorder\fP values in \fIcepstrum_0\fP in the same order 
+as returned by \fIget_cfft_inv\fP(3-ESPS); the cepstral sequence is
+returned in the following order:
+c(0), c(1),..., c(N/2), c(-(N/2) + 1), c(-(N/2) + 2),..., c(-1).
+It is possible to specify that a subrange of these values
+be used to form \fIcepstrum_0\fP (see \fB\-e\fP option).
+This makes it possible to discard cepstral information not relevant
+to further processing.  
+.PP
+It is possible to perform simple filtering on the cepstral data.
+The \fB\-z\fP option can be used to set elements of the cepstral data to zero. To 
+apply more complicated operations to the cepstral data, \fBfeafunc\fP(1-ESPS) can be
+used to process the field \fIcepstrum_0\fP directly and 
+\fBmake_sd\fP(1-ESPS) can be used to 
+create \fIFEA_SD\fP(5-ESPS) 
+files which can be processed with \fBwindow\fP (1-ESPS).
+.PP
+\fBExample Shell Script\fP
+.br
+The following shell script is an example of using \fIfftcep\fP
+to analyze a segment of speech.  The FFT spectrum as found by
+\fIfft\fP(1\-\s-1ESPS\s+1) can be compared to the spectrum
+of the liftered cepstral sequence 
+computed by \fIfftcep\fP.  A 512 point segment is read from the
+file \fI/usr/esps/demo/speech.sd\fP by \fIfft\fP and \fIfftcep\fP.
+Both programs compute a 1024 point FFT from the Hamming windowed
+sequence, and \fIfftcep\fP is forced to compute and store the real
+part of the power cepstrum.  Liftering is performed by using the
+\fB\-z\fP option to set the long-time cepstral components to zero.
+The program \fImake_sd\fP(1\-\s-1ESPS\s+1) must be used to translate
+the FEA file output of \fIfftcep\fP into the FEA_SD file format
+expected by \fIfft\fP.
+The program \fIplotspec\fP(1\-\s-1ESPS\s+1) can be used to compare
+the FFT spectrum with the spectrum of the liftered cepstral sequence.
+.PP
+#!/bin/csh
+.br
+set spfile = /usr/esps/demo/speech.sd
+.br
+set sf = `hditem -i record_freq $spfile`
+.br
+#
+.br
+fft -r1000:1511 -o10 -l512 -wHAMMING $spfile speech.spec 
+.br
+plotspec -p0:4000 speech.spec
+.br
+#
+.br
+fftcep -r1000:1511 -o10 -l512 -wHAMMING -F -R -z23:1000 \\
+.br
+	$spfile speech.cep 
+.br
+make_sd -r1: -fcepstrum_0 -S$sf speech.cep speech.cepsd
+.br
+fft -p1:3072 -o10 -l1024 speech.cepsd speech.cspec
+.br
+plotspec -p0:4000 speech.cspec
+.PP
+
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP
+.BI \-P " param"
+uses the parameter file 
+.I param
+rather than the default, which is
+.I params.
+.TP
+.BI \-r " first" : "last"
+.TP
+.BI \-r " first" \- "last"
+.TP
+.BI \-r " first" :+ "incr"
+In the first two forms, a pair of unsigned integers specifies the range of
+sampled data to analyze.  If 
+.IR last " = " first " + " incr,
+the third form (with the plus sign) specifies the same range as the
+first two forms.  If 
+.I first
+is omitted, the default value of 1 is used.  If
+.I last
+is omitted, the range extends to the end of the file.
+If the specified range extends beyond the end of the file,
+it is reduced to end at the end of the file.
+Then, if the range doesn't end on a frame boundary,
+it is extend to make up a full last frame.
+If the range, so extended, goes past the end of the file,
+the last frame is filled out with zeros.
+All forms of the option override the values of 
+.I start
+and
+.I nan
+in the parameter file or ESPS Common file.
+The first two forms are equivalent to supplying values of
+.I first
+for the parameter
+.I start
+and
+.RI ( last " + 1 \- " first )
+for the parameter
+.I nan.
+The third form is equivalent to values of
+.I first
+for
+.I start
+and
+.RI ( incr " + 1)"
+for
+.I nan.
+If the \fB\-r\fP option is not
+used, the range is determined from the ESPS Parameter or Common file if the
+appropriate parameters are present.
+.TP
+.BI \-l " frame_len" "\fR [0]"
+Specifies the length of each frame.
+If the option is omitted, the parameter file is consulted.
+A value of 0 (from either the option or the parameter file)
+indicates that a default value is to be used:
+the transform length determined by the order.  (See the
+.B \-o
+option and the
+.I order
+parameter.)
+This is also the default value in case
+.I frame_len
+is not specified either with the
+.B \-l
+option or in the parameter file.
+.TP
+.BI \-S " step" "\fR [" frame_len "\fR]"
+Initial points of consecutive frames differ by this number of samples.
+If the option is omitted, the parameter file is consulted,
+and if no value is found there, a default equal to
+.I frame_len
+is used (resulting in exactly abutted frames).
+The same default applies if \fIstep\fP is given a value of 0.
+.TP
+.BI \-w " window_type" " \fR[RECT]"
+The name of the data window to apply to the data in each frame before
+computing the FFT.  If the option is omitted, the parameter
+file is consulted, and if no value is found there, the default used is a
+rectangular window with amplitude one.  Possible window types include
+rectangular ("RECT"), Hamming ("HAMMING"), Hanning ("HANNING"),
+cos^4 ("COS4"), and triangular ("TRIANG"); see
+the window (3-ESPS) manual page for the complete list.
+.TP
+.BI \-o " order" "\fR [10]\fP"
+The order of the FFT and inverse FFT; the transform length is 2^\fIorder\fP
+(2 to the \fIorder\fP-th 
+power).  If the number of data points in each frame (frame length) is less
+than the transform length, the frame is padded with zeros (a warning is
+given).  If the number of data points in each frame exceeds the transform
+length, only the first 2^\fIorder\fP points from each frame are 
+transformed \-
+i.e., points are effectively skipped between each transform (a warning is
+given).  The default order is 10 (transform length 1024).
+.TP
+.BI \-F 
+Discard imaginary part of cepstral data and force field \fIcepstrum_0\fP 
+to have data type FLOAT.
+.TP
+.BI \-R
+Compute cepstrum rather than complex cepstrum. The DFT of the cepstrum
+is the log magnitude cepstrum when it is computed in this way.
+.TP
+.BI \-e " element_range" " \fR [0:2^\fIorder\fP-1]"
+By default, the field 
+.I cepstrum
+in 
+.I fea_file
+contains the full 2^\fIorder\fP values returned by the inverse FFT.
+By supplying \fIelement_range\fP it is possible to specify that a subrange of 
+elements be used to create the field \fIcepstrum_0\fP.
+For example, specifying \fI20,25:30\fP will result in
+.I cepstrum_0
+having 7 elements taken from positions 20, 25,...,30 in the data returned
+by the inverse FFT (whose indices run from 0 to 2^\fIorder\fP-1).
+If \fIelement_range\fP specifies indices outside the range 0 to 2^\fIorder\fP-1,
+\fIfftcep\fP issues an error message and exits.  
+.TP
+.BI \-z " zeroing_range" " \fR [null]"
+By default, the cepstral data is stored unmodified in \fIcepstrum_0\fP.  If the
+\fB\-z\fP option is used, the elements of \fIcepstrum_0\fP specified by
+\fIzeroing_range\fP are set to zero.  This is useful in deconvolution
+and echo removal (see [1]-[3]).
+Note that this zeroing operation is performed after
+\fIcepstrum_0\fP is formed, so if \fI\-z\fP is used with \fI\-e\fP,
+\fIzeroing_range\fP must be a subrange of \fIelement_range\fP; if it is
+not, \fIfftcep\fP issues an error message and exits.
+.TP
+.BI \-x " debug_level" " \fR [0]"
+A positive value specifies
+that debugging output be printed on the standard error output.
+Larger values result in more output.
+The default is 0, for no output.
+.br
+.SH ESPS PARAMETERS
+.PP
+.PP
+The parameter file is not required to be present, as there are 
+default parameter values that apply.  If the parameter file 
+does exist, the following parameters are read:
+.TP
+.I "start \- integer"
+.IP
+The first point in the input sampled data file that is processed.  A
+value of 1 denotes the first sample in the file.  This is only read
+if the \fB\-r\fP option is not used.  If it is not in the parameter
+(or Common) file, the default value of 1 is used.  
+.TP
+.I "nan \- integer"
+.IP
+The total number of data points to process.  If 
+.I nan
+is 0, the whole file is processed.
+.I Nan
+is read only if the \fB\-r\fP option is not used.  (See the 
+discussion under \fB\-r\fP).
+.TP
+.I "frame_len \- integer"
+.IP
+The number of points in each frame.  This parameter is not read if the
+.B \-l
+option is specified.  A value of 0 indicates that the transform length
+(determined by the order) is to be used as a default;
+this is also the default value in case
+.I frame_len
+is specified neither with the
+.B \-l
+option nor in the parameter file.
+.TP
+.I "step \- integer"
+.IP
+Initial points of consecutive frames differ by this number of samples.
+This parameter is not read if the
+.B \-S
+option is specified.
+If the option is omitted and no value is found in the parameter file,
+a default equal to
+.I frame_len
+is used (resulting in exactly abutted frames).
+The same default applies if \fIstep\fP is given the value 0.
+.TP
+.I "window_type \- string"
+.IP
+The data window to apply to the data.
+This parameter is not read if the command-line option
+.B \-w
+is specified.
+If the option is omitted and if no value is found in the parameter file,
+the default used is "RECT", for a rectangular window with amplitude one.
+Other acceptable values include
+"HAMMING", for Hamming, "HANNING" for Hanning, "COS4" for cos^4,
+and "TRIANG", for triangular;
+see the window(3-ESPSsp) manual page for the complete list.
+.TP
+.I "data_type \- string"
+.IP
+The data type of the field \fIcepstrum_0\fP.  The two possible types
+are "FLOAT" and "FLOAT_CPLX" (the default). This parameter is not read
+if the command line option \fB\-F\fP is used.
+.TP
+.I "method \- string"
+.IP
+Specifying "CEPSTRUM" forces the cepstrum to be computed by 
+performing the inverse FFT on the log magnitude of the input spectrum.
+If "CPLX_CEPSTRUM" is specified, or if no parameter is given, 
+the inverse FFT is performed
+on the complex logarithm of the input spectrum. This option is not read if
+the command line option \fB\-R\fP is used.
+.TP
+.I "order \- integer"
+.IP
+The order of the FFT \- the transform length is 2^\fIorder\fP 
+(2 to the \fIorder\fP-th
+power).  If no value is given in the file, a default value of 10 is used
+(transform length 1024).
+This value is not read if the command line option
+\fB\-o\fP is used.
+.TP
+.I "element_range \- string"
+.IP
+This string is scanned by \fIgrange_switch\fP (3-ESPS) to determine which 
+elements of the cepstral data are used to form the field
+.I cepstrum_0
+in 
+.I fea_file.
+This parameter is not read if the command line option \fB\-e\fP is used.
+.TP
+.I "zeroing_range \- string"
+.IP
+This string is scanned by \fIgrange_switch\fP to determine which elements of
+the field \fIcepstrum_0\fP should be set to zero. 
+This parameter is not read if the command line option \fB\-z\fP is used.
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.SH "ESPS COMMON"
+.PP
+.PP
+ESPS Common is read provided that Common processing is enabled and 
+that the 
+.I filename
+entry in Common matches 
+.I sd_file,
+in which case parameters present in Common override values from
+the parameter file, which in turn may be overriden by command
+line options (see the discussion in ESPS PARAMETERS and under
+each option).  
+.PP
+If Common processing is enabled and if
+.I fea_file
+is not standard output, the Common parameters 
+.I "filename, prog, start,"
+and
+.I nan
+are written to Common, where 
+.I filename
+is set to the input 
+.I sd_file.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".
+The default ESPS Common file is .espscom in the user's home directory.
+This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.SH ESPS HEADER
+A new file header is created for the FEA file.  The sampled data header
+from the input header is added as a source in the output file header, and
+the command line is added as a comment.  The input file \fIsd_file\fP is
+set as the reference header for tags.
+.PP
+.I fftcep
+writes the following values into the specified generic header items
+in the output FEA file:
+.nf
+.sp
+\fIstart\fP = start;
+\fInan\fP = nan;
+\fIstep\fP = step;
+\fIfrmlen\fP = frame_len;
+\fIorder\fP = order;
+\fIsrc_sf\fP = sample frequency of \fIsd_file\fP;
+.sp
+.fi
+All these fields have data type LONG, except for \fIsrc_sf\fP which has
+data type FLOAT.
+.PP
+In addition, the CODED type generic header items \fIwindow_type\fP, 
+\fIcplx_cepstrum\fP, and \fIdata_type\fP
+are created and filled with the values used by \fIfftcep\fP. Item
+\fIcplx_cepstrum\fP is set to YES or NO, depending on whether the complex
+cepstrum or the cepstrum is computed (see the \fB\-R\fP option and 
+\fImethod\fP parameter).  Item \fIdata_type\fP is set to FLOAT_CPLX or
+FLOAT depending on the \fB\-F\fP option and the \fIdata_type\fP parameter.
+.PP
+The charcter type generic header items \fIcep_range\fP and \fIcep_zeroed\fP 
+contain the strings \fIelement_range\fP and \fIzeroing_range\fP.
+.PP
+The generic header item \fIstart_time\fP (type DOUBLE) is written in
+the output file.  The value written is computed by taking the
+\fIstart_time\fP value from the header of the input file (or zero, if
+such a header item doesn't exist) and adding to it the offset time
+(from the beginning of the input file) of the first point processed
+plus one half of \fIframe_len\fP (thus, \fIstart_time\fP is middle of
+the first frame, which is appropriate since the output data represent
+the entire frame; without this adjustment for \fIframe_len\fP,
+\fIwaves\fP+ displays would not line up properly.  
+.PP
+The generic header item \fIrecord_freq\fP (type DOUBLE) is written in
+the output file.  The value is the number of output records per second
+of input data.
+.SH  SEE ALSO
+.PP
+.nf
+\fIplotsd\fP(1\-\s-1ESPS\s+1), \fIrefcof\fP(1\-\s-1ESPS\s+1), \fItranspec\fR(1\-\s-1ESPS\s+1),
+\fIspectrans\fP(1\-\s-1ESPS\s+1), \fIme_spec\fP(1\-\s-1ESPS\s+1), \fIplotspec\fP(1\-\s-1ESPS\s+1), 
+\fIget_fft\fP(3\-\s-1ESPS\s+1),\fIfft_cepstrum\fP(3\-\s-1ESPS\s+1),\fIget_feasd_orecs\fP(3\-\s-1ESPS\s+1),
+\fIFEA\fP(5\-\s-1ESPS\s+1), \fIFEA_SD\fP(5\-\s-1ESPS\s+1)
+.fi
+.sp
+.sp
+.SH WARNINGS
+The routines \fIfft_ccepstrum\fP and
+\fIfft_ccepstrum_r\fP(3\-\s-1ESPS\s+1) 
+used by \fIfftcep\fP to compute the complex cepstrum
+perform phase unwrapping to find the complex logarithm of the input
+spectrum (see [1],[3]).  This procedure adds or subtracts 2*pi to the
+phase angle of the spectrum in an attempt to remove discontinuities. 
+If the unwrapping algorithm fails to satisfy the continuity criterion,
+it will echo a warning message to standard error, provided
+\fIdebug_level\fP is greater than 0.  This does not mean that the
+the resulting cepstrum is useless, but that
+the user should check that the  input and output data make
+sense. 
+.SH BUGS
+.PP
+None known.
+.SH FUTURE CHANGES
+.sp
+.PP
+.SH REFERENCES
+[1] A. V. Oppenheim and R. W. Schafer,
+.I Digital Signal Processing
+Prentice-Hall, N.J. 1975
+.sp
+[2] L. R. Rabiner and R. W. Schafer, 
+.I Digital Processing of Speech Signals
+Prentice-Hall, N.J. 1978
+[3] D. G. Childers, D. P. Skinner, R. C. Kemerait,
+.I The Cepstrum: A Guide to Processing
+Proceedings of the I.E.E.E., vol. 65, no. 10 October 1977, pp. 1428-1443
+.sp 
+.sp 
+.SH AUTHOR
+Program and manual page by Bill Byrne.
+
+
+

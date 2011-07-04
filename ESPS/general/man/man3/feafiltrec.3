@@ -1,0 +1,210 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)feafiltrec.3	1.3 06 May 1997 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH FEAFILTREC 3\-ESPSu  06 May 1997
+.SH NAME
+.nf
+allo_feafilt_rec \- allocate memory for a FEA_FILT file record
+get_feafilt_rec \- get the next data record from an ESPS FEA_FILT data file
+init_feafilt_hd \- initialize a FEA file header for subtype FEA_FILE
+put_feafilt_rec \- write the next data record of an ESPS FEA_FILT 
+data file
+feafilt_to_zfunc \- zfunc structure from feafilt record
+.SH SYNOPSIS
+.ft B
+.nf
+#include <esps/esps.h>
+#include <esps/fea.h>
+#include <esps/feafilt.h>
+
+struct feafilt *
+allo_feafilt_rec( hd)
+	struct	  header	*hd;
+
+int
+get_feafilt_rec( data, hd, file)
+	struct feafilt *data;
+	struct header *hd;
+	FILE *file;
+
+int 
+init_feafilt_hd( hd, max_num, max_denom, filter_design_params);
+	struct header *hd;
+	long max_num;
+	long max_denom;
+	filtdesparams *filter_design_params;
+
+void
+put_feafilt_rec( data, hd, file)
+	struct feafilt *data;
+	struct header *hd;
+	FILE *file;
+
+struct zfunc
+feafilt_to_zfunc( data)
+       struct feafilt *data;
+.ft
+.fi
+.SH DESCRIPTION
+.I allo_feafilt_rec
+allocates memory for a FEA_FILT file record
+and returns a pointer to it.
+Since the size of the allocated record depends on values in the data
+file header, it is important to be sure that a given FEA_SPEC record is
+consistent with the header of the file it is being used with.
+(See
+.IR init_feafilt_hd (3-ESPSu)).
+Internally,
+.I allo_feafilt_rec
+calls
+.IR allo_fea_rec (3-ESPSu)
+and then hooks the FEA record up to a feafilt structure.
+If the value of the FEA_FILT header generic header item 
+\fIcomplex_filter\fP is NO, no memory is allocated for the fields
+\fIim_num_coeff\fP and \fIim_denom_coeff\fP and they should be treated
+as NULL pointers. If the value of the FEA_FILT header generic header item 
+\fIdefine_pz\fP is NO, no memory is allocated for the fields
+\fIzero_dim, pole_dim, zeros\fP and \fIpoles\fP; they should be treated
+as NULL pointers.
+.PP
+.I get_feafilt_rec
+reads the next FEA_FILT record from stream 
+.I file 
+into the data structure 
+.I data,
+which already must have been allocated by means of a call to 
+.IR allo_feafilt_rec.  
+The parameter 
+.I hd
+points to the ESPS header in which the various FEA_FILT fields have
+been defined. An EOF is returned upon end of file. Zero is returned if
+the function returns normally.  
+.PP
+.I init_feafilt_hd
+takes a pointer
+.I hd
+to an ESPS FEA header.
+It sets
+.I hd.hd.fea\->fea_type
+to FEA_FILT and initializes the record-filed definitions to define the
+fields that make up a file of subtype FEA_FILT.  It does this by calls
+to 
+.I add_fea_fld (3-ESPS).
+The necessary values are passed in through the pointer 
+\fIfilter_design_params\fP to the following structure
+.PP
+.nf
+typdef struct_filtdesparams {
+	short			complex_filter;
+	short			define_pz;
+	short			type;
+	short			method;
+	short			func_spec;
+	long			g_size;
+	long			nbits;
+	float			*gains;
+	long			nbands;
+	float			*bandedges;
+	long			npoints;
+	float			*points;
+	float			*wts;
+} filtdesparams; 
+.fi
+.PP
+This structure is defined in the feafilt support module.  If
+\fIinit_feafilt_hd\fP
+is called with a NULL value of \fIfilter_design_params\fP, the
+corresponding integer parameters are set to 0 and the pointers 
+point to 1 element zero filled arrays.
+.PP
+The header items \fIwts\fP and \fIgains\fP are both created as floating 
+arrays with the same number of elements.  If the argument \fIfunc_type\fP is 
+BAND, they contain \fInbands\fP elements.  If the argument \fIfunc_type\fP is 
+POINTS, they contain \fInpoints\fP elements. They are both NULL pointers if
+\fIfunc_type\fP is NONE.
+For a description of the various FEA_FILT record fields, see
+FEA_FILT(5-ESPS). Zero is returned if the function returns normally.
+
+.PP
+.I put_feafilt_rec
+writes a FEA_FILT data record pointed to by 
+.I data
+onto the stream
+.I file,
+which should be an open ESPS FEA_FILT file.
+The header must be written out to the FEA_FILT file before this
+function is called. 
+.PP
+.I feafilt_to_zfunc
+creates a zfunc structure from a feafilt data record. 
+The feafilt fields num_degree and denom_degree are copied to the
+zfunc fields nsiz and dsiz. Memory is allocated for the zfunc arrays
+zeros and poles and the contents of the feafilt arrays re_num_coeff
+and re_denom_coeff are copied to the new zfunc.  Note that imaginary data
+in the feafilt record is ignored.
+.PP
+.SH EXAMPLE
+.PP
+.sp .5
+.nf
+\fB\s-1Reading an existing file:\s+1\fR
+.sp .5
+struct feafilt *p;
+struct header *ih;
+ih = read_header(file);	\fI/* read FEA_FILT file header */\fR
+pp = allo_feafilt_rec(ih);	\fI/* allocate record */\fR
+if(get_feafilt_rec(p,ih,file) == EOF) . . .     \fI/* get next data record */\fR
+for (i = 0; i <= p->num_degree; i++)	\fI/* record reference */\fR
+    printf("numerator coefficient %d: real part %e, imaginary part %e\\n",
+                  p->re_num_coeff[i].real, p->im_num_coeff[i].imag);
+
+\fB\s-1Creating a new file:\s+1\fR
+.sp .5
+struct header *oh;
+oh = new_header(FT_FEA);
+filtdesparams fdp;
+fdp.type = FILT_LP;
+\fI/* create FEA_FILT header */\fR
+if ( init_feafilt_hd(oh, 16L, 0L, fdp) != 0 ) 
+    ERROR_EXIT("error filling FEA header");
+ .
+ .		
+write_header(oh);
+p = allo_feafile_rec(oh); 
+ .
+ .
+p->num_degree = 16;
+for (i = 0; i< 16; i++) {	\fI/* copy filter polynomial to record */\fR
+	p->re_num_coeffs[i] = realpart[i];
+	p->im_num_coeffs[i] = imagpart[i];
+}
+ .
+ .
+put_feafilt_rec(p,ih,file);
+.fi
+.SH SEE ALSO
+.nf
+\fIfilt2fea\fP(1-ESPS), \fIfea2filt\fP(1-ESPS), \fIinit_feafilt_hd\fP(3-ESPS),
+\fIallo_feafilt_rec\fP(3-ESPS), \fIget_feafilt_rec\fP(3-ESPS), 
+\fIput_feafilt_rec\fP(3-ESPS), FEA(5-ESPS)
+.SH DIAGNOSTICS
+.PP
+If
+.I hd
+does not point to a FEA header of subtype
+FEA_FILT, then the program terminates with an assertion failure.  
+In
+.I get_feafilt_rec,
+if an incomplete record is read,
+a message is printed on the standard error output.
+In
+.I put_feaspec_rec,
+if an I/O error occurs during the write,
+a message is written to standard error,
+and the program exits with status 1.
+.SH BUGS
+None known.
+.PP
+.SH AUTHOR 
+Bill Byrne
+

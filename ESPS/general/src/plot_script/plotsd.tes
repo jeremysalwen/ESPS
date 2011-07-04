@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+#  This material contains proprietary software of Entropic Speech, Inc.   
+#  Any reproduction, distribution, or publication without the prior	   
+#  written permission of Entropic Speech, Inc. is strictly prohibited.
+#  Any public distribution of copies of this work authorized in writing by
+#  Entropic Speech, Inc. must bear the notice			
+# 								
+#      "Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved."
+# 				
+#
+# test file for plotsd @(#)plotsd.tes	3.1 10/20/87 ESI
+
+echo "Testing plotsd."
+testsd -f200 -p80 tst.sd
+$1/plotsd tst.sd
+rm tst.sd

@@ -1,0 +1,54 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getfburg.3	1.2 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GET_FBURG 3\-ESPSsp 18 Apr 1997
+.SH NAME
+get_fburg \- Compute reflection coefficients using fast modified Burg method.
+.SH SYNOPSIS
+.nf
+.ft B
+ 
+get_fburg (x, lnt, c, order, rc, pgain)
+float *x;
+int   lnt;
+float *c;
+int   order;
+float *rc;
+float *pgain;
+
+.ft
+.SH DESCRIPTION
+.PP
+This function computes the reflection coefficients and the lpc filter
+coefficients directly from sampled data.  The algorithm is a faster
+version of the modified Burg method used in
+\fIget_burg\fP(3\-\s-1ESPSsp\s+1);
+relative to that function, \fIget_fburg\fP
+provides computational savings on the order of 50 to 70 per cent.
+.PP
+Unlike the standard Burg algorithm, where reflection coefficients are
+obtained from the forward and backward prediction errors, this
+(unpublished) method works with the sample covariance matrix of the
+data.
+.PP
+\fIget_fburg\fP takes data of size \fIlnt\fP in array \fIx\fP
+as input, and computes \fIorder\fP reflection coefficients \fIrc\fP[1]
+to \fIrc\fP[\fIorder\fP], \fIorder\fP lpc filter coefficients 
+\fIc\fP[1] to \fIc\fP[\fIorder\fP], and the lpc filter gain
+*\fIpgain\fP.  
+.SH BUGS
+None known
+.SH SEE ALSO
+.PP
+.nf
+\fIestimate_covar\fP(3\-\s-1ESPS\s+1sp), \fIget_burg\fP(3\-\s-1ESPS\s+1sp),
+\fIget_vburg\fP(3\-\s-1ESPS\s+1sp), \fIstrcov_auto\fP(3\-\s-1ESPS\s+1sp),
+\fIgenburg\fP(3\-\s-1ESPS\s+1sp), \fIcompute_rc\fP(3\-\s-1ESPS\s+1sp)
+.fi
+.SH REFERENCES
+.\" an internal reference is Shankar Narayan, ETM-S-86-49:ssn, 
+.\" Spectrum Analysis of periodic data,
+.SH AUTHOR
+.PP
+Program and man page by Shankar Narayan; revisions by John Shore

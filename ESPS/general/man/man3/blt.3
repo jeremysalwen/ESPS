@@ -1,0 +1,70 @@
+.\" Copyright (c) 1987, 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)blt.3	1.2 30 Apr 1997 ERL
+.TH BLT 3\-ESPS 11/10/90
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+blt \- Find the bilinear transform of a sequence.
+
+.SH SYNOPSIS
+.ft B
+void 
+.br
+blt(data, n, a)
+.br
+int n;
+.br
+float *data;
+.br
+float a;
+.sp 
+.SH DESCRIPTION
+The routine \fIblt\fP performs a bilinear transformation of a real
+sequence as described in [1].  The transform of the length \fIn\fP 
+sequence, \fIdata\fP, is obtained through recursive application of IIR 
+filters (see [1]).  The transformed sequence, also length \fIn\fP, is returned in \fIdata\fP.
+.PP
+A single parameter, \fIa\fP, describes the bilinear transformation. The 
+Z-Transform of the original sequence, F, and the transformed 
+sequence, G, are related by 
+.br
+.sp
+F( e^(jw) ) = G( e^(jw') ) 
+.br
+.sp
+where
+.br
+.sp
+w = arctan[ ( (1-a^2) sin w')/( 2a + (1+a^2) cos w') ].
+.PP
+An intendend application of this routine is to obtain a frequency
+warping which approximates the mel-scale. An example of this is the
+mel-warped cepstrum, which is described in [2].
+.SH SEE ALSO
+\fIacf\fR(1\-ESPS), \fIafc2cep\fR(3\-ESPS), \fIfft_cepstrum\fR(3\-ESPS)
+.sp 
+.SH COMMENTS
+The transformation is performed in-place. Internal static memory is 
+allocated as required.  If \fIblt\fP is called with \fIa\fP 
+equal to 0, the routine returns without performing any computation; no
+error message is generated.
+.sp 5
+.SH REFERENCES
+[1] A. V. Oppenheim and D. H. Johnson,
+\fIDiscrete Representation of Signals.\fP
+Proceedings of the I.E.E.E., vol. 60, no. 6, June 1972 p681-691
+.sp
+[2] K. Lee,
+\fIAutomatic Speech Recognition: the Development of the SPHINX System\fP
+Kluwer Academic, Norwell, MA. 1989
+.sp 5
+.SH AUTHOR
+Manual page and program by Bill Byrne.
+
+
+
+
+
+
+
+

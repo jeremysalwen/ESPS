@@ -1,0 +1,33 @@
+"Add_op..." shell send_xwaves add_op_panel help_file `get_esps_base`/lib/waves/add_op.help
+
+"Image Painting" MENU
+  "Rescale" DEFAULT @rescale_on.WC
+  "No Rescale" @rescale_off.WC
+  "Image Painting Panel..." make_panel name scont file imageglbl.WM columns 4 icon_title scontrol title "Image Painting Controls" panel_choice 1 choice_horiz 1 columns 2
+"Image Painting" END
+
+"Audio extensions..." make_panel name audio file audio.WM  icon_title audio title "Optional Audio Extensions" columns 2
+
+"waves+ profile..." make_panel name wstate file profile.WM  icon_title state title "waves+ profile Controls" columns 5
+
+"Print setup..." print_setup  
+
+"Annotation..." make_panel name annot file annot.WM columns 3 icon_title annotation title "Annotation Controls" panel_choice 1 choice_horiz 1
+
+"Ganging..." make_panel name ganging file ganging.WM columns 3 icon_title debug title "Ganging Controls" panel_choice 1 choice_horiz 1 
+
+"Colormap..." make_panel name color title "Image Color Support" icon_title Colors file colors.WM panel_choice 1 choice_horiz 1 columns 1
+
+"Toolbars..." make_panel name toolbars file toolbars.WM icon_title toolbars title "Tool Bars"
+
+"Menu Changes..." make_panel name mstyle columns 2 file menus.WM icon_title menus title "Menu Changes"
+
+"Mouse Bindings..." make_panel name bindings file mbind.WM icon_title bindings title "Global Mouse Bindings"
+
+"Debug..." make_panel name debg file debug.WM columns 4 icon_title debug title "Debug Controls" panel_choice 1 choice_horiz 1 columns 1
+
+# @(#)controls.WM	1.23 9/4/98
+
+
+
+

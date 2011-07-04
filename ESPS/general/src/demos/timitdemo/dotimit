@@ -1,0 +1,58 @@
+#! /bin/sh
+# @(#)dotimit	1.5 12/1/92 ERL
+
+# first we bring up label (getting rid of existing signal)
+
+rm -f $demo_temp/timitcom
+
+if test `mach_type` = HP400
+then
+#sleep command confuses communications on hp400
+cat > $demo_temp/timitcom << ZAPPER1
+kill
+detach
+attach function xlabel
+ZAPPER1
+else
+cat > $demo_temp/timitcom << ZAPPER1
+kill
+sleep seconds .2
+detach
+sleep seconds .2
+attach function xlabel
+ZAPPER1
+fi
+
+send_xwaves @timitcom
+
+# convert the labels from SPHERE to waves+ format
+sleep 1
+rm -f $demo_temp/phonemes.w $demo_temp/words.w
+cnvlab -s 16000 files/$1.phn $demo_temp/phonemes.w
+cnvlab -s 16000 files/$1.wrd $demo_temp/words.w
+
+# put up the displays
+
+rm -f $demo_temp/timitcom
+
+if test `mach_type` = HP400
+then
+#sleep command confuses communications on hp400
+cat > $demo_temp/timitcom << ZAPPER2
+make name timit file files/$1.wav loc_x 1 loc_y 225
+send make name timit file $demo_temp/phonemes.w
+send make name timit file $demo_temp/words.w
+ZAPPER2
+else
+cat > $demo_temp/timitcom << ZAPPER2
+make name timit file files/$1.wav loc_x 1 loc_y 225
+sleep seconds .2
+send make name timit file $demo_temp/phonemes.w
+sleep seconds .2
+send make name timit file $demo_temp/words.w
+ZAPPER2
+fi
+
+send_xwaves @timitcom
+
+

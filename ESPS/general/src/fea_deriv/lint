@@ -1,0 +1,20 @@
+fea_deriv.c:
+
+fea_deriv.c
+==============
+warning: possible pointer alignment problem
+    (366)  	    (366)  	    (372)  
+    (372)  	    (400)  	    (400)  
+    (441)  	    (529)  	    (531)  
+    (533)  	    (535)  	    (547)  
+    (547)  	    (549)  	    (549)  
+    (551)  	    (551)  	    (553)  
+    (553)  	
+gethighfie.c:
+
+
+==============
+name declared but never used or defined
+    getwd   	fea_deriv.c?(74)
+function returns value which is always ignored
+    fprintf	

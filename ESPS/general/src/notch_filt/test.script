@@ -1,0 +1,15 @@
+#!/bin/sh
+#@(#)test.script	3.4	6/2/88 ESI
+#
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+ESPSCOM=./espscom
+export ESPSCOM
+echo Design a 60 cycle notch filter
+echo " "
+echo "notch_filt -PPnotch_filt - | psps -"
+notch_filt -PPnotch_filt  - | psps -
+echo " "
+echo The a coefficients should be 1.168, -2.334, 1.168.
+echo The b coefficients should be 1, -1.957, 0.9595
+

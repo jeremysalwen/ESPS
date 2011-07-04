@@ -1,0 +1,38 @@
+.\" Copyright (c) 1987, 1989 Entropic Speech, Inc. All rights reserved.
+.\" @(#)genhdcodes.3	1.6 21 Dec 1989 ESI
+.TH GENHD_CODES 3\-ESPSu 21 Dec 1989
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+genhd_codes \- get the string array of possible values for generic header of coded type
+.SH "SYNOPSIS"
+.ft B
+#include <esps/esps.h>
+.PP
+.ft B
+char **
+.br
+genhd_codes(name, hd)
+.br
+char *name;
+.br
+struct header *hd;
+.ft R
+.SH "DESCRIPTION"
+.I genhd_codes
+returns a pointer to a NULL terminated array of character pointers,
+each of which points to character string being a possible value for
+the generic header item \fIname\fR.   If \fIname\fR is undefined or
+is not of type \fB\s-1CODED\s+1\fR NULL is returned.
+.SH DIAGNOSTICS
+.PP
+There are internal checks to be sure \fIname\fR and \fIhd\fR are not
+NULL.
+.SH "BUGS"
+.PP
+.SH "SEE ALSO"
+.PP
+add_genhd(3\-ESPSu), get_genhd(3\-ESPSu),
+genhd_list(3\-ESPSu), copy_genhd(3\-ESPSu)
+.SH "AUTHOR"
+.PP
+Alan Parker

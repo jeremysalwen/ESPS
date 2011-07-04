@@ -1,0 +1,6 @@
+#@(#)Pfft_filter	3.4	5/15/91 ESI
+# Default params for fft_filter
+int filter_nsiz = 3;
+float filter_num = {1, 2, 3};
+int start = 1;
+int nan = 20;

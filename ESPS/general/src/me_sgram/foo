@@ -1,0 +1,341 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     me_sgram - produces a  maximum-entropy-based  FEA_SPEC  file
+     suitable for displaying as a spectrogram
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>me_sgram</STRONG> [ <STRONG>-s</STRONG> <EM>range</EM> ] [ <STRONG>-P</STRONG> <EM>param</EM>_<EM>file</EM> ] [ <STRONG>-p</STRONG> <EM>range</EM> ] [   <STRONG>-</STRONG> <STRONG>r</STRONG>
+     <EM>range</EM> ] [ <STRONG>-m</STRONG> <EM>method</EM> ] [ <STRONG>-a</STRONG> <EM>lpc</EM>_<EM>method</EM> ] [ <STRONG>-w</STRONG> <EM>window</EM>_<EM>len</EM> ] [
+     <STRONG>-E</STRONG> <EM>pre</EM>_<EM>emphasis</EM> ] [ <STRONG>-o</STRONG> <EM>analysis</EM>_<EM>order</EM> ] [ <STRONG>-S</STRONG> <EM>step</EM>_<EM>size</EM> ] [ <STRONG>-</STRONG>
+     <STRONG>d</STRONG>  <EM>data</EM>_<EM>window</EM>  ]  [  <STRONG>-c</STRONG> <EM>conv</EM>_<EM>test</EM> ] [ <STRONG>-i</STRONG> <EM>max</EM>_<EM>iter</EM> ] [ <STRONG>-D</STRONG> ]
+     <EM>input</EM>.<EM>SD</EM> <EM>output</EM>.<EM>SPEC</EM>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     <EM>Me</EM>_<EM>sgram</EM> reads an ESPS sampled data file, pre-emphasizes it,
+     and  produces  an ESPS <STRONG><A HREF="../man5.html/FEA_SPEC.5.html">FEA_SPEC(5-ESPS)</A></STRONG> file, which qresults
+     from maximum entropy spectral analysis.  This file is  suit-
+     able for displaying as a speech spectrogram.  (See <EM>plotsgram</EM>
+     (1-ESPS).)  By default (specifying no options) or by  speci-
+     fying  <EM>wb</EM>  for  the  <STRONG>-m</STRONG> option, <EM>me</EM>_<EM>sgram</EM> produces a FEA_SPEC
+     file that simulates the analysis done to produce a wide-band
+     speech spectrogram.  Alternatively, by specifying <EM>nb</EM> for the
+     <STRONG>-m</STRONG> option, a FEA_SPEC file that simulates the analysis for a
+     narrow-band  spectrogram  is computed.  The <STRONG>-m</STRONG> option simply
+     defines different defaults for the other options.  By speci-
+     fying  any  of  the  other  options,  in addition to <STRONG>-m</STRONG>, the
+     default  values  are  overridden  by  the  specified  option
+     values.   This allows the user to alter the basic display to
+     highlight facets of the spectrogram that are  of  particular
+     interest.
+
+     <EM>me</EM>_<EM>sgram</EM> is a shell script that makes  use  of  <EM>filter</EM>  (1 -
+     ESPS),  <STRONG><A HREF="../man1.html/refcof.1.html">refcof (1-ESPS)</A></STRONG>, and <STRONG><A HREF="../man1.html/me_spec.1.html">me_spec (1-ESPS)</A></STRONG>; the parameter
+     file is processed using <STRONG><A HREF="../man1.html/getparam.1.html">getparam (1-ESPS)</A></STRONG>.
+
+     If "-" is specified for the output file, standard output  is
+     used.  Note, standard input cannot be read by this script.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     <STRONG>-s</STRONG> <EM>start</EM>_<EM>time</EM>:<EM>end</EM>_<EM>time</EM> [0.0:(end of file)]
+
+     <STRONG>-s</STRONG> <EM>start</EM>_<EM>time</EM>:+<EM>duration</EM>
+          Determines the range in seconds in the input file  over
+          which  the  spectrogram  values are to be computed.  In
+          the first form, a pair of real numbers gives the start-
+          ing  and ending times of the range.  The correspondence
+          between samples and times is determined by two  quanti-
+          ties:   the  starting time of the file and the interval
+          between samples.  The former is given  by  the  generic
+          header item <EM>start</EM>_<EM>time</EM> in the input file, or 0.0 if the
+          header item is not present.  The latter is the recipro-
+          cal  of  the  sample frequency <EM>sf</EM> in the type-dependent
+          part of the SD header.  If <EM>start</EM>_<EM>time</EM> is  omitted,  the
+          starting  time  of  the  file  is used.  If <EM>end</EM>_<EM>time</EM> is
+          omitted, the range extends through the end of the file.
+          The  second  form  of  the  option is equivalent to the
+          first with <EM>end</EM> = <EM>start</EM> + <EM>duration</EM> .
+
+     <STRONG>-p</STRONG> <EM>starting</EM>_<EM>point</EM>:<EM>end</EM>_<EM>point</EM> [1:(end of file)]
+
+     <STRONG>-p</STRONG> <EM>starting</EM>_<EM>point</EM>:+<EM>incr</EM>
+          Determines the range in points in the input  file  over
+          which  the  spectrogram  values are to be computed.  In
+          the first form, a pair of unsigned integers  gives  the
+          first and last points of the range, counting from 1 for
+          the first point in the file.  If first is omitted, 1 is
+          used.  If last is omitted, the range extends to the end
+          of the file.  The second  form  is  equivalent  to  the
+          first with last = first + incr . This option should not
+          be specified if -s is specified.
+
+     <STRONG>-r</STRONG> <EM>range</EM>
+          <STRONG>-r</STRONG> is a synonym for <STRONG>-p</STRONG>.
+
+     <STRONG>-m</STRONG> <EM>method</EM> [wb]
+          The basic method is specified here. There are two  pos-
+          sible values:  <EM>wb</EM> for wide band and <EM>nb</EM> for narrow band.
+          By  specifying  <EM>wb</EM>,  the  following  values  are   set:
+          lpc_method  = fburg, pre-emphasis = .94, analysis_order
+          = 10, window_len = 8 msec., step_size =  2  msec.,  and
+          data_window  =  RECT.   By specifying <EM>nb</EM>, the following
+          values are set: lpc_method = fburg, pre-emphasis = .94,
+          analysis_order = 10, window_len = 40 msec., step_size =
+          2 msec., and data_window = RECT.
+
+     <STRONG>-a</STRONG> <EM>lpc</EM>_<EM>method</EM> [fburg]
+          Specifies the spectrum analysis method.  The default is
+          the  fast  modified Burg ("fburg") method.  Also avail-
+          able are the autocorrelation method  "autoc"),  covari-
+          ance  method  ("cov"),  Burg  method ("burg"), modified
+          Burg method ("mburg"), stuctured  covariance  ("strcov"
+          and "strcov1"), and vector Burg ("vburg", fast approxi-
+          mation to structured covariance.  Of the two structured
+          covariance methods, the first ("strcov" is considerably
+          faster and  better  behaved;  "strcov1"  is  older  but
+          included  as  it  may  prove useful on occasion.  ** If
+          "strcov"  is  used,  the  <STRONG>-c</STRONG>  and  <STRONG>-i</STRONG>  options   become
+          relevant.   The  <STRONG>-m</STRONG> option overrides the value that may
+          be in the parameter file.
+
+     <STRONG>-c</STRONG> <EM>conv</EM>_<EM>test</EM>[1e-5]
+          Specifies, for the STRCOV method  only  (not  including
+          STRCOV1),  a  convergence  test  value.   The lower the
+          value, the smaller the change required on  each  itera-
+          tion  before  the  estimator  terminates,  and the more
+          iterations that normally will result.
+
+     <STRONG>-i</STRONG> <EM>max</EM>_<EM>iter</EM>[20]
+          Specifies, for the STRCOV method  only  (not  including
+          STRCOV1),  the  maximum  number  of iterations that the
+          estimator will run through before terminating.  A warn-
+          ing  will  indicate if the estimator terminates because
+          max_iter has been exceeded.
+
+     <STRONG>-w</STRONG> <EM>window</EM>_<EM>len</EM>
+          The duration of data in milliseconds over which the the
+          power spectrum is computed for each column of the spec-
+          trogram. The analysis bandwidth  is  inversely  propor-
+          tional to this value.
+
+     <STRONG>-E</STRONG> <EM>pre</EM>_<EM>emphasis</EM>
+          The coefficient <EM>A</EM> in the pre-emphasis filter: 1 -  <EM>A</EM>/z.
+          This  filter is applied to the sampled data before com-
+          puting the power spectrum. A value of <EM>A</EM> = 1 provides  a
+          6 dB/octave boost to the high frequencies; a value of 0
+          provides no boost.
+
+     <STRONG>-o</STRONG> <EM>analysis</EM>_<EM>order</EM>
+          The number of parameters in  the  autoregressive  model
+          that is used to compute the power spectrum.
+
+     <STRONG>-S</STRONG> <EM>step</EM>_<EM>size</EM>
+          The time step in milliseconds between  columns  in  the
+          spectrogram.   The  time resolution and horizontal mag-
+          nification are affected by this parameter.
+
+     <STRONG>-d</STRONG> <EM>data</EM>_<EM>window</EM>
+          The data window applied to the data before the computa-
+          tion  of the power spectrogram. Possible values include
+          RECT (rectangular), HAMMING, and  TRIANG  (triangular).
+          See  <STRONG><A HREF="../man3.html/window.3.html">window  (3 -ESPS)</A></STRONG> for a complete list of supported
+          data windows.
+
+     <STRONG>-D</STRONG>    Include in the output records  a  field  <EM>dith</EM>_<EM>spec</EM>_<EM>val</EM>
+          containing  1s  and  0s intended for display as a simu-
+          lated gray-scale spectrogram on a black-and-white moni-
+          tor.   The  <STRONG><A HREF="../man1.html/refcof.1.html">refcof (1-ESPS)</A></STRONG> output is piped through the
+          <STRONG><A HREF="../man1.html/dither.1.html">dither(1-ESPS)</A></STRONG> program.
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     The parameter file is not required to be present,  as  there
+     are  default  parameter values that apply.  If the parameter
+     file does exist, the following parameters are read:
+
+     <EM>method</EM> - <EM>string</EM>
+          The spectrogram method to use.  This parameter  is  not
+          read  if  the  <STRONG>-m</STRONG>  option is used.  If the parameter is
+          present and is read, it determines default  values  for
+          all  other parameters as discussed under the <STRONG>-m</STRONG> option.
+          The other parameters  (or  command  line  options),  if
+          present,   override  these  defaults.   The  choice  of
+          "other" uses defaults that are the same as "wb".
+
+     <EM>lpc</EM>_<EM>method</EM> - <EM>string</EM>
+          The analysis method used to compute reflection  coeffi-
+          cients.  This parameter is not read if the <STRONG>-a</STRONG> is used.
+
+     <EM>data</EM>_<EM>window</EM> - <EM>string</EM>
+          The data window to apply to the data.   This  parameter
+          is  not read if the <STRONG>-d</STRONG> option is specified or if <EM>method</EM>
+          is in the parameter file and does not  have  the  value
+          "other".   Acceptable  values include "RECT" for a rec-
+          tangular window, "HAMMING", for Hamming, "HANNING"  for
+          Hanning,  "COS4" for cosine 4th, and "TRIANG", for tri-
+          angular; see the <STRONG><A HREF="../man3.html/window.3.html">window(3-ESPSsp)</A></STRONG> manual page  for  the
+          complete list.
+
+     <EM>start</EM> - <EM>integer</EM>
+
+          The first point in the input sampled data file that  is
+          processed.   A  value  of 1 denotes the first sample in
+          the file.  This parameter is not read  if  any  of  the
+          range  command  line options are used.  If it is not in
+          the parameter file, and neither option is specified,  a
+          default value of 1 is used.
+
+     <EM>nan</EM> - <EM>integer</EM>
+
+          The total number of data points to process.  If <EM>nan</EM>  is
+          0,  processing  continues  through the end of the file.
+          This parameter is not read if any of the range  command
+          line options are used.
+
+     <EM>window</EM>_<EM>len</EM> - <EM>float</EM>
+
+          The duration in milliseconds of each frame. This param-
+          eter  not  read  if  the  <STRONG>-w</STRONG>  option is specified of if
+          <EM>method</EM> is in the file  and  does  not  have  the  value
+          "other".
+
+     <EM>pre</EM>_<EM>emphasis</EM> - <EM>float</EM>
+          The coefficient in the preemphasis filter (see  <STRONG>-</STRONG> <STRONG>E</STRONG>  in
+          the Options section). This parameter not read if the <STRONG>-E</STRONG>
+          option is specified.
+
+     <EM>step</EM>_<EM>size</EM> - <EM>float</EM>
+          Initial points of consecutive  frames  differ  by  this
+          number of milliseconds.  This parameter not read if the
+          <STRONG>-S</STRONG> option is specified.
+
+     <EM>order</EM> - <EM>integer</EM>
+          The number of reflection coefficients computed for each
+          frame of input data.  If no value is given in the file,
+          a default value of 15 is used.  This value is not  read
+          if the command line option <STRONG>-o</STRONG> is used.
+
+     <EM>strcov</EM>_<EM>test</EM> - <EM>float</EM>
+
+          If STRCOV is used, this is the convergence  test  value
+          (the lower the value, the smaller the change per itera-
+          tion before termination). This is not  read  if  <STRONG>-c</STRONG>  is
+          used.
+
+     <EM>strcov</EM>_<EM>maxiter</EM> - <EM>int</EM>
+
+          If STRCOV is used, this is the maximum number of itera-
+          tions allowed before the estimator terminates.  This is
+          not read if <STRONG>-i</STRONG> is used.
+
+     The values of parameters obtained from  the  parameter  file
+     are printed if the environment variable ESPS_VERBOSE is 3 or
+     greater.  The default value is 3.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     ESPS Common is  read  provided  that  Common  processing  is
+     enabled  and  that  the  <EM>filename</EM>  entry  in  Common matches
+     <EM>input</EM>.<EM>SD</EM>, in which case parameters present in  Common  over-
+     ride  values  from  the parameter file, which in turn may be
+     overriden by command line options  (see  the  discussion  in
+     ESPS  PARAMETERS  and under each option).  Common processing
+     is useful when <STRONG><A HREF="../man1.html/range.1.html">range (1-ESPS)</A></STRONG> is used to  select  a  segment
+     from  <EM>file</EM>.<EM>sd</EM>.  Common  is  not  read if <EM>file</EM>.<EM>sd</EM> is standard
+     input. If <EM>file</EM>.<EM>rc</EM> is not standard output and <EM>file</EM>.<EM>sd</EM> is  not
+     standard  input, the Common parameters <EM>filename</EM> (= file.sd),
+     <EM>prog</EM> (= refcof), <EM>start</EM>, and <EM>nan</EM> are written to ESPS Common.
+
+     ESPS Common  processing  may  be  disabled  by  setting  the
+     environment  variable USE_ESPS_COMMON to "off".  The default
+     ESPS Common file is setting the environment variable ESPSCOM
+     to  the desired path.  User feedback of Common processing is
+     determined by the environment variable ESPS_VERBOSE, with  0
+     causing  no  feedback and increasing levels causing increas-
+     ingly detailed feedback.  If ESPS_VERBOSE is not defined,  a
+     default value of 3 is assumed.
+
+
+</PRE>
+<H2>ESPS HEADERS</H2><PRE>
+     The generic header item <EM>start</EM>_<EM>time</EM> (type DOUBLE) is  written
+     in the output file.  The value written is computed by taking
+     the <EM>start</EM>_<EM>time</EM> value from the header of the input  file  (or
+     zero,  if such a header item doesn't exist) and adding to it
+     the offset time (from the beginning of the  input  file)  of
+     the  first  point  processed.  Also, the generic header item
+     <EM>record</EM>_<EM>freq</EM> (type DOUBLE) is written  in  the  output  file.
+     The  value  is  the  number  of output records per second of
+     input data.  For details on the parameters used  by  all  of
+     the  programs in the script, look at all of the intermediate
+     headers (e.g., via <EM>psps</EM> <STRONG>-a</STRONG>).
+
+
+</PRE>
+<H2>FUTURE CHANGES</H2><PRE>
+     <STRONG><A HREF="../man1.html/Me_sgram.1.html">Me_sgram (1-ESPS)</A></STRONG> will be re-implemented as a C program.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man1.html/sgram.1.html">sgram (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/plotsgram.1.html">plotsgram (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/filter.1.html">filter (1-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man1.html/refcof.1.html">refcof (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/me_spec.1.html">me_spec (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man3.html/compute_rc.3.html">compute_rc (3-ESPSsp)</A></STRONG>,
+     <STRONG><A HREF="../man1.html/dither.1.html">dither (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA_SPEC.5.html">FEA_SPEC (5-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD (5-ESPS)</A></STRONG>
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     This script cannot read standard input.
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Manual page and program by David Burton. Revisions  by  John
+     Shore.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

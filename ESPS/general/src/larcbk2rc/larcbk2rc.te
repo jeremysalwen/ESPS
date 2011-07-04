@@ -1,0 +1,14 @@
+#!/bin/sh
+# @(#)larcbk2rc.te	3.1 10/2/87 ESI
+ESPSCOM=./espscom
+export ESPSCOM
+echo TEST of larcbk2rc
+echo " "
+echo Make LAR codebook
+echo " "
+echo lloydcbk -n4 -c.01 -dsquared_error -tlar_cbk test.data lar.scbk
+lloydcbk -n4 -c.01 -dsquared_error -tlar_cbk test.data lar.scbk
+echo " "
+echo There should be 4 decode values: .81818, .9802, .99800, .9998
+echo "larcbk2rc lar.scbk - | psps -"
+larcbk2rc lar.scbk - | psps -

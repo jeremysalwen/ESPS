@@ -1,0 +1,174 @@
+.\" Copyright (c) 1995 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)send_xwaves.1	1.7 3/27/97 ERL
+.ds ]W (c) 1995 Entropic Research Laboratory, Inc.
+.TH SEND_XWAVES 1\-ESPS 3/27/97
+.SH NAME
+send_xwaves \- open a connection to an xwaves+ via the X server
+.sp
+.SH SYNOPSIS
+.B send_xwaves
+[
+.BI \-h " display name"
+] [
+.BI \-d " reply delay"
+] [
+.BI \-D " startup delay"
+] [
+.BI \-n " destination application name"
+] [
+.B \-B 
+] [
+.BI \-x " debug_level"
+] [
+.I xwaves command
+]
+.sp
+.SH DESCRIPTION
+.PP
+.I send_xwaves 
+uses communications through the X server to communicate 
+with \fIxwaves\fR(1\-\s-1ESPS\s+1).
+This program connects to the default X server (like any other X program) to
+establish a communications link with an \fIxwaves\fR running on that server.
+An alternate display server name can be specified by using the \fB\-h\fR option.
+This is given in the usual X convention, of \fIhostname:display:screen\fR,
+and is most often simply \fIhostname:0.0\fR.   The host running 
+\fIsend_xwaves\fR must have access permission to the X server that \fIxwaves\fR
+is displaying on in order for the communications link to be established.
+If the \fB\-h\fR option is not given, then the value of the environment 
+variable 
+\fBDISPLAY\fR is used, as is the case in all X programs.   By default, 
+\fIsend_xwaves\fR will look for an application that has registered by the 
+name of \fIxwaves\fR with the X server.   To specify an alternate name, use
+the \fB\-n\fR option.  The name that an \fIxwaves\fR registers under is given 
+on its control panel title bar.
+.PP
+\fISend_xwaves\fP will continue trying to establish connection for the
+delay interval specified using the \fB\-D\fR option [10 sec by default].
+.PP
+A single \fIxwaves\fR command can be given on the command line,
+following any option flags and arguments.  In this mode, the
+connection is opened, the command is sent, and the connection is
+closed.  When using this mode, you must be aware of how the shell you
+are using handles special characters on the command line and how to
+escape them.  Unless blocking is disabled with the \fB\-B\fR option,
+\fIsend_xwaves\fP will wait until \fIxwaves\fP signals that the
+command has been processed for up to the number of seconds specified
+by the \fB\-d\fR option (2000 seconds, by default).  In this mode, any value
+returned by the remote procedure call processed on the host (e.g. from
+\fIxwaves\fP "get" commands) will be sent to \fIsend_xwaves\fP'
+standard output.
+.PP
+If no command is given on the command line, \fIsend_xwaves\fR,
+attempts to open a connection to an \fIxwaves\fR, waiting
+for up to \fIstartup delay\fP seconds, and then reads an arbitrary
+number of commands from standard input and sends them, waiting for a
+response from the server between each request, unless the \fB\-B\fR flag is
+set.  When \fIsend_xwaves\fR reads EOF, it closes the connection and
+exits immediately.  This way of using \fIsend_xwaves\fP is convenient
+if you wish to have a window in which you can just type \fIxwaves\fP
+commands, or when a routine set of commands is to be executed from a
+file or other source.
+.PP
+If the \fB\-B\fR flag is set, \fIsend_xwaves\fP processes all commands in
+the input stream with no interlock between requests.  Thus, when a
+batch of commands are sent with \fB\-B\fR enabled, these commands should not
+be interdependent (i.e. the success of a command in the batch should not
+depend upon the completion of a previous command).
+.PP
+Given a file of \fIxwaves\fP commands, one could send them all to
+\fIxwaves\fP by \fIcat\fP-ing the file to the \fIsend_xwaves\fP stdin.
+One could also cause
+\fIxwaves\fP to invoke the command file directly by using
+\fIsend_xwaves\fP to send an "@filename", where \fIfilename\fP is the
+name of a file containing the commands to be executed. 
+.PP
+The options described below override both the default, and the
+environment variables.
+.sp
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-h " display name"
+The X server name that the target \fIxwaves\fR is displaying on. This is 
+given in the usual X server name convention; \fIhost:display.screen\fR.
+If the option is not given, then the value of the environment variable 
+\fBDISPLAY\fR is used.
+.TP
+.BI \-n " destination application name"
+The name of the \fIxwaves\fR application to connect to.  The default name
+is \fIxwaves\fR.  The name might be different if more than one \fIxwaves\fR 
+is displaying on the display, or if a non-standard name was specified upon
+startup of \fIxwaves\fR.
+.TP
+.BI \-D " startup delay" "\fR [10 seconds]"
+\fISend_xwaves\fP will keep trying for up to \fIstartup delay\fP
+seconds before concluding that \fIxwaves\fR can not be reached.  If
+the timeout period is reached before the connection is established,
+\fIsend_xwaves\fP exits with an error message and error status.
+.TP
+.BI \-d " reply delay" "\fR [2000 seconds]"
+When operating in the single command-line mode, \fIsend_xwaves\fP will
+wait up to \fIreply delay\fP seconds for \fIxwaves\fR to process the
+request and return a value.  If a response is not received within this
+time, \fIsend_xwaves\fP exits with an error message and error status.
+.TP
+.BI \-B  "\fR [blocking enabled]"
+This option disables the blocking behavior described above.  When
+\fB-B\fP is specified, \fIsend_xwaves\fP observes the \fIstartup
+delay\fP, but does not wait for any acknowledgement from \fIxwaves\fP
+after a command is sent.
+.TP
+.BI \-x " debug_level" "\fR [0]"
+A positive value specifies
+that debugging output be printed on the standard error output.
+Larger values result in more output.
+The default is 0, for no output.
+.br
+.SH EXAMPLES
+Suppose you had \fIxwaves\fP displaying on host yorba.  You could cause
+it to exit with:
+.nf
+
+	send_xwaves -h "yorba:0.0" quit
+
+.fi
+If \fIxwaves\fR was displaying on the same X server as was the default for
+the process running the \fIsend_xwaves\fR, then the \fB\-h\fR option would not 
+have been necessary.
+.PP
+If \fIxwaves\fP was displaying file foo.sd in ensemble foo, you could
+cause the time interval from 1.5 to 2.5 seconds to be displayed with:
+.nf
+
+	send_xwaves foo bracket file foo.sd start 1.5 end 2.5
+
+.fi
+The \fIxwaves\fP test script located in $ESPS_BASE/bin/test_waves
+contains many examples of the use of \fIsend_xwaves\fP.
+.br
+.SH ESPS PARAMETERS
+.PP
+The ESPS parameter file has no effect on this program.
+.SH ESPS COMMON
+.PP
+This program has no interaction with ESPS common.
+.SH ESPS HEADER
+.PP
+This program does not directly handle ESPS files, so it has no effect on
+ESPS file headers.
+.SH  SEE ALSO
+.PP
+.nf
+\fIOpenXwaves\fP(3\-\s-1ESPS\s+1u), \fISendXwavesNoReply\fP(3\-\s-1ESPS\s+1u),
+\fISendXwavesReply\fP(3\-\s-1ESPS\s+1u), \fICloseXwaves\fP(3\-\s-1ESPS\s+1u), 
+.fi
+.sp
+.SH BUGS
+.PP
+None known.
+.sp
+.SH  AUTHORS
+.PP
+David Talkin and Alan Parker
+

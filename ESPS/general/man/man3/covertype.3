@@ -1,0 +1,46 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc.; All rights reserved
+.\" @(#)covertype.3	1.2 1.2 ESI
+.TH COVERTYPE 3\-ESPSu 30 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+cover_type \- returns data type that can contain any data from two input types
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+
+short
+cover_type(t1, t2)
+short t1, t2;
+.ft
+
+.fi
+.SH DESCRIPTION
+.PP
+For arguments \fIt1\fP and \fIt2\fP with values among the standard ESPS
+FEA data types (DOUBLE, FLOAT, LONG, SHORT, BYTE, DOUBLE_CPLX,
+FLOAT_CPLX, LONG_CPLX, SHORT_CPLX, BYTE_CPLX), \fIcover_type\fP
+returns the data type that "covers" the input types, in the sense that
+all values of the input types can be stored in the output type.  
+.PP
+If either of the input types is complex, the output type is also
+complex; otherwise the output type is non-complex.  The underlying
+output type (the type of real and imaginary parts for complex types;
+the type itself for non-complex types) is the first item in the list
+(DOUBLE, FLOAT, LONG, SHORT, BYTE) that matches the underlying type of
+either \fIt1\fP or \fIt2\fP.
+.PP
+Assertion errors result if either \fIt1\fP or \fIt2\fP is not a 
+valid ESPS type.  
+.SH BUGS
+None known.
+.SH "SEE ALSO"
+\fItype_convert\fP (3\-\s-1ESPS\s+1), FEA (5\-\s-1ESPS\s+1)
+.SH AUTHOR
+Manual page and program by John Shore. 
+
+
+
+
+
+

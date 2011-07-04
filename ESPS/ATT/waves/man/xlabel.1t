@@ -1,0 +1,959 @@
+.\" Copyright (c) 1987-1990 AT&T, Inc.
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1990-1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)xlabel.1t	1.10 10/3/97 ATT/ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.\" This version no longer has tbl constructs.
+.TH XLABEL 1\-ESPS 10/3/97
+.if t .ds - \(em\h'-0.5m'\(em
+.if n .ds - ---
+.if n .ds lq \&"\"
+.if t .ds lq \&``
+.if n .ds rq \&"\"
+.if t .ds rq \&''
+.de qI
+.ie '\\$2'' \&\\*(lq\fI\\$1\fP\\*(rq
+.el \&\\*(lq\fI\\$1\fP \\$2\\*(rq
+..
+.ds wD \fIwaves+ Manual\fP
+.ds wR \fIwaves+ Reference\fP
+.ds wT \fIIntroducing waves+\fP
+.ad l
+.SH "NAME"
+xlabel \-  time-series labeling attachment for xwaves
+.SH "SYNOPSIS"
+.B xlabel
+[
+.BI \-c " host_X_registry"
+] [
+.BI \-n " host_name"
+] [
+.BI \-w " wave_pro"
+]
+.SH "DESCRIPTION"
+.PP
+.I xlabel
+is an
+.I attachment
+for the program
+.IR xwaves (1\-ESPS):
+a program that runs in close cooperation with
+.I xwaves
+and provides additional capabilities.
+.I xlabel
+facilitates interactive labeling of signals displayed in
+.I xwaves
+windows.
+This manual entry briefly describes
+.I xlabel
+but is not intended to be a complete
+.I xlabel
+manual.
+For full details, see the chapter
+.qI xlabel
+in \*(wD
+and the chapters
+.qI xlabel "reference"
+and
+.qI xlabel "quick reference"
+in \*(wR.
+Also see \*(wD and \*(wR for information about
+.I xwaves.
+In \*(wT, a hands-on tutorial introduction to
+.I xwaves,
+there is a demonstration of the use of
+.IR xlabel :
+see the section \*(lqLabeling your signals\*(rq
+in the chapter \*(lqSpectrum estimation, adding labels\*(rq.
+.SS "Introduction"
+.PP
+An attachment is a program that extends the capabilities of
+.I xwaves
+while running as a separate UNIX process.
+Attachments exchange information with
+.I xwaves
+by communicating through the X server,
+using a communication protocol that is compatible with Tcl/Tk.
+.PP
+.I xlabel,
+an
+.I xwaves
+attachment,
+is a general-purpose signal segmentation and labeling program.
+.PP
+.I xlabel
+can be used to view and edit
+multiple  label/segmentation files (up to 32) simultaneously.
+Labels are entered and displayed in a label display window
+that is time aligned with the
+.I xwaves
+window displaying the signal that is being labeled.
+Labels can be selected from a user-configurable menu
+or typed in directly from the keyboard.
+.I xlabel
+is controllable from UNIX scripts via the
+.I xwaves
+command
+.I send.
+.PP
+.I xlabel
+is especially useful
+for comparing and generating multiple segmentations of the same signal
+where the label sequence can not be easily predicted in advance.
+If the label sequence is known in advance,
+.IR xmarks (1\-ESPS)
+may be more useful.
+.SS "Starting xlabel"
+.PP
+You can start
+.I xlabel
+in various ways.
+The commonest way is to click the
+.B xlabel
+button in the
+.B Attach:
+item of the main control panel.
+Another way is to issue the
+.I xwaves
+command
+.I attach.
+The names that appear in the
+.B Attach:
+item are determined by the global variable
+.I attachments,
+which can be specified in the
+.I .wave_pro
+file.
+If
+.I xlabel
+has several distinct names (e.g. via symbolic links),
+each one can be bound to a separate
+.B Attach:
+button and invoked as a separate attachment.
+Thus multiple simultaneous invocations of
+.I xlabel
+are possible.
+.PP
+Once you have started
+.I xlabel,
+a
+.I "control panel"
+appears.
+This panel has four text input fields and two buttons (see
+\*(lqThe control panel\*(rq below or
+\*(lqThe labeler control panel\*(rq in the chapter
+.qI xlabel
+of \*(wD).
+.PP
+A
+.I "label display"
+window appears when a name is entered in the
+.B "Object:"
+field of the panel or an
+.I xwaves
+data display is created or changed.
+The object name should be that of the
+.I xwaves
+display ensemble to be labeled.
+The
+.B "Object:"
+field is usually filled in automatically by
+.I xwaves
+with the current object name.
+.PP
+A
+.I "label file"
+is displayed in the window after the
+.B "Label File:"
+item is filled in or after a
+.I "send make"
+command from
+.I xwaves.
+.PP
+The label display window allows you to add labels to the signals either
+by typing them in or selecting them from a menu.
+.PP
+All functions normally available in
+.I xwaves
+are active in conjunction
+with the labeler.
+.SS "The control panel"
+.PP
+The
+.I xlabel
+control panel contains the following text fields and buttons.
+At least the
+.B "Label File:"
+and
+.B "Object:"
+fields must be filled in to open a label file.
+.TP
+.B "Label File:"
+This field can be used to open an existing label file or a new one
+by entering its name.
+Several label files can be open simultaneously.
+An existing label file must conform to the format described
+in the section \*(lqLabel files\*(rq below;
+also see \*(lqLabel file format\*(rq in the chapter
+.qI xlabel
+of \*(wD. 
+This field can be filled in either by typing or by the
+.I xlabel
+command
+.I make.
+.TP
+.B "Object:"
+This field contains the name of the
+.I xwaves
+display
+.I object
+(\*(lqdisplay ensemble\*(rq)
+to which the label display window is to be attached.
+This field is filled in automatically by
+.I xwaves
+with the name of the current object when
+.I xlabel
+is started after a signal window has been opened
+or when a new signal window is opened after
+.I xlabel
+is started.
+You can change the contents of this field by typing
+or with the
+.I xlabel
+command
+.I make.
+.TP
+.B "Active fields:"
+This text field contains a set of numbers, separated by blanks,
+that indicate the active
+.I "label fields"
+in the label window.
+For an explanation of multiple fields within a label,
+see \*(lqLabel files\*(rq below
+or \*(lqLabel files\*(rq in the chapter
+.qI xlabel
+of \*(wD. 
+.TP
+.B "Label Menu File:"
+This field can be used to change
+the file used to create the menu shown in the label display window.
+By default this is filled in initially
+with the value of the global symbol 
+.I xlabel_menufile.
+See \*(lqLabel menus\*(rq below
+or \*(lqLabel menus\*(rq in the chapter
+.qI xlabel
+of \*(wD for a description of the label menu file.
+.TP
+.B "xlabel manual"
+Clicking on this button with the mouse pops up a searchable text window
+containing material from \*(wD and this manual entry.
+.TP
+.B "QUIT"
+Clicking on this button
+saves all the labels in their corresponding files and stops
+.I xlabel.
+.SS "The label display window"
+.PP
+A label input window contains markers with attached text labels.
+A marker created in a label window
+is also drawn in all the waveform and spectrogram windows
+of the object with which the window is associated.
+The label window tries to stay close to the
+.I xwaves
+window to which it is attached,
+which is the most recently created window in the object
+unless the window was created with an
+.I xlabel
+.I make
+command specifying a different signal.
+The label window is automatically resized, rescaled, and scrolled
+to maintain alignment with the window to which it is attached.
+When you move the mouse in the label window,
+the cursors in all
+.I xwaves
+windows of the same object
+move so as to indicate the same time as the cursor in the label window.
+.PP
+When several label files are open for the same object
+(see
+.B "Label file:"
+above)
+the label window is split into subwindows by horizontal lines.
+When the mouse pointer enters a subwindow,
+the name of the corresponding label file
+is displayed at the bottom of the window.
+.PP
+Clicking the right mouse button in the label display window
+pops up a menu that lets you select predefined labels
+and certain other operations
+(see \*(lqLabel menus\*(rq below or \*(lqLabel menus\*(rq in the chapter
+.qI xlabel
+of \*(wD).
+When the mouse pointer is in the window,
+text typed on the keyboard is entered in the window
+(see \*(lqEntering labels\*(rq below
+or \*(lqEntering labels\*(rq in the chapter
+.qI xlabel
+of \*(wD).
+.SS "Entering labels"
+.PP
+.I xlabel
+can be operated in either
+.I INSERT,
+.I MOVE,
+or
+.I REPLACE
+mode.
+The current mode is shown near the bottom of the label window.
+The mode can be changed by selecting the
+(optional) corresponding item from the label menu.
+.PP
+In
+.I INSERT
+mode you can place labels by moving the mouse in the label window
+until the cursor is at the appropriate time location,
+then depressing the right button to show the label menu.
+The selected item is applied at the
+cursor location when you release the right button.
+You can perform the same operations by selecting
+.B "xlabel"
+from the menu in an
+.I xwaves
+data window, but response is slower,
+and two right button clicks are needed.
+.PP
+If very accurate label placement is required, use the
+.B "Button Modes"
+menu item in
+.I xwaves
+to select
+.B "blow up; function"
+as the function of the middle mouse button.
+If you then move the mouse to approximately the right
+location in a waveform window and press the middle button,
+the scale in the window is temporarily expanded
+so that you can position the cursor accurately
+with the middle button held down;
+the menu comes up when the button is released.
+See \*(lqInsert mode\*(rq under \*(lqEntering labels\*(rq in the chapter
+.qI xlabel
+of \*(wD for an explanation of how this behavior is obtained.
+.PP
+.I MOVE
+mode lets you change a label location
+without separately deleting and reinserting it.
+This mode operates identically to
+.I INSERT
+except for the function of the middle button.
+In
+.I MOVE
+mode, you can move the label nearest the cursor
+by pressing and holding the middle mouse button,
+moving the cursor to the desired location,
+and releasing the button.
+.PP
+.I REPLACE
+mode causes the label closest to the current cursor
+position to be changed to the item selected from the label menu.
+This permits rapid correction of labels without repositioning the mark.
+By default, the first field of a multi-field label is changed.
+To change a different field, enter its number,
+immediately preceded by an asterisk, in the
+.B "Active fields:"
+item.
+This \*(lqstarred\*(rq field specification is
+.I "in addition"
+to any other field display specifications
+(see
+.B "Active fields:"
+under \*(lqThe control panel\*(rq above).
+.PP
+Characters typed from the keyboard are entered into the specified
+field of the closest label, when in the
+.I REPLACE
+mode.
+In all cases, if the specified field does not exist for a given label,
+it is created.
+.PP
+There are keyboard shortcuts to get into
+.I MOVE
+and
+.I REPLACE
+modes without explicitly changing mode.
+If
+.I SHIFT
+is depressed, 
+.I xlabel
+switches into the
+.I MOVE
+mode for
+.I "middle button operations"
+as long as
+.I SHIFT
+is held.
+While
+.I SHIFT
+is depressed,
+.I REPLACE
+mode is in effect for
+.I "label menu selections."
+The previous mode is reinstated after the
+.I SHIFT
+key is released.
+See \*(lqThe
+.I SHIFT
+key\*(rq
+under \*(lqAlternative modes of editing\*(rq in the chapter
+.qI xlabel
+of \*(wD for more details.
+.PP
+In any mode, labels of arbitrary content and length
+can be directly typed in at the
+.I xlabel
+cursor location without pressing
+any mouse buttons.
+An existing label can be edited by placing the
+cursor exactly on its boundary mark and then using the keyboard.
+The
+.I "DELETE"
+key removes characters right to left.
+At any time,
+.I "RETURN"
+causes the label file to be rewritten
+to reflect the current state of the display.
+Multiple, individually displayable label fields can be
+entered by separating them with the separator character
+specified in the label file header
+(see \*(lqLabel files\*(rq below or \*(lqLabel files\*(rq in the chapter
+.qI xlabel
+of \*(wD).
+.PP
+An alternative means of editing is available through
+a text widget that permits editing long lines.
+This editing mode is entered
+by selecting the item to be changed with the left mouse button
+while the
+.I CTRL
+key is depressed, or by selecting the
+.I xlabel
+menu item corresponding to
+.I *EDIT*.
+See \*(lqThe label edit window\*(rq
+under \*(lqAlternative modes of editing\*(rq
+in the chapter
+.qI xlabel
+of \*(wD for details of operation.
+.SS "Label menus"
+.PP
+Labels to be applied and certain control functions can be accessed via
+user-customizable menus.
+Each label file on display can have its own
+menu, which is accessed by a right button press while in the label
+window.
+The
+.I xlabel
+control panel item
+.B "Label Menu File:"
+can be used to specify the path name of a menu.
+(Also see the command
+.I set
+and the symbol
+.I xlabel_menufile
+in the chapter
+.qI xlabel "reference"
+of \*(wR).
+.PP
+See \*(lqLabel menus\*(rq
+in the chapter
+.qI xlabel
+of \*(wD for details of the default filenames and search paths that
+.I xlabel
+uses in finding menu files.
+The default menu
+.I $ESPS_BASE/lib/waves/menus/labelmenu.def
+contains the ASCII labels used in transcribing the DARPA
+.B TIMIT
+acoustic-phonetic continuous-speech database.
+(This menu is also stored as
+.I labelmenu.timit
+in the same directory.)
+Another menu, based on the DARPAbet symbols,
+is available in the file
+.I labelmenu.darpa
+in the same directory.
+.PP
+The format of the label menu file is quite straightforward.
+The first
+line of the file must contain the keyword
+.I "columns"
+or
+.I "rows"
+followed by a space and the decimal number of columns or rows
+which you would like your menu of labels to have.
+The first line can also additionally specify the font
+to be used in the label display by including the keyword
+.I font,
+a space, and the name of the desired font.
+If the font is specified in the menu
+and also in an existing label file (see below),
+the menu specification overrides.
+Any fixed-width font in the list printed by the utility
+.I xlsfonts
+may be specified.
+.PP
+The balance of the menu file
+contains two blank-separated text items per line.
+The left item appears in the menu;
+the right item is for insertion in the label file to be created.
+(See
+.I $ESPS_BASE/lib/waves/menus/labelmenu
+for an example.)
+.PP
+The menu file may optionally include lines
+containing some of the special items below as their
+right members.
+The left members, which appear in the menu,
+can be any strings not containing space characters.
+The special items have the following functions
+when selected from the menu.
+.TP
+.I "*INSERT*"
+selects the insert mode for labeling.
+.TP
+.I "*MOVE*"
+selects the move mode for labeling.
+.TP
+.I "*REPLACE*"
+selects the replace mode for labeling.
+.TP
+.I "*DEL*"
+deletes the closest marker.
+.TP
+.I "*SHELL*"
+takes the left hand entry to be a UNIX command
+(e.g. the name of a shell script).
+It tries to execute the command with three arguments:
+(1) the name of the label file,
+(2) the first field of the label closest to the mouse cursor,
+and (3) the time location of that label.
+A label menu may contain any number of
+.I *SHELL*
+entries.
+.TP
+.I "*UNLOAD*"
+unloads the label file;
+i.e. it saves the current label set in the label file
+and removes the labels from the screen.
+.TP
+.I "*EDIT*"
+pops up an edit window containing the label closest to the cursor.
+This is useful for editing long labels.
+.TP
+.I "*PRINT*"
+prints the contents of the label window.
+.SS "Label files"
+.PP
+Label files are specified using the control panel or an
+.I xlabel
+command
+.I set
+or
+.I make
+(see
+.qI xlabel "commands"
+in the chapter
+.qI xlabel "reference"
+of \*(wR).
+Named label files are retrieved
+by the same search strategy that applies to
+.I xwaves
+output files.
+See \*(lqLabel files\*(rq in the chapter
+.qI xlabel
+of \*(wD for details;
+also see
+.I output_dir
+under \*(lqGlobal symbols\*(rq in the chapter
+.qI xwaves "symbols reference"
+of \*(wR.
+If the named
+label file exists, it is read and displayed;
+otherwise, a new file is created.
+.PP
+A label file is an ordinary ASCII text file with a short header
+followed by a section consisting of one-line records,
+one for each label.
+The two sections are separated by
+a line beginning with a \*(lq#\*(rq sign.
+Only the \*(lq#\*(rq line is mandatory;
+empty headers are permitted.
+.PP
+A label
+.I header
+consists of keyword\-value pairs, which may appear in any order. 
+Either spaces or tabs can be used
+to separate the keywords and their values.
+Here is an example of a label file.
+.LP
+.RS
+.nf
+.if t .ft I
+signal speech
+type 0
+color 121
+comment created using xlabel Wed Aug 20 16:58:09 1997
+font 12x24
+separator &
+nfields 2
+#
+   24.520303  121 now&right
+   25.674485  121 is&wrong
+   26.239576  121 the&right
+   24.953758  121 time&right
+.if t .ft P
+.fi
+.RE
+.PP
+The
+.I "separator"
+is the character that delimits fields within a label string
+(see below).
+By default this is a semicolon,
+but any non-whitespace character can be used.
+.PP
+The
+.I "color"
+is an integer specifying the colormap table entry to use
+when adding labels to the file.
+It does not override the color specifiers in the records,
+but it determines the color of new labels added to the file by
+.I xlabel.
+.PP
+The
+.I "font"
+is the name of the character font used to create the label file.
+If multiple label files are displayed, each can have its own font.
+Although you can choose the fonts for label display windows,
+there is currently no way to change the fonts displayed in label menus.
+.PP
+See \*(lqThe label file header\*(rq
+under \*(lqLabel file format\*(rq in the chapter
+.qI "xlabel"
+of \*(wD for the semantics of the keywords
+.I type,
+.I nfields,
+.I signal,
+and
+.I comment.
+Other header entries may also appear in files written by
+.I xlabel,
+but they are ignored.
+In fact the only values that are actually used by
+.I xlabel
+are the
+.I separator,
+.I color,
+and
+.I font.
+.PP
+After the header lines, if any, and the \*(lq#\*(rq line
+come the
+.I "label-record lines.
+Each label record has three entries, separated by blanks.
+The first is a time tag, in units of seconds.
+The second is an integer that specifies the colormap entry
+to use when plotting the label.
+The third, which comprises the remainder of the line, is the label string.
+.PP
+The label string can have several
+.I fields,
+separated by the field-separator character specified in the header.
+Blank or null fields
+are indicated by adjacent or blank-separated delimiters.
+The fields are numbered consecutively starting at one.
+Which fields
+.I xlabel
+displays
+is determined by the list of numbers in the
+.B "Active fields:"
+item in the
+.I xlabel
+panel.
+.PP
+Label entries need not be in chronological order
+to be read and displayed correctly,
+but if
+.I xlabel
+changes the file,
+the entries of the modified file are reordered chronologically.
+.PP
+If a label file contains only time markers (and no colors or label text),
+.I xlabel
+displays the markers properly but without accompanying text.
+This can be useful to merely indicate positions.
+See \*(lqThe label file body\*(rq under \*(lqLabel files\*(rq in the chapter
+.qI "xlabel"
+of \*(wD for an example.
+.SS "D/A output"
+.PP
+If D/A support is available from
+.I xwaves,
+two D/A playback
+features are supported by
+.I xlabel.
+A left button press while in the label window
+causes the marked segment containing the cursor to be played.
+A middle button press causes the segment delimited by
+the cursor and the label boundary immediately to the left of the cursor
+to be played.
+In both cases the region played is marked in the 
+.I xwaves
+waveform window
+in case you want to perform additional operations on that segment
+(e.g., bracket markers, run an external program on it, etc.).
+.SS "Graphics export"
+.PP
+Like
+.I xwaves
+and the other attachments,
+.I xlabel
+can export graphics
+in PostScript or PCL (HP LaserJet code).
+This can be used to print displays directly on the printer
+or to generate graphics to be imported into a document
+with a suitable text editing program.
+For
+.I xlabel
+the facility is still somewhat limited in that, for example,
+IPA fonts are not yet accommodated.
+For that purpose one of the generally available X window-grab utilities
+may be more useful.
+.PP
+There is an
+.I xwaves
+command,
+.I "print_setup,"
+that invokes a setup window
+with which you can choose output to a file or printer,
+select PostScript or PCL, set output resolution and scaling,
+and control other aspects of the graphics-export environment.
+See the chapter \*(lqPrinting graphics\*(rq in \*(wD for details.
+.PP
+Graphics output can be invoked by selecting the
+.I xlabel
+menu item corresponding to
+.I *PRINT*
+or by a
+.I "print"
+command sent from
+.I xwaves.
+See the chapter
+.qI xlabel "reference"
+of \*(wR.
+.PP
+.I xlabel
+supports the
+.I xwaves
+command
+.I print_ensemble;
+it can cooperate with
+.I xwaves
+to allow the contents of
+.I xlabel
+windows to be included in
+.I xwaves
+multi-window graphics output.
+See \*(lqPrinting graphics\*(rq in \*(wD for details.
+.SS "xlabel symbols"
+.PP
+By means of the
+.B \-w
+option and a temporary file written by
+.I xwaves,
+.I xlabel
+reads the current set of
+.I xwaves
+globals variables on startup.
+Included are a few globals that are relevant specifically to
+.I xlabel.
+See
+.qI xlabel "symbols"
+in \*(wR
+for a list with explanations.
+.SS "xlabel commands"
+.PP
+.I xwaves
+can be controlled by a command file,
+by commands entered through the control panel,
+or by commands from the program
+.IR send_xwaves (1\-ESPS)
+or programs using the
+.IR SendXwaves (3\-ESPS)
+functions in the ESPS library.
+(See the
+program and function manual pages
+and the chapter \*(lqThe
+.I waves+
+command language\*(rq in \*(wD.)
+Commands from these sources can be passed through to
+.I xlabel
+via the
+.I xwaves
+command
+.I "send"
+(See \*(lqGlobal
+.I xwaves
+Commands\*(rq in \*(wD.)
+The syntax of the commands as received by
+.I xlabel
+is:
+.LP
+.RS
+.nf
+.if t .ft I
+receiver command keyword value keyword value ...
+.if t .ft P
+.fi
+.RE
+.LP
+(the same as for
+.I xwaves
+commands).
+The first item,
+.I receiver,
+is either the attachment name \*(lqxlabel\*(rq
+or the name of a display ensemble.
+The second item,
+.I command,
+is the actual command name.
+There may be any number, including 0, of keyword\-value pairs.
+See the chapter
+.qI xlabel "reference"
+in \*(wR
+for discussions of the individual commands.
+.PP
+There are two illustrations of the control of
+.I xlabel
+via
+.I xwaves
+commands under \*(lqExamples with the command language\*(rq in the chapter
+.qI "xlabel"
+of \*(wD.
+One is a C-shell script that attaches
+.I xlabel
+to
+.I xwaves
+and then loops through a list of data files, displaying each file,
+loading two related label files, pausing to let the user interact with
+.I xlabel,
+and finally removing the displays before going on to the next data file.
+The other example shows how to use the
+.I xwaves
+commands
+.I add_op
+and
+.I key_map
+to allow fast invocation of an
+.I xlabel
+operation by a single keystroke.
+.SH "OPTIONS"
+.PP
+.I xlabel
+is usually started as a subordinate program by
+.I xwaves.
+In this case, you need not be concerned with the
+command-line options presented below, and you may skip this section.
+However, it is also possible to run
+.I xlabel
+(and the other attachments) as sibling UNIX processes,
+in which case it may be necessary
+to specify one or more of the following options.
+.TP
+.BI \-c " host_X_registry"
+This is the name that the host program is registered under
+for X server-based communications.
+This option is intended to be supplied by
+.I xwaves
+when it runs
+.I xlabel.
+.TP
+.BI \-n " host_name"
+This is the name of the program object with which
+.I xlabel
+will be communicating.
+When the host program is
+.I xwaves,
+this name is always the default value, \*(lqwaves\*(rq.
+.TP
+.BI \-w " wave_pro"
+Specifies the startup profile to read.
+This option is always used
+when
+.I xlabel
+is invoked by
+.I xwaves,
+in which case the specified profile
+is a temporary file written by
+.I xwaves
+and containing the current state of the
+.I xwaves
+globals.
+If
+.B \-w
+is not used (only possible if
+.I xlabel
+is run from the shell),
+.I xlabel
+attempts to read the file
+.I .wave_pro.
+In both cases the search path
+.I $HOME:$ESPS_BASE/lib/waves
+is used.
+The search path used can be overridden
+by setting the UNIX environment variable WAVES_PROFILE_PATH before starting
+.I xwaves.
+.SH "SEE ALSO"
+\*(wD,
+.br
+\*(wR,
+.br
+\*(wT,
+.br
+.IR cnvlab (1\-ESPS),
+.IR formant (1\-ESPS),
+.IR select (1\-ESPS),
+.br
+.IR xchart (1\-ESPS),
+.IR xcmap (1\-ESPS),
+.IR xmarks (1\-ESPS),
+.br
+.IR xspectrum (1\-ESPS),
+.IR xwaves (1\-ESPS)
+.SH "BUGS"
+.PP
+Occasionally,
+when the vertical size of the label display window is changed manually,
+.I xlabel
+insists on returning it to its previous size
+or some other inappropriate height.
+Multiple attempts will usually yield the desired effect.
+This will eventually be fixed.
+.PP
+The label file does
+.I not
+automatically adjust to time changes
+caused by waveform segment deletion or insertion.
+It is recommended that no waveform editing be performed
+on files being labeled.
+.SH "AUTHOR"
+Program by David Talkin, AT&T Bell Laboratories.
+Later enhancements by
+David Burton, Rod Johnson, Alan Parker, John Shore, David Talkin,
+and others at Entropic.
+This manual page largely extracted by Rod Johnson
+from \*(wD and earlier manual pages
+derived from Talkin's original documentation
+with revisions and additions by
+David Burton, Joop Jansen, Rod Johnson, John Shore, David Talkin,
+and others at Entropic.

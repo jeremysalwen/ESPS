@@ -1,0 +1,129 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)genburg.3	1.3 06 May 1997 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  GENBURG 3\-ESPSsp 06 May 1997
+.SH NAME
+
+.nf
+genburg \- generalized Burg (structured covariance) estimation of covariance matrix
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+ 
+#include <esps/stdio.h>
+#include <esps/window.h>
+#include <esps/ana_methods.h>
+
+extern int debug_level;
+
+genburg(sigma_in, isigma_in, qd, pdist, sigma_out, isigma_out, c_flag, 
+	monitor_flag, ret_flag, R_out, iR_out, init_flg, anderson)
+
+double *sigma_in;*
+double *isigma_in;*
+int    *qd;*
+double *pdist;
+doulbe *sigma_out;*
+doulbe *isigma_out;*
+double *R_out;*
+double *iR_out;*
+int    c_flag;*
+int    monitor_flag;*
+int    *ret_flag;*
+int    init_flg;*
+int    anderson;
+
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+\fIgenbug\fP uses the algorithms discussed in [1] and [2] to find the
+best estimate for the covariance matrix of single channel real or
+complex problem.  The input is a Hermitian sample covariance matrix,
+and the output is a Hermition (block) Toeplitz matrix.  All matrics
+are stored in row order.  Input sample covariance matrices can be
+obtained from \fIestimate_covar\fP (3\-\s-1ESPS\s+1sp).
+.PP
+\fIsigma_in\fP is the address of the real part of the input sample
+covariance matrix, and \fIisigma_in\fP is the address of the imaginary
+part. \fIqd\fP is the size (1 dimension) of the input (and output)
+matrices.
+.PP
+\fIsigma_out\fP is the address of the real part of the output output
+matrix, and \fIisigma_out\fP is the address of the imaginary part. If
+\fIinit_flg\fP == 1 (see below), \fIsigma_out\fP and \fIisigma_out\fP
+are also as inputs to pass an initial guess to \fIgenburg\fP.
+\fIR_out\fP and \fIiR_out\fP are the final solution vectors used to
+construct \fIsimga_out\fP and \fIisigma_out\fP.  
+The finnal distance or measure is returned via \fIpdist\fP. 
+.PP
+If \fIc_flag\fP != 0, the inputs are complex.  If \fImonitor_flag\fP
+!= 0, intermediate results are printed on stdout.  
+.PP
+A function return status is returned in \fIret_flag\fP, with 
+values as follows (some of these refer to internals of the algorithm): 
+.nf
+
+	0 = no decrease in measure after 4 attempts
+	1 = Rinit or Rnew is singular or Rinit is negative definite
+	2 = sigma_in or Rinit is non-pos-definite 
+	3 = Aij singular 
+	4 = unsuccessful interpolation, or non positive definite Rnew
+	5 = successful measure ratio convergence test 
+	6 = insufficient storage allocation
+
+.fi
+The parameter \fIinit_flag\fP has the following meanings: 
+.nf
+
+	0 = use identity matrix as initial guess 
+	1 = use \fIsigma_out\fP and possibly \fIisigma_out\fP as initial guess
+	2 = use the first projection of \fIsigma_in\fP as initial guess
+	3 = use average + first projection as initial guess
+
+
+.fi
+IF \fIanderson\fP != 0, the Anderson version of the algorithm is used.
+Otherwise, the Burg version is used.  
+.SH EXAMPLES
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+
+.SH FUTURE CHANGES
+.PP
+.SH BUGS
+.PP
+This function is more general though not as reliable as the function
+\fIstruct_cov\fP(3\-\s-1ESPS\s+1sp).
+.SH REFERENCES
+.TP
+[1]
+J.P.Burg, D.G.Luenberger, D.L.Wenger, "Estimation of Structured
+Covariance Matrices" \fIProceedings of the IEEE\fP, Vol. 70, No. 9
+September 1982
+.TP
+[2] T.W. Anderson, "Estimation for Autoregressive Moving Average
+Models in the Timne and Frequency Domain," \fIThe Annals of
+Statistics\fP, 1977, Vol. 5, No. 5, 842-865.
+.TP
+[3]
+J.E. Shore, "On a Relation Between Maximum Liklihood Classification 
+and Minimum Relative-Entropy Classification, \fIIEEE Transactions on 
+Information Theory\fP, Vol. IT-30, No. 6, Nov. 1984, pp. 851-854.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIestimate_covar\fP(3\-\s-1ESPS\s+1), \fIget_auto\fP(3\-\s-1ESPS\s+1), 
+\fIstrcov_auto\fP(3\-\s-1ESPS\s+1), \fIstruct_cov\fP(3\-\s-1ESPS\s+1),
+\fIget_vburg\fP(3\-\s-1ESPS\s+1), \fIrefcof\fP(1\-\s-1ESPS\s+1), 
+\fIme_spec\fP(1\-\s-1ESPS\s+1)
+.fi
+.SH AUTHOR
+.PP
+Program by Daniel Wenger, minor revisions and man page by John Shore.  
+
+
+
+

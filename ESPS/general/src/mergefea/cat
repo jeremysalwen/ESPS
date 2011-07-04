@@ -1,0 +1,264 @@
+
+
+
+MERGEFEA(1-ESPS)                            ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     mergefea - merge two FEA files so that output  records  con-
+     tain fields from both
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     mmmmeeeerrrrggggeeeeffffeeeeaaaa [ ----ffff _f_i_e_l_d__n_a_m_e ] . . . [ ----tttt ] [ ----uuuu ] [ ----aaaa ] [  ---- xxxx
+     _d_e_b_u_g__l_e_v_e_l ] [ ----zzzz ] [ ----TTTT _F_E_A__s_u_b_t_y_p_e ] _f_e_a_1 _f_e_a_2 [ _f_e_a_3 ]
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     If _f_e_a_1 and _f_e_a_2 both exist, _m_e_r_g_e_f_e_a merges  their  records
+     in  the sense that the fields in each output record comprise
+     the union of fields in two input records.   The  results  of
+     the  merge  can be written to a third file _f_e_a_3, or _f_e_a_2 can
+     be rewritten to contain the merged results (think of this as
+     merging  _f_e_a_1 into _f_e_a_2).  The ----ffff option can be used to res-
+     trict which fields are taken from the _f_e_a_1 records. If  _f_e_a_2
+     doesn't  exist, it is created and contains only the selected
+     fields from _f_e_a_1 (thus,  _m_e_r_g_e_f_e_a  can  be  used  to  filter
+     fields out of FEA files).
+
+     If both input files exist, then each record  of  the  output
+     contains  all  of  the  fields  from  the corresponding _f_e_a_2
+     record and the selected fields from the  corresponding  _f_e_a_1
+     record  (all of them unless the ----ffff option is used).  None of
+     the selected fields from _f_e_a_1 may have the same  name  as  a
+     field  in   _f_e_a_2.  The size of the output file is determined
+     by the size of _f_e_a_2 - they have the same number of  records.
+     If  _f_e_a_1  has  more  records  than _f_e_a_2, then the additional
+     records are ignored.  If _f_e_a_1 has fewer records  than  _f_e_a_2,
+     then  the field values in the last record of _f_e_a_1 are dupli-
+     cated for merging with the additional _f_e_a_2 records.  If _f_e_a_3
+     is  supplied,  then  the  output is written to _f_e_a_3, and the
+     original contents of _f_e_a_2 are left unchanged.   If  _f_e_a_3  is
+     not  supplied,  then the contents of the output file replace
+     the previous contents of _f_e_a_2.  That is,  _m_e_r_g_e_f_e_a  rewrites
+     _f_e_a_2 with additional fields in each record.
+
+     If _f_e_a_2  does not exist, it is created as  an  output  file,
+     and _f_e_a_3 must not be supplied.
+
+     Generic header items are copied from input  to  output.   If
+     _f_e_a_1  and  _f_e_a_2 contain header items with the same name, the
+     value in _f_e_a_2 prevails.  This behavior  can  be  changed  by
+     using  the ----uuuu option, which causes all generics from _f_e_a_1 to
+     be copied; unique new names are generated if generics by the
+     same name already exist in _f_e_a_2).
+
+     If _f_e_a_1 is "-", standard input is used.  If _f_e_a_3 is not sup-
+     plied  and  _f_e_a_2  is  " -", standard output is used (in this
+     case, _m_e_r_g_e_f_e_a is just a field filter).  If _f_e_a_3 is supplied
+     and  _f_e_a_2  is "-", standard input is used, but _f_e_a_1 and _f_e_a_2
+     may not both be standard input.  If _f_e_a_3 is " - ",  standard
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+MERGEFEA(1-ESPS)                            ENTROPIC RESEARCH LAB
+
+
+
+     output is used.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following options are supported:
+
+     ----ffff _f_i_e_l_d__n_a_m_e
+          Specifies a field name to be taken from _f_e_a_1.  If no ----ffff
+          option is given, all fields are taken.  This option may
+          be given more than once.
+
+     ----tttt    This option makes the output file a  tagged  file  and
+          causes  record _t_a_g values to be copied from _f_e_a_1 to the
+          output file, along with the specified  feature  fields.
+          If the option is not specified, then the output file is
+          tagged if and only if _f_e_a_2 exists and  is  tagged,  and
+          the _t_a_g values, if any, are copied from _f_e_a_2.
+
+     ----uuuu    If generic header items in _f_e_a_1 have names that  exist
+          already  as  generics in _f_e_a_2, this option causes those
+          items in _f_e_a_1 to be copied with unique new  names  gen-
+          erated by the use of _c_o_p_y__g_e_n_h_d__u_n_i_q (3-ESPS).  Numeri-
+          cal digits are appended  to  the  generic  header  item
+          names in order to render them unique (see _u_n_i_q__n_a_m_e (3-
+          ESPS)).
+
+     ----aaaa    If the selected fields in _f_e_a_1 and all fields in  _f_e_a_2
+          have  non-conflicting  names, and if both _f_e_a_1 and _f_e_a_2
+          have  the  generic   header   items   _r_e_c_o_r_d__f_r_e_q   and
+          _s_t_a_r_t__t_i_m_e  defined,  then  this  option can be used to
+          merge the files in a time-aligned manner.   The  output
+          file  _f_e_a_3 has the same record frequency _r_e_c_o_r_d__f_r_e_q as
+          _f_e_a_2, and it consists of records that correspond to the
+          time intersection of the two input files.  In case that
+          input record frequencies differ, a  zero-th  order  (or
+          nearest-neighbor)  interpolation scheme is performed on
+          records of _f_e_a_1.
+
+     ----xxxx _d_e_b_u_g__l_e_v_e_l [0]
+          If _d_e_b_u_g__l_e_v_e_l is positive, _m_e_r_g_e_f_e_a outputs  debugging
+          messages.   The  messages  proliferate  as  _d_e_b_u_g__l_e_v_e_l
+          increases.  For level 0, there is no output.
+
+     ----zzzz    Suppress the  warning  that  is  normally  printed  if
+          _r_e_c_o_r_d__f_r_e_q is defined with different values in the two
+          input files.
+
+     ----TTTT _F_E_A__s_u_b_t_y_p_e [(same as _f_e_a_2)]
+          If this option is given, the feature file subtype  code
+          in  the  output  file is filled in with the given code.
+          The symbolic name of the subtype code  must  be  given,
+          for  example  FEA_ANA  or FEA_SD (or NONE).  For a com-
+          plete list of defined subtype codes, see FEA(5 - ESPS).
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+
+
+
+
+MERGEFEA(1-ESPS)                            ENTROPIC RESEARCH LAB
+
+
+
+          Use of this option doesn't ensure that the file has the
+          correct format for the specified subtype.   You  should
+          use  this  option  only when you knows that a file with
+          the correct fields and generic  header  items  will  be
+          produced.   See  the  section  5  manual  pages for the
+          defined feature file types.
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     No parameter file is used by _m_e_r_g_e_f_e_a.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     ESPS Common is not read or written by _m_e_r_g_e_f_e_a.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+     The generic header items from both input files are added  as
+     generic  header items to the output file.  If generic header
+     items with the same name exist  in  both  input  files,  the
+     value from _f_e_a_2 is used (but see the ----uuuu option).
+
+     The input files _f_e_a_1 and _f_e_a_2, if both exist, are  added  as
+     source  files  in  the output header; otherwise only _f_e_a_1 is
+     added.  The generic header items _s_t_a_r_t__t_i_m_e and  _r_e_c_o_r_d__f_r_e_q
+     are handled like any others.  In addition, if _r_e_c_o_r_d__f_r_e_q is
+     defined with different values in the two  input  files,  the
+     program  prints a warning.  The  ----zzzz option will suppress the
+     warning.
+
+     If _f_e_a_2 exists, its FEA subtype code  is  preserved  in  the
+     output  unless  a  different choice is specified with the ----TTTT
+     option.
+
+FFFFUUUUTTTTUUUURRRREEEE CCCCHHHHAAAANNNNGGGGEEEESSSS
+     Add range processing options.
+
+     Add parameter file processing.
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     _u_n_i_q__n_a_m_e (3-ESPS), _c_o_p_y__g_e_n_h_d (3-ESPS),
+     _c_o_p_y__g_e_n_h_d__u_n_i_q (3-ESPS), _c_o_p_y_s_p_s (1-ESPS),
+     _f_e_a__d_e_r_i_v (1-ESPS), _a_d_d_f_e_a (1-ESPS),
+     _a_d_d_g_e_n (1-ESPS) _a_d_d_f_e_a_h_d (1-ESPS), _s_e_l_e_c_t (1-ESPS),
+     _f_e_a_f_u_n_c (1-ESPS), _f_e_a__e_d_i_t (1-ESPS)
+
+WWWWAAAARRRRNNNNIIIINNNNGGGGSSSS AAAANNNNDDDD DDDDIIIIAAAAGGGGNNNNOOOOSSSSTTTTIIIICCCCSSSS
+     _M_e_r_g_e_f_e_a will exit with an error message if _f_e_a_1,  and  _f_e_a_2
+     if  it  exists,  are not ESPS FEA files; if "-" is given for
+     both _f_e_a_1 and _f_e_a_2 and _f_e_a_3  is  given;  if  _r_e_c_o_r_d__f_r_e_q  is
+     defined  with  different  values  in the two input files; if
+     fields named by a ----ffff option do not  exist  in  _f_e_a_1;  or  if
+     fields  to  be  merged  in  from _f_e_a_1 already exist in _f_e_a_2.
+     Note that field names can be changed by using  _f_e_a_f_u_n_c  (1 -
+     ESPS)  or by running _f_e_a__e_d_i_t (1-ESPS) and editing the self-
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+
+
+
+
+
+MERGEFEA(1-ESPS)                            ENTROPIC RESEARCH LAB
+
+
+
+     description.
+
+BBBBUUUUGGGGSSSS
+     None known.
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Manual page by John Shore.  Program  by  Alan  Parker,  with
+     revisions by John Shore.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 4G4        4
+
+
+

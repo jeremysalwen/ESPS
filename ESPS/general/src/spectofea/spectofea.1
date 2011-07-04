@@ -1,0 +1,103 @@
+.\" Copyright (c) 1988 Entropic Speech, Inc. All rights reserved.
+.\" @(#)spectofea.1	1.8	08 Apr 1997	ESI
+.TH SPECTOFEA 1\-ESPS 08 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+spectofea \- convert SPEC file to FEA_SPEC file
+.SH "SYNOPSIS"
+.B spectofea
+[
+.BR \-f " {" BYTE | FLOAT }
+] [
+.BI \-x " debug_level"
+]
+.I "input.spec output.fea"
+.SH "DESCRIPTION"
+.PP
+.I Spectofea
+accepts an ESPS SPEC file
+.I input.spec
+and writes an ESPS FEA_SPEC file
+.I output.fea
+containing the same number of records with the same information in each record.
+If
+.I input.spec
+is "\-", standard input is used for the input file.
+If
+.I output.fea
+is "\-", standard output is used for the output file.
+.SH "OPTIONS"
+.PP
+The following option is supported:
+.TP
+.BI \-f " re_spec_val format"
+If the input SPEC file is of type ST_DB, then this argument determines
+whether the field \fIre_spec_val\fR in the output FEA file is in BYTE format
+or FLOAT format.  See \fIFEA_SPEC\fR(5\-ESPS) for details.   This option
+is ignored if the SPEC file is not of type ST_DB.   The default output
+format for DB type files is BYTE.
+.TP 
+.BI \-x " debug_level"
+Positive values of
+.I debug_level
+cause debugging information to be printed.
+The default value is 0, which suppresses the messages.
+.SH "ESPS PARAMETERS"
+.PP
+No parameter file is read.
+.SH "ESPS COMMON"
+.PP
+The ESPS common file is not accessed.
+.SH ESPS HEADERS
+The output header is a new FEA file header, with appropriate items
+copied from the input header.
+Generic header items
+.I freq_format,
+.I spec_type,
+.I contin,
+.I num_freqs,
+and
+.I frame_meth
+and, if necessary,
+.I freqs,
+.I sf,
+and
+.I frmlen
+are created in the output header
+and filled with the information from the like-named elements of the
+type-specific part of the input header.
+(See FEA_SPEC(5-ESPS) for details on
+when these last three items are required.)
+The generic header items of the input header are copied to the output
+header after being renamed, if necessary, to avoid name conflicts.
+As usual, the command line is added as a comment, and the header of
+.I input.spec
+is added as a source file to
+.I output.fea.
+.SH "FUTURE CHANGES"
+.PP
+None planned.
+.SH "SEE ALSO"
+.na
+.IR featospec (1-ESPSu),
+.IR SPEC (5-ESPS),
+.IR FEA (5-ESPS),
+.br
+.IR FEA_SPEC (5-ESPS),
+.SH "WARNINGS AND DIAGNOSTICS"
+.ad
+.PP
+.I Spectofea
+will exit with an error message
+if the command line contains unrecognized options or too many or too
+few file names.
+It will print a warning
+if a generic header item in the input file has to be renamed to avoid
+a name conflict in the output file.
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Manual page and program by Rodney Johnson. 
+

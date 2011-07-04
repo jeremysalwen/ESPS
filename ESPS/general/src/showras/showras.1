@@ -1,0 +1,56 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc.  All rights reserved.
+.\" @(#)showras.1	1.1	9/27/89	ESI
+.TH SHOWRAS 1\-ESPS 9/27/89
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+showras \- display Sun rasterfile image
+.SH "SYNOPSIS"
+.B showras
+[
+.BI \-x " debug_level"
+]
+.I input.ras
+.SH "DESCRIPTION"
+.PP
+This program runs only on Sun systems under SunView.
+The input file contains an image in Sun rasterfile format.
+(Files in this format can be made with image(1-ESPS).)
+The program reads the file, creates a window,
+and displays the image in the window.
+If the file name is given as ``\-'', standard input is read.
+.SH "OPTIONS"
+.PP
+The following option is supported.  A value in brackets is a default.
+.TP
+.BI \-x " debug_level" "\fR [0]"
+Print diagnostic messages as program runs (for debugging purposes
+only).
+The default level of zero suppresses all debugging messages.
+.SH "ESPS PARAMETERS"
+.PP
+No ESPS parameter file is read.
+.SH "ESPS COMMON"
+.PP
+The ESPS common file is not accessed.
+.SH "SEE ALSO"
+.PP
+image(1-ESPS)
+.SH "DIAGNOSTICS"
+.PP
+.nf
+showras: unknown option \-\fIletter\fP
+Usage: showras [\-x debug_level] input.ras
+showras: no file name.
+showras: too many file names.
+showras: can't open input file
+showras: \fIm\fP-plane image incompatible with \fIn\fP-plane screen.
+.fi
+.SH "BUGS"
+.PP
+None known.
+.SH WARNINGS
+.PP
+.SH "FUTURE CHANGES"
+.PP
+.SH "AUTHOR"
+Rodney Johnson, ESI

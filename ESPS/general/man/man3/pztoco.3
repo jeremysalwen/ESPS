@@ -1,0 +1,88 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)pztoco.3	1.4 02 Jul 1991 ESI/ERL
+.TH pz_to_co 3\-ESPSsp 7/1/91
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.SH NAME
+.nf
+pz_to_co \- convert pole or zero locations to filter coefficients.
+pz_to_co_d \- convert pole or zero locations to filter coefficients.
+
+.SH SYNOPSIS
+.ft B
+.br
+int pz_to_co (nroots, real, imag, pnco, co);
+.br
+int nroots;
+.br
+double *real, *imag;
+.br
+float *co;
+.br
+short *pnco;
+.sp
+int pz_to_co_d (nroots, real, imag, pnco, co);
+.br
+int nroots;
+.br
+double *real, *imag;
+.br
+double *co;
+.br
+short *pnco;
+.ft
+.sp
+.SH DESCRIPTION
+.I pz_to_co 
+and
+.I pz_to_co_d
+take in
+.I nroots
+root locations and returns the
+coefficients for the expanded polynomial.  The root locations
+are specified as complex numbers in rectangular form and are
+passed to the function in the 
+.I real
+and
+.I imag
+arrays.
+The resulting polynomial coefficients (starting with order zero)
+are returned in the
+.I co
+array, and the number of them is returned in the variable
+pointed to by
+.I pnco.
+If a root does not lie on the real axis (i.e. its imaginary part is nonzero)
+then its complex conjugate is automatically included, and should not be
+specified.  Those roots lying on the
+real axis are left as is.
+.SH EXAMPLE
+.nf
+
+int nzero;
+double *real, *imag;
+	.
+	.
+	.
+
+/* This converts a set of zero locations to a filter record. */
+/* Assume nzero and the real and imag arrays have been initialized. */
+
+oh->hd.filt->max_num = nzero = NUM_COEFF;
+oh->hd.filt->max_den = 0;
+frec = allo_filt_rec (oh);
+
+pz_to_co (nzero, real, imag, &(frec->filt_func.nsiz), frec->filt_func.zeros);
+ 
+/* Write the filter record to the output file. */
+write_header (oh, fpout);
+.fi
+.SH DIAGNOSTICS
+None.
+.SH BUGS
+None known.
+.SH SEE ALSO
+zero_pole (1-ESPS)
+.SH AUTHOR
+Brian Sublett.  pz_to_co_d added by Bill Byrne.
+

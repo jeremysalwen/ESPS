@@ -1,0 +1,198 @@
+
+
+
+MBROT(1-ESPS)                                                1997
+
+
+
+NNNNAAAAMMMMEEEE
+     mbrot - compute elements of Mandelbrot set
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     mmmmbbbbrrrrooootttt [ ----bbbb _b_o_t_t_o_m__e_d_g_e ] [ ----tttt _t_o_p__e_d_g_e ] [ ----llll _l_e_f_t__e_d_g_e ] [
+     ----rrrr _r_i_g_h_t__e_d_g_e ] [ ----cccc _c_o_n_f_i_d_e_n_c_e ] [ ----gggg _g_r_i_d__p_t_s ] [ ----CCCC ] [ ----
+     xxxx ] _o_u_t_p_u_t__f_i_l_e
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     _M_b_r_o_t computes points that are in the Mandelbrot set.   This
+     is  the set of all points _Z in the complex plane such that C
+     = C * C + _Z stays bounded as it is recursively repeated.
+
+     _M_b_r_o_t produces an ESPS feature file, FEA(5-ESPS), that  con-
+     tains  two  fields:  _X__p_o_s  (  type  DOUBLE) and _m_b_r_o_t (type
+     SHORT).  _X__p_o_s is a scalar variable and is the x-axis  coor-
+     dinate  of  the  vertical  data  vector  stored in the _m_b_r_o_t
+     field.  _m_b_r_o_t is a vector of size _g_r_i_d__p_t_s + 1 (see ----gggg); the
+     zeroth  element  of the _m_b_r_o_t field has y-axis coordinate of
+     _b_o_t_t_o_m__e_d_g_e (see ----bbbb).  If " - "  is  supplied  in  place  of
+     _o_u_t_p_u_t__f_i_l_e, then standard output is used.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following options are supported:
+
+     ----bbbb _b_o_t_t_o_m__e_d_g_e [-1.]
+          Specifies the lower edge of the region over  which  the
+          Mandelbrot set is computed.
+
+     ----tttt _t_o_p__e_d_g_e [1.]
+          Specifes the upper edge of the region  over  which  the
+          Mandelbrot set is computed.
+
+     ----llll _l_e_f_t__e_d_g_e [-1.9]
+          Specifies the left edge of the region  over  which  the
+          Mandelbrot set is computed.
+
+     ----rrrr _r_i_g_h_t__e_d_g_e [.6]
+          Specifies the right edge of the region over  which  the
+          Mandelbrot set is computed.
+
+     ----cccc _c_o_n_f_i_d_e_n_c_e [342]
+          Specifies the  number  of  iterations  used  to  decide
+          whether  the point is in the set.  That is, if after ----cccc
+          specified iterations of  the  recursion  the  point  is
+          still  bounded (real and imaginary parts less than 2 in
+          magnitude), then the point is considered to be  in  the
+          set.  The larger the _c_o_n_f_i_d_e_n_c_e factor, the sharper the
+          set boundaries become (and often the  more  interesting
+          the image looks).
+
+     ----gggg _g_r_i_d__p_t_s [100]
+
+
+
+Apr      Copyright Entropic Research Laboratory, Inc. 03        1
+
+
+
+
+
+
+MBROT(1-ESPS)                                                1997
+
+
+
+          Specifies the number of grid cells to use  in  dividing
+          the region of interest. Often, the larger the number of
+          _g_r_i_d__p_t_s, the more interesting the image looks.
+
+     ----CCCC    By default, _m_b_r_o_t returns 0 if the point is not in the
+          set  and 1 if the point is in the set.  By specifying ----
+          CCCC, each point is assigned a value between -64  and  50.
+          Points  in the set get 50.  Proportionally lower values
+          are given to all other points based on how close  there
+          are to being in the set. For example, if the _c_o_n_f_i_d_e_n_c_e
+          factor is 114 and the point falls out of the set  after
+          90  iterations, the value given this point is 26 ( = 90
+          - 64 ). To make full use of the _x_w_a_v_e_s colormaps,  make
+          sure that the ----cccc specified value is an integer multiple
+          of 114.
+
+     ----xxxx    If specified, debug information is printed to stderr.
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     The parameter file is not processed.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     ESPS Common is not read by _m_b_r_o_t.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+     In addition to the usual header values  for  FEA  (5 - ESPS)
+     files,  _m_b_r_o_t  writes  the  following  values:  _n_u_m__g_r_i_d__p_t_s
+     (LONG),   _n_u_m__i_t_e_r_a_t_i_o_n_s   (LONG),    _l_e_f_t__e_d_g_e    (DOUBLE),
+     _r_i_g_h_t__e_d_g_e  (DOUBLE),  _b_o_t_t_o_m__e_d_g_e  (DOUBLE), _t_o_p__e_d_g_e (DOU-
+     BLE), _X__i_n_c (DOUBLE), _Y__i_n_c (DOUBLE),
+
+FFFFUUUUTTTTUUUURRRREEEE CCCCHHHHAAAANNNNGGGGEEEESSSS
+     Parameter file processing will be added.
+
+EEEEXXXXAAAAMMMMPPPPLLLLEEEESSSS
+     By default, _m_b_r_o_t (1-ESPS) produces the classical fuzzy bug.
+     Try the following:
+
+          %mbrot - |  image -embrot -S500:400 -
+
+
+     For a more interesting display, try
+
+          %mbrot -C -l-1.254 -r-1.2536 -b.0234 -t.0238  - g800  -
+          c798 - |
+          tofspec -fmbrot - mbrot.fspec&
+
+     This will take a while to complete, but when it is done  use
+     _x_w_a_v_e_s to view the FEA_SPEC (5-ESPS) file.
+
+     In general, the more interesting images  are  found  on  the
+     edges of the set.
+
+
+
+Apr      Copyright Entropic Research Laboratory, Inc. 03        2
+
+
+
+
+
+
+MBROT(1-ESPS)                                                1997
+
+
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     _i_m_a_g_e (1-ESPS), _x_w_a_v_e_s (1-ESPS), _t_o_f_s_p_e_c (1-ESPS)
+
+WWWWAAAARRRRNNNNIIIINNNNGGGGSSSS AAAANNNNDDDD DDDDIIIIAAAAGGGGNNNNOOOOSSSSTTTTIIIICCCCSSSS
+BBBBUUUUGGGGSSSS
+     None known.
+
+RRRREEEEFFFFEEEERRRREEEENNNNCCCCEEEESSSS
+     James Gleick, _C_H_A_O_S,  New York, PENGUIN BOOKS, 1987
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Program and manual page by David Burton
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Apr      Copyright Entropic Research Laboratory, Inc. 03        3
+
+
+

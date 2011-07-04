@@ -1,0 +1,47 @@
+#! /bin/sh
+# @(#)newsignal	1.2 11/5/91 ERL
+# create and display new test signal
+
+sigfile=$demo_temp/testsig.sd
+fullsig=$demo_temp/testfull.sd
+
+rm -f $sigfile
+rm -f $fullsig
+rm -f $demo_temp/testsig.par
+rm -f $demo_temp/noise.par
+rm -f $demo_temp/testsig.sd
+
+send_xwaves kill 
+
+exprompt -Wp 0 260 -n -P Ptestsig -h testsd $demo_temp/testsig.par 
+
+exprompt -Wp 0 465 -n -P Pnoise $demo_temp/noise.par
+
+echo "Generating signal..."
+
+testsd -P testsig.par $sigfile
+
+echo "Generating noise and adding to signal..."
+
+fields=`fea_element -n $sigfile`
+
+type=`datatype $fields`
+
+points=`hditem -i ndrec $sigfile`
+
+freq=`hditem -i record_freq $sigfile`
+
+testsd -P noise.par -r $freq -t $type -p $points - | addsd $sigfile - $fullsig
+
+echo "Displaying via xwaves+..."
+
+send_xwaves make name testsig file $fullsig loc_x 0 loc_y 78
+
+sleep 1
+
+# force xspectrum to compute a spectrum
+
+send_xwaves send make name testsig file $fullsig time .02
+
+
+

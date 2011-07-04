@@ -1,0 +1,36 @@
+head	1.1;
+access;
+symbols;
+locks
+	stepheni:1.1; strict;
+comment	@ * @;
+
+
+1.1
+date	2006.08.11.17.38.41;	author stepheni;	state Exp;
+branches;
+next	;
+
+
+desc
+@xp_stubs for xwaves
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@int doing_print_graphic = 0;
+
+void init_print_setup_window(){}
+void e_print_graphic(canvas, event, arg){}
+void do_print_ensemble(obj){}
+char *meth_print_setup(o, str){}
+int get_xp_display (){}
+int XpRootWindow(display, arg){}
+int dlsym;
+int  dlclose(){}
+int dlopen(){}
+@

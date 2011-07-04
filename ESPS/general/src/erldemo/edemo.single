@@ -1,0 +1,42 @@
+#! /bin/sh
+# edemo.single 	@(#)edemo.single	1.5 6/6/90
+# main script for single loop demo of waves+ and ESPS 
+# to be run under X Windows 
+# runs demo one time only
+
+# environment setup 
+
+PATH=.:esps/bin:$PATH; export PATH
+ESPS_VERBOSE=0; export ESPS_VERBOSE
+USE_ESPS_COMMON=off; export USE_ESPS_COMMON
+WAVES_MISC=esps/lib/waves; export WAVES_MISC
+DSPDEV="NEW,CODEC,FREQ=3072,PATH=./esps/32bin"; export DSPDEV
+
+log_file=/tmp/erldemo.log
+
+stop_file=/tmp/erldemo.stop
+
+rm -f $log_file
+
+xwaves+ -w esps/lib/waves/.wave_pro single_demo.com >> $log_file 2>&1 
+
+sleep 2
+
+#if we happen to be in a continuous demo (repeated execution of 
+#edemo.single, check here (as well as in edemo.cont) to see if 
+#we should stop; this also enables cutting short a single demo
+
+if test -f $stop_file
+then
+     exit
+else
+     snaps.demo >> $log_file 2>&1 
+fi
+
+
+
+
+
+
+
+

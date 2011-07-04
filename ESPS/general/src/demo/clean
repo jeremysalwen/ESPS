@@ -1,0 +1,40 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of
+# Entropic Research Laboratory, Inc. Any reproduction, distribution,
+# or publication of this work must be authorized in writing by Entropic
+# Research Laboratory, Inc., and must bear the notice:
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc.
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc.
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended
+# publication of this source code.
+#
+# @(#)clean	3.10   11/22/96     ESI/ERL
+#
+# Written by:
+# Checked by:
+# Revised by: David Burton, Gayle Ayers
+#
+# Brief description:  Clean up demo files
+#
+
+mv -f speech12.sd safe
+mv -f speech.sd safe2
+mv -f poet.sd safe3
+mv -f canyon.sd safe4
+mv -f question.sd safe5
+mv -f speech.sgram safe6
+rm -f *.lsf *.rc *.fana  *.vq *.cbk *hist *.chk *.spec *.filt *.synt *.qfana *.qsynt *.sgram sel1 sel2 *.sd input.dst speech.rat
+rm -fr plot plotv
+rm -f *.fspec
+rm -f *BAK
+mv safe speech12.sd
+mv safe2 speech.sd
+mv safe3 poet.sd
+mv safe4 canyon.sd
+mv safe5 question.sd
+mv safe6 speech.sgram
+chmod 0644 speech12.sd
+

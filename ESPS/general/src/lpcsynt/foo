@@ -1,0 +1,185 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     lpcsynt - perform pitch-synchronous synthesis  from  FEA_ANA
+     files
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>lpcsynt</STRONG> [ <STRONG>-x</STRONG> ] [ <STRONG>-P</STRONG> <EM>param</EM>_<EM>file</EM> ] [ <STRONG>-r</STRONG> <EM>range</EM> ] [ <STRONG>-p</STRONG>  <EM>range</EM>  ]
+     <EM>input</EM>_<EM>fea</EM> <EM>output</EM>_<EM>sd</EM>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     This program must be used with files with a format  such  as
+     that  created  by <STRONG><A HREF="../man1.html/lpcana.1.html">lpcana(1-ESPS)</A></STRONG>.  Consider use of <EM>lp</EM>_<EM>syn</EM>(1-
+     ESPS). While still supported, <STRONG><A HREF="../man1.html/lpcana.1.html">lpcana(1-ESPS)</A></STRONG> and <EM>lpcsynt</EM>(1 -
+     ESPS) should be considered obsolescent.
+
+     <EM>Lpcsynt</EM>  takes  as  input  an  ESPS  <STRONG><A HREF="../man5.html/FEA_ANA.5.html">FEA_ANA(5 - ESPS)</A></STRONG>  file
+     (<EM>input</EM>_<EM>fea</EM>)   containing   analysis   information,  performs
+     pitch-synchronous synthesis,  and  outputs  the  synthesized
+     speech  to an ESPS <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD(5-ESPS)</A></STRONG> file <EM>output</EM>_<EM>sd</EM>. The output
+     file is written in short format.
+
+     If "-" is specified as the input file name,  standard  input
+     is  used; if "-" is specified as the output file name, stan-
+     dard output is used.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following options are supported:
+
+     <STRONG>-x</STRONG>    This option is specified for printing  debugging  mes-
+          sage in the standard error.
+
+     <STRONG>-P</STRONG> <EM>param</EM>_<EM>file</EM>
+          uses the parameter  file  <EM>param</EM>_<EM>file</EM>  rather  than  the
+          default which is <EM>params</EM>.
+
+     <STRONG>-p</STRONG> <EM>range</EM>
+          Selects a subrange of points to be  synthesized,  where
+          the  start  and  end points are defined with respect to
+          the original SD file that is the source  of  the  input
+          FEA_ANA  file.  The range is specified using the format
+          <EM>start</EM>-<EM>end</EM> or <EM>start</EM>:<EM>end</EM> or <EM>start</EM>:+<EM>nan</EM>.  Either <EM>start</EM>  or
+          <EM>end</EM> may be omitted, in which case the omitted parameter
+          defaults respectively to the start or end of the  input
+          FEA_ANA file.
+
+     <STRONG>-r</STRONG> <EM>range</EM>
+          <STRONG>r</STRONG> is a synonym for <STRONG>p</STRONG>.
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     The values of parameters obtained from  the  parameter  file
+     are printed if the environment variable ESPS_VERBOSE is 3 or
+     greater.  The default value is 3.
+
+     The following parameters are read from the params file:
+
+     <EM>post</EM>_<EM>filt</EM>_<EM>num</EM> - <EM>float</EM>
+
+          A three element vector specifying the  numerator  of  a
+          pole-zero  post  processing  filter.   If no values are
+          specified in the parameter file, the vector  [1.,  -1.,
+          0] is used.
+
+
+     <EM>post</EM>_<EM>filt</EM>_<EM>den</EM> - <EM>float</EM>
+
+          A three element vector specifying the denominator of  a
+          pole-zero  post  processing  filter.   If no values are
+          specified in the parameter file, the vector [1., -.875,
+          0.] is used.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     ESPS Common is not processed.
+
+
+</PRE>
+<H2>ESPS HEADERS</H2><PRE>
+     The following parameters are read from  the  header  of  the
+     input  FEA_ANA  file:  <EM>start</EM>,  <EM>nan</EM>,  <EM>nominal</EM>_<EM>frame</EM>_<EM>size</EM>, <EM>and</EM>
+     <EM>src</EM>_<EM>sf</EM>.
+
+     <EM>Synt</EM> writes the following header items in the output  FEA_SD
+     file:   <EM>synt</EM>_<EM>order</EM>  (int),  <EM>synt</EM>_<EM>method</EM> (coded), <EM>synt</EM>_<EM>interp</EM>
+     (coded),  <EM>synt</EM>_<EM>pwr</EM>  (coded),  <EM>v</EM>_<EM>excit</EM>_<EM>method</EM>  (coded),   and
+     <EM>uv</EM>_<EM>excit</EM>_<EM>method</EM> (coded).
+
+     Also, <EM>src</EM>_<EM>sf</EM> is copied from the input  header  and  used  as
+     <EM>record</EM>_<EM>freq</EM> in the output FEA_SD file.
+
+     In addition, the generic header item <EM>start</EM>_<EM>time</EM>  (type  DOU-
+     BLE)  is  written  in  the output file. The value written is
+     computed by taking the <EM>start</EM>_<EM>time</EM> value from the  header  of
+     the  input  file  (or  zero,  if  such a header item doesn't
+     exist) and adding to it the offset time (from the  beginning
+     of  the original sampled data file) of the first point writ-
+     ten by <STRONG><A HREF="../man1.html/lpcsynt.1.html">lpcsynt (1-ESPS)</A></STRONG>.
+
+
+</PRE>
+<H2>COMMENTS</H2><PRE>
+     The synthesizer implementation is  very  simple.   A  single
+     impulse  is  used  as the excitation function for each pitch
+     pulse in the case of voiced speech.  A gaussian white  noise
+     sequence  is  used as the excitation function when the frame
+     is unvoiced.  Linear interpolation is  performed  (for  each
+     pulse) on the reflection coefficients, prior to synthesis.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man1.html/lpcana.1.html">lpcana (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/ESPS.5.html">ESPS(5-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA_ANA.5.html">FEA_ANA(5-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD(5-ESPS)</A></STRONG>.
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     None known.
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     S. Shankar Narayan. Slight mods  by  John  Shore.  ESPS  3.0
+     modification by David Burton
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,186 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     plotfield - plot arbitrary named field from a FEA file
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>plotfield</STRONG> <STRONG>-f</STRONG> <EM>field</EM> [ <STRONG>-r</STRONG> <EM>range</EM> ] [ <STRONG>-t</STRONG> <EM>text</EM> ] [ <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM>
+     ] [ <STRONG>-y</STRONG> <EM>range</EM> ] [ <STRONG>-T</STRONG> <EM>device</EM> ] [ <STRONG>-Y</STRONG> <EM>range</EM> ] <EM>file</EM>.<EM>fea</EM>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     <EM>plotfield</EM> plots a named field from  an  ESPS  FEA  <EM>file</EM>.<EM>fea</EM>.
+     Fields  containing  complex  data are not supported yet.  If
+     <EM>file</EM>.<EM>fea</EM> is "-", the standard input is  read.   By  default,
+     the  output  is  in Unix GPS (``Graphics Primitive String'')
+     format and is displayed on the graphics  display,  but  with
+     the   <STRONG>-</STRONG> <STRONG>T</STRONG>  option,  this may be sent to the standard output,
+     obtained in Tektronix format rather than GPS, or plotted  on
+     an Imagen laser printer.
+
+     If the <STRONG>-r</STRONG> option is omitted, then the named <EM>field</EM> is plotted
+     from the first record of <EM>file</EM>.<EM>fea</EM>.
+
+     <EM>Plotfield</EM> finds the  maximum  and   minimum  values  of  the
+     points to be plotted and computes appropriate scales for the
+     <EM>x</EM>- and <EM>y</EM>-axes.  These automatic values can be  overriden  by
+     the <STRONG>-y</STRONG> or <STRONG>-Y</STRONG> options.
+
+     The color and line style of output  to  ``gps''  or  ``mcd''
+     depend  on  the environment variable BUNDLE.  The default is
+     GPS bundle number 20, which gives solid lines on  monochrome
+     displays.
+
+     The fieldname to plot must be given with the <STRONG>-f</STRONG> flag.   This
+     is not optional and there is no default.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following options are supported:
+
+     <STRONG>-r</STRONG> <EM>record</EM>
+
+     <STRONG>-r</STRONG> <EM>first</EM>:<EM>last</EM>
+
+     <STRONG>-r</STRONG> <EM>first</EM>:+<EM>incr</EM>
+          Determines the records from which the  named  <EM>field</EM>  is
+          plotted.   In  the first form, a single integer identi-
+          fies one record from which <EM>field</EM> is plotted.   The  <EM>x</EM> -
+          axis  shows  element number within the field and the <EM>y</EM>-
+          axis shows element value.
+
+          In the second form, a pair of unsigned  integers  gives
+          the  first  and  last points of the range.  If <EM>first</EM> is
+          omitted, 1 is used.   If  <EM>last</EM>  is  omitted,  the  last
+          record  in  <EM>file</EM>.<EM>fea</EM>  is  assumed.   The  third form is
+          equivalent to the first with <EM>last</EM> = <EM>first</EM> + <EM>incr</EM>.  When
+          more than one record is plotted, the element values are
+          catenated together before plotting  with  the  <EM>x</EM> - axis
+          showing  the  cumulative element number.  (For example,
+          if <EM>field</EM> has ten elements and two records are  plotted,
+          the <EM>x</EM>-axis will be labelled 1-20).
+
+     <STRONG>-t</STRONG> <EM>text</EM>
+          A line of  text  to  be  printed  below  the  plot.  By
+          default,  <EM>plotfield</EM> prints a line giving the fieldname,
+          record number, and file name.  An additional  line  may
+          be printed via the <STRONG>-t</STRONG> option.
+
+     <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM>
+          If <EM>debug</EM>_<EM>level</EM> is  nonzero,  debugging  information  is
+          written to the standard error output.  Default is 0 (no
+          debugging output).
+
+     <STRONG>-y</STRONG> <EM>low</EM>:<EM>high</EM>
+          Specifies approximate lower and upper  limits  for  the
+          <EM>y</EM>-axis.   The  values  are  adjusted by <EM>plotfield</EM> in an
+          attempt to make an  esthetically  pleasing  plot.   See
+          also  the <STRONG>-Y</STRONG> option.  If neither <STRONG>-y</STRONG> or <STRONG>-Y</STRONG> is specified,
+          limits are calculated automatically.
+
+     <STRONG>-T</STRONG> <EM>device</EM>
+          <EM>Device</EM> may be <STRONG>gps</STRONG>, <STRONG>mcd</STRONG>, <STRONG>tek</STRONG>, or <STRONG>imagen</STRONG>.  The default is
+          <STRONG>-Tmcd,</STRONG> which displays the output on the graphics screen
+          by piping it through <EM>mcd</EM>(1G).  Specifying <STRONG>-</STRONG> <STRONG>Tgps</STRONG>  sends
+          output to the standard output in Masscomp Unix GPS for-
+          mat.  Specifying <STRONG>-Ttek</STRONG> causes output to be sent to  the
+          standard  output in Tektronix 4000-series format, and <STRONG>-</STRONG>
+          <STRONG>Timagen</STRONG> plots it on an Imagen  laser  printer  in  Tek-
+          tronix 4014 emulation mode.
+
+     <STRONG>-Y</STRONG> <EM>low</EM>:<EM>high</EM>
+          Specifies exact lower and upper limits for the <EM>y</EM>-axis.
+
+
+</PRE>
+<H2>EXAMPLES</H2><PRE>
+     <STRONG>plotfield</STRONG> <STRONG>-f</STRONG> <STRONG>spec_param</STRONG> <STRONG>-r5</STRONG> speech.fana
+
+     plots the <EM>spec</EM>_<EM>param</EM> field from record 5 of speech.fana.
+
+          <STRONG>plotfield</STRONG> &lt;<EM>options</EM>&gt; &lt;<EM>filename</EM>&gt;
+
+     is equivalent to
+
+          <STRONG>plotfield</STRONG> <STRONG>-Tgps</STRONG> &lt;<EM>options</EM>&gt; &lt;<EM>filename</EM>&gt; <STRONG>|</STRONG> <STRONG>mcd</STRONG>
+
+     The second form may be used if nondefault  options  for  <EM>mcd</EM>
+     are desired.
+
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     No ESPS parameter file is read.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     ESPS Common processing is disabled.
+
+
+</PRE>
+<H2>DIAGNOSTICS</H2><PRE>
+     <EM>Plotfield</EM> complains and exits if <EM>file</EM>.<EM>fea</EM> does not exist  or
+     is  not  a FEA file.  It also exits if the nemaed field con-
+     tains complex data.
+
+
+</PRE>
+<H2>IMPLEMENTATION NOTE</H2><PRE>
+     The current version of <EM>fieldplot</EM> is implemented as  a  shell
+     script  that  pipes  the  output  of <STRONG><A HREF="../man1.html/pplain.1.html">pplain (1-ESPS)</A></STRONG> through
+     <STRONG><A HREF="../man1.html/testsd.1.html">testsd (1-ESPS)</A></STRONG> and <STRONG><A HREF="../man1.html/plotsd.1.html">plotsd (1-ESPS)</A></STRONG>.  This is an example  of
+     how  ESPS  programs  can  be  combined  with the "Unix tools
+     approach" - see the simplified example on  the  <EM>pplain</EM>  (1 -
+     ESPS) man page.
+
+
+</PRE>
+<H2>EXPECTED CHANGES</H2><PRE>
+     Many more options may be added.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man1.html/plotsd.1.html">plotsd(1-ESPS)</A></STRONG> <STRONG><A HREF="../man1.html/plotspec.1.html">plotspec(1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/mlplot.1.html">mlplot(1-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man1.html/genplot.1.html">genplot(1-ESPS)</A></STRONG>
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Manual page by John Shore
+     Program by Alan Parker
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

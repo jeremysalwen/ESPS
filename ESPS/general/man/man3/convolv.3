@@ -1,0 +1,69 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)convolv.3	1.4 06 May 1997 ESI
+.TH CONVOLV 3\-ESPSsp 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+convolv \- convolution of regular polynomials or auto-correlations
+.PP
+auto_convolv \- convolution of symmetric polynomials or auto-correlations
+.SH SYNOPSIS
+.ft B
+convolv (pol_1, size_1, pol_2, size_2, pol_out, out_siz)
+.br
+double *pol_1, *pol_2, *pol_out;
+.br
+int     size_1, size_2, *out_siz;
+.PP
+.ft B
+auto_convolv (pol_1, size_1, pol_2, size_2, pol_out, out_siz)
+.br
+double *pol_1, *pol_2, *pol_out;
+.br
+int     size_1, size_2, *out_siz;
+.ft R
+.SH DESCRIPTION
+.PP
+.I convolv
+and
+.I auto_convolv
+perform the convolution (product) of the 2 input polynomials.
+In other words:
+.br
+pol_out[Z] = pol_1[Z] * pol_2[Z].
+.PP
+.I convolv
+is to be used in the case of "regular" polynomials, while
+.I auto_convolv
+is to be used in the case of symmetric polynomials. Symmetric refers to
+polynomials with positive and negative powers
+where the coefficients of the negative and positive powers
+are equal, as it is the case, for example, in auto-correlation functions.
+Coefficients are stored in order of increasing powers.
+In the case of
+.I auto_convolv,
+it is assumed that only the coefficients of the positive powers are stored
+in the arrays.
+.PP
+.I Pol_1
+and
+.I pol_2
+are the input polynomials.
+The sizes, i.e. 1 plus the order, of the polynomials are respectively
+.I size_1
+and
+.I size_2.
+.I Pol_out
+is the result polynomial, and
+.I out_siz
+is a pointer to its size. We have:
+.br
+.I *out_siz = size_1 + size_2
+- 1.
+.SH DIAGNOSTICS
+.PP
+None
+.SH BUGS
+.PP
+None known.
+.SH "SEE ALSO"
+.SH AUTHOR

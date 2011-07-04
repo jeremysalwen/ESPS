@@ -1,0 +1,153 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)scbkrec.3	1.3 06 May 1997 ESI
+.TH SCBK_REC 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+allo_scbk_rec \- allocate memory for SCBK file record
+get_scbk_rec \- get the next data record from an ESPS SCBK data file
+print_scbk_rec \- print an ESPS SCBK data record
+put_scbk_rec \- put an ESPS SCBK data record onto the file
+.SH SYNOPSIS
+.ft B
+#include <esps/scbk.h>
+.br
+struct scbk_data *
+.br
+allo_scbk_rec(hd)
+.br
+struct header *hd;
+.sp
+.br
+#include <esps/scbk.h>
+.br
+int
+.br
+get_scbk_rec(data, hd, file)
+.br
+struct scbk_data *data;
+.br
+struct header *hd;
+.br
+FILE *file;
+.sp
+.br
+void
+.br
+print_scbk_rec(data, hd, file)
+.br
+struct scbk_data *data;
+.br
+struct header *hd;
+.br
+FILE *file;
+.sp
+.br
+#include <esps/scbk.h>
+.br
+void
+.br
+put_scbk_rec(data, hd, file)
+.br
+struct scbk_data *data;
+.br
+struct header *hd;
+.br
+FILE *file;
+.ft
+.SH DESCRIPTION
+.I allo_scbk_rec
+allocates memory for an SCBK file record and returns a pointer to it.
+The number of elements allocated to
+\fIcswd_dist\fR, \fIfinal_pop\fR, and \fIqtable\fR is given by the
+header item \fIhd.scbk\->num_cdwds\fR.
+Since the size of the allocated record depends on a value in the data file
+header, it is important to be sure that a given SCBK record is 
+consistent with the header of the file it is being used with.
+The SCBK
+data read/write routines use this same value in the header to determine
+the amount of data to read or write.
+A mismatch could cause the program to fail in unpredictable ways.
+It is possible to allocate only one 
+record, for both input and output, if the programmer is certain that the
+value of \fIhd.scbk\->num_cdwds\fR
+is the same in both the input and output files.
+If the record is being allocated for a new file (to be written), then
+\fIhd.scbk\->num_cdwds\fR in the new header
+(after \fInew_header\fR(3\-ESPSu)) must be filled in before calling 
+.I allo_scbk_rec.
+.PP
+.I get_scbk_rec
+reads the next SCBK record from stream \fIfile\fR into the data structure
+pointed to by \fIdata\fR.
+The ESPS file header pointed to by \fIhd\fR
+is consulted for the value of \fIhd.scbk->num_cdwds\fR.
+This value determines the size of the data record.   
+See the caution on \fIallo_scbk_rec\fR.
+EOF is returned upon end of file.
+A positive non-zero value is returned otherwise.
+.PP
+.I print_scbk_record
+prints the SCBK record pointed to by \fIdata\fR onto the stream \fIfile\fR.
+The ESPS header pointed to by \fIhd\fR
+is consulted for the value of \fIhd.scbk->num_cdwds\fR.
+This value determines the size of the data record.
+See the caution on \fIallo_scbk_rec\fR.
+This function is useful for debug output in programs which
+process SCBK data files.
+.PP
+.I put_scbk_rec
+writes an SCBK data record pointed to by \fIdata\fR onto the stream
+\fIfile\fR, which should be an open ESPS SCBK file.
+The header must be written out to the SCBK file before calling this function.
+The ESPS file header pointed to by \fIhd\fR
+is consulted for the value of \fIhd.scbk\->num_cdwds\fR.
+This value determines the size of the data record.
+See the caution on \fIallo_scbk_rec\fR.
+.SH EXAMPLE
+.if n .ta 33
+.if t .ta 3i
+struct scbk_data *p;	
+.br
+struct header *ih;
+.br
+ih = read_header(file);	/* read scbk file header */
+.br
+p = allo_scbk_rec(ih);	/* allocate record */
+.br
+if(get_scbk_rec(p,ih,file) == EOF) \fIeof...\fR	/* read a record */
+.br
+x = p\->final_dist;	/* record reference */
+.br
+(void) print_scbk_record(p,ih,stderr)	/* print the record */
+.sp
+.br
+struct header *oh;
+.br
+oh = new_header(FT_SCBK);	/* create file header */
+.br
+\fI ... fill in some values, including hd.scbk->num_cdwds...\fR
+.br
+(void) write_header(oh,file);	/* write out header */
+.br
+p = allo_scbk_rec(oh);	/* allocate record */
+.br
+\fI ... fill in desired data record values...\fR
+.br
+(void) put_scbk_rec(p,oh,file);	/* write data record */
+.SH DIAGNOSTICS
+If \fIhd\fR does not point to a SCBK header then a message is printed
+on stderr and the program terminates with exit 1.
+If the value of \fIhd.scbk\->num_cdwds\fR is less than 1,
+a message is printed on stderr and the program terminates with exit 1.
+If an I/O error occurs during write in
+.I put_scbk_rec,
+a message is output to standard error and the program exits with status 1.
+.SH BUGS
+None known.
+.SH SEE ALSO
+eopen(3\-ESPSu),
+read_header(3\-ESPSu), copy_header(3\-ESPSu),
+SCBK(5\-ESPS), ESPS(5\-ESPS)
+.SH AUTHOR
+Alan Parker

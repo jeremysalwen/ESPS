@@ -1,0 +1,41 @@
+#! /bin/csh
+
+#-----------------------------------------------------------------------+
+#									|
+#   This material contains proprietary software of Entropic Speech,	|
+#   Inc.  Any reproduction, distribution, or publication without the	|
+#   prior written permission of Entropic Speech, Inc. is strictly	|
+#   prohibited.  Any public distribution of copies of this work		|
+#   authorized in writing by Entropic Speech, Inc. must bear the	|
+#   notice								|
+#									|
+#    "Copyright (c) 1989 Entropic Speech, Inc. All rights reserved."	|
+#									|
+#-----------------------------------------------------------------------+
+#									|
+#  test script for mbrot (image(1-esps) is also run).			|
+#									|
+#  by David Burton, Entropic Speech, Inc.				|
+#									|
+#									|
+#-----------------------------------------------------------------------+
+# Sccs information: "@(#)mbrot.test	1.2 5/18/89 ESI"
+
+setenv ESPS_VERBOSE 0
+
+# compute fea file and plot fuzzy bugs
+
+echo " "
+echo " "
+echo "There should be a big fuzzy bug"
+echo " "
+echo "Computing set ..."
+
+mbrot - | image -embrot -S500:400 -
+
+echo " "
+echo " "
+
+echo "test script done"
+
+

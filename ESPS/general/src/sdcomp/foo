@@ -1,0 +1,184 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     sdcomp - listening program to compare two sampled data files
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>sdcomp</STRONG> [ <STRONG>-b</STRONG> <EM>shift</EM>-<EM>value</EM> ] [ <STRONG>-c</STRONG> <EM>channel</EM> ] [ <STRONG>-d</STRONG> <EM>delay</EM> ]  [   <STRONG>-</STRONG>
+     <STRONG>{fprs}</STRONG> <EM>range</EM> ] [ <STRONG>-g</STRONG> <EM>gain</EM> ] [ <STRONG>-i</STRONG> ] [ <STRONG>-R</STRONG> <EM>nrepeat</EM> ] [ <STRONG>-n</STRONG> <EM>step</EM> ]
+     [ <STRONG>-w</STRONG> <EM>width</EM> ] [ <STRONG>-x</STRONG> <EM>debug</EM>-<EM>level</EM> ] <EM>sdfile</EM> [ <EM>sdfile</EM> ... ]
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     <EM>Sdcomp</EM> cycles through one or more ESPS <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD(5-ESPS)</A></STRONG>  files
+     playing  a  portion  from  each  file  by means of the local
+     <STRONG><A HREF="../man1.html/play.1.html">play(1-ESPS)</A></STRONG> program.  <EM>Sdcomp</EM> assumes that  the  local  play
+     program has the same command line options as <EM>mcplay</EM>.
+
+     After <EM>sdcomp</EM> starts and after a portion is played from  each
+     file, the user is prompted for the next action.  The follow-
+     ing commands are then accepted (&lt;CR&gt; refers to the  "return"
+     key):
+
+          &lt;CR&gt;      play next portion from each file
+          r&lt;CR&gt;          repeat current portion from each file
+          b&lt;CR&gt;          back up and play previous portion from each file
+          c&lt;CR&gt;          continue playing portions without stopping for commands
+          q&lt;CR&gt;          quit
+
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     The ESPS parameter file processing is the same as  that  for
+     <EM>mcplay</EM>.
+
+
+</PRE>
+<H2>ESPS HEADERS</H2><PRE>
+     ESPS headers are treated as in <EM>mcplay</EM>.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The flags <STRONG>bcgirwx</STRONG> are passed to the local play program every
+     time  that  program  is invoked.  In addition, the following
+     options are supported:
+
+     <STRONG>-{prsf}</STRONG> <EM>range</EM>
+          Selects the first portion that will be played from each
+          file,  with  syntax as in <EM>mcplay</EM>. The default is <STRONG>-s</STRONG>0:1.
+          If the part of the range specification after the  colon
+          is  omitted  (giving  only  the  starting  point),  the
+          defaults are as follows:
+
+               <STRONG>-p</STRONG>&lt;start&gt;:+7999
+               <STRONG>-r</STRONG>&lt;start&gt;:+7999
+               <STRONG>-s</STRONG>&lt;start&gt;:+1
+               <STRONG>-f</STRONG>&lt;start&gt;:+79
+
+          These give approximately the  same  length  (1  second)
+          when  the  sampling  frequency  is  8000  Hz.,  but not
+          otherwise.
+
+          The effect of the <STRONG>-</STRONG> <STRONG>{psrf}</STRONG>  option  is  to  select  the
+          starting  position  and  length  of  the portion.  This
+          length remains in effect for subsequent  portions  that
+          are  played, while the starting positions of subsequent
+          portions are determined by the <STRONG>-n</STRONG> option.  Note that <STRONG>-p</STRONG>
+          and <STRONG>-r</STRONG> are synonyms.
+
+     <STRONG>-d</STRONG> <EM>delay</EM>
+          If <STRONG>-d</STRONG> is not specified, <EM>sdcomp</EM> passes all the  filename
+          arguments  to  one  invocation of the play program each
+          time a portion is played from the files.   If   <STRONG>-</STRONG> <STRONG>d</STRONG>  is
+          specified,  then  each filename is passed to a separate
+          invocation of the play program, which is followed by  a
+          pause  of  <EM>delay</EM> seconds.  (Note that specifying <STRONG>-d0</STRONG> is
+          not equivalent to omitting the option entirely.)
+
+     <STRONG>-w</STRONG> <EM>width</EM> [100]
+          This option defines  the  frame  width.  The  width  is
+          ignored unless the <STRONG>-f</STRONG> option is also specified.
+
+     <STRONG>-n</STRONG> <EM>step</EM>
+          Selects the amount by which the  starting  position  is
+          changed  from one portion of each file to the next por-
+          tion of each file.  If the <EM>step</EM> is less than  the  por-
+          tion length (determined by <STRONG>-{prsf}</STRONG> ), the portions will
+          overlap.  If it is greater than the portion length, the
+          portions  played  will skip segments of the files.  The
+          <EM>step</EM> must be expressed in the same units as the  <EM>range</EM>.
+          That  is, if <EM>range</EM> is specified with <STRONG>-p</STRONG> or <STRONG>-r</STRONG> (points),
+          the <EM>step</EM> is assumed to be points, etc.  The default for
+          <EM>step</EM> equals the length of the initial portion specified
+          by the <STRONG>-{prsf}</STRONG> option.
+
+
+
+
+</PRE>
+<H2>FUTURE CHANGES</H2><PRE>
+     The user should be able to change the order in  which  files
+     are played.
+
+     There should be an option that causes <EM>sdcomp</EM> to  select  the
+     order  in which files are played and report that order after
+     all of the speech has been played.
+
+     The user should be able  to  change  the  position,  portion
+     length, and step size dynamically.
+
+     The user should be able to specify a separate gain (<STRONG>-</STRONG> <STRONG>g</STRONG>)  or
+     shift-value (<STRONG>-b</STRONG>) for each input file.
+
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man1.html/play.1.html">play(1-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD(5-ESPS)</A></STRONG>
+
+
+</PRE>
+<H2>WARNINGS</H2><PRE>
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     <EM>A</EM> <EM>range</EM> or <EM>step</EM> value in seconds is  restricted  to  integer
+     values (this reflects a bug in <EM>play</EM> ).
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Manual page by John Shore; program by Rodney Johnson
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

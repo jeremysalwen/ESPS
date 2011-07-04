@@ -1,0 +1,83 @@
+#
+# @(#)nb_params.src	1.2 3/28/90 ESI ATT
+# These parameters determine the characteristics of the "narrow-band" 
+# spectrogram.  Parameter specifications take the form
+#	key_word <value>
+# Each line may contain one or several of these pairs.  All specifications
+# except the error diffusion filter are optional and may occur in any order.
+# All comments and blank lines in this file are optional except the line
+# preceeding the spatial filter coefficients which begins with an asterisk.
+# Parameters may be changed with any text editor while waves is running so
+# that the effects of changes may be readily observed.
+
+# duration of the window applied to the time series (ms).
+# The bandwidth of the analysis is inversely proportional to this.
+win_size_ms 51.2
+
+# type of time weighting (windowing) to use when computing the DFT's
+# 0 ==> rectangular; 1 ==> Hamming; 2 ==> cos**4; 3 ==> Hanning
+window_type 1
+
+# time step between adjacent columns in the spectrogram (ms)
+# This effects both the time resolution and horizontal magnification.
+win_step_ms 2
+
+# coefficient of the first-order preemphasis filter
+# A value of -1.0 yields +6dB/oct preemphasis; 0.0 results in no preemphasis.
+preemp -.7
+
+
+# minimum size of the (radix-2) FFT to use in computing spectra (points)
+# This is automatically increased as necessary to accommodate the window size.
+fft_points	512
+
+# number of pixels displayed vertically for each frequency sample (pixels)
+# The vertical size of the display in pixels will thus be
+#		(freq_intrp * fft_points)/2.
+# This variable (freq_intrp) applies only to spectrograms computed by 
+# an external DSP board -- see also min_spec_height in .wave_pro
+freq_intrp	2
+
+# factor by which spectral log-magnitude values are multiplied before display
+# A value of 1.0 is recommended unless the dynamic range must be limited.
+ampl_scale	1
+
+# a constant subtracted from spectral log-magnitude values before display (dB)
+# This may be used to adjust for overall signal level, if desired.
+ampl_offset_db	50
+
+# fraction of spectral log-magnitude mean subtracted from spectra for display
+# Note that this interacts with the ampl_offset_db
+agc_ratio	.0
+
+# name of the program to run on the DSP-32 card for spectrogram computation
+dsp_prog_name /usr/esps/32bin/dspgm
+
+# fraction of spectral variance used to normalize displayed variance
+# This is best left at 0.0 for now...
+var_norm	0.0
+
+# dimensions of the error-diffusion spatial filter (pixels)
+# These dimensions are only used for monochrome spectrograms.
+# For wide-band spectrograms y_dither should be larger than x_dither.
+# For narrow-band spectrograms x_dither should be >= y_dither.
+# The number of rows and columns should be odd and >= 3.  The coefficients
+# may have any value.  If x_dither and y_dither are specified the filter
+# coefficients MUST be specified.  The COEFFICIENTS MUST IMMEDIATELY FOLLOW
+# THE LINE STARTING WITH THE ASTERISK AND BE THE LAST ITEMS IN THIS FILE.
+x_dither	5
+y_dither	3
+
+# coefficients of the error-diffusion spatial filter
+# The first coefficient in the list is for the lower left corner; the last is
+# for the upper right corner.  Note that the last (y_dither/2) coefficients
+# are zero and are not used.  The middle entry in the last column is the
+# weighting given to the spectral amplitude being quantized.  The other
+# coefficients are used to weight the quantization errors of surrounding
+# pixels.
+* the y_dither by x_dither error-diffusion spatial filter follows
+0. 1. 0.
+2. 3. 2.
+3. 5. 3.
+4. 7. 4.
+7. 8. 0.

@@ -1,0 +1,2014 @@
+
+xwaves_rpc.h,371
+#define XWAVES_PNUM 31,828
+#define XWAVES_VNUM 32,856
+#define IMMEDIATE_RESPONSE 35,947
+#define INTERLOCK_RESPONSE 36,976
+#define INTERLOCK_NOREPLY 37,1005
+#define INTERLOCK_DELAY_RESPONSE 38,1034
+#define RPCINFO_CALL 39,1069
+typedef struct str_list str_list41,1093
+} StrList;StrList45,1171
+typedef struct adata adata48,1241
+} Attachment;Attachment56,1664
+
+browser.c,622
+static char *sccs_id 23,803
+Pending_input new_files 37,1177
+Pending_input *input_pending 49,1590
+    mmo1 66,2260
+Pending_input *get_new_files(74,2692
+do_browser_menu(82,2901
+file_selection_window(117,3759
+add_to_menu_list(202,5795
+listing_display(250,6817
+destroy_pending_input(301,8049
+reshuffle_and_kill(336,8842
+select_from_alternatives(372,9659
+menu_redoit(438,11500
+menu_doit(487,12919
+m_play_file(622,15825
+m_print_file(637,16221
+m_kill_display(690,17314
+m_pass_in_name(708,17646
+m_remove_list_element(727,18114
+m_designate_source(771,19130
+show_output_proc(799,19797
+free_menu_list(830,20603
+
+dac.c,635
+static char    *sccs_id 20,551
+int             indigo_maxsamps,26,682
+int             indigo_maxsamps, indigo_sent 26,682
+static int      numChannel;29,805
+static short   *input_buffer 30,833
+static int      buff_bytes 31,870
+static void    *inhead 33,978
+static FILE    *instream 34,1009
+static int      infd 35,1042
+static short   *inbuff 36,1113
+#define DRAIN_LIMIT 43,1274
+#define DRAIN_LIMIT 45,1303
+close_alport(49,1409
+sg_audio_is_available(56,1545
+scale(67,1780
+da_samps_remaining(76,2025
+indigo_handle(82,2169
+still_in_que(188,5642
+indigo_completion(194,5780
+dac_indigo(207,6083
+dacmaster_indigo(217,6416
+
+dac_indigo.c,639
+static char *sccs_id 24,742
+int indigo_maxsamps,32,921
+int indigo_maxsamps, indigo_sent=32,921
+static short *input_buffer 35,1008
+static int buff_bytes 36,1043
+static void *inhead=38,1141
+static FILE *instream=39,1167
+static int  infd 40,1195
+static short *inbuff=41,1262
+static int indigo_rates[43,1290
+static ALport alport 48,1533
+close_alport(52,1678
+int sg_audio_is_available(62,1915
+static scale(73,2149
+int da_samps_remaining(95,2582
+indigo_handle(104,2756
+int still_in_que(194,5452
+indigo_completion(203,5620
+closest_srate(216,5853
+dac_indigo(244,6514
+dacmaster_indigo(254,6820
+int da_samps_remaining(357,9829
+
+export_gr.c,361
+static char    *sccs_id 22,685
+#define _NO_PROTO33,969
+int             debug_level 43,1155
+e_print_graphic(62,1689
+typedef struct file_info file_info;file_info102,2513
+typedef struct cont_info cont_info;cont_info103,2549
+struct file_info file_info105,2586
+struct cont_info cont_info111,2665
+do_print_ensemble(123,2847
+cont_print_ensemble(237,6658
+
+globals.c,2135
+static char *sccs_id 24,823
+#define MAXPATHLEN 31,972
+int da_stop_pos_view 40,1273
+int show_play_pos 41,1356
+double play_time 42,1437
+double plot_max 43,1518
+double  plot_min 44,1587
+int append_extensions 46,1610
+int s_range_offset 47,1689
+int c_range_offset 48,1762
+int reticle_grid 49,1845
+int show_processes 50,1919
+int show_error_gui 51,1989
+int major_lines 52,2053
+int do_central_marks 53,2128
+int spect_height 54,2206
+int spect_width 55,2228
+int sig_max_override 56,2249
+int spect_interp 58,2358
+int h_spect_rescale 59,2433
+int v_spect_rescale 60,2512
+char spect_rescale_scope[61,2589
+int shorten_header 63,2670
+int dsp_type;64,2756
+int P8574_type=65,2795
+int ARIEL_16=66,2841
+int ARIEL_HK=67,2910
+int socket_port=68,2970
+int hold_audio_port=69,3029
+int old_sphere_format=71,3179
+int play_buff_factor 80,3660
+int 		dsp32_wait 90,4045
+int   min_frameheight 93,4151
+int   min_framewidth 94,4224
+int  command_step 98,4361
+char inputname[100,4429
+int print_graphic_printer 158,7201
+int print_graphic_resolution 159,7264
+char print_graphic_orientation[160,7300
+char print_graphic_type[161,7366
+char print_graphic_file[162,7426
+char print_graphic_command[163,7477
+double print_graphic_scale 164,7525
+int print_only_plot 165,7559
+int print_ps_level 166,7584
+int    write_common 178,7936
+int scroll_ganged 180,8009
+int dont_save_sgrams 190,8332
+double ref_size 196,8484
+double ref_step 197,8542
+double ref_start 198,8595
+double zoom_ratio 199,8664
+double cross_level 200,8688
+int def_w_height 201,8758
+int invert_dither 207,8961
+int  next_x 210,9093
+int  w_x_incr=212,9174
+double  f0_canvas_use 216,9282
+int  w_verbose 218,9341
+int  show_labels 219,9411
+int  show_current_chan 220,9448
+int find_crossing 221,9476
+int max_buff_bytes 222,9544
+int use_static_cmap 224,9618
+int stop_play_error 225,9643
+  g88 232,9848
+char *wave_pro 352,16985
+get_globals(355,17140
+Selector *get_waves_selector_list(361,17274
+Selector *build_full_list(367,17402
+get_all_globals(380,17663
+get_general_globals(388,17880
+output_variables_to_file(422,18725
+dump_local_variables(447,19528
+
+ibm_stub.c,209
+static char *sccs_id 22,673
+int dsprg(27,773
+int dspwr(30,853
+int dspmap(33,932
+int dsp_codec(36,1013
+int dsp_freq(39,1100
+int dsp_old(42,1185
+int dsptmr(45,1268
+int dspld(48,1349
+int dspopn(51,1429
+
+keymapper.c,696
+static char *sccs_id 38,1716
+#define CHECK_QUERY(CHECK_QUERY44,1838
+typedef struct keycom keycom47,1932
+} Keycom;Keycom51,2014
+static Keycom *wave_keys 53,2025
+static Keycom *spect_keys 54,2058
+static Keycom *new_keycom(57,2168
+static Keycom *link_new_keycom(74,2538
+add_keycom(112,3393
+delete_keycom(142,4264
+translate_keyval(167,4733
+static char key[191,5092
+static char key[10], menu[191,5092
+static char key[10], menu[20], command[191,5092
+  s1 193,5157
+encode_keyval(199,5383
+save_keymap(220,5721
+dump_keymaps(235,6097
+char *meth_dump_keymaps(268,6821
+char *meth_add_keymap(289,7360
+char *meth_delete_keymap(311,7938
+do_key_command(327,8269
+keymap_command(344,8644
+
+labelio.c,185
+static char *sccs_id 24,751
+read_labels(43,1295
+output_label_header(168,4486
+build_label_outout_name(186,5064
+get_maxfields(194,5252
+rewrite_labels(215,5667
+file_update(278,7209
+
+labelprocs.c,571
+static char *sccs_id 20,696
+#define MAXPATHLEN 25,802
+#define MAXPATHLEN 32,916
+#define DELETE 35,948
+Objects *objlist 40,1056
+find_labelfile(47,1228
+make_label_filename(66,1552
+get_labelfile(85,1904
+free_label(101,2253
+destroy_labelfile(119,2528
+kill_object(160,3402
+new_label(198,4091
+new_field(218,4474
+get_next_label(239,4900
+get_prev_label(259,5267
+get_prev_time(279,5635
+get_next_time(293,5878
+get_nearest_label(307,6122
+remove_nearest_label(324,6518
+unlink_label(351,7126
+fields_destroy(371,7540
+append_label(386,7765
+char_to_label(420,8549
+
+markeralloc.c,523
+static char *sccs_id 30,824
+#define NWORDS 35,929
+#define NMARKERS 36,948
+#define NSENTENCES 37,970
+Word wordlist[39,993
+Marker markerlist[40,1016
+Sentence sentencelist[41,1045
+Word nullword;43,1081
+Marker nullmarker;45,1097
+Sentence nullsentence;47,1117
+Word *nextword 49,1141
+Marker *nextmarker 50,1168
+Sentence *nextsentence 51,1201
+init_markers(55,1290
+get_word(70,1539
+get_marker(83,1724
+get_sentence(96,1926
+insert_word(108,2133
+delete_word(117,2321
+insert_marker(127,2451
+delete_marker(137,2652
+
+markerio.c,74
+static char *sccs_id 29,843
+read_markers(39,992
+print_markers(104,2579
+
+markerutil.c,55
+static char *sccs_id 24,739
+first_free_marker(29,833
+
+message.c,1612
+static char *sccs_id 21,655
+#define TRUE 34,899
+#define FALSE 35,914
+char            ok[37,931
+typedef struct pending_calls pending_calls53,1515
+}               PendCalls;PendCalls58,1663
+static PendCalls *pring 61,1735
+static int      pending_call_id 62,1767
+static StrList *dq 65,1868
+static char     in[68,1958
+static char     in[1000], out[68,1958
+static char     in[1000], out[1000], *pin 68,1958
+Display        *X_Display 75,2187
+Window          comm_window 76,2221
+char           *registry_name 77,2257
+char           *remote_name 78,2295
+Window          remote_comm_window 79,2331
+		 install_default_execute_proc(90,2753
+builtin_default_execute_proc(101,3020
+static void    *command_step_caller 112,3285
+static char    *command_step_resp 113,3329
+prepare_to_resume_ipc(117,3449
+resume_ipc_if_stepping(126,3678
+execute_command(135,3926
+set_return_value_callback(213,6084
+do_return_callback(247,6970
+dispatch(291,8139
+#define ITIMER_NULL 329,9064
+static int      under_xview 330,9107
+set_no_xview(334,9255
+restart_d_clock(340,9371
+stop_d_clock(364,9989
+static StrList *this_request 378,10259
+in_a_ipc_dispatch(387,10701
+sanity_check(406,11361
+do_ipc_response_if_any(413,11531
+process_d_q(434,12065
+transfer_to_dispatch_q(480,13354
+new_disp_ent(496,13648
+delay_dispatch(516,14192
+background_a_program(546,14929
+free_list(580,15758
+dispatch_ipc(604,16407
+event_proc(665,18073
+setup_ipc(681,18435
+setup_attach_comm(703,18943
+send_start_command(723,19482
+terminate_communication(743,19996
+mess_write(755,20302
+terminal_message(762,20471
+mess_send(769,20645
+
+nplay.c,768
+static char *sccs_id 23,823
+#define HOST_RESPONSE 31,983
+#define	STARTUP_CODE	32,1014
+#define	PARAM_CODE	33,1039
+#define	DATA_CODE	34,1062
+#define DSP_COMPLETE 35,1084
+#define DS310038,1130
+typedef struct header header58,2070
+} Head;Head64,2369
+int channel=66,2378
+int     surf_maxsamps,68,2394
+int     surf_maxsamps, surf_sent=68,2394
+static char *dsp_program[70,2446
+static int shifts;71,2506
+static Head *header 74,2602
+static int  dpm_size 75,2630
+static short *inbuff=82,2955
+static struct ioctlio dcmd;83,2982
+static double frequency;84,3010
+static void *inhead=85,3035
+static FILE *instream=86,3061
+static scale(91,3187
+surf_handle(122,3900
+dadc_32C(295,8832
+surf_completion(299,8934
+stop_32c_vme_da(327,9614
+dacmaster_32C(335,9780
+
+odd_objects.c,237
+static char *sccs_id 20,680
+  q1 32,982
+change_objects_globally(58,2710
+char *checking_selectors(81,3172
+char *checking_activators(112,3744
+char **get_attr_list(143,4319
+char **get_vc_attr_list(193,5413
+free_string_list(200,5503
+
+paste.c,221
+static char *sccs_id 62,2897
+static char designated_source[76,3237
+set_designated_source(77,3282
+get_designated_source(89,3550
+find_source_signal(139,4861
+paste(183,6005
+compatable(276,8701
+insert_signal(287,9026
+
+play_data.c,996
+static char *sccs_id 24,769
+#define	DPR_MAX	33,985
+#define DB_SIZE	34,1007
+#define	DA_START	35,1064
+#define	DA_RUN	36,1083
+#define	DA_END	37,1101
+#define ALWAYS_LOAD 38,1119
+#define LOAD_AS_NEEDED 39,1145
+#define LBIN 41,1184
+int             da_done 44,1222
+static char     loaded[46,1286
+short           dsp_is_open 47,1315
+short          *dpr 56,1522
+static int      byt_swap;57,1550
+ext_play_done(64,1732
+call_external_play_prog(84,2586
+get_estimated_signal_maximum(106,3399
+static Signal  *this_play 135,4357
+Signal *get_playing_signal(137,4392
+play_file(148,4740
+show_play_position(237,7583
+void stop_da_view(275,8501
+play_signal(283,8691
+dac_mem(315,9612
+dac_file(353,10914
+stop_da(445,14110
+playable_dimension(481,15174
+ereader_can_handle(508,15950
+#define ITIMER_NULL 542,16767
+xv_dac_handle(545,16893
+clear_dac_callbacks(563,17321
+set_fab2_dac_callbacks(572,17544
+clear_fab2_dac_callbacks(579,17723
+set_dac_callbacks(587,17911
+stop_indigo_da(609,18516
+
+playrec.c,1017
+static char *sccs_id 25,755
+#define	DSP_PCR	68,2360
+#define	DSP_RUN	69,2385
+#define	DSPBUF	71,2424
+#define	NBUF	72,2493
+#define	NBYTES	73,2548
+#define  TRUE 75,2573
+#define FALSE 76,2589
+static	short*	dpr;78,2606
+static	int	ofd;79,2658
+static  int   have_ofd;80,2704
+static	int	ifd;81,2768
+static  void    *v32_head,82,2784
+                *v32_stream;83,2840
+static	short*	optr;84,2869
+static	short*	iptr;85,2930
+	int	fab2_maxsamps,86,2950
+                fab2_sent 87,2998
+static	int	icnt;89,3137
+static	int	qcnt;90,3172
+static	int	iwait;91,3212
+static	int	atime=92,3255
+static  int     lastpir;93,3322
+static  int     smax,94,3368
+static  int     smax, smin;94,3368
+static	short	obuf[95,3435
+static	short	tobuf[96,3460
+static  short   shift;97,3486
+int use_dsp32 101,3571
+stop_fab2_da(105,3626
+static int  locked 111,3714
+cpy(116,3870
+cpymaxmin(136,4363
+irq(155,4782
+timeout(220,6366
+dadc(235,6707
+adc(245,6959
+dacmaster_32(254,7229
+dac_32(268,7585
+fab2_completion(280,7882
+
+pole_methods.c,252
+static char *sccs_id 15,450
+write_poles(27,699
+#define A_BUF_SIZE 72,1965
+put_ascii_poles(75,2065
+put_binary_poles(128,3741
+get_ascii_poles(189,5575
+get_binary_poles(291,8483
+read_poles(398,11395
+free_poles(442,12772
+free_pole_data(460,13086
+
+rpc.c,667
+static char    *sccs_id 20,639
+#define CHECK_QUERY(CHECK_QUERY56,2444
+static Attachment *att_list 61,2601
+new_attachment(73,2903
+start_external_function(99,3559
+find_attachment(148,4990
+static char     func[164,5282
+static char     func[NAMELEN], command[164,5282
+static char     registry[165,5336
+static Selector s0 166,5371
+meth_send(172,5682
+add_to_ipc_send_que(220,7020
+meth_start_attachment(251,7873
+print_att(279,8566
+meth_get_attach_list(292,8883
+free_attachment(320,9499
+clobber_function(339,9850
+detach_func(359,10395
+destroy_function_client(385,11056
+xwaves_ipc_send_attachment(413,11667
+terminate(447,12531
+xwaves_ipc_send(481,13307
+
+tag_methods.c,294
+static char *sccs_id 22,668
+#define MAXPATHLEN 28,794
+#define scoff(scoff41,1091
+#define ALMOST 42,1147
+tag_time_to_x(45,1240
+tag_x_to_time(63,1733
+tag_plot_waves(80,2254
+#define PLOT_TYPE(PLOT_TYPE130,3630
+tag_setup_view(315,8605
+tag_save_seg(333,8960
+tag_insert_signal(522,15234
+
+text_utils.c,775
+static char *sccs_id 23,742
+#define TRUE 33,969
+#define FALSE 34,985
+char **uniq_list(44,1266
+strip_newline_at_etc(59,1569
+block_build(81,2039
+clobber_cr(119,3176
+char *expand_name(133,3505
+apply_waves_input_path(170,4299
+apply_esps_bin_path(183,4700
+remove_reg_exp(211,5346
+cleaned_for_input(232,5790
+first_digit(249,6144
+after_last_digit(271,6542
+get_num(288,6864
+make_next_name(307,7166
+make_x_name(324,7462
+is_a_x_file(354,8369
+new_ext(381,9062
+remove_ext(409,9576
+its_a_reg_exp(440,10207
+its_a_directory(458,10677
+its_a_partial_pathname(483,11142
+fix_path_end(495,11475
+not_explicitly_named(510,11855
+get_output_file_names(521,12081
+insert_numeric_ext(604,14418
+setup_output_dir(628,15108
+strcmpcover(666,16146
+char **sort_a_list(673,16292
+
+view_setter.c,2097
+static char *sccs_id 21,683
+static  char view_channels[36,1103
+static Object *view_object 37,1188
+static View *the_view;38,1223
+view_assimilate_args(41,1321
+static char *cur_ch;120,3539
+channel_access(122,3634
+next_chan(136,3889
+void view_set_background(148,4130
+void view_set_zoom_ratio(156,4301
+void view_set_cross_level(164,4474
+void view_set_page_step(172,4649
+void view_set_invert_dither(189,4909
+void view_set_overlay_as_number(197,5086
+void set_view_channels(205,5271
+void view_set_redraw_on_release(213,5440
+void view_set_rewrite_after_edit(221,5625
+void view_set_edit_ganged(229,5812
+void view_set_zoom_ganged(238,6038
+void view_set_find_crossing(247,6264
+void view_set_scroll_ganged(255,6443
+void view_set_scrollbar_height(264,6673
+void view_set_readout_height(274,6879
+void view_set_line_color(282,7058
+void view_set_line_type(299,7490
+void view_set_val_offset(316,7929
+void view_set_val_scale(337,8446
+void view_set_show_vals(358,8959
+void view_set_show_current_chan(375,9396
+void view_set_show_labels(385,9607
+void view_set_reticle_on(402,10050
+void view_set_spect_interp(419,10490
+void view_set_h_rescale(427,10665
+void view_set_rescale_scope(436,10835
+void view_set_v_rescale(444,11023
+void view_set_plot_max(461,11460
+void view_set_plot_min(483,11988
+void view_set_middle_op(505,12516
+void view_set_move_op(524,12879
+void view_set_left_op(543,13237
+void view_set_mark_reference(562,13599
+void view_set_shorten_header(581,14000
+void view_set_cursor_yval(591,14226
+void view_set_cursor_chan(599,14399
+void view_set_cursor_time(607,14575
+void view_set_lmarker_time(615,14748
+void view_set_rmarker_time(623,14923
+void view_set_tmarker_yval(631,15098
+void view_set_tmarker_chan(639,15273
+void view_set_bmarker_yval(647,15448
+void view_set_bmarker_chan(655,15623
+void view_set_view(663,15798
+  vi35 676,16029
+update_view(722,18997
+char *set_view_attributes(730,19149
+Menuop *view_get_settable_list(768,19784
+void set_all_view_attributes(774,19912
+void set_wave_view_attributes(804,20428
+void set_spect_view_attributes(834,20975
+
+view_utils.c,3531
+static char *sccs_id 19,622
+#define WhiteSpace(WhiteSpace27,797
+static Selector va11 35,1043
+typedef struct activator activator73,2909
+} Activator;Activator77,2995
+  vb14 82,3028
+static double left_mark_time(129,5558
+static double right_mark_time(152,6031
+static double mark_time_reference(175,6495
+static char *view_get_l_mark_time(190,6875
+static char *view_get_mark_range_time(203,7163
+static char *view_get_r_mark_time(218,7541
+int time_to_sample(231,7830
+static char *view_get_mark_range_samp(247,8211
+static char *view_get_dur_samp(262,8628
+static char *view_get_f_value(276,8934
+static char *view_get_dur_time(294,9323
+static char *view_get_r_mark_samp(307,9585
+static char *view_get_l_mark_samp(321,9899
+char **view_get_variable_names(336,10215
+static Selector *view_setup_access(380,10982
+char **object_get_files(411,11894
+static char *view_get_files(442,12448
+static char *view_get_settables(455,12759
+static char *view_get_objects(463,12957
+static char *view_get_variables(476,13200
+static char *view_get_operators(484,13398
+static char *view_get_new_files(492,13591
+static char *view_get_object_commands(500,13789
+static char *view_get_waves_commands(508,13990
+Event *view_state_to_event(516,14189
+void view_do_op(533,14729
+arg_to_simple_string(565,15499
+char *value_as_string(582,15906
+static char *view_get_overlays(604,16329
+static char *view_get_is_iconized(637,17047
+static char *view_get_cursor_samp(650,17328
+static char *view_get_l_marker_samp(663,17605
+static char *view_get_l_marker_samp_from_start(676,17885
+static char *view_get_r_marker_samp(689,18194
+static char *view_get_tmarker_chan(702,18474
+static char *view_get_bmarker_chan(715,18737
+static char *view_get_cursor_label(728,19000
+static char *view_get_cursor_element(753,19467
+static char *view_get_cursor_chan(781,19991
+static char *view_get_range_time(794,20255
+static char *view_get_range_samp(806,20533
+static char *view_get_range_yval(820,20882
+static char *view_get_range_chan(836,21272
+view_invert_display_index(851,21652
+static char *view_get_cursor_channels(869,22007
+view_get_win_x(901,22839
+view_get_loc_x(918,23180
+view_get_loc_y(935,23538
+static char *view_get_sec_cm(951,23864
+static char *view_get_val_cm(964,24097
+static char *view_get_cursor_value(981,24441
+static char *view_get_cursor_labels(999,24820
+static char *view_get_cursor_values(1033,25502
+static char *view_get_view_channels(1063,26195
+static char *view_get_view_end_time(1092,26813
+static char *view_get_computed_value(1104,27042
+char *view_get_value(1119,27333
+View *find_and_destroy_overlay_views(1145,27920
+get_active_labeled_chan(1188,28870
+get_channels_name(1212,29451
+clear_active_channels(1226,29766
+add_active_channels(1269,30831
+set_active_channels(1295,31414
+void operate_wave_scrollbar(1337,32401
+generic_time_to_x(1357,32800
+generic_yval_to_y(1375,33349
+double generic_x_to_time(1392,33836
+double generic_y_to_yval(1409,34306
+double nonlin_y_to_yval(1427,34785
+generic_x_to_index(1448,35248
+int level_crossing_index(1468,35816
+double level_crossing_time(1530,37080
+int generic_ord_to_y(1546,37449
+#define DIST(DIST1566,37936
+generic_xy_to_chan(1569,38045
+plot_view(1664,40080
+View *find_view(1695,40966
+#define FUZZ 1716,41568
+get_view_segment(1718,41591
+view_fit_duration(1789,43890
+position_view(1800,44186
+page(1815,44561
+zoom_view(1844,45246
+zoom_others(1871,46043
+do_align_views(1903,46986
+align_view(1955,48480
+#define ET_PROPOSED(ET_PROPOSED1976,49270
+
+xaddop.c,1110
+static char *sccs_id 21,642
+#define NULL 48,1095
+#define EXV_WINDOW_TITLE 51,1118
+#define EXV_ICON_TITLE 53,1170
+static Frame addop_win 90,1851
+static Frame vars_win 92,1886
+static Frame ops_win 93,1919
+static Textsw textwin 94,1951
+static Panel_item attrlist;96,1985
+static Panel_item opName;98,2049
+static Panel_item windows;99,2075
+static Panel_item objNameStr;100,2102
+static Panel_item objNameType;101,2132
+static Panel_item gOutExt;102,2163
+static Panel_item tOutExt;103,2190
+static Panel_item nOutExt;104,2217
+static char *helpfile;106,2245
+static addop_par *Gparams;108,2269
+check_par(111,2308
+xaddop(130,2620
+*addop_defaults(210,4249
+print_addop_par(247,5065
+#define P_PRINT(P_PRINT254,5184
+create_addop_win(320,6441
+create_ops_win(472,11231
+create_vars_win(561,14486
+dismiss_proc(706,19636
+show_ops(730,20121
+show_vars(792,21352
+insert_var(842,22374
+insert_op(867,22881
+revise_op_attr(917,23887
+insert_attr(948,24553
+insert_gOut(972,25065
+insert_tOut(989,25460
+insert_nOut(1006,25855
+apply_addop(1024,26251
+add_op_help(1133,29146
+select_object_name(1145,29400
+
+xample.c,1109
+static char *sccs_id 20,641
+#define MAXPATHLEN 25,743
+#define SYNTAX 30,819
+static  char *wave_pro 32,996
+int    debug_level 34,1072
+int    command_paused 37,1171
+int	use_dsp32;39,1236
+double	image_clip 40,1252
+char *host 44,1344
+typedef struct objects objects49,1535
+} Objects;Objects54,1639
+Objects *objlist 59,1747
+static char objectname[65,2020
+static char objectname[NAMELEN], file[65,2020
+static char objectname[NAMELEN], file[NAMELEN], signame[65,2020
+  a12 67,2102
+int  mynum 78,2524
+char *generate_startup_command(85,2833
+main(98,3274
+void quit_proc(169,5471
+waves_send(182,5913
+char *meth_kill(196,6221
+char *meth_set(217,6785
+char *meth_mark(233,7264
+cleanup(265,8220
+char *meth_quit(274,8466
+char *meth_make_object(286,8782
+char *meth_redisplay(324,9972
+char *meth_return(344,10680
+get_display_attributes(369,11407
+  meth2 403,12564
+  bm8 409,12786
+Objects *new_objects(417,13057
+kill_proc(439,13652
+Objects *make_new_object(453,14065
+char *exec_waves(471,14499
+char *get_receiver_name(479,14666
+char *get_methods(486,14809
+Objects *get_receiver(497,15034
+
+xchartprocs.c,743
+static char *sccs_id 25,759
+#define _NO_PROTO62,2118
+Wobject *charts=68,2215
+Menu make_chart_menu(72,2334
+Wobject *new_wobject(102,3119
+kill_chartfile(124,3728
+kill_wobject(153,4281
+free_chartfile(185,4853
+plotting_labels(213,5396
+*get_chart_level(225,5640
+plotting_charts(258,6463
+send_play_seg(265,6638
+double left_bound(280,7013
+double right_bound(301,7438
+Word *get_word_level(320,7790
+play_chart_entry(369,9107
+top_word(391,9704
+scroll(413,10245
+Wobject *get_wobject(447,11021
+Chartfile *new_chartfile(460,11254
+Chartfile *get_chartfile(493,12218
+Hit *new_hit(510,12596
+Word *new_word(527,12953
+append_word(558,13787
+read_charts(610,15009
+plot_chart(715,17991
+do_chart_menu(802,20635
+chart_menu_proc(826,21214
+
+xcolormap.c,596
+static char *sccs_id 23,679
+#define MAXPATHLEN 30,831
+static char cms_name[39,972
+int attachment 41,1012
+Cms cms 45,1135
+int do_color 47,1185
+int cmap_depth 48,1227
+Xv_singlecolor rgb[50,1287
+int cmap_size 54,1426
+VisualID visual_id;62,1793
+int visual_class;63,1813
+Visual *visual_ptr;64,1831
+#define GetVisual 66,1852
+#define DEFAULT_VISUAL 67,1872
+static char *VisualNames[69,1900
+static int VisualValues[73,2037
+void cmap(78,2154
+#define SET_COLOR(SET_COLOR177,4879
+save_shared_colormap 239,6577
+get_color_depth 249,6816
+setup_colormap 276,7623
+identify_visual 301,8327
+
+xcursors.c,427
+static char *sccs_id 14,399
+View *focus_view;24,642
+transform_xy(27,733
+link_views(87,2184
+move_cursors(129,3231
+move_markers(184,4589
+move_ord_markers(225,5553
+plot_cursors(331,8654
+plot_markers(357,9325
+plot_hmarkers(425,11334
+object_xor_mark(476,12611
+view_xor_marks(503,13079
+plot_scrollbar(553,14882
+new_scrollbar(593,16143
+set_scrollbar(626,17092
+operate_scrollbar(643,17554
+void plot_time_bar(676,18356
+
+xedit_data.c,581
+static char *sccs_id 29,1045
+#define y_to_val(y_to_val45,1454
+#define MIN(MIN47,1555
+#define MAX(MAX49,1611
+e_modify_signal(61,2169
+double  assign_value(154,4732
+double  signal_get_value(260,6700
+double  get_displayed_value(357,8391
+fill_in(378,8971
+element_size(439,10714
+samp_size(486,11719
+add_to_new_files_browser(498,11940
+save_segment(511,12435
+do_deletions(538,13225
+#define RETURN(RETURN566,13833
+save_generic_seg(571,14004
+save_seg_in_file(737,19722
+delete_generic_segment(764,20394
+#define MOVE_TYPES(MOVE_TYPES769,20525
+delete_segment(919,24966
+
+xesps.c,2316
+static char *sccs_id 23,735
+#define _BSD26,807
+#define MAXPATHLEN 38,961
+#define SINGLE_HIT 56,1249
+#define CHECK_QUERY(CHECK_QUERY61,1478
+#define NAME_TAB 84,2026
+struct fname fname86,2048
+struct fname *names[92,2115
+static char espst_name[100,2459
+static char espst_command[101,2487
+static char espst_menu[102,2528
+Selector    et3 104,2557
+char *meth_add_espst(109,2770
+} espsfInfo;espsfInfo146,3797
+static int  espsf_num_outputs;148,3811
+static int  espsf_display;149,3842
+static char espsf_out_ext[150,3869
+static char new_command[151,3900
+static char espsf_name[152,3944
+static char espsf_menu[153,3972
+  ef6 156,4010
+char *meth_add_espsf(165,4433
+static char espsn_name[204,5484
+static char espsn_command[205,5512
+static char espsn_menu[206,5553
+Selector    e3 208,5582
+char *meth_add_espsn(217,6038
+char *meth_add_operator(244,6706
+is_an_add_op(275,7526
+is_an_add_waves(286,7788
+dump_add_ops(299,8083
+char *meth_dump_add_ops(339,9042
+#define PID_TABSIZE 361,9601
+	} pid_table[371,9791
+static int	pid_not_initialized 373,9819
+static void pid_reset_entry(376,9930
+static int init_pid_table(390,10345
+static void pid_clear_out_files(411,10879
+static int pid_get_table_index(433,11405
+void reset_esps_callback(447,11727
+void set_esps_callback_data(458,12030
+caddr_t get_esps_callback_data(469,12268
+static char *pid_add_graphics_name(481,12510
+static char *pid_add_text_name(490,12792
+static char *pid_add_command(499,13073
+static char *make_output_name(508,13302
+char *get_only_ascii(537,14042
+static run_any_prog(569,14685
+char *is_arith_operator(637,16692
+void call_operator(660,17306
+run_esps_prog(787,21209
+run_esps_prog_get_pid(801,21678
+int esps_w_done(984,26485
+char *mk_esps_temp(1061,28608
+hash 1078,28975
+lookup(1093,29217
+inc_esps_name(1111,29638
+markers_to_common(1170,30965
+typedef struct pidisplay pidisplay1210,31964
+static Frame pframe 1217,32057
+static Panel ppanel 1218,32088
+static Panel_item plist 1219,32119
+static Frame cframe 1220,32154
+static void ok_command(1222,32186
+static void process_kill_command(1227,32243
+void show_pending_command(1245,32709
+pframe_destroy_func(1281,33643
+void create_plist(1301,34021
+void add_to_plist(1335,35045
+indicate_process_complete(1352,35400
+indicate_pending_process(1376,35863
+
+xf0_methods.c,291
+static char *sccs_id 23,748
+#define scoff(scoff29,865
+#define ALMOST 30,921
+print_f0_y(40,1196
+homogeneous(155,3830
+new_f0_view(173,4216
+sig_type_hack(206,5174
+scale_f0_for_canvas(219,5548
+plot_f0_waves(305,8647
+#define PLOT_TYPE(PLOT_TYPE372,10807
+prepare_f0_reticle(546,15684
+
+xlabel.c,4115
+static char *sccs_id 24,772
+#define MAXPATHLEN 36,1037
+#define _NO_PROTO47,1277
+#define DELETE 50,1321
+#define DEBUG(DEBUG51,1343
+#define SYNTAX 53,1389
+static char *wave_pro 55,1499
+Event pseudo_event;57,1581
+int    debug_level 58,1601
+int    command_paused 59,1625
+Canvas global_canvas;61,1670
+Panel_item temp_item,82,2279
+Panel_item temp_item, file_item,82,2279
+Panel_item temp_item, file_item, object_item,82,2279
+Panel_item temp_item, file_item, object_item, active_item,82,2279
+Panel_item temp_item, file_item, object_item, active_item, menu_item,82,2279
+  chart_item,83,2349
+  chart_item, top_word_item;83,2349
+Frame daddy 87,2409
+Panel panel;88,2487
+int xlab_ctlwin_y 92,2578
+int xlab_ctlwin_x 93,2648
+static int  wind_height 98,2797
+static int xlabel_frame_voff 103,3005
+static int insert_mode 105,3064
+int replace_field 106,3129
+Xv_Font def_font 109,3194
+int     def_font_height,110,3222
+int     def_font_height, def_font_width;110,3222
+int	use_dsp32;112,3265
+double	image_clip 113,3324
+char        *Ok=115,3370
+char fontfile[116,3406
+char  active[117,3437
+char menufile[118,3462
+char chartname[119,3507
+char topword[120,3540
+char chartmenu[121,3568
+char *host 122,3610
+Objects *program;132,3871
+  g70 134,3905
+  static double m_time,161,5328
+  static double m_time, sec_cm,161,5328
+  static double m_time, sec_cm, start,161,5328
+  static double m_time, sec_cm, start, rend,161,5328
+  static double m_time, sec_cm, start, rend, rstart;161,5328
+  static int color,162,5381
+  static int color, width,162,5381
+  static int color, width, height,162,5381
+  static int color, width, height, loc_x,162,5381
+  static int color, width, height, loc_x, loc_y;162,5381
+  static char signame[163,5430
+  static int type 164,5462
+  static char sep;165,5498
+  static char comment[166,5517
+  a12 168,5563
+get_default_label_font(187,6366
+open_label_font(196,6533
+window_wash(203,6677
+Menu make_menu(212,6889
+make_labels_menu(295,9027
+time_to_x(346,10385
+x_to_time(356,10609
+char *exec_waves(366,10828
+get_receiver_name(375,11002
+get_methods(383,11146
+get_receiver(395,11372
+destroy_func(417,11712
+char *generate_startup_command(447,12420
+static char env_str[457,12693
+main(460,12873
+set_blowup_op(662,18242
+get_label_level(672,18450
+doit(705,19293
+quit_proc(917,24834
+waves_send(926,25003
+send_cursor(940,25311
+do_label_menu(953,25583
+static int evrx 982,26242
+static int evrw 984,26291
+static long evrw 986,26318
+label_menu_proc(992,26480
+do_labels(1034,27546
+done_proc(1155,30557
+plot_labels(1167,30797
+redo_display(1285,33825
+meth_unload(1332,34730
+meth_kill(1363,35545
+is_chart(1439,37980
+meth_set(1447,38155
+initial_setup(1480,38871
+meth_mark(1507,39446
+cleanup(1551,40661
+meth_quit(1576,41157
+get_decor_size(1586,41356
+set_display_size(1611,42046
+initial_bad_values(1658,43416
+install_signal_name(1671,43676
+meth_make_object(1684,43966
+update_menu_panel(1820,47515
+update_object_panel(1832,47716
+update_file_panel(1844,47930
+send_all_marks(1856,48157
+meth_print(1874,48423
+meth_print_EPS_temp(1927,49544
+meth_redisplay(1996,50945
+get_display_attributes(2018,51464
+have_all_display_attributes(2042,52154
+ob_exists(2070,52776
+repaint(2087,53038
+resize(2109,53589
+meth_new_labelmenu(2121,53876
+meth_set_active_fields(2138,54228
+meth_return(2167,54954
+char *meth_save_globals(2183,55254
+meth7 2203,55687
+bm9 2212,56006
+kill_signal_view(2226,56544
+make_new_object(2251,57322
+new_objects(2270,57768
+kill_proc(2303,58566
+Objects *obj_exists(2314,58831
+newFile(2330,59266
+set_active_fields(2427,61773
+void remove_cursor(2462,62539
+void add_cursor(2489,63242
+void mark_window(2516,63829
+typedef struct cur_ed cur_ed2528,64167
+} Editing;Editing2534,64262
+static Editing ed 2536,64274
+static Textsw textwin 2537,64327
+static Frame editor 2538,64360
+still_lives(2541,64464
+finish_edit(2575,65041
+ignore_edit(2619,66005
+static void open_edit_win(2628,66177
+set_up_editor(2702,67701
+int get_default_xlabel_color(2720,68168
+Selector *xlabel_global_list(2726,68294
+new_labelfile(2733,68432
+
+xmarks.c,2424
+static char *sccs_id 27,1056
+#define SYNTAX 42,1355
+int     debug_level 44,1465
+int     command_paused 45,1490
+int     use_dsp32,48,1564
+int     use_dsp32, da_location 48,1564
+double  image_clip 49,1641
+Frame	base_frame 52,1689
+Frame   daddy 53,1717
+Panel	panel 54,1742
+Canvas	labelsw 55,1765
+Pixwin	*labelpw;56,1791
+char *host 57,1808
+Xv_Font	fonts[61,1937
+char	*font_styles[62,1955
+int	font_sizes[63,2032
+Sentence *sentence=81,2395
+Marker *current_m 82,2420
+int insert_before 83,2446
+Rect	*label_rect 85,2508
+FILE	*infd 87,2534
+Objects base_obj,99,2765
+Objects base_obj, file_obj;99,2765
+static double sec_cm,103,2897
+static double sec_cm, start;103,2897
+static int  width,104,2926
+static int  width, height,104,2926
+static int  width, height, loc_x,104,2926
+static int  width, height, loc_x, loc_y;104,2926
+static double m_time,105,2967
+static double m_time, rstart,105,2967
+static double m_time, rstart, rend;105,2967
+static char name[106,3003
+static char name[NAMELEN], file[106,3003
+static char name[NAMELEN], file[NAMELEN], sigfile[106,3003
+static int color;107,3063
+static Selector a9 108,3081
+char *get_receiver_name(123,3805
+char *get_methods(130,3948
+char *get_receiver(140,4183
+init_object(163,4594
+char *generate_startup_command(187,5039
+main(202,5548
+set_blowup_op(315,8161
+quit_proc(325,8362
+kill_proc(333,8514
+create_panel_subwindow(344,8771
+create_label_subwindow(403,10480
+next_word_proc(415,10738
+last_word_proc(428,11048
+next_mark_proc(440,11354
+last_mark_proc(450,11588
+insert_where_proc(460,11821
+change_label(468,12029
+change_label_proc(478,12289
+insert_label(493,12630
+insert_label_proc(517,13240
+un_set_proc(534,13606
+delete_proc(542,13809
+#define MY_SPACE 549,14010
+show_markers(552,14103
+get_bounds(616,15859
+erase(640,16368
+prompt_for_label(649,16566
+time_to_x(662,16917
+sendtc(671,17132
+replot(686,17446
+get_decor_size(755,19292
+reposition(783,20044
+meth_replot(800,20487
+get_display_attributes(824,20980
+meth_return(844,21473
+    fm4 861,21781
+Methods  bm8 866,21949
+send_preset_marks(875,22275
+replot_proc(892,22631
+meth_make(906,22963
+initial_bad_values(976,24888
+have_all_display_attributes(986,25101
+meth_read(1008,25561
+meth_write(1038,26306
+meth_mark(1063,26912
+meth_kill(1087,27496
+waves_send(1117,28287
+cleanup(1131,28595
+meth_quit(1143,28866
+make_new_object(1154,29074
+char *exec_waves(1168,29369
+
+xmenus.c,2370
+static char *sccs_id 26,959
+#define SINGLE_HIT 34,1122
+#define CHECK_QUERY(CHECK_QUERY40,1290
+Event *last_event;44,1416
+Menu		w_button_submenu,58,1750
+Menu		w_button_submenu, s_button_submenu;58,1750
+static struct named_menu named_menu60,1793
+		w_menl[62,1874
+static Menu wave_submenu 87,2790
+void bus_err(90,2854
+void seg_viol(102,3045
+void zero_divide(112,3210
+void underflow(120,3377
+testh5 138,3840
+  mbo3 172,5679
+Menuop *blowup_op 181,6083
+Menuop *wave_get_ops(184,6182
+Canvas menu_get_canvas(190,6309
+View *menu_get_view(210,6932
+Menuop *last_menuop(221,7219
+Menuop *find_operator(233,7428
+void donothing(247,7641
+Menuop null_menu_operator 252,7673
+Menuop *get_null_op(255,7808
+void menu_set_blowup_op(261,7938
+Menuop *find_some_operator(284,8500
+  mol2 298,8734
+Moplist *menu_get_op_lists(302,8931
+Menuop *new_menuop(308,9054
+get_menu_label(352,10080
+menu_null_proc(365,10343
+do_menu(382,10981
+find_menu_item(426,12042
+static caddr_t op_select_proc(447,12512
+make_generic_menu(479,13351
+typedef struct but_it but_it505,13864
+} Button_items;Button_items508,13914
+Menu make_op_list(511,14003
+Menuop *search_all_menus_but(581,15678
+Menuop *find_op_list(606,16349
+Menuop *find_op_in_list(622,16658
+Menu make_window_menu(638,16995
+make_wave_menu(690,18233
+void menu_change(697,18416
+menu_clear(759,19691
+char *meth_save_menus(784,20328
+add_button_submenu(845,21997
+menu_get_n(888,22993
+void menu_operate(906,23362
+e_play_window(927,23866
+e_play_between_marks(942,24183
+e_play_file(957,24521
+e_play_from_cursor(974,24911
+e_page_ahead(988,25269
+e_page_back(1005,25618
+e_output_bitmap(1022,25966
+e_forward_window(1032,26151
+e_backward_window(1054,26558
+e_zoom_full_out(1075,27018
+e_position_view(1092,27377
+e_zoom_in(1107,27693
+e_blow_up(1123,28001
+e_blow_up_call_function(1147,28558
+e_zoom_out(1177,29265
+e_align_views(1194,29579
+e_save_segment(1210,29930
+e_insert_file(1255,30951
+e_kill(1273,31294
+e_delete_segment(1291,31629
+e_wb_spectrogram(1322,32294
+c_print_graphic(1336,32615
+e_print_ensemble(1346,32841
+e_nb_spectrogram(1362,33197
+e_up_down_move_marks(1376,33520
+e_move_closest_mark(1398,34115
+e_repeat_previous(1433,35066
+e_exec_waves(1449,35406
+char **get_ops(1465,35776
+char **get_full_op_list(1492,36259
+char *pack_up_list_items(1527,36978
+char *get_string_list(1567,37886
+
+xmethods.c,3193
+static char *sccs_id 23,796
+#define MAXPATHLEN 33,1023
+#define ATTACHING 36,1055
+#define SLEEPING 37,1080
+#define HI_SPECT_LIM 39,1106
+#define CHECK_QUERY(CHECK_QUERY49,1555
+int command_paused 122,3747
+typedef struct com_stk com_stk123,3806
+} Com_stack;Com_stack127,3889
+Com_stack *command_stack 129,3903
+int	new_width=131,3937
+get_receiver(139,4135
+get_receiver_name(160,4515
+get_methods(168,4658
+augment_external_command(180,4879
+meth_return(211,5865
+meth_delete_item(227,6152
+meth_delete_all(256,6655
+static void *ipc_callback_data 271,6911
+meth_pause(276,7059
+meth_detach(288,7301
+meth_attach(304,7628
+get_first_view(321,7955
+meth_align(336,8214
+meth_active_channels(364,8864
+meth_move_markers(403,9915
+meth_move_cursors(428,10442
+meth_remap_colors(455,11050
+limit_z_range(490,12261
+meth_spectrogram(503,12576
+meth_page(585,15083
+meth_bracket_markers(615,15887
+meth_save_seg(654,16853
+meth_play_seg(704,18177
+meth_stop_play(769,19786
+meth_play_window(821,21145
+meth_branch_to_script(870,22174
+FILE *pop_command_file(894,22735
+meth_call_script(928,23563
+strip_trailing_spaces(958,24328
+static char *find_double_colon(968,24537
+char *separate_wcommands(982,24795
+char *exec_waves(1021,25554
+meth_return_from_script(1077,26917
+char *menu_op_access_proc(1094,27259
+install_dispatch_hook(1121,27937
+push_command_file(1127,28093
+meth_close_frame(1157,28866
+meth_auto_plotlims(1187,29593
+meth_print_graphic(1201,29951
+meth_print_ensemble(1223,30468
+meth_open_frame(1234,30693
+void reset_color_maps(1257,31197
+static Menuop   si1 1272,31628
+post_set_process(1286,32593
+meth_set_attr(1305,32925
+  meth_call_operator(1337,33741
+  meth_overlay(1390,35083
+  meth_kill(1415,35674
+char *meth_quit(1470,36973
+char *meth_print_setup_cover(1480,37148
+mopup(1489,37354
+exit_lm(1503,37642
+kill_proc(1517,37824
+cleanup(1535,38203
+  meth_make_panel(1546,38378
+do_something(1588,39788
+char *meth_make_add_op_panel(1601,40052
+  meth_close_panel(1630,40913
+  meth_open_panel(1650,41374
+  meth_kill_panel(1667,41749
+char *meth_add_waves(1683,42118
+char *meth_open_ctlwin(1761,44143
+char *meth_close_ctlwin(1776,44449
+char *meth_make_object(1799,44929
+insert_mark(1849,46522
+object_enter_mark(1877,47194
+  new_mark(1898,47631
+kill_all_marks(1914,47906
+object_kill_mark(1930,48205
+char *meth_chdir(1956,48706
+char *meth_setenv(1976,49121
+char *meth_get(2016,50066
+send_kill_file(2176,54400
+send_kill_object(2193,54723
+send_redisplay(2206,54996
+#define ITIMER_NULL 2221,55263
+  meth_sleep(2228,55629
+check_ipc_response_pending(2260,56656
+  waves_timeout_proc(2271,56956
+  meth_shell(2298,57584
+  meth_shell_done(2313,57876
+  meth_mark(2326,58212
+char *meth_unmark(2348,58656
+  meth_redisplay(2382,59331
+  make_new_object(2391,59479
+char name[2398,59561
+char name[200], command[2398,59561
+fopen_command_file(2419,60142
+char *meth_insert(2438,60551
+char *meth_disconnect(2472,61479
+	 meth19 2492,61963
+	bmeth33 2519,63338
+char **get_commands(2566,65944
+char **waves_get_commands(2593,66434
+char **object_get_commands(2599,66573
+char **waves_get_variable_names(2607,66754
+Methods *get_methods_list(2637,67200
+
+xnotice.c,194
+static char    *sccs_id 18,551
+char            notice_msg[27,735
+#define ITIMER_NULL 29,769
+static Xv_notice notice_obj 35,996
+kill_notice(38,1046
+notice_proc(61,1529
+show_notice(77,1910
+
+xoverlays.c,818
+static char *sccs_id 23,691
+#define ALMOST 34,940
+#define P_F_Y_LOC 35,960
+#define P_F_X_LOC 36,1003
+static o_yoff 42,1160
+static o_off 43,1237
+#define BW_OVERLAYS 53,1598
+o_x_to_time(91,3237
+#define DIST(DIST108,3687
+overlay_xy_to_chan(111,3804
+overlay_general(220,6144
+overlay_spectrograms(227,6289
+dummy_cursor(279,7729
+general_overlay_print(287,7861
+overlay_formants(333,9188
+formant_cursor(395,11080
+formant_print(402,11212
+overlay_poles(434,12197
+pole_cursor(480,13611
+pole_print(487,13740
+find_host_signal(522,14732
+setup_overlay(539,15072
+setup_general_overlay(641,18322
+setup_formant_overlay(728,20958
+setup_pole_overlay(786,22655
+o_time_to_x(831,24051
+static finish_overlay_edit(840,24299
+e_reassign_formant(881,25766
+overlay_replot_value(1164,33445
+create_dummy_sf(1195,34399
+
+xp_pw.c,714
+static char *sccs_id 23,689
+#define _NO_PROTO31,874
+Display *global_display 40,1049
+set_pw_display(43,1098
+Xp_xv_vector(59,1581
+PIXFONT        *xv_pf_sys;96,2578
+Xp_xv_ttext(101,2693
+Xp_xv_text(156,4227
+Xp_xv_rop(211,5767
+#define CAT(CAT257,6931
+int   GC_CHAIN_KEY;266,7119
+#define INVALID_XID	270,7169
+Xp_xv_set_gc_op(275,7256
+Xp_xv_rop_internal(341,8963
+Xp_xv_rop_mpr_internal(429,11536
+Xp_xv_vector(583,16132
+PIXFONT        *xv_pf_sys;626,17282
+Xp_xv_ttext(632,17398
+Xp_xv_text(670,18423
+Xp_xv_rop(729,20056
+int   GC_CHAIN_KEY;774,21281
+#define INVALID_XID	778,21331
+Xp_xv_set_gc_op(785,21462
+Xp_xv_rop_internal(851,23169
+Xp_xv_rop_mpr_internal(960,26233
+xv_depth_relation(1106,30574
+
+xp_stubs.c,258
+int doing_print_graphic 1,0
+void init_print_setup_window(3,30
+void e_print_graphic(4,63
+void do_print_ensemble(5,106
+char *meth_print_setup(6,136
+int get_xp_display 7,169
+int XpRootWindow(8,193
+int dlsym;9,226
+int  dlclose(10,237
+int dlopen(11,254
+
+xpanels.c,781
+static char *sccs_id 22,718
+#define DEF_PANEL_LOC_X 30,870
+#define DEF_PANEL_LOC_Y 31,900
+#define DELTA_DEF_PANEL_LOC_X 33,931
+#define DELTA_DEF_PANEL_LOC_Y 34,968
+#define MAX_DEF_PANEL_LOC_X 36,1006
+#define MAX_DEF_PANEL_LOC_Y 37,1042
+typedef struct auxpanel auxpanel46,1241
+    }   AuxPanel;AuxPanel51,1449
+static AuxPanel *panels 53,1468
+int	def_panel_loc_x 55,1501
+static Panel define_panel_from_file(67,1838
+int make_auxpanel(119,3180
+close_auxpanel(181,4814
+open_auxpanel(201,5221
+kill_auxpanel(219,5583
+link_new_auxpanel(233,5803
+find_auxpanel(258,6269
+unlink_auxpanel(275,6522
+destroy_func(295,6805
+destroy_panel(324,7468
+btn_exec_waves(341,7774
+make_add_op_panel(356,8096
+#define CHECK_QUERY(CHECK_QUERY398,9205
+char *meth_save_panels(400,9298
+
+xplot_data.c,412
+static char *sccs_id 21,699
+#define scoff(scoff39,1113
+#define ALMOST 40,1169
+fmod(43,1266
+plot_reticles(54,1461
+print_y(67,1730
+file_print_x(224,5606
+print_x(262,6592
+plot_waves(300,7675
+#define PLOT_TYPE(PLOT_TYPE365,9612
+View *view_initial_values(598,16008
+View *new_waves_view(645,17578
+setup_generic_view(655,17781
+setup_view(733,20253
+prepare_reticle(759,20849
+scale_for_canvas(904,25625
+
+xpopup.c,291
+static char *sccs_id 31,1186
+static Frame	    popup 45,1447
+static Panel	    panel;46,1481
+static Panel_item   str_item;47,1505
+static char	    *data;49,1562
+static char	    *sptr;50,1585
+static int	    slen;51,1608
+accept_proc(55,1652
+cancel_proc(79,1972
+popup_get_string(93,2122
+
+xprint_setup.c,904
+static char *sccs_id 21,586
+#define _NO_PROTO30,799
+static Frame setup_frame;39,1044
+static Panel setup_panel;40,1070
+static Panel_item setup_out_place;41,1096
+static Panel_item setup_resolution,42,1131
+static Panel_item setup_resolution, setup_orient,42,1131
+static Panel_item setup_resolution, setup_orient, setup_scale;42,1131
+static Panel_item setup_out_type,43,1194
+static Panel_item setup_out_type, setup_outfile;43,1194
+static Panel_item setup_print_com,44,1243
+static Panel_item setup_print_com, setup_ps_level;44,1243
+show_for_printer(64,1888
+show_for_file(71,2017
+meth_print_setup(80,2189
+init_print_setup_window(113,3231
+char str[246,6697
+ps_level_notify(249,6725
+out_place_notify(274,7302
+out_type_notify(293,7715
+resolution_notify(317,8321
+scale_notify(329,8599
+orient_notify(340,8854
+outfile_notify(358,9238
+print_com_notify(369,9496
+send_attach_all_vals(379,9754
+
+xprint_util.c,260
+static char    *sccs_id 20,658
+#define _NO_PROTO31,943
+int             doing_print_graphic 41,1120
+static Display	*xp_printer;56,1550
+get_xp_display(61,1662
+setup_xp_from_globals(69,1789
+start_xp(178,4533
+finish_xp(196,4957
+setup_xp_EPS_temp(216,5379
+
+xreticle.c,655
+static char *sccs_id 24,771
+#define oneormore(oneormore69,1690
+char default_x_precision[74,1818
+char default_y_precision[75,1857
+reticle_get_margins(91,2311
+new_spectrogram_reticle(137,3598
+ret_scale(201,5485
+scale_spect_view_ret(229,5958
+lin_spect_view_int(276,7528
+round_num_between(309,8282
+arb_spect_view_int(336,8918
+new_wave_reticle(419,11189
+free_reticle(480,12965
+myfmod(501,13651
+do_x_numbers(523,14184
+do_x_label(553,14950
+do_y_numbers(576,15543
+reticle_set_absc_precision(610,16496
+reticle_set_ord_precision(634,17076
+draw_reticle(658,17655
+central_marks(820,22608
+get_ord_marklist(846,23296
+get_absc_marklist(932,25392
+
+xserver.c,523
+static char *sccs_id 23,766
+#define CHECK_QUERY(CHECK_QUERY57,1610
+struct clients clients60,1704
+static SOCKET *sp;66,1790
+static struct clients *client_list 67,1809
+char *meth_enable_server(75,2083
+char *meth_disable_server(118,3149
+static Notify_value  server_catcher(144,3752
+static char lockfile[160,4125
+static remove_server_lock(161,4157
+static Notify_value server_io(176,4704
+static SOCKET *find_socket(217,5909
+static struct clients *addclient(230,6196
+static struct clients *remove_client(247,6621
+
+xspect.c,2266
+static char *sccs_id 20,728
+#define _NO_PROTO37,1071
+#define ALWAYS_LOAD 45,1166
+#define LOAD_AS_NEEDED 46,1192
+#define BW_OVERLAYS 47,1218
+#define HI_SPECT_LIM 49,1241
+char spect_prog[80,2257
+static int use_spect_prog 81,2284
+double image_clip 89,2519
+char *spect_params 93,2616
+char loaded[96,2759
+char *sh_mem;100,2851
+  srbo16 122,3704
+right_sbut_menu 142,4749
+slbo3 156,5085
+Menuop *aux_sbut_ops 181,5455
+int wind_type 188,5619
+int bits_per_pixel;192,5716
+#define CLIENT_BYTE_ORDER 197,5865
+#define CLIENT_BYTE_ORDER 201,5949
+rev 207,6080
+bit_reverse 228,6496
+byte_swap 240,6673
+byte_swap_s 263,6962
+spect_get_ops 284,7263
+new_spectrogram 291,7404
+get_spgm_params 332,8376
+spectrogram 509,13663
+new_spect_display 617,16644
+#define RETURN(RETURN630,16874
+spgm_32 634,17004
+  struct mem_dprmem_dpr644,17409
+static char e_spect_tname[990,27546
+clobber_temp_signal_file 992,27663
+e_spect 1002,27911
+e_spgm 1103,30332
+spblit 1208,33086
+cmap_spect 1263,34290
+new_spect_window 1352,36873
+print_spect_x 1515,41701
+spect_y_to_yval 1546,42481
+spect_get_cursor_channel 1561,42846
+print_spect_y 1587,43451
+rescale_spect 1627,44401
+spect_plot_reticles 1658,45371
+scale_spect_for_canvas 1670,45649
+#define EF(EF1680,45835
+plot_spect_cursors 1757,48146
+kill_srvimage 1790,48942
+new_spgm_reticle 1801,49127
+spect_xy_to_chan 1907,52488
+isa_spectrogram_view 1930,52902
+nonlin_yval_to_y 1940,53152
+spect_yval_to_y 1971,53790
+operate_spect_scrollbar 1987,54168
+new_spect_view 2010,54604
+spect_file_print_x 2146,58905
+e_move_contour 2177,59615
+e_modify_intensity 2253,61461
+gray_init 2337,63763
+dith_init 2385,64728
+interp 2461,66303
+dither 2515,67687
+dith_free 2597,69670
+gray_free 2621,70079
+scope_to_number 2640,70397
+get_mapper_array 2662,70863
+plot_spectrogram 2693,71714
+      typedef int triple[triple3244,86028
+make_spect_menu 3414,89682
+setup_dsp 3428,90005
+#define	DA_RUN	3436,90283
+#define	DA_END	3437,90301
+#define	PARAM_WAIT_CODE	3488,91784
+#define	DATA_WAIT_CODE	3489,91824
+#define	DSP_INIT_CODE	3490,91863
+#define	DSP_START_CODE	3491,91897
+#define DSP_CHIP 3492,91932
+DSP_LoadAndGo 3499,92097
+#define RETURN(RETURN3532,93056
+spgm_32C 3536,93186
+  struct mem_dprmem_dpr3548,93618
+
+xspectrum.c,6195
+static char *sccs_id 29,947
+#define _NO_PROTO57,1953
+#define	SCALE_DB 61,2023
+#define	SCALE_MAG 62,2045
+#define	SCALE_PWR 63,2067
+#define TRACE_MAX 66,2139
+#define X_CURS_MAX 68,2209
+#define Y_CURS_MAX 70,2293
+#define NOT_SET 72,2324
+int	    debug_level 74,2348
+int	    command_paused 75,2373
+int	    use_dsp32,76,2432
+int	    use_dsp32, da_location 76,2432
+double	    image_clip 79,2528
+double      range_db 80,2577
+static int fft_tablesize 83,2653
+static char *wave_pro 84,2736
+#define MAX_LPC_ORDER 86,2818
+Xv_Font	    def_font;96,3024
+int	    def_font_height,97,3046
+int	    def_font_height, def_font_width;97,3046
+int xsp_datwin_height 100,3149
+int xsp_datwin_width 101,3223
+int xsp_datwin_y 102,3295
+int xsp_datwin_x 103,3372
+int xsp_ctlwin_y 104,3449
+int xsp_ctlwin_x 105,3521
+int xsp_datwin_forw 106,3593
+int xsp_max_lpc_order 107,3673
+    static double   m_time,118,4018
+    static double   m_time, rstart,118,4018
+    static double   m_time, rstart, rend,118,4018
+    static double   m_time, rstart, rend, sec_cm,118,4018
+    static double   m_time, rstart, rend, sec_cm, start;118,4018
+    static int	    color,119,4075
+    static int	    color, width,119,4075
+    static int	    color, width, height,119,4075
+    static int	    color, width, height, loc_x,119,4075
+    static int	    color, width, height, loc_x, loc_y;119,4075
+    static char	    name[120,4130
+    static char	    name[NAMELEN], file[120,4130
+    static char	    name[NAMELEN], file[NAMELEN], signame[120,4130
+double	w_size 123,4249
+int	scale_type 127,4470
+int    current_analysis_type 141,5201
+double  cep_cutoff 144,5283
+int cep_liftering 145,5329
+  g72 148,5415
+    static Selector a9 201,8699
+} Trace;Trace225,9770
+typedef struct objects objects227,9780
+} Objects;Objects254,10892
+Objects	    *objlist 257,10928
+Menu	    menu,266,11209
+char        *Ok=276,11493
+Panel	    panel;280,11677
+Frame	    frame;281,11694
+Frame	    daddy 282,11711
+Panel_item  newFunct_item,284,11789
+Panel_item  newFunct_item,	order_item,284,11789
+Panel_item  newFunct_item,	order_item,	reticle_item,284,11789
+	    weightType_item,285,11842
+	    weightType_item,	wsize_item,285,11842
+	    weightType_item,	wsize_item,	fb_item,285,11842
+	    limits_item,286,11885
+	    preemp_item,287,11903
+	    preemp_item,	hcurs_item,287,11903
+	    preemp_item,	hcurs_item,  horiz_c_item,287,11903
+	    fsize_item,288,11948
+	    fsize_item,		scale_item,288,11948
+	    int_c_item,289,11978
+	    int_c_item,		man_item,289,11978
+	    int_c_item,		man_item,	quit_item;289,11978
+Panel_item  cep_trans_item,291,12027
+Panel_item  cep_trans_item, cep_cutoff_item,291,12027
+Panel_item  cep_trans_item, cep_cutoff_item, cep_liftering_item;291,12027
+typedef struct funlist funlist310,12531
+} Funlist;Funlist315,12654
+Funlist fun12 325,13044
+int    def_weight_type[346,14050
+int	esps_spect_method 354,14305
+#define SYNTAX 357,14341
+char *host 359,14454
+doing_cepstral_smoothing(362,14574
+do_function(370,14730
+get_receiver_name(388,15480
+get_methods(397,15682
+window_wash(408,15948
+get_receiver(423,16345
+#define SET_PANEL_DOUBLE(SET_PANEL_DOUBLE446,16718
+#define SET_PANEL_INT(SET_PANEL_INT449,16838
+#define LIM_LOW(LIM_LOW452,16954
+#define LIM_HIGH(LIM_HIGH453,16997
+#define SET_ABS(SET_ABS455,17042
+meth_set(458,17092
+make_new_object(548,19159
+double_proc(568,19796
+#define PNZ_VAL(PNZ_VAL574,19928
+int_proc(608,20655
+#define PNZ_VAL(PNZ_VAL615,20797
+newFunction(636,21378
+void newWindType(663,22010
+quit_proc(704,22892
+char *generate_startup_command(713,23061
+static char env_str[733,23817
+main(735,23854
+set_blowup_op(1105,33811
+x_to_frequency(1117,34171
+frequency_to_x(1144,34747
+x_to_index(1175,35402
+amplitude_to_y(1238,36599
+double y_to_amplitude(1269,37285
+trace_color(1300,37949
+plotcursors(1314,38301
+printcursors(1359,39449
+send_curs_freq(1390,40217
+setcursors(1402,40468
+save_as_ref(1434,41306
+set_ref_level(1466,42115
+plot_v_marker(1483,42495
+move_v_markers(1499,42881
+plot_h_marker(1526,43534
+move_h_markers(1542,43927
+plot_markers(1569,44577
+move_markers(1583,44999
+doit(1597,45364
+plot_data(1703,48730
+char *meth_print_data(1750,50089
+#define scoff(scoff1807,51482
+plot_a_trace(1808,51547
+plot_trace(1874,53494
+read_signal_segment(1958,56047
+invfil(2031,58336
+free_trace(2190,62855
+new_trace(2203,63152
+make_output_array(2263,64138
+esps_compute_spect(2277,64426
+log_mag_dftr(2463,69268
+log_mag_dft(2539,71441
+log_cepstrally_smoothed(2625,73553
+scale_mag(2777,77397
+use_sig_data(2867,79395
+kill_proc(2914,80645
+waves_send(2931,81172
+meth_mark(2947,81577
+do_implied_analysis(2974,82320
+meth_mark_obj(2998,82972
+show_window(3026,83815
+check_signal(3047,84336
+cleanup(3069,84832
+meth_kill(3077,85009
+meth_quit(3130,86294
+kill_spectral_view(3145,86609
+meth_make_object(3169,87565
+recompute_all(3348,92205
+new_spectrum_reticle(3363,92450
+convert_trace(3484,96319
+get_trace_maxmin(3555,97756
+get_spect_maxmin(3590,98474
+redo_display(3619,99138
+have_all_display_attributes(3735,101869
+initial_bad_values(3756,102323
+meth_redisplay(3766,102533
+limit_location(3814,103663
+get_display_attributes(3829,104185
+repaint(3856,104857
+meth_return(3889,105963
+char *meth_save_globals(3905,106264
+meth_print_EPS_temp(3923,106616
+char *meth_print(3978,107792
+  meth5 3997,108286
+  bm8 4006,108619
+new_objects(4018,109114
+kill_object(4067,110194
+make_arrays(4100,110835
+get_fft_size(4135,111657
+destroy_func(4147,111813
+#define DEBUG(DEBUG4152,111901
+sigint_func(4173,112393
+sigtrm_func(4182,112569
+sigfpe_func(4191,112725
+sigbus_func(4200,112898
+sigill_func(4209,113073
+sigseg_func(4218,113258
+is_feasd(4227,113438
+got_enough(4245,113782
+    op5 4266,114263
+do_menu(4283,115132
+make_generic_menu(4317,115928
+make_menu(4346,116520
+e_ref_save(4354,116670
+static void e_set_ref_level(4365,116898
+static void e_bracket_markers(4377,117155
+static void e_zoom_out(4389,117408
+e_inv_filt(4403,117667
+e_clear_traces(4415,117936
+e_clear_non_ref_traces(4435,118249
+char *exec_waves(4455,118630
+static void e_print_graphic(4463,118797
+print_EPS_temp(4490,119258
+
+xversion.c,169
+static char *sccs_id 23,768
+char	*ProgName 28,878
+char	*Version 29,905
+char	*Date 30,930
+static char    *VersionFile 32,960
+set_pvd(35,1010
+check_version(49,1315
+
+xwaves.c,1884
+static char *sccs_id 25,840
+#define MAXPATHLEN 41,1234
+#define SYNTAX 44,1266
+#define REACT_TIME 46,1359
+Xv_singlecolor ffg,75,2206
+Xv_singlecolor ffg, fbg;75,2206
+int             dffg 76,2274
+FILE	    *fp_command 101,3083
+int	    command_line 103,3169
+int	    debug_level;135,4117
+Xv_Font def_font;145,4302
+int     def_font_height,146,4320
+int     def_font_height, def_font_width;146,4320
+int	menu_item_key;147,4361
+int	file_name_key;149,4460
+int	list_elem_key;151,4572
+int	auxpanel_key;153,4687
+Frame	daddy 157,4811
+Panel	control_panel;158,4838
+Panel_item attach_panel;159,4859
+Object	program 161,4885
+int	    child 173,5030
+char	    *host;174,5049
+char *thisprog;175,5097
+Menu	    spect_menu 179,5186
+Panel_item  help_item,182,5281
+Panel_item  help_item, quit_item,182,5281
+Panel_item  help_item, quit_item, newFile_item,182,5281
+Panel_item  help_item, quit_item, newFile_item, newFunct_item,182,5281
+Panel_item  help_item, quit_item, newFile_item, newFunct_item, newObj_item,182,5281
+	    newControl_item,183,5357
+	    newControl_item, pause_item,183,5357
+	    newControl_item, pause_item, resume_item,183,5357
+	    newControl_item, pause_item, resume_item, overlay_item,183,5357
+	    outputFile_item;184,5418
+int server_mode 190,5623
+static unsigned int prev_attach_value=196,5753
+static void attach_callback(199,5867
+void reset_attach_choice(231,6523
+static Panel_item add_attach_choices(257,7169
+main(294,7992
+doub_proc(682,18511
+#define PNZ_VAL(PNZ_VAL688,18594
+rescale_it(696,18776
+View *create_new_signal_view(726,19683
+doit(891,24485
+move_view_to_loc(974,26686
+handle_da_interruption(998,27302
+command_proc(1024,28101
+pause_proc(1138,30945
+resume_proc(1151,31168
+quit_proc(1167,31442
+newText_proc(1178,31661
+kill_program(1259,34306
+kill_signal_view(1282,34989
+destroy_func(1301,35450
+#define DEBUG(DEBUG1306,35535
+
+xwaves_utils.c,1655
+static char    *sccs_id 24,778
+static char     env_str[40,1134
+set_default_header(45,1318
+set_old_sphere_format(61,1628
+clone_methods(70,1869
+window_wash(89,2540
+static char     cur_oname[98,2695
+current_object_name(102,2830
+set_current_obj_name(118,3181
+window_check_return(128,3397
+receiver_prefixed(139,3659
+esps_initialize(182,4903
+sigint_func(187,4939
+emergency_quit(196,5146
+sigtrm_func(206,5248
+sigfpe_func(215,5419
+sigbus_func(224,5602
+sigill_func(233,5792
+sigseg_func(242,5992
+install_signal_handlers(251,6256
+distribute_options_settings(278,7224
+waves_initialize(297,7799
+install_colormap(380,10371
+iabs(401,10765
+get_labeled_chan(412,11049
+new_object(436,11558
+kill_object(472,12634
+   typedef struct frli frli478,12745
+   }               Flist;Flist481,12823
+dt_xv_destroy(554,14507
+dt_xv_destroy_safe(564,14775
+put_waves_signal(574,15058
+get_extension(602,15838
+make_edited_filename(619,16205
+get_new_files_list(657,17325
+get_objects_list(689,18009
+time_to_index(719,18611
+check_file_name(730,18891
+free_canvas_views(752,19468
+canvas_still_lives(871,22882
+really_plot_it_now(897,23355
+static List    *dq 913,23649
+#define ITIMER_NULL 915,23677
+process_repaint_q(918,23817
+clobber_repaint_entry(936,24247
+new_repaint_ent(950,24526
+delay_repaint(964,24818
+repaint(996,25464
+redoit(1006,25670
+find_object(1014,25832
+link_new_object(1023,26020
+link_new_signal(1033,26214
+find_signal(1046,26494
+get_playable_signal(1065,26889
+update_filename_display(1149,29735
+maybe_basename(1170,30257
+update_window_titles(1184,30575
+update_control_panel_names(1203,31116
+is_a_command_file(1219,31739

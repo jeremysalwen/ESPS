@@ -1,0 +1,33 @@
+.lo
+.ce 2
+.b
+Waves+ Source Directory
+Document version: @(#)wsource.me	1.1 7/19/90
+.sh 1 "Using the Waves+ Source"
+.pp
+The \fIwaves+\fR source directory contains the source for \fIwaves+\fR,
+(both Suntools and X version), \fIformant\fR, \fIcmap\fR,
+\fIdspsgram\fR, \fIwrecord\fR, and \fIwplay\fR.   To compile any of
+these go down into the desired source directory and do:
+.ft CW
+.sp
+emake 
+.sp
+.ft R
+.pp
+A few of the directories (\fIwaves\fR, \fIformant\fR, and \fIlibsig\fR)
+have makefiles that depend on which window system you are compiling
+for.   There are three makefiles: \fImakefile\fR, \fIsunview.mk\fR, and
+\fIxview.mk\fR.   The main makefile tries to compile using both sunview
+and xview makefiles.  Only one or both may succeed.  You can force make
+to use one or the other by:
+.ft CW
+.sp
+emake -f xview.mk   or emake -f sunview.mk
+.sp
+.ft R
+.pp
+In order to compile the X windows version of \fIwaves+\fR, you must have
+the Sun XView toolkit installed.  (You can either build this from public
+domain sources, or get a binary distribution from Sun.)   This version
+of the sources must be compiled and linked under Versin 1.0.1 of XView.

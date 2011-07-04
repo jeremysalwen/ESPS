@@ -1,0 +1,12 @@
+
+comment.c
+==============
+(112)  warning: main() returns random value to invocation environment
+
+
+==============
+function argument ( number ) used inconsistently
+    _flsbuf( arg 1 )   	llib-lc(486) :: comment.c(96)
+    _flsbuf( arg 1 )   	llib-lc(486) :: comment.c(105)
+function returns value which is always ignored
+    printf	    _flsbuf	

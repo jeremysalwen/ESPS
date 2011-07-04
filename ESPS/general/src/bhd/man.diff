@@ -1,0 +1,91 @@
+.\" Copyright (c) 1988 Entropic Speech, Inc.; All rights reserved
+.\" @(#)bhd.1	3.7 3.7 ESI
+.TH BHD 1\-ESPS 4/2/97
+.ds ]W (c) 1991 ERL, Inc.
+.SH "NAME"
+bhd \- behead an ESPS file
+.SH "SYNOPSIS"
+.B bhd
+[
+.B -h
+] [
+.B -F
+]
+.I infile
+.I outfile
+.SH "DESCRIPTION"
+.PP
+.I Bhd
+reads an ESPS file (\fIinfile\fR), chops the header from the data,
+discards the header, and writes the data to \fIoutfile\fP.  If the
+\fB-h\fP is used, \fIbhd\fP instead discards the data and writes 
+the header to \fIoutfile\fP.  
+.PP
+When used without \fB-h\fP, \fIbhd\fP allows the contents of an ESPS
+file to be passed to non-ESPS programs (For a table giving the binary
+data format, use \fIfea_element\fP (1\-\s-1ESPS\s+1).)  If you 
+want to pass the data to non-ESPS programs in ASCII format, use 
+\fIpplain\fP (1\-\s-1ESPS\s+1).  
+.PP
+When used with \fB-h\fP, \fIbhd\fP yields pure-header files that may
+be useful as external ESPS references in the headers of other files.
+(See \fIaddgen\fP (1\-\s-1ESPS\s+1).)
+.PP
+The \fB-F\fR option causes a foreign header to be retained on the output
+file, if one is present.  In most cases, such a foreign header would
+have been included in the ESPS file by the use of the \fB-F\fR option
+on either \fIaddfeahd\fR(1\-\s-1ESPS\s+1) or \fIbtosps\fR(1\-\s-1ESPS\s+1).   
+However, the foreign header could also have been saved by a user
+written program. 
+.PP
+If the \fB-F\fR option is used with the \fB-h\fR option, then the
+foreign header is written to the output file following the ESPS header.
+If the \fB-F\fR option is used without the \fB-h\fR option, then the
+foreign header is written to the output file before the data.
+.PP
+If infile = "\-", standard input is read;
+if outfile = "\-", standard output is written.
+.PP
+If the input file is in EDR format a warning is printed on those
+machines where the native machine format is not the same as EDR.  In
+these cases, the output file might not be very useful.  The file can
+first be converted to native format if necessary.
+.SH "ESPS HEADERS"
+.PP
+This program ignores all header items.
+.SH "ESPS PARAMETERS"
+.PP
+This program does not access the parameter file.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.B \-h
+Produce a header-only ESPS file in \fIoutfile\fP.  
+.SH "EXAMPLE(S)"
+.PP
+Suppose you need to check that two versions of a program are writing
+identical output data, though there may have been header changes.
+Do the following with output files from the two programs.
+.LP
+.BI bhd " file.1  file.1.nh "
+.br
+.BI bhd " file.2  \- | " "cmp " "\- file.1.nh"
+.SH "SEE ALSO"
+.PP
+.nf
+\fIhdshrink\fP (1\-\s-1ESPS\s+1) , \fIaddgen\fP (1\-\s-1ESPS\s+1), \fIaddfea\fP (1\-\s-1ESPS\s+1), 
+\fIpplain\fP (1\-\s-1ESPS\s+1), \fIbtosps\fP (1\-\s-1ESPS\s+1), \fIaddfeahd\fP (1\-\s-1ESPS\s+1), 
+ESPS(5-ESPS), \fIread_header\fP (3\-\s-3ESPS\s+1)
+.fi
+.SH "DIAGNOSTICS"
+.PP
+.nf
+Usage: bhd [-h] infile outfile
+bhd: can't open \fIfilename\fP: \fIreason\fP
+bhd: \fIfilename\fP is not an ESPS file
+.SH "BUGS"
+.PP
+None known.
+.SH "AUTHOR"
+Rodney Johnson.

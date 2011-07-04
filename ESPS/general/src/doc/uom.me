@@ -1,0 +1,26 @@
+.lo
+.ce 2
+.b
+README FIRST
+Document Version: 1.1 6/19/89
+.sh 1 "About this tape"
+.pp
+This tape contains both the ESPS HP sources as described in the
+attached instructions and a HP 300 binary directory.   
+You can either build the
+system from source (see the source installation instructions), or use
+the pre-compiled binary (see the binary installation instructions).
+.pp
+You will have to build HP 800 binaries yourself.
+.pp
+Note that in order to read the tape, you must use the HP utility
+\fItcio\fR and pipe that to \fItar\fR.   See the enclosed instructions
+and look at the HP \fItcio\fR manual page for details.
+.sh 2 "Possible Problems with Compiling on HP 800"
+.pp
+We've had some reports of problems compiling this release on HP 800s.
+The module \fIlib/locks.c\fR gets a syntax error in the include file
+\fIfile.h\fR.   This module is not needed by any programs in the HP 800
+release, so if you get this error edit the \fIMakefile\fR in
+\fIsrc/lib\fR and remove references to \fIlocks\fR in the \fBSRCS\fR and
+\fBOBJS\fR lists.

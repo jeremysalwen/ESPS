@@ -1,0 +1,12 @@
+# @(#)Prefcof	1.10 7/13/93 ESI
+# default parameter file for refcof
+int start ?= 1: "First point to process";
+int nan ?= 1000: "Number of points; 0 means continue to EOF";
+int frame_len ?= 0: "Number of points per analysis frame; 0 means nan";
+int step ?= 0: "Number or points between start of successive frames; 0 means frame_len";
+string window_type ?= "RECT": "Window to apply to data": {"RECT", "HAMMING", "TRIANG", "HANNING", "COS4"};
+int order ?= 15: "Number of reflection coefficients to compute per frame)";
+string method ?= "AUTOC": "Analysis method":{"AUTOC", "COV", "BURG", "MBURG", "FBURG", "VBURG", "STRCOV", "STRCOV1"};
+float preemphasis ?= 0.95: "preemphasis factor";
+float strcov_test ?= 1e-5: "convergence test value for STRCOV";
+int strcov_maxiter ?= 20: "maximum number of iterations for STRCOV";

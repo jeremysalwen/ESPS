@@ -1,0 +1,206 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)fea_deriv.1	3.8 20 Sep 1997 ESI/ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH FEA_DERIV 1\-ESPS 20 Sep 1997
+.SH "NAME"
+fea_deriv - derive a new FEA file containing elements from an existing one 
+.SH "SYNOPSIS"
+.B fea_deriv 
+[
+.BI \-r " range"
+] [
+.BI \-T " subtype"
+] [
+.B \-t
+] [
+.BI \-x " debug_level"
+]
+.I " fieldfile infile.fea outfile.fea"
+.SH "DESCRIPTION"
+.PP
+.I Fea_deriv
+creates a new FEA file,
+.I outfile.fea,
+with fields whose elements are taken from an 
+existing FEA file
+.I infile.fea
+The input file 
+.I fieldfile
+specifies the names for the fields in 
+.I outfile.fea
+and specifies how these fields are constructed from elements of the 
+fields in 
+.I infile.fea.
+If
+.I infile.fea
+is equal to "\-", 
+then standard input is used. If
+.I outfile.fea
+is equal to "\-", standard output is used.  
+.PP
+.I Fieldfile
+is an ASCII file with the following format:  The first line has the 
+form:
+.nf
+
+    field = <new_field_name>
+
+.fi
+where "field" is a keyword and <new_field_name> is an ASCII string
+that gives the name of the first field to be defined for
+.I outfile.fea.
+Following this line is a series of lines containing strings of the
+form:
+.nf
+
+    <old_field_name> [ <element_range> ]
+
+.fi
+where <old_field_name> is the name of a field in
+.I infile.fea,
+and where <element_range> is a list of 
+elements in a form suitable for \fIgrange_switch\fP (3\-ESPSu).  
+These lines specify how <new_field_name> is composed of elements from
+fields in 
+.I infile.fea.
+The field names (<new_field_name> and <old_field_name>)
+must follow the same rules as C identifiers, i.e.
+they can only consist of letters and digits; the first
+character must be a letter.  The underscore "_" counts as a letter.
+.PP
+For example, suppose that
+.I fieldfile
+contains the following:
+.nf
+
+    field = svector
+    raw_power[0]
+    spec_param[1,3:5]
+
+.fi
+This is interpreted to mean that the output field
+.I svector
+contains five elements derived from elements in the 
+.I raw_power
+and
+.I spec_param
+fields of 
+.I infile.fea.
+In particular, the 5 elements of 
+.I svector
+correspond to \fIraw_power\fP[0], \fIspec_param\fP[1],
+\fIspec_param\fP[3], \fIspec_param\fP[4], and \fIspec_param\fP[5].  
+Note that the size of the defined field is implicit in the 
+list of components.
+The default type of the derived field is the "highest" type of the
+component fields.  That is, if they are all ints, then int, if one
+or more is float, then float, etc.
+.PP
+Adding an additional line of the form
+.nf
+
+    type = <\fIdata_type\fP>
+
+.fi
+after the line containing the keyword "field" will
+explicitly force the type of the derived field to \fIdata_type\fP.
+Additional fields can be defined by additional 
+sets of specifications in
+.I fieldfile,
+with each field specification beginning with a line starting with 
+"field =". 
+.PP
+.I Fea_deriv
+will exit with an error message if any of the field specifications
+do not refer to fields defined in
+.I infile.fea, or any of the specified fields are of type complex.
+.SH OPTIONS
+.TP
+.BI \-r " range"
+Specifies a restricted range of records from 
+.I infile.fea
+to be processed.  If this option is not used, all records are 
+processed.  
+.TP
+.BI \-T " subtype"
+Specifies that a particular FEA subtype code be set in the output
+file; for example "\-\fBT\fP FEA_SD" forces the output file to be 
+a FEA_SD file.  Note that it is the user's responsibility to make 
+sure that the field definitions and generic header items are defined 
+appropriately for the subtype.  
+.TP
+.B \-t
+Specifies that tags are to be copied from the input file to the output file.  
+.TP
+.BI \-x " debug_level"
+If
+.I debug_level
+is nonzero, debugging information is written to the standard error output.
+Default is 0 (no debugging output).
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read by 
+.I fea_deriv.
+.SH "ESPS COMMON"
+.PP
+The ESPS common file is not processed by 
+.I fea_deriv.
+.SH ESPS HEADERS
+.PP
+.I fea_deriv
+creates a FEA file header for 
+.I outfile.fea
+based on the field definitions in
+.I fieldfile.  
+Generic header items in 
+.I infile.fea
+are copied to
+.I outfile.fea
+even though some of them may not be meaningful.
+.PP
+If the input file has the generic header item \fIrecord_freq\fR, then
+the generic header item \fIstart_time\fP is written in the output file.  
+The value written is computed by taking the \fIstart_time\fP value from 
+the header of the input file (or zero, if such a header item doesn't
+exist) and adding to it the relative time from the first record
+in the file to the first record processed. 
+.PP
+If it exists in the input file header, the generic header item
+\fIrecord_freq\fP is copied to the output file header.  This item
+gives the number of records per second of original data analyzed. 
+.PP
+The access function \fIset_fea_deriv\fP (3\-\s-1ESPS\s+1) is called to
+set the \fIsrcfields\fP header entries \- this maintains a record of
+how the fields were derived from inputs (such information is used, for
+example, by \fIclassify\fP (1\-\s-1ESPS\s+1)).
+.SH "DIAGNOSTICS"
+.nf
+fea_deriv: %s is not an ESPS Feature file.
+fea_deriv: incorrect subrange given, only %d records in \fIfile\fP.
+fea_deriv: start record greater than end record.
+fea_deriv: keyword "type" has not been implemented, yet.
+fea_deriv: unknown keyword: \fIkeyword\fP.
+fea_deriv: encountered error in field file \fIfile\fP, line %d: \fIline\fP.
+fea_deriv: encountered error in parsing component field in \fIfile\fP, line %d: \fIline\fP.
+fea_deriv: no keyword found in field file \fIfile\fP.
+fea_deriv: no component fields found for field name \fIfield_name\fP.
+fea_deriv: no component fields found in field file \fIfile\fP.
+fea_deriv: calloc: could not allocate memory for \fIarray\fP.
+fea_deriv: add_fea_fld: could not add field name %s.
+fea_deriv: set_fea_deriv: %s is not a defined field in \fIfile\fP.
+fea_deriv: get_deriv_vec: encountered an error getting derived field.
+.fi
+.SH "FUTURE CHANGES"
+.PP
+Implement "type = ... ."
+.SH "SEE ALSO"
+.PP
+ESPS (5-ESPS), FEA(5\-ESPS), FEA_STAT(5-ESPS), 
+.br
+fea_stats(1\-ESPS), set_fea_deriv(3\-ESPSu),
+.br
+get_fea_deriv(3\-ESPSu)
+.SH "AUTHOR"
+.PP
+Manual page by John Shore, program by Ajaipal S. Virdy.

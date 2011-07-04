@@ -1,0 +1,35 @@
+#! /bin/sh
+# TESTDEMO @(#)TESTDEMO	1.2 10/9/90  - starting point of whole test demo
+# this version assumes Sun OpenWindows is installed
+
+rm -f /tmp/erldemo.lock
+rm -f /tmp/ewaves.lock
+rm -f /tmp/eslides.lock
+rm -f /tmp/erlwtry.lock
+
+cd erldemos
+PATH=.:esps/bin:$PATH; export PATH
+
+#erldemo -x2 -S testslide.sh -W testwdemo.sh -T testwtry.sh -I edemo.info -A edemo.about -t "Entropic Test Demo" &
+
+# without slides 
+
+#erldemo -W testwdemo.sh -T testwtry.sh -I edemo.info -A edemo.about -t "Entropic Test Demo" &
+
+# without waves intro
+
+#erldemo -S testslide.sh -T testwtry.sh -I edemo.info -A edemo.about -t "Entropic Test Demo" &
+
+# without waves tryout
+
+#erldemo -W testwdemo.sh -S testslide.sh -I edemo.info -A edemo.about -t "Entropic Test Demo" &
+
+# forced silence with another machine example
+
+#erldemo -m masscomp -s -S testslide.sh -W testwdemo.sh  -T testwtry.sh -I edemo.info -A edemo.about -t "Entropic Test Demo" &
+
+# full test
+
+erldemo -S testslide.sh -W testwdemo.sh  -T testwtry.sh -I edemo.info -A edemo.about -t "Entropic Test Demo" &
+
+

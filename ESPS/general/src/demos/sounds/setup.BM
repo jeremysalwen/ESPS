@@ -1,0 +1,25 @@
+README		xtext -t "ABOUT THE SOUNDS DEMO" -Wp 300 555 -F README &
+
+"Setup Output" MENU
+
+ "Setup SPARCStation Output" DEFAULT 	rm -f $demo_temp/play; ln -s `get_esps_base`/bin/splay $demo_temp/play
+
+ "Setup Ariel S32C Output"	rm -f $demo_temp/play; ln -s `get_esps_base`/bin/s32cplay $demo_temp/play
+
+ "Setup LSI C30 Output"	rm -f $demo_temp/play; ln -s `get_esps_base`/bin/c30play $demo_temp/play
+
+ "Setup AT&T/Heurikon Surf or FAB2 Output"     rm -f $demo_temp/play; ln -s `get_esps_base`/bin/v32play $demo_temp/play
+
+ "Setup SGI Indigo Output"     rm -f $demo_temp/play; ln -s `get_esps_base`/bin/sgplay $demo_temp/play
+
+ "Setup HP700 Output"     rm -f $demo_temp/play; ln -s `get_esps_base`/bin/hpplay $demo_temp/play
+
+ "Setup generic output"		rm -f $demo_temp/play
+
+ "Setup no output"		rm -f $demo_temp/play; ln -s `pwd`/bin/null_play $demo_temp/play
+
+ "Setup Output" END
+
+"See Demo Scripts and Files"   mbuttons -q 1 -X0 -Y 225 -w"Demo Configuration Files" -i"demo" -b1 demofiles.BM
+
+# @(#)setup.BM	1.7 9/30/93 ERL

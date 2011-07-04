@@ -1,0 +1,5 @@
+kill name signal1 file files/speech.sd
+make name signal1 file files/speech.sd loc_x 10 loc_y 180 height 220 width 550
+
+
+#@(#)mk_wform1.WC	1.1 7/29/91 ERL

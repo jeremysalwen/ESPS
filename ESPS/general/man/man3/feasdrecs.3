@@ -1,0 +1,375 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc. All rights reserved.
+.\" @(#)feasdrecs.3	1.2	06 May 1997	ESI
+.TH FEASD_RECS 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.if t .ds - \(em\h'-0.2m'\(em
+.if n .ds - ---
+.SH NAME
+.nf
+allo_feasd_recs   \- allocate memory for FEA_SD file records
+get_feasd_recs    \- get data records from an ESPS FEA_SD data file
+get_feasd_orecs    \- get overlapping data from an ESPS FEA_SD data file
+init_feasd_hd    \- initialize a FEA file header for subtype FEA_SD
+put_feasd_recs    \- write data records to an ESPS FEA_SD file
+.SH SYNOPSIS
+.ft B
+.nf
+#include <esps/esps.h>
+#include <esps/fea.h>
+#include <esps/feasd.h>
+
+struct feasd *
+allo_feasd_recs(hd, data_type, num_records, data, make_ptrs);
+    struct header   *hd;
+    int	    	    data_type;
+    long    	    num_records;
+    char            *data;
+    int		    make_ptrs;
+
+long
+get_feasd_recs(data, start, num_records, hd, file)
+    struct feasd    *data;
+    long    	    start, num_records;
+    struct header   *hd;
+    FILE    	    *file;
+
+long
+get_feasd_orecs(data, start, framelen, step, hd, file)
+    struct feasd    *data;
+    long    	    start, framelen, step;
+    struct header   *hd;
+    FILE    	    *file;
+
+int
+init_feasd_hd(hd, data_type, num_channels, start_time, mult_st_t, record_freq)
+    struct header   *hd;
+    int	    	    data_type, num_channels;
+    double  	    *start_time;
+    int		    mult_st_t;
+    double	    record_freq;
+
+int
+put_feasd_recs(data, start, num_records, hd, file)
+    struct feasd    *data;
+    long    	    start, num_records;
+    struct header   *hd;
+    FILE    	    *file;
+.ft
+.fi
+.SH DESCRIPTION
+.IP
+.I allo_feasd_recs
+.PP
+This function allocates memory for a 
+.I feasd
+structure, as described in
+.IR FEA_SD (5-ESPS),
+and fills in values for the structure members.
+If requested, it will also allocate storage for the associated data array,
+the pointer array for accessing the rows of the data array, or both.
+The function allocates the data array if the argument
+.I data
+is (char *) NULL.
+If the argument is non-NULL,
+it should point to the beginning of a suitable block of storage,
+and the supplied pointer value is simply copied into the
+.I data
+member of the
+.I feasd
+structure.
+When the value of the argument
+.I make_ptrs
+is YES, the function creates
+the pointer array for accessing the rows of the data array.
+(see
+.IR FEA_SD (5-ESPS)).
+It does this whether the data array is allocated by
+.I allo_feasd_recs
+or supplied by the calling function.
+When
+.I make_ptrs
+is NO, the structure member
+.I ptrs
+is made NULL.
+The dimensions of the array are determined by the argument
+.I num_records
+and the size of the "samples" field defined in the header
+.RI * hd,
+which gives the number of channels.
+The data type of the array is determined by the
+.I data_type
+argument.
+Legal values are given by the data-type constants
+BYTE, SHORT, LONG, etc. defined in the include file
+.I esps/esps.h.
+Non-numeric ESPS data types such as CHAR, CODED, EFILE, and AFILE
+are not allowed.
+The
+.I data_type
+and
+.I num_records
+members of the structure are filled in
+with the values of the corresponding function arguments.
+The returned value is a pointer to the structure upon successful completion,
+or NULL in case of failure.
+.PP
+Since the structure of the data storage depends on values in the file header,
+it is important to be sure that a given FEA_SD struct
+is consistent with the header of the file it is being used with.
+A programmmer who supplies a non_NULL value for the
+.I data
+argument assumes the responsibility for its pointing
+to a storage area of sufficient size.
+The size must be at least
+.I num_records
+*
+.I num_channels
+*
+.IR typesiz ( data_type ),
+where
+.I num_channels
+may be obtained as the value of
+.IR get_fea_siz (\c
+"samples",
+.I hd,
+.RI ( short " *) " NULL,
+.RI ( long " **) " NULL ).
+.IP
+.I get_feasd_recs
+.PP
+This function attempts to read the next
+.I num_records
+FEA_SD records from stream
+.I file
+and store the contents of the "samples" fields
+in the the structure pointed to by
+.I data,
+beginning with element (or row) number
+.I start.
+(Counting begins with 0 for the first element or row.)
+If any fields besides "samples" are present, their contents are ignored;
+they do, however, make reading slower.
+The sum of arguments
+.IR start + num_records
+must not exceed the limit
+.I data\->num_records.
+The function returns the actual number of records read.
+If no records are read (end of file), 0 is returned.
+The ESPS file header
+.RI * hd
+is consulted for the type of data in the file,
+and if that differs from
+.I data\->data_type,
+the data are converted.
+If fewer than the requested number
+.I num_records
+of records are read, the deficit is made up with zero fill.
+.IP
+.I get_feasd_orecs
+.PP
+Like
+.I get_feasd_recs,
+this function reads frames of sampled data from an ESPS FEA_SD file.
+However, while
+.I get_feasd_recs
+moves a full frame length between calls,
+.I get_feasd_orecs
+moves an arbitrary amount and is therefore suitable for use by programs
+that analyze overlapping or noncontiguous frames.
+.PP
+A frame consists of the data from the "samples" fields of
+.I framelen
+records of the file.
+Each frame after the first begins
+.I step
+records further along in the file than the previous frame;
+thus frames overlap when
+.IR step < framelen,
+are exactly abutted when
+.IR step == framelen,
+and are separated by gaps when
+.IR step > framelen.
+Each call of the function stores a frame in a buffer
+that consists of a segment of the structure pointed to by
+.I data,
+beginning with element or row number
+.I start.
+The sum
+.IR start + framelen
+must not exceed
+.I data\->num_records,
+and any elements or rows preceding number
+.I start
+or following number
+.IR start + framelen \-1
+are left unchanged by the function.
+All data read are converted, as necessary,
+from the type indicated in the header to the type indicated in
+.I data\->data_type.
+If a read attempt yields fewer records than required
+(because the end of file is reached),
+the deficit is made up by zero fill.
+The function returns the number of valid samples in the buffer.
+This equals
+.I framelen
+when the requested number of records are successfully read;
+otherwise it is some smaller number.
+.PP
+The buffer is assumed to contain data from a prior invocation of
+.I get_feasd_orecs
+or
+.I get_feasd_recs.
+Then, if
+.IR step < framelen,
+the function drops the first
+.I step
+elements or rows of the buffer,
+shifts the rest
+.I step
+positions toward the beginning, and attempts to read
+.I step
+more records to fill out the vacated positions at the end of the buffer.
+The returned value is the number of records read plus
+.RI ( framelen \- step ).
+.PP
+If
+.IR step >= framelen,
+the function ignores the previous contents of the buffer, skips
+.IR step \- framelen
+records in the file,
+and then attempts to read the next
+.I framelen
+records\*-\c
+.I i.e.,
+after skipping a gap of
+.IR step \- framelen
+records between frames,
+.I get_feasd_orecs
+operates like
+.I get_feasd_recs.
+Note that if
+.IR step == framelen,
+the result is adjacent, non-overlapping frames such as
+.I get_feasd_recs
+produces.
+.PP
+The normal pattern of usage of
+.I get_feasd_orecs
+is to read an initial frame with
+.I get_feasd_recs
+and then read each following frame with
+.I get_feasd_orecs.
+The function does not maintain any internal memory;
+calls for reading one file into one buffer may therefore be intermixed
+with calls for reading other files into other buffers.
+For any one given file, the arguments other than
+.I step
+should normally remain the same from one call to the next.
+However,
+.I step
+may be varied freely.
+It is permissible to call
+.I get_feasd_orecs
+with
+.IR step == 0.
+It then simply returns
+.I framelen,
+and the buffer is not altered.
+Negative values for
+.I step
+are not allowed.
+.IP
+.I init_feasd_hd
+.PP
+This function takes a pointer
+.I hd
+to an ESPS FEA header and sets
+.I hd\->hd.fea\->fea_type
+to FEA_SD.
+By calling
+.IR add_fea_fld (3-ESPSu)
+it initializes the header to define the field "samples".
+The data type of the field is determined by the argument
+.I data_type:
+legal values are given by the data-type constants
+BYTE, SHORT, LONG, etc. defined in the include file
+.I esps/esps.h.
+Non-numeric ESPS data types such as CHAR, CODED, EFILE, and AFILE
+are not allowed.
+The size of the field is given by the argument
+.I num_channels.
+The arguments
+.I start_time
+and
+.I record_freq
+initialize the required generic header items
+described in
+.IR FEA_SD (5-ESPS).
+If the argument
+.I mult_st_t
+is YES, there is a starting time for each channel, and
+.I start_time
+points to the beginning of an array of length
+.I num_channels
+containing the values, which are copied into an array in the header item.
+If
+.I mult_st_t
+is NO, there is just one starting time for the file, and
+.I start_time
+is a pointer to a single element.
+By contrast,
+.I record_freq
+holds the actual value, not a pointer to it.
+The value returned by the function is 0 upon successful completion
+and a nonzero error code otherwise.
+.IP
+.I put_feasd_recs
+.PP
+This function takes data from the structure pointed to by
+.I data,
+starting with element (or row) number
+.I start.
+(Counting begins with 0.)
+It puts the data into the "samples" fields of
+.I num_records
+FEA_SD records and writes the records to the stream
+.I file.
+Unlike
+.I get_feasd_recs
+and
+.I get_feasd_orecs,
+this function will not handle records containing fields other than "samples".
+(It was felt that while reading such records and ignoring the extra fields
+was a useful,
+writing them and filling the extra fields with arbitrary values was not.)
+Programs that need to write FEA_SD files with additional fields
+should use
+.I put_fea_rec(3-ESPSu).
+The sum of arguments
+.I start + num_records
+must not exceed the limit
+.I data\->num_records.
+The ESPS file header
+.I *hd
+is consulted for the data type of the data in the file;
+if it differs from the data type
+.I data\->data_type,
+appropriate conversions are performed.
+The file should be an open FEA_SD file.
+The header must be written to the file before this function is called.
+The returned value is 0 upon successful completeion
+and a non-zero error code otherwise.
+.SH EXAMPLE
+
+.SH DIAGNOSTICS
+.PP
+
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+copy_header(3-ESPSu), eopen(3-ESPSu), new_header(3-ESPSu), 
+read_header(3-ESPSu), ESPS(5-ESPS), FEA(5-ESPS), FEA_SD(5-ESPS)
+.fi
+.SH AUTHOR
+Man page by Rodney Johnson, ESI.

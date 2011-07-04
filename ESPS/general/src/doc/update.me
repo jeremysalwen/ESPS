@@ -1,0 +1,73 @@
+.lo
+.ce 2
+.b
+"Updating from version 4.0 [a or b] ESPS and/or 2.0 [a] of \fIwaves+\fR"
+Document Version: 1.1 11/12/90
+.sh 1 "Summary"
+.pp
+If you do not already have a copy of ESPS/\fIwaves+\fR installed and
+running ignore this note.
+Otherwise, please read this note and the enclosed standard installation
+instructions before reading the tape.
+.sh 1 "Saving Your License Keys"
+.pp
+Before reading this tape; please save your license keys from your
+current installation.  This will save you (and us) time in getting you
+going on this new version.   The license keys are files in
+\fI/usr/esps/lib\fR, named \fBwaves.plus\fR if you have a \fIwaves+\fR
+license and \fBesps.XX\fR if you have an ESPS license (where XX is the
+machine type, such as Sun4, Sun3, Convex, etc).
+.pp
+Copy these files into safe place.     The following commands will do it:
+.nf
+.ft CW
+% cd
+% mkdir keys   
+% cp /usr/esps/lib/esps.* keys
+% cp /usr/esps/lib/waves.plus keys
+.fi
+.ft R
+.pp
+You should now kill the license manager daemon (\fIelmd\fR) if you are going
+to install the new version at this time.   Do this by finding the
+process ID of \fIelmd\fR with \fIps\fR and killing it.
+.sh 1 "Reading the New Tape"
+.pp
+Now you can read in the new tape.    If you have plenty of file space,
+then  you might want to read this tape in while keeping your previous
+version online.  This is usually simple to do, if \fI/usr/esps\fR is
+just a symbolic link to the actual location of the previous tape.  If
+the previous tape is actually under \fI/usr/esps\fR, then you can rename
+this directory and read in the new tape there.     For example, if
+\fI/usr/esps\fR is a symbolic link (say to /home/esps.sun4):
+.nf
+.ft CW
+% ls -lS /usr/esps
+lrwxrwxrwx  1 parker         34 Nov  8 10:34 /usr/esps -> /home/esps.sun4/
+% cd /home
+% mv esps.sun4 esps.sun4.old
+% tar xvf /dev/rst8   (read in new tape)
+.fi
+.ft R
+.pp
+Then by simply setting the symbolic link \fI/usr/esps\fR to either
+\fI/home/esps.sun4\fR or \fI/home/esps.sun4.old\fR you can select the
+old or new version.   Of course, you should switch over the new version
+as quickly as possible and free up the disk space.
+.pp
+If you read in the original tape at \fI/usr/esps\fR, without using a
+symbolic link, then you can still save the old copy if you want.  To do
+this, simply go to \fI/usr\fR and rename \fIesps\fR to \fIesps.old\fR
+and then install the new version.
+.pp
+Refer to the enclosed standard installation instructions for details on
+installing the product.
+.sh 1 "Installing the Keys into the New Version"
+.pp
+After installing the new version, you should copy your key files into
+\fI/usr/esps/lib\fR.  Be sure that their mode is set such that they can
+be read by the process that runs the license manager.   It is safe to
+simply make them readable by everyone.
+.pp
+If you do loose the keys, or they do not work after copying them, then
+call us for help.

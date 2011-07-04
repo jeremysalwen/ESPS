@@ -1,0 +1,163 @@
+.\" Copyright (c) 1988-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)minrelent.3	1.2 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH MIN_REL_ENT 3\-ESPSsp 18 Apr 1997
+.if t .ds S \(*S
+.if n .ds S \fRSUM\fP
+.if t .ds f \fI
+.if n .ds f \fR
+.if t .ds a \(*a
+.if n .ds a "alpha 
+.if t .ds b \(*b
+.if n .ds b beta
+.SH NAME
+min_rel_ent \- compute maximum-entropy or minmum-relative-entropy estimate of probability distribution
+.SH SYNOPSIS
+.ft B
+.nf
+double
+min_rel_ent(p, c, q, beta, m, n, maxit, thresh)
+    double  *p, **c, *q, *beta;
+    int	    m, n, maxit;
+    double  thresh;
+.SH DESCRIPTION
+.PP
+Given
+.I p,
+an
+.I initial estimate
+of a probability distribution,
+and
+.I c,
+a
+.I constraint matrix,
+the function
+.I min_rel_ent
+computes
+.I q,
+a
+.I final estimate
+of the probatility distribution.
+This is a vector with nonnegative elements
+\*fq\d\s-3j\s+3\u\fR
+that satisfies the
+.I constraints
+.IP
+\*f\*S\d\s-3j\s+3\u c\d\s-3ij\s+3\uq\d\s-3j\s+3\u\fR = 0,
+.IP
+\*f\*S\d\s-3j\s+3\u q\d\s-3j\s+3\u\fR = 1,
+.LP
+and, subject to those constraints, minimizes the
+.I relative entropy,
+.IP
+\*f\*S\d\s-3j\s+3\u q\d\s-3j\s+3\u \fRlog\fP q\d\s-3j\s+3\u/p\d\s-3j\s+3\u\fR
+.LP
+of
+.I q
+with respect to
+.I p.
+The solution is of the form
+.IP
+\*fq\d\s-3j\s+3\u = \*ap\d\s-3j\s+3\u \fRexp\fP \*S\d\s-3i\s+3\u \*b\d\s-3i\s+3\uc\d\s-3ij\s+3\u\fR
+.LP
+where \*a and the elements of \*b are Lagrange multipliers chosen to
+satisfy the constraints.  The value of \*b is available as an additional
+output
+.I beta.
+.PP
+To obtain a maximum-entropy estimate
+.I q
+subject to the stated constraints,
+use an initial estimate
+.I p
+whose elements are all equal.
+.PP
+The function argument
+.I p
+should be an array of
+.I n
+nonnegative numbers
+(or more precisely a pointer to the first element of such an array).
+The sum of the elements of
+.I p
+need not be normalized to 1, and the same results should be obtained
+as if each element were divided by the sum.
+The argument
+.I c
+should be an
+.I m
+by
+.I n
+matrix, represented as an array of
+.I m
+pointers to rows of length
+.I n.
+(Such structures can be allocated by
+.IR arr_alloc (3-ESPSu)).
+The arguments
+.I q
+and
+.I beta
+should be arrays of lengths
+.I n
+and
+.I m
+to hold the results;
+these must be allocated by the calling program.
+The arguments
+.I m
+and
+.I n
+give the array dimensions.
+The argument
+.I thresh
+is a convergence criterion.
+The function uses an iterative procedure that terminates as soon as
+the relative change in the computed value of every element of
+.I q
+is less than
+.I thresh
+from one iteration to the next.
+If the convergence criterion is not satisfied after
+.I maxit
+iterations, the procedure prints an error message and terminates anyway.
+The function value returned by
+.I min_rel_ent
+is the maximum relative change in any element of
+.I q
+between the last iteration and the next to last.
+It is less than
+.I thresh
+in case of successful termination
+and not otherwise.
+.SH DIAGNOSTICS
+Function value greater than or equal to
+.I thresh;
+error message:
+.IP
+min_rel_ent: convergence failed after \fIn\fP iterations.
+.SH BUGS
+None known.
+.SH REFERENCES
+.LP
+1.  R. Johnson,
+``Determining Probability Distributions by Maximum Entropy
+and Minimum Cross-Entropy,''
+.I APL Quote Quad,
+vol. 9, no. 4, June 1979, pp. 24-29.
+(APL 79 Conference Proceedings).
+.LP
+2.  J. Shore and R. Johnson,
+``Axiomatic Derivation of the Principle of Maximum Entropy
+and the Principle of Minimum Relative Entropy,''
+.I IEEE Trans. Information Theory,
+vol. IT-26, no. 1, pp. 26-37, Jan. 1980
+.SH SEE ALSO
+.nf
+\fIrel_ent\fP(3\-ESPSsp)
+.fi
+.SH AUTHOR
+Rodney W. Johnson, Entropic Speech, Inc.
+Based on an APL function from Ref. 2
+and on a Fortran adataption by Joseph T. Buck.

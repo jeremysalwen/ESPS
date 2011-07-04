@@ -1,0 +1,455 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc. all rights reserved.
+.\" @(#)mespec.1	1.8	03 Apr 1997	ESI
+.TH ME_SPEC 1\-ESPS 03 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+me_spec \- Generate maximum-entropy spectra from parameter vectors.
+.SH SYNOPSIS
+.B me_spec
+[
+.BI \-n " num_freqs"
+]
+[
+.BI \-o " max_order"
+]
+[
+.BI \-r " range"
+]
+[
+.BI \-x " debug_level"
+]
+[
+.BI \-G
+]
+.br
+[
+.BI \-P " params"
+]
+.I input
+.I output.spec
+.SH DESCRIPTION
+.I Me_spec
+reads spectral parameters and other information from the input file
+and generates a corresponding spectral record file containing
+logarithmically scaled (in dB) maximum-entropy spectral power densities.
+.PP
+The spectral parameters may be reflection coefficients,
+autoregressive-filter coefficients, or any of several other types of
+parameters;
+see
+.I spec_rep
+in the Parameters section and the documentation for
+.RI reps_rc(3\-ESPS)
+for a list.
+Other required information includes the total power, 
+the order of the spectrum, and the sampling frequency.
+These may be obtained from the input file, or defaults may be used;
+see the descriptions of the parameters
+.I max_order,
+.I samp_freq_name,
+.I samp_freq,
+.I power_field,
+and
+.I power.
+FEA_ANA(5\-ESPS) files are suitable as input and are specially provided for,
+but any vector field of type
+.I float
+in any FEA file may be treated as a vector of
+spectral parameters; see
+.I spec_param_field
+and
+.I spec_rep
+in the Parameters section.
+.PP
+The spectral values are computed for the specified number of frequencies,
+which must be at least 2.
+The frequencies are equispaced from 0 to half the sampling frequency.
+There is an option to compute the spectrum to a lower order than the number
+of coefficients present in the analysis records.
+.PP
+One output record is written for each input record in the specified range.
+If ``\-'' is given for the input file, the standard input is read.
+If ``\-'' is given for the output file, the standard output is written to.
+The output file can be plotted using the plotspec(1\-ESPS) command.
+.SH OPTIONS
+The following options are supported.  Values in brackets are defaults.
+.TP
+.BI \-n " num_freqs" "\fR [513]"
+Compute spectral values for this number of frequencies, equispaced from 0
+to half the sampling frequency.
+Must be at least 2.
+.TP
+.BI \-o " max_order"
+Maximum-entropy spectra of at most this order will be computed,
+even when more coefficients are available in the analysis records.
+The program converts the spectral parameters to reflection coefficients,
+carrying the computation out to the actual order of the parameter set
+contained in the record.
+In FEA_ANA files, when
+.B \-G
+has not been specified,
+the actual order is given by the header item
+.I order_vcd,
+for records in which the
+.I frame_type
+field is VOICED or TRANSITION,
+and by
+.I order_unvcd
+in other records.
+In other files, or when
+.B \-G
+has been specified,
+the actual order is assumed to be the length of the field
+(or subsequence of a field)
+named by the parameter
+.I spec_param_field.
+After converting the parameters,
+the program truncates the sequence of reflection coefficients to length
+.I max_order
+and computes a maximum_entropy spectrum from the truncated sequence.
+.IP
+This procedure is
+.I not
+equivalent to simply truncating the original parameter set,
+for example by specifing a shorter field with
+.I spec_param_field.
+The latter procedure may give incorrect results, depending on the spectral
+representation (see
+.I spec_rep
+in the Parameters section).
+For example, the
+.I m
+autoregressive filter coefficients of order
+.I m
+are not in general the same as the first
+.I m
+autoregressive filter coefficients of order
+.I n
+(where
+.IR n\|>\|m ).
+.TP
+.BI \-r " first" : "last" "\fR [(first in file):(last in file)]"
+.TP
+.BI \-r " first" :+ "incr"
+In the first form, a pair of unsigned integers specifies the range
+of records to be processed.
+Either
+.I first
+or
+.I last
+may be omitted; then the default value is used.
+If
+.IR last " = " first " + " incr,
+the second form (with the plus sign) specifies the same range as the first.
+If the specified range contains records not in the file,
+.I me_spec
+complains and quits.
+.TP
+.BI \-x " debug_level \fR[0]"
+If
+.I debug_level
+is non-zero,
+.I me_spec
+prints debugging messages and other information on the standard error output.
+.TP
+.BI \-G
+Even if the input file is a FEA_ANA file,
+it is treated like any other FEA file.
+Special processing does not take place
+for determining filter order from voicing
+or computing average power from individual pulse powers and durations
+in multipulse FEA_ANA files.
+The parameter file must supply values for the parameters
+.I spec_param_field,
+.I spec_rep,
+.I power_field
+or
+.I power,
+and
+.I samp_freq_name
+or
+.I
+samp_freq.
+The filter order is taken to be the length of the field specified by
+.I spec_param_field;
+but see the discussion of the
+.B \-o
+option.
+.TP
+.BI \-P " params" \fR[params]
+The name of the parameter file.
+.SH ESPS COMMON
+The ESPS common file is not referred to.
+.SH ESPS PARAMETERS
+.PP
+The following parameters are read as required.
+.TP
+.I num_freqs \- integer
+The number of frequencies for which spectral values are computed.
+The value in the parameter file is not used
+if a value is specified with the command-line option
+.B \-n.
+The default value and restrictions are as for the argument of the option.
+.TP
+.I max_order \- integer
+An upper bound on the order of the maximum-entropy spectra that will be
+computed.
+The value in the parameter file is not used
+if a value is specified with the command-line option
+.B \-o.
+See the discussion of
+.B \-o
+in the Options section for the detailed interpretation of this parameter.
+.TP
+.I start \- integer
+The number of the first record to be processed,
+counting the first in the input file as number 1.
+The value in the parameter file is not used if a starting value is given
+with the
+.B \-r
+option.
+The default value is 1.
+.TP
+.I nan \- integer
+The number of records to be processed.
+The value in the parameter file is not used if the
+.B \-r
+option is specified.
+By convention, a value of 0 means that all records from the starting record
+through the end of the file are processed.
+This also the default behavior in case no value is specified either on the
+command line or in the parameter file.
+.TP
+.I spec_param_field \- string
+The field containing the spectral parameters.
+This must be explicitly specified in the parameter file
+unless the input file is a FEA_ANA file and the
+.B \-G
+option is not specified.
+The default in that case is "spec_param".
+This parameter may be simply a field name, or it may be of the form
+.IP
+.IB field-name "\^[\^" grange "\^]\^" \fR,
+.IP
+where
+.I grange
+is a general range specification acceptable to
+.IR grange_switch (3\-ESPSu).
+The bracketed range specification specifies the indices of a subsequence
+of the elements of the named field that are to be used as the spectral
+parameters.
+.TP
+.I spec_rep \- string
+A name or abbreviation for the type of spectral parameters.
+Acceptable values include
+"RC" (reflection coefficients),
+"LAR" (log area ratios),
+"AUTO" (normalized autocorrelation coefficients),
+"AFC" (autoregressive filter coefficients),
+"CEP" (cepstrum coefficients),
+and
+"LSF" (line spectral frequencies).
+See the documentation for
+.RI reps_rc (3\-ESPSsp).
+This parameter must be explicitly specified in the parameter file unless the
+input file is a FEA_ANA file and the 
+.B \-G
+option is not specified.
+The default in that case is the contents of the generic header item
+.I spec_rep.
+.TP
+.I power_field \- string
+A field containing the total power of the spectrum.
+Either this parameter or
+.I power
+must be explicitly specified in the parameter file
+unless the input file is a FEA_ANA file and the
+.B \-G
+option is not specified.
+The default in that case is "raw_power".
+.TP
+.I power \- float
+A numerical value for the total power of the spectrum.
+This value is used, and applies to all records,
+unless the parameter
+.I power_field
+is defined and names a field that exists in the input file.
+In that case, the contents of the named field are used instead.
+.TP
+.I samp_freq_name \- string
+The name of a generic header item that contains the sampling frequency.
+Either this parameter or
+.I samp_freq
+must be explicitly specified in the parameter file
+unless the input file is a FEA_ANA file and the
+.B \-G
+option is not specified.
+The default in that case is "src_sf".
+.TP
+.I samp_freq \- float
+A numerical value for the sampling frequency.
+This values is used unless the parameter
+.I samp_freq_name
+is defined and names a generic header item that exists in the input file.
+In that case, the value of the header item takes precedence.
+.SH ESPS HEADERS
+.PP
+The values 
+.I common.type,
+.I variable.refer,
+and
+.I hd.fea->fea_type
+are read from the header of the input file.  The following 
+generic header items may also read if the input is a FEA_ANA file:
+.I order_vcd,
+.I order_unvcd,
+.I src_sf,
+.I spec_rep
+.I frmlen,
+.I start,
+.I nan,
+and
+.I maxpulses.
+.PP
+The following parameters are written to the header of the FEA_SPEC file:
+.I common.tag,
+.I common.prog,
+.I common.vers,
+.I common.progdate,
+.I variable.refer,
+.I frmlen 
+(long),
+.I sf 
+(float),
+.I frame_meth
+(CODED),
+.I freq_format
+(CODED),
+.I spec_type
+(CODED),
+.I contin
+(CODED),
+.I num_freqs
+(LONG).
+For input FEA_ANA (5\-\s-1ESPS\s+1) files,
+.I order_vcd
+(LONG)
+and
+.I order_unvcd
+(LONG)
+are added to the 
+output file header.
+In addition, the input file is added as the source of the output file,
+and the command line is added as a comment.  
+.PP
+The generic header item \fIstart_time\fP is written in the output
+file.  The value written is computed by taking the \fIstart_time\fP
+value from the header of the input file (or zero, if such a header
+item doesn't exist) and adding to it the offset time (from the
+beginning of the input file) of the first point or record processed.
+If \fIrecord_freq\fP doesn't exist in the input file, it defaults to
+1.  Otherwise, it is copied to the output file header.  This item
+gives the number of records per second of original data analyzed.
+.SH SEE ALSO
+\fIrefcof\fP (1\-\s-1ESPS\s+1), \fIplotspec\fP (1\-\s-1ESPS\s+1), 
+\fIreps_rc\fP (3\-\s-1ESPSsp\s+1), FEA_SPEC (5\-\s-1ESPS\s+1), ESPS
+(5\-\s-1ESPS\s+1), 
+.SH DIAGNOSTICS
+.PP
+me_spec: unknown option: 
+.RI \- letter
+.br
+Usage: me_spec [\-n num_freqs][\-o order][\-r range][\-x debug_level][\-G][\-P params] ana_file spec_file
+.br
+me_spec: too many file names specified.
+.br
+me_spec: too few file names specified.
+.br
+me_spec: number of frequencies
+.I n
+is less than 2.
+.br
+me_spec: can't open
+.I filename: reason
+.br
+me_spec: 
+.I filename
+is not an ESPS file
+.br
+me_spec: Can't start before beginning of file.
+.br
+me_spec: Last record precedes first.
+.br
+me_spec: Name of spec_param field not specified.
+.br
+me_spec: Unrecognized spectral representation.
+.br
+me_spec: Spectral representation not specified.
+.br
+me_spec: Field
+.I name
+and symbol "power" undefined or not float.
+.br
+me_spec: Neither field nor default value for power specified.
+.br
+me_spec: Header item
+.I name
+and symbol "samp_freq" undefined or not float.
+.br
+me_spec: No header-item name or default value for sampling frequency.
+.br
+me_spec: Input field
+.I name
+undefined.
+.br
+me_spec: Input field
+.I name
+undefined or not float.
+.br
+me_spec: Input field length
+.I n
+too small.
+.br
+me_spec: can't allocate memory--input spectral parameters
+.br
+me_spec: can't allocate memory--lpc filter
+.br
+me_spec: can't allocate memory--reflection coefficients
+.br
+me_spec: unknown spectral parameter type
+.PP
+When
+.IR debug_level !=0,
+the reflection coefficients, average raw power, location tag,
+and inverse filter coefficients
+are listed for each record.
+.SH BUGS
+.PP
+The
+.I frame_len
+field in an input FEA_ANA record, defined as ``number of samples to synthesize
+from frame,'' is copied to the
+.I frame_len
+field in a spectral record, defined as ``number of samples in analysis
+window.''
+This is invalid if the FEA_ANA file was produced by a program for which
+the two are different.
+.SH WARNINGS
+.PP
+In order to produce FEA_SPEC (5\-\s-1ESPS\s+1) that can be overlaid
+on FEA_SPEC (5\-\s-1ESPS\s+1) files produced by \fIfft\fP (1\-\s-1ESPS\s+1),
+the \fB\-G\fP option should be used. This produces a generic FEA_SPEC (5\-\s-1ESPS\s+1) file without the voicing information.
+.SH FUTURE CHANGES
+.SH AUTHOR
+S. Shankar Narayan.
+Made SDS compatible by Joe Buck.
+Originally called
+.I pltspc,
+later
+.I fanaspec.
+Modified for ESPS and number of frequencies made variable
+by Rod Johnson, Entropic Speech, Inc.
+Modified for FEA_ANA files by John Shore. 
+Additions by Rod Johnson to accept spec_reps other than reflection coefficients
+and to accept files other than FEA_ANA files.
+

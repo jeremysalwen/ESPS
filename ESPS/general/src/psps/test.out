@@ -1,0 +1,969 @@
++ testsd -p20 t.sd 
++ testsd -p3000 t1.sd 
++ testsd -Tgauss gauss.sd 
++ testsd -Tsine -f600 sine.sd 
++ addsd gauss.sd sine.sd signal.sd 
++ refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
++ spectrans -pauto signal.rc -+ spectrans -plsf - signal.lsf 
+ 
++ psps t.sd 
+File: t.sd
+
+---Common Part of Header---
+File type: SD (Sampled Data File)
+File header date: Thu Aug  6 15:50:57 1987 , header version: 1.44
+Produced by: testsd, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: 20
+Data is not tagged.
+Data format is 0 doubles, 1 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ testsd -p20 t.sd 
+There is no reference header.
+
+     1:      0.0000   191.3417   353.5534   461.9398   500.0000
+     6:    461.9397   353.5533   191.3416    -0.0001  -191.3418
+    11:   -353.5535  -461.9398  -500.0000  -461.9397  -353.5533
+    16:   -191.3415     0.0002   191.3419   353.5536   461.9399
++ cat t.sd 
++ psps - 
+File: <stdin>
+
+---Common Part of Header---
+File type: SD (Sampled Data File)
+File header date: Thu Aug  6 15:50:57 1987 , header version: 1.44
+Produced by: testsd, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: unknown (input is pipe)
+Data is not tagged.
+Data format is 0 doubles, 1 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ testsd -p20 t.sd 
+There is no reference header.
+
+     1:      0.0000   191.3417   353.5534   461.9398   500.0000
+     6:    461.9397   353.5533   191.3416    -0.0001  -191.3418
+    11:   -353.5535  -461.9398  -500.0000  -461.9397  -353.5533
+    16:   -191.3415     0.0002   191.3419   353.5536   461.9399
++ psps -r1:2 -l t.sd 
+File: t.sd
+
+---Common Part of Header---
+File type: SD (Sampled Data File)
+File header date: Thu Aug  6 15:50:57 1987 , header version: 1.44
+Produced by: testsd, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: 20
+Data is not tagged.
+Data format is 0 doubles, 1 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ testsd -p20 t.sd 
+There is no reference header.
+
+---Type Specific Part of Header (SD)---
+equip: NONE
+max_value: 500, sf: 8000, src_sf: 0
+synt_method: NONE
+scale: 0, dcrem: 0
+q_method: NONE
+v_excit_method: NONE
+uv_excit_method: NONE
+spare1: 0, nchan: 1
+synt_interp: NONE
+synt_pwr: NONE
+synt_rc: NONE
+synt_order: 0
+start: 0, nan: 0
+No prefilter zfunc
+No de_emp zfunc
+
+---Generic Part of Header---
+test_type: SINE 
+
+     1:      0.0000   191.3417
++ psps -r3 signal.rc 
+File: signal.rc
+
+---Common Part of Header---
+File type: FEA (Feature File)
+File header date: Thu Aug  6 15:51:16 1987 , header version: 1.44
+Produced by: refcof, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 15 floats, 2 longs,
+1 shorts, and 0 chars (bytes).
+refer file: signal.sd
+comment text:
+ testsd -Tgauss gauss.sd 
+ testsd -Tsine -f600 sine.sd 
+ addsd gauss.sd sine.sd signal.sd 
+ 
+ Added samples of gauss.sd to samples of sine.sd by addsd.
+ refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+Source files: signal.sd
+There is no reference header.
+
+Record 3: 
+Tag: 2002
+frame_len:  1000 
+num_pulses:  0 
+frame_type:  NONE 
+voiced_fraction:  0 
+raw_power:  349865 
+lpc_power:  269088 
+p_pulse_len:  0 
+spec_param:  
+  0:   0.311259    0.05747  0.0319433  -0.134966  -0.206249  -0.217438 
+  6:  -0.164964 -0.0936914  -0.060158  0.0151685   0.075568 
+
++ psps -lD signal.rc 
+File: signal.rc
+
+---Common Part of Header---
+File type: FEA (Feature File)
+File header date: Thu Aug  6 15:51:16 1987 , header version: 1.44
+Produced by: refcof, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 15 floats, 2 longs,
+1 shorts, and 0 chars (bytes).
+refer file: signal.sd
+comment text:
+ testsd -Tgauss gauss.sd 
+ testsd -Tsine -f600 sine.sd 
+ addsd gauss.sd sine.sd signal.sd 
+ 
+ Added samples of gauss.sd to samples of sine.sd by addsd.
+ refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+Source files: signal.sd
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: FEA_ANA, segment_labeled: NO, field_count: 8
+
+---Generic Part of Header---
+DC_removed: NO 
+filters: NO 
+frmlen: 1000 
+maxlpc: 1 
+maxpulses: 1 
+maxraw: 1 
+method: AUTOC 
+nan: 4000 
+order: 11 
+order_unvcd: 11 
+order_vcd: 0 
+spec_rep: RC 
+src_sf: 8000 
+start: 1 
+
++ psps -r1:+1 signal.lsf 
+File: signal.lsf
+
+---Common Part of Header---
+File type: FEA (Feature File)
+File header date: Thu Aug  6 15:51:22 1987 , header version: 1.44
+Produced by: spectrans, version: 1.6, of: 6/22/87
+User: shore
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 15 floats, 2 longs,
+1 shorts, and 0 chars (bytes).
+refer file: signal.sd
+comment text:
+ testsd -Tgauss gauss.sd 
+ testsd -Tsine -f600 sine.sd 
+ addsd gauss.sd sine.sd signal.sd 
+ 
+ Added samples of gauss.sd to samples of sine.sd by addsd.
+ refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+ spectrans -pauto signal.rc - 
+ spectrans -plsf - signal.lsf 
+Source files: signal.lsf
+There is no reference header.
+
+Record 1: 
+Tag: 2
+frame_len:  1000 
+num_pulses:  0 
+frame_type:  NONE 
+voiced_fraction:  0 
+raw_power:  363833 
+lpc_power:  283135 
+p_pulse_len:  0 
+spec_param:  
+  0:    470.477    624.485    854.692    1331.03    1629.32    1983.64 
+  6:    2339.67    2678.27       2992    3333.22     3650.8 
+
+Record 2: 
+Tag: 1002
+frame_len:  1000 
+num_pulses:  0 
+frame_type:  NONE 
+voiced_fraction:  0 
+raw_power:  385569 
+lpc_power:  289688 
+p_pulse_len:  0 
+spec_param:  
+  0:     451.44    612.329     831.61    1346.51    1615.96    1978.16 
+  6:    2285.81    2701.88    3010.16    3346.35    3635.65 
+
++ psps -Dh signal.lsf 
+File: signal.lsf
+
+---Common Part of Header---
+File type: FEA (Feature File)
+File header date: Thu Aug  6 15:51:22 1987 , header version: 1.44
+Produced by: spectrans, version: 1.6, of: 6/22/87
+User: shore
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 15 floats, 2 longs,
+1 shorts, and 0 chars (bytes).
+refer file: signal.sd
+comment text:
+ testsd -Tgauss gauss.sd 
+ testsd -Tsine -f600 sine.sd 
+ addsd gauss.sd sine.sd signal.sd 
+ 
+ Added samples of gauss.sd to samples of sine.sd by addsd.
+ refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+ spectrans -pauto signal.rc - 
+ spectrans -plsf - signal.lsf 
+Source files: signal.lsf
+There is no reference header.
+
+ ----------------
+ File: signal.lsf
+
+ ---Common Part of Header---
+ File type: FEA (Feature File)
+ File header date: Thu Aug  6 15:51:21 1987 , header version: 1.44
+ Produced by: spectrans, version: 1.6, of: 6/22/87
+ User: shore
+ Number of data records: unknown (input is pipe)
+ Data is  tagged.
+ Data format is 0 doubles, 15 floats, 2 longs,
+ 1 shorts, and 0 chars (bytes).
+ refer file: signal.sd
+ comment text:
+  testsd -Tgauss gauss.sd 
+  testsd -Tsine -f600 sine.sd 
+  addsd gauss.sd sine.sd signal.sd 
+  
+  Added samples of gauss.sd to samples of sine.sd by addsd.
+  refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+  spectrans -pauto signal.rc - 
+ Source files: <stdout>
+ There is no reference header.
+
+  ----------------
+  File: <stdout>
+
+  ---Common Part of Header---
+  File type: FEA (Feature File)
+  File header date: Thu Aug  6 15:51:16 1987 , header version: 1.44
+  Produced by: refcof, version: 3.1, of: 8/10/87
+  User: shore
+  Number of data records: 4
+  Data is  tagged.
+  Data format is 0 doubles, 15 floats, 2 longs,
+  1 shorts, and 0 chars (bytes).
+  refer file: signal.sd
+  comment text:
+   testsd -Tgauss gauss.sd 
+   testsd -Tsine -f600 sine.sd 
+   addsd gauss.sd sine.sd signal.sd 
+   
+   Added samples of gauss.sd to samples of sine.sd by addsd.
+   refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+  Source files: signal.sd
+  There is no reference header.
+
+   ----------------
+   File: signal.sd
+
+   ---Common Part of Header---
+   File type: SD (Sampled Data File)
+   File header date: Thu Aug  6 15:51:07 1987 , header version: 1.44
+   Produced by: addsd, version: 1.1, of: 7/29/87
+   User: shore
+   Number of data records: 8000
+   Data is not tagged.
+   Data format is 0 doubles, 1 floats, 0 longs,
+   0 shorts, and 0 chars (bytes).
+   comment text:
+    testsd -Tgauss gauss.sd 
+    testsd -Tsine -f600 sine.sd 
+    addsd gauss.sd sine.sd signal.sd 
+    
+    Added samples of gauss.sd to samples of sine.sd by addsd.
+   Source files: gauss.sd
+                 sine.sd
+   There is no reference header.
+
+    ----------------
+    File: gauss.sd
+
+    ---Common Part of Header---
+    File type: SD (Sampled Data File)
+    File header date: Thu Aug  6 15:51:02 1987 , header version: 1.44
+    Produced by: testsd, version: 3.1, of: 8/10/87
+    User: shore
+    Number of data records: 8000
+    Data is not tagged.
+    Data format is 0 doubles, 1 floats, 0 longs,
+    0 shorts, and 0 chars (bytes).
+    comment text:
+     testsd -Tgauss gauss.sd 
+    There is no reference header.
+
+    ----------------
+    File: sine.sd
+
+    ---Common Part of Header---
+    File type: SD (Sampled Data File)
+    File header date: Thu Aug  6 15:51:04 1987 , header version: 1.44
+    Produced by: testsd, version: 3.1, of: 8/10/87
+    User: shore
+    Number of data records: 8000
+    Data is not tagged.
+    Data format is 0 doubles, 1 floats, 0 longs,
+    0 shorts, and 0 chars (bytes).
+    comment text:
+     testsd -Tsine -f600 sine.sd 
+    There is no reference header.
+
++ psps -Da signal.lsf 
+File: signal.lsf
+
+---Common Part of Header---
+File type: FEA (Feature File)
+File header date: Thu Aug  6 15:51:22 1987 , header version: 1.44
+Produced by: spectrans, version: 1.6, of: 6/22/87
+User: shore
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 15 floats, 2 longs,
+1 shorts, and 0 chars (bytes).
+refer file: signal.sd
+comment text:
+ testsd -Tgauss gauss.sd 
+ testsd -Tsine -f600 sine.sd 
+ addsd gauss.sd sine.sd signal.sd 
+ 
+ Added samples of gauss.sd to samples of sine.sd by addsd.
+ refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+ spectrans -pauto signal.rc - 
+ spectrans -plsf - signal.lsf 
+Source files: signal.lsf
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: FEA_ANA, segment_labeled: NO, field_count: 8
+
+---Generic Part of Header---
+DC_removed: NO 
+Specified search grid spacing (Hz.): 4 
+filters: NO 
+frmlen: 1000 
+maxlpc: 1 
+maxpulses: 1 
+maxraw: 1 
+method: AUTOC 
+nan: 4000 
+order: 11 
+order_unvcd: 11 
+order_vcd: 0 
+spec_rep: LSF 
+src_sf: 8000 
+start: 1 
+
+ ----------------
+ File: signal.lsf
+
+ ---Common Part of Header---
+ File type: FEA (Feature File)
+ File header date: Thu Aug  6 15:51:21 1987 , header version: 1.44
+ Produced by: spectrans, version: 1.6, of: 6/22/87
+ User: shore
+ Number of data records: unknown (input is pipe)
+ Data is  tagged.
+ Data format is 0 doubles, 15 floats, 2 longs,
+ 1 shorts, and 0 chars (bytes).
+ refer file: signal.sd
+ comment text:
+  testsd -Tgauss gauss.sd 
+  testsd -Tsine -f600 sine.sd 
+  addsd gauss.sd sine.sd signal.sd 
+  
+  Added samples of gauss.sd to samples of sine.sd by addsd.
+  refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+  spectrans -pauto signal.rc - 
+ Source files: <stdout>
+ There is no reference header.
+
+ ---Type Specific Part of Header (FEA)---
+ fea_type: FEA_ANA, segment_labeled: NO, field_count: 8
+
+ ---Generic Part of Header---
+ DC_removed: NO 
+ filters: NO 
+ frmlen: 1000 
+ maxlpc: 1 
+ maxpulses: 1 
+ maxraw: 1 
+ method: AUTOC 
+ nan: 4000 
+ order: 11 
+ order_unvcd: 11 
+ order_vcd: 0 
+ spec_rep: AUTO 
+ src_sf: 8000 
+ start: 1 
+
+  ----------------
+  File: <stdout>
+
+  ---Common Part of Header---
+  File type: FEA (Feature File)
+  File header date: Thu Aug  6 15:51:16 1987 , header version: 1.44
+  Produced by: refcof, version: 3.1, of: 8/10/87
+  User: shore
+  Number of data records: 4
+  Data is  tagged.
+  Data format is 0 doubles, 15 floats, 2 longs,
+  1 shorts, and 0 chars (bytes).
+  refer file: signal.sd
+  comment text:
+   testsd -Tgauss gauss.sd 
+   testsd -Tsine -f600 sine.sd 
+   addsd gauss.sd sine.sd signal.sd 
+   
+   Added samples of gauss.sd to samples of sine.sd by addsd.
+   refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+  Source files: signal.sd
+  There is no reference header.
+
+  ---Type Specific Part of Header (FEA)---
+  fea_type: FEA_ANA, segment_labeled: NO, field_count: 8
+
+  ---Generic Part of Header---
+  DC_removed: NO 
+  filters: NO 
+  frmlen: 1000 
+  maxlpc: 1 
+  maxpulses: 1 
+  maxraw: 1 
+  method: AUTOC 
+  nan: 4000 
+  order: 11 
+  order_unvcd: 11 
+  order_vcd: 0 
+  spec_rep: RC 
+  src_sf: 8000 
+  start: 1 
+
+   ----------------
+   File: signal.sd
+
+   ---Common Part of Header---
+   File type: SD (Sampled Data File)
+   File header date: Thu Aug  6 15:51:07 1987 , header version: 1.44
+   Produced by: addsd, version: 1.1, of: 7/29/87
+   User: shore
+   Number of data records: 8000
+   Data is not tagged.
+   Data format is 0 doubles, 1 floats, 0 longs,
+   0 shorts, and 0 chars (bytes).
+   comment text:
+    testsd -Tgauss gauss.sd 
+    testsd -Tsine -f600 sine.sd 
+    addsd gauss.sd sine.sd signal.sd 
+    
+    Added samples of gauss.sd to samples of sine.sd by addsd.
+   Source files: gauss.sd
+                 sine.sd
+   There is no reference header.
+
+   ---Type Specific Part of Header (SD)---
+   equip: NONE
+   max_value: 2874.96, sf: 8000, src_sf: 0
+   synt_method: NONE
+   scale: 0, dcrem: 0
+   q_method: NONE
+   v_excit_method: NONE
+   uv_excit_method: NONE
+   spare1: 0, nchan: 1
+   synt_interp: NONE
+   synt_pwr: NONE
+   synt_rc: NONE
+   synt_order: 0
+   start: 0, nan: 0
+   No prefilter zfunc
+   No de_emp zfunc
+
+   ---Generic Part of Header---
+   seed: 1234567 
+   test_type: GAUSS 
+
+    ----------------
+    File: gauss.sd
+
+    ---Common Part of Header---
+    File type: SD (Sampled Data File)
+    File header date: Thu Aug  6 15:51:02 1987 , header version: 1.44
+    Produced by: testsd, version: 3.1, of: 8/10/87
+    User: shore
+    Number of data records: 8000
+    Data is not tagged.
+    Data format is 0 doubles, 1 floats, 0 longs,
+    0 shorts, and 0 chars (bytes).
+    comment text:
+     testsd -Tgauss gauss.sd 
+    There is no reference header.
+
+    ---Type Specific Part of Header (SD)---
+    equip: NONE
+    max_value: 2374.96, sf: 8000, src_sf: 0
+    synt_method: NONE
+    scale: 0, dcrem: 0
+    q_method: NONE
+    v_excit_method: NONE
+    uv_excit_method: NONE
+    spare1: 0, nchan: 1
+    synt_interp: NONE
+    synt_pwr: NONE
+    synt_rc: NONE
+    synt_order: 0
+    start: 0, nan: 0
+    No prefilter zfunc
+    No de_emp zfunc
+
+    ---Generic Part of Header---
+    seed: 1234567 
+    test_type: GAUSS 
+
+    ----------------
+    File: sine.sd
+
+    ---Common Part of Header---
+    File type: SD (Sampled Data File)
+    File header date: Thu Aug  6 15:51:04 1987 , header version: 1.44
+    Produced by: testsd, version: 3.1, of: 8/10/87
+    User: shore
+    Number of data records: 8000
+    Data is not tagged.
+    Data format is 0 doubles, 1 floats, 0 longs,
+    0 shorts, and 0 chars (bytes).
+    comment text:
+     testsd -Tsine -f600 sine.sd 
+    There is no reference header.
+
+    ---Type Specific Part of Header (SD)---
+    equip: NONE
+    max_value: 500, sf: 8000, src_sf: 0
+    synt_method: NONE
+    scale: 0, dcrem: 0
+    q_method: NONE
+    v_excit_method: NONE
+    uv_excit_method: NONE
+    spare1: 0, nchan: 1
+    synt_interp: NONE
+    synt_pwr: NONE
+    synt_rc: NONE
+    synt_order: 0
+    start: 0, nan: 0
+    No prefilter zfunc
+    No de_emp zfunc
+
+    ---Generic Part of Header---
+    test_type: SINE 
+
++ psps -Dav signal.lsf 
+File: signal.lsf
+
+---Common Part of Header---
+File type: FEA (Feature File)
+File header date: Thu Aug  6 15:51:22 1987 , header version: 1.44
+Produced by: spectrans, version: 1.6, of: 6/22/87
+User: shore
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 15 floats, 2 longs,
+1 shorts, and 0 chars (bytes).
+refer file: signal.sd
+comment text:
+ testsd -Tgauss gauss.sd 
+ testsd -Tsine -f600 sine.sd 
+ addsd gauss.sd sine.sd signal.sd 
+ 
+ Added samples of gauss.sd to samples of sine.sd by addsd.
+ refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+ spectrans -pauto signal.rc - 
+ spectrans -plsf - signal.lsf 
+Source files: signal.lsf
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: FEA_ANA, segment_labeled: NO, field_count: 8
+Item name: frame_len, type: LONG, size: 1
+Item name: num_pulses, type: LONG, size: 1
+Item name: frame_type, type: CODED, size: 1
+ Possible coded values:
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+Item name: voiced_fraction, type: FLOAT, size: 1
+Item name: raw_power, type: FLOAT, size: 1
+Item name: lpc_power, type: FLOAT, size: 1
+Item name: p_pulse_len, type: FLOAT, size: 1
+Item name: spec_param, type: FLOAT, size: 11, rank: 1
+
+---Generic Part of Header---
+DC_removed: NO 
+Specified search grid spacing (Hz.): 4 
+filters: NO 
+frmlen: 1000 
+maxlpc: 1 
+maxpulses: 1 
+maxraw: 1 
+method: AUTOC 
+nan: 4000 
+order: 11 
+order_unvcd: 11 
+order_vcd: 0 
+spec_rep: LSF 
+src_sf: 8000 
+start: 1 
+
+ ----------------
+ File: signal.lsf
+
+ ---Common Part of Header---
+ File type: FEA (Feature File)
+ File header date: Thu Aug  6 15:51:21 1987 , header version: 1.44
+ Produced by: spectrans, version: 1.6, of: 6/22/87
+ User: shore
+ Number of data records: unknown (input is pipe)
+ Data is  tagged.
+ Data format is 0 doubles, 15 floats, 2 longs,
+ 1 shorts, and 0 chars (bytes).
+ refer file: signal.sd
+ comment text:
+  testsd -Tgauss gauss.sd 
+  testsd -Tsine -f600 sine.sd 
+  addsd gauss.sd sine.sd signal.sd 
+  
+  Added samples of gauss.sd to samples of sine.sd by addsd.
+  refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+  spectrans -pauto signal.rc - 
+ Source files: <stdout>
+ There is no reference header.
+
+ ---Type Specific Part of Header (FEA)---
+ fea_type: FEA_ANA, segment_labeled: NO, field_count: 8
+ Item name: frame_len,  type: LONG,  size: 1
+ Item name: num_pulses,  type: LONG,  size: 1
+ Item name: frame_type,  type: CODED,  size: 1
+  Possible coded values:
+  NONE
+  UNKNOWN
+  VOICED
+  UNVOICED
+  SILENCE
+  TRANSITION
+ Item name: voiced_fraction,  type: FLOAT,  size: 1
+ Item name: raw_power,  type: FLOAT,  size: 1
+ Item name: lpc_power,  type: FLOAT,  size: 1
+ Item name: p_pulse_len,  type: FLOAT,  size: 1
+ Item name: spec_param,  type: FLOAT,  size: 11, rank: 1
+
+ ---Generic Part of Header---
+ DC_removed: NO 
+ filters: NO 
+ frmlen: 1000 
+ maxlpc: 1 
+ maxpulses: 1 
+ maxraw: 1 
+ method: AUTOC 
+ nan: 4000 
+ order: 11 
+ order_unvcd: 11 
+ order_vcd: 0 
+ spec_rep: AUTO 
+ src_sf: 8000 
+ start: 1 
+
+  ----------------
+  File: <stdout>
+
+  ---Common Part of Header---
+  File type: FEA (Feature File)
+  File header date: Thu Aug  6 15:51:16 1987 , header version: 1.44
+  Produced by: refcof, version: 3.1, of: 8/10/87
+  User: shore
+  Number of data records: 4
+  Data is  tagged.
+  Data format is 0 doubles, 15 floats, 2 longs,
+  1 shorts, and 0 chars (bytes).
+  refer file: signal.sd
+  comment text:
+   testsd -Tgauss gauss.sd 
+   testsd -Tsine -f600 sine.sd 
+   addsd gauss.sd sine.sd signal.sd 
+   
+   Added samples of gauss.sd to samples of sine.sd by addsd.
+   refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+  Source files: signal.sd
+  There is no reference header.
+
+  ---Type Specific Part of Header (FEA)---
+  fea_type: FEA_ANA, segment_labeled: NO, field_count: 8
+  Item name: frame_len,   type: LONG,   size: 1
+  Item name: num_pulses,   type: LONG,   size: 1
+  Item name: frame_type,   type: CODED,   size: 1
+   Possible coded values:
+   NONE
+   UNKNOWN
+   VOICED
+   UNVOICED
+   SILENCE
+   TRANSITION
+  Item name: voiced_fraction,   type: FLOAT,   size: 1
+  Item name: raw_power,   type: FLOAT,   size: 1
+  Item name: lpc_power,   type: FLOAT,   size: 1
+  Item name: p_pulse_len,   type: FLOAT,   size: 1
+  Item name: spec_param,   type: FLOAT,   size: 11, rank: 1
+
+  ---Generic Part of Header---
+  DC_removed: NO 
+  filters: NO 
+  frmlen: 1000 
+  maxlpc: 1 
+  maxpulses: 1 
+  maxraw: 1 
+  method: AUTOC 
+  nan: 4000 
+  order: 11 
+  order_unvcd: 11 
+  order_vcd: 0 
+  spec_rep: RC 
+  src_sf: 8000 
+  start: 1 
+
+   ----------------
+   File: signal.sd
+
+   ---Common Part of Header---
+   File type: SD (Sampled Data File)
+   File header date: Thu Aug  6 15:51:07 1987 , header version: 1.44
+   Produced by: addsd, version: 1.1, of: 7/29/87
+   User: shore
+   Number of data records: 8000
+   Data is not tagged.
+   Data format is 0 doubles, 1 floats, 0 longs,
+   0 shorts, and 0 chars (bytes).
+   comment text:
+    testsd -Tgauss gauss.sd 
+    testsd -Tsine -f600 sine.sd 
+    addsd gauss.sd sine.sd signal.sd 
+    
+    Added samples of gauss.sd to samples of sine.sd by addsd.
+   Source files: gauss.sd
+                 sine.sd
+   There is no reference header.
+
+   ---Type Specific Part of Header (SD)---
+   equip: NONE
+   max_value: 2874.96, sf: 8000, src_sf: 0
+   synt_method: NONE
+   scale: 0, dcrem: 0
+   q_method: NONE
+   v_excit_method: NONE
+   uv_excit_method: NONE
+   spare1: 0, nchan: 1
+   synt_interp: NONE
+   synt_pwr: NONE
+   synt_rc: NONE
+   synt_order: 0
+   start: 0, nan: 0
+   No prefilter zfunc
+   No de_emp zfunc
+
+   ---Generic Part of Header---
+   seed: 1234567 
+   test_type: GAUSS 
+
+    ----------------
+    File: gauss.sd
+
+    ---Common Part of Header---
+    File type: SD (Sampled Data File)
+    File header date: Thu Aug  6 15:51:02 1987 , header version: 1.44
+    Produced by: testsd, version: 3.1, of: 8/10/87
+    User: shore
+    Number of data records: 8000
+    Data is not tagged.
+    Data format is 0 doubles, 1 floats, 0 longs,
+    0 shorts, and 0 chars (bytes).
+    comment text:
+     testsd -Tgauss gauss.sd 
+    There is no reference header.
+
+    ---Type Specific Part of Header (SD)---
+    equip: NONE
+    max_value: 2374.96, sf: 8000, src_sf: 0
+    synt_method: NONE
+    scale: 0, dcrem: 0
+    q_method: NONE
+    v_excit_method: NONE
+    uv_excit_method: NONE
+    spare1: 0, nchan: 1
+    synt_interp: NONE
+    synt_pwr: NONE
+    synt_rc: NONE
+    synt_order: 0
+    start: 0, nan: 0
+    No prefilter zfunc
+    No de_emp zfunc
+
+    ---Generic Part of Header---
+    seed: 1234567 
+    test_type: GAUSS 
+
+    ----------------
+    File: sine.sd
+
+    ---Common Part of Header---
+    File type: SD (Sampled Data File)
+    File header date: Thu Aug  6 15:51:04 1987 , header version: 1.44
+    Produced by: testsd, version: 3.1, of: 8/10/87
+    User: shore
+    Number of data records: 8000
+    Data is not tagged.
+    Data format is 0 doubles, 1 floats, 0 longs,
+    0 shorts, and 0 chars (bytes).
+    comment text:
+     testsd -Tsine -f600 sine.sd 
+    There is no reference header.
+
+    ---Type Specific Part of Header (SD)---
+    equip: NONE
+    max_value: 500, sf: 8000, src_sf: 0
+    synt_method: NONE
+    scale: 0, dcrem: 0
+    q_method: NONE
+    v_excit_method: NONE
+    uv_excit_method: NONE
+    spare1: 0, nchan: 1
+    synt_interp: NONE
+    synt_pwr: NONE
+    synt_rc: NONE
+    synt_order: 0
+    start: 0, nan: 0
+    No prefilter zfunc
+    No de_emp zfunc
+
+    ---Generic Part of Header---
+    test_type: SINE 
+
++ psps -gH -r1 signal.lsf 
+Record: 1 Tag: 2
+   element1: 0
+   element2: 363833
+   element3: 283135
+   element4: 0
+   element5: 470.477
+   element6: 624.485
+   element7: 854.692
+   element8: 1331.03
+   element9: 1629.32
+   element10: 1983.64
+   element11: 2339.67
+   element12: 2678.27
+   element13: 2992
+   element14: 3333.22
+   element15: 3650.8
+   element16: 1000
+   element17: 0
+   element18: 0
++ psps -t1002 -H signal.lsf 
+Record 2: 
+Tag: 1002
+frame_len:  1000 
+num_pulses:  0 
+frame_type:  NONE 
+voiced_fraction:  0 
+raw_power:  385569 
+lpc_power:  289688 
+p_pulse_len:  0 
+spec_param:  
+  0:     451.44    612.329     831.61    1346.51    1615.96    1978.16 
+  6:    2285.81    2701.88    3010.16    3346.35    3635.65 
+
++ psps -t1 -v -f spec_param signal.rc 
+File: signal.rc
+
+---Common Part of Header---
+File type: FEA (Feature File)
+File header date: Thu Aug  6 15:51:16 1987 , header version: 1.44
+Produced by: refcof, version: 3.1, of: 8/10/87
+User: shore
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 15 floats, 2 longs,
+1 shorts, and 0 chars (bytes).
+refer file: signal.sd
+comment text:
+ testsd -Tgauss gauss.sd 
+ testsd -Tsine -f600 sine.sd 
+ addsd gauss.sd sine.sd signal.sd 
+ 
+ Added samples of gauss.sd to samples of sine.sd by addsd.
+ refcof -o11 -r1:1000 -n4 signal.sd signal.rc 
+Source files: signal.sd
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: FEA_ANA, segment_labeled: NO, field_count: 8
+Item name: frame_len, type: LONG, size: 1
+Item name: num_pulses, type: LONG, size: 1
+Item name: frame_type, type: CODED, size: 1
+ Possible coded values:
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+Item name: voiced_fraction, type: FLOAT, size: 1
+Item name: raw_power, type: FLOAT, size: 1
+Item name: lpc_power, type: FLOAT, size: 1
+Item name: p_pulse_len, type: FLOAT, size: 1
+Item name: spec_param, type: FLOAT, size: 11, rank: 1
+
+---Generic Part of Header---
+DC_removed: NO 
+filters: NO 
+frmlen: 1000 
+maxlpc: 1 
+maxpulses: 1 
+maxraw: 1 
+method: AUTOC 
+nan: 4000 
+order: 11 
+order_unvcd: 11 
+order_vcd: 0 
+spec_rep: RC 
+src_sf: 8000 
+start: 1 
+

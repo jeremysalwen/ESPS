@@ -1,0 +1,523 @@
+#!/bin/sh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1996  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)showEnsemble	1.9	9/29/98	ERL
+# 
+# Written by:  Gayle Ayers
+# Checked by:  Jack Unverferth
+# Revised by:
+# 
+# Brief description:
+#
+#  This shell script is an example of a script that displays a useful
+#  set of speech data displays given a BASENAME common to all of the 
+#  speech data files.  It also describes the commands used in the script.  
+#  The script sends commands to xwaves using the send_xwaves command.  
+#
+#  This shell script creates and displays xwaves display ensembles
+#  with a speech waveform, an f0 display, and a spectrogram.  Two 
+#  label files (using xlabel) are associated to the speech waveform.
+#
+#  A full display ensemble $BASENAME consists of these files:
+#      $BASENAME.sd	   ($SPEECH -- the speech waveform)
+#      $BASENAME.f0	   ($F0 -- fundamental frequency)
+#      $BASENAME.phones	   (an xlabel label file for labelling phonemes)
+#      $BASENAME.words	   (an xlabel label file for labelling words)
+#      $BASENAME.sd.fspec  ($SPECT -- a (wideband) spectrogram)
+#
+#  Additional referenced files: $ESPS_BASE/lib/waves/menus/actionsonlymenu
+#			        $ESPS_BASE/lib/waves/menus/labelmenu.timit
+#
+#  Keep the terminal window accessible so that you can see the prompt
+#  messages. 
+#
+#  This script has been tested with ESPS/waves+ version 5.1.
+
+
+#-------------------------------------------------------------------------
+#  Preliminary startup checks to see if it is ok to start xwaves and
+#  start displaying ensembles.
+#-------------------------------------------------------------------------
+
+#  CHECK #1:  Make sure there are $BASENAME arguments specified.
+#  Invoke the script with "showEnsemble BASENAME1 BASENAME2 ..."
+
+case "$#" in
+        0) echo "Usage: $0 BASENAME1 BASENAME2 ... "; exit 1;;
+esac
+
+#  CHECK #2:  Make sure that $ESPS_BASE is defined.
+
+if test -z "$ESPS_BASE"
+then
+     echo "Please define the UNIX variable ESPS_BASE and try again."
+     exit 1
+fi
+
+#  CHECK #3:  Make sure that $ESPS_BASE/bin is in the user's path so
+#  that the send_xwaves and xwaves commands don't fail.
+
+if test -z "`echo $PATH | grep $ESPS_BASE/bin`"
+then
+     echo "Please add $ESPS_BASE/bin to your path and try again."
+     exit 1
+fi
+  
+#  CHECK #4:  Make sure that the user doesn't lose the work of a 
+#  current xwaves session.  
+#
+#  If xwaves is already running, check to see if there are any current
+#  display objects.  If there aren't, go ahead and try to display the
+#  ensembles.  If there are current display objects, warn the user.
+#  If xwaves is not already running, try to start it.
+#  
+#  Checking for a current xwaves session is done by testing the
+#  success of a command sent to xwaves ("set barr foo").
+#  With option -D1, send_xwaves waits only 1 second to try to make a 
+#  connection to xwaves.  If xwaves is running, it will be able to 
+#  make a connection within 1 second.  If it isn't, it will not.
+#  Suppress warning messages with "1>/dev/null 2>&1".  E.g.,
+#	Cannot open a connection to xwaves
+#  if xwaves is not already running.
+#  
+#  If there are no current display objects in xwaves, then 
+#  "send_xwaves get aname objects" returns the string "" (i.e., \"\")
+
+if send_xwaves -D1 "set barr foo" 1>/dev/null 2>&1
+then
+     if test `send_xwaves get aname objects` = "\"\""
+     then
+          STARTED_WITH_XWAVES=true
+          export STARTED_WITH_XWAVES
+     else
+          STARTED_WITH_XWAVES=true
+          export STARTED_WITH_XWAVES
+          echo "     " 
+          echo "     Sorry, but it appears that xwaves is running"
+          echo "     and displaying views of the object"
+          echo "          `send_xwaves get aname objects`"
+          echo "     When you are ready to display the ensemble(s)"
+          echo "          \"$*\""
+          echo "     please close all the open display windows or"
+          echo "     quit your current xwaves session.  Then repeat"
+          echo "     your request to display the ensembles by reinvoking"
+          echo "          $0 $*"
+          echo "     "
+          exit 1
+     fi
+else
+     STARTED_WITH_XWAVES=false
+     export STARTED_WITH_XWAVES
+     echo "     Starting up xwaves."
+     xwaves &
+fi
+
+#  CHECK 5:  Check to make sure that xwaves started up ok.  
+#  Don't use -D1 because you have to leave time for xwaves to start up.
+#  (The default for -D is a 10 second wait).
+
+if "$STARTED_WITH_XWAVES" = "false"
+then
+     if send_xwaves "set barrr fii" 1>/dev/null 2>&1
+     then
+          echo "     Getting ready to display ensemble \"$1\"."
+     else
+          echo "     Sorry, but xwaves did not start up ok.  Check"
+          echo "     your configuration and try again.  If the problem"
+          echo "     is that you have no more xwaves licenses, then you"
+          echo "     must wait until one is free."
+     fi
+else
+          echo "     Getting ready to display ensemble \"$1\"."
+fi
+
+#-------------------------------------------------------------------------
+#  Set up xwaves to process this script.  Specify all parameters
+#  that are identical for each $BASENAME. 
+#    1.  Specify waveform, xlabel, f0, and spectrogram view characteristics,
+#        and actually set the xwaves global symbols that are independent 
+#        of $BASENAME file displays.
+#    2.  Attach the xlabel attachment to xwaves (to allow labelling).
+#-------------------------------------------------------------------------
+
+  #-----------------------------------------------------------------------
+  #  1.  Specify waveform, xlabel, f0, and spectrogram view characteristics,
+  #      and actually set the xwaves global symbols that are independent 
+  #      of $BASENAME file displays.
+  #      Specifications that are not set immediately are enacted in 
+  #      various send_xwaves commands later on in the script, primarily 
+  #      in the main "for" loop that displays the ensemble views.
+  #-----------------------------------------------------------------------
+
+  #-----------------------------------------------------------------------
+  #  Set a colormap file for the xwaves display.  Chose from the options
+  #  provided in $ESPS_BASE/lib/waves/colormaps/ or define your own.
+  #-----------------------------------------------------------------------
+  
+  WAVES_COLORMAP=colormap
+  send_xwaves set colormap $ESPS_BASE/lib/waves/colormaps/$WAVES_COLORMAP
+
+  #-----------------------------------------------------------------------
+  #  Specify variables determining speech waveform file $SPEECH size and 
+  #  location in the $BASENAME ensemble.
+  #-----------------------------------------------------------------------
+
+  SPEECH_X=0
+  SPEECH_Y=30
+  SPEECH_HEIGHT=100
+  SPEECH_WIDTH=1025
+
+  #-----------------------------------------------------------------------
+  #  Specify variables determining xlabel views.
+  #-----------------------------------------------------------------------
+
+  #  Define what menufiles to use ($WORDSMENU, $PHONESMENU) in the ensemble.
+  #    $WORDSMENU is a menu with only the special xlabel actions.
+  #    $PHONESMENU is a menu with the TIMIT phonetic labelling set.
+  #    If the specified menufiles are not found, xwaves gives the error:
+  #       No argument for selector menufile
+  #    and is generally unhappy.
+  #  Define what color new label marks are ($LABEL_COLOR) in the ensemble.
+
+  WORDSMENU=$ESPS_BASE/lib/waves/menus/actionsonlymenu
+  PHONESMENU=$ESPS_BASE/lib/waves/menus/labelmenu.timit
+  LABEL_COLOR=115
+
+  #-----------------------------------------------------------------------
+  #  Specify variables determining the f0 file $F0 size and location
+  #  in the $BASENAME ensemble.
+  #-----------------------------------------------------------------------
+
+  F0_X=0
+  F0_Y=285
+  F0_HEIGHT=280
+
+  #  Set the variables that determine the f0 scale displayed.  
+  #  f0 values are plotted on a scale from $F0_MIN to $F0_MIN + $F0_RANGE.
+  #  F0_SIZE=1 makes the f0 field take up the whole f0 window.
+
+  F0_MIN=100
+  F0_RANGE=250
+  F0_SIZE=1
+
+  send_xwaves set f0_min $F0_MIN f0_range $F0_RANGE f0_size $F0_SIZE
+
+  #-----------------------------------------------------------------------
+  #  Specify variables determining the spectrogram file $SPECT 
+  #  size, location, threshold, and range.  
+  #  Also allow spectrogram window rescaling so that the spectrogram 
+  #  can be time aligned with the other views in the ensemble.
+  #-----------------------------------------------------------------------
+
+  SPECT_X=0
+  SPECT_Y=590
+  SPECT_HEIGHT=280
+  SPECT_THRESHOLD=20
+  SPECT_RANGE=85
+
+  V_SPECT_RESCALE=1
+  H_SPECT_RESCALE=1
+
+  send_xwaves set v_spect_rescale $V_SPECT_RESCALE \
+                  h_spect_rescale $H_SPECT_RESCALE 
+
+#-------------------------------------------------------------------------
+#    2.  Attach the xlabel attachment to xwaves (to allow labelling).
+#-------------------------------------------------------------------------
+
+send_xwaves attach function xlabel 
+
+#-------------------------------------------------------------------------
+#  The main control structure of the script.  Take each argument of 
+#  the script ($BASENAME) as the basename for a display ensemble.  
+#  To create the ensemble: 
+#	display the speech waveform file ($SPEECH)
+#	display two xlabel files ($BASENAME.words, $BASENAME.phones)
+#	display the f0 file ($F0)
+#	display the spectrogram file ($SPECT)
+#  Then time align all the display windows to the speech waveform $SPEECH.  
+#  The script waits for user keyboard input to continue on the the next 
+#  display ensemble 'c', or to quit 'q'.  
+#-------------------------------------------------------------------------
+
+for BASENAME in $*
+
+do
+     #--------------------------------------------------------------------
+     #  Define filenames for ensemble $BASENAME.
+     #  Change file extensions here if your naming conventions differ.
+     #--------------------------------------------------------------------
+
+     SPEECH=$BASENAME.sd	
+     F0=$BASENAME.f0
+     SPECT=$BASENAME.sd.fspec
+
+     #--------------------------------------------------------------------
+     #  Start the process of displaying the ensemble $BASENAME.
+     #
+     #  Check that the file $SPEECH exists and is readable.
+     #  If it is readable, display $SPEECH and try to display the other
+     #  components of the ensemble: $F0 and $SPECT.
+     #  If it doesn't exist or isn't readable, don't try to display it or 
+     #  the other components of the ensemble. 
+     #--------------------------------------------------------------------
+
+     if test -f $SPEECH 
+     then
+
+          #---------------------------------------------------------------
+          #  Display the speech waveform file $SPEECH.
+          #---------------------------------------------------------------
+
+          echo "     "
+          echo "     Displaying ensemble \"$BASENAME\"."
+          echo "     Displaying speech waveform file \"$SPEECH\"."
+          send_xwaves make name $BASENAME file $SPEECH \
+	                   loc_x $SPEECH_X loc_y $SPEECH_Y \
+                           height $SPEECH_HEIGHT width $SPEECH_WIDTH  
+
+          #---------------------------------------------------------------
+          #  Display the label files $BASENAME.words and $BASENAME.phones.
+          #
+          #  The labeller xlabel and its label files are linked to the 
+          #  first loaded signal file, in this case $SPEECH.
+          #---------------------------------------------------------------
+
+          #  This sets up two label files.  If you want to have more than
+          #  two label files, add them here.  
+          #  Note:  The most recently loaded label files are displayed
+          #  at the top of the xlabel window.
+          #  I.e., $BASENAME.phones is above $BASENAME.words 
+          #  in the xlabel window.
+
+          send_xwaves send function xlabel op xlabel make name $BASENAME \
+                           signal $SPEECH file $BASENAME.words \
+                           color $LABEL_COLOR menufile $WORDSMENU 
+
+          send_xwaves send function xlabel op xlabel make name $BASENAME \
+	                   signal $SPEECH file $BASENAME.phones \
+                           color $LABEL_COLOR menufile $PHONESMENU 
+
+          #---------------------------------------------------------------
+          #  Display the fundamental frequency signal file $F0 if the
+          #  file exists.  Otherwise compute it and then display it.
+          #
+          #  Also define which fields of the f0 file $F0 to display.  
+          #  For f0 files computed with "get_f0", the field numbers are:
+          #  0 = f0, 1 = prob_voice, 2 = rms, 3 = ac_peak
+          #---------------------------------------------------------------
+
+          if test -f $F0
+          then
+               echo "     Displaying f0 file \"$F0\"."
+          else
+               echo "     "
+               echo "     WARNING:"
+               echo "     The f0 file \"$F0\" was not found."
+               echo "     Computing it now with the command:"
+               echo "            get_f0 $SPEECH $F0"
+               get_f0 $SPEECH $F0
+          fi
+
+          send_xwaves make name $BASENAME file $F0 \
+                           loc_x $F0_X loc_y $F0_Y height $F0_HEIGHT 
+
+          send_xwaves $BASENAME activate file $F0 op set numbers "0" 
+
+          #---------------------------------------------------------------
+          #  Display the spectrogram file $SPECT if it exists. 
+          #  Otherwise compute it and display the wideband spectrogram. 
+          #---------------------------------------------------------------
+
+          if test -f $SPECT
+          then
+               echo "     Displaying spectrogram file \"$SPECT\"."
+
+               send_xwaves make name $BASENAME file $SPECT \
+                           loc_x $SPECT_X loc_y $SPECT_Y height $SPECT_HEIGHT
+
+               send_xwaves $BASENAME colormap threshold $SPECT_THRESHOLD \
+                           range $SPECT_RANGE
+          else
+               echo "     "
+               echo "     WARNING:"
+               echo "     The spectrogram file \"$SPECT\" was not found."
+               echo "     Computing and displaying it now.  Please wait."
+
+               send_xwaves $BASENAME spectrogram file $SPEECH \
+                           loc_x $SPECT_X loc_y $SPECT_Y height $SPECT_HEIGHT \
+                           threshold $SPECT_THRESHOLD range $SPECT_RANGE   
+          fi
+
+          #---------------------------------------------------------------
+          #  Time align all displayed files with the waveform $SPEECH.
+          #---------------------------------------------------------------
+
+          echo "     Time aligning all windows in ensemble \"$BASENAME\"."
+
+          send_xwaves $BASENAME align file $SPEECH 
+
+     # else of "if test -f $SPEECH"
+     else 
+          echo "     "
+          echo "     WARNING:"
+          echo "     Speech waveform file \"$SPEECH\" was not found."
+          echo "     Can't display the ensemble \"$BASENAME\"."
+
+     # fi of "if test -f $SPEECH"
+     fi 
+
+     #--------------------------------------------------------------------
+     #  The shell interaction to continue ('c') or quit ('q') the script.
+     #  after an ensemble $BASENAME from the list of arguments has been
+     #  displayed in its entirety.
+     #--------------------------------------------------------------------
+
+     echo "     "
+     echo "     Type continuation command ('c' or 'q' only)."
+     echo "     'c' to continue to next ensemble, or 'q' to quit: \c"
+     LOOKING_FOR_CONTINUE_COMMAND=true
+     read cont_command
+     while "$LOOKING_FOR_CONTINUE_COMMAND" = "true"
+     do
+        case $cont_command in
+             c) echo "     ";
+                echo "     Continuing to next display ensemble.";
+                LOOKING_FOR_CONTINUE_COMMAND=false;
+                export LOOKING_FOR_CONTINUE_COMMAND;
+                send_xwaves kill name $BASENAME;;
+             q) echo "     ";
+                echo "     Quitting from displaying ensembles.";
+                echo "     ";
+                #---------------------------------------------------------
+                #  To remove or not remove spectrogram files? 
+                #
+                #  (This is the same as the quitting section at the end,
+                #   but the indent formatting is somewhat violated here.)
+                #---------------------------------------------------------
+
+                if test -z "`send_xwaves get aname new_files | grep '.fspec'`"
+                then
+                     echo "     "
+                else
+                 echo "     Do you want to remove the following"
+                 echo "     spectrogram files created during this session?"
+                 echo "       `send_xwaves get aname new_files | grep '.fspec'`"
+                     echo "     Answer 'y' for yes, 'n' for no: \c"
+                     LOOKING_FOR_YES_NO_CHARACTER=true
+                     read yes_no_character
+                     while "$LOOKING_FOR_YES_NO_CHARACTER" = "true"
+                     do
+                        case $yes_no_character in
+                            y) LOOKING_FOR_YES_NO_CHARACTER=false;
+                               export LOOKING_FOR_YES_NO_CHARACTER;
+               echo "     Removing spectrogram file(s) created this session:";
+               echo "       `send_xwaves get aname new_files | grep '.fspec'`";
+               rm -f `send_xwaves get aname new_files | grep '.fspec'`;;
+                            n) LOOKING_FOR_YES_NO_CHARACTER=false;
+                               export LOOKING_FOR_YES_NO_CHARACTER;
+               echo "     Saving spectrogram file(s) created this session:";
+               echo "       `send_xwaves get aname new_files | grep '.fspec'`";;
+                            *) LOOKING_FOR_YES_NO_CHARACTER=true; 
+                               export LOOKING_FOR_YES_NO_CHARACTER; 
+                               echo "     ";
+               echo "     WARNING:  Command \"$yes_no_character\" unknown.";
+               echo "     Please try again.  Enter 'y' or 'n': \c";
+                               read yes_no_character;;
+                        esac
+                     done
+                fi
+
+                #---------------------------------------------------------
+                #  Started with xwaves running or not?
+                #---------------------------------------------------------
+
+                LOOKING_FOR_CONTINUE_COMMAND=false;
+                export LOOKING_FOR_CONTINUE_COMMAND;
+
+                if "$STARTED_WITH_XWAVES" = "true"
+                then
+                     echo "     Closing ensemble \"$BASENAME\"."
+                     echo "     "
+                     send_xwaves kill name $BASENAME
+                else
+                     echo "     Quitting xwaves."
+                     echo "     "
+                     send_xwaves quit
+                fi
+                exit 0;;
+             *) echo "     ";
+                echo "     WARNING:  Command \"$cont_command\" unknown.";
+                echo "     Please try again.  Enter 'c' or 'q': \c";
+                LOOKING_FOR_CONTINUE_COMMAND=true;
+                export LOOKING_FOR_CONTINUE_COMMAND;
+                read cont_command;;
+        esac
+     #done of "while "$LOOKING_FOR_CONTINUE_COMMAND" = "true""
+     done 
+# done of "for BASENAME in $*"
+done
+
+#-------------------------------------------------------------------------
+#  No more arguments of script left so:
+#     1.  Remove spectrograms created during this session.
+#     2.  Quit xwaves if script was used to start up xwaves.  
+#         If xwaves was already running before the script was 
+#         started then don't quit xwaves.
+#-------------------------------------------------------------------------
+
+echo "     "
+echo "     No more ensembles to display."
+echo "     "
+
+if test -z "`send_xwaves get aname new_files | grep '.fspec'`"
+then
+     echo "     "
+else
+     echo "     Do you want to remove the following"
+     echo "     spectrogram files created during this session?"
+     echo "       `send_xwaves get aname new_files | grep '.fspec'`"
+     echo "     Answer 'y' for yes, 'n' for no: \c"
+     LOOKING_FOR_YES_NO_CHARACTER=true
+     read yes_no_character
+     while "$LOOKING_FOR_YES_NO_CHARACTER" = "true"
+     do
+        case $yes_no_character in
+            y) LOOKING_FOR_YES_NO_CHARACTER=false;
+               export LOOKING_FOR_YES_NO_CHARACTER;
+               echo "     Removing spectrogram file(s) created this session:";
+               echo "       `send_xwaves get aname new_files | grep '.fspec'`";
+               rm -f `send_xwaves get aname new_files | grep '.fspec'`;;
+            n) LOOKING_FOR_YES_NO_CHARACTER=false;
+               export LOOKING_FOR_YES_NO_CHARACTER;
+               echo "     Saving spectrogram file(s) created this session:";
+               echo "       `send_xwaves get aname new_files | grep '.fspec'`";;
+            *) LOOKING_FOR_YES_NO_CHARACTER=true;
+               export LOOKING_FOR_YES_NO_CHARACTER;
+               echo "     ";
+               echo "     WARNING:  Command \"$yes_no_character\" unknown.";
+               echo "     Please try again.  Enter 'y' or 'n': \c";
+               read yes_no_character;;
+        esac
+     done
+fi
+
+if "$STARTED_WITH_XWAVES" = "true"
+then
+     echo "     "
+else
+     echo "     Quitting xwaves."
+     echo "     "
+     send_xwaves quit
+fi
+
+exit 0

@@ -1,0 +1,778 @@
+ #! /bin/sh
+# @(#)vq.test	3.4 2/16/93 ESI
+# test script for vq programs
+#
+#make VQ codebook from Gaussian noise
+#note that this training sequence will not yield the same codebooks
+#on all systems since the codebook splits involve random numbers and
+#the random number generators do not give the same results on both 
+#systems
+ESPSCOM=./espscom
+export ESPSCOM
+echo "Making FEA training sequence (reflection coeff. from Gaussian data)"
+atosps - rc.fana << ZAP
+{
+01 d
+02 6a1a
+03 Wed Sep  9 12:33:10 1987 
+04 1.50
+05 refcof
+06 3.4
+07 2/16/93
+53 shore
+08 28
+09 1
+0b e
+0c 2
+0d 1
+10 <stdin>
+12 testsd -Tgauss -i - refcof -p1:8000 -d -l200 - rc.fana  Converted from rc.fana by spstoa.
+13 <stdin>
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@nan LONG 1 8000 
+@src_sf FLOAT 1 8000 
+@order SHORT 1 10 
+@method CODED 1 [ NONE AUTOC BURG COV MBURG STRCOV VBURG ] AUTOC 
+@frmlen LONG 1 200 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 0 
+@maxraw LONG 1 1 
+@start LONG 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@order_unvcd LONG 1 10 
+@DC_removed CODED 1 [ NO YES ] YES 
+@maxpulses LONG 1 1 
+
+{
+01 9
+02 6a1a
+03 Wed Sep  9 12:33:09 1987 
+04 1.50
+05 testsd
+06 3.4
+07 8/31/87
+53 shore
+08 ffffffff
+0d 1
+12 testsd -Tgauss -i - 
+42 0
+43 2374.96
+44 8000
+20 0
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+}
+}
+
+#Tag 1
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	274676 
+#lpc_power	259578 
+#p_pulse_len	0 
+#spec_param	-0.00476037 -0.053669 -0.114144 -0.072686 -0.0368939 -0.134668 -0.104615 -0.0644129 
+	-0.0193629 -0.003574 
+
+#Tag 201
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	236387 
+#lpc_power	220475 
+#p_pulse_len	0 
+#spec_param	-0.137261 0.000886645 -0.0682462 -0.141844 -0.0437858 -0.101936 -0.0388654 -0.0720962 
+	0.00110666 0.081006 
+
+#Tag 401
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	260744 
+#lpc_power	257628 
+#p_pulse_len	0 
+#spec_param	0.0454781 0.0286804 -0.0167188 0.00788868 0.0241189 0.000924848 -0.00858801 0.0381447 
+	0.015676 0.080047 
+
+#Tag 601
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	207743 
+#lpc_power	188632 
+#p_pulse_len	0 
+#spec_param	-0.139569 -0.0447109 0.137166 -0.181777 -0.0638225 0.107306 0.0203789 -0.0193141 
+	-0.0234588 -0.0722782 
+
+#Tag 801
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	247944 
+#lpc_power	241748 
+#p_pulse_len	0 
+#spec_param	0.00115596 -0.0111754 0.0198073 0.0422325 0.0475159 0.0684025 0.0656002 -0.000993612 
+	0.106593 0.0176628 
+
+#Tag 1001
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	232725 
+#lpc_power	226321 
+#p_pulse_len	0 
+#spec_param	0.0448641 -0.0256901 0.0195723 0.0162607 0.064338 0.0317177 -0.0703692 -0.0845633 
+	-0.0614061 -0.0591633 
+
+#Tag 1201
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	261872 
+#lpc_power	250190 
+#p_pulse_len	0 
+#spec_param	0.0926998 0.0113662 -0.0181695 0.0203621 0.134462 0.00303678 0.0524595 0.0813933 
+	-0.0917401 -0.00456006 
+
+#Tag 1401
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	251510 
+#lpc_power	228398 
+#p_pulse_len	0 
+#spec_param	-0.1605 0.0263378 0.0393458 0.02156 0.126698 -0.156357 -0.0208882 -0.0318458 
+	-0.127745 -0.0933147 
+
+#Tag 1601
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	248822 
+#lpc_power	225400 
+#p_pulse_len	0 
+#spec_param	0.0711194 -0.0226708 -0.138772 -0.0614709 0.105471 -0.0591692 -0.0475233 -0.0393719 
+	0.218893 0.0493471 
+
+#Tag 1801
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	289679 
+#lpc_power	279612 
+#p_pulse_len	0 
+#spec_param	-0.0547514 0.11012 0.00514158 -0.0348087 0.0214901 -0.0689463 -0.0606313 -0.0147137 
+	0.0733382 -0.066321 
+
+#Tag 2001
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	257101 
+#lpc_power	246060 
+#p_pulse_len	0 
+#spec_param	0.0193495 -0.156802 0.0102669 -0.0538156 -0.0669823 -0.059592 0.0550274 -0.0543669 
+	-0.0389032 -0.0075174 
+
+#Tag 2201
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	222093 
+#lpc_power	213970 
+#p_pulse_len	0 
+#spec_param	-0.0429303 -0.0871161 -0.0074115 0.1015 0.0648978 -0.0158129 -0.0395454 0.0376366 
+	0.0303832 -0.0947233 
+
+#Tag 2401
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	237643 
+#lpc_power	220553 
+#p_pulse_len	0 
+#spec_param	0.112913 -0.190362 0.00307722 -0.03515 -0.0889553 -0.0218808 0.0326087 -0.070069 
+	-0.0635174 -0.0719725 
+
+#Tag 2601
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	217631 
+#lpc_power	213068 
+#p_pulse_len	0 
+#spec_param	-0.0190945 0.0539041 0.0860668 0.0567389 0.0203987 0.0286687 -0.0520801 0.00945493 
+	-0.0243831 0.0511065 
+
+#Tag 2801
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	217054 
+#lpc_power	200134 
+#p_pulse_len	0 
+#spec_param	-0.043261 -0.0593916 0.201074 0.0144736 0.098473 -0.0312213 -0.0717401 0.0259701 
+	-0.0478199 -0.12372 
+
+#Tag 3001
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	281575 
+#lpc_power	272416 
+#p_pulse_len	0 
+#spec_param	0.0558831 -0.0222527 -0.140151 -0.0107733 -0.0134077 0.00317855 -0.0487062 0.0172126 
+	-0.066484 -0.0468692 
+
+#Tag 3201
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	209567 
+#lpc_power	201737 
+#p_pulse_len	0 
+#spec_param	0.11234 0.00846449 -0.0796249 -0.0835806 -0.0140126 0.0222668 0.0109456 0.104491 
+	-0.011707 0.003146 
+
+#Tag 3401
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	277735 
+#lpc_power	264459 
+#p_pulse_len	0 
+#spec_param	0.0824846 -0.119914 -0.0448975 -0.0753454 0.0831244 -0.0475946 0.0691668 -0.0356913 
+	-0.0547671 -0.0410217 
+
+#Tag 3601
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	236824 
+#lpc_power	221254 
+#p_pulse_len	0 
+#spec_param	-0.0368877 -0.000193528 -0.0183189 -0.0880395 -0.11654 -0.0470201 -0.088574 -0.0896134 
+	-0.0613482 0.150563 
+
+#Tag 3801
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	284130 
+#lpc_power	269917 
+#p_pulse_len	0 
+#spec_param	-0.0511369 0.0328502 0.0584781 0.0715145 -0.0995137 0.0684329 -0.037591 -0.0872515 
+	0.123158 -0.00893865 
+
+#Tag 4001
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	294831 
+#lpc_power	287120 
+#p_pulse_len	0 
+#spec_param	0.0260192 -0.0453338 -0.0614282 -0.105834 -0.0377191 -0.0112548 0.013648 -0.0613894 
+	-0.00308033 0.0565334 
+
+#Tag 4201
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	245400 
+#lpc_power	242674 
+#p_pulse_len	0 
+#spec_param	0.0144333 -0.07459 -0.0345485 -0.0355126 -0.0309853 0.0314982 -0.000204418 0.0139515 
+	-0.0278121 -0.00196497 
+
+#Tag 4401
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	247988 
+#lpc_power	227690 
+#p_pulse_len	0 
+#spec_param	-0.189182 0.0418002 0.0753103 -0.0603846 -0.0813012 0.0759693 -0.0565661 0.0749874 
+	0.00790477 -0.128044 
+
+#Tag 4601
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	228244 
+#lpc_power	218740 
+#p_pulse_len	0 
+#spec_param	-0.0643747 -0.0778351 -0.0832221 0.015016 0.0190425 0.104361 0.0112259 -0.10361 
+	-0.042965 0.0323647 
+
+#Tag 4801
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	233085 
+#lpc_power	216685 
+#p_pulse_len	0 
+#spec_param	0.127195 -0.0740036 -0.01104 -0.00757702 0.0814351 0.0349134 -0.100944 -0.157912 
+	-0.056032 0.066736 
+
+#Tag 5001
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	253650 
+#lpc_power	246249 
+#p_pulse_len	0 
+#spec_param	-0.0574554 -0.0557237 -0.0926272 -0.00515249 0.0470378 -0.0442044 -0.0629646 0.0560008 
+	-0.0525911 0.0223835 
+
+#Tag 5201
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	270198 
+#lpc_power	259867 
+#p_pulse_len	0 
+#spec_param	-0.0372152 0.0640097 -0.0677345 0.0147753 -0.00808478 0.0556983 -0.0674572 0.0705501 
+	0.125751 0.00380058 
+
+#Tag 5401
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	288962 
+#lpc_power	276550 
+#p_pulse_len	0 
+#spec_param	0.0390745 -0.0870144 0.11836 0.0542431 0.0486538 0.0791691 -0.0576618 -0.0221042 
+	-0.0475228 0.0545735 
+
+#Tag 5601
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	252610 
+#lpc_power	238528 
+#p_pulse_len	0 
+#spec_param	-0.024125 -0.0465988 -0.0569807 0.0120642 -0.155932 -0.0159685 0.0370682 -0.12709 
+	-0.0741281 0.0562154 
+
+#Tag 5801
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	274711 
+#lpc_power	261938 
+#p_pulse_len	0 
+#spec_param	0.0865238 -0.00703004 -0.061273 -0.021383 0.00584293 -0.0569641 0.0464178 0.121818 
+	-0.117988 -0.0376131 
+
+#Tag 6001
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	229945 
+#lpc_power	219994 
+#p_pulse_len	0 
+#spec_param	-0.104715 0.067608 -0.0332054 -0.0267919 0.0273813 -0.0247569 -0.131291 0.0830924 
+	0.0277326 0.0190458 
+
+#Tag 6201
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	240069 
+#lpc_power	217055 
+#p_pulse_len	0 
+#spec_param	0.219999 -0.0845315 -0.0696971 -0.160826 0.0203237 0.0354609 -0.0121853 -0.0429597 
+	0.0653939 -0.0704083 
+
+#Tag 6401
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	263536 
+#lpc_power	240894 
+#p_pulse_len	0 
+#spec_param	-0.0587568 -0.0901386 -0.0457805 0.127392 -0.160377 -0.081922 -0.00320398 0.0676525 
+	-0.0301751 0.1457 
+
+#Tag 6601
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	260414 
+#lpc_power	242547 
+#p_pulse_len	0 
+#spec_param	0.0259863 0.0814026 -0.124502 0.0276313 0.0941301 0.124208 -0.0806818 -0.0453083 
+	-0.109133 -0.048462 
+
+#Tag 6801
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	239732 
+#lpc_power	220328 
+#p_pulse_len	0 
+#spec_param	0.165858 -0.060955 -0.111691 -0.0631723 0.0733707 -0.0441087 0.0327956 -0.126464 
+	0.00973624 -0.107384 
+
+#Tag 7001
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	307938 
+#lpc_power	292444 
+#p_pulse_len	0 
+#spec_param	0.0308717 -0.01148 0.0806325 0.0746117 0.0452884 0.0283835 -0.0217599 -0.183327 
+	0.0209716 0.02175 
+
+#Tag 7201
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	274388 
+#lpc_power	260880 
+#p_pulse_len	0 
+#spec_param	0.0080616 0.0220165 0.0457461 0.0634076 -0.0889814 -0.0927471 -0.0983463 -0.0637024 
+	0.0530494 -0.102775 
+
+#Tag 7401
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	206272 
+#lpc_power	190029 
+#p_pulse_len	0 
+#spec_param	-0.137561 0.0625499 0.0642448 -0.00750126 -0.0659737 -0.179151 0.0542279 -0.116297 
+	0.0172977 -0.0308861 
+
+#Tag 7601
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	236682 
+#lpc_power	230176 
+#p_pulse_len	0 
+#spec_param	0.0457955 -0.0230211 -0.0334807 0.00209927 0.052277 -0.119261 0.0491127 0.0524076 
+	0.0401677 0.0165395 
+
+#Tag 7801
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	232086 
+#lpc_power	211380 
+#p_pulse_len	0 
+#spec_param	-0.117534 0.00163461 0.110359 -0.0735537 -0.0802516 -0.121693 -0.181373 -0.00373605 
+	-0.083265 0.00769137 
+ZAP
+cat > vqparams << ZAP
+string fea_field = "spec_param";
+int fea_dim = 10;
+float conv_ratio = .1;
+int vq_size = 16;
+int max_iter = 100;
+string dist_type = "MSE";
+string cbk_struct = "FULL_SEARCH";
+string cbk_type = "MISC";
+string init_file = "vqdes.chk";
+int init_rec = 1;
+string init_behav = "INIT_CLUSTER";
+ZAP
+echo Design codebook with these parameters:
+echo "   %cat vqparams"
+cat vqparams
+echo " "
+echo designing codebook rc.cbk -- history in vqdeshist
+echo "   %vqdes -Pvqparams -x2 rc.fana rc.cbk"
+vqdes -Pvqparams -x2 rc.fana rc.cbk
+echo " "
+echo "codebook designed"
+echo "now quantize the training sequence -- history in vqhist"
+echo "   %vq -x3 rc.cbk rc.fana rc.vq"
+vq -x3 rc.cbk rc.fana rc.vq
+echo " "
+echo look in header of rc.vq to see that encode distortion = design distortion
+echo " "
+echo "   %psps -Dl rc.vq | egrep "\"final\|distortion\"" "
+echo " "
+psps -Dl rc.vq | egrep "final|distortion"
+echo " "
+echo Now make ASCII training sequence equivalent to FEA training sequence
+cat > ascii << ZAP
+-0.0047603655  -0.053668998   -0.11414441  -0.072685994  -0.036893934 -0.13466822   -0.10461482  -0.064412914  -0.019362852 -0.0035739979 
+-0.13726051 0.00088664464  -0.068246208   -0.14184403  -0.043785837 -0.10193647   -0.03886538  -0.072096184  0.0011066557   0.081005998
+0.045478087   0.028680444  -0.016718814  0.0078886794   0.024118932 0.00092484831 -0.0085880077   0.038144715   0.015676014   0.080046967
+-0.1395691  -0.044710934    0.13716602   -0.18177694  -0.063822478 0.10730594    0.02037893  -0.019314086  -0.023458822  -0.072278246
+0.0011559624  -0.011175372   0.019807335   0.042232469    0.04751591 0.068402544   0.065600172 -0.00099361222    0.10659347   0.017662844
+0.04486407  -0.025690086   0.019572319   0.016260656   0.064338028 0.031717703  -0.070369162   -0.08456333  -0.061406083  -0.059163343
+0.092699811   0.011366204  -0.018169481   0.020362105    0.13446216 0.0030367777   0.052459538   0.081393331  -0.091740057 -0.0045600571
+-0.1605   0.026337769   0.039345782   0.021559985    0.12669767 -0.15635701  -0.020888219  -0.031845782   -0.12774464  -0.093314663
+0.071119405  -0.022670776   -0.13877229  -0.061470937    0.10547075 -0.059169181  -0.047523279  -0.039371934    0.21889275   0.049347054
+-0.05475137     0.1101198  0.0051415823  -0.034808666    0.02149011 -0.068946294  -0.060631342  -0.014713685    0.07333824  -0.066321045
+0.019349461   -0.15680172   0.010266948  -0.053815633  -0.066982262 -0.059592031   0.055027358  -0.054366928  -0.038903199 -0.0075173993
+-0.042930342  -0.087116063 -0.0074114962    0.10149997   0.064897828 -0.015812863  -0.039545398   0.037636567   0.030383246  -0.094723299
+0.1129127   -0.19036162  0.0030772155  -0.035150044  -0.088955253 -0.021880815   0.032608725  -0.070069022  -0.063517384   -0.07197246
+-0.019094517   0.053904075    0.08606685   0.056738921   0.020398719  0.02866869  -0.052080099  0.0094549321  -0.024383115   0.051106479
+-0.043260984  -0.059391566    0.20107445   0.014473624   0.098472953 -0.031221285  -0.071740076   0.025970131  -0.047819875   -0.12371986
+0.055883076  -0.022252694   -0.14015086  -0.010773343  -0.0134076950 .0031785509   -0.04870617    0.01721259  -0.066484019  -0.046869177
+0.11233982  0.0084644901  -0.079624906  -0.083580554   -0.01401257 0.022266809   0.010945636    0.10449055  -0.011707015  0.0031459951
+0.08248464   -0.11991391  -0.044897545  -0.075345375   0.083124369 -0.047594633   0.069166839  -0.035691336  -0.054767083   -0.04102166
+-0.036887735 -0.00019352828  -0.018318914  -0.088039495   -0.11654034 -0.047020141   -0.08857403  -0.089613363  -0.061348204     0.1505633
+-0.051136881   0.032850202   0.058478106   0.071514539  -0.099513702 0.06843286  -0.037590992  -0.087251537    0.12315766 -0.0089386497
+0.026019214   -0.04533381  -0.061428219   -0.10583382  -0.037719052 -0.011254768   0.013647992  -0.061389409 -0.0030803299   0.056533404
+0.014433267   -0.07458999  -0.034548547   -0.03551257  -0.030985346 0.031498179 -0.0002044178    0.01395152   -0.02781212 -0.0019649705
+-0.18918186   0.041800238   0.075310275  -0.060384601  -0.081301212 0.075969316  -0.056566052   0.074987352  0.0079047708   -0.12804428
+-0.0643747  -0.077835053  -0.083222114   0.015015979   0.019042505 0.10436117   0.011225875   -0.10360958  -0.042964987   0.032364666
+0.12719494  -0.074003614  -0.011039992 -0.0075770211   0.081435136 0.034913387   -0.10094352   -0.15791184  -0.056032017   0.066736013
+-0.057455376  -0.055723663   -0.09262716 -0.0051524919   0.047037832 -0.044204433  -0.062964551   0.056000758  -0.052591067   0.022383463
+-0.037215233   0.064009659  -0.067734495   0.014775266 -0.0080847843 0.055698283  -0.067457169   0.070550062    0.12575124  0.0038005766
+0.039074454  -0.087014399    0.11836037   0.054243147   0.048653837 0.079169139  -0.057661775  -0.022104204  -0.047522768   0.054573528
+-0.02412495  -0.046598803  -0.056980655   0.012064239   -0.15593249 -0.01596849   0.037068188   -0.12708977  -0.074128069   0.056215417
+0.086523794 -0.0070300358  -0.061272964  -0.021383025  0.0058429334 -0.056964107   0.046417847    0.12181848   -0.11798761  -0.037613086
+-0.10471507   0.067607962  -0.033205427  -0.026791852    0.02738132 -0.024756903   -0.13129061   0.083092444   0.027732642   0.019045826
+0.21999942  -0.084531546  -0.069697097    -0.1608263    0.02032374 0.03546086  -0.012185281  -0.042959698   0.065393858   -0.07040827
+-0.058756802  -0.090138622  -0.045780495    0.12739232   -0.16037688 -0.081922017 -0.0032039788   0.067652538  -0.030175079    0.14570038
+0.025986319     0.0814026   -0.12450159   0.027631348   0.094130084 0.12420806  -0.080681846  -0.045308322   -0.10913344  -0.048462037
+0.16585772  -0.060954962   -0.11169092  -0.063172303    0.07337065 -0.044108711   0.032795634   -0.12646358   0.009736239   -0.10738353
+0.030871719  -0.011479955   0.080632478   0.074611679   0.045288354 0.028383486  -0.021759868   -0.18332686   0.020971604   0.021750037
+0.0080616027   0.022016512   0.045746144   0.063407645   -0.08898142 -0.092747115  -0.098346293  -0.063702397   0.053049359     -0.102775
+-0.13756111   0.062549911   0.064244784 -0.0075012646  -0.065973744 -0.17915107   0.054227937   -0.11629654   0.017297737  -0.030886117
+0.0457955    -0.0230211  -0.033480726  0.0020992707   0.052276965 -0.11926063   0.049112685   0.052407593   0.040167686   0.016539477
+-0.11753383  0.0016346116    0.11035883  -0.073553734  -0.080251619 -0.12169266   -0.18137276 -0.0037360534  -0.083264954  0.0076913717
+ZAP
+echo "design codebook from ASCII data"
+echo "   %vqdesasc -Pvqparams -c "\"test data same as FEA file\"" -x2 ascii asc.cbk"
+vqdesasc -Pvqparams -x2 -c "test data same as FEA file" ascii asc.cbk
+echo quantize training sequence
+echo "   %vqasc -l250 -x3 asc.cbk ascii ascii.out"
+vqasc -l250 -x3 asc.cbk ascii ascii.out
+echo compare quantized output from FEA version and ASCII version
+echo "   %psps -r1:5 -f spec_param -H rc.vq"
+psps -r1:5 -f spec_param -H rc.vq
+echo "   %head -5 ascii.out"
+head -5 ascii.out
+
+echo Make a test FEA_ANA file that contains only 4 distinct spec_param values
+echo Use COPYSPS on RC.FANA to make TEST.FANA
+i=1
+nrep=11
+    rm -rf test.fana
+    copysps -f -r1 rc.fana test.fana
+    copysps -f -r2 rc.fana test.fana
+    copysps -f -r3 rc.fana test.fana
+    copysps -f -r4 rc.fana test.fana
+while test $i -lt $nrep
+do
+    echo " ."
+    copysps -f test.fana test2.fana
+    i=`expr $i + 1`
+done
+cat > vqparams << ZAP
+string fea_field = "spec_param";
+int fea_dim = 10;
+float conv_ratio = .05;
+int vq_size = 4;
+int max_iter = 100;
+string dist_type = "MSE";
+string cbk_struct = "FULL_SEARCH";
+string cbk_type = "MISC";
+string init_file = "vqdes.chk";
+int init_rec = 1;
+string init_behav = "INIT_CLUSTER";
+ZAP
+echo Design a rate 2 codebook with these parameters:
+echo "   %cat vqparams"
+cat vqparams
+echo " " 
+echo "  %vqdes -Pvqparams -hhist.file -kcheck.file test2.fana test.cbk"
+vqdes -Pvqparams -hhist.file -kcheck.file test2.fana test.cbk
+echo " "
+echo "psps -H -r3 -f final_dist -f codebook -f clustersize -f clusterdist test.cbk"
+psps -H -r3 -f final_dist -f codebook -f clustersize -f clusterdist test.cbk
+echo " "
+echo In the above output file, the average distortion should be approx. 0
+echo and the codewords should be the following \(order might be different\):
+echo "   %psps -H -r1:4 -f spec_param test.fana"
+psps -H -r1:4 -f spec_param test.fana
+echo " "
+cat > vqparams << ZAP
+string fea_field = "spec_param";
+int fea_dim = 10;
+float conv_ratio = .05;
+int vq_size = 5;
+int max_iter = 25;
+string dist_type = "MSE";
+string cbk_struct = "FULL_SEARCH";
+string cbk_type = "MISC";
+string init_file = "test.cbk";
+int init_rec = 2;
+string init_behav = "INIT_CLUSTER";
+ZAP
+echo Now test design for overconstrained case with following parameters:
+echo "  %cat vqparams"
+cat vqparams
+echo There are really only 4 clusters so design should fail
+echo \(This will take a while\)
+echo " "
+echo "  %vqdes -Pvqparams -x0 -hconst.hist test2.fana - > /dev/null"
+vqdes -Pvqparams -x0 -hconst.hist test2.fana - > /dev/null
+echo " "
+cat > vqparams << ZAP
+string fea_field = "spec_param";
+int fea_dim = 10;
+float conv_ratio = .05;
+int vq_size = 4;
+int max_iter = 100;
+string dist_type = "MSE";
+string cbk_struct = "FULL_SEARCH";
+string cbk_type = "MISC";
+string init_file = "test.cbk";
+int init_rec = 2;
+string init_behav = "INIT_CLUSTER";
+ZAP
+echo Now check the -i option by designing with the following parameters:
+echo " %cat vqparams"
+cat vqparams
+echo " "
+echo The design should yield same final codebook as in previous test
+echo "  (order of codewords might be different)"
+echo " "
+echo "   %vqdes -i -Pvqparams test2.fana - | psps -r2 -H  -f final_dist -f codebook -f clustersize -f clusterdist -"
+vqdes -i -Pvqparams test2.fana - | psps -r2 -H  -f final_dist -f codebook -f clustersize -f clusterdist -
+echo " "
+echo Now test VQDESASC on the same data
+echo  " "
+echo First make ascii input data file
+echo "  %pplain -e5:14 test2.fana > test2.asc"
+pplain -e5:14 test2.fana > test2.asc
+echo " " 
+echo Now design codebook 
+echo "   %vqdesasc -Pvqparams -hhist.asc -l 400 -kcheck.asc -c"\"check vqdesasc\"" test2.asc test3.cbk"
+vqdesasc -Pvqparams -hhist.asc -l400 -kcheck.asc -c"check vqdesasc" test2.asc test3.cbk
+psps -H -r3 -f final_dist -f codebook -f clustersize -f clusterdist test3.cbk
+echo " "
+echo check that the results are the same as before
+echo " "
+echo Now check -i option
+echo " "
+echo Should yield same final codebook as above
+echo "  %vqdesasc -i -Pvqparams test2.asc test4.cbk"
+vqdesasc -i -Pvqparams -kcheck.file -c"\"check  -i\"" test2.asc test4.cbk
+echo "  %psps -H -r2 -f final_dist -f codebook -f clustersize -f clusterdist test4.cbk"
+psps -H -r2 -f final_dist -f codebook -f clustersize -f clusterdist test4.cbk
+
+echo " "
+echo "**********************************************************************"
+echo " "
+echo Now Test the VQ encode programs
+echo " " 
+echo First VQ
+echo " "
+echo "  %cat test.fana | vq -hvqhist -x3 -fspec_param test.cbk - - | psps -H -r1:4 -f spec_param -"
+cat test.fana | vq -hvqhist -x3 -fspec_param test.cbk - - | psps -H -r1:4 -f spec_param -
+echo " "
+echo All 4 records should have different values, same as following from input:
+echo "  %psps -H -r1:4 -f spec_param test.fana"
+psps -H -r1:4 -f spec_param test.fana
+echo  " "
+echo Check encode distortions - they should be close to zero
+echo " "
+echo "   %egrep "\"vector\| distortion\"" vqhist | head -20"
+echo "  "
+egrep "vector| distortion" vqhist | head -20
+echo " "
+echo Now check -c option
+echo " "
+echo "  %cat test.fana | vq -hvqhist -x3 -fspec_param -c1 test.cbk - - | psps -H -r1:4 -f spec_param -"
+cat test.fana | vq -hvqhist -x3 -c1 -fspec_param test.cbk - - | psps -H -r1:4 -f spec_param -
+echo " "
+echo All 4 records should have same spec_param values
+echo  " "
+echo NOW CHECK VQASC
+echo " " 
+echo Make ascii input file
+echo "pplain -e5:14 test.fana > test.asc"
+pplain -e5:14 test.fana > test.asc
+echo " " 
+echo Check that all four output values are different
+echo "cat test.asc | vqasc -hvqasc.hist -x3 -c1 test.cbk - - | head -4"
+cat test.asc | vqasc -x3 -hvqasc.hist test.cbk - - | head -4
+echo " "
+echo Check that encode distortions are zero
+echo " " 
+echo "  %egrep "\"final_dist\|distortion\"" vqasc.hist"
+egrep "final_dist|distortion" vqasc.hist
+echo " "
+echo Check -i option... 
+echo "vq -i rc.cbk rc.fana rc.vq2"
+vq -i rc.cbk rc.fana rc.vq2
+echo Following 2 commands should yield no output:
+echo "pspsdiff -H -f spec_param_cwndx rc.vq rc.vq2"
+pspsdiff -H -f spec_param_cwndx rc.vq rc.vq2
+echo "pspsdiff -H -f raw_power rc.vq rc.vq2"
+pspsdiff -H -f raw_power rc.vq rc.vq2

@@ -1,0 +1,93 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)macros.3	1.6 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH MACROS 3\-ESPSu 18 Apr 1997
+.SH NAME
+macros \- useful macros for ESPS programs
+.SH SYNOPSIS
+.ft B
+#include <esps/esps.h>
+.sp
+TRYOPEN(prog,filename,mode,fd)
+.br
+char *prog,*filename,*mode;
+.br
+FILE *fd;
+.sp
+CANTOPEN(prog,filename)
+.br
+char *prog, *filename;
+.sp
+USAGE(text)
+.br
+char *text;
+.sp
+NOTSPS(prog,filename)
+.br
+char *prog,*filename;
+.sp
+BOOL(arg)
+.br
+int arg;
+.sp
+ROUND (arg)
+.br
+float arg;
+.sp
+LROUND (arg)
+.br
+float arg;
+.sp
+MAX (a,b)
+.sp
+MIN (a,b)
+.sp
+.ft
+.SH DESCRIPTION
+.PP
+The TRYOPEN macro attempts to open a file with fopen(3), using the given
+mode, which may be "r", "w", or any other mode allowed by fopen(3). If the
+file cannot be opened, a message is printed on the error output of the
+form
+.nf
+
+program: can't open filename: reason
+
+.fi
+and the program exits with error status 1. The reason text is obtained from
+the perror(3) call, which interprets the system error status. Examples include
+"no such file or directory" or "permission denied".
+.PP
+The CANTOPEN macro is invoked by TRYOPEN; it may also be invoked directly.
+It just prints the error message described above and causes an exit with
+error status 1.
+.PP
+The USAGE macro prints the message
+.nf
+
+Usage: text
+
+.fi
+on the error output and causes a program exit with error status 1.
+.PP
+The NOTSPS macro prints an error message of the form
+.nf
+
+program: filename is not an ESPS file
+
+.fi
+on the error output and causes an exit with error status 1.
+.PP
+The BOOL macro returns true (1) if the argument is 1, 'y', or 'Y', and false
+(0) otherwise. It is useful for testing ESPS header values or parameter file
+values.
+.PP
+The ROUND macro is used to round a floating value to the nearest integer
+value.   This is used for floating to integer conversions when rounding
+is desired, rather than truncation.
+.PP
+The LROUND macro is like ROUND, but it returns a type LONG.
+.PP
+MIN and MAX return the maximum or minimum of their arguments.  They can
+be used with any data type.

@@ -1,0 +1,15 @@
+#@(#)Pepochs	1.3 2/17/94 ERL
+float clip_level ?= 0.5:"clipping level";
+float peak_quality_wt ?= 1.0:"weight given to peak quality";
+float period_dissim_cost ?= 0.4: "cost of period dissimilarity";
+float period_qual_dissim_cost ?= 0.05: "cost peak quality dissimilarity";
+float shape_to_peak ?= 0.35: "relative contribution of shape to peak quality";
+float freq_dh_cost ?= 0.7: "cost of each frequency doubling/halving";
+float peak_award ?= 0.4: "award for selecting a peak";
+float v_uv_cost ?= 0.2: "cost for V-UV transition";
+float uv_v_cost ?= 0.2: "cost for UV-V transition";
+float rms_onoff_cost ?= 0.3: "cost for RMS rise/fall appropriateness";
+float uv_cost ?= 0.7: "cost of unvoiced classification";
+float jitter ?= 0.1: "reasonable inter-period variation";
+string polarity ?= "NONE": "local extrema polarity": {"NONE", "+", "-"};
+

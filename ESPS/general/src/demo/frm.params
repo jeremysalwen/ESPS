@@ -1,0 +1,4 @@
+# @(#)frm.params	1.2 6/12/91 ERL - parameter file for frame
+int frame_len = 60;
+int step = 60;
+string window_type = "RECT";

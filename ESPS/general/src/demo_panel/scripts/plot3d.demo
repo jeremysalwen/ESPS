@@ -1,0 +1,10 @@
+#!/bin/sh
+# @(#)plot3d.demo	1.1 6/18/91 ERL - plot3d socket communication setup
+xwaves -w wpro.3dplot -s &
+sleep 15 
+WAVES_PORT=5678;export WAVES_PORT
+plot3d -oR -w  files/sat.fspec&
+
+
+
+

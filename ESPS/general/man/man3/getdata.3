@@ -1,0 +1,63 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getdata.3	1.4 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GET_DATA 3\-ESPSu 18 Apr 1997
+.SH NAME
+.nf
+get_ddata \- get data from a binary file in double precision form
+get_fdata \- get data from a binary file in floating form
+.SH SYNOPSIS
+.ft B
+get_ddata(stream,dtype,data,npoints)
+.br
+FILE *stream;
+.br
+char dtype;
+.br
+float data[];
+.br
+int npoints;
+.sp
+.br
+get_fdata(stream,dtype,data,npoints)
+.br
+FILE *stream;
+.br
+char dtype;
+.br
+float data[];
+.br
+int npoints;
+.ft
+.SH DESCRIPTION
+.PP
+.I Get_data
+reads data from a binary file. This file is expected to contain a stream
+of bytes, short integers, long integers, floating values, or double precision
+floating values. The
+.I dtype
+argument indicates the type of data in the file; it may be 'b', 'w', 'l', 'f',
+or 'd'.
+.I Npoints
+values are read from the file, converted to double by
+.I get_ddata,
+to float by
+.I get_fdata,
+and returned in the
+.I data
+array.
+.SH DIAGNOSTICS
+If a read error occurs,
+.I get_data
+prints an error message on the error output and exits.
+.SH BUGS
+Ideally, an error status should be returned on error and the program should
+be allowed to determine whether to exit.
+.SH SEE ALSO
+.nf
+\fIput_ddata\fP(3\-ESPSu), \fIput_fdata\fP(3\-ESPSu)
+.fi
+.SH EXPECTED CHANGES
+Fix the flaw described in "BUGS".
+.SH AUTHOR

@@ -1,0 +1,385 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)plotspec.1	3.16  03 Apr 1997  ESI
+.TH PLOTSPEC 1\-ESPS  03 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.if t .ds pi \(*p
+.if n .ds pi pi
+.SH NAME
+plotspec \- Plot spectral record files (.spec)
+.SH SYNOPSIS
+.B plotspec
+[
+.BI \-d
+] [
+.BI \-l
+] [
+.BI \-r " range"
+] [
+.BI \-t " text"
+] . . . [
+.BI \-x " debug_level"
+] [
+.BI \-y " range"
+]
+.br
+[
+.BI \-D
+] [
+.BI \-F
+] [
+.BI \-T " device"
+] [
+.BI \-W " generic window system options"
+] [
+.BI \-X " range"
+] [
+.BI \-Y " range"
+] 
+.I file.fspec
+.SH DESCRIPTION
+.PP
+.I plotspec
+plots records from ESPS spectral-feature-record (FEA_SPEC) files.
+These files can be created by the
+.I me_spec
+command.
+More than one record may be plotted, superposed on one set of axes.
+If the input file is ``\-'', the standard input is
+read.
+.PP
+The default action is to plot the contents of the
+.I re_spec_val
+field of the input records and,
+if the type is SPTYP_CPLX, the contents of
+.I im_spec_val
+as well.
+However, alternative output formats are available with the
+.BR \-d ,
+.BR \-D ,
+and
+.BR \-F
+options.
+When the spectrum type is SPTYP_REAL and a power is required,
+as with the
+.BR \-d
+and
+.BR \-D
+options,
+the square of
+.I re_spec_val
+is used.
+.PP
+By default,
+the output is in Unix GPS (``Graphics Primitive String'') format
+and is displayed on the Masscomp or Sun display,
+but with the
+.B \-T
+option, this may be sent to the standard output,
+obtained in Tektronix format rather than GPS,
+or plotted on a hardcopy device.
+.PP
+On Masscomp systems the color and line style of output to 
+``gps'' or ``mcd'' depend on the
+environment variable BUNDLE.  The default is GPS bundle number 20, which
+gives solid lines on monochrome displays.
+.PP
+On a Sun workstation (not running X windows), 
+this program must be run from within the
+\fISuntools\fR window system.  The plot will appear in a new window,
+which can be moved, resized, closed (reduced to an icon), and removed by
+using the functions on the \fISuntools\fR menu.   To get this menu, move
+the mouse cursor to the title bar of the plot window and press the right
+mouse button.
+.SH OPTIONS
+.PP
+The following options are supported.
+.TP
+.BI \-d
+Plot the power spectrum cumulative distribution function.
+.TP
+.BI \-l
+Plot frequencies on a logarithmic scale (labeled in decades).
+When the vertical scale is in dB, this option results in Bode-plot format.
+.TP
+.BI \-r " first" : "last"
+.TP
+.BI \-r " first" :+ "incr"
+.TP
+.BI \-r " frame"
+Range of records to be plotted.
+The default range is the entire file.
+In the first form, a pair of unsigned integers gives the first and last
+records of the range.
+The first frame in the file counts as number 1
+regardless of any reference file.
+If
+.I first
+is omitted, 1 is used.
+If
+.I last
+is omitted, the last record of the file is used.
+The second form is equivalent to the first with
+.IR last " = " first " + " incr.
+The third form is equivalent to
+.BI \-r " frame" : "frame."
+.TP
+.BI \-t " text"
+A line of text to be printed below the plot.  If this option is specified
+more than once, the lines are printed in the order given.
+.TP
+.BI \-x "debug_level"
+If
+.I debug_level
+is nonzero, debugging information is written to the standard error output.
+The higher the level, the more messages are written.
+Default is 0 (no debugging output).
+.TP
+.BI \-y " low" : "high"
+Data range.  Specifies spectral values for the lower and upper
+.IR y -axis
+limits.  If
+.I low
+or
+.I high
+is unspecified, the limit is determined from the file contents.
+The values are adjusted by
+.I plotspec
+in an attempt to make an esthetically pleasing plot.
+To specify exact limits, use
+.B \-Y
+instead.
+.TP
+.BI \-D
+Plot the logarithmically scaled power (in dB) regardless of whether
+the spectrum type is SPTYP_DB or not.
+The arguments of the
+.B \-y
+and
+.B \-Y
+options are interpreted in dB.
+.TP
+.BI \-F
+Plot the phase of complex data, rather than the real and imaginary parts.
+The input file must contain data of type SPTYP_CPLX.
+The verical axis is scaled in radians, from \-\*(pi to \*(pi,
+and the
+.B \-y
+and
+.B \-Y
+options are ignored.
+.TP
+.BI \-T " device"
+.I Device
+may be
+.BR gps ,
+.BR mcd ,
+.BR tek ,
+.BR suntools ,
+.BR hp ,
+or
+.BR hardcopy .
+The default is
+.BR \-Tmcd,
+which displays the output on the worstation graphics screen by piping it through
+.IR mcd
+or
+.IR xmcd.
+The program \fImcd\fR is supplied by Masscomp for their systems, and by
+ESI for other workstations.
+Specifying
+.B \-Tgps
+sends output to the standard output in Masscomp Unix GPS format.
+Specifying
+.B \-Ttek
+causes output to be sent to the standard output in Tektronix 4000-series
+format.
+If
+.B \-Tsuntools
+is used, then the display will be forced to use \fIsuntools\fR window
+system (on Suns and Solbournes only), even if ESPS has been configured
+to use the X window system.   If ESPS is built for X, then it uses X for
+plotting by default.
+.B \-Thp
+produces output for an HP LaserJet printer.   Note that the output is
+produced on standard out and it is not spooled to the printer by this
+command.   Use of this option will result in about 750K bytes of output
+per page.   If the link to your LaserJet is slow, it might take
+several minutes to send it to the printer.    
+In a later version, this will be merged with the
+\fIhardcopy\fR option above for direct spooling.
+If
+.B \-Tmcd
+is used on a Masscomp and ESPS has been configured to use X windows,
+then the old SP-40 \fImcd\fR is used instead of X windows.
+Specifying
+.B \-Thardcopy
+plots it on a hardcopy device, if one was set up in the installation
+script.  Note that the word \fIimagen\fR was used for this option in
+previous versions.   It is still accepted, but \fIhardcopy\fR is meant
+to be more general.
+.TP
+.BI \-W
+This option is followed by a character
+string consisting of the generic window system options.   These options are
+passed onto \fImcd\fR or \fIxmcd\fR.   
+This option is used to pass along generic X window
+arguments to \fIxmcd\fR or Suntool arguments to \fImcd\fR on Suns.  This
+option might not have an effect on all systems.   For example, on a
+system running X windows, to cause the plot to appear at a particular
+screen location the following command could be used: 
+.br
+\fIplotspec -W "=300x250+50+200" file\fR.
+.br
+See \fImcd(1\-ESPS)\fR and \fIxmcd(1\-ESPS)\fR for details.
+.TP
+.BI \-X " low" : "high"
+.TP
+.BI \-X " limit"
+Frequency range.  Specifies frequency values for the lower and upper
+.IR x- axis
+limits.  If
+.I low
+or
+.I high
+is omitted, the limit is determined from the file contents.
+The second form is equivalent to
+.BR \-X " 0" : \fIlimit\fP
+if the header value
+.I freq_format
+is SPFMT_SYM_CTR or SPFMT_SYM_EDGE and to
+.BI \-X " \-limit" : "limit"
+otherwise.
+.TP
+.BI \-Y " range"
+Specifies exact lower and upper limits for the
+.IR y- axis.
+.PP
+For Sun systems, this program will plot under either X windows, or
+Suntools.   By default, if the \fB-T\fR option is not used, it will 
+expect X windows.   To plot under Suntools you can use the \fB-Tsuntools\fR
+option.    If you always use Suntools, you can avoid using the \fB-T\fR
+option by defining the environment variable \fBEPLOTDEV\fR to be
+\fIsuntools\fR.  This will make the Suntools window system the default.
+This variable is ignored if the machine type is not Sun4, SUN3, or
+SUN386i.
+.SH EXAMPLE
+.IP
+.BI "plotspec " "<options> <filename>"
+.PP
+is equivalent to
+.IP
+.BI "plotspec \-Tgps " "<options> <filename> " "| mcd"
+.PP
+The second form may be used if nondefault options for
+.I mcd
+are desired.
+.SH "ESPS PARAMETERS"
+The ESPS parameter file is not read.
+.SH "ESPS COMMON"
+The ESPS common file is not read or written.
+.SH "ESPS HEADERS"
+The following values are explicitly read
+from the header of the spectral-feature-record file:
+.I common.type,
+and the generic header items
+.I num_freqs
+and
+.I freq_format.
+In addition, the header is examined by the library routines
+.I allo_feaspec_rec,
+.I get_feaspec_rec,
+and
+.I put_feaspec_rec.
+.SH SUBROUTINES CALLED
+plotscale, drawbox, plot2data and printtime.
+.SH SEE ALSO
+me_spec(1\-ESPS), plotsd(1\-ESPS), FEA_SPEC(5\-ESPS)
+.SH DIAGNOSTICS
+.PP
+plotspec: unknown option:
+.RI \- letter
+.br
+Usage: plotspec [-d] [-r range] [-t text]... [-x debug_level][-y range]
+.br
+ [-E] [-T device] [-X range] [-Y range] [file.fspec] 
+.br
+plotspec: Too many \-t options
+.br
+plotspec: no input file
+.br
+plotspec: more than one input file
+.br
+plotspec:
+.I filename
+is not an ESPS file.
+.br
+plotting records
+.I n1
+thru
+.I n2.
+.br
+plotspec: can't open temporary file.
+.br
+plotspec: EOF encountered before start reached.
+.br
+can't allocate memory for
+.I n
+points.
+.br
+plotspec: only freq formats
+SPFMT_SYM_EDGE, SPFMT_SYM_CTR, SPFMT_ASYM_EDGE, SPFMT_ASYM_CEN
+supported so far.
+.br
+plotspec: discrete distributions not het supported.
+.br
+plotspec: \-s option not implemented yet.
+.br
+plotspec: \-d and \-F optins incompatible.
+.br
+plotspec: \-F option requires complex data.
+.br
+plotspec: can't open temporary file.
+.br
+plotspec: freq format SPFMT_ARB_VAR not yet supported.
+.br
+plotspec: freq format SPFMT_ARB_FIXED not yet supported.
+.br
+plotspec: unrecognized freq format
+.I n.
+.br
+frequency out of range.
+.br
+data out of range.
+.br
+plotspec: no input records
+.br
+\-T option requires argument.
+.SH WARNINGS
+.PP
+To overlay FEA_SPEC files from
+.IR fft (1-ESPS)
+on FES_SPEC files from
+.IR me_spec (1-ESPS),
+the
+.B \-G
+option of
+.I me_spec
+must be used.
+.SH BUGS
+.PP
+Frequency formats SPFMT_ARB_VAR and SPFMT_ARB_FIXED are not yet supported.
+.SH FUTURE CHANGES
+Data conversions \-
+.I e.g.,
+between log (dB) and linear representations.
+.SH AUTHOR
+S. Shankar Narayan.
+Made SDS compatible by Joe Buck.
+Originally called
+.I pspc.
+Modified for ESPS
+by Rod Johnson, Entropic Speech, Inc.
+.br
+\-d option added by Ajaipal S. Virdy.
+\-T, \-l, \-D, and \-F added by Rod Johnson.
+Revised by Rod Johnson for input from FEA_SPEC file.

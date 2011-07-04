@@ -1,0 +1,50 @@
+#!/bin/sh
+# @(#)win_filt.tes	1.1 9/7/93 
+
+USE_ESPS_COMMON=off;export USE_ESPS_COMMON
+ESPS_VERBOSE=0;export ESPS_VERBOSE
+
+outfile='/tmp/out'
+donefile='/tmp/done'
+
+#------LOW PASS
+echo "Low pass filter, visually inspect"
+echo " cutoff frequency at 1800, with transition band 20 Hz"
+cat >> $donefile << END
+float samp_freq = 8000.000000;
+int nbands = 2;
+float band_edge1 = 0.000000;
+float band_edge2 = 1800.000000;
+float band_edge3 = 4000.000000;
+float band1_des = 1.000000;
+float band2_des = 0.000000;
+float rej_db = 20.000000;
+float trans_band = 100.000000;
+END
+win_filt -P$donefile  $outfile
+filtspec -ml $outfile - |plotspec -
+
+#--------WINDOW_METH HIGHPASS -------------------
+echo "high pass filter, visually inspect"
+echo " cutoff frequency at 1800, with transition band 20 Hz"
+cat >> $donefile << END
+float samp_freq = 8000.000000;
+int nbands = 2;
+float band_edge1 = 0.000000;
+float band_edge2 = 1800.000000;
+float band_edge3 = 4000.000000;
+float band1_des = 0.000000;
+float band2_des = 1.000000;
+float rej_db = 20.000000;
+float trans_band = 100.000000;
+END
+win_filt -P$donefile  $outfile
+filtspec -ml $outfile - |plotspec -
+
+rm $outfile
+rm $donefile
+
+
+
+
+

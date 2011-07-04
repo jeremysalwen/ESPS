@@ -1,0 +1,10 @@
+# @(#)xsgram.defaults	1.1 6/18/91 ERL - parameter file for FFT analyzer
+#
+
+string method = "other": "Method (parameters, other than range, have no effect unless 'other' is chosen)"  : {"wb", "nb", "other"};
+string data_window ?= "HAMMING": "Window to apply ": {"RECT", "HAMMING", "TRIANG", "HANNING", "COS4"};
+int fft_order ?= 7: "Fourier transform length is 2 to this power" : [2,512];
+float window_len ?= 8.0: "Duration of each frame in milliseconds";
+float pre_emphasis ?= 0.0: "Coefficient in preemphasis filter";
+float step_size ?= 2.0: "Initial points of consecutive frames differ by this number of milliseconds";
+

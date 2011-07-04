@@ -1,0 +1,471 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)mux.1	1.4 03 Apr 1997 ESI/ERL
+.ds ]W (c) 1991 ERL, Inc.
+.TH MUX 1\-ESPS 03 Apr 1997
+.if t .ds - \(em\h'-0.2m'\(em
+.if n .ds - ---
+.SH NAME
+
+.nf
+mux \- multiplex sampled-data files into a single multichannel or complex file
+.fi
+.SH SYNOPSIS
+.B mux
+[
+.BR \- { prs } " \fIrange\fP"
+] .\ .\ . [
+.BI \-x " debug_level"
+] [
+.B \-J
+] [
+.BI \-P " param_file"
+]
+.I input1.fsd
+[
+.I "input2.fsd .\ .\ ."
+]
+.I output.fsd
+.SH DESCRIPTION
+.PP
+The
+.I mux
+(``multiplex'') program combines its input sampled-data FEA_SD(5\-ESPS) files,
+or equal-length portions of them,
+into a single multichannel output sampled-data file,
+possibly also combining real channels in pairs to form complex channels.
+.PP
+Normally the number of output channels
+is the total number of channels in all the input files.
+Each output record contains the data from the
+.I samples
+field in one record of each input file.
+This is organized as a single vector containing one sample value
+from each channel of each input file.
+Within the vector,
+the data from the first input file comes first,
+followed by the data from the second, and so on,
+in the order of the file names on the command line.
+The channels of any one input file
+keep the same relative ordering in the output file
+that they had in the input file.
+.PP
+When the
+.B \-J
+option is used, the number of output channels is only half the normal number;
+input channels of a real data type are combined in pairs
+into single output channels of the corresponding complex type.
+.PP
+The input files must be consistent in data type and sampling frequency;
+the output file has the same data type
+(unless
+.B \-J
+is used)
+and the same sampling frequency as the input files.
+Any fields other than
+.I samples
+in the input are ignored.
+.PP
+By default, the first output record contains data from the first
+record in each input file, and in general the
+.IR n th
+output record contains data from the
+.IR n th
+record in each input file;
+but a later starting point in each input file can be chosen with the
+.BR \-p ,
+.BR \-r ,
+or
+.B \-s
+option.
+By default, records are processed until an input file runs out of data, 
+but a shorter range of data can be chosen with
+.BR \-p ,
+.BR \-r ,
+or
+.BR \-s .
+.PP
+If ``\-'' is written for an input file, the standard input is used.
+At most one input file may be standard input.
+Names of disk files, however, may be repeated (duplicating channels).
+Since different 
+.BR \-p ,
+.BR \-r ,
+and
+.BR \-s
+options may apply to each instance of a repeated input file name,
+it is possible
+to align and juxtapose different portions of a single input file.
+If ``\-'' is written for the output, the standard output is used.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-p " range"
+For this program
+.B \-p
+and
+.B \-r
+are synonymous.
+See
+.B \-r
+for the interpretation and the format of the argument.
+.TP
+.BI \-r " first" : last
+.TP
+.BI \-r " first" :+ incr
+Determines the range of points (records) to be taken from an input file.
+In the first form, a pair of unsigned integers
+gives the numbers of the first and last records of the range.
+(Counting starts with 1 for the first record in the file.)
+If
+.I first
+is omitted, 1 is used.
+If
+.I last 
+is omitted, the last record in the file is used.
+The second form is equivalent to the first with 
+.I "last = first + incr".
+.IP
+This option and the
+.BR \-p
+and
+.B \-s
+options may be repeated up to a maximum total number, for all three kinds,
+of the number of input files.
+The first
+.BR \-p ,
+.BR \-r ,
+or
+.B \-s
+option applies to the first input file, the second to the second,
+and so on.
+If there are fewer
+.BR \-p ,
+.BR \-r ,
+and
+.B \-s
+options than input files,
+the last such option applies to all the remaining input files.
+In particular, if there is only one
+.BR \-p ,
+.BR \-r ,
+or
+.B \-s
+option, it applies to all the input files.
+.IP
+If two options disagree as to the number of records to be processed,
+the smaller number applies.
+In fact
+.I mux
+stops processing as soon as it encounters either the end of a
+specified range or the actual end of file in any input file.
+Certain inconsistencies in these various stopping criteria
+will evoke warning messages; see the Diagnostics section for details.
+.TP
+.BI \-s " start" : end
+.TP
+.BI \-s " start" :+ incr
+Determines the range in seconds of the data to be taken from an input file.
+In the first form, a pair of floating-point numbers give
+the beginning time and ending time of the range.
+The second form is equivalent to the first with 
+.I "last = first + incr."
+Each sample has a time given by
+.IR s " + (" r "\-1)/" f,
+where
+.I s
+is the value of the generic header item "start_time",
+.I r
+is the record number, and
+.I f
+is the sampling frequency, given by the generic header item "record_freq".
+This time may depend on the channel number,
+since the "start_time" item may be a vector with a component per channel;
+for present purposes the value for the first channel (number 0) is used.
+The range selected by the
+.B \-s
+option consists of the records for which the time is less than
+.I end
+but not less than
+.I start.
+.IP
+This option and the
+.B \-p
+and
+.B \-r
+options may be repeated to supply different ranges for different input files.
+See the
+.B \-r
+option for details.
+.TP
+.BI \-x " debug_level"
+If
+.I debug_level
+is positive, the program prints debugging messages as it progresses\*-\c
+the higher the number, the more messages.
+The default level is 0, for no debugging output.
+.TP
+.B \-J
+Join pairs of input channels to form single complex output channels.
+The total number of channels in the input files must be even,
+and the output file has half that number of channels.
+The input channels are taken in the usual order and grouped in pairs
+to form the real and imaginary parts of the output channels.
+The pairing is without regard to
+whether two input channels come from the same input file or consecutive files.
+The last channel of a file,
+if not paired with the previous input channel,
+is paired with the first channel of the next input file.
+.IP
+The input files must all have the same real data type:
+DOUBLE, FLOAT, LONG, SHORT, or BYTE.
+(See
+.IR FEA (5-ESPS)
+for an explanation of these type codes.)
+The output file has the corresponding complex data type:
+DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX, SHORT_CPLX, or BYTE_CPLX.
+.IP
+If two channels with with different time alignments
+are combined into one complex channel,
+time-alignment information may be lost.
+A warning message is printed in that case.
+See the discussion of the "start_time" generic header item
+in the section on ESPS Headers.
+.TP
+.BI \-P " param_file"
+The name of the parameter file.
+The default name is ``params''.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file is not required to be present, as there are default
+values for all parameters.
+If the file exists, the following parameters may be read
+if they are not determined by command-line options.
+.TP
+.I "start \- integer array"
+The starting record number in each input file.
+The array elements are matched with input files in order.
+If there are more input files,
+the last array element applies to the unmatched file.
+If there are more array elements, the unmatched ones are ignored.
+This parameter is not read if the
+.BR \-p ,
+.BR \-r ,
+or
+.B \-s
+option is specified.
+The default is all 1's, meaning the beginning of each input file.
+.TP
+.I "nan \- integer"
+The number of records to process in each input file.
+A value of 0 (the default) means
+continue processing until the end of an input file is reached.
+This parameter is not read if the
+.BR \-p ,
+.BR \-r ,
+or
+.B \-s
+option is specified.
+.TP
+.I "make_complex \- string"
+A value of "YES" or "yes" means
+join pairs of real channels to form complex channels as if the
+.B \-J
+option is in force.
+A value of "NO" or "no"
+means make a separate output channel for each input channel as usual.
+No other values are allowed.
+This parameter is not read if the
+.B \-J
+option is specified.
+The default value is "NO".
+.SH "ESPS COMMON"
+.PP
+The ESPS Common file is not read.
+.PP
+If Common processing is enabled, and the output file is not standard output,
+the program writes the Common parameters
+.I prog,
+.I filename,
+.I start,
+and
+.I nan
+to record the program's name, the name of the output file,
+the starting record number of the output file (always 1),
+and the number of points in the output file.
+.PP
+ESPS Common processing may be disabled
+by setting the environment variable USE_ESPS_COMMON to
+.I off.
+The default ESPS Common file is
+.I espscom
+in the user's home directory.
+This may be overidden
+by setting the environment variable ESPSCOM to the desired path.
+User feedback of Common processing is determined
+by the environment variable ESPS_VERBOSE, with 0 causing no feedback
+and increasing levels causing increasingly detailed feedback.
+If ESPS_VERBOSE is not defined, a default value of 3 is assumed.
+.SH "ESPS HEADERS"
+.PP
+The output header is a new FEA_SD file header,
+with appropriate items copied from the input headers.
+.PP
+The generic header item "record_freq",
+which must have the same value in all input files,
+is copied into the output header.
+.PP
+The generic header item "start_time"
+records the starting time for each output channel.
+It is a single number if all output channels have the same starting time;
+otherwise it is a vector with one element per channel.
+The starting time for a channel is its starting time in the input file
+plus an offset in case the data taken from the input file
+do not start with the first record.
+The offset is given by
+.RI ( r \-1)/ f
+where
+.I r
+is the starting record number in the input file and
+.I f
+is the sampling frequency given by the "record_freq" header item.
+The
+.B \-J
+option can create complex channels
+whose real and imaginary parts have inconsistent starting times.
+When that happens, a warning message is printed, and the starting time
+for the real part is recorded in the "start_time" header item.
+.PP
+If every input file has a "max_value" header item,
+then the output file
+has a "max_value" header item containing the same information.
+.SH EXAMPLES
+.PP
+Multiplex data from three input files to produce an output file
+.I xxx.
+Processing begins with the sampled data
+in the first record in each input file.
+The output file has the same length as the shortest input file.
+.IP
+.I "mux aaa bbb ccc xxx"
+.PP
+Start at time 0.5 in each input file
+and process 0.5 seconds of data from each.
+(Suppose the sampling frequency is 8000 Hz,
+and the start times in the three input files are 0.0, 0.0, and 0.5.
+Then the starting record numbers are 4001, 4001, and 1, respectively.
+The start time in the output file is 0.5 for all channels.)
+.IP
+.I "mux \-s0.5:1.0 aaa bbb ccc xxx"
+.PP
+Start at time 0.5 in file
+.I aaa
+and with the first record in the other two input files.
+(With the assumptions of the previous example,
+the starting record numbers in the three input files
+are 4001, 1, and 1, respectively.
+The start times in the output file header are 0.5 for data from files
+.I aaa
+and
+.I ccc
+and 0.0 for data from file
+.IR bbb. )
+.IP
+.I "mux \-s0.5: \-p1: aaa bbb ccc xxx"
+.PP
+Juxtapose data from an input file with a test signal
+and pass the result to another program.
+.IP
+.I "testsd \- | mux aaa \- \- | more_processing \-"
+.PP
+If
+.I aaa
+has two channels of real data,
+this will convert it to a single-channel file
+.I zzz
+of complex data.
+.IP
+.I "mux \-J aaa zzz"
+.PP
+If
+.I aaa
+and
+.I bbb
+are single-channel files of real data,
+this will join them into a single-channel file of complex data.
+.IP
+.I "mux \-J aaa bbb zzz"
+.PP
+Multiplex a portion of a file with a later portion of the same file.
+.IP
+.I "mux \-p1001:2000 \-p2501: aaa aaa xxx"
+.SH "SEE ALSO"
+.PP
+demux(1-ESPS), copysps(1-ESPS), addgen(1-ESPS), 
+.br
+FEA_SD(5-ESPS), FEA(5-ESPS)
+.SH DIAGNOSTICS
+.PP
+The program exits with an error message if any of the following occur.
+  The command line cannot be parsed.
+  Fewer than two file names are specified (one in, one out).
+  Fewer input file names are specified than
+.BR \-p ,
+.BR \-r ,
+and
+.B \-s
+options.
+  More than one input file name is ``\-''.
+  An input file cannot be opened or is not an ESPS sampled-data file.
+  The input files do not all have the same sampling frequency.
+  The input files do not all have the same data type.
+  The
+.B \-J
+option is specified with input files of a complex data type.
+  The
+.B \-J
+option is specified, and the total number of input channels is odd.
+  A starting record specified with a
+.BR \-p ,
+.BR \-r ,
+or
+.B \-s
+option does not exist in all the files that the option applies to.
+.fi
+.PP
+The program issues a warning message if the end of a range specified by a
+.BR \-p ,
+.BR \-r ,
+or
+.B \-s
+option is not reached,
+and the option argument (see the Options section) ends with an explicit
+.I last,
+.I end,
+or
+.BI + incr.
+(This doesn't apply to option arguments that default to end-of-file
+by omitting what follows the colon.)
+The end of the range may fail to be reached
+either because the end of an input file is reached first
+or because another
+.BR \-p ,
+.BR \-r ,
+or
+.B \-s
+option causes an earlier stop.
+.PP
+The program issues a warning message if processing for the
+.B \-J
+option joins two channels that are not properly time-aligned
+(so that they would require conflicting entries
+in the output "start_time" header item).
+.SH BUGS
+.PP
+The \fB-s\fR option is not implemented in this version of the program.
+.SH "AUTHOR"
+Manual page by Rodney Johnson.
+Program by Alan Parker.
+
+

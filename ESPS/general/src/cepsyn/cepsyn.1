@@ -1,0 +1,339 @@
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)cepsyn.1	1.2 9/27/97 ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.if n .ds pi pi
+.if t .ds pi \(*p
+.TH  CEPSYN 1\-ESPS 9/27/97
+.SH NAME
+
+cepsyn \- recover sampled data from cepstrum and phase
+.SH SYNOPSIS
+.B
+cepsyn
+[
+.BI \-r " range1"
+[
+.BI \-r " range2"
+]] [
+.BI \-t " output_type"
+] [
+.BI \-x " debug_level"
+] [
+.B \-W
+]
+.I phase_in.fea
+.I cepst_in.fea
+.I output.sd
+.SH DESCRIPTION
+.PP
+This is one of a pair of programs that lets one
+analyze a file of sampled data to obtain cepstrum and phase information,
+modify the cepstrum,
+and recombine the modified cepstrum with the original phase
+to obtain a new sampled-data file.
+The program
+.IR cepanal (1\-ESPS)
+analyzes the sampled data into phase and cepstrum data
+in separate output files.
+This program performs the inverse transformation,
+combining phase and cepstrum data in
+.I phase_in.fea
+and
+.I cepstrum_in.fea
+to produce sampled data in
+.I output.sd.
+.PP
+Either input file, but not both, may be "\-", for standard input.
+If "\-" is given for the output file, the output is written to the
+standard output.
+.PP
+The input files,
+.I phase_in.fea
+and
+.I cepst_in.fea
+should have the same format as the output files of
+.IR cepanal (1\-ESPS).
+Namely, they are ordinary ESPS files, not of any special FEA subtype,
+each containing a single field with data type FLOAT.
+The fields are named
+.I phase
+and
+.I cepstrum,
+respectively; they must have the same length, namely
+.IR "n" "/2 + 1,"
+where
+.I "n"
+is the length of the Fourier transform used in
+.I cepanal.
+(Thus
+.I "n"
+is 2 raised to the power
+.I order,
+where
+.I order
+is the order of the transform.
+See the option
+.B \-o
+in the man page for
+.IR cepanal (1\-ESPS)).
+.PP
+Each input field implicitly determines a vector
+of the full transform length,
+.I n,
+by symmetry, in the case of
+.I cepstrum,
+or antisymmetry (mod 2\*(pi), in the case of
+.I phase.
+The program 
+performs a Fast Fourier Transform on each vector of cepstral data from
+.I cepst_in.fea,
+obtaining a real result (because of the symmetry).
+To this it adds an imaginary part
+consisting of the vector of phase data from the corresponding frame in
+.I phase_in.fea.
+It then computes the inverse Fourier transform
+of the exponential of the resulting complex quantity,
+obtaining frames of sample data,
+which it combines to form the contents of an ESPS FEA_SD file,
+It normally attempts to compensate at the same time for any windowing
+performed by 
+.IR cepanal :
+it divides the overlapped sum of the sampled-data frames by a similarly
+overlapped sum of translated copies of the window function,
+obtaining an overlapped average of the frames.
+For this to succeed, the latter sum must not contain zeros;
+otherwise a message is printed, and the division step is skipped.
+This behavior can be modified by the
+.B \-W
+option (see below).
+.SH OPTIONS
+.PP
+The following options are supported.  Default values are shown in brackets.
+.TP
+.BI \-r " first" : "last" "\fR [1:(last in file)]"
+.TP
+.BI \-r " first" :+ "incr"
+.TP
+.BI \-r " first"
+The range of records to be taken from one or both input files.
+In the first form, a pair of unsigned integers specifies the range of
+records to analyze.
+If
+.I first
+is omitted, the default value of 1 is used.  If
+.I last
+is omitted, the range extends to the end of the file.
+If
+.IR last " = " first " + " incr,
+the second form (with the plus sign) specifies the same range as the
+first form.
+The third form (omitting the colon) specifies a single record.
+Note that for this program the range is specified in frames,
+whereas for
+.IR cepanal (1\-ESPS)
+it is specified in samples.
+.IP
+This option may be used at most twice.
+If used once, it applies to both input files.
+If used twice, it applies to
+.I phase_in.fea
+the first time and
+.I cepst_in.fea
+the second time.
+If the option is used twice and implies ranges of inconsistent sizes,
+a warning message may be issued.
+For example 
+.BR \-r " 1" : 10
+and
+.BR \-r " 101" : 120
+in the same
+.I cepsyn
+command will generate a warning of inconsistent
+.B \-r
+options.
+On the other hand two options with one unspecified endpoint, like
+.BR \-r " 1" :
+and
+.BR \-r " 101" : 120,
+are not considered inconsistent and will not generate the warning.
+.TP
+.BI \-t " output_type" "\fR [FLOAT]"
+The data type of the output sampled data.
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+A positive value specifies that debugging output is to be printed on
+the standard error output.
+Larger values result in more output.
+For the default value, 0, there is no output.
+.TP
+.BI \-W
+Specifying this option causes the program to ignore the input header item
+.I window_type
+and assume a rectangular window.
+.SH ESPS PARAMETERS
+.PP
+This program does not access a parameter file.
+.SH ESPS COMMON
+.PP
+The ESPS Common file is not read.
+.PP
+If Common processing is enabled,
+and the output file is not standard output,
+the program writes the Common parameters
+.I prog,
+.I filename,
+.I start,
+and
+.I nan
+to record the program's name, the name of the output file,
+the starting record number of the output file (always 1),
+and the number of points in the output file.
+.PP
+ESPS Common processing may be disabled
+by setting the environment variable USE_ESPS_COMMON to
+.I off.
+The default ESPS Common file is
+.I espscom
+in the user's home directory.
+This may be overridden
+by setting the environment variable ESPSCOM to the desired path.
+User feedback of Common processing is determined
+by the environment variable ESPS_VERBOSE, with 0 causing no feedback
+and increasing levels causing increasingly detailed feedback.
+If ESPS_VERBOSE is not defined, a default value of 3 is assumed.
+.SH ESPS HEADERS
+.PP
+The program reads the header items
+.I sf,
+.I framelen,
+.I record_freq,
+.I start_time
+.I step,
+and
+.I window_type
+from the header of
+.I phase_in.fea.
+It relies on the phase file for these items
+since they are more likely to be preserved intact there
+than in the cepstrum file.
+However, it also reads certain of the corresponding items from
+.I cepst_in.fea
+and prints a message in case of inconsistency.
+.PP
+The program defines the
+standard ouput header items
+.I start_time
+and
+.I record_freq
+and includes the normal field definition
+for a FEA_SD file in the output header (see
+.IR init_feasd_hd (3\-ESPS)).
+Like most ESPS programs, it includes copies of the input file headers
+in the ouput header (see
+.IR add_source_file (3\-ESPS)),
+and it saves a copy of the command line as a comment in the output
+header
+(see
+.IR add_comment (3\-ESPS)
+and
+.IR get_cmd_line (3\-ESPS)).
+.SH FUTURE CHANGES
+.PP
+.SH EXAMPLES
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+If an unknown option is specified,
+if the
+.B \-r
+option is used more than two times,
+or if the number of file names is wrong,
+.I cepsyn
+prints a synopsis of command-line usage and exits.
+The program exits with an error message if any of the folowing are true:
+the output file name is the same as one of the input file names
+(but not "\-");
+the input file names are the same;
+the field
+.I phase
+in 
+.I phase_in.fea
+is absent or not FLOAT;
+the field
+.I cepstrum
+in 
+.I cepst_in.fea
+is absent or not FLOAT;
+the fields
+.I phase
+and
+.I cepstrum
+have different sizes;
+the size of the fields
+.I phase
+and
+.I cepstrum
+does not correspond to an integer order
+(i.e. is is not of the form
+.IR "n" "/2 + 1,"
+where
+.I n
+is a power of 2);
+the generic header items
+.I frmlen,
+.I sf,
+and
+.I record_freq
+in
+.I cepst_in.fea
+are not all present or do not all have positive numerical values;
+a
+.B \-r
+option specifies a starting record before the beginning of the file
+or specifies an empty range of records;
+two
+.B \-r
+options specify ranges with different explicit lengths;
+the
+.B \-t
+option does not specify a valid numeric data type;
+an attempt to write an ESPS common file failed.
+The program prints a message and continues
+if any of the following conditions are encountered:
+one of the generic header items
+.I frmlen,
+.I sf,
+and
+.I record_freq
+in
+.I cepst_in.fea
+(if present) specifies a value inconsistent with
+.I phase_in.fea;
+the two input file headers, together with any range options,
+specify inconsistent values of
+.I start_time;
+the end of the input file is reached prematurely
+according to an explicitly indicated end of range.
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.na
+.IR cepanal (1\-ESPS),
+.IR fft (1\-ESPS),
+.IR fftcep (1\-ESPS),
+.br
+.IR fftinv (1\-ESPS),
+.IR init_feasd_hd (3\-ESPS),
+.br
+.IR add_source_file (3\-ESPS),
+.IR add_comment (3\-ESPS),
+.br
+.IR get_cmd_line (3\-ESPS).
+.ad
+.PP
+.SH AUTHOR
+.PP
+Rod Johnson

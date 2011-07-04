@@ -1,0 +1,6 @@
+"Verbosity 0" set verbose 0
+"Verbosity 1" set verbose 1
+"Verbosity 2" set verbose 2
+# @(#)verbose.WM	1.3 4/23/93
+
+

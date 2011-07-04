@@ -1,0 +1,8 @@
+#! /bin/csh -f
+# @(#)rundemo	1.8 11/8/91 ERL
+# demo cover script, needed as a hack since DEC doesn't have unset!
+
+unsetenv BBOX_QUIT_BUTTON
+
+exec ./rundemo.sh $*
+

@@ -1,0 +1,285 @@
+.\" Copyright (c) 1988 Entropic Speech, Inc. All rights reserved.
+.\" @(#)transpec.1	1.6 3/31/97
+.TH TRANSPEC 1\-ESPS 3/31/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+transpec \- transform spectral parameters in a FEA file
+.SH "SYNOPSIS"
+.B transpec 
+[
+.BI \-i " input_field"
+] [
+.BI \-m " target_rep"
+] [
+.BI \-o " output_field"
+] [
+.BI \-r " source_rep"
+]
+.br
+[
+.BI \-s " samp_freq"
+] [
+.BI \-w " grid_width"
+] [
+.BI \-x " debug_level"
+] [
+.BI \-P " parameter_file"
+]
+.I " infile.fea outfile.fea"
+.SH "DESCRIPTION"
+.PP
+.I Transpec
+transforms a numeric vector
+field containing spectral information in a FEA file
+(\fIinfile.fea\fR)
+to a different spectral representation and outputs a FEA(5\-ESPS) file
+(\fIoutfile.fea\fR)
+that contains the new spectral representation
+and all the other original fields. 
+By default the new spectral representation is written over the
+old one in the \fIinput_field\fR, but if an \fIoutput_field\fR
+is supplied (via the \fB\-o\fR option or the parameter file), 
+then the original
+parameters are left in the \fIinput_field\fR and a new field is
+added
+to each record that contains the transformed spectral parameters.
+.PP
+If
+.I infile.fea
+is equal to "\-", 
+then standard input is used. If
+.I outfile.fea
+is equal to "\-", standard output is used.  
+.PP
+There is a program
+.IR spectrans (1-ESPS)
+that performs similar parameter transformations but is specialized to FEA_ANA
+files.
+One feature of
+.I spectrans
+not available in
+.I transpec
+is handling parameter sets whose order depends on the voicing class.
+.SH OPTIONS
+.PP
+.TP
+.BI \-i " input_field \fR[spec_param]\fP"
+This is the name of the field in \fIinfile.fea\fR
+that contains the spectral parameters. If a value is not specified
+on the command line or in the parameter file,
+\fItranspec\fR checks to see if the field \fIspec_param\fR
+exists, and if it does,  \fItranspec\fR uses the elements
+of that field as the input spectral parameters. The command line option
+values overrides any parameter file value.
+.TP
+.BI \-m " target_rep"
+.I Target_rep
+is the type of spectral parameter to put in the output FEA(5\-ESPS) file.
+Legal values are defined in 
+.I <esps/anafea.h>, 
+but they include the following:
+AUTO == normalized autocorrelations, RC == reflection coefficients,
+AFC == autoregressive filter coefficients, LAR == log area ratios, 
+CEP == cepstrum coefficients, and 
+LSF == line spectral frequencies.
+This value overrides any parameter file value.
+.TP
+.BI \-o " output_field"
+This is the name of the field in \fIoutfile.fea\fR in which the 
+transformed spectral parameters are deposited. By default,
+the transformed parameters are deposited in the \fIinput_field\fR
+of \fIoutfile.fea\fR, so if you don't want the original parameters
+overwritten, a value for \fIoutput_field\fR must be specified
+on the command line or in the parameter file.
+Specifying an empty string ("") through the parameter file
+is equivalent to omitting the specification.
+Thus a parameter-file entry like
+.IP
+string output_field ?= "": "Field name for output spectral parameters";
+.IP
+makes overwriting the original parameters the default,
+but gives the user the opportunity to specify an alternative output field
+interactively.
+.TP
+.BI \-r " source_rep \fR[spec_rep value]\fP"
+.I Source_rep
+is the type of spectral parameter in the input FEA(5\-ESPS) file.
+Legal values are defined in 
+.I <esps/anafea.h>.
+If no value is specified (either on the command line or in the parameter
+file),
+\fItranspec\fR checks to see if a generic header item called
+\fIspec_rep\fR exists, and if it does,
+\fItranspec\fR gets the type of the input spectral parameter 
+from this header item. The command line option value overrides any
+parameter file value.
+.TP
+.BI \-s " samp_freq \fR[src_sf value]\fP"
+The sampling frequency of the data from which the spectral parameters
+were derived. The sampling frequency is needed only if LSFs
+are the input or target spectral representations.
+If no value for the sampling frequency is supplied on the command line
+or in the parameter file, and one is required,
+\fItranspec\fR checks to see if the generic header item \fIsrc_sf\fR
+is present, and if it is, its value is used as the sampling frequency.
+.TP
+.BI \-w " grid_width \fR[4]\fP"
+\fIGrid_width\fR is the nominal spacing (in Hz.) of the 
+grid used in the search for LSFs. It is used only during
+computation of LSF values, and if it is not specified, a default value
+of 4 Hz. is used. Reasonable values for \fIgrid_width\fR depend on the
+bandwidth of the original sampled data, but for 4 kHz. data,
+values between 2 and 62 Hz. are reasonable.
+The speed of the algorithm for computing LSFs
+depends strongly on this quantity.
+The larger values are recommended for a quick look at the output,
+and the smaller values are recommended when accuracy of the results
+is more important than speed.
+The command-line value overrides any parameter-file value.
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+.I Debug_levels 
+greater than 0 cause messages to print to stderr.
+.TP
+.BI \-P " parameter_file \fR[params]\fP"
+Specifies the name of the parameter file to use.
+.SH "ESPS PARAMETERS"
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.PP
+The following parameters are read from the parameter file:
+.TP
+.I "input_field \- string"
+.IP
+The field in \fIinfile.fea\fR containing the spectral parameters.
+If this parameter value is not specified and the \fB\-i\fR option
+is not used, the default value for the 
+field name in \fIinfile.fea\fR is \fIspec_param\fR; if it doesn't
+exist, \fItranspec\fR warns and exits.
+.TP
+.I "source_rep \- string"
+.IP
+The name of the current spectral parameter type.
+Acceptable values include RC (reflection coefficients),
+LAR (log area ratios), AFC (autoregressive filter coefficients),
+CEP (cepstral coefficients), and LSF (line spectral frequencies).
+If this parameter value is not specified, and the \fB\-r\fR
+option is not used, and the generic header item \fIspec_rep\fR
+exists, the value in \fIspec_rep\fR is used. If \fIspec_rep\fR
+doesn't exist and \fIsource_rep\fR is not otherwise specified,
+\fItranspec\fR warns and exits.
+.TP
+.I "target_rep \- string"
+.IP
+The name of the spectral type in the output file.
+Acceptable values are the same as for \fIsource_rep\fR.
+There are no defaults; a value must be specified either on the command
+line or in the parameter file.
+.TP
+.I "output_field \- string"
+.IP
+The name of the field in \fIoutfile.fea\fR in which to put the
+transformed
+spectral parameters.
+If \fIoutput_field\fR already exists in \fIinfile.fea\fR,
+\fItranspec\fR warns and exits. If \fIoutput_field\fR
+is not specified either on the command line or in a parameter file,
+\fItranspec\fR overwrites the values in the field
+\fIinput_field\fR.
+.TP 
+.I "samp_freq_name \- string"
+.IP
+The name of a generic header item that contains the sampling
+frequency.
+Either this parameter or \fIsamp_freq\fR must be explicitly
+specified, if the either the input or target
+spectral representation 
+is LSF.
+If a sampling frequency is needed and
+this field is not specified and \fIsamp_freq\fR
+is not specified on the command line or in the parameter file,
+a default value of \fIsrc_sf\fR is used for this header item.
+If it does not exist, 
+\fItranspec\fR warns and exits.
+.TP
+.I "samp_freq \- float"
+.IP
+A numerical value for the sampling frequency. This value
+is used unless the parameter \fIsamp_freq_name\fR is defined and
+names a generic header item that exists in the file or
+the command line option \fB\-s\fR is set to a valid value.
+The value of the generic header item takes
+precedence over the parameter value \fIsamp_freq\fR, 
+but the command line option value \fB\-s\fR takes precedence over the 
+value of the generic header item.
+Remember a value for the sampling frequency is required only if the
+input or target spectral representation is LSF.
+.TP
+.I "grid_width \- float"
+.IP
+This specifies the nominal spacing (in Hz.) of the grid used in
+the search for LSFs. See the \fB\-w\fR option for more details.
+This values is superseded by the
+command line option value of \fB\-w\fR.
+This value is required only if the target (output) representation
+is LSF.
+.SH ESPS COMMON
+.PP
+The ESPS Common file is not read by 
+.I transpec. 
+.SH ESPS HEADERS
+.PP
+Values in the header of 
+.I outfile.fea
+are copied from  the values in the header of 
+.I infile.fea,
+except for
+.I spec_rep
+which is set equal to the target spectral representation
+(and is added if not present).
+If the parameter is being converted to LSFs,
+then a generic header item \fILSF_grid_width\fR (type "double") is
+added that contains the \fB\-w\fR value. If a generic header item 
+called \fILSF_grid_width\fR already exists, 
+.IR uniq_name (3\-ESPSu)
+is used to derive a new name.
+Finally,
+if the sampling frequency
+was provided directly by the params file or the command line
+(not via a generic header item), a generic header
+item \fIsrc_sf\fR (type double) is added to the output file header.
+If a generic header item 
+called \fIsrc_sf\fR already exists, 
+.IR uniq_name (3\-ESPSu)
+is used to derive a new name.
+.SH "FUTURE CHANGES"
+.PP
+Add support for AF (area functions) as spectral parameters.
+Handle
+.I voicing,
+.I order_vcd,
+and
+.I order_unvcd
+in FEA_ANA files as a special case.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIrefcof\fP(1\-ESPS), \fIlpcana\fP(1\-ESPS), \fIme_spec\fP(1\-ESPS),
+\fIspectrans\fP(1\-ESPS), ESPS(5\-ESPS), FEA_ANA(5\-ESPS),
+FEA(5\-ESPS)
+.fi
+.SH "BUGS"
+.PP
+The field
+.I voicing
+and the header items
+.I order_vcd
+and
+.I order_unvcd
+in FEA_ANA files are ignored.
+.SH "AUTHOR"
+.PP
+Manual page by David Burton.
+

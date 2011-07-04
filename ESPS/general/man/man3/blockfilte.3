@@ -1,0 +1,224 @@
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)blockfilte.3	1.10 06 May 1997 ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH  BLOCK_FILTER2 3\-ESPSsp 06 May 1997
+.SH NAME
+block_filter2 \- filters data with FIR or IIR filter
+.PP
+init_fdata \- initializes the filter data structure for \fIblock_filter2\fR
+.PP
+block_filter \- filters data with FIR or IIR filter (not supported as of ESPS v5.0)
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/feafilt.h>
+
+int
+block_filter2(nsamp, in, out, frec)
+long nsamp;
+struct sdata *in, *out;
+struct fdata **frec;
+
+#define FIR_FILTERING 1
+#define IIR_FILTERING 2
+
+struct fdata *
+init_fdata(type, filtrec, fh, cplx_sig, cplx_fil)
+int type;
+struct feafilt *filtrec;
+struct header *fh;
+int cplx_sig, cplx_fil;
+
+int block_filter (nsamp, x, y, pzfunc, state);
+int nsamp;
+double *x, *y, *state;
+struct zfunc *pzfunc;
+
+.ft
+.fi
+.SH DESCRIPTION
+\fIblock_filter2\fR takes sampled data pointed to by \fIin\fR, 
+filters it with a real FIR or IIR filter that has its internal states and 
+coefficients pointed to by \fIfrec\fR.  The result is placed in some memory 
+block pointed to by \fIout\fR.
+.PP
+\fIIn\fR and \fIout\fR point to the \fIsdata\fR data structures that 
+support sampled data of single or multichannels, and of data type of 
+DOUBLE or DOUBLE_CPLX.  
+.PP
+.nf
+struct sdata{
+  struct header *hd;
+  struct feasd *rec;
+  void *data, **ptrs;
+  short data_type;
+
+  int no_channel;
+  int *channel;
+  double sample_rate;
+  char *name;
+};
+.fi
+.PP
+The input sampled data can be either from file or memory.  Data must
+be of the type DOUBLE or DOUBLE_CPLX.  Input sampled data
+read from a file using function such as \fIget_feasd_recs (3-\ESPS)\fR 
+is pointed to by a \fIstruct feasd *\fR pointer which can be set to equal
+to \fIin->rec\fR.  If \fIin->rec\fR is non-NULL, \fIblock_filter2\fR
+uses the data pointed by it and ignores all other structure
+members in \fIin\fR.
+.PP
+If the sampled data is from memory, \fIin->rec\fR is set to NULL, and 
+\fIin->data\fR is set to point to
+the memory block for single channel data or \fIin->ptrs\fR 
+for multichannel data.
+\fIin->no_channel\fR is set to  the number of input channels.  
+\fIin->data_type\fR is set to DOUBLE or DOUBLE_CPLX.
+Other structure members are ignored.
+For multichannel data, \fIin->ptrs[s][c]\fR is the sample number \fIs\fR 
+of channel \fIc\fR.  
+.PP
+Similarly, if \fIout->rec\fR is non-NULL and points to
+some space allocated by \fIallo_feasd_recs (3-\ESPS)\fR, data pointed by
+it is written to a file after calling \fIput_feasd_recs (3-\ESPS)\fR.
+If the output data is to be written to some memory block instead
+of a file,
+set \fIout->rec\fR to NULL and set \fIout->data\fR for single channel
+data or \fIout->ptrs\fR for multichannel data
+point to the memory block.  Output data
+should be either DOUBLE or DOUBLE_CPLX depending on the input data type.
+.PP
+In the IIR system, the filter is realized by cascading the second order
+sub-systems of pairs of poles and zeros and their complex conjugate
+counterparts.  Each sub-system is implemented in the direct form II.
+This is to insure the numerical stability of the system.  
+In the FIR system, the filter is realized in the direct form.
+.PP
+The coefficients of the second order IIR subsystems and internal states
+of both IIR and FIR systems are initialized and allocated by the function
+\fIinit_fdata\fR.  \fIinit_fdata\fR returns the \fIfdata\fR data 
+structure which is used as the \fIfrec\fR argument in \fIblock_filter2\fR.
+\fItype\fR specifies the type of filter, either
+\fIFIR_FILTERING\fR or \fIIIR_FILTERING\fR.  \fIfiltrec\fR points to
+the \fIFEA_FILT (5\-ESPS)\fR structure.  \fIfh\fR is the filter file
+header.  \fIcplx_sig\fR is set to 1 if input data type is DOUBLE_CPLX, 0
+if DOUBLE.  \fIcplx_fil\fR always has the value 0 for this release.
+.PP
+.I block_filter
+takes an array of 
+.I nsamp
+inputs in 
+.I x,
+filters it with the transfer function pointed to by
+.I pzfunc,
+and returns the 
+.I nsamp
+outputs in the
+.I y
+array.
+The user may change the values of 
+.I nsamp, pzfunc->nsiz,
+or
+.I pzfunc->dsiz
+between calls of the function and the function will check
+whether it has to reallocate its own internal array space.
+.PP
+The array pointed to by
+.I state
+contains the present state vector of the filter, when implemented in
+"Direct" form.
+The calling program should allocate space for the
+.I state
+array sufficient to store max
+.I (pzfunc->nsiz, pzfunc->dsiz)
+elements.
+For FIR filters, the state vector will contain the last
+.I pzfunc->nsiz
+input samples.
+For IIR filters, the contents of the state vector are more complicated.
+Since the function retains information about its past inputs and outputs
+through the
+.I state
+array, the contents of this array should normally not be altered
+by the calling program between calls to the function.
+.PP
+Data can be stored in the 
+.I state
+array prior to the first call to
+.I block_filter
+for the purposes of initialization.
+For either FIR or IIR filters, the 
+.I state
+array should be initialized to contain all zeroes if the filtering operation
+is to assume zero inputs before the starting point of the filtering.
+For FIR filters, the 
+.I state
+array may be filled with the previous
+.I pzfunc->nsiz
+samples to have the first output computed correspond to "steady state"
+conditions.
+.PP
+.SH EXAMPLES
+.nf
+FILE *ffile, *isdfile, *osdfile;
+struct header *fhd, ihd, ohd;
+struct feafilt *filtrec;
+struct fdata *frec;
+struct sdata *in, *out;
+int nsamp, size;
+
+
+/* get feafilt filter data */
+filtrec = allo_feafilt_rec(fhd);
+get_feafilt_rec(filtrec, fhd, ffile);
+
+
+/* initialize fdata filter data to allocate internal states...*/
+frec = (struct fdata *) init_fdata( IIR_FILTERING, filtrec, fhd, 0, 0);
+
+
+/* allocate in and output structures, set up pointers */
+in = (struct sdata *) malloc(sizeof(struct sdata));
+out = (struct sdata *) malloc(sizeof(struct sdata));
+
+in->rec = allo_feasd_recs( ihd, DOUBLE, 1000, (char *) NULL, NO);
+out->rec = allo_feasd_recs( ohd, DOUBLE, 1000, (char *) NULL, NO);
+
+
+/* main filtering loop */
+while( 0 != (size = get_feasd_recs( in->rec, 0L, nsamp, ihd, isdfile))){
+   block_filter2(size, in, out, &frec);
+   put_feasd_recs( out->rec, 0L, size, ohd, osdfile );
+}
+.fi
+.SH ERRORS AND DIAGNOSTICS
+\fIblock_filter2\fR function returns a non-zero value if an error 
+occurs.  Error messages
+are printed to the standard error output, \fIstderr\fR.
+.PP
+\fIblock_filter\fR returns 1 if the filtering was performed successfully.
+The function prints an error message to 
+.I stderr
+and exits if 
+.I pzfunc->dsiz
+is greater than 0 and 
+.I pzfunc->poles[0]
+is equal to 0.
+.PP
+.SH BUGS
+Due to the direct form implementation of the IIR filter, \fIblock_filter\fR is
+numerically unstable and is not supported as of the ESPS 5.0 release.
+This function is replaced by \fIblock_filter2\fR.
+.SH REFERENCES
+Leland B. Jackson, \fIDigital Filters and Signal Processing\fP,
+Kluwer Academic Publishers, 1986
+.SH "SEE ALSO"
+.nf
+filter2(1\-ESPS), FEA_FILT(5\-ESPS), $ESPS_BASE/include/esps/feafilt.h
+.fi
+.SH AUTHOR
+Derek Lin
+
+
+
+

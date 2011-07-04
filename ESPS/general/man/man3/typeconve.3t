@@ -1,0 +1,291 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc. All rights reserved.
+.\" @(#)typeconve.3t	1.7	23 Sep 1997	ESI
+.TH TYPE_CONVERT 3\-ESPSsp 23 Sep 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+type_convert \- convert array from one numeric type to another
+.SH SYNOPSIS
+.ft B
+.nf
+#include <esps/esps.h>
+
+char *
+type_convert(num, source, src_type, destination, dest_type, clip_action)
+long	num;
+char	*source;	int	src_type;
+char	*destination;	int	dest_type;
+void	(*clip_action)();
+
+void
+warn_on_clip(i, val)
+long		i;
+double_cplx	val;
+.fi
+.SH DESCRIPTION
+.PP
+The function
+.I type_convert
+takes
+.I num
+numeric values of type
+.I src_type,
+starting at the location
+.I source,
+and converts them to type
+.I dest_type.
+It stores the results starting at the location
+.I destination
+if
+.I destination
+is non-NULL; otherwise it allocates space and stores the results there.
+In either case
+the returned value of the function is the starting location of the results.
+When the source type
+can represent a wider range of numerical values than the destination type,
+conversion may entail clipping; the function pointer
+.I clip_action,
+if non-NULL,
+specifies action to be taken when clipping occurs.
+The function
+.IR warn_on_clip
+is provided for use as the last argument of
+.I type_convert;
+it prints a warning message when clipping occurs.
+.PP
+.TS
+center, box, tab(;);
+c | c
+l | l
+l | l.
+code;type
+=
+BYTE;signed char
+SHORT;short
+LONG;long
+FLOAT;float
+DOUBLE;double
+BYTE_CPLX;byte_cplx
+SHORT_CPLX;short_cplx
+LONG_CPLX;long_cplx
+FLOAT_CPLX;float_cplx
+DOUBLE_CPLX;double_cplx
+.TE
+.PP
+The types are indicated by numeric codes
+that have symbolic names defined in the include file
+.I esps/esps.h.
+The table above shows the data type for each code.
+.PP
+The last 5 types have typedefs in
+.I esps/esps.h;
+they are complex types corresponding to the 5 real types.
+(For example the code
+.I SHORT_CPLX
+indicates the type
+.I short_cplx,
+which is the type of a structure representing a complex number
+whose real and imaginary parts are of type
+.I short.
+If
+.I x
+is a variable of that type, the real and imaginary parts are accessible as
+.I x.real
+and
+.IR x.imag )
+.PP
+The
+.I source
+should be a pointer
+to a scalar or array element of the type indicated by
+.I src_type.
+The pointer must be cast to
+.RI ( "char *" )
+when passed as an argument to the function.
+Likewise,
+.I destination
+should be the result of casting a pointer to
+.RI ( "char *" ):
+either NULL or a pointer to the type indicated by
+.I dest_type.
+.PP
+The destination storage area, if supplied by the user,
+should not overlap the source storage area;
+otherwise storing to the destination may destroy a part of the source
+that has not yet been converted.
+.PP
+The returned value of the function
+should be cast to a pointer to the destination type.
+.PP
+When
+.I src_type
+and
+.I dest_type
+are the same, the function acts as a simple array copier.
+.PP
+When a complex number is converted to another complex type,
+the real and imaginary parts are converted separately
+according to the rules for conversion between real types.
+When a complex number is converted to a real type,
+the imaginary part is discarded, and the real part is converted.
+When a real number is converted to a complex type,
+is is converted to form the real part of the result,
+and an imaginary part of zero is supplied.
+If a real number
+.RI ( char,
+.I short, long, float,
+or
+.IR double )
+is outside the range of representable values of the type
+to which it is being converted,
+it is clipped to the greatest or least representable value,
+depending on sign.
+(When this happens, the function
+.RI * clip_action
+is invoked if defined, as described below.)
+When a float or double is converted to an integral type
+.RI ( char,
+.I short,
+or
+.IR long )
+and is in range,
+it is converted by rounding, not truncation.
+Other real-to-real conversions are done as in C
+and are generally value-preserving,
+with some possible loss of precision
+in case of conversion from an integral type to
+.I float
+or
+.I double
+or from
+.I double
+to
+.I float.
+.PP
+If
+.I clip_action
+is not
+.RI ( void (*)()) NULL,
+it should point to a function with the same interface as
+.IR warn_on_clip (3-ESPS):
+a
+.I long
+argument, a
+.I double_cplx
+argument, and
+.I void
+return.
+Whenever conversion of an element of the source array (say element
+.IR i)
+entails clipping,
+the function is invoked with two arguments:  the index
+.I i
+and the original source value converted to
+.I double_cplx.
+The fuction is invoked once for each source value that requires clipping.
+Even if conversion between complex types requires clipping both the real
+and the imaginary parts of a source value, the function is invoked only
+once for that value.
+The function is invoked
+after the converted value is stored in the destination array.
+If the function requires access to the source or destination array,
+that must be made available through a global variable.
+If
+.I clip_action
+is NULL,
+no special action is taken when clipping occurs.
+.PP
+The function
+.I warn_on_clip
+prints on
+.I stderr
+a line of the form
+.IP
+warn_on_clip: element
+.I i
+clipped from
+.I val.
+.LP
+where
+.I i
+and
+.I val
+are the arguments.
+Thus invoking
+.I type_convert
+with
+.I warn_on_clip
+as the last argument will cause a warning message for every source value
+that is clipped.
+.SH EXAMPLE
+.nf
+
+.ft I
+/*
+ * Convert an array of 100 shorts to complex numbers
+ * with real and imaginary parts of type double.
+ * No special action on clipping.
+ */
+
+.ft P
+    short	in[100];
+    double_cplx	out[100];
+
+    type_convert(100L, (char *) in, SHORT,
+			(char *) out, DOUBLE_CPLX, (void (*)()) NULL);
+
+.ft I
+/*
+ * Convert a float scalar to short.
+ * Warning message on stdout in case of clipping.
+ */
+
+.ft P
+    void	(*warn_on_clip)();
+    float	x;
+    short	y;
+
+    type_convert(1L, (char *) &x, FLOAT,
+			(char *) &y, SHORT, warn_on_clip);
+
+.ft I
+/*
+ * Convert an array of 100 shorts to complex numbers
+ * with real and imaginary parts of type double.
+ * User-written function counts the elements that are clipped.
+ */
+
+.ft P
+    static long	count;
+    static void
+    count_on_clip(i, val)
+    	long       	i;
+    	double_cplx	val;
+    {
+    	count++;
+    }
+
+    main()
+    {
+    	short	in[100];
+    	double_cplx	out[100];
+
+    	\fI/* .\ .\ . */\fP
+
+    	count = 0;
+    	type_convert(100L, (char *) in, SHORT,
+			(char *) out, DOUBLE_CPLX, count_on_clip);
+	fprintf(stderr, "Warning--%ld values clipped.\\n", count);
+
+    	\fI/* .\ .\ . */\fP
+    }
+
+
+.fi
+.SH BUGS
+.PP
+None known.
+.SH "SEE ALSO"
+.PP
+
+.SH AUTHOR
+Rodney Johnson, ESI.

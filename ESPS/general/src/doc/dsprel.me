@@ -1,0 +1,23 @@
+.lo
+.ce 2
+.b
+.sp
+Release Notes for Waves+ DSP32 Support Kit 1.1
+Document Version: 1.3 2/28/89
+.sh 1 "Changes Since 1.0"
+.pp
+The only change to this kit is a new version of 
+\fIwrecord\fR.     The record program was reversing the max and min
+value, resulting in the wrong value going into the header as the
+absolute value of the minimum or maximum point.  
+.sh 1 "Installing this Update"
+.pp
+If you already have the DSP Support Kit installed, then you only need
+the new \fIwrecord\fR binary.    You do not need to
+reinstall the driver part of the kit.   To install the new programs,
+simply change to the \fIdsp32.sunX\fR directory and do \fIemake
+install\fR.   This must be after ESPS is installed.
+.pp
+If you also received an ESPS update or a \fIwaves+\fR update, install
+those first before installing this kit.
+(Install ESPS, and then \fIwaves+\fR.)

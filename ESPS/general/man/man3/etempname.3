@@ -1,0 +1,142 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)etempname.3	1.1 29 Apr 1991 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  E_TEMP 3\-Eu 29 Apr 1991
+.SH NAME
+
+.nf
+e_temp_name \- make a unique ESPS file name
+
+e_temp_file \- create and open a unique ESPS file
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+#include <stdio.h>
+
+extern int debug_level;
+
+char *
+e_temp_name(template)
+char	*template;
+
+FILE *
+e_temp_file(template, new_file)
+char	*template;
+char    **new_file;
+
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+\fIe_temp_name\fP creates a unique file name, typically in a temporary
+filesystem.  If \fItemplate\fP is not NULL, its contents are used in
+forming the new file name as described below.  In all cases, the
+address of the new file name is returned by \fIe_temp_name\fP.
+.PP
+If \fItemplate\fP is NULL, the default string "espsXXXXXX" is used.
+If \fItemplate\fP is not NULL, the string in \fItemplate\fP should
+contain six trailing Xs; in either case, \fImktemp\fP(3) is used to
+replace the Xs in a copy of \fItemplate\fP with a letter followed by
+the current process ID.
+.PP
+The file name returned by \fIe_temp_name\fP depends on whether
+\fItemplate\fP contains a path specification \- i.e., on whether
+\fItemplate\fP contains one or more instances of the character '/'.
+If \fItemplate\fP does contain a path specification, \fIe_temp_name\fP
+returns the result of applying \fImktemp\fP to a copy of
+\fItemplate\fP.  In this way, \fIe_temp_name\fP can be used to
+generate a unique file name in a directory specified as part
+of the call.  (This is not the recommended approach.) 
+.PP
+If \fItemplate\fP does not contain a path specification, then
+\fIe_temp_name\fP returns a string containing the contents of the
+\fIunix\fP environment variable ESPS_TEMP_PATH, followed by '/',
+followed by the result of applying \fImktemp\fP to a copy of
+\fItemplate\fP.  This provides global control over the location of
+temporary files.  If ESPS_TEMP_PATH is not defined, then a compiled in
+default is used (usually "/usr/tmp").
+.PP
+Unlike \fImktemp\fP(3), \fIe_temp_name\fP does not change the contents
+of \fItemplate\fP.  Thus repeated calls to \fIe_temp_name\fP can be
+made using the same \fItemplate\fP.  \fIe_temp_name\fP uses
+\fImalloc\fP(3) to allocate space for the constructed file name and
+returns a pointer to this area.  Thus, any pointer returned by
+\fIe_temp_name\fP can be serve as an argument to \fIfree\fP(3).
+.PP
+e_temp_name will return NULL if it cannot construct a file name
+(\fImalloc\fP fails), or if the constructed file name is not a
+writable file.  
+.PP
+\fIe_temp_file\fP creates a new file name using \fIe_temp_name\fP,
+opens the file for update, and returns the corresponding file pointer.
+The argument \fItemplate\fP is passed to \fIe_temp_name\fP, which
+interprets it as described above.  \fIe_temp_file\fP will return NULL
+if the call to \fIe_temp_file\fP fails or if it is unable to open the
+resulting file name for updating.  \fIe_temp_file\fP sets
+*\fInew_file\fP to the address of the file name constructed by the
+call to \fIe_temp_name\fP.  This makes it possible for the the user to
+remove the temporary file (e.g., with \fIunlink\fP(3)) after it is no
+longer needed, as well as to free the space used for the file name.  
+.PP
+Normally, ESPS programs should call \fIe_temp_name\fP or
+\fIe_temp_file\fP with a \fItemplate\fP that does not contain a path
+specification.  This is to allow global control of temporary file
+location by means of the environment variable ESPS_TEMP_PATH.
+.SH EXAMPLES
+.PP
+.nf
+	char *name;
+	char *tmp_name;
+	FILE *tmp_strm;
+
+	/* use defaults - if ESPS_TEMP_PATH is not defined, 
+	 * will generate as /usr/tmp/espsXXXXXX; otherwise, 
+	 * will generate as ESPS_TEMP_PATH/espsXXXXXX. */
+
+	name = e_temp_name(NULL); 
+
+	/* If ESPS_TEMP_PATH is not defined, 
+	 * will generate as /usr/tmp/PLTXXXXXX; otherwise, 
+	 * will generate as ESPS_TEMP_PATH/PLTXXXXXX. */
+
+	name = e_temp_name("PLTXXXXXX"); 
+
+	/* Force generation as /h1/shore/tmp/PLTXXXXXX;
+         * considered bad practice */
+
+	name = e_temp_name("/h1/shore/tmp/PLTXXXXXX"); 
+	     
+	/* open temporary file */
+
+	tmp_strm = e_temp_file("PLTXXXXXX", &tmp_name);
+
+	 . . . 
+
+	(void) fclose(tmp_strm);
+	(void) unlink(tmp_name); 
+
+.SH ERRORS AND DIAGNOSTICS
+.PP
+If \fIdebug_level\fP is non-zero, an error message will be printed
+to stderr in the following cases:  \fIe_make_name\fP cannot 
+allocate sufficient space to construct the file name,
+\fIe_make_name\fP constructs a file name that is not writable, 
+or \fIe_make_file\fP cannot open the file for update.  
+.SH FUTURE CHANGES
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+\fImktemp\fP(3), \fItmpfile\fP(3), \fIfopen\fP(3S)
+.SH AUTHOR
+.PP
+Manual page and programs by John Shore. 
+
+
+
+

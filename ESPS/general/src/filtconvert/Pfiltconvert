@@ -1,0 +1,5 @@
+# @(#)Pfiltconvert	1.1 5/24/91 ERL
+# Default parameter file for fea2filt and filt2fea
+int start ?= 1: "Starting record number?";
+int nan ?= 0: "Number of records to process?";
+int debug_level ?= 0: "Debug level?";

@@ -1,0 +1,75 @@
+vqdes history output on Tue Feb 20 12:30:18 1996
+vqdes version 3.9, date 10/20/93
+command line:
+vqdes -P vqdes.p t1.sd cbk 
+checkpoint file is vqdes.chk
+
+Parameter values:
+	dimension of training vectors = 1
+	name of FEA field with training vectors = samples
+	fractional conv. thresh = 0.1
+	max number of iterations on one level = 500
+	size of VQ codebook= 8
+	distortion type = MSE
+	codebook structure = FULL_SEARCH
+vqdesign: entering function vqdesign
+vqdesign: external get_chunk supplied
+vqdesign: generic vec_to_cdwd being used
+vqdesign: generic split routine being used
+vqdesign: mean-square-error distortion being used
+vqdesign: external checkpoint function being used
+vqdesign: Root codebook created; distortion not computed.
+	Current codebook size = 1
+	Size of training sequence = 100
+	Total number of cluster iterations = 1
+	Current average distortion = 1e+20
+	Number of times empty cell found = 0
+	Entropy of current codebook = 0.000000
+vqdesign: Splitting codebook.
+vqdesign: Clustering codebook.
+vqdesign: average distortion after encode = 123592
+vqdesign: average distortion after encode = 24869.8
+vqdesign: average distortion after encode = 24869.8
+vqdesign: Codebook clustered, Tue Feb 20 12:30:19 1996
+vqdesign: New codebook:
+	Current codebook size = 2
+	Size of training sequence = 100
+	Total number of cluster iterations = 4
+	Current average distortion = 24869.8
+	Number of times empty cell found = 0
+	Entropy of current codebook = 0.992774
+vqdesign: Splitting codebook.
+vqdesign: Clustering codebook.
+vqdesign: average distortion after encode = 24446.7
+vqdesign: average distortion after encode = 5167.73
+vqdesign: average distortion after encode = 5167.73
+vqdesign: Codebook clustered, Tue Feb 20 12:30:19 1996
+vqdesign: New codebook:
+	Current codebook size = 4
+	Size of training sequence = 100
+	Total number of cluster iterations = 7
+	Current average distortion = 5167.73
+	Number of times empty cell found = 0
+	Entropy of current codebook = 1.981604
+vqdesign: Splitting codebook.
+vqdesign: Clustering codebook.
+vqdesign: average distortion after encode = 4994.43
+vqdesign: average distortion after encode = 57.9433
+vqdesign: average distortion after encode = 57.9433
+vqdesign: Codebook clustered, Tue Feb 20 12:30:19 1996
+vqdesign: New codebook:
+	Current codebook size = 8
+	Size of training sequence = 100
+	Total number of cluster iterations = 10
+	Current average distortion = 57.9433
+	Number of times empty cell found = 0
+	Entropy of current codebook = 2.953552
+vqdesign: codebook converged.
+vqdesign: Final codebook:
+	Current codebook size = 8
+	Size of training sequence = 100
+	Total number of cluster iterations = 10
+	Current average distortion = 57.9433
+	Number of times empty cell found = 0
+	Entropy of current codebook = 2.953552
+vqdes: vqdesign return VQ_OK

@@ -1,0 +1,4 @@
+kill name signal1 file speech.wb.spgm
+make name signal1 file speech.wb.spgm loc_x 610 loc_y 225
+
+#@(#)mk_spgm1.WC	1.1 7/29/91 ERL

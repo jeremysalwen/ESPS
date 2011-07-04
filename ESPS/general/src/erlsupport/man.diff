@@ -1,0 +1,62 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)erlsupport.1	1.4 7/23/93 ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH  ERLSUPPORT 1\-ESPS 7/23/93
+.SH "NAME"
+.nf
+erlsupport \- send a support request to ERL.
+.fi
+.SH SYNOPSIS
+erlsupport
+.SH DESCRIPTION
+.PP
+\fIErlsupport\fR allows you to create a support request form that helps ensure
+quick and accurate support by Entropic Research Laboratory (ERL) engineers.
+Note that the form editor has not been ported to all architectures that
+ERL supports for ESPS/waves+.  If it hasn't been ported, then erlsupport
+will just print out the information that you can use to contact us
+and help us support you.
+.PP
+You may email the form directly to ERL, or print the form for faxing
+or mailing, or both.  The form may also be email carbon copied to
+whoever you want to see it.
+.PP
+Initial data for the form is created via an data entry screen that
+gets information that any problem or support request will require.
+You may then edit the form with the editor of your choice, prior
+to it's being emailed or printed.
+.PP
+.SH CONFIGURATION
+.PP
+The file \fI$ESPS_BASE/lib/erlsupport.defs\fR contains standard definitions
+that \fIerlsupport\fR uses.  It is a Bourne shell script (sh(1)).  You may
+edit it to set whatever defaults you like.  Make sure to keep a backup
+of the original, in case the defaults you like break \fBerlsupport\fR.
+.PP
+.SH OPTIONS
+.PP
+\fIErlsupport\fR has no options.
+.PP
+.SH FUTURE CHANGES
+.PP
+An X-Window's version would be nice.
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+\fBErlsupport\fI uses the program \fBmail\fI for email. If it can't find
+mail, or \fI$ESPS_BASE/bin/sf\fR then it will terminate. If your system 
+desn't have mail, then edit the \fIerlsupport\fR script to use a mail
+program you do have.  Don't hesitate to call ERL if you have trouble.
+.PP
+.SH BUGS
+.PP
+None known.
+.SH "FILES"
+.PP
+$ESPS_BASE/lib/erlsupport.defs  - standard definitions that erlsupport uses.
+.PP
+.SH "SEE ALSO"
+.PP
+.SH AUTHOR
+Ken Nelson wrote \fIerlsupport\fR and this man page. Paul Lew wrote
+shellforms (sf).  The source to sf is in the $ESPS_BASE/pub.

@@ -1,0 +1,71 @@
+head	1.1;
+access;
+symbols;
+locks
+	steve:1.1; strict;
+comment	@# @;
+
+
+1.1
+date	2009.02.07.18.51.10;	author steve;	state Exp;
+branches;
+next	;
+
+
+desc
+@script that compiles and installs binaries
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@# This script is meant to be run after the SETUP script in the same directory.
+# In particular, it assumes that an emake program and ESPS_BASE file,
+# correct for the system being installed, are present in this directory, and
+# that the $ESPS_BASE directory tree has been created and a number of include
+# and library files have been copied into it.
+
+export EMAKE_DIR=`pwd`
+export ESPS_BASE=`cat ESPS_BASE`
+# There may be old versions of esps utility programs such as emake,
+# get_esps_base, diffmk in the $PATH, or no version at all if this is a fresh
+# install. During installation, we use the ones in this directory and possibly
+# ones that have been freshly installed.
+# Be careful not to put any executables in this directory with the names of
+# standard system programs.  E.g., this script is called ESPS_INSTALL,
+# rather than install, so as not to interfere with the standard install
+# invoked by make.
+
+export PATH="$EMAKE_DIR:$ESPS_BASE/bin:$PATH"
+cp -r other_includes/* $ESPS_BASE/include || \
+    echo "Error copying other_includes directories to $ESPS_BASE/include"
+mkdir -p $ESPS_BASE/include/waves
+cp -r ../ATT/waves/src/h/*  $ESPS_BASE/include/waves || \
+   echo "Error copying xwaves include files to $ESPS_BASE/include/waves"
+cd src
+./COMPILE libs
+
+echo Producing position independent emake \(run make with all the right parameters\) ...
+cat $EMAKE_DIR/emake | sed -e s+$ESPS_BASE+\`get_esps_base\`+g > $ESPS_BASE/bin/emake
+chmod 0755 $ESPS_BASE/bin/emake
+
+echo Generating whatis database...
+(cd $ESPS_BASE/man; $ESPS_BASE/bin/makewhatis)
+
+echo Copying doc files...
+cp -r doc/* $ESPS_BASE/doc
+chmod -R og+r $ESPS_BASE/doc
+
+cd ..
+
+echo Copying pub files...
+tar cf - pub | (cd $ESPS_BASE ; tar xvf -)
+chmod -R og+r $ESPS_BASE/pub
+
+echo Copying src_examples files...
+rm -rf $ESPS_BASE/src_examples/*
+tar cf - src_examples | (cd $ESPS_BASE ; tar xvf -)
+@

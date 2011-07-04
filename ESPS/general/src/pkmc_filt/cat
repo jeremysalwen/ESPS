@@ -1,0 +1,264 @@
+
+
+
+PKMC_FILT(1-ESPS)                           ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     pkmc_filt - design an equiripple FIR filter using the Parks-McClellan algorithm
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     ppppkkkkmmmmcccc____ffffiiiilllltttt ----PPPP _p_a_r_a_m__f_i_l_e [ ----xxxx _d_e_b_u_g__l_e_v_e_l ] _f_i_l_e._f_i_l_t_e_r
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     The program _p_k_m_c__f_i_l_t designs a linear-phase  finite-impulse
+     response  (FIR)  filter that meets the specification defined
+     in the parameter file _p_a_r_a_m__f_i_l_e.  The  filter  coefficients
+     are saved in the output file _f_i_l_e._f_i_l_t_e_r.  If _f_i_l_e._f_i_l_t_e_r is
+     replaced by "-", the standard output is written.
+
+     The design method is based on the Parks-McClellan algorithm.
+     The   resulting   filter   minimizes   the  maximum-weighted
+     approximation-error.  One of the four standard FIR types  is
+     produced.    For   a  filter  with  multiple  stopbands  and
+     passbands, the Type 1 (symmetric and odd length) or  Type  2
+     (symmetric  and even length) filter is designed.  For a dif-
+     ferentiator or a Hilbert  Transformer,  either  the  Type  3
+     (anti-symmetric  and  odd  length)  or  the  Type  4  (anti-
+     symmmetric and even length) is designed.
+
+     Frequency responses of Types 2 and 3 filters are equal to  0
+     at PI, which is undesirable for a highpass filter.  For mul-
+     tiple stopbands/passbands filters, type 1 and  2  are  used.
+     For differentiator and Hilbert transformer, type 3 and 4 are
+     used.
+
+     A generic Parks-McClellan  algorithm  is  implemented  here,
+     without  numerical  optimization.   Numerical problem occurs
+     for   filter   with   more    than    100    taps,    narrow
+     passbands/stopbands,   large   transition  bands,  and  non-
+     symmetrical transition bands.  In some cases, the  algorithm
+     does  not detect the problem.  Typically the filter gain for
+     such cases are large, exceeding 1.0. Always check the result
+     by _f_i_l_t_s_p_e_c (_1-_E_S_P_S) and _p_l_o_t_s_p_e_c (_1-_E_S_P_S).
+
+     Also see the shell script _x_f_i_r__f_i_l_t(_1-_E_S_P_S) that is a  cover
+     script for this and other FIR filter design programs.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following option is supported:
+
+     ----xxxx _d_e_b_u_g__l_e_v_e_l [0]
+          If _d_e_b_u_g__l_e_v_e_l is positive, _p_k_m_c__f_i_l_t prints  debugging
+          messages  and  other  information on the standard error
+          output.  The messages proliferate  as  the  _d_e_b_u_g__l_e_v_e_l
+          increases.   If _d_e_b_u_g__l_e_v_e_l is 0 (the default), no mes-
+          sages are printed.
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+PKMC_FILT(1-ESPS)                           ENTROPIC RESEARCH LAB
+
+
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     The following parameters are read from the _p_a_r_a_m__f_i_l_e:
+
+     _f_i_l_t__t_y_p_e - _s_t_r_i_n_g
+          The type of filter desired.  Use _M_U_L_T_I_B_A_N_D for lowpass,
+          highpass,  bandpass,  bandstop,  and arbitrary multiple
+          stop/passbands FIRs.  Use  _D_I_F_F_E_R_E_N_T_I_A_T_O_R  for  a  dif-
+          ferentiator and _H_I_L_B_E_R_T for Hilbert transform filter.
+
+     _f_i_l_t__l_e_n_g_t_h - _i_n_t
+          Number of taps for the filter.
+
+     _n_g_r_i_d - _i_n_t
+          This is an optional parameter. It specifies the  number
+          of  grid  points used for interpolation from 0 to PI/2.
+          The default value is 2 * _f_i_l_t__l_e_n_g_t_h.
+
+     _s_a_m_p__f_r_e_q - _f_l_o_a_t
+          The sampling frequency.  This number is used  for  res-
+          caling the values of bandedge parameters.
+
+     _n_b_a_n_d_s - _i_n_t
+          Number of bands from 0 to  _s_a_m_p__f_r_e_q/_2.   For  example,
+          for  a  _M_U_L_T_I_B_A_N_D  filter  type, a lowpass filter has 2
+          bands -- a passband from 0 to some frequency _f_1  and  a
+          stopband  from  some frequency _f_2 to _s_a_m_p__f_r_e_q/_2, where
+          _f_1<_f_2.  For a differentiator, _n_b_a_n_d_s is  1  if  a  full
+          band differentiator is desired, 2 otherwise. For a Hil-
+          bert transform filter, _n_b_a_n_d_s is always 1, and its band
+          extend from 0 to _s_a_m_p__f_r_e_q/_2.
+
+     The following set  of  the  parameters  have  the  forms  of
+     _b_a_n_d[_i]__e_d_g_e_1,  _b_a_n_d[_i]__e_d_g_e_2,  _b_a_n_d[_i]__d_e_s, and _b_a_n_d[_i]__w_t,
+     where _i denotes the band number.  For  example,  _b_a_n_d_2__e_d_g_e_1
+     is  a  parameter  for the left edge of the second band.  The
+     number of sets of these parameters must be equal to  _n_b_a_n_d_s.
+     Band  1  is the left-most band, band _n_b_a_n_d is the right-most
+     band.
+
+     The response at the band edges is  automatically  determined
+     by  the  algorithm,  the  error on the band edge is the same
+     equi-ripple error of the  band.   The  generic  header  item
+     _r_i_p_p_l_e__d_b  in the output file contains the equi-ripple error
+     in dB that represents the smallest approximation error  that
+     meets the specification.
+
+     _b_a_n_d[_i]__e_d_g_e_1 - _f_l_o_a_t
+          The  left  edge  of  _ith  band.   It  must  be  0   for
+          _b_a_n_d_1__e_d_g_e_1.
+
+     _b_a_n_d[_i]__e_d_g_e_2 - _f_l_o_a_t
+          The right edge of _ith band.  It must be _s_a_m_p__f_r_e_q/_2 for
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+
+
+
+
+PKMC_FILT(1-ESPS)                           ENTROPIC RESEARCH LAB
+
+
+
+          the  last  band.  _b_a_n_d[_i]__e_d_g_e_2 and _b_a_n_d[_i+_1]__e_d_g_e_1 can
+          not be  the  same  number.   In  fact  _b_a_n_d[_i]__e_d_g_e_2  >
+          _b_a_n_d[_i+_1]__e_d_g_e_1.
+
+     _b_a_n_d[_i]__d_e_s - _f_l_o_a_t
+          For _M_U_L_T_I_B_A_N_D filter type, it is the  desired  constant
+          value  for  the  _ith  band.   For _D_I_F_F_E_R_E_N_T_I_A_T_O_R filter
+          type, it is the slope of the frequency response on  the
+          passband.   The  slope  is  measured  by  the amplitude
+          response over normalized frequency axis.  For  _H_I_L_B_E_R_T,
+          it should be set to 1.
+
+     _b_a_n_d[_i]__w_t - _f_l_o_a_t
+          For _M_U_L_T_I_B_A_N_D filter type, it is the constant weighting
+          factor  for  the  approximation error in _ith band.  The
+          weights in bands are  relative  to  one  another.   For
+          example,  in  a  two  band  filter,  _b_a_n_d_1__w_t of 10 and
+          _b_a_n_d_2__w_t of 20 are the same as _b_a_n_d_1__w_t of 1 and 2  for
+          the  other  band.   For _D_I_F_F_E_R_E_N_T_I_A_T_O_R filter type, the
+          weighting function _1/_f is appplied to the the  passband
+          region  of  the  differentiator. For _H_I_L_B_E_R_T, it should
+          always be set to 1.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     No ESPS common parameter processing is used.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+     A new FEAFILT header is created for the  output  file.   The
+     program  fills  in  appropriate values in the common part of
+     the header as well as the  following  generic  header  items
+     associated with the FEAFILT type.
+
+     The _s_a_m_p__f_r_e_q generic header  item  contains  value  of  the
+     _s_a_m_p__r_e_q parameter.
+
+     The _b_a_n_d__e_d_g_e_s generic header item of size  _2*_n_b_a_n_d_s  is  an
+     array containing the left and rights band edges of bands.
+
+     The _d_e_s_i_r_e_d__v_a_l_u_e generic header item of size _n_b_a_n_d_s  is  an
+     array containing the _b_a_n_d[_i]__d_e_s parameters
+
+     The _d_e_s_i_r_e_d__w_e_i_g_h_t generic header item of size _n_b_a_n_d_s is  an
+     array containing the _b_a_n_d[_i]__w_t parameters
+
+     The _r_i_p_p_l_e__d_b generic header item of size _n_b_a_n_d_s is an array
+     containing the error in dB for each band.
+
+     In addition, the generic header  item  _d_e_l_a_y__s_a_m_p_l_e_s   (type
+     DOUBLE)  is  added   to the header. _D_e_l_a_y__s_a_m_p_l_e_s  is  equal
+     to (filter length  -  1)/2. This represents  the  delay   to
+     the  center  of  the peak of the impulse response.
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+
+
+
+
+
+PKMC_FILT(1-ESPS)                           ENTROPIC RESEARCH LAB
+
+
+
+FFFFUUUUTTTTUUUURRRREEEE CCCCHHHHAAAANNNNGGGGEEEESSSS
+EEEEXXXXAAAAMMMMPPPPLLLLEEEESSSS
+     The following parameter file designs a bandpass filter  with
+     stop  band  from 0 to 500 Hz, passband from 1000 to 2000 Hz,
+     and stopband from 2500 to 4000 Hz.
+
+          int filt_length = 32;
+          float band1_edge1 = 0.000000;
+          float band1_edge2 = 500.000000;
+          float band1_des = 0.000000;
+          float band1_wt = 1.000000;
+          float band2_edge1 = 1000.000000;
+          float band2_edge2 = 2000.000000;
+          float band2_des = 1.000000;
+          float band2_wt = 1.000000;
+          float band3_edge1 = 2500.000000;
+          float band3_edge2 = 4000.000000;
+          float band3_des = 0.000000;
+          float band3_wt = 1.000000;
+          string filt_type = "MULTIBAND";
+          float samp_freq = 8000.000000;
+          int nbands = 3;
+
+     The unspecified regions from 500 to 1000 Hz and 2000 to 2500
+     Hz  are  unspecified and are taken as transition bands which
+     will have arbitray repsonse.
+
+EEEERRRRRRRROOOORRRRSSSS AAAANNNNDDDD DDDDIIIIAAAAGGGGNNNNOOOOSSSSTTTTIIIICCCCSSSS
+BBBBUUUUGGGGSSSS
+     None known.
+
+RRRREEEEFFFFEEEERRRREEEENNNNCCCCEEEESSSS
+     Oppenheim & Schafer, _D_i_s_c_r_e_t_e-_T_i_m_e _S_i_g_n_a_l _P_r_o_c_e_s_s_i_n_g,  Pren-
+     tice Hall, 1989
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     xfir_filt(1- ESPS),  cb_filt(1 - ESPS),  win_filt(1 - ESPS),
+     notch_filt(1 - ESPS),  FEA_FILT(5 - ESPS),  atofilt(1-ESPS),
+     wmse_filt(1-ESPS), iir_filt(1-ESPS), sfconvert(1-ESPS)
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Derek Lin
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 4G4        4
+
+
+
+
+
+

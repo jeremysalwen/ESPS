@@ -1,0 +1,209 @@
+.\" Copyright (c) 1988,1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)zcross.1	1.8 8/10/91 ESI
+.TH ZCROSS 1\-ESPS 8/10/91
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+zcross \- computes average zero-crossing rate for sampled data in FEA records 
+.SH "SYNOPSIS"
+.B zcross
+[
+.BI \-P " params"
+] [
+.BI \-f " sd_field"
+[
+.BI \-f " zeros_field"
+]] [
+.BI \-r " range"
+] [
+.BI \-x " debug_level"
+]
+.I "input output"
+.SH "DESCRIPTION"
+.PP
+.I Zcross
+accepts a FEA file \fIinput\fP containing a vector sampled-data field
+in each record.  It produces a FEA file \fIoutput\fP with records
+containing the average zero-crossing rate of the sampled-data field
+from that record.  Each field of sampled data may be thought of as a
+separate frame of data, such as might be produced by \fIframe\fP
+(1\-\s-1ESPS\s+1).  The default name for the sampled data field in
+\fIinput\fP is \fIsd\fP, and the default name for the zero-crossing
+field in \fIoutput\fP is \fIzero_cross_rate\fP.  Both defaults can be
+changed by means of the \fB\-f\fP option.  If \fIinput\fP is "\-",
+standard input is used for the input file.  If \fIoutput\fP is "\-",
+standard input is used for the output file.
+.PP
+The zero-crossing rate is computed by multiplying the number of zero
+crossings by the sampling frequency and dividing by the number of samples
+in the frame.  Thus, the units are zero-crossings per second.  If
+\fIinput\fP is not a segment-labelled FEA file (see FEA (5\-\s-1ESPS\s+1)),
+the frame is considered to comprise all of the points in the sampled data
+field, so the frame length is a constant set to the size of the sampled
+data field (which can be determined from the file header).  If \fIinput\fP
+is segment-labelled, the size of the sampled data field is really a maximum
+size, and the frame size for a particular record is given by the
+\fIsegment_length\fP field (this field is always present in
+segment-labelled files).  Thus, for segment-labelled files, the frame from
+any input record is the first \fIsegment_length\fP points of the sampled
+data field.
+.PP
+The sampling frequency is determined by the generic header item
+\fIsrc_sf\fP from \fIinput\fP.  If this generic header item doesn't exist,
+the sample frequency is set to 1 so that the zero-crossing rate is reported
+in units of crossings per sample.  (Note that you can always use
+\fIaddgen\fP (1\-\s-1ESPS\s+1) to put in the correct sampling frequency if
+it is missing.)
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-P " param" " \fR[params]\fP"
+Specifies the name of the parameter file.
+.TP
+.BI \-r " start" : "last" "\fR [1:(last in file)]"
+.TP
+.BI \-r " start" :+ "nan"
+In the first form, a pair of unsigned integers specifies the range
+of records to be processed.
+Either
+.I start
+or
+.I last
+may be omitted; then the default value is used.
+If
+.IR last " = " start " + " nan,
+the second form (with the plus sign) specifies the same range as the first.
+The \fB\-r\fP overrides the values of \fIstart\fP and \fInan\fP from 
+the parameter file.  
+.TP
+.BI \-f " field_name" 
+If this option is used once, it specifies the name of the sampled data
+field in \fIinput\fP.  If it is used twice, the second time it specifies
+the name of the power field in \fIoutput\fP.  The default names for these
+fields are "sd" and "zero_cross_rate", respectively.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file does not have to be present,
+since all the parameters have default values.
+The following parameters are read, if present, from the parameter file:
+.IP
+.I "sd_field_name \- string"
+.IP
+This is the name of the sampled data field in \fIinput\fP.
+The default is "sd".  A parameter file value (if present) is overridden
+by the first use of the \fB\-f\fP option.  
+.IP
+.I "zcross_field_name \- string"
+.IP
+This is the name of the raw power field in \fIoutput\fP.  The default is
+"zero_cross_rate".  A parameter file value (if present) is overridden by
+the second use of the \fB\-f\fP option.
+.IP
+.I "start \- integer"
+.IP
+This is the first record of \fIinput\fP to process.  The default is 1.  It
+is not read if the \fB\-r\fP option is used.
+.sp
+.I "nan \- integer"
+.IP
+This is the number of records to process.  It is not read if the \fB\-r\fP
+option is used.  A value of zero means all subsequent records in the file;
+this is the default.
+.PP
+Remember that command line option values override 
+parameter file values.
+.SH "ESPS COMMON"
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overridden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+ESPS Common is not processed by 
+.I zcross
+if \fIinput\fP is 
+standard input.  Otherwise, provided that the Common file is newer 
+than the parameter file, and provided that the \fIfilename\fP entry in 
+Common matches \fIinput\fP, the Common values for \fIstart\fP and 
+\fInan\fP override those that may be present in the parameter file. 
+.PP
+The following items are written into the ESPS Common file 
+provided that \fIoutput\fP is not <stdout>.  
+.IP
+.I "start \- integer"
+.IP
+The starting point from the input file.
+.sp
+.I "nan \- integer"
+.IP
+The number of points in the selected range.
+.sp
+.I "prog \- string"
+.IP
+This is the name of the program 
+.RI ( zcross
+in this case).
+.sp
+.I "filename \- string"
+.IP
+The name of the input file \fIinput\fP.
+.SH ESPS HEADERS
+.PP
+The \fIoutput\fP header is a new FEA file header.  If the generic
+header item \fIsrc_sf\fP exists in the input file, it is copied to the
+output file if it exists (otherwise it is set to 1).  The items
+\fIstart\fP and \fInan\fP are written to contain the starting record
+number and number of records processed.
+.PP
+The size of the input sampled data field is written to the generic 
+\fIfrmlen\fP.  
+.PP
+The generic header item \fIstart_time\fP is written in the output
+file.  The value written is computed by taking the \fIstart_time\fP
+value from the header of the input file (or zero, if such a header
+item doesn't exist), adding to it the relative time from the first
+record in the file to the first record processed, and adding a
+displacement corresponding to half of \fIfrmlen\fP.  The computation
+of \fIstart_time\fP depends on the value of the generic header item
+\fIsrc_sf\fP in the input file (which is assumed to be the sampling
+rate of the actual data in each field).  If this item is not present,
+\fIstart_time\fP is just copied from the input file to the output
+file.
+.PP
+As usual, the command line is added as a comment and the header of
+\fIinput\fP is added as a source file to \fIoutput\fP.  Another
+comment gives the name of the field added by \fIzcross\fP.
+.SH "FUTURE CHANGES"
+.PP
+Control over the type of the output power field.  
+.SH "SEE ALSO"
+.PP
+\fIframe\fP (1\-\s-1ESPS\s+1), FEA (5\-\s-1ESPS\s+1), \fIfea_stats\fP
+(1\-\s-1ESPS\s+1), \fIpwr\fP (1\-\s-1ESPS\s+1), \fIwindow\fP
+(1\-\s-1ESPS\s+1), \fIaddgen\fP (1\-\s-1ESPS\s+1), \fIstats\fP
+(1\-\s-1ESPS\s+1) 
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+.I zcross
+will exit with an error message if any of the 
+following are true: 
+.I input
+does not exist or is not an ESPS FEA file; 
+the sampled-data field does not exist in
+.I input;
+the power field already exists in
+.I input.
+.PP
+.I Zcross
+will warn if the generic \fIsrc_sf\fP doesn't exist in \fIinput\fP. 
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Manual page and program by John Shore.  
+

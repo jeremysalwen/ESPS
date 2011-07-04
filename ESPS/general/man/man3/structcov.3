@@ -1,0 +1,66 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)structcov.3	1.3 02 May 1997 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH STRUCT_COV 3\-ESPSsp 02 May 1997
+.SH NAME
+struct_cov \- compute a structured covariance estimate of a Toeplitz autocorrelation matrix
+.SH SYNOPSIS
+.ft B
+int 
+.br
+extern int debug_level;
+
+struct_cov(S, R, distance, size, cvgtst, max_iter)
+.br
+double **S, *R, *distance, cvgtst;
+.br
+int size;
+.SH DESCRIPTION
+.PP
+\fIStruct_cov\fR estimates the autocorrelation coefficients, \fIR\fR,
+(equivalent to a Toeplitz autocorrelation matrix) that corresponds to
+the input sampled covariance matrix (\fIS\fR).  \fISize\fR is the
+number of rows (or columns) in the input covariance matrix, and the
+number of returned autocorrelation values.  \fIDistance\fR is the
+final distortion between the input covariance matrix and the resulting
+autocorrelation matrix.  \fIstruct_cov\fP estimates \fIR\fP
+iteratively; the estimator terminates after \fImax_iter\fP iterations,
+or after the relative change in autocorrelation values falls below the
+convergence threshold \fIcvgtst\fR.
+.PP
+Input sample covariance matrices can be obtained from
+\fIestimate_covar\fP (3\-\s-1ESPS\s+1sp).  
+.SH DIAGNOSTICS
+.PP
+\fIStruct_cov\fR returns 0 if no problem is discovered in the process
+of estimating the autocorrelation values, and it returns 1, if a
+problem arises.  If the external \fIdebug_level\fP is positive, 
+debugging output is printed on stderr, with higher values yielding
+more verbose output.  
+.SH SEE ALSO
+.PP
+\fIestimate_covar\fP(3\-\s-1ESPS\s+1sp),
+\fIstrcov_auto\fP(3\-\s-1ESPS\s+1sp),
+.br
+\fIgenburg\fP(3\-\s-1ESPS\s+1sp),
+\fIget_vburg\fP(3\-\s-1ESPS\s+1sp), 
+\fIget_fburg\fP(3\-\s-1ESPS\s+1sp)
+.SH REFERENCES
+.TP
+[1]
+J.P.Burg, D.G.Luenberger, D.L.Wenger, "Estimation of Structured
+Covariance Matrices" \fIProceedings of the IEEE\fP, Vol. 70, No. 9
+September 1982
+.TP
+[2] T.W. Anderson, "Estimation for Autoregressive Moving Average
+Models in the Timne and Frequency Domain," \fIThe Annals of
+Statistics\fP, 1977, Vol. 5, No. 5, 842-865.
+.TP
+[3]
+J.E. Shore, "On a Relation Between Maximum Liklihood Classification 
+and Minimum Relative-Entropy Classification, \fIIEEE Transactions on 
+Information Theory\fP, Vol. IT-30, No. 6, Nov. 1984, pp. 851-854.
+.SH AUTHOR
+Code by B. Frankel; ESPS modification by D. Burton;
+manual page by D. Burton. Additional mods by John Shore

@@ -1,0 +1,36 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)elpr.1	1.2 7/23/93 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  ELPR 1\-ESPS 7/23/93
+.SH ELPR
+elpr \- a standard way for ESPS/waves+ scripts to print
+.SH SYNOPSIS
+.B
+elpr [any lpr options]
+.SH DESCRIPTION
+.PP
+Program \fBelpr(1)\fR provides a standard means for ESPS/waves+ scripts to
+print.  If environment variable ELPR is set then it is evaluated and executed
+with any paramaters passed on the elpr command line.  If the enviroment
+variable ELPR is not set then lpr is called with the command line parameters
+.SH EXAMPLES
+.PP
+.nf
+%setenv ELPR "lpr -Php"
+%elpr -n -c 1 foobar.ps
+.fi
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+.SH AUTHOR
+.PP
+Ken Nelson
+
+
+
+

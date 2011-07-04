@@ -1,0 +1,167 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)interpfilt.3	1.7 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH INTERP_FILT 3\-ESPSsp 18 Apr 1997
+.SH NAME
+interp_filt \- perform interpolation filtering on a data array.
+.SH SYNOPSIS
+.ft B
+.br
+int interp_filt (nx, x, y, pzfunc, state, up, down, poutflag, pout);
+.br
+int nx, up, down, *poutflag, *pout;
+.br
+double *x, *y, *state;
+.br
+struct zfunc *pzfunc;
+.ft
+.SH DESCRIPTION
+.I interp_filt
+takes an array of 
+.I nx
+inputs in 
+.I x,
+performs interpolation filtering, and returns the result in
+.I y.
+This changes the sampling rate
+by a factor of 
+.I up/down.
+To accomplish this it raises the sampling rate by a factor of 
+.I up
+by inserting zeros into the input data sequence,
+filters it with the transfer function pointed to by
+.I pzfunc,
+and downsamples the resulting sequence by a factor of
+.I down
+to result in 
+.I *pout
+outputs.
+Depending on the values of
+.I nx
+and
+.I *poutflag
+on any particular call to the function, 
+.I *pout
+will either be
+.I nx*up/down
+or
+.I nx*up/down + 1.
+.PP
+In the case of IIR filtering, a weighted sum must be computed for each
+sample at the higher sampling rate 
+.I (up*src_sf).
+For FIR filtering, however, the function is implemented so as to compute
+only the samples which will be returned in the
+.I y
+array.
+The user may change
+.I nx, 
+and
+.I *pzfunc,
+between calls of the function, but the values passed on the first call
+of the function for 
+.I nx, pzfunc->nsiz,
+or
+.I pzfunc->dsiz
+must never be exceeded.
+.PP
+.I poutflag 
+is a pointer to a variable which indicates to the subroutine which sample
+in the function's internal state array corresponds to the next output.  Normally, the calling program
+should initialize this parameter to zero at the beginning of the
+filtering operation, and not change it after that.
+.PP
+The array pointed to by
+.I state
+contains the present state vector of the filter, when implemented in
+"Direct" form.
+The calling program should allocate space for the
+.I state
+array sufficient to store max
+.I (up*pzfunc->nsiz, up*pzfunc->dsiz)
+elements.
+For FIR filters, the state vector will contain the previous
+input samples at the 
+.I up*src_sf
+sampling rate.
+For IIR filters, the contents of the state vector are more complicated.
+Since the function retains information about its past inputs and outputs
+through the
+.I state
+array, the contents of this array should normally not be altered
+by the calling program between calls to the function.
+.PP
+Data can be stored in the 
+.I state
+array prior to the first call to
+.I interp_filt
+for the purposes of initialization.
+For either FIR or IIR filters, the 
+.I state
+array should be initialized to contain all zeroes if the filtering operation
+is to assume zero inputs before the starting point of the filtering.
+For FIR filters, the 
+.I state
+array may be filled with the previous
+.I up*(pzfunc->nsiz)
+which would occur at the sampling rate
+.I up*src_sf,
+in order to have the first computed output correspond to "steady state"
+conditions.
+.SH EXAMPLE
+.nf
+/* The following is valid for FIR filtering. */
+
+skip_rec (fpin, start - pzfunc->nsiz, size_rec (ih));
+get_sd_recf (temp, pzfunc->nsiz, ih, fpin);
+
+/* Intersperse zeros in the state array to set the initial conditions. */
+for (i=0; i<pzfunc->nsiz; i++)
+    {
+    state [i*up] = temp[i];
+    for (j=1; j<up; j++) state [i*up+j] = 0;
+    }
+
+/* We're going to filter nan input samples. */
+nleft = nan;
+
+/* The first output will correspond to the first input. */
+outflag = 0;
+
+/* Main filtering loop. */
+while (nleft > nsamp))
+    {
+    get_sd_recf (x, nsamp, ih, fpin);
+    nleft -= nsamp;
+    interp_filt (nsamp, x, y, pzfunc, state, up, down, &outflag, &nout);
+    put_sd_recf (y, nout, oh, fpout);
+    }
+
+/* Finish up the odd samples. */
+get_sd_recf (x, nleft, ih, fpin);
+interp_filt (nleft, x, y, pzfunc, state, up, down, &outflag, &nout);
+put_sd_recf (y, nout, oh, fpout);
+
+.fi
+.SH DIAGNOSTICS
+The function returns 1 if the filtering was performed successfully.
+The function prints an error message to 
+.I stderr
+and exits if 
+.I pzfunc->dsiz
+is greater than 0 and 
+.I pzfunc->poles[0]
+is equal to 0.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+\fIfilter\fP(1\-ESPS), ESPS(5\-ESPS)
+.fi
+.SH REFERENCES
+L.R. Rabiner and R.W.Schafer, 
+.I Digital Processing of Speech Signals,
+page 22, Prentice-Hall, 1978.
+.SH AUTHOR
+Brian Sublett

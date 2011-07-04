@@ -1,0 +1,50 @@
+.lo
+.ce 2
+.b
+READ ME FIRST (SGI Beta Release)
+1.2 1/11/90
+.sh 1 "About this tape"
+.pp
+This tape contains a binary distribution of ESPS for the Silicon
+Graphics IRIS machines and ESPS source.   This is a Beta release of 4.0
+of ESPS (beta for all machines types) and a new port to the Silicon
+Graphics machines.   There are two main directories on the tape;
+\fIesps.sgi\fR is the binary directory that should be ready to install
+and run; and \fIgeneral\fR is the source directory.  If you need to work
+with the source, refer to the enclosed source installation
+instructions.
+.sh 1 "Installing ESPS"
+.pp
+This package contains the standard ESPS binary installation
+instructions.   There are two changes that must be made to the
+installation instructions.   First, the SGI distribution is not shown in
+the table.   The name of the SGI binary directory is \fIesps.sgi\fR and
+its size is about 29 Megabytes.   The other change is to section 3.0 and 3.1
+of the instructions.   Normally ESPS is rooted at \fI/usr/esps\fR.   What
+we usually do is to install it anywhere and put a symbolic link from
+there to \fI/usr/esps\fR.   This is because many systems we deal with
+have very limited space on \fI/usr\fR.    With this beta release,
+however, you must root ESPS at \fI/usr/esps3\fR instead.   Since most of
+the documentation refers to \fI/usr/esps\fR, I suggest that you install
+the system at \fI/usr/esps3\fR and then put a symbolic link from there
+to \fI/usr/esps\fR.   That way it appears to be at both locations and a
+user following the other documentation will not get confused.   For
+example you could:
+.nf
+.ft CW
+# cd /usr
+# tar px
+# ls
+.. .. .. esps3 .. .. .. 
+# ln -s /usr/esps3 /usr/esps
+.ft R
+.fi
+.pp
+Be sure that the modes of the files are correct (they should allow the
+most general access for reading and execution).    The \fBp\fR option on
+\fItar\fR should preserve the modes from tape.
+.pp
+.sh 1 "Handling of the Source Code"
+.pp
+Please don't send the source code out on the demo machine to a customer
+site.

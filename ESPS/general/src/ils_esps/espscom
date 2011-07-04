@@ -1,0 +1,4 @@
+string filename = "wd102.tst";
+string prog = "testsd";
+int start = 1;
+int nan = 252;

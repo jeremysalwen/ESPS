@@ -1,0 +1,6 @@
+get attributes global output $HOME/tmpwavepro
+sleep seconds 1
+shell xtext -F $HOME/tmpwavepro &
+return
+
+# @(#)displglob.WC	1.6 6/23/93

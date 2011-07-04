@@ -1,0 +1,21 @@
+#@(#)Ppkmc_filt	1.3 7/16/93 ERL
+string filt_type ?= "multiband": "Desired FIR kind:":{"MULTIBAND", "DIFFERENTIATOR", "HILBERT"};
+int filt_length ?= 33: "Filter length:";
+#int ngrid = 100: "Number of grid point:";
+float samp_freq ?= 1: "Sampling frequency:";
+int nbands ?= 3: "Number of bands:";
+float band1_edge1 ?= 0: "Left bandedge for band 1:";
+float band1_edge2 ?= .1: "Right bandedge for band 1:";
+float band1_des ?= 0: "Value for band 1, or slope for differentiator";
+float band1_wt ?= 1: "Weight for band 1";
+
+float band2_edge1 ?= 0.2: "Left bandedge for band 2:";
+float band2_edge2 ?= 0.3: "Right bandedge for band 2:";
+float band2_des ?= 1: "Value for band 2";
+float band2_wt ?= 1: "Weight for band2";
+
+float band3_edge1 ?= 0.4: "Left bandedge for band 3:";
+float band3_edge2 ?= 0.5: "Right bandedge for band 3:";
+float band3_des ?= 0: "Value for band 3";
+float band3_wt ?= 1: "Weight for band 3";
+

@@ -1,0 +1,26 @@
+.lo
+.ce 2
+.b
+README FIRST
+Document Version: 1.1 6/23/89
+.sh 1 "About this tape"
+.pp
+This tape contains both the ESPS Masscomp sources as described in the
+attached instructions and binary directories.   You can either build the
+system from source (see the source installation instructions), or use
+the pre-compiled binary (see the binary installation instructions).
+.pp
+The binary is included because we have noticed that some Masscomp
+systems have a C compiler version that fails to correctly compile a few
+of our programs.  The problem is actually with the libraries and results
+in some undefined symbols.   Some minor changes to the makefiles will
+fix this.  The problem seems to vary with different Masscomp systems,
+so it has been difficult to fix it for cetain.   (The risk of a source
+distribution.)  Call us if you see this problem. 
+.pp
+The binary tape contains two versions of the Masscomp binary; one built
+for X windows and the other built for Masscomp SP40 graphics.   Use the
+correct one for your configuration.   If you compile from the sources,
+you can control this by setting the correct parameters in the
+installation script.  See the source installation instructions for
+details.

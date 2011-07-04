@@ -1,0 +1,61 @@
+.\" Copyright (c) 1988 Entropic Speech, Inc. All rights reserved.
+.\" @(#)stsolv.3	1.1	20 Jun 1988	ESI
+.TH STSOLV 3\-ESPSsp 20 Jun 1988
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+stsolv \- solve a real symmetric Toeplitz system of linear equations by Levinson's method.
+.SH SYNOPSIS
+.ft B
+.nf
+int
+stsolv(r, v, order, w)
+double  *r, *v;
+int	order;
+double  *w;
+.fi
+.ft
+.SH DESCRIPTION
+.PP
+This function solves the system of equations
+.PP
+.I Rw = v
+.PP
+where  R  is a Toeplitz matrix with coefficients given by
+.PP
+.I R\d\s-3ij\s+3\u = r\d\s-3|i\-j|\s+3\u
+.PP
+The input vectors
+.I r
+and
+.I v
+and the output vector
+.I w
+are of
+length
+.I order
++ 1
+with indices running from 0 to
+.I order.
+In the intended applications,
+.I R
+is an autocorrelation matrix;
+it should be positive definite.
+Levinson's method is used \-
+reflection coefficients are computed as intermediate results,
+and the computation halts if a reflecton coefficient with
+magnitude 1 or greater is computed.
+In that case
+.I w
+will be the solution of a system of smaller order,
+indicated by the return value of the function.
+The return value upon normal completion is equal to
+.I order,
+and \-1 indicates that
+.IR r [0]
+equals 0.
+.SH BUGS
+None known.
+.SH "SEE ALSO"
+toep_solv(1\-ESPS), auto(1\-ESPS), cross_cor(1\-ESPS)
+.SH AUTHOR
+Rodney Johnson

@@ -1,0 +1,11 @@
+#!/bin/sh 
+# Script to do maximum entropy spectrum analysis
+# "%W% %G% ERL"
+
+# $1 is range 
+# $2 is input file
+# $3 is output file
+
+
+exprompt -PPrefcof $demo_temp/refcof.params
+refcof -P$demo_temp/refcof.params $1 $2 - | me_spec - $3

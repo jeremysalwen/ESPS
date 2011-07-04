@@ -1,0 +1,42 @@
+#!/bin/sh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# %W%	%G%	ERL
+# 
+# Written by:  Bill Byrne
+# Checked by:
+# Revised by:
+# 
+# Brief description: filter conversion programs test script
+# 
+cat > num << EOD
+2
+10.0 
+20.0
+EOD
+cat > den << EOD
+3 
+30.0 
+40.0 
+50.0
+EOD
+echo " "
+echo "----------------------------------"
+echo "numerator should be [10.0, 20.0]  "
+echo "denominator should be [30, 40, 50]"
+echo "----------------------------------"
+echo " "
+echo "atofilt -c" " num den - | fea2filt - - | filt2fea - - | psps -"
+echo " " 
+atofilt -c" " num den - | fea2filt - - | filt2fea - - | psps -
+
+/bin/rm den num

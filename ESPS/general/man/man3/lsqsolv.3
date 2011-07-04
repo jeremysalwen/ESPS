@@ -1,0 +1,301 @@
+.\" Copyright (c) 1988-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)lsqsolv.3	1.4 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH LSQ_SOLV 3\-ESPSsp 18 Apr 1997
+.SH NAME
+lsq_solv \- minimum least-squares solution of a system of linear equations
+.br
+lsq_solv2 \- minimum least-squares solutions of systems of linear equations
+.br
+moore_pen \- Moore-Penrose generalized inverse of a matrix
+.SH SYNOPSIS
+.ft B
+.nf
+int
+lsq_solv(a, b, m, n, x, eps)
+    double  **a, *b;
+    int	    m, n;
+    double  *x, eps;
+.sp
+int
+lsq_solv2(a, b, m, n, p, x, eps)
+    double  **a, **b;
+    int	    m, n, p;
+    double  **x, eps;
+.sp
+int
+moore_pen(a, m, n, x, eps)
+    double  **a;
+    int	    m, n;
+    double  **x, eps;
+.SH DESCRIPTION
+.PP
+The function
+.I lsq_solv
+attempts to solve a linear system
+.TP
+(1)
+.I Ax = b,
+.LP
+where
+.I a
+is a given
+.I m
+by
+.I n
+matrix,
+.I b
+is a given
+.IR m- component
+vector, and
+.I x
+is an
+.IR n- component
+vector to be determined.
+There may not be a solution \- for example it is typical
+for equation (1) to be inconsistent when
+.I m > n.
+If there is no solution,
+then a least-squares approximate solution of (1) is obtained.
+This is a vector
+.I x
+for which the norm
+.IP
+.I ||Ax \- b||
+.LP
+of the difference vector
+.I Ax \- b
+is as small as possible.
+(Here the norm of a vector, denoted by the symbols || ||,
+is defines as the square root of the sum of the squares of its components.)
+If there is more than one such vector
+.I x,
+then the
+.I minimum
+least-squares approximate solution is found.
+That is, among all the vectors
+.I x
+for which
+.I ||Ax \- b||
+is minimum,
+the one chosen is the one for which
+.I ||x||
+is least.
+.PP
+The argument
+.I a
+of
+.I lsq_solv
+is an input argument that gives the matrix
+.I A,
+represented as a pointer to the first element of an array of
+.I m
+pointers,
+each of which points to the first element of an array of
+.I n
+doubles that represents a row of
+.I A.
+(Matrices allocated by the functions
+.IR arr_alloc (3-ESPSu)
+and
+.IR d_mat_alloc (3-ESPSu)
+have this format.)
+The argument
+.I b
+points to the first element of an array of
+.I m
+doubles that represents the right-hand side of (1).
+The arguments
+.I m
+and
+.I n
+give the dimensions.
+The argument
+.I x
+points to the first element of an array of
+.I n
+doubles that receives the solution;
+this must be allocated by the caller before
+the function is called.
+The argument
+.I eps
+is a relative tolerance for use in pseudorank determination.
+The function attempts to test whether the matrix
+.I A
+is nearly rank-deficient \-
+that is, approximately equal to a matrix of some rank less than
+.RI min( "m, n" ).
+If so,
+.I A
+is treated as being of the smaller rank, known as the pseudorank.
+The pseudorank is returned as the value of the function.
+In general,
+.I eps
+should at least be greater than the machine precision \- say 1e\-15
+for IEEE double-precision floating point.
+If it known that there are greater uncertainties in the data,
+.I eps
+should be increased accordingly.
+.PP
+To find minimum least-squares solutions
+for several systems such as (1) with the same matrix
+.I A,
+but different right-hand sides
+.I b,
+use
+.I lsq_solv2.
+This function has an additional dimension parameter
+.I p,
+and the arguments
+.I b
+and
+.I x
+are an
+.I m
+by
+.I p
+matrix and an
+.I n
+by
+.I p
+matrix, represented as arrays of pointers like
+.I a.
+Each column of
+.I b
+independently plays the role of right-hand side,
+and the solution is stored in the corresponding row of
+.I x.
+.PP
+Use
+.I moore_pen
+to find the Moore-Penrose generalized inverse of
+.I A.
+This is an
+.I n
+by
+.I m
+matrix
+.I M
+such that
+.IP
+.I x = Mb
+.LP
+gives the minimum least-squares solution to (1).
+The result is the same as that obtained by calling
+.I lsq_solv2
+with
+.I p = m
+and an
+.I m
+by
+.I m
+identity matrix for
+.I b.
+.SH EXAMPLES
+.PP
+After the declarations
+.LP
+.nf
+	double  adata[5][4] = { {  9,  \-36,   18,   24},
+				{\-36,  192, \-108, \-144},
+				{ 30, \-180,  108,  144},
+				{  0,    0,    0,    0},
+				{  0,    0,    0,    0} };
+	double  *amat[5] = {adata[0], adata[1], adata[2], adata[3], adata[4]};
+
+	double  bvec[5] = {1, 0, 0, 0, 0};
+
+	double  bdata[5][2] = { {  1,    1},
+				{  0,    2},
+				{  0,    3},
+				{  0,    4},
+				{  0,    5} };
+	double  *bmat[5] = {bdata[0], bdata[1], bdata[2], bdata[3], bdata[4]};
+
+	double  *xvec;
+	double  **xmat;
+	double  **inv;
+
+	long    dim[2];
+.fi
+.LP
+and the initialization
+.LP
+.nf
+	xvec = (double *) malloc((unsigned) 5);
+.fi
+.LP
+executing
+.LP
+.nf
+	rank = lsq_solv(amat, bvec, 5, 4, xvec, 1e\-12);
+.fi
+.LP
+sets
+.I rank
+equal to 3 and stores the following in
+.I xvec.
+.LP
+.nf
+	    1           0.5         0.2         0.266667    0
+.fi
+.LP
+After
+.LP
+.nf
+	dim[0] = 4;     dim[1] = 2;
+	xmat = (double **) arr_alloc(2, dim, DOUBLE, 0);
+	rank = lsq_solv2(amat, bmat, 5, 4, 2, xmat, 1e\-12);
+.fi
+.LP
+.I rank
+equals 3, and the contents of
+.I xmat
+are the following.
+.LP
+.nf
+	    1           3
+	    0.5         1.91667
+	    0.2         0.86
+	    0.266667    1.14667
+.fi
+.LP
+After
+.LP
+.nf
+	dim[0] = 4;     dim[1] = 5;
+	inv = (double **) arr_alloc(2, dim, DOUBLE, 0);
+	rank = moore_pen(amat, 5, 4, inv, 1e\-12);
+.fi
+.LP
+.I rank
+equals 3, and the contents of
+.I inv
+are the following.
+.LP
+.nf
+	    1           0.5         0.333333    0           0
+	    0.5         0.333333    0.25        0           0
+	    0.2         0.15        0.12        0           0
+	    0.266667    0.2         0.16        0           0
+.fi
+.SH DIAGNOSTICS
+Returned value less than
+.RI min( "m, n" )
+when
+.I A
+is nearly rank-deficient.
+.SH BUGS
+None known.
+.SH REFERENCES
+[1] C. L. Lawson and R. J. Hanson,
+.I "Solving Least Squares Problems,"
+Prentice-Hall, 1974.
+.SH SEE ALSO
+.nf
+\fItoep_solv\fP(1\-ESPS), \fImatrix_inv\fP(3\-ESPSsp), \fIstsolv\fP(3\-ESPSsp)
+.fi
+.SH AUTHOR
+Rodney W. Johnson.
+Functions based on Fortran code by Lawson and Hanson (ref. [1]).

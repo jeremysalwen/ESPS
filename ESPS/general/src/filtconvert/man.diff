@@ -1,0 +1,107 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)filt_convert.1	1.1 5/21/91 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH FILTCONV 1\-ESPS 5/21/91
+.SH NAME
+.nf
+filt2fea \- transform FILT file to FEA_FILT file 
+fea2filt \- transform FEA_FILT file to FILT file 
+.SH SYNOPSIS
+.B filt2fea
+[
+.BI \-P "  params"
+] [
+.BI \-r " range"
+] [
+.BI \-x " debug_level"
+] 
+.I filt_file fea_filt_file
+
+.B fea2filt2
+[
+.BI \-P "  params"
+] [
+.BI \-r " range"
+] [
+.BI \-x " debug_level"
+] 
+.I "fea_filt_file filt_file"
+.SH DESCRIPTION
+These programs convert filter data between ESPS file types
+FEA_FILT and FILT. 
+Note that the 
+FEA_FILT file type is meant to replace the FILT file type.
+\fIfilt2fea\fP reads the header from
+the FILT file \fIfilt_file\fP, allocates an appropriate FEA_FILT
+header, reads the specified FILT records from \fIfilt_file\fP, and
+transforms them to FEA_FILT records which are written to the new FEA_FILT
+file \fIfea_filt_file\fP. \fIfea2filt\fP converts the FEA_FILT file 
+\fIfea_filt_file\fP to a new FILT file \fIfilt_filt\fP in the same way.
+All header items, both generic and those defined in the header,
+are copied from the source header to the destination
+header. 
+.PP
+Note that additional fields cannot be added to FILT records, so
+\fIfea2filt\fP 
+copies only the FEA_FILT record fields \fInum_degree,
+denom_degree, num_coeff,\fP and \fIdenom_coeff\fP to
+the destination FILT file.  Other fields in the FEA_FILT file are not
+copied. 
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-P " param" "\fR [params]\fP"
+Specifies the name of the parameter file.
+.TP
+.BI \-r " range"
+Select a range of records to be processed.  The default is
+all the records in the source file. (See
+.I grange_switch(3\-ESPS) 
+for full details of generic range specification.)
+.TP
+.BI \-x " debug_level" "\fR [0]\fP"
+Increasing values provide a more detailed running commentary
+on the program's progress. The default level is zero, which causes no
+debug output.
+.SH ESPS PARAMETERS
+The parameter file does not have to be present, since all the
+parameters have default values.
+The following parameters are read, if present, from the parameter
+file: 
+.TP
+.I "start \- integer"
+.IP
+This is the first record of the source file to process.  The default
+is 1. 
+It is not read if an initial record is specfied by the \fB\-r\fP option.
+.TP
+.I "nan \- integer"
+.IP
+This is the number of records to process.  It is not read if the
+\fB\-r\fP option is used to specify the last record to be processed.
+A value of zero means all subsequent records in the file; this is the
+default. 
+.TP
+.I "debug_level \- integer"
+.IP
+Not read if the \fB-x\fP option is used.
+.SH ESPS COMMON
+.PP
+The common file is not read.
+.SH ESPS HEADERS
+No information is lost when transforming a FILT file to a FEA_FILT
+file. No information is lost when transforming a FEA_FILT file to a
+FILT file if no additional fields have been added to the FEA_FILT
+file.  \fIcopy_genhd\fP (3\-\s-1ESPS\s+1) is used to duplicate
+the source generic header items in the destination header.
+.SH "SEE ALSO"
+notch_filt(1\-ESPS), FILT(5\-ESPS), atofilt(1\-ESPS), 
+wmse_filt(1\-ESPS), iir_filt(1\-ESPS), xpz(1\-ESPS),
+init_feafilt_hd(3\-ESPSu),
+init_feafilt_hd(3\-ESPSu),
+allo_feafilt_rec(3\-ESPSu), get_feafilt_rec(3\-ESPSu), put_feafilt_rec(3\-ESPSu),
+ESPS(5\-ESPS), FEA(5\-ESPS), FEA_FILT(5\-ESPS)
+.SH AUTHOR
+Man pages and program by Bill Byrne.
+

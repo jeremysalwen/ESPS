@@ -1,0 +1,60 @@
+# @(#)testfile	3.2 9/9/87 ESI
+# no files are open
+clear
+eval 1
+header 
+help
+log
+sel 1
+show buffer
+show fields
+show from
+show log
+show last
+show sel 1
+show to 
+size
+to foo
+to foo with a
+undo
+version 
+write
+#
+# this case is with an input, but no output
+from rc.fana
+clear
+eval 1
+header
+log
+sel 1
+show buffer
+show fields
+show from
+show log
+show last
+show sel 1
+show to
+size
+undo
+write
+#
+# open an output file
+to a.fana
+clear
+eval 1
+header
+help
+sel 1
+show buffer
+show fields
+show from
+show log
+show last
+show sel 1
+show to
+size
+undo
+sel 1
+write
+quit
+

@@ -1,0 +1,19 @@
+"ABOUT THIS DEMO..." shell xtext -Wp 5 540 -F help/inter_waves.doc -t "waves+ Intro" -i "Intro Help"
+
+"How To..." shell xtext -Wp 5 320 -F help/brief.instrs -t "How To Use waves+" -i HELP
+
+"Menu Changes" @do_menus.WC
+
+"Colors" @do_colors.WC
+
+"Input Files" @do_files.WC
+
+"See Demo Scipts and Menus" shell mbuttons -q 1 -X0 -Y225 -w"Demo Configuration Files" -i demofiles -b1 demofiles.BM
+
+"QUIT THIS DEMO" quit
+
+# @(#)controls.WM	1.7 3/16/92 ERL 
+
+
+
+

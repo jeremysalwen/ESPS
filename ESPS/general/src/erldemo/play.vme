@@ -1,0 +1,4 @@
+# play.vme  	@(#)play.vme	1.2 6/5/90
+# play on Sun4 using AT&T DSP32 board as output
+
+wplay -a $*

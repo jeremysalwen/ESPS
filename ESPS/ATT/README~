@@ -1,0 +1,8 @@
+To build ESI Waves+ from these sources you must have ESPS installed and
+on your path.   Then do "emake install" in this directory.
+
+
+The compilation (with gcc 3) will yield a huge number of warnings, but
+no should give no hard Errors.
+
+

@@ -1,0 +1,69 @@
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1992  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# %W% %G% ERL
+# 
+# Makefile for: 
+#
+# Written by:  Derek Lin
+# Checked by:
+# Revised by:
+
+CFLAGS =  -O3 $(PROGCFLAGS) 
+
+OBJS = sfconvert.o
+SRCS = sfconvert.c
+PROGNAME = sfconvert
+MANNAME = sfconvert.1
+DEFPARAM = Psfconvert
+
+$(PROGNAME): $(WSPSLIB) $(OBJS)
+	$(CC)  $(CFLAGS) $(OBJS) $(WSPSLIB) -lm -o $(PROGNAME)
+
+pure: $(WSPSLIB) $(OBJS)
+	purify $(CC)  $(CFLAGS) $(OBJS) $(WSPSLIB) -lm -o $(PROGNAME)
+
+$(OBJS): $(SINC)/esps.h 
+
+install: $(PROGNAME)
+	$(STRIP) $(PROGNAME)
+	-rm -f $(BINDIR)/$(PROGNAME)
+	-rm -f $(BINDIR)/esfconvert
+	mv -f $(PROGNAME) $(BINDIR)/$(PROGNAME)
+	chmod $(PROGMOD) $(BINDIR)/$(PROGNAME)
+	ln $(BINDIR)/$(PROGNAME) $(BINDIR)/esfconvert
+	-rm -f $(BINDIR)/xsfconvert
+	cp xsfconvert $(BINDIR)/xsfconvert
+	chmod $(PROGMOD) $(BINDIR)/xsfconvert
+	-rm -f $(MANDIR)/man1/$(MANNAME)
+	-rm -f $(MANDIR)/man1/xsfconvert.1
+	-rm -f $(MANDIR)/man1/esfconvert.1
+	cp $(MANNAME) $(MANDIR)/man1/$(MANNAME)
+	chmod $(MANMOD) $(MANDIR)/man1/$(MANNAME)
+	ln $(MANDIR)/man1/$(MANNAME) $(MANDIR)/man1/xsfconvert.1
+	ln $(MANDIR)/man1/$(MANNAME) $(MANDIR)/man1/esfconvert.1
+#
+# install the default parameter file
+# delete this section if there is no default params file
+#
+	-rm -f $(PARAMDIR)/$(DEFPARAM)
+	-rm -f $(PARAMDIR)/Pesfconvert
+	cp $(DEFPARAM) $(PARAMDIR)/$(DEFPARAM)
+	chmod $(LIBMOD) $(PARAMDIR)/$(DEFPARAM)
+	ln $(PARAMDIR)/$(DEFPARAM) $(PARAMDIR)/Pesfconvert
+
+clean:	
+	-rm -f $(OBJS) $(PROGNAME)  lint
+# also remove any test files, etc here
+
+lint:	$(SRCS) 
+	$(LINT) $(LINTFLAGS) $(SRCS) $(LINTLIB) -lm > lint
+

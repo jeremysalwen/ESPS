@@ -1,0 +1,200 @@
+.\" Copyright (c) 1988-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1996 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)addgen.1	1.19 10/1/98 ESI/ERL
+.ds ]W (c) 1996 Entropic Research Laboratory, Inc.
+.TH ADDGEN 1\-ESPS 10/1/98
+.SH "NAME"
+addgen - adds generic header items to an existing or new ESPS file header
+.SH "SYNOPSIS"
+.B addgen
+[
+.BI \-g
+.I generic_name
+]\|.\|.\|.
+[
+.BI \-t
+.I generic_type
+]\|.\|.\|.
+[
+.BI \-v
+.I generic_value
+]\|.\|.\|.
+[
+.BI \-x
+.I debug_level
+]
+[
+.B \-F
+]
+[
+.BI \-P
+.I params
+]
+.I espsfile.in
+[
+.I espsfile.out
+]
+.SH "DESCRIPTION"
+.PP
+\fIAddgen\fR creates a new file \fIespsfile.out\fR, copies the header
+from \fIespsfile.in\fR to \fIespsfile.out\fR, adds the specified
+generic header item, and copies the data from \fIespsfile.in\fR to the
+output file.  If \fIespsfile.out\fR is not supplied, then the generic
+header item is added to the input file \fIespsfile.in\fR.  In this 
+case a temporary copy is created in the process.  (The temporary 
+file will be create in the directory specified by the environment 
+variable ESPS_TEMP_PATH, with /usr/tmp as the default).  
+.PP
+If \fIespsfile.in\fP does not exist, then \fIaddgen\fP creates a new
+ESPS FEA file and adds the generic header item (in this case
+\fIespsfile.out\fP may not be supplied).  The resulting file
+\fIespsfile.in\fP has a single field defined (name: ADDGEN; type:
+SHORT; size: 1) and no data records.  This \fIaddgen\fP capability is
+useful when the resulting file (with additional generics defined in
+the header) will serve as an external ESPS file reference in the
+headers of other ESPS files.  Thus, common parameters for a large set
+of ESPS files can be stored one time only.
+.PP
+Values for all three options \fB\-g\fR, \fB\-t\fR, and \fB\-v\fR must be
+specified, or \fIaddgen\fR exits with an error message.  The values
+may be specified on the command line, in the params file, or jointly
+in the params file and on the command line.  If
+.I espsfile.in
+is not an ESPS file,
+.I addgen
+prints an error message and exits.  
+.PP
+If \fIespsfile.in\fR = "\-", standard input is read;
+if \fIespsfile.out\fR = "\-", standard output is written.
+.PP
+More than one generic header item can be added to the output header by
+repeating the three options \fB\-g\fR, \fB\-t\fR, and \fB\-v\fR on the
+command line.
+Each must be given the same number of times, up to a maximum of 100.
+.PP
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-g " generic_name"
+Specifies the name of the generic header item.
+If a generic header item by this name already exists,
+\fIaddgen\fR warns and exits unless \fB\-F\fR is also specified.
+.TP
+.BI \-t " generic_type"
+Specifies the type of the generic header item.  Allowable values are
+DOUBLE, FLOAT, LONG, SHORT, CHAR, EFILE, and AFILE.
+.TP
+.BI \-v " generic_value"
+Specifies the value of the generic header item.  For CHAR, EFILE, and
+AFILE, the value is a quoted string.  For EFILE (external ESPS file)
+and AFILE (external ASCII file) the string gives the name of the file,
+which can be a full path name.  If there is no leading "/" or hostname
+in the string, the path to the current working directory is prepended
+automatically.  If there is a leading hostname, the hostname must be
+followed by a full path (i.e., starting with "/"). A leading hostname
+has the form of a string followed by a colon.  For example,
+"epiwrl:/usr/speech_data/male/fricative.sd" is a properly formated
+EFILE value.  If a leading hostname is not followed by a full path,
+\fIaddgen\fP prints an error and exits.  Note that the use EFILE and
+AFILE types with leading hostnames can be expensive, as the current
+implementation causes programs like \fIpsps\fP(1\-\s-1ESPS\s+1) \fB-e\fP
+or \fIget_genhd_efile\fP(3\-\s-1ESPS\s+1) to copy the entire referenced
+file from across the network via \fIrcp\fP. 
+.TP
+.BI \-x " debug level \fR[0]\fP"
+If
+.I debug_level
+is nonzero then debugging output from library functions is enabled.
+.I addgen 
+does not do any debug output currently.
+.TP
+.BI \-F 
+This forces the overwriting of an existing header item.
+If the \fB\-g\fP named generic header item already exists in
+the input file, \fIaddgen\fP (1\-\s-1ESPS\s+1) normally
+warns the user and exits. By specifying the \fB\-F\fP
+option, \fIaddgen\fP (1\-\s-1ESPS\s+1) will overwrite the existing
+value with the new specified value. 
+.TP
+.BI \-P " param" " \fR[params]\fP"
+Specifies the name of the parameter file.
+.SH "ESPS PARAMETERS"
+.PP
+The following parameters are read, if present, from the parameter
+file:
+.IP
+.I "generic_name \- string"
+.IP
+This is the name of the generic header item to add.  
+.IP
+.I "generic_type \- string"
+.IP
+This is the type of generic header item to add.  Allowable
+DOUBLE, FLOAT, LONG, SHORT, CHAR, EFILE, and AFILE.
+.sp
+.IP
+.I "gen_value_f \- float"
+.IP
+.I "gen_value_i \- integer"
+.IP
+.I "gen_value_s \- string"
+.IP
+These are used to specify the value of the generic header item to add.
+.IP
+At present, there are three types of values that can be specified in a
+parameter file: \fIint\fR, \fIfloat\fR, and \fIstring\fR.  \fIInt\fR
+is used to input LONG and SHORT.  \fIfloat\fR is used to input FLOAT
+and DOUBLE, and \fIstring\fR is used to specify character strings.
+Only one value is read from the parameter file for the generic header
+item that is being added \- either \fIgen_value_f\fR,
+\fIgen_value_i\fR, or \fIgen_value_s\fR \- and which value is read
+depends on the value of \fIgeneric_type\fR. For example if
+\fIgeneric_type = DOUBLE\fR, \fIgen_value_f\fR should be specified in
+the params file.  If \fIgeneric_type\fP is CHAR, EFILE, or AFILE,
+\fIgen_value_s\fP should be specified in the params file.  See the 
+discussion of string format under \fB-v\fP, above.  
+.PP
+Remember that command line option values override 
+parameter file values.
+.SH ESPS HEADERS
+.PP
+All old header values are copied and the specified header value is
+added.  The input ESPS file is not treated as a source file within the
+recursive header.  The \fIdate\fP field in the universal portion of
+the output header is not affected by \fIaddgen\fP (i.e., it is the
+same as that of the input header).  Besides the usual command line in
+the comment field, a comment is added giving the name of the added
+generic header item, the user name, and the date/time at which it was added.
+.PP
+\fIaddgen\fP (1\-\s-1ESPS\s+1) can be used to add the \fIstart_time\fP
+and \fIrecord_freq\fP generics that are required by
+\fIwaves+\fP. It can also be used to modify
+the values of any generic header items.
+.SH ESPS COMMON
+.PP
+ESPS Common is not used.
+.SH "FUTURE CHANGES"
+.PP
+None contemplated.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIaddfea\fP (1\-\s-1ESPS\s+1), \fIcomment\fP (1\-\s-1ESPS\s+1), \fIpsps\fP (1\-\s-1ESPS\s+1), \fIpplain\fP (1\-\s-1ESPS\s+1), 
+\fIbhd\fP (1\-\s-1ESPS\s+1), \fIinhibit_hdr_date\fP (3\-\s-1ESPS\s+1), ESPS(5-ESPS)
+.fi
+.SH "WARNINGS"
+.PP
+Sphere files are not supported.
+Files in Esignal format are not supported.
+PC WAVE format files are not supported.
+To add generic header items to files of these types (and convert them
+to ESPS files) put addgen(1-ESPS) on a pipe from copysps(1-ESPS).
+.PP
+.SH "BUGS"
+.PP
+.SH "AUTHOR"
+.PP
+Manual page and code by David Burton. Modifications by 
+John Shore, Alan Parker, Derek Lin, and Rod Johnson.  
+

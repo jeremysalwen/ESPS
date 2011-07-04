@@ -1,0 +1,6 @@
+#!/bin/sh
+#@(#)sdplay	1.2 6/21/91 ERL - sampled data filter for previewer
+for i in `ls $* | grep sd`
+do
+play  $i
+done

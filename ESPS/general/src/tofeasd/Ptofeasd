@@ -1,0 +1,6 @@
+#  @(#)Ptofeasd @(#)Ptofeasd	1.1	2/28/90	ESI";
+# default parameter file for tofeasd
+string	field_name ?= "samples": "Input field name";
+int	start ?= 1: "First record from input file to process";
+int	nan ?= 0: "Number of records from input file to process[0 means all]";
+float	record_freq ?= 0: "Record_freq (sampling rate) [0 means take from input file]";

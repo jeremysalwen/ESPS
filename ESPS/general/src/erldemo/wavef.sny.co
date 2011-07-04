@@ -1,0 +1,148 @@
+#wavef.sny..com  	@(#)wavef.sny.co	1.3 1/15/91
+# command file for explaining markers and showing various operations 
+# that can be performed on waveform windows
+#waves set command_step 1
+waves make name b file files/e_fe1.sd loc_x 0 loc_y 180 height 275 width 1100 ref_size 10
+sleep seconds .5
+waves make name e file files/e_fe1.sd2 loc_x 0 loc_y 500 height 275 width 1100 ref_size 10
+#set command_step 1
+sleep seconds 1
+
+# set cursors and markers
+
+b cursor time 0.5
+sleep seconds .3
+e cursor time 0.5
+sleep seconds .3
+b marker time 0.40 do_left 1
+sleep seconds .2
+b marker time 0.60  do_left 0
+sleep seconds .2
+e marker time 0.40 do_left 1
+sleep seconds .2
+e marker time 0.60  do_left 0
+sleep seconds .2
+shell lock_play audio/e_wave1.sd audio/e_wave2.sd &
+shell wait_for 2
+
+# progressive magnification 
+
+shell /tmp/play audio/e_wave3.sd &
+b bracket file files/e_fe1.sd start 0 end 1.0
+b marker time 0.40 do_left 1
+b marker time 0.60  do_left 0
+sleep seconds 2
+b bracket file files/e_fe1.sd start .2  end 0.8
+b marker time 0.40 do_left 1
+b marker time 0.60  do_left 0
+sleep seconds 2
+b bracket file files/e_fe1.sd start .3  end 0.7
+b marker time 0.40 do_left 1
+b marker time 0.60  do_left 0
+sleep seconds 2
+b bracket file files/e_fe1.sd start .48 end .52
+sleep seconds 2
+b bracket file files/e_fe1.sd start .3  end 0.7
+b marker time 0.40 do_left 1
+b marker time 0.60  do_left 0
+sleep seconds 3
+
+# paging forward 
+
+shell /tmp/play audio/e_wave4.sd &
+b bracket file files/e_fe1.sd start .6 end .8
+e marker time .6 do_left 1
+e marker time .8 do_left 0
+sleep seconds 2
+b bracket file files/e_fe1.sd start .8 end 1.0
+e marker time .8 do_left 1
+e marker time 1.0 do_left 0
+sleep seconds 2
+b bracket file files/e_fe1.sd start 1.0 end 1.2
+e marker time 1.0 do_left 1
+e marker time 1.2 do_left 0
+sleep seconds 2
+b bracket file files/e_fe1.sd start 1.2 end 1.4
+e marker time 1.2 do_left 1
+e marker time 1.4 do_left 0
+sleep seconds 2
+kill name e file files/e_fe1.sd2
+
+# hand editing 
+
+shell /tmp/play audio/e_wave5.sd &
+waves make name b file files/e_fe1.ed.sd loc_x 0 loc_y 500 height 275
+sleep seconds 1
+b marker time 1.2 do_left 1
+b marker time 1.4 do_left 0
+b bracket file files/e_fe1.ed.sd start 1.2 end 1.4
+sleep seconds 5
+kill name b file files/e_fe1.ed.sd
+sleep seconds .2
+b bracket file files/e_fe1.sd start 0 end 3
+sleep seconds .2
+
+# can make spectrograms among other operations 
+
+set min_spec_height 450
+make name b file files/e_fe1.spgm loc_x 0 loc_y 425 start 0  ref_size 10
+sleep seconds .5
+shell lock_play audio/e_wave6.sd &
+sleep seconds .5
+make name c file files/e_fe1.nb.spgm loc_x 500 loc_y 300 start 0  ref_size 10
+sleep seconds 1
+shell wait_for 2
+set min_spec_height 250
+shell /tmp/play audio/e_wave7.sd
+
+#show shimmering and overlays
+
+shell lock_play audio/e_wave8.sd &
+call commandname shimmer.com
+set colormap esps/lib/waves/greymap
+call commandname shimmer.com
+shell wait_for 1
+
+# overlay demo
+
+#get rid of nb spgrm before overlay
+kill name c file files/e_fe1.nb.spgm
+sleep seconds 1
+shell /tmp/play audio/e_wave9.sd 
+b overlay file files/fe1.fb.sig on_file fe1.sd.spgm
+sleep seconds 2.5
+
+
+# similar operations on general multi-parameter ESPS objected oriented files
+
+make name b file files/e_fe1.rcn loc_x 500 loc_y 450 start 0 duration 4 height 400 width 600
+sleep seconds 2
+shell lock_play audio/e_wave10.sd
+sleep seconds 1
+b marker time 1.1 do_left 1
+b marker time 1.4  do_left 0
+sleep seconds 3
+b bracket file files/e_fe1.rcn start 1.1 end 1.4
+sleep seconds 3
+b bracket file files/e_fe1.rcn start 0 end 3
+sleep seconds .2
+b marker time 1.1 do_left 1
+b marker time 1.4  do_left 0
+sleep seconds .2
+shell wait_for 0
+
+# demonstrate cursor motion 
+
+set colormap esps/lib/waves/greymap
+b colormap threshold 35 range 60
+shell lock_play audio/e_wave11.sd &
+call commandname cursors.com
+call commandname cursors.com
+shell wait_for 0
+kill 
+sleep seconds 2
+set colormap esps/lib/waves/Colormap
+return
+
+
+

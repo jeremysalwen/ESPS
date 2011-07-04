@@ -1,0 +1,4 @@
+# @(#)Psetrange	1.2 12/22/88 ESI
+# default parameter file for setrange
+float start_s ?= 0: "Starting point in seconds";
+float nan_s ?= 0: "Number of seconds; 0 means whole file)";

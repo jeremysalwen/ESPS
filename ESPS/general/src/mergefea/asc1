@@ -1,0 +1,56 @@
+File: fea3
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is  tagged.
+Data format is 0 doubles, 6 floats, 0 longs,
+0 shorts, and 0 chars (bytes).
+comment text:
+ mergefea -a fea1 fea2 fea3 
+Source files: fea2
+              fea1
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 2
+Item name: fea2, type: FLOAT, size: 3, rank: 1
+Item name: fea1, type: FLOAT, size: 3, rank: 1
+
+---Generic Part of Header---
+frmlen: (LONG) 3 
+nan: (LONG) 2147483647 
+record_freq: (DOUBLE) 2 
+src_sf: (FLOAT) 8000 
+start: (LONG) 1 
+start_time: (DOUBLE) 0.6 
+step: (LONG) 3 
+
+Record 1: 
+Tag: 4
+fea2:  
+  0:             4             5             6 
+fea1:  
+  0:             1             2             3 
+
+Record 2: 
+Tag: 7
+fea2:  
+  0:             7             8             9 
+fea1:  
+  0:             4             5             6 
+
+Record 3: 
+Tag: 10
+fea2:  
+  0:            10            11            12 
+fea1:  
+  0:             4             5             6 
+
+Record 4: 
+Tag: 13
+fea2:  
+  0:            13            14            15 
+fea1:  
+  0:             7             8             9 
+

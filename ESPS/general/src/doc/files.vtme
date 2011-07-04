@@ -1,0 +1,911 @@
+.lo
+.de SM          \"macro to shrink left margin
+.br
+.nr $i \\n($i+\\$1i
+..
+.de RM          \"macro to restore original left margin
+.br
+.nr $i 0
+..
+.SJ "Data Files in the Entropic Signal Processing System (ESPS)"
+.AU "Alan Parker and Joe Buck"
+.RB "John Shore"
+.TM ETM-S-86-13:rap/jtb  3.5 1/22/93
+.*R
+Entropic Signal Processing System, Programmers Reference Manual
+.*R
+ETM-S-86-12, Parameter and Common Files in the Entropic Signal Processing System (ESPS)
+.*R
+ETM-S-86-14, Entropic Signal Processing System Programming Guidelines
+.*R
+ETM-S-86-21, Introduction to the Entropic Signal Processing System (ESPS)
+.*R
+ETM-S-86-25, Guidelines for Implementing ESPS Feature File Subtypes
+.*R
+ESPS APPLICATIONS NOTE: File Headers and Record Keeping in ESPS
+.*R
+ESPS APPLICATIONS NOTE: Converting Data to and from ESPS FEA Files
+.*R
+ETM-S-88--3, Machine Independent File I/O (MIIO) Module for ESPS
+.sh 1 Introduction
+.lp
+This document describes the Entropic Signal Processing System
+(\s-1ESPS\s+1) data files and presents information
+required to understand and write programs using the \s-1ESPS\s+1 data file
+header structures.    
+.(f
+\(co Copyright 1987-1990 Entropic Speech, Inc. Copyright 1991-1993 Entropic
+Research Laboratory, Inc.,  All rights reserved.  
+.)f
+.lp
+The reader must also read and understand the \s-1ESPS\s+1
+manual pages in reference [1].   These manual pages are in the
+standard \s-1UNIX\s+1 format; Section 1 describes user commands, Section 3
+describes library routines, and Section 5 describes the format of \s-1ESPS\s+1
+files.
+This document together with reference [1] is the complete description
+of the \s-1ESPS\s+1 file structures.
+.lp
+For additional information on \s-1ESPS\s+1 programming guidelines and a
+sample program see reference [3].  For a general introduction to 
+ESPS see [4].  
+.lp
+This document also describes support for reading files with NIST
+and other foreign headers, and how non-ESPS programs can read ESPS
+files.
+.sh 1 "Design Goals"
+.lp
+The design goals for ESPS files are:
+.ip "\ \ \(bu"
+Store all relevant information about the file, including analysis
+conditions, source files, history, and the type of data that is in the
+file.
+.ip "\ \ \(bu"
+Flexibility.  We will have sampled data files, files of fixed length
+records, and record files in which a tag marking a position is
+associated with each record.  We may want to store 8, 16, or 32-bit
+integers, or 32 or 64-bit floating point values.
+.ip "\ \ \(bu"
+The design should allow programs that only understand a few of the
+header items to run correctly.  For example, one could imagine a
+general plotting program that uses certain header items to determine
+where the data starts, whether the data type is integer or floating,
+and to put appropriate labels on the plot.  A program should not need
+special knowledge about how a certain type of data is stored; it
+should all be in the header.
+.ip "\ \ \(bu"
+The header should provide enough information to repeat an experiment
+or to check files for compatibility before processing.   
+.ip "\ \ \(bu"
+The design should allow new file types to be designed and added without 
+affecting existing data files of another type.
+.ip "\ \ \(bu"
+The design should allow users to add additional ("generic") header 
+items to existing ESPS file types without affecting existing data files
+of that type or existing programs that deal with files of that type.  
+.ip "\ \ \(bu"
+The header in a specific data file type should only contain items that are
+used by that specific file type.   
+.ip "\ \ \(bu"
+It should be possible to create user-defined ESPS file types.  
+.ip "\ \ \(bu"
+All fields in a data record should not have to be the same type;
+\fIe.g.\fR some fields are integer while others are floating.
+.ip "\ \ \(bu"
+Provide support for non-ESPS (foreign) headers.
+.ip "\ \ \(bu"
+Provide reasonable support for non-ESPS programs to access ESPS files.
+.ip "\ \ \(bu"
+Provide the ability for ESPS files to be moved across different computer
+architectures (by dealing with issues such as byte swapping, etc.).
+.lp
+For a general introduction to ESPS files and file headers, see [6].  
+.sh 1 "ESPS File Types"
+.lp
+All ESPS files conform to a common structure, consisting of a standard
+header followed by data records.  The header is the primary means by
+which record-keeping is performed within ESPS.  An ESPS header include the
+values of all important parameters to the program that created the ESPS
+file, and the header is a recursive structure that permits the inclusion
+of the headers of all source files that were inputs to the program.  It
+follows that most ESPS files contain a complete history of the origin of
+the data in the file and all intermediate processing steps.  ESPS file 
+headers and data records can be viewed by means of the program 
+.i psps
+(1-ESPS).  
+.lp
+Current ESPS file types in the general release include the following:
+.SM .5i
+.ip "FILT (obsolete)" 16
+digital filters
+.ip "SCBK" 16
+scalar quantization codebooks
+.ip "SD (obsolete)" 16
+sampled 
+.ip "SPEC (obsolete)" 16
+spectra 
+.ip "FEA" 16
+feature file
+.RM
+.lp
+.lp
+For a complete description of the \s-1ESPS\s+1 data files refer to
+\fIESPS\fR(5\-\s-1ESPS\s+1), \fISD\fR(5\-\s-1ESPS\s+1),
+\fIFILT\fR(5\-\s-1ESPS\s+1), \fISCBK\fR(5\-\s-1ESPS\s+1), and
+\fIFEA\fR(5\-\s-1ESPS\s+1) in reference [1].
+.lp
+The FEA type deserves special mention.  It is a general purpose file
+type that can be used to store arbitrary information in fixed-length
+records; optionally, the records can point to positions in various
+source files.  Unlike the case for the other ESPS file types \- the
+names, sizes, and data types of the fields in FEA records are not
+pre-defined.  This means that FEA files can be used to create
+user-defined ESPS files that have all of the advantages of the
+built-in file types.  For details, see [5].  We are replacing all of
+the built-in file types with FEA subtypes.  Currently, the following
+are available:
+.SM .25i
+.ip "FEA_SPEC"
+used for storing spectral information, such as power spectra.  Each
+record contains a vector of spectral values (powers or power densities
+in the case of power spectra), together with certain optional fields
+\- total power, an imaginary-part vector, number of frequencies, and a
+vector of frequencies \- that are present or absent according to the
+values of certain header items;
+.ip "FEA_ANA"
+suitable for speech processing; contains spectral parameters (various
+representations), pulse lengths, powers, and voicing information;
+.ip "FEA_VQ"
+contains vector quantization codebooks;
+.ip "FEA_STAT"
+contains statistical information (means, covariances, etc.) suitable
+for pattern-classification;
+.ip "FEA_SD"
+contains sampled data; supports multi-channel and complex data
+.ip "FEA_FILT"
+contains digital filter coefficients
+.RM
+.sh 1 "ESPS File Headers"
+.lp
+\s-1ESPS\s+1 data file headers consist of two primary parts; the common
+section and the type specific section.  All \s-1ESPS\s+1 data file
+headers have the same common section.  This section contains information
+relating to the type of the data in the file, creation date and version
+information, housekeeping information required by the header access
+routines, and comments.  The type-specific section of the header
+contains data relevant to the specific file type.  Data fields in the
+header are called \fIheader items\fR.  
+.lp
+Internally, a file header is stored as a C structure.  In the file
+itself, there are two types of header items.  Most header items are
+assigned a fixed location and are always present.  The remaining header
+items may or may not be present and may be variable in size.  These are
+stored in the file after the fixed location items, but programmers need
+not be concerned about the actual data format in the file.
+.lp
+Analysis conditions stored in file headers reflect the history of a
+file, not commands to programs that operate on the file.  In
+\s-1ESPS\s+1, the parameter file, the common file, and in some cases the
+command line specify analysis conditions and options that affect the
+operation of many \s-1ESPS\s+1 programs.  \s-1ESPS\s+1 programs consult
+the parameter file, the common file, and the command line for analysis
+conditions, and for most analysis conditions store these in the header
+of the output data file.  For information about the parameter and common
+files, see [2].  
+.lp
+There will be cases where there are not header items to save particular
+analysis conditions or options.  This is particularly likely during
+experimentation or testing of changes to programs.  If it is determined
+that a new analysis condition or option is significant it will likely be
+added to the file header in a future release.  In the meantime,
+experimental versions are free to use the spare locations in file
+headers (documented in [2, Section 5] for each file type), with the
+understanding that official ESPS releases may invalidate such use.  To
+further support record keeping, all \s-1ESPS\s+1 programs will record
+the command line that invoked them in the comment field of any generated
+output file headers, and in the case of conditions or options without
+corresponding header entries recording the command line will be the
+record of their use.  This convention facilitates record keeping when 
+files are produced by unofficial version of programs with special 
+analysis options.  The ESPS library routines
+.i get_cmd_line 
+and
+.i add_comment
+(3\-\s-1ESPS\s+1) support this convention.  
+.lp
+To allow a single file to contain its entire history, headers are recursive
+structures. This means that an entire file header may be included as an
+optional header item. The C structure representing the header in memory
+has fields that can contain pointers to other header structures.
+.sh 1 "Programming with the \s-1ESPS\s+1 Header Structures"
+.lp
+This section presents information needed to write programs using the \s-1ESPS\s+1
+header structures.
+.sh 2 "Header Structure"
+.lp
+Refer to the listing of \fIheader.h\fR in reference [1] to help
+understand this section.  Also, see \fIESPS\fR(5\-\s-1ESPS\s+1).  In the
+following, we assume that the variable "head" is a pointer to an ESPS
+file header structure.  As mentioned above, the header structure
+contains two portions \- the common portion and the type-specific
+portion.  The common portion of the header itself contains two
+structures, 
+.i common
+and
+.i variable
+.lp
+The structure \fIcommon\fR contains items present in every \s-1ESPS\s+1
+data file, regardless of type.  This section contains the type code of
+the header, a check value, identification of the program and its version
+that created the header, the name of the person who ran that program,
+the number of data records in the file, whether the data is tagged
+(meaning each record has a tag that refers to a point in a source file),
+and the type of the records in the data file.  An example (file creation
+date) is 
+.nf
+
+	head\->common.date.  
+
+.fi
+.lp
+The structure \fIvariable\fR contains pointers to source file names,
+embedded source file headers, two text fields (one is the comment field
+mentioned earlier), the name of a reference file, and two variables that
+tell the number of source file names and embedded headers.  An example
+(reference file name) is 
+.nf
+
+	head\->variable.refer.  
+
+.lp
+The variable portion also contains so-called "generic" header items,
+which are used by programs to store arbitrary information not included
+in the standard header.  This facility means that the basic design of an
+ESPS file type does not have to anticipate every application.  For
+example, the SD file type does not make provision for storing in the
+file header the average rate of zero crossings, but a program that needs
+to can do so by means of a generic header item.  If such an item 
+was created and called "zero_crossing", a pointer to 
+the stored value is given by 
+.nf
+
+	get_genhd("zero_crossing", ih)
+
+.fi
+.lp
+The type-specific portion of the header is provided by a union \fIhd\fR
+that contains pointers to each possible type-specific structure.  They
+are declared in a union so that additional pointers can be added in the
+future without affecting existing data files (since the size of the
+pointers themselves are the same).  Programmers can tell which of these
+pointers to use by checking the item head\->common.type.  The pointer 
+names are given in the following table:
+.nf
+
+.TS
+box,center;
+c c
+l l.
+Value of \fIcommon.type\fR	Pointer in \fIhd\fR to use
+_
+\s-1FT_SD\s+1	\fIhd.sd\fR
+\s-1FT_SPEC\s+1	\fIhd.spec\fR
+\s-1FT_FILT\s+1	\fIhd.filt\fR
+\s-1FT_SCBK\s+1	\fIhd.scbk\fR
+\s-1FT_FEA\s+1	\fIhd.fea\fR
+.TE
+
+.fi
+.lp
+For example, the sampling frequency from the header of an (old-style) SD file 
+is head\->hd.sd\->sf.
+.sh 3 "NIST (Sphere) Headers"
+.lp
+ESPS programs can read sample data files containing the NIST Shpere
+header (such as found on the TIMIT CD-ROM database).  This is
+implemented by having the ESPS file header access routines, detect an
+input file containing a NIST header and build an ESPS FEA_SD header from
+it.   All header information in the NIST header is saved as generic
+header items in the ESPS header.   
+.sh 3 "Foreign Headers"
+.lp
+It is often desirable to maintain an existing file header even if a file
+is converted to ESPS.   The non-ESPS header is called a foreign header
+and it can be stored in the file between the ESPS header and the first
+data record.
+.lp
+Foreign headers are kept in the ESPS header in the following manner:
+The generic header item \fIforeign_hd_length\fP contains the size (in
+bytes) of the foreign header.  If this item is present (and non-zero),
+\fIread_header\fP() will read this many additional bytes of data, put
+it into the header, and set an additional generic header item
+\fIforeign_hd_ptr\fP to point to it.  From that point on, the foreign
+header is just part of the ESPS header.  
+.lp
+With this mechanism, it is possible to write programs that 
+use the ESPS header and record I/O functions while still having
+access to the foreign header.  The procedure is simple: use 
+\fIread_header\fP() to read the ESPS header, and \fIget_genhd\fP() 
+to get the pointer to the foreign header.  
+.lp
+The conversion programs \fIbtosps\fR and \fIaddfeahd\fR would usually be
+used to create such files.   See reference [7].
+.sh 2 "Header Access Routines"
+.lp
+There are several \s-1ESPS\s+1 library routines that support access to the
+\s-1ESPS\s+1 data file headers.    
+These are described in detail in Section 3 of [1].
+Declarations
+for all these functions are found in \fI<esps/header.h>\fR; 
+the programmer need not declare them if this file is included.
+.lp
+The \fIread_header\fR routine attempts to read a file header from a
+stream (the fd parameter is typically one from a "fopen" call).  If an
+I/O error occurs
+\fIread_header\fR returns \s-1NULL\s+1.  
+If the file does not begin with a valid ESPS header, then
+\fIread_header\fR will determine if the file begins with a NIST header.
+If a NIST header is present, then a FEA_SD header is generated and
+filled in with the appropriate values from the NIST header (sample rate,
+minimum and maximum sample values, data type, etc).   \fIRead_header\fR
+then returns a pointer to this FEA_SD header in the usual way.
+Programs which called \fIread_header\fR on a NIST file will operate
+normally and not know that the file wasn't initially a normal ESPS
+file.  If neither a valid ESPS header, or a NIST header in present, then
+\fIread_header\fR will check for the \fIunix\fR environment variable
+\fBDEF_HEADER\fR.  If it is defined and points to a file containg a
+valid ESPS header, then that header is used instead.
+If all of the above attempts to find a header fail, then NULL is
+returned.
+Memory for the file header is
+allocated from dynamic memory.  After \fIread_header\fR returns, the
+program should consult \fIcommon.type\fR to determine the type of the
+header that has been returned.
+.lp
+The \fIwrite_header\fR routine attempts to write a file header onto a
+stream.  It computes and fills in values for hsize, fixsiz, check,
+date, and hdvers and ensures that must-be-zero fields contain zero, by
+clearing them.  If an I/O error occurs, \fIwrite_header\fR writes an
+error message and the program bombs.
+.lp
+The \fInew_header\fR routine allocates a new header from dynamic memory and
+returns a pointer to it.   Which type-specific header is allocated
+depends on the value of the argument \fItype\fR.    If \fItype\fR is
+zero, then no type-specific header is allocated, only the common part
+is.   This case is intended for use by the header access programs.  
+.lp
+The \fIcopy_header\fR routine accepts a pointer to a file header and
+returns a copy of the same type in which all items except
+common.comment, common.prog, common.vers, common.date,
+common.progdate, and common.hdvers are copied from the source header.
+This routine partially generates a header for an output file, given a
+header for an input file (any changed parameters must be filled in,
+along with the program name and version).  It is important to realize
+that this function can only be used when the output file is of the
+same type as the input file.
+.lp
+The \fIadd_source_file\fR routine inserts a source file name and header
+into the next available positions in a header. The nnames and nheads
+fields are incremented. Strictly speaking, only pointers are copied, so
+the source parameters must not be altered before \fIwrite_header\fR is
+called. 
+.lp
+The \fIadd_comment\fR routine appends a character string onto the
+comment field of a header.  For example, with the help of
+.i get_cmd_line
+(3\-\s-1ESPS\s+1), the command line is added as a comment.  
+All ESPS programs by convention add the command line as a comment in 
+the output header.  
+.lp
+For creating \fIzfunc\fR structures, the function 
+.i new_zfunc
+is supplied.  It allocates dynamic memory, builds a new zfunc structure,
+and returns a pointer to it. The zeros and poles are also copied to
+dynamic memory.  To assist in storing \fIzfunc\fRs as generic 
+header items 
+the functions 
+.i add_genzfunc
+and
+.i get_genzfunc
+are provided.  
+.lp
+Generic header items are added to an existing header by the 
+.i add_genhd_\fRX\fP
+(3\-\s-1ESPS\s+1) routines ("X" stands for one of six possible data types).
+Other generic-related header access routines are 
+.i genhd_list,
+which returns a list of the defined generic header items, 
+.i genhd_type,
+which returns the type of a specific generic header item, and 
+.i get_genhd,
+which returns a pointer to a specific generic header item.  These
+routines make it possible for programs to process the generic 
+header items in ESPS files without having to know what they are in 
+advance.  
+.sh 3 "Using the Header Access Routines"
+.lp
+The header access routines are easy to use.   The important
+thing to remember is that, before
+\fIwrite_header\fR is called, 
+.i "all values must be set in the header."
+The easiest error is to confuse pointers that might be in use pointing
+to several different headers, most often the input and the output file.
+The basic model of use is to open the input file and call
+\fIread_header\fR on this file.  This allocates memory for the input
+file header, checks the header on the input file, and reads to its end.
+The next read on this file will return data, rather than header, values.
+.lp
+If \fIread_header\fR returns without error, then it has found a
+valid \s-1ESPS\s+1 header.    The program should now check \fIcommon.type\fR
+to be sure that the file is of the type expected by the program.
+If it is not, then an error message should be printed and the
+program should exit with a non-zero exit code (standard convention
+is to use exit(1)).    Some programs may accept several (or any) of
+the valid \s-1ESPS\s+1 file types.    These programs should still consult
+\fIcommon.type\fR to determine which pointer in the union \fIhd\fR
+to use.    The use of the wrong pointer will cause unpredictable
+results (most often a harmless bus error, but worse could happen).
+.lp
+Since \fIread_header\fR returns a pointer to the main header structure,
+a pointer must be declared 
+before
+.i read_header 
+is called:
+.vS
+.nf
+
+    struct header *h;
+    .
+    .
+    .
+    h = read_header(file);
+
+.fi
+.vE
+After the call to 
+.i read_header, 
+items in the header may be accessed.  Here are some examples:
+.vS
+.nf
+
+    char *ref_file;
+    float frequency, avg_zero;
+    .
+    .
+    .
+    if (h->common.type == FT_SD) {	/*verify file type*/
+        fprintf(stderr, "Input file is not an SD file.\n");
+        exit(1)
+    }
+    ref_file = h->variable.refer;	/*get name of reference file for tags*/
+    frequency = h->hd.sd.sf;		/*sampling frequency of data*/
+    avg_zero = *(float *) get_genhd("zero_crossing", h);
+        
+.fi
+.vE
+.lp
+In some ESPS programs (especially newer programs), the call to 
+.i read_header
+and the file type checking is done within a library function 
+.i eopen,
+which also opens the file.  An example of this is given later.  
+.lp
+If the output file of the program is the same type as the input file
+then \fIcopy_header\fR is useful for creating the header of the new
+output file and filling in most values from the input file.  Some of
+these values might have to be changed before \fIwrite_header\fR is
+called, but in many cases, the header of an output file is much like
+that of its input file.  If the output file is of a different type than
+the input file, or the programmer decides that none or very few values
+will be in common, then \fInew_header\fR should be used to create the
+header for the new output file.  A type code must be specified when
+\fInew_header\fR is called.  In either case, when creating an output
+\s-1ESPS\s+1 file from source \s-1ESPS\s+1 files, the source headers
+should be saved in the new output header.  This is done by calling
+\fIadd_source_file\fR.  Here is an example of reading values 
+from the header of an input file, and creating and writing
+an output file header.   
+.vS
+.nf
+
+    char *speaker_name;
+    float samp_freq, zero_crossing, *coh_thresh;
+    long num_samples;
+    .
+    .
+    .
+    ih = read_header(in_file);    	/* get input header */
+    speaker_name = (char *) get_genhd("speaker", ih);  /*generic example*/
+    .
+    .
+    .
+    oh = new_header(FT_FEA)		/* create new output header */
+    (void) add_source_file(oh,in_file,ih);       /* save input header */
+    oh->variable.refer = ih->variable.refer;   /*same refer file*/
+    /*add the command line as a comment*/
+    add_comment(oh, get_cmd_line(argc, argv));
+    (void) strcpy (oh->common.prog, progname);
+    (void) strcpy (oh->common.vers, Version);
+    /*add generic header items*/
+    (void)add_genhd_f("avg. zero crossing", &zero_crossing, 1, ih)
+    coh_thresh = add_genhd_d("voicing threshold", (double *)NULL, 1, ih);
+    .
+    .
+    .
+    zero_crossing = . . .;
+    *coh_thresh = . . .;
+    (void) write_header(oh, ostrm);	/*ostrm is output file stream*/
+
+.fi
+.vE
+.lp
+The call to 
+.i add_source_file
+results in the input header being stored on the new output
+file.   This is done (within 
+.i add_source_file
+) by setting a pointer (\fIvariable.srchead\fR)
+to point to the old header.   There is a limit to the number of
+headers that can be embedded in this way.  It is defined as
+\s-1MAX_SOURCES\s+1 and its current value can be found in
+\fI<esps/header.h>\fR.    The header item \fIvariable.nheads\fR
+should be checked before calling \fIadd_source_file\fR if the
+programmer wants to avoid the chance of a run-time error because of
+exceeding this limit.   Of course, if the header is being stored in
+a new header and only once in the program, then it is safe to store a
+header without checking.  This is the case in the above example.  
+.lp
+The example above includes both "styles" of adding generic header items
+\- the \fIadd_genhd_\fRX routines can either allocate space for the item
+and return a pointer to it, or accept a pointer to existing space.  Note
+that the actual values written out to the header are the values that
+exist when 
+.i write_header
+is called, \fInot\fP the values that exist when the \fIadd_genhd_\fRX 
+routines are called.  Thus, in the above example, the two lines 
+prior to the 
+.i write_header 
+call determine the values written to the corresponding generic 
+header items.  There is, however, a "Hi-C" way to guarantee that
+the value written to the header is fixed at the time of the call to 
+\fIadd_genhd_\fRX routine, as follows:
+.nf
+
+    *add_genhd_f("avg. zero crossing", NULL, 1, ih) = zero_crossing;
+
+.fi
+When writing programs that exploit the generic header items in the input
+ESPS files, it may be the case that the presence of those items is useful
+but not essential.  In such cases, care should be taken allow the
+program to run on ESPS files that do not have the required gereric header
+items.  This can be accomplished by using 
+.i genhd_list, 
+or by checking for a NULL return value from 
+.i get_genhd.  
+.sh 1 "Data Structures"
+.lp
+The data structures for data records in the different types of
+\s-1ESPS\s+1 files are specified in the Section 5 manual pages that
+describe the file formats.  The general approach is to define a C
+structure that represents one data record in the file.  Access functions
+are available to support reading and writing such records, so that
+programmers can deal with the C structure and ignore the issue of how
+that structure is stored in the file.  
+.sh 2 "Data Access Routines"
+.lp
+In general a function named \fIget_\fRxx\fI_rec\fR and one named 
+\fIput_\fRxx\fI_rec\fR are provided to get and put records from/onto
+an \s-1ESPS\s+1 file type xx.   There is also  n\fIallo_\fRxx\fI_rec\fR 
+function that allocates memory for one record.  
+In most cases, the size of
+certain elements of the record, depend on values in the file header.
+.lp
+For example, here is an example of reading a \s-1SPEC\s+1 record:
+.vS
+.nf
+
+    FILE *ifile;
+    struct ana_data *p;
+    struct header *ih;
+    .
+    .
+    .
+    ifile = fopen(in_file,"r");    	/* open the file */
+    ih = read_header(ifile);		/* read the header */
+    if (ih->common.type != FT_SPEC) bomb();/* must be an ANA file */
+    p = allo_ana_rec(ih);		/* allocate the record */
+    if (!get_ana_rec(p,ih,ifile) eof();	/* read record */
+    nfreq = p->n_frqs;			/* get number of frequencies*/
+
+.fi
+.vE
+.lp
+The pointer p could be used in subsequent calls
+to 
+.i get_ana_rec
+provided that the program deals with only one record at a time.  If 
+more than one record is needed at the same time within the program, 
+additional pointers must be declared and additional space must be
+allocated by calls to 
+.i allo_ana_rec.
+.lp
+In the case of the built in file types, the type of the data
+(\fIe.g.\fR float, integer, etc.) is fixed and defined by the file
+format itself.  The header access routine \fIwrite_header\fR
+automatically sets the type fields in the common part of the header to
+their correct values (which depend on various other fields in the
+header).  The type codes might be set by code like this (this is done
+within
+.i write_header
+\- most ESPS programmers will never have to do anything like this):
+.vS
+.nf
+
+    struct header *h;
+    {
+    . . .
+    /* the tag doesn't count here */
+    h->common.ndouble = 0;
+    h->common.nfloat = 3 * val1 + 2;
+    h->common.nlong = 0;
+    h->common.\fRshort = 1;
+    h->common.nchar = 0;
+    }
+	
+.fi
+.vE
+.lp
+The actual code in the library has additional logic to insure that it is
+being used properly.  
+.lp
+There is one case where the type code fields are not set properly by 
+.i write_header
+\- old style SD files.  Since SD files can have data records of
+different types (unlike other current file types, in which the types
+in records are pre-defined), the user has specify what type of SD
+record is wanted.  This is done by means of the function
+.i set_sd_type,
+which must be called before writing any data to the file and before 
+calling 
+.i write_header.  
+SD files are exceptional in one other respect, namely
+that the "get" and "put" routines come in several flavors.  Recognizing
+that programmers will sometimes want to read or write SD records to or
+from short, float, and double arrays, different routines are provided to
+support these cases.  For example, the routine
+.i put_sd_recf
+will write SD records from a program array of type float.  Note that 
+the type of SD record (i.e., the type that will be stored in the SD 
+file) does not matter here.  Provided that there has been a previous
+call to 
+.i set_sd_type,
+the right conversion will be performed on output.  The new FEA_SD file
+type, which is intended to replace SD files, also allows separate
+specification of the data type stored in the file and the data type in
+memory (see \fIinit_feasd_hd\fP and \fIallo_feasd_recs\fP).  
+.lp
+As mentioned above, FEA files provide a mechanism to define their own
+record structure.  That is, users can determine the number, types,
+sizes, and names of the items stored in FEA records.  FEA files include
+special support for labelling the records with pointers to other source
+files.  The (3\-\s-1ESPS\s+1) functions that deal with FEA files are:  \fI
+allo_fea_rec, add_fea_fld, fea_decode, fea_encode, get_fea_ptr,
+get_fea_rec, print_fea_rec, \fRand \fIput_fea_rec\fR.  For a detailed 
+introduction to FEA files, see [5].  
+.sh 2 "Using \fIeopen\fP"
+.lp
+Many ESPS programs go through a sequence of getting a command-line
+file name, checking to see if it is a "\-" (for standard input or
+output), opening the file, and checking to see that is an ESPS file 
+type of the proper type (and proper subtype for FEA files).  Here's 
+an example with a FEA_ANA file:
+.vS
+.nf
+
+    /*
+     * open the input file 
+     */
+    if (optind < argc) {
+	in_fea = argv[optind++];
+	if (strcmp (in_fea, "-") == 0)
+	    in_fea = "<stdin>";
+	else
+	    TRYOPEN (argv[0], in_fea, "r", infea_strm);
+	}
+    else {
+	Fprintf(stderr, "no input file specified.\n");
+	SYNTAX;
+        }
+    /*
+     * check for FEA_ANA ESPS file
+     */
+    if ((fea_ih = read_header(infea_strm)) == NULL)      
+	ERROR_EXIT("couldn't read input FEA file header");
+    if(fea_ih->common.type != FT_FEA)
+	ERROR_EXIT("Input file is not a FEA file");
+    if(fea_ih->hd.fea->fea_type != FEA_ANA)
+	ERROR_EXIT("Input file is not FEA_ANA type");
+    /*
+     * allocate a record; input a record, and process
+     */
+    anafea_rec = allo_anafea_rec(fea_ih);
+    (void) get_anafea_rec(anafea_rec, fea_ih, infea_strm);
+    if (*(short *)get_genhd("spec_rep", fea_ih) != RC) 
+        ERROR_EXIT("FEA_ANA file does not have reflection coefficients");
+    rc0 = anafea_rec->spec_param[0];   /*get first reflection coefficient*/
+
+.fi
+.vE
+.lp
+Often, code like the above can be simplified by using 
+.i eopen,
+as follows:
+.vS
+.nf
+
+    if (optind < argc) 
+        in_fea = eopen(ProgName, argv[optind++], "r", FT_FEA, FEA_ANA, &fea_ih, &infea_strm);
+    else {
+            Fprintf(stderr, "no input file specified.\n");
+            SYNTAX;
+    }
+    /* note that standard input is allowed, so we don't need to check in_fea
+     *
+     * allocate a record; input a record, and process
+     */
+    anafea_rec = allo_anafea_rec(fea_ih);
+    (void) get_anafea_rec(anafea_rec, fea_ih, infea_strm);
+    if (*(short *)get_genhd("spec_rep", fea_ih) != RC) 
+        ERROR_EXIT("FEA_ANA file does not have reflection coefficients");
+    rc0 = anafea_rec->spec_param[0];   /*get first reflection coefficient*/
+.fi
+.vE
+.sh 2 "Reading Data Files with Generic Programs"
+.lp
+Before FEA files were introduced, a different mechanism was available
+to allow so-called "generic" (also called "dumb") programs to operate
+on \s-1ESPS\s+1 data files without knowing the details of the file
+format.  We shall describe that mechanism here, but users should avoid
+using it as it will be phased out in later releases. 
+.lp
+An example of such a "dumb" generic program is
+.i stats
+(1\-\s-1ESPS\s+1).  This program computes certain statistics on records
+in a data file, without knowledge of the particular data structure.
+Clearly, in order to support this class of programs sufficient
+information must be available in the file header.  To provide that
+information, the common part of the header contains the number of
+doubles, floats, longs, shorts, and characters that comprise a record
+within the file.  Moreover, the data in each record is stored in the
+order listed \- i.e., the given number of doubles followed by the given
+number of floats, etc.  These items are set automatically by 
+.i write_header
+when the ESPS file is created (except in the case of SD files, where
+a call to 
+.i set_sd_type
+is also needed), and they can be used by generic programs to properly
+read a record.  To simplify this further, the library function 
+.i get_gen_recd
+is
+provided to read an arbitrary \s-1ESPS\s+1 record into an vector of
+doubles.  A short example of reading records from a
+data file in a non-type specific manner is:  
+.vS
+.nf
+
+    FILE *ifile;
+    struct header *ih;
+    double tag;
+    double dbuf[100];
+    .
+    .
+    .
+    ifile = fopen(in_file,"r");
+    ih = read_header(ifile);
+    if (get_gen_recd(dubf, &tag, ih, ifile) == EOF) done();    
+    a = dbuf[2];		/* access an element */
+    
+.fi
+.vE
+Programmers and users sometimes need to know the correspondence between
+this generic view of an ESPS record and the type-specific view provided
+by the C structures such as this one for PIT files (see 
+.i PIT
+(5\-\s-1ESPS\s+1)):
+.vS
+.nf
+
+    struct pitch {
+    	long tag;		/*position in the reference file*/
+    	float pulse_dist;	/*pulse to pulse distance*/
+    	float raw_pulse_dist;	/*raw pulse distance*/
+    }
+
+.fi
+.vE
+.lp
+For example, a user of a generic statistics program might want to get
+statistics on the pulse_dist component of pitch records, and to do so
+must be able to state which element of the record this is from the
+viewpoint of generic programs.  This information is provided in 
+the section "RECORD ELEMENT FILE STRUCTURE" within each Section 5 ESPS
+manual page.  Thus, for example, by reading 
+.i SCBK
+(5-\s-1ESPS\s+1) you can determine that the final_dist component 
+of SCBK records is the element number 1 from the generic viewpoint.  
+In the case of FEA files, the correspondence between the FEA-specific
+view and the generic view is more complicated since a single such 
+table will not suffice, and for this reason an ESPS program is
+provided to translate between the two views; see \fIelemfea\fR
+(1\-\s-1ESPS\s+1).  
+.sh 1 "The Preamble - Reading ESPS Files with non-ESPS Programs"
+.lp
+Each ESPS header contains a fixed size structure which we call the
+preamble.   The preamble contains information necessary for the
+operation of the \fIread_header\fR function and will not be described in
+detail here.   However, the preamble does contain information that
+allows a non-ESPS program to skip over an ESPS header to access the data
+directly.   Note that this can also be achieved by the user level
+program \fIbhd\fR.   The assumption here, is that the user needs to
+incorporate into an existing non-ESPS program to ability to read an ESPS
+file.
+.lp
+From the view point of a non-ESPS program, the preamble is the first 8
+long words (32 bytes) of the file.   The preamble is always written in
+the Entropic EDR format (see reference [8]), so on a machine with a
+different default byte order the user program will have to byte swap the
+data.  EDR format has the same byte order as Sun workstations, so if
+your machine's order if different, you will have to convert it.
+.lp
+This is the preamble:
+.vS
+.nf
+struct preamble {
+   long         machine_code;	/* machine which wrote file, see header.h */
+   long         check_code;	/* version check code */
+   long         data_offset;	/* data offset (in bytes, from 0) in file */
+   long         record_size;	/* record size in bytes */
+   long         check;		/* ESPS magic number, same as main header */
+   long         edr;		/* YES if EDR_ESPS, NO if native */
+   long         align_pad_size;	/* alignment pad need for some SD files */
+   long         foreign_hd;	/* pointer to foreign header, -1 if */
+				/* there is none */
+};
+.fi
+.vE
+.lp
+The third long word contains the offset from the beginning of the file
+to the first data record (in bytes).   So to skip over the ESPS header,
+simply seek to this location in the file.   The next long word, contains
+the record size in bytes.   For a better detailing of the record format
+use the program \fIfea_element\fR(1\-ESPS) or \fIgen_element\fR(1\-ESPS).
+.lp
+All a non-ESPS need do to read an ESPS file, is to declare this
+structure, read in the first part of the file into it and then seek into
+the file to the point indicated by \fIdata_offset\fR.   If the machine
+on which you are reading this file has a different byte order from EDR,
+the you will have to byte swap these fields after reading them.   The
+field \fIedr\fR in the preamble tells you whether you have to worry
+about the data format of the data records, with respect to byte order
+and floating point format.   If \fIedr\fR is 1, then the data is in EDR
+format.  This is the most common data format in the workstation market.
+If your machine's data formats are different than that of a Sun, then
+you will have to convert the data.   If the \fIedr\fR flag is 0, then
+the file is in the native format of the machine which wrote it.  You
+will have to determine that machine type (look at \fImachine_code\fR)
+and convert from that format to that of the destination machine.   In
+most cases there is nothing to do, but some cases can be difficult.  It
+is possible that you can ensure that the ESPS file is written in the
+easiest format for you to deal with by your non-ESPS program.  See
+reference [8] for details on this.
+.lp
+If \fIforeign_hd\fR in the preamble is not -1, then the file contains a
+foreign header and this is a pointer to it.   Please note that this is
+not the normal way for ESPS programs to access the foreign header.  That
+would be via the generic item \fIforeign_hd_ptr\fR and
+\fIforeign_hd_length\fR.   The foreign header pointer in the preamble
+is provided just for the case of non-ESPS program access.
+
+.sp 2
+.ce 1
+(end)

@@ -1,0 +1,106 @@
+#! /bin/sh
+# Another test script for acf; this compares output with other programs
+# @(#)acf.t2	1.4 1/21/97 ERL
+#set -x
+
+cep_order=20
+fft_order=9
+range=-r1:630
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+
+echo "Running test to compare acf output with other ESPS programs."
+
+#run acf
+
+echo "running acf..."
+
+acf $range -P params.t3 test_speech.sd t2.acf
+
+# create pre-emphasis filter
+
+echo "creating preemphasis filter..."
+
+cat > preemp_data << ZAP
+2
+1
+-.97
+ZAP
+
+atofilt -c "preemphasis filter" preemp_data preemp.filt
+
+#run various other programs
+
+# preemphasize and frame 
+
+echo "computing preemphasis..."
+
+filter2 -F preemp.filt -d float test_speech.sd - | tee preemp.sd | frame -P params.t2 -f sd - sd.fea
+
+cp sd.fea test.fea
+
+# do power
+
+echo "computing power..."
+
+pwr $range -P params.t2 sd.fea - | mergefea -f power1 - test.fea
+
+# do zero corssings 
+
+echo "computing zero crossings..."
+
+zcross $range -P params.t2 sd.fea - | mergefea -f zero_crossing - test.fea
+
+# do reflection coefficients  + another power
+
+# do autocorrelations + another power
+
+echo "computing reflection coefficients..."
+
+refcof $range -P params.t2 preemp.sd refcof.fea
+
+size=`hditem -i order_unvcd refcof.fea`
+
+pplain -f spec_param refcof.fea | addfea -c rc -f refcof -s $size -t float - test.fea
+
+pplain -f raw_power refcof.fea | addfea -c pwr -f power2 -t float - test.fea
+
+echo "computing autocorrelations..."
+
+auto -P params.t2 preemp.sd auto.fea
+
+pplain -f spec_param auto.fea | addfea -c autocorr -f auto_corr -s $size -t float - test.fea
+
+pplain -f raw_power auto.fea | addfea -c pwr -f power3 -t float - test.fea 
+
+# do LSFs
+
+echo "computing LSFs..."
+
+transpec  -i spec_param -r rc -o line_spec_freq -m lsf refcof.fea - | mergefea -f line_spec_freq - test.fea
+
+# do LARs
+
+echo "computing LARs..."
+
+transpec  -i spec_param -r rc -o log_area_ratio -m lar refcof.fea - | mergefea -f log_area_ratio - test.fea
+
+# do LPC-CEP
+
+echo "computing LPC-CEP..."
+
+#transpec  -i spec_param -r rc -o lpc_cepstrum -m cep  refcof.fea - | mergefea -f lpc_cepstrum - test.fea
+
+refcof -o $cep_order  -P params.t2 preemp.sd - | transpec -i spec_param -r rc -m cep -o lpc_cepstrum - - | mergefea -f lpc_cepstrum - test.fea
+
+echo "computing fft..."
+
+fft $range -P params.t2 -o $fft_order preemp.sd - | mergefea -f re_spec_val - test.fea
+
+echo "computing fftcp..."
+
+fftcep $range -R -P params.t2 -o $fft_order preemp.sd - | mergefea -f cepstrum_0 - test.fea
+
+echo "You should now compare test.fea (ESPS results) with t2.acf (acf output)"
+
+echo "    Look at the first record only." 

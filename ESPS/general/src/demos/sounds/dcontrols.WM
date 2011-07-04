@@ -1,0 +1,13 @@
+# adapted from standard panel 
+
+"Menu Changes" make_panel name mstyle file menus.WM icon_title menus title "Menu Styles"
+
+"Image Painting" MENU
+  "Rescale" DEFAULT @rescale_on.WC
+  "No Rescale" @rescale_off.WC
+  "Image Painting Panel" make_panel name scont file imageglbl.WM columns 4 icon_title scontrol title "Image Painting Controls"
+"Image Painting" END
+
+"Image Colors" make_panel name color title "Image Color Support" icon_title Colors file colors.WM 
+
+# @(#)dcontrols.WM	1.5 1/18/93 ERL

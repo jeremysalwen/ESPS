@@ -1,0 +1,48 @@
+# @(#)lwb.test	1.2 1/21/88 ESI
+ESPSCOM=./espscom
+export ESPSCOM
+echo CONVERT LWB header and data file into ESPS file
+echo  " "
+echo lwb2esps two_chan dc.sd
+echo " "
+lwb2esps two_chan dc.sd
+echo " "
+echo LOOK at ESPS File
+echo CHECK number of records and first couple of values
+echo " "
+echo "psps -r1:20 dc.sd "
+echo " "
+psps  -r1:20 dc.sd 
+echo " "
+echo NOW look at LWB data file
+echo " "
+echo wc two_chan.D
+echo " " 
+wc two_chan.D
+sleep 15
+echo " "
+echo more -c two_chan.D
+echo " "
+sleep 5
+more -c two_chan.D
+echo " "
+echo NOW convert back to LWB file
+echo " " 
+echo esps2lwb dc.sd dc
+echo "  "
+esps2lwb dc.sd dc 
+echo " "
+echo COMPARE the two LWB data files
+echo Do they have the same number of values
+echo " "
+echo wc dc.D two_chan.D
+echo " "
+wc dc.D two_chan.D
+sleep 15
+echo  " "
+echo NOW check the new LWB data file values
+echo " "
+echo more -c dc.D
+echo " " 
+sleep 5
+more -c dc.D

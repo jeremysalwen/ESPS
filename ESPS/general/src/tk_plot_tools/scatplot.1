@@ -1,0 +1,225 @@
+.\" Copyright (c) 1987, 1988 Entropic Speech, Inc. All rights reserved.
+.\" @(#)scatplot.1	1.1  9/19/97  ESI
+.TH SCATPLOT 1-ESPS 9/19/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+scatplot - make a scatter plot
+.SH SYNOPSIS
+.B scatplot
+[
+.BI \-e " range"
+] [
+.BI \-r " range"
+] [
+.BI \-s " symbols"
+] [
+.BI \-t " text"
+] [
+.BI \-x " debug_level"
+]
+.br
+[
+.BI \-H " text"
+] [
+.BI \-V " text"
+] [
+.BI \-X " range"
+] [
+.BI \-Y " range"
+] [
+.BI \-W " generic window system options"
+] 
+.I file1
+[
+.I file2
+] . . .
+.SH DESCRIPTION
+.PP
+.I Scatplot
+makes a scatter plot of pairs of elements from multiple ESPS files
+.I file1, file2, . . . .
+When used as a file name, ``\-'' denotes standard input.
+.PP
+The plot is displayed in an X window.  The display has three pull down
+menus: \fBFile\fR, \fBViews\fR, and \fBHelp\fR.    The \fBFile\fR menu
+has two items: \fBPrint\fR and \fBQuit\fR.   \fBPrint\fR selects a
+dialog box that has controls to produce a PostScript output of the
+plot.   The \fBQuit\fR item causes the program to exit.
+.PP
+The \fBViews\fR menu has selectors that enable or disable display of
+the box around the plot, the horizontal grid, the vertical grid, any
+text (usually the file name and date), and the tick marks on the
+reticle.  This menu also has buttons to enable all of the above items,
+to redraw the original plot, and to refresh the plot as it is currently
+shown.
+.PP
+The \fBHelp\fR menu has two items: \fBon Plot Tool\fR and \fBAbout
+Plot Tool\fR.   These display a help file and version information.
+.PP
+If the \fB\-r\fP option is omitted, then the entire contents
+of all files are plotted.
+.PP
+The \fB\-e\fP option specifies which elements to plot.  An even
+number of elements must always be given since there are no default
+elements to plot.  The first pair of elements is associated with the first
+file, the second pair with the second file, and so
+on up to the last file or until no other pair of elements remains, in
+which case the last pair of elements is associated with the remaining
+files.  The first element in the pair is plotted as the abscissa
+and the second element as the ordinate.  Default symbols are used
+to distinguish between multiple files, but they can be overridden by
+the \fB\-s\fP option.  
+.PP
+.I Scatplot
+finds the maximum and minimum of the
+.I x
+values and the
+.I y
+values in the specified ranges of the input files
+and computes appropriate scales
+This automatic scaling can be overridden by the
+.B \-X
+and
+.B \-Y
+options.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-e " elements"
+Determine which elements within a record to plot.
+The elements may be separated by commas, or, more generally,
+any construct acceptable to
+.IR grange_switch (3-ESPSu)
+may be used, as long as the number of elements specified is even.
+The first pair of elements is associated with the first
+file, the second pair with the second file, and so
+on up to the last file or until no other pair of elements remains,
+in which case the last pair of elements is associated with the remaining
+files.
+The first element in the pair is plotted as the abscissa
+and the second element as the ordinate.
+.TP
+.BI \-r " first:last"
+.TP
+.BI \-r " first:+incr
+Determines the range of records to be plotted.  In the first form, a
+pair of unsigned integers gives the first and last records of the range.  
+If 
+.I first
+is omitted, 1 is used.  If 
+.I last 
+is omitted, the last record in the file is used.  The second form is
+equivalent to the first with 
+.I "last = first + incr".
+.IP
+This option may be repeated.
+The first
+.B \-r
+option applies to the first input file, the second
+.B \-r
+option to the second input file, and so on.
+If there are more files than
+.B \-r
+options, then the last option applies to all remaining files.
+.TP
+.BI \-s " symbols \fR[\fPxo*abcdefghijklmnpqrstuvwyz\fR]\fP"
+Plot the scatter plot using the symbols specified.
+The first symbol is used for the first file,
+the second symbol for the second file,
+and so on up to the last file.
+There must be at least as many symbols as files.
+The default symbols are given in brackets.  
+.IP
+The positions of the symbols
+.I `x'
+and
+.I `o'
+have been modified so that the plotting point falls very close to
+the "center" of the character.  Other characters will not have their
+centers exactly at the plotting points.
+.TP
+.BI \-t " text"
+Print a line of text above the graph.
+.TP
+.BI \-x " level"
+If
+.I level
+is nonzero, debugging information is written to the standard error output.
+Default is 0 (no debugging output).
+.TP
+.BI \-H " text"
+Print a line of text below the graph.
+.TP
+.BI \-V " text"
+Print a line of text along the left side of the graph going upwards.
+.TP
+.BI \-X " low:high"
+Specifies lower and upper limits for the x-axis, disables
+automatic computation of limits.
+.TP
+.BI \-Y " low:high"
+Specifies lower and upper limits for the y-axis, disables
+automatic computation of limits.
+.TP
+.BI \-W
+This option is followed by a character
+string consisting of the generic window system options. For example, on a
+system running X windows, to cause the plot to appear at a particular
+screen location the following command could be used: 
+.sp
+.br
+\fIscatplot -W "=300x250+50+200" file\fR.
+.PP
+.SH EXAMPLES
+.TP
+\fBscatplot \-r\fI1:500\fP \-s\fIxo \fB\-e\fI5,6,15,19 file1 file2\fR
+makes a scatter plot (using the letter \fIx\fP for file1 and the
+letter \fIo\fP for file2) of element 5 versus element
+6 in \fIfile1\fP and of element 15 versus element 19
+in \fIfile2\fP across the record range 1 to 500. The plot is
+displayed on the graphics terminal.
+.SH "ESPS PARAMETERS"
+.PP
+.I Scatplot
+does not read an ESPS parameter file.
+.SH "ESPS COMMON"
+.PP
+.I Scatplot
+does not read or write the ESPS common file.
+.SH "ESPS HEADERS"
+.PP
+.I Scatplot
+reads the following fields from the ESPS file headers:
+.I common.ndrec,
+.I common.tag.
+.SH DIAGNOSTICS
+.PP
+.nf
+scatplot: please give only one \-e option.
+scatplot: \-e option: even number of elements required.
+scatplot: please specify an element range with the \-e option.
+scatplot: data is not tagged in \fIfile\fP, cannot plot element 0.
+scatplot: please specify \fIn_symbols\fP symbols with the \-s option.
+scatplot: start point after end point.
+scatplot: only \fIn_points\fP in \fIfile\fP.
+scatplot: only \fIn_records\fP records read in \fIfile\fP.
+scatplot: calloc: could not allocate memory for \fIarray\fP.
+scatplot: d_mat_alloc: could not allocat memory \fImatrix\fP.
+scatplot: command line too long: truncating string.
+.fi
+.SH EXPECTED CHANGES
+.PP
+Allow range specifications of the form
+.IB "<field name>" [ "<range>" ]
+with FEA files.
+.SH SEE ALSO
+mlplot(1\-ESPS), genplot(1\-ESPS), fea_element(1\-ESPS),
+grange_switch(3\-ESPS).
+.SH AUTHOR
+.PP
+.nf
+Ajaipal S. Virdy
+Generalized by Rodney Johnson to allow independent ranges in the input
+files.
+.fi

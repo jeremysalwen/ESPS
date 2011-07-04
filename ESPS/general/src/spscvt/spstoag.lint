@@ -1,0 +1,38 @@
+spstoag.c:
+
+spstoag.c
+==============
+(100)  warning: main() returns random value to invocation environment
+fea_sup.c:
+
+fea_sup.c
+==============
+(450)  warning: rec_count set but not used in function cvt_fearec
+(861)  warning: index redefinition hides earlier one
+warning: argument unused in function:
+    (816)  hd in fill_gencoded
+    (815)  name in fill_gencoded
+    (856)  hd in fill_codes
+    (855)  name in fill_codes
+    (891)  hd in fill_codes1
+    (890)  name in fill_codes1
+    (889)  size in fill_codes1
+warning: possible pointer alignment problem
+    (149)  	    (153)  	    (157)  
+    (161)  	    (170)  	    (248)  
+    (260)  	    (268)  	    (285)  
+    (291)  	    (354)  	    (370)  
+    (374)  	    (378)  	    (382)  
+    (390)  	    (480)  	    (484)  
+    (488)  	    (492)  	    (500)  
+    (566)  	    (568)  	    (570)  
+    (572)  	    (921)  	
+
+
+==============
+name used but not defined
+    index   	spstoag.c?(30)
+name defined but never used
+    cvt_feahdr   	fea_sup.c(189)
+    cvt_fearec   	fea_sup.c(417)
+    fill_codes   	fea_sup.c(859)

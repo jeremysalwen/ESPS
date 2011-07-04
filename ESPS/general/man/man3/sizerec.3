@@ -1,0 +1,25 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)sizerec.3	1.6 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH SIZE_REC 3\-ESPSu 18 Apr 1997
+.SH NAME
+size_rec \- return the size of a record in an ESPS file
+.SH SYNOPSIS
+.ft B
+#include <esps/esps.h>
+.br
+size_rec(hptr)
+.br
+struct header *hptr;
+.ft
+.SH DESCRIPTION
+.PP
+.I size_rec
+returns the size, in bytes, of records in an ESPS file. It determines this
+information by examining fields in the supplied ESPS file header.
+.SH DIAGNOSTICS
+None.
+.SH BUGS
+.SH AUTHOR
+Joe Buck

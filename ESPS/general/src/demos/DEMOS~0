@@ -1,0 +1,75 @@
+#! /bin/sh
+# top level script for ERL demos
+# @(#)DEMOS	1.2 7/25/91 ERL
+#
+# Called with one (optional) argument
+#
+# $1 = path to directory for temporary files
+#set -x
+# check syntax
+
+case $# in
+1)
+        # any output files go in directory specified by $1
+	demo_temp=$1
+	;;
+*)
+	demo_temp=/usr/tmp/Edemo$$
+	echo "no temporary directory specified, will use $demo_temp"
+	;;
+esac
+
+# create temp directory if necessary, check that it is writable
+
+if test ! -d $demo_temp
+then
+  mkdir $demo_temp > /dev/null 2>&1
+fi
+
+touch $demo_temp/foo.$$ > /dev/null 2>&1
+
+if test -f $demo_temp/foo.$$
+ then
+   rm $demo_temp/foo.$$
+ else 
+   echo "$0: can't create $demo_temp or can't write in it; exiting. "
+   exit 1
+fi
+
+# make sure we have full path for temp directory
+cur_dir=`pwd`
+cd $demo_temp
+demo_temp=`pwd`
+cd $cur_dir
+
+# If we are not in the main demo directory, we try to find it 
+# and switch to it.  
+
+if test -f demo_menu
+  then
+    demo_dir=`pwd`
+  else
+    demo_dir=`get_esps_base`/newdemos
+fi
+
+if test ! -d $demo_dir
+ then 
+   echo "$0: Couldn't find demo directory; exiting."
+   exit 1
+fi
+
+demo_menu=$demo_dir/demo_menu
+cd $demo_dir > /dev/null 2>&1
+
+# insert temp directory in standard demo menu file
+
+sed s%@DEMO_TEMP@%$demo_temp% $demo_menu > $demo_temp/entropic.MB
+
+# bring up main button panel
+
+mbuttons -w "Entropic Demos" -i Edemos -X0 -Y0 -q1 $demo_temp/entropic.MB &
+
+
+
+
+

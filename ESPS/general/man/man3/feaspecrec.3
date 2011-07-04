@@ -1,0 +1,386 @@
+.\" Copyright (c) 1988 Entropic Speech, Inc. All rights reserved.
+.\" @(#)feaspecrec.3	1.6 06 May 1997 ESI
+.TH FEASPEC_REC 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+allo_feaspec_rec   \- allocate memory for FEA_SPEC file record
+get_feaspec_rec    \- get the next data record from an ESPS FEA_SPEC data file
+init_feaspec_hd    \- initialize a FEA file header for subtype FEA_SPEC
+put_feaspec_rec    \- write the next data record of an ESPS FEA_SPEC file
+.SH SYNOPSIS
+.ft B
+.nf
+#include <esps/esps.h>
+#include <esps/fea.h>
+#include <esps/feaspec.h>
+
+struct feaspec *
+allo_feaspec_rec(hd, re_spec_format)
+    struct header   *hd;
+    int	    re_spec_format;
+
+int
+get_feaspec_rec(data, hd, file)
+    struct feaspec  *data;
+    struct header   *hd;
+    FILE	    *file;
+
+int
+init_feaspec_hd(hd, def_tot_power, freq_format, spec_type,
+	    contin, num_freqs, frame_meth, freqs, sf, frmlen, re_spec_format)
+    struct header   *hd;
+    int		    def_tot_power;
+    int		    freq_format;
+    int		    spec_type;
+    int		    contin;
+    long	    num_freqs;
+    int		    frame_meth;
+    float	    *freqs;
+    double	    sf;
+    long	    frmlen;
+    int	    re_spec_format;
+
+int
+put_feaspec_rec(data, hd, file)
+    struct feaspec  *data;
+    struct header   *hd;
+    FILE	    *file;
+.ft
+.fi
+.SH DESCRIPTION
+.IP
+.I allo_feaspec_rec
+.PP
+This function allocates memory for a FEA_SPEC file record
+and returns a pointer to it.
+Since the size of the allocated record depends on values in the data
+file header, it is important to be sure that a given FEA_SPEC record is
+consistent with the header of the file it is being used with.
+(See
+.IR init_feaspec_hd (3-ESPSu)).
+Internally,
+.I allo_feaspec_rec
+calls
+.IR allo_fea_rec (3-ESPSu)
+and then hooks the FEA record up to a feaspec structure.
+.PP
+The feaspec structure refers to some fields
+that may in some cases be defined implicitly by the file header rather than by
+data in the file records.
+In such cases
+.I allo_feaspec_rec
+allocates storage separate from the FEA file record
+and fills in the values.
+The field
+.I im_spec_value
+in the structure is implicitly defined as an array of
+.I num_freqs
+zeros whenever the generic header item
+.IR spec_type
+has a value other than SPTYP_CPLX.
+The fields
+.I n_frqs
+and
+.I frqs
+in the structure are implicitly defined whenever the header item
+.IR freq_format
+has a value other than SPFMT_ARB_VAR.
+In that case
+.I n_frqs
+is the same as
+.I num_freqs,
+and the frequencies contained in
+.I frqs
+are either found in the generic header item
+.I freqs
+or computed from the generic header item
+.I sf.
+See the description of
+.I freq_format
+in the FEA_SPEC(5-ESPS) manual page for details.
+The field
+.I frame_len
+in the structure is implicitly defined by the generic header item
+.I frmlen
+whenever the header item
+.I frame_meth
+has the value SPFRM_FIXED.
+.PP
+If the header item \fIspec_type\fR has a value of SPTYP_DB, the real
+spectral values can be made available in the data structure as either
+floats or bytes, regardless of the representation in the external file.
+If \fIspec_type\fR is SPTYP_DB and \fIre_spec_format\fR is FLOAT,
+then \fIre_spec_val_b\fR in the data structure is NULL, and
+\fIre_spec_val\fR is defined;
+it is defined as a pointer into the underlying
+.I feaspec
+structure if the data type of the
+.I re_spec_val
+field in the external file is FLOAT,
+and as a pointer to separate storage allocated by
+.I allo_feaspec_rec
+if the external type is BYTE.
+If \fIspec_type\fR is SPTYP_DB and \fIre_spec_format\fR is BYTE,
+then \fIre_spec_val\fR in the data structure is NULL, and
+\fIre_spec_val_b\fR is defined;
+it is defined as a pointer into the underlying
+.I feaspec
+structure if the data type of the 
+.I re_spec_val
+field in the external file is BYTE,
+and as a pointer to separate storage allocated by
+.I allo_feaspec_rec
+if the external type is FLOAT.
+.PP
+if the header item \fIspec_type\fR has a value other than SPTYP_DB, then
+the parameter \fIre_spec_format\fR is ignored.
+.IP
+.I get_feaspec_rec
+.PP
+This function reads the next FEA_SPEC record from stream
+.I file
+into the data structure
+pointed to by
+.I data,
+which must have been allocated by means of 
+a call to
+.IR allo_feaspec_rec (3-ESPSu).
+The parameter
+.I hd
+points to the ESPS header
+in which the various FEA_SPEC fields have been defined.
+If \fIspec_type\fR is SPTYP_DB, and the external and internal data types
+of the spectrum data are different,
+.I get_feaspec_rec
+converts the types.
+There are two cases.
+If the
+.I re_spec_val
+member in
+.RI * data
+is a non-NULL pointer, and the type of the
+.I re_spec_val
+field in the file is BYTE, the function converts the byte values to float,
+subtracts a 64.0 dB offset,
+and stores the results in the array indicated by the pointer.
+(Byte quantities in the range 0 to 127 represent spectral values in
+the range \-64.0 dB to 63.0 dB; see
+.IR FEA_SPEC (5\-ESPS)).
+If the
+.I re_spec_val_b
+member in
+.RI * data
+is a non-NULL pointer, and the type of the
+.I re_spec_val
+field in the file is FLOAT, the function
+adds the 64.0 dB offset,
+converts the float values to byte,
+and stores the results in the array indicated by the pointer.
+.PP
+The function returns EOF upon end of file.
+If \fIspec_type\fR is SPTYP_DB,
+and a float-to-byte conversion results in an overflow,
+it returns the number of such overflows.
+The normal return value is 0.
+.IP
+.I init_feaspec_hd
+.PP
+This function takes a pointer
+.I hd
+to an ESPS FEA header.
+It sets
+.I hd.hd.fea\->fea_type
+to FEA_SPEC and initializes the record-field definitions to define the
+fields that make up a file of subtype FEA_SPEC.
+It does this by means of calls to
+.IR add_fea_fld (3-ESPSu).
+For a description of the various FEA_SPEC record fields, see FEA_SPEC(5-ESPS).
+The field
+.I tot_power
+is created if the argument
+.I def_tot_power
+has the value YES;
+if the value is NO, the field is left undefined.
+The field
+.I im_spec_val
+is created only if
+.I spec_type
+has the value SPTYP_CPLX defined in
+.I esps/feaspec.h.
+The fields
+.I n_frqs
+and
+.I frqs
+are created only if
+.I freq_format
+has the value SPFMT_ARB_VAR.
+The field
+.I frame_len
+is created only if
+.I frame_meth
+has the value SPFRM_VARIABLE.
+.PP
+If \fIspec_type\fR is SPTYP_DB then the value of the
+\fIre_spec_format\fR determines the data type \fIre_spec_val\fR on the
+physical file.  \fIre_spec_format\fR can be either FLOAT or BYTE.
+If \fIspec_type\fR != SPTYP_DB then \fIre_spec_format\fR is ignored.
+Note that \fIre_spec_format\fR determines the type of the data on the
+physical file.  A similar parameter on \fIallo_feaspec_rec\fR determines
+how the user program sees the data in memory.
+.PP
+.I init_feaspec_hd
+also defines the required generic header items described in FEA_SPEC(5-ESPS).
+The values of the following generic header items are set equal to
+the values of the corresponding parameter to
+.I init_feaspec_hd:
+.I freq_format, spec_type, contin, num_freqs,
+and
+.I frame_meth.
+.PP
+If
+.I freq_format
+equals the constant SPFMT_ARB_FIXED defined in
+.I esps/feaspec.h,
+the function defines the header item
+.I freqs
+and copies
+.I num_freqs
+frequency values, starting at the location that the argument
+.I freqs
+points to.
+If
+.I freq_format
+has any other value, the header item is not created, and the argument
+.I freqs
+is ignored.
+.PP
+If
+.I freq_format
+equals one of the constants
+SPFMT_SYM_CTR, SPFMT_SYM_EDGE, SPFMT_ASYM_CTR, and SPFMT_ASYM_EDGE
+defined in
+.I esps/feaspec.h,
+the function defines the header item
+.I sf
+and sets it equal to the argument
+.I sf.
+If
+.I freq_format
+has any other value,
+the header item is not created, and the argument
+.I sf
+is ignored.
+.PP
+If
+.I frame_meth
+equals the constant
+SPFRM_FIXED
+defined in
+.I esps/feaspec.h,
+the function defines the header item
+.I frmlen
+and sets it equal to the argument
+.I frmlen.
+If
+.I frame_meth
+has any other value, the header item is not created, and the argument
+.I frmlen
+is ignored.
+.PP
+.I init_feaspec_hd
+returns 1 if any of the internal calls to
+.IR add_fea_fld (3-ESPSu)
+return an error code.
+Otherwise, it returns 0.
+.I init_feaspec_hd
+should only be called when creating a new FEA_SPEC file,
+after the 
+.IR new_header (3-ESPSu)
+call.
+.IP
+.I put_feaspec_rec
+.PP
+This function writes a FEA_SPEC data record pointed to by
+.I data
+onto the stream
+.I file,
+which should be an open ESPS FEA_SPEC file.
+The header must be written out to the FEA_SPEC file
+before this function is called.
+If \fIspec_type\fR is SPTYP_DB,
+and the external and internal data types of the spectrum data are different,
+this function, like
+.I get_feaspec_rec,
+converts the types, adding or subtracting the necessary 64.0 dB offset.
+If a float-to-byte conversion results in an overflow,
+the function returns the number of such overflows.
+Zero is the normal return value.
+.SH EXAMPLE
+.sp .5
+.if n .ta 11 33
+.if t .ta 1i 3i
+.nf
+\fB\s-1Reading an existing file:\s+1\fR
+.sp .5
+struct feaspec *p;
+struct header *ih;
+ih = read_header(file);	\fI/* read FEA_SPEC file header */\fR
+p = allo_feaspec_rec(ih,FLOAT);	\fI/* allocate record */\fR
+if(get_feaspec_rec(p,ih,file) == EOF) . . .     \fI/* get next data record */\fR
+for (i = 0; i < num_freqs; i++)
+    p->re_spec_val[i] = 10.0 * log10(p->re_spec_val[i]);
+		\fI/* record reference */\fR
+
+\fB\s-1Creating a new file:\s+1\fR
+.sp .5
+struct header *ih;
+ih = new_header(FT_FEA);
+\fI/* create FEA_SPEC header */\fR
+if ( init_feaspec_hd(fea_oh, YES, SPFMT_SYM_EDGE, SPTYP_DB,
+	YES, 257L, SPFRM_FIXED, (float *) NULL, 8000.0, 180L, BYTE) != 0 )
+    ERROR_EXIT("error filling FEA header");
+ .
+ .
+ .		
+fd = fopen(outputfile,"w");
+write_header(ih,fd);
+p = allo_feaspec_rec(ih,FLOAT); 
+ .
+ .
+ .
+if(put_feaspec_rec(p,ih,file) != 0) \fIfloat to byte conversion error\fR
+
+.fi
+.SH DIAGNOSTICS
+.PP
+If
+.I hd
+does not point to a FEA header of subtype
+FEA_SPEC, then the program terminates with an assertion failure.  
+In
+.I get_feaspec_rec,
+if an incomplete record is read,
+a message is printed on the standard error output.
+In
+.I init_feaspec_hd,
+if the value of
+.I freqs
+is required but is NULL,
+the program terminates with an assertion failure.
+In
+.I put_feaspec_rec,
+if an I/O error occurs during the write,
+a message is written to standard error,
+and the program exits with status 1.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+allo_fea_rec(3-ESPSu),  copy_header(3-ESPSu), 
+eopen(3-ESPSu), new_header(3-ESPSu), 
+read_header(3-ESPSu), ESPS(5-ESPS), FEA(5-ESPS), 
+FEA_SPEC(5-ESPS), SPEC(5-ESPS)
+.fi
+.SH AUTHOR
+Rodney Johnson

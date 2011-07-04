@@ -1,0 +1,74 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved.
+.\" @(#)his.1	3.5 4/1/97 ESI/ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH HIS 1\-ESPS 4/1/97
+.SH NAME
+his \- sort data into bins to make histograms for plotting.
+.SH SYNOPSIS
+.B his
+[
+.BI \-x " debug_level"
+]
+[
+.BI \-r " range"
+]
+[
+.BI \-n " nbins"
+]
+.I out_file
+.SH DESCRIPTION
+.PP
+The program
+.I his
+reads Ascii data from standard input and sorts the data into bins
+to form a histogram for plotting.
+The output is Ascii data in a form that can be given directly to
+.IR aplot (1\-ESPS)
+to make the plot.
+If 
+.I out_file
+is "\-",
+the program writes standard output.
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-x " debug_level" " \fR[0]\fP"
+A value of 0 (the default value) will cause
+.I his
+to do its work silently, unless there is an error.
+A nonzero value will cause various parameters to be printed out
+during program initialization.
+.br
+.TP
+.BI \-r " low:high"
+This is the range of bin values on the x axis, specified in the format accepted by 
+.IR frange_switch (3-ESPSu).
+The default for range is +/\- 2048; this is appropriate
+for 12-bit sampled data files.
+.TP
+.BI \-n " nbins"
+The range is divided uniformly into
+.I nbins
+bins or segments.  Each bin includes its lower bound but does not
+contain its upper bound.  In other words, bin
+.I i
+will count the number of occurences of numbers greater than or equal
+to bin 
+.IR i 's
+lower bound, and less than bin 
+.IR i 's
+upper bound.  The default for
+.I nbins
+is 64.
+.SH ESPS PARAMETERS
+The parameter file is not accessed.
+.SH ESPS COMMON
+The common file is not accessed.
+.SH SEE ALSO
+\fIpplain\fP(1\-ESPS), \fIaplot\fP(1\-ESPS)
+.SH EXAMPLE
+pplain\0file.sp\0|\0his\0\-r\-1024:1024\0\-n2048\0\-\0|\0aplot\0\-z
+.SH AUTHOR
+Original code by Brian Sublett; extensively
+changed and modified for ESPS 3.0 by David Burton

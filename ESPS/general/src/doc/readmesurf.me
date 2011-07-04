@@ -1,0 +1,37 @@
+.lo
+.ce
+.ps +4
+.vw +4
+.sp
+\fBREAD ME FIRST for ATT Surfboard with Ariel - 8/15/91\fR 
+.sp
+.ps -2
+.vs -2
+.np
+The enclosed tape with the Entropic label contains the device driver for
+the AT&T Surfboard and test programs.   There may also be a tape from
+AT&T included with the board.  Please use the Entropic tape, as it
+incorporates some bug fixes relating to our software.
+.np
+If you orded the Surfboard and Ariel Pro-Port from Entropic, then these
+have been assembled and tested and are packaged together.   The smaller
+boxes contain the Surfboard manuals and accessories and the Ariel board
+manual.
+.np
+Some Ariel Pro-Ports have been shipped with a P8574AP part instead of
+the P8574P.  This part implements a serial interface that is used by the
+Surfboard to set the sample rate on the Ariel board.   If you have the
+wrong version part on your board Ariel board, you will get a message
+like: iicack: bus error, sta=0x8, flag=0x0, when you do analog I/O.  To
+correct this, simply define the Unix environment variable
+\fBP8574_type\fR to be zero.    
+.np
+The Ariel board can have either a 24 Mhz crystal, or a 16 Mhz crystal.
+Versions of Entropic software prior to ESPS 4.1, assume the 24 Mhz.
+Unfortunately, this does not yield 8 Khz as an available sample rate.
+There is a version of speech.sd which has been converted to 12 Khz in
+\fI/usr/esps/demo\fR, under the name of \fIspeech12.sd\fR.   If you have
+the Surfboard/Ariel combination, you should use this file instead of
+\fIspeech.sd\fR in the \fIwaves+\fR tutorial.
+.np
+Version 4.1 of ESPS will also support the 16 Mhz crystal.

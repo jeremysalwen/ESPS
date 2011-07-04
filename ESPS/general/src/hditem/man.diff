@@ -1,0 +1,108 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)hditem.1	1.5 4/1/97 ESI
+.TH HDITEM 1\-ESPS 4/1/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+hditem - print an item from an ESPS file header
+.SH SYNOPSIS
+.B hditem
+[
+.B \-s
+]
+.BI \-i " item_name"
+.I file
+.SH DESCRIPTION
+.PP
+.I Hditem
+prints an item from an ESPS file header on the standard output.
+If the
+.B \-s
+(silent) option is given, it merely returns a success or failure
+status, depending on whether or not the given generic item is defined
+in the file header.
+.PP
+\fIHditem\fR looks for items by the name given in 
+ESPS(5\-ESPS) (the common or universal part of the header)
+and generic header items.
+Sometimes these names are the same as the names printed
+by psps(1\-ESPS), but this is a coincidence. Support for the
+psps(1\-ESPS) item names is not provided.
+.PP
+If \- is specified as the input file, standard input is read.
+.PP
+The following "items" are universal or common header items
+and are always recognized:
+.IP \fIprogram\fR
+The program that created the file
+.IP \fIversion\fR
+The version of the program that created the file.
+.IP \fIprogdate\fR
+The date the program that created the file was compiled.
+.IP \fIdate\fR
+The file creation date
+.IP \fItyptxt\fR
+The typtxt field in the file header
+.IP \fIcomment\fR
+The comment text in the file header
+.IP \fIcurrent_path\fR
+The path (including host name) to the directory where the file was created
+.IP \fIndrec\fR
+The number of data records in the file
+.IP \fItype\fR
+The ESPS type code.
+.IP \fIhdvers\fR
+The version number of header.h used to make the input file.
+.IP \fIuser\fR
+The first 8 characters of the username (login name) of the
+creater of the file.
+.PP
+Two pseudo items are also always recognized:
+.IP \fIhostname\fR
+The host system on which the file was created
+.IP \fIcwd\fR
+The directory path to where the file was created on the host system.
+.LP
+These two items make up the \fIcurrent_path\fR item described above.
+They have been broken out to make shell script processing easier.
+.PP
+Other items are searched for using the \fIget_genhd\fP(3-ESPS) call.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.B \-s
+Silent mode.  Just return success or failure to the shell
+(unless the file specified is not a valid ESPS file).
+.TP
+.BI \-i " item_name"
+Specify the name of the header item whose value is desired.
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.SH ESPS COMMON
+.PP
+The common file is not used.
+.SH WARNINGS
+.PP
+Note that \fIhditem\fR gives the warning message
+\fBBroken pipe\fR, if it is on a pipe line. 
+.SH EXAMPLES
+.PP
+Print the number of samples in
+.IR peter.sd :
+.nf
+
+    %hditem -i ndrec peter.sd
+
+.fi
+.SH BUGS
+None known.
+.SH EXPECTED CHANGES
+.PP
+Add support for fea_type, segment_labeled, and field_count
+as items in FEA files and complex generic header items.
+.SH AUTHOR
+.PP
+Joe Buck. ESPS 3.2 conversion and item expansion by David Burton.
+
+

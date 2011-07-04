@@ -1,0 +1,5 @@
+# @(#)Pvqdst	1.1	5/1/91	ERL
+# Default parameter file for vqdst
+
+string distortion ?= "MSE": "Only mean square error supported";
+string field ?= "spec_param": "Field to encode";

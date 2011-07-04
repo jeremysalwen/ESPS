@@ -1,0 +1,34 @@
+.lo
+.ce 2
+.b
+README FIRST
+1.2 3/24/89
+.sh 1 "Package Contents"
+.pp
+This package contains the ESPS source, \fIwaves+\fR source, \fIwaves+\fR
+demo directory, and a sample DSP32 driver support kit.
+Each of these in a separate \fIbar\fR file set.  \fIBar\fR is a utility
+on the Sun 386i that works like \fItar\fR, but handles multi-volume
+sets.   The Sun 4 DSP32 driver kit was included to give you an idea how
+we package the driver, to help you when you get the 386i driver going.
+The source code to the Unix DSP32 device driver is in this kit.
+.sh 1 "Getting Started"
+.pp
+Read the detailed instructions that are enclosed.  But what you will do
+is to first read in the ESPS source, then the \fIwaves+\fR and then run
+the install script.  You will have to first go super-user and create
+\fI/usr/esps\fR and change its owner to be the same as who ever is
+running the install script.  I discourage you from doing the install as
+root.
+.pp
+The install script should be set up for the Sun 386i.
+.sh 1 "Demo Directories"
+.pp
+The demo directory \fIdemp.text\fR uses printed text and does not
+require the DSP board.  The directory \fIdemo.dsp\fR uses the DSP board
+for talking during the demos.   Look at the README file in each
+directory for instructions.  The DSP version is very preliminary and
+might have some problems.  
+.pp
+We did not send you the DSP version of the demo directory yet.  We will
+supply it when you are ready to test your DSP version of 386i waves.

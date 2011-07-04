@@ -1,0 +1,209 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getgenhd.3	1.18 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GET_GENHD 3\-ESPSu 18 Apr 1997
+.SH "NAME"
+.nf
+get_genhd \- get a pointer to a generic header item
+get_genhd_c \- get a pointer to generic header item of type char
+get_genhd_s \- get a pointer to generic header item of type short or coded
+get_genhd_l \- get a pointer to generic header item of type long
+get_genhd_f \- get a pointer to generic header item of type float
+get_genhd_d \- get a pointer to generic header item of type double
+get_genhd_coded \- get a pointer to string representations of coded generic header items
+get_genhd_val \- get the value of a numeric scalar generic header item
+get_genhd_efile \- get a pointer to the header of an external ESPS EFILE
+get_genhd_efile_name \- get a pointer to the name of an external ESPS EFILE
+get_genhd_afile \- get a stream pointer to an AFILE generic header item
+get_genhd_afile_name \- get a pointer to the name of an external ESPS AFILE
+.fi
+.SH "SYNOPSIS"
+.ft B
+#include <esps/esps.h>
+.PP
+.ft B
+.nf
+char *
+get_genhd(name, hd)
+char *name;
+struct header *hd;
+.sp
+char *
+get_genhd_c(name, hd)
+char *name;
+struct header *hd;
+.sp
+short *
+get_genhd_s(name, hd)
+char *name;
+struct header *hd;
+.sp
+long *
+get_genhd_l(name, hd)
+char *name;
+struct header *hd;
+.sp
+float *
+get_genhd_f(name, hd)
+char *name;
+struct header *hd;
+.sp
+double *
+get_genhd_d(name, hd)
+char *name;
+struct header *hd;
+.sp
+char **
+get_genhd_coded(name, hd)
+char *name;
+struct header *hd;
+.sp
+double
+get_genhd_val(name, hd, default)
+char *name;
+struct header *hd;
+double default;
+.sp
+struct header *
+get_genhd_efile(name, hd)
+char *name;
+struct header *hd;
+.sp
+char *
+get_genhd_efile_name(name, hd)
+char *name;
+struct header *hd;
+.sp
+FILE *
+get_genhd_afile(name, hd)
+char *name;
+struct header *hd;
+.sp
+char *
+get_genhd_afile_name(name, hd)
+char *name;
+struct header *hd;
+.fi
+.ft R
+.SH "DESCRIPTION"
+.I Get_genhd
+returns a pointer to the data associated with the
+generic header item \fIname\fR.  It is a "bare" form of these functions
+and should rarely be used in normal programs.  Programs should usually
+use one of these type\-specific versions.
+The functions \fIget_genhd_s\fR, \fIget_gehd_l\fR, \fIget_genhd_f\fR,
+\fIget_genhd_d\fR, and \fIget_genhd_c\fR call \fIget_genhd\fR and return
+a pointer value of the correct type.
+.PP
+The function \fIget_genhd_coded\fR returns a pointer to a
+list of character strings that represent the text
+values of the coded item (if the size of the coded item is greater than 1,
+there is one string for each element).  This is most often needed when it is
+desired to print a coded value.
+For a list of all possible values, use \fIgenhd_codes\fR.
+Note that when using a coded value
+for program control (as in a \fIswitch\fR statement), its numeric
+must be used, and \fIget_genhd_s\fR should be used in this case.
+.PP
+The value returned by
+.I get_genhd_val
+is the value of the header item
+.I name
+converted to DOUBLE,
+provided that the item
+has one of the numeric types
+DOUBLE, FLOAT, LONG, SHORT, and CHAR (or BYTE).
+If
+.I name
+is not defined as a generic header item in
+.I hd,
+or its data type is not numeric
+the returned value is that of the argument
+.I default.
+If 
+.I name
+is not a scaler (i.e. its size is greater than 1) the the value returned
+is the value of the first element of
+.I name.
+.PP
+.I Get_genhd_efile
+attempts to open the filename stored in the header item \fIname\fR and
+returns a pointer to the header of that file.  If the file cannot be
+opened, or it is not a valid ESPS file, or \fIname\fR is not of type
+EFILE, then the function returns NULL.  Note that since this function
+opens and processes file referenced by the header item each time it is
+called, the function should not be called more than once for a given
+value of \fIname\fR.  The function does not keep the external ESPS
+file open and no provision is made for reading the data in this file.
+Note that this call can be expensive in the current implementation in
+cases where the EFILE is on a remote host, as \fIrcp\fP is used to
+obtain a local copy.
+.PP
+.I Get_genhd_afile
+attempts to open the filename stored in the header item \fIname\fR and
+returns a file stream pointer (FILE *) to that file.  If the file cannot
+be opened or \fIname\fR is not of type AFILE the function returns NULL.
+Note that this call can be expensive in the current implementation in
+cases where the AFILE is on a remote host, as \fIrcp\fP is used to
+obtain a local copy.  
+.PP
+.I Get_genhd_efile_name
+and
+.I get_genhd_afile_name
+return the name of the file referenced by the generic header item
+\fIname\fR.  (Do not confuse the name of the generic header item, with
+that of the referenced filename.)  If \fIname\fR is not of type EFILE or AFILE,
+then NULL is returned.
+.PP
+These functions can only be called when the value of
+.I hd
+is a non-NULL header pointer such as the result returned by
+.IR read_header (3\-ESPSu)
+(or possibly
+.IR new_header (3\-ESPSu)
+or
+.IR copy_header (3\-ESPSu)).
+.PP
+All these functions except
+.I get_genhd_val
+return NULL if \fIname\fR does not exist in the header.
+.SH EXAMPLE
+.PP
+.nf
+float *p_zeta;
+\fI/* read in the header */\fR
+hd = read_header(file);
+\fI/* get generic header item zeta, assume you already know its type */\fR
+p_zeta = get_genhd_f("zeta", hd);
+\fI/* use its value */\fR
+y = *p_zeta*45.6;
+\fI/* instead of using a pointer variable, you could do this */\fR
+y = *get_genhd_f("zeta", hd)*45.6;
+\fI/* print value (in ASCII) of generic header item spec_rep */\fR
+fprintf (stdout, "spec_rep = %S", *get_genhd_coded("spec_rep", hd));
+.fi
+.SH DIAGNOSTICS
+.PP
+If \fIname\fR or \fIhd\fR is NULL,
+an assertion failure occurs (see
+.IR spsassert (3-ESPSu))
+and a message is printed.
+.SH "SPECIAL NOTE"
+.PP
+In earlier versions of ESPS, only \fIget_genhd\fR existed.  Since it
+is typed (char *) the function return type should be coerced into the
+correct type.  Plain \fIget_genhd\fR should not be used in new
+programs.
+.SH "SEE ALSO"
+.nf
+add_genhd(3\-ESPSu), genhd_list(3\-ESPSu),
+genhd_type(3\-ESPSu), genhd_codes(3\-ESPSu),
+copy_genhd(3\-ESPSu), read_header(3\-ESPSu),
+new_header(3\-ESPSu), copy_header(3\-ESPSu),
+spsassert(3\-ESPSu)
+.fi
+.PP
+.SH "AUTHOR"
+.PP
+Alan Parker

@@ -1,0 +1,31 @@
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)efree.1	1.5 9/26/97 ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH EFREE 1\-ESPS 9/26/97
+.SH "NAME"
+efree \- free an ESPS license
+.SH "SYNOPSIS"
+.B efree
+.SH "DESCRIPTION"
+.PP
+.I Efree
+.PP
+frees an ESPS license that was checked out by \fIecheckout\fR.
+The license can only be freed with this program by the same user that
+checked it out.   
+.PP
+If it is necessary to free a license that was checked out by another
+user, the super-user will have to find the process id of the
+\fIecheckout\fR and kill that process.
+.SH "ESPS HEADERS"
+.PP
+This program ignores all header items.
+.SH "ESPS PARAMETERS"
+.PP
+This program does not access the parameter file.
+.SH OPTIONS
+.PP
+None.
+.SH "SEE ALSO"
+.PP
+\fIecheckout\fR(1\-ESPS), \fIelmd\fR(1\-ESPS), \fIelmadmin\fR(1\-ESPS)

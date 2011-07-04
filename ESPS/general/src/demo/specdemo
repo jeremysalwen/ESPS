@@ -1,0 +1,64 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of
+# Entropic Research Laboratory, Inc. Any reproduction, distribution,
+# or publication of this work must be authorized in writing by Entropic
+# Research Laboratory, Inc., and must bear the notice:
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc.
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc.
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended
+# publication of this source code.
+#
+# @(#)specdemo	3.10   6/12/91     ESI/ERL
+#
+# Written by:
+# Checked by:
+# Revised by: David Burton
+#
+# Brief description:  Illustrates maximum entropy spectum analysis
+#
+
+
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+
+if test `mach_type` = CONVEX -o `mach_type` = SONY_RISC -o `mach_type` = SONY_68K
+ then
+  echo This script will fail if you do not have write permission on this directory.
+ else
+  if test ! -w . 
+    then
+	echo "You do not have write permission in this directory."
+	exit 1
+  fi
+fi
+echo "make 1 second of Gaussian noise"
+echo "   %testsd -r20000 -Tgauss gauss.sd"
+testsd -r20000 -Tgauss gauss.sd
+
+echo "make 1 second of a sine wave at frequency 600 Hz and one at 1100 Hz"
+echo "   %testsd -Tsine -f600 -r20000 sine1.sd"
+testsd -Tsine -f600 -r20000 sine1.sd
+echo "   %testsd -Tsine -f1100 -r20000 sine2.sd"
+testsd -Tsine -f1100 -r20000 sine2.sd
+
+echo "add the two sine waves"
+echo "   %addsd sine1.sd sine2.sd sines.sd"
+addsd sine1.sd sine2.sd sines.sd
+
+echo "add the Gaussian noise to the two sines"
+echo "   %addsd gauss.sd sines.sd signal.sd"
+addsd gauss.sd sines.sd signal.sd
+
+echo "compute reflection coefficients to 100th order"
+echo "   %refcof -o100 -p1:2500 -l0 signal.sd signal.rc"
+refcof -o100 -p1:2500 -l0 signal.sd signal.rc
+
+echo "compute spectrum"
+echo "   %me_spec signal.rc signal.spec"
+me_spec signal.rc signal.spec
+

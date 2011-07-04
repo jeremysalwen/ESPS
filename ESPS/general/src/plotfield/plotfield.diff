@@ -1,0 +1,149 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)plotfield.1	1.5 7/20/98 ESI
+.TH PLOTFIELD 1\-ESPS 7/20/98
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+plotfield \- plot arbitrary named field from a FEA file
+.SH SYNOPSIS
+.B plotfield
+.BI \-f " field"
+[
+.BI \-r " range"
+] [
+.BI \-t " text"
+] [
+.BI \-x " debug_level"
+] [
+.BI \-y " range"
+] [
+.BI \-Y " range"
+]
+.I file.fea
+.SH DESCRIPTION
+.PP
+.I plotfield
+plots a named field from an ESPS FEA
+.I file.fea. 
+Fields containing complex data are not supported yet.
+If
+.I file.fea
+is "\-", the standard input is read.
+.PP
+The plot is displayed in an X window.  The display has three pull down
+menus: \fBFile\fR, \fBViews\fR, and \fBHelp\fR.    
+See \fIplotsd(1-ESPS)\fP for a description of these menus.
+.PP
+If the \fB\-r\fP option is omitted, then the named 
+.I field
+is plotted from just the first record of 
+.I file.fea. 
+Use \fB\-r1:\fP to plot the data
+for the entire file.
+.PP
+.I Plotfield
+finds the maximum and  minimum values of the points to be 
+plotted and computes appropriate scales for the 
+.IR x -
+and 
+.IR y -axes.
+These automatic values for the y-axis can be overriden by the 
+.B \-y
+or
+.B \-Y 
+options.  
+.PP
+The fieldname to plot must be given with the 
+.B \-f
+flag.  This is not optional and there is no default.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-r " record"
+.TP
+.BI \-r " first:last"
+.TP
+.BI \-r " first:+incr
+Determines the records from which the named \fIfield\fP is plotted.  In
+the first form, a single integer identifies one record from which 
+.I field 
+is plotted.  The \fIx\fP\-axis shows element number within the field and 
+the \fIy\fP\-axis shows element value.  
+.IP
+In the second form, a pair of unsigned integers gives the first and last
+points of the range.  If
+.I first
+is omitted, 1 is used.  If 
+.I last 
+is omitted, the last record in 
+.I file.fea
+is assumed.  The third form is equivalent to the first with
+.I "last = first + incr."
+When more than one record is plotted, the element values are catenated
+together before plotting with the \fIx\fP\-axis showing the cumulative 
+element number.  (For example, if \fIfield\fP has ten elements and 
+two records are plotted, the \fIx\fP\-axis will be labelled 1\-20).  
+.TP
+.BI \-t " text"
+A line of text to be printed below the plot.  
+By default, \fIplotfield\fP prints a line giving the fieldname, 
+record number, and file name.  An additional line may 
+be printed via the 
+.B \-t
+option.
+.TP
+.BI \-x " debug_level"
+If
+.I debug_level
+is nonzero, debugging information is written to the standard error output.
+Default is 0 (no debugging output).
+.TP
+.BI \-y " low:high"
+Specifies approximate lower and upper limits for the 
+.IR y -axis.
+The values are adjusted by 
+.I plotfield
+in an attempt to make an esthetically pleasing plot.  See also 
+the \fB\-Y\fP option.  If neither \fB\-y\fP or \fB\-Y\fP is 
+specified, limits are calculated automatically.  
+.TP
+.BI \-Y " low:high"
+Specifies exact lower and upper limits for the 
+.IR y -axis.
+.SH EXAMPLES
+.PP
+\fBplotfield \-f spec_param \fB\-r5\fR speech.fana\fP
+.PP
+plots the \fIspec_param\fR field from record 5 of speech.fana.  
+.SH "ESPS PARAMETERS"
+No ESPS parameter file is read.
+.SH "ESPS COMMON"
+ESPS Common processing is disabled.  
+.SH DIAGNOSTICS
+.PP
+.I Plotfield
+complains and exits if 
+.I file.fea
+does not exist or is not a FEA file.
+It also exits if the named field contains complex data.
+.SH "IMPLEMENTATION NOTE"
+.PP
+The current version of \fIfieldplot\fP is implemented as a shell script
+that pipes the output of \fIpplain\fP (1\-\s-1ESPS\s+1) through
+\fItestsd\fP (1\-\s-1ESPS\s+1) and \fIplotsd\fP (1\-\s-1ESPS\s+1).  This is
+an example of how ESPS programs can be combined with the "Unix tools
+approach" \- see the simplified example on the \fIpplain\fP
+(1\-\s-1ESPS\s+1) man page.
+.SH EXPECTED CHANGES
+.PP
+None contemplated.
+.SH SEE ALSO
+plotsd(1\-\s-1ESPS\s+1) plotspec(1\-ESPS), mlplot(1\-ESPS),
+.br
+genplot(1\-ESPS)
+.SH AUTHOR
+.PP
+.nf
+Manual page by John Shore
+Program by Alan Parker
+

@@ -1,0 +1,38 @@
+
+				GrafGen
+
+
+
+  GrafGen Library :    ~~~~~~~~~~~~~~~~~~~~~~~~~~~	
+  View	    	  :    ~~~~~~~~~~~~~~~~~~~~~~~~~~~  (Use arrow keys to change)
+  Device	  :    ~~~~~~~~~~~~~~~~~~~~~~~~~~~  (Use arrow keys to change)
+
+  Postscript File :    ~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+    (enter if Postscript output is desired)
+
+  GKS Metafile    :    ~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+    (enter if GKS Metafile output is desired)
+
+  Design Portion  :    ~~~~~~~
+
+
+                 Action:  ~~~~~~~   [Okay, Cancel, Help]
+
+
+.v=graflib.d=graflib.
+.v=view.s=/With Tree/Withed By Tree/Call Tree/Called-by Tree/Declaration Diagram.
+.h=Draw a With Tree of your program.
+.h=Draw a Withed By Tree of your program.
+.h=Draw a Call Tree of your program.
+.h=Draw a Called-by Tree of your program.
+.h=Draw a Declaration Diagram of your program.
+.v=device.s=/Sun Console/Tektronix 4014/To File/To Screen and File.
+.h=Output to Sun Console.
+.h=Output to Textronix Device.
+.h=Output to a Postscript and/or GKS Metafile.
+.h=Output to console and Postscript and/or GKS Metafile.
+/v=psname/d=grafgen.ps/
+/v=gmtname/d=grafgen.gmt/
+.v=portion.s=/All/Specify.
+.v=action.s=/Okay/Cancel/Help.
+

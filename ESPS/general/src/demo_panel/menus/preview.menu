@@ -1,0 +1,9 @@
+# @(#)preview.menu	1.1 6/18/91 ERL - fbuttons menu for previewer demo
+"Play sd File"                 sdplay
+"Brief History"      xtext comment -a
+"Brief Header"          xtext psps -lD
+"Full Header"          xtext psps -aD
+"Print Data"             xtext psps -H
+"Visualize Data" send_xwaves -p 5679 make file 
+
+

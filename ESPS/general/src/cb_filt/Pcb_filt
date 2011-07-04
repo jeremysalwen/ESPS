@@ -1,0 +1,53 @@
+#@(#)Pcb_filt	1.3 7/19/93 ERL
+int filt_length_L ?= 31: "Largest length";
+int filt_length_S ?= 21: "Smallest length";
+#int ngrid = 201: "nubmer of grid points";
+float samp_freq ?= 1: "sampling frequency";
+int nspec ?= 5: "number of specifications";
+string model ?= "cosine" : "model": {"cosine", "sine"};
+string push_direction ?= "neither": "push direction": {"neither", "left", "right"};
+#int nspec_pushed ?= 2: "number of specs pushed";
+#int spec1_pushed ?= 4: "first spec number pushed";
+#int spec2_pushed ?= 3: "second spec number pushed";
+
+string spec1_type ?= "limit":"spec type":{"concave", "limit"};
+string spec1_sense ?= "+": "spec sense":{"+", "-"};
+float spec1_edge1 ?= 0;
+float spec1_edge2 ?= 0.2;
+float spec1_bound1 ?= 1;
+float spec1_bound2 ?= 1;
+string spec1_hug ?= "hugged":"spec hug": {"hugged", "not hugged"};
+string spec1_interp ?= "arithmetic": "interpolation method": {"arithmetic", "geometric"};
+
+string spec2_type ?= "limit":"spec type":{"concave", "limit"};
+string spec2_sense ?= "-": "spec sense":{"+", "-"};
+float spec2_edge1 ?= 0;
+float spec2_edge2 ?= 0.2;
+float spec2_bound1 ?= 0.9;
+float spec2_bound2 ?= 0.9;
+string spec2_hug ?= "not hugged":"spec hug": {"hugged", "not hugged"};
+string spec2_interp ?= "arithmetic":"interpolation method": {"arithmetic", "geometric"};
+
+string spec3_type ?= "limit":"spec type":{"concave", "limit"};
+string spec3_sense ?= "+": "spec sense":{"+", "-"};
+float spec3_edge1 ?= .25;
+float spec3_edge2 ?= 0.5;
+float spec3_bound1 ?= 0.1;
+float spec3_bound2 ?= 0.1;
+string spec3_hug ?= "not hugged":"spec hug": {"hugged", "not hugged"};
+string spec3_interp ?= "arithmetic":"interpolation method": {"arithmetic", "geometric"};
+
+string spec4_type ?= "limit":"spec type":{"concave", "limit"};
+string spec4_sense ?= "-": "spec sense":{"+", "-"};
+float spec4_edge1 ?= 0.25;
+float spec4_edge2 ?= 0.5;
+float spec4_bound1 ?= -0.1;
+float spec4_bound2 ?= -0.1;
+string spec4_hug ?= "not hugged":"spec hug": {"hugged", "not hugged"};
+string spec4_interp ?= "arithmetic":"interpolation method": {"arithmetic", "geometric"};
+
+string spec5_type ?= "concave": "spec type": {"concave", "limit"};
+string spec5_sense ?= "-": "spec sense": {"+", "-"};
+float spec5_edge1 ?= 0;
+float spec5_edge2 ?= 0.2;
+

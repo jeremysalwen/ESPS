@@ -1,0 +1,214 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc. All rights reserved.
+.\" @(#)fea_print.1	1.6 1.6 ESI
+.TH FEA_PRINT 1\-ESPS 01 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+fea_print - print data from FEA records with user-controlled formatting
+.SH "SYNOPSIS"
+.B fea_print 
+[
+.BI \-r " range"
+] [
+.BI \-l " layout"
+] [
+.BI \-x " debug_level"
+]
+.I " stylefile infile.fea"
+.SH "DESCRIPTION"
+.PP
+.I fea_print
+outputs the values of selected elements of FEA file records to stdout
+in a user-defined format.
+The input file 
+.I stylefile
+contains one or more layout specifications, which specify the elements from
+.I infile.fea
+whose values are to be printed, and the format to be used.
+If
+.I infile.fea
+is equal to "\-", 
+then standard input is used.
+.PP
+.I stylefile
+is an ASCII file containing a number of multi-line layout specifications.
+Each specification is separated from the next by intervening blank lines.
+The first line of each layout specification has the form:
+.nf
+
+    layout=<layout name>
+
+.fi
+where "layout name" is a name chosen for that layout.  It is this name
+which can be specified, using the "-l" option above, to select
+the layout specification to be used, and thereby
+the set of elements to be printed and the format to be used.
+.PP
+Immediately following the layout keyword line in each specification,
+up to three header lines can be specified using one or more of the constructs:
+.nf
+
+    header1=<header line one>
+    header2=<header line two>
+    header3=<header line three>
+
+.fi
+where "header line n" is an ASCII string to be printed at the beginning of
+the output.
+.PP
+Following these keyword lines in the layout specification
+are a series of lines of the form:
+.nf
+
+    <field_name>[<element_range>] <format_string>
+\fIor\fP  <string_constant> <format_string>
+
+.fi
+where <field_name> is the name of a field in
+.I infile.fea,
+<element_range> is a list of 
+elements in a form suitable for \fIgrange_switch\fP (3\-ESPSu),
+and <format_string> is a format string appropriate for passing to
+fprintf() in order to print
+.I one
+element of <field_name>: fprintf() is called repeatedly to print each
+specified element of each field named in the layout specification.  A
+maximum of 100 elements, including string constants, can be printed
+per record.  Note that an element range must be given for every field
+name \- for scalar fields, use "[0]".  Note also that a string format 
+should be used for printing coded types \- although a coded type is 
+stored as a short in each record, \fIfea_print\fP prints the
+corresponding ASCII string.  
+.PP
+Each field name
+must follow the same rule as C identifiers, i.e.
+it can only consist of letters and digits, with the first
+character being a letter.  The underscore "_" counts as a letter.
+The
+.I first
+space following the "]" character is stripped off: additional
+spaces, if any, become part of the corresponding format string.
+(But it is better to use "\\s" to represent spaces:  see below.)
+In the case of <string_constant> <format_string> lines, the
+.I first
+space found in the line is considered to separate the <string_constant>
+from the <format_string>
+.PP
+For example, suppose that
+.I stylefile
+contains the following:
+.nf
+.ft CW
+
+    layout=example
+    header1= **************** OUTPUT ****************\\n
+    raw_power[0] power: %5.2f
+    frame_type[0] \ttype: %s
+    spec_param[0] \tRCs: %4.2f
+    spec_param[3,5:6]   %4.2f
+    spec_param[7]   %4.2f\\n
+
+.ft LR
+.fi
+Invoking this layout with a FEA_ANA file would result, for example, 
+in the following: 
+.nf
+.ft CW
+
+    **************** OUTPUT ****************
+    power: 52.78    type: VOICED    RCs: 0.92  -0.36  -0.29  -0.04  -0.29
+    power: 55.71    type: VOICED    RCs: 0.92  -0.36  -0.29  -0.04  -0.29
+    power: 506.98   type: VOICED    RCs: 0.92  -0.36  -0.29  -0.04  -0.29
+    power: 154.47   type: UNVOICED  RCs: 0.31  -0.27  -0.22  -0.05  -0.19
+    power: 9143.28  type: UNVOICED  RCs: 0.31  -0.27  -0.22  -0.05  -0.19
+
+.ft LR
+.fi
+.PP
+.I fea_print
+will exit with an error message if any of the field specifications
+do not refer to fields defined in
+.I infile.fea.
+.PP
+The header and format strings in the layout specifications may contain
+"C-like" escape codes.  These are two-character sequences beginning with
+"\\".  The escape codes currently supported are:
+.nf
+	\\n:	newline
+	\\t:	tab
+	\\s:	space
+	\\f:	formfeed
+	\\e:	equal sign
+
+.fi
+Note that it is a good idea for the each header line,
+and the final format string in each layout,
+to end with "\\n".  Otherwise, LONG output lines are liable to result!
+.SH OPTIONS
+.TP
+.BI \-r " range"
+Specifies a restricted range of records from 
+.I infile.fea
+to be processed.  If this option is not used, all records are 
+processed.  
+.TP
+.BI \-l " layout"
+Use the layout specification named
+.I layout
+in
+.I stylefile.
+If this option is not specified, the first layout in
+.I stylefile
+is used.
+.TP
+.BI \-x " debug_level"
+If
+.I debug_level
+is nonzero, debugging information is written to the standard error output.
+Default is 0 (no debugging output).
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read by 
+.I fea_print.
+.SH "ESPS COMMON"
+.PP
+The ESPS common file is not processed by 
+.I fea_print.
+.SH ESPS HEADERS
+.PP
+.I fea_print
+does not print any header information.
+.SH "DIAGNOSTICS"
+.nf
+fea_print: style and feature files can't BOTH be from stdin!
+fea_print: %s is not an ESPS Feature file.
+fea_print: incorrect subrange given, only %d records in \fIfile\fP.
+fea_print: start record greater than end record.
+fea_print: unknown keyword: \fIkeyword\fP.
+fea_print: error in style file \fIstylefile\fP:
+	component name %s on line %d precedes layout keywords.
+fea_print: more than %d elements to print per record.
+fea_print: couldn't find format string in \fIstylefile\fP.
+fea_print: layout %s not found in style file \fIstylefile\fP.
+fea_print: no component fields found for field name %s.
+fea_print: get_deriv_vec: encountered error getting field.
+fea_print: more than %d elements to print per record.
+fea_print: can't handle complex fields
+.fi
+.SH "FUTURE CHANGES"
+.PP
+Implement formatting of complex type elements, which are not currently
+supported.  Permit printing of the record number (as a workaround, 
+use \fIaddfea\fP or \fImergefea\fP to add a field containing the 
+record number and then print with \fIfea_print\fP).  
+.SH "SEE ALSO"
+.nf
+ESPS(5-ESPS), FEA(5\-ESPS), \fIpplain\fP(1\-\s-1ESPS\s+1), \fIpsps\fP(1\-\s-1ESPS\s+1), 
+\fIaddfea\fP(1\-\s-1ESPS\s+1), \fImergefea\fP (1\-\s-1ESPS\s+1)
+.fi
+.SH "BUGS"
+.PP
+None known.
+.SH "AUTHOR"
+.PP
+Program and manual page by Richard Goldhor, Sensimetrics Corp; minor
+modifications by John Shore

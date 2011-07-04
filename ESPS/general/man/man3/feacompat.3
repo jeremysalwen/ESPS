@@ -1,0 +1,261 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc. All rights reserved.
+.\" @(#)feacompat.3	1.1	22 Mar 1990	ESI
+.TH FEA_COMPAT 3\-ESPSu 22 Mar 1990
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+fea_compat \- check compatibility of field definitions in FEA file headers
+.SH SYNOPSIS
+.ft B
+.nf
+int fea_compat(ihd, ohd, fields, trans)
+struct header	*ihd, *ohd;
+char	**fields;
+short	***trans;
+.fi
+.SH DESCRIPTION
+.PP
+.I fea_compat
+checks field definitions in two ESPS feature-file (FEA) headers
+for compatibility in the sense required for use of
+.IR copy_fea_rec (3-ESPS).
+.I fea_compat
+may also create a translation table for
+.IR copy_fea_rec (3-ESPS)
+to use in copying CODED data
+and add necessary items to the
+.I enums
+arrays of CODED fields in
+.I ohd.
+.PP
+The arguments
+.I ihd
+and
+.I ohd
+should point to two ESPS header structures of type FEA.
+It is assumed that information is to be copied from a record described by
+.I ihd
+(the ``input header'')
+to a record described by
+.I ohd
+(the ``output header'').
+.PP
+The argument
+.I fields,
+if not NULL,
+should point to the beginning of a NULL-terminated list of strings
+that contains the names of the fields to be checked.
+If
+.I fields
+is
+.RI ( char "\ **) NULL,"
+all fields defined in
+.I ihd
+are checked.
+.PP
+The argument
+.I trans
+must point to a variable of type
+.RI ( short "\ **)"
+in which the function stores an output value:  either a pointer to the
+beginning of a translation table or else the value
+.RI ( short "\ **) NULL,"
+indicating that no translation table is necessary.
+.PP
+The value returned by the function is an integer code that indicates the
+``level of compatibility.''
+Three values are possible:
+\-1, for ``incompatibility''; 0, for ``minimal compatibility'';
+and 1, for ``full compatibility.''
+.PP
+The returned value is \-1 unless every field being checked
+(as determined by
+.IR fields )
+satisfies three conditions:
+.TP
+(a)
+The field must be defined in both headers.
+.TP
+(b)
+Both headers must define the field as having the same type.
+.TP
+(c)
+The size of the field as defined in
+.I ohd
+must be at least as great as the size as defined in
+.I ihd
+(that is, the field in the output records must be large enough to hold the
+data from the input records).
+.LP
+If every field checked satisfies (a), (b), and (c), the level of compatibility
+is 0 unless the fields each also satisfy two more conditions:
+.TP
+(d)
+Both headers must specify the same rank for the field.
+.TP
+(e)
+Both headers must specify the same dimensions (and therefore the same size)
+for the field.
+.LP
+The function returns the value 2 if every field checked satisfies all five
+conditions (a)\-(e).
+.PP
+In copying a field of CODED type,
+.I copy_fea_rec
+requires a translation table
+unless the encodings defined for the field in the two headers are the same.
+The encodings are the same provided the
+.I enums
+arrays for the field in both headers (see
+.IR FEA (5-ESPS))
+contain the same strings in the same order; if the two
+.I enums
+arrays differ, the encodings differ,
+since the code for a string is its position in the
+.I enums
+array.
+If
+.I fea_compat
+finds that any field being checked is CODED
+and has different encodings defined in the two headers,
+it creates a translation table and stores a pointer to the beginning of the
+table in the location
+.RI * trans.
+The table is an array of pointers, one for each field named in
+.I fields
+(or one for each field defined in
+.I ihd,
+if
+.I fields
+is NULL).
+The elements of the array corresponding to non-CODED fields are NULL.
+For each CODED field, the array element is a pointer to the beginning of an
+array of shorts that is used in translating data in the field.
+See
+.IR copy_fea_rec (3-ESPS)
+for additional information.
+.PP
+If, for some CODED field, the
+.I enums
+array in the input header contains strings that are not in the
+.I enums
+array in the output header,
+the missing strings must be added to the array in the output header
+before the field can be copied.
+In addition to providing the translation table,
+.I fea_compat
+will make the necessary additions to the
+.I enums
+array in
+.I ohd
+for any field that is checked.
+New items are added at the end of the array, and the positions of existing
+items are not changed.
+.SH EXAMPLE
+.LP
+Appending one FEA file to another.
+.PP
+Given the inclusions
+.RS
+.nf
+
+#include <stdio.h>
+#include <esps/esps.h>
+#include <esps/fea.h>
+
+.fi
+.RE
+and the declarations
+.RS
+.nf
+
+struct header	*hd1, *hd2;
+struct fea_data	*rec1, *rec2;
+FILE		*file1, *file2;
+short		**table;
+
+.fi
+.RE
+the following code checks files
+.I file_one.fea
+and
+.I file_two.fea
+for compatibility.
+If the check succeeds, it copies
+.I file_one.fea
+to
+.I stdout,
+followed by records containing the same information as the records of
+.I file_two.fea
+but in the format of
+.I file_one.fea.
+The program fails and exits if the format of
+.I file_one.fea
+will not accommodate all the information in
+.I file_two.fea.
+If
+.I file_two.fea
+has fields that are not defined in
+.I file_one.fea,
+their contents in the appended output records are undefined.
+.RS
+.nf
+
+eopen("ProgName", "file_one.fea", "r", FT_FEA, NONE, &hd1, &file1);
+eopen("ProgName", "file_two.fea", "r", FT_FEA, NONE, &hd2, &file2);
+rec1 = allo_fea_rec(hd1);
+rec2 = allo_fea_rec(hd2);
+
+/* \fICheck compatibility\fP */
+
+switch(fea_compat(hd2, hd1, (char **) NULL, &table))
+{
+case -1:
+    fprintf(stderr, "Failure: incompatible files.\\n");
+    exit(1);
+    break;
+case 0:
+    fprintf(stderr, "Warning: minimally compatible files.\\n");
+    break;
+case 1:
+    break;
+}
+
+/* \fICopy file_one.fea\fP */
+
+    /* \fIShould add history-keeping information to hd1.\fP */
+write_header(hd1, stdout);
+while (get_fea_rec(rec1, hd1, file1) != EOF)
+    put_fea_rec(rec1, hd1, stdout);
+
+/* \fIAppend file_two.fea\fP */
+
+while (get_fea_rec(rec2, hd2, file2) != EOF)
+{
+    copy_fea_rec(rec2, hd2, rec1, hd1, (char **) NULL, table);
+    put_fea_rec(rec1, hd1, stdout);
+}
+
+.fi
+.RE
+.SH DIAGNOSTICS
+If
+.I ihd
+or
+.I ohd
+does not point to a FEA header,
+a message is printed on
+.I stderr,
+and the program exits with status 1.
+.SH BUGS
+None known.
+.SH WARNINGS
+This function may alter the header that the argument
+.I ohd
+points to.
+.SH SEE ALSO
+copy_fea_rec(3-ESPSu),
+FEA(5\-ESPS), 
+ESPS(5\-ESPS)
+.SH AUTHOR
+Rodney Johnson
+

@@ -1,0 +1,260 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)feadst.5t	1.4 25 Sep 1997 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH FEA_DST 5\-ESPS 25 Sep 1997
+.SH NAME
+ESPS Quantized Distortion Feature File Subtype \- (.dst)
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/fea.h>
+#include <esps/feadst.h>
+#include <esps/vq.h>
+.fi
+.SH DESCRIPTION
+.PP
+The FEA_DST file is a subtype of the FEA file.  If \fIhd\fR is a 
+pointer to the header of such a file, then \fIhd\->hd.fea\->fea_type\fR
+== FEA_DST.  FEA_DST files are used to store quantization distortion
+and identification information 
+useful for classification and recognition experiments.
+FEA_DST headers are created by calling 
+.I init_feadst_hd
+(3\-ESPSu) after 
+.I new_header
+(3\-ESPSu).  
+.PP
+The header for a FEA_STAT
+file consists of the following generic header item,
+which is determined by a parameter in the call to
+\fIinit_feadst_hd\fR (3\-ESPS):
+.PP
+.TS
+center, box, tab(;);
+c | c | c | c
+l | l | l | l.
+Name;Size;Type;Enums
+=
+max_num_sects;1;long;NULL;
+.TE
+.PP
+The generic header item has the following meaning:
+.IP max_num_sects
+The maximum number of sections allowed in the input data file
+and the codebook.
+.PP
+In addition to the pre-defined generic header item,
+the
+header contains definitions for the record fields as given by the 
+table below.
+.PP
+In the table,
+\fIsection_mthds\fR, \fIvq_cbk_types\fR, \fIcbk_structs\fR,
+and \fIdist_types\fR are arrays of possible values
+that the field can take on.
+These are defined in the ESPS library.
+For the possible values, see \fIvq.h\fR and \fIfeadst.h\fR.
+.PP
+.ne 10
+See \fIfea\fR(5\-ESPS) 
+for additional information on the meaning of the table columns.
+.sp
+.TS
+center, box, tab(;);
+c | c | c | c | c | c 
+l | l | l | l | l | l.
+Name;Size;Rank;Dimen;Type;Enums
+=
+data_sect_mthd;1;0;NULL;coded;\fIsection_mthds\fR
+data_sect_num;1;0;NULL;short;NULL
+cbk_sect_mthd;1;0;NULL;coded;\fIsection_mthds\fR
+cbk_sect_num;1;0;NULL;short;NULL
+quant_field;16;1;NULL;char;NULL
+quant_field_rep;16;1;NULL;char;NULL
+cbk_struct;1;0;NULL;coded;\fIcbk_structs\fR
+cbk_type;1;0;NULL;coded;\fIvq_cbk_types\fR
+dsgn_dst;1;0;NULL;coded;\fIdist_types\fR
+cbk_train_dst;\fImax_num_sects\fR;1;NULL;float;NULL
+encde_dst;1;0;NULL;coded;\fIdist_types\fR
+cbk_sect_size;\fImax_num_sects\fR;1;NULL;short;NULL
+cbk_name;16;1;NULL;char;NULL
+cbk_rec;1;0;NULL;short;NULL
+data_name;16;1;NULL;char;NULL
+source_type;16;1;NULL;char;NULL
+cbk_source;32;1;NULL;char;NULL
+cbk_signal;16;1;NULL;char;NULL
+input_source;32;1;NULL;char;NULL
+input_signal;16;1;NULL;char;NULL
+in_rep_number;1;0;NULL;short;NULL
+data_sect_dst;\fImax_num_sects\fR;1;NULL;float;NULL
+data_sect_size;\fImax_num_sects\fR;1;NULL;short;NULL
+average_dst;1;0;NULL;float;NULL
+.TE
+.sp
+.PP
+In most cases, programs that deal with FEA_DST files will use the support
+routines provided in the ESPS library and will not have to make direct
+use of the information in the above tables.   The library routine
+.I init_feadst_hd
+(3\-ESPSu) creates the record fields.
+.PP
+Programs that deal with FEA_DST files do so in terms of structures of
+type (struct feadst) \- pointers to structures of this type are returned by 
+.IR allo_feadst_rec (3\-ESPSu), 
+and the FEA_DST read and write routines (\fIget_feadst_rec\fR
+and \fIput_feadst_rec\fP) have parameters of type (struct feadst).  Here is 
+the definition of the feadst struct (given in \fI<esps/feadst.h>\fR):
+.sp
+struct	feadst	{
+.TS
+l1 l1 l1 l.
+   short	*data_sect_mthd;	/\(** input data sectioning method \(**/
+   short	*data_sect_num;	/\(** number of input sections \(**/
+   short	*cbk_sect_mthd;	/\(** cbk design sectioning method \(**/
+   short	*cbk_sect_num;	/\(** number of cbk sections \(**/
+   char	*quant_field;	/\(** field quantized \(**/
+   char	*quant_field_rep;	/\(** type of field quantized \(**/
+   short	*cbk_struct;	/\(** codebook struct, e.g. FULL_SEARCH \(**/
+   short	*cbk_type;	/\(** cbk type, e.g. UNVOICED \(**/
+   float	*cbk_train_dst;	/\(** final design distortion(s) \(**/
+   short	*dsgn_dst;	/\(** codebook design distortion \(**/
+   short	*encde_dst;	/\(** quantization distortion \(**/
+   short	*cbk_sect_size;	/\(** size of each section cbk \(**/
+   char	*cbk_name;	/\(** name of input cbk \(**/
+   long	*cbk_rec;	/\(** cbk record number \(**/
+   char	*data_name;	/\(** name of input file \(**/
+   char	*cbk_source;	/\(** name of codebook source \(**/
+   char	*source_type;	/\(** type of source \(**/
+   char	*cbk_signal;	/\(** name of codebook signal \(**/
+   char	*input_source;	/\(** name of input source \(**/
+   char	*input_signal;	/\(** name of input signal \(**/
+   short	*in_rep_number;	/\(** repetition # of input \(**/
+   float	*data_sect_dst;	/\(** quantization distortion per section \(**/
+   short	*data_sect_size;	/\(** # of input vectors per input section \(**/
+   float	*average_dst;	/\(**total average distortion \(**/
+   struct fea_data	*fea_rec;	/\(**ptr to corresponding fea record \(**/
+    };
+.TE
+.PP
+The record fields have the following meanings:
+.IP data_sect_mthd
+This field identifies the sectioning method used on the file that was 
+quantized.
+.IP data_sect_num
+The number of sections in the file that was quantized.
+.IP cbk_sect_mthd
+This field identifies the sectioning method used when the codebook was 
+designed.
+.IP cbk_sect_num
+The number of codebook sections in the codebook used to quantize 
+the input file.
+.IP quant_field
+This field
+identifies the field in the input file that was quantized.
+.IP quant_field_rep
+This field identifies the field's representation in the input file that
+was quantized. For example, in FEA_ANA files,
+the \fIspec_param\fR field has many different possible representations:
+AUTO, RC, LAR, AFC, CEPSTRUM, and LSF \- note that this field
+is a character string rather than an enumerated type. "N.A." used only if
+it is relevant.
+.IP cbk_type
+This field identifies the type of the codebook that was used to
+quantize the input data.
+.IP cbk_train_dst
+This field contains the final average distortion that results from
+the codebook design process. For multisection codebooks,
+there are final distortions for each section of the codebook;
+for single section codebooks, there is only one distortion value.
+.IP dsgn_dst
+This field identifies the 
+distortion measure that was used to design the codebook that was used to
+quantize the input data.
+.IP encde_dst
+This field identifies
+the distortion measure that was used to quantize the input data in the 
+input codebook file (\fIcbk_name\fR).
+.IP  cbk_sect_size
+This is an array whose elements contain the number of codewords
+that the corresponding input section codebook contains. For example,
+if \fIcbk_sect_size[0]\fR = 4, then the first section codebook in the input
+multisection codebook has 4 codewords in it.
+.IP cbk_name
+This is an array that contains the name of the multisection codebook file
+that was used to quantize the input data file.
+.IP cbk_rec
+This field identifies the record number in the multisection codebook
+file (\fIcbk_name\fR) that was used to quantize the input data.
+.IP data_name
+This is an array that contains the name of the input
+file whose \fIquant_field\fR was quantized.
+.IP cbk_source
+This is a character string that contains the name of the source represented
+by the codebook. For speech recognition applications,
+this would be the name of a speaker.
+.IP source_type
+This is a character string that contains a type code of the source.  For speech
+recognition applications this would be the sex of the speaker.
+The list of possible values is supplied to
+\fIinit_feadst_hd\fR(3\-ESPS).
+.IP cbk_signal
+This is a character string that contains the name of the signal represented by
+the codebook. For speech recognition applications, this would be the
+text of the word or utterance
+that the codebook represents.
+.IP input_source
+This is a character string that contains the name of the source of the
+input data.
+For speech recognition applications,
+this would be the name of the speaker of the input data.
+.IP input_signal
+This is a character 
+string that contains the name of the signal represented by
+the input data. 
+For speech recognition applications, this is the
+text of the word or utterance
+that the input represents.
+.IP in_rep_number
+This number in this field tells which occurence of the
+input (identical \fIinput_source\fR and \fIinput_signal\fR)
+contributed to this records average distortion value.
+.IP data_sect_dst
+This is an array that contains the average
+distortion that results from quantizing the corresponding
+input section with the multisection codebook. There are as many
+nonzero elements in this array as MIN(\fIdata_sect_num, cbk_sect_num\fR).
+.IP data_sect_size
+This is an array that contains the number of vectors in each 
+input section. 
+There are as many
+nonzero elements in this array as MIN(\fIdata_sect_num, cbk_sect_num\fR).
+.IP average_dst
+This field contains the total average distortion that results
+from encoding the input file in the multisection codebook.
+.IP fea_rec
+This is a pointer to the FEA file record in which all the FEA_DST 
+information is stored.  Programs should not use this value directly.
+.SH SEE ALSO
+.PP
+.nf
+init_feadst_hd(3\-ESPSu), allo_feadst_rec(3\-ESPSu), 
+get_feadst_rec(3\-ESPSu), put_feadst_rec(3\-ESPSu), 
+FEA(5\-ESPS), ESPS(5\-ESPS), FEA_VQ(5\-ESPS)
+.fi
+.SH RECORD ELEMENT FILE STRUCTURE
+.PP
+In order to use this (or any other) FEA file type with a generic ESPS
+program (one that operates on any file type) it is necessary to know the
+way that record elements are positioned in the file.   For a FEA file
+that information is obtained by running the program
+\fIfea_element\fR(1\-ESPS) on the file in question.
+.SH FILES
+.PP
+.nf
+/usr/include/esps/fea.h
+/usr/include/esps/feadst.h
+/usr/include/esps/esps.h
+/usr/include/esps/vq.h
+.SH AUTHOR
+Manual page by David Burton

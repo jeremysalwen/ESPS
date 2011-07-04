@@ -1,0 +1,141 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)exvpromptp.3	1.2 22 Oct 1991 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH EXV_PROMPT_PARAMS 3\-ESPSxu 22 Oct 1991
+.SH NAME
+
+.nf
+exv_prompt_params \- fill in a parameter file using X-Windows prompting form
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/exview.h>
+
+extern int debug_level;
+
+exv_prompt_params(param_file, flag, check_file, outfile, program, x_pos, y_pos)
+char *param_file;	
+int flag;		
+char *check_file;
+char *outfile;		
+char *program;		
+int x_pos, y_pos;	
+
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+\fIexv_prompt_params\fP provides for the interactive specification of 
+parameter files used by ESPS programs.  
+.PP
+\fIexv_prompt_params\fP processes an input parameter file
+\fIparam_file\fP, and produces an output parameter file \fIoutfile\fP.
+The definite parameters in \fIparam_file\fP are copied to
+\fIoutfile\fP.  An X-Windows prompt form is displayed containing 
+items for each of the indefinite parameters in \fIparam_file\fP.  
+For each item, the prompt string, name, and default value are 
+shown.  Users can change any of the values.  When the "Done" 
+button is pressed, the current set of values are added to
+\fIoutfile\fP and \fIexv_prompt_params\fP returns.  
+.PP
+IF numerical limits are included in \fIparam_file\fP, these limits are
+enforced by \fIexv_prompt_params\fP.  If string choices are included in
+\fIparam_file\fP for string items, the interactive display for that
+item consists of mutually-exclusive push-buttons labelled with the
+string choices (otherwise, there's just a text entry item).  See
+\fIread_params\fP (3\-\s-1ESPS\s+1) for details about the
+\fIparam_file\fP format.
+.PP
+\fIexv_prompt_params\fP uses \fIread_params\fP (3\-\s-1ESPS\s+1) to read
+in \fIparam_file\fP.  The parameters \fIflag\fP and \fIcheck_file\fP
+are passed directly to \fIread_params\fP; thus, if flag is
+SC_CHECK_FILE, if an ESPS Common file exists, and if Common processing
+is enabled (see ESPS COMMON, below), then the Common file is processed
+if \fIcheck_file\fP matches the value of the filename entry in the Common
+file or if \fIcheck_file\fP is NULL.  If a Common file is processed,
+\fIread_params\fP compares the last modification time of the ESPS Common and
+\fIparam_file\fP.  The parameter values in the younger of the two files
+takes precedence.  Parameter values not occurring in the ESPS Common
+file are read from \fIparam_file\fP.  Note that, in the case of
+indefinite assignment ("?=" or "=?" used as the assignment operator in
+the parameter file), Common processing will still occur for the
+assigned default value.  If the value from Common takes precedence, it
+will be this value that is shown as the default in the \fIexv_prompt_params\fP 
+.PP
+If \fIprogram\fP is not NULL, a "Help" button is included in the
+display window.  If \fIprogram\fP doesn't contain a path
+specification (i.e., doesn't contain a "/"), it is assumed to name 
+an ESPS program corresponding to \fIparam_file\fP.  In this case, 
+pressing "Help" brings up a window with the output of "eman program"
+\- see \fIeman\fP (1\-\s-1ESPS\s+1).  If \fIprogram\fP contains 
+a "/", pressing "Help" just brings up the contents of the file
+\fIprogram\fP.  
+.PP
+If \fIx_pos\fP and \fIy_pos\fP are not zero, they are used to hints to
+the window manager for the position the prompt window.  Otherwise, the
+position is left to the window manager.  Whether or not the window
+manager follows the hints varies with window managers.  For example, 
+\fIolwm\fP does so by default, but \fItwm\fP will only do so if 
+.nf
+
+	UsePPosition "on"   # use program-specified size hints
+
+.fi
+is contained in the user's .twmrc (Otherwise, window placement
+requires user-interation.)
+.PP
+The display window contains a "Defaults" button which, if pressed, 
+restores all parameter values to the defaults in \fIparam_file\fP or
+ESPS Common.  
+.PP
+\fIexv_prompt_params\fP returns 0 if the parameter file was read
+successfully, the user exited via the "DONE" button, and all
+parameters were written successfully.  If there was trouble processing
+the input parameter file, \fIexv_prompt_params\fP returns 1.  If the
+user exits via the "DONE" button but the parameters were not written
+successfully, \fIexv_prompt_params\fP returns 2.  If
+\fIexv_prompt_params\fP exits for other reasons, it returns 3; the
+most common reasons reasons are inability to create a window in the first
+place, a window-manager quit operation, or an explicit kill signal.
+.SH ESPS COMMON
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  If ESPS_VERBOSE
+is set to 1 or greater, \fIread_params\fP will report the values of 
+any parameters take from Common. 
+.SH EXAMPLES
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+Suitable error messages are printed if the return value is -1.  
+If \fIdebug_level\fP > 0, various debugging messages are printed.  
+More details are printed as \fIdebug_level\fP increases (maximum is 
+3).  
+.SH FUTURE CHANGES
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+\fIexv_make_text_window\fP (3\-\s-1ESPSxu\s+1), 
+\fIexv_helpfile\fP (3\-\s-1ESPSxu\s+1), 
+\fIexv_make_text_window\fP (3\-\s-1ESPSxu\s+1), 
+\fIexv_bbox\fP (3\-\s-1ESPSxu\s+1),
+\fIexprompt\fP (1\-\s-1ESPSxu\s+1), 
+\fIexpromptrun\fP (1\-\s-1ESPS\s+1)
+.SH AUTHOR
+.PP
+Program and documentation by John Shore
+
+
+
+
+
+

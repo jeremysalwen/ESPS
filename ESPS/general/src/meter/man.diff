@@ -1,0 +1,147 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)meter.1	1.3 6/23/93 ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH  METER 1\-ESPS 6/23/93
+.SH NAME
+
+.nf
+meter \- a control panel for ESPS A/D recording programs
+.fi
+.SH SYNOPSIS
+.B
+meter
+[
+.BI \-i " update_time"
+] [
+.BI \-c " RC_const"
+] [
+.BI \-s
+] [
+.BI \-m
+] [
+.BI \-r
+] [
+.I -
+]
+.I outfile
+.PP
+.SH DESCRIPTION
+\fIMeter\fR is a front-end program to be used with any ESPS recording
+program to control its recording process and to visually monitor input 
+signal amplitude
+in decibels.  Input to \fImeter\fR is always the standard input which
+may be optionally specified on the command line as "-" before the output
+file name \fIoutfile\fR.  If \fIoutfile\fR is "-", standard output is
+written.
+.PP
+\fIMeter\fR is a X-window based program compiled for the Motif version 
+1.1.3 and X11R4.
+When executed, the program pops up a panel with the following control
+and monitoring featurers:
+.PP
+A "Start/Restart" pushbutton to start and restart the recording.  Input to
+\fImeter\fR will not be written out to \fIoutfile\fR unless the "Start"
+push button is activated.  Activating the button after the first time will
+cause the file stream pointer to rewind and rewrite to \fIoutfile\fR,
+thus restarting the recording process.  A message of "Recording...." is
+shown on the panel while writing to \fIoutfile\fR is in progress.
+.PP
+A "Pause/Resume" pushbutton to pause and resume the recording.
+A message of "Recording...." is shown on the panel while writing to 
+\fIoutfile\fR is in progress.
+.PP
+Two input dB-level meters representing channel 1 and channel 2.  Each
+meter gives a visual indication of input dB level by means of a rising and
+falling green bar with grey background along with its numerical readout.  
+If the input dB level exceeds 90 dB, then
+the top region of meter, normally black, turns into red color to indicate
+that signal clipping has occured and input signal amplitude should be
+turned down.
+An additional falling
+thin green line indicates the decay of the last maximum input value
+with an exponential rate of \fI-RC_const\fR.
+By default, the meter display updates every 0.1 second, but
+changeable by the \fB-i\fR option.  Input is always assumed to be the
+data type SHORT.  The top region of the meter become red in the event of
+clipping.
+.PP
+Three toggle buttons: A "DC-offset" toggle button to remove DC component of
+input signal before writing to \fIoutfile\fR, a "meter" toggle button to
+disable the meter display, and a "meter db readout" toggle button to
+disable the numerical dB value readout.
+.PP
+A "Stop/Quit" button to exit the program.  When this button is pressed, \fImeter\fR
+closes input and output file stream pointers, this may cause ESPS recording
+program to display a write-error message since it can no longer write to
+standard output.  Ignore the message in such case.
+.PP
+The success of executing the program depends on the CPU load
+of the machine.  If \fImeter\fR can not keep up with the input, an error
+message from the recording program is displayed to standard error, 
+and the recording process halts.  In such cases, decrease the CPU load
+by killing other jobs on the machine, increasing
+the time interval between meter display updates by the \fB-i\fR
+option, or turning "DC-offset", "meter", or "meter db readout" toggle button 
+to off.
+.PP
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-i " update_time \fR[0.1]\fP"
+\fIMeter\fR updates its display every \fIupdate_time\fR second.  
+\fIupdate_time\fR is in increment of 0.1 seconds.  The smallest value is 0.1.
+.TP
+.BI \-c " RC_const \fR[0.1]\fP"
+The falling exponential rate of the thin green line.  This must be a 
+non-negative number.  At each display update, the green line has the dB
+value of the previous maximum input level times 
+\fIexp(RC_const*time)\fR, where \fItime\fR is the elapsed time since
+the last maximum occured.
+.TP
+.BI \-s
+To set the default state of "DC-offset" toggle button from OFF to ON.  
+\fIRem_dc (1-ESPS)\fR may also be used to remove the DC component in the
+signal after the recording is done.
+.TP
+.BI \-m
+To set the default state of "meter" toggle button from ON to OFF.
+.TP
+.BI \-r
+To set the default state of "meter db readout" toggle button from ON to OFF.
+.PP
+.SH ESPS PARAMETERS
+No ESPS parameter file processing is supported.
+.PP
+.SH ESPS COMMON
+No ESPS common parameter processing is supported.
+.PP
+.SH ESPS HEADERS
+ESPS header from the standard input is copied to \fIoutfile\fR without
+change.
+.PP
+.SH EXAMPLES
+The following monitors signal input level of Sun Sparc 8-bit 
+mu-law A/D converter.
+.TP
+srecord - |Meter /dev/null
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+rem_dc (1-ESPS), v32record (1-ESPS), c30record (1-ESPS), 
+s32crecord (1-ESPS), srecord (1-ESPS), sgrecord (1-ESPS)
+.PP
+.SH AUTHOR
+Derek Lin
+.PP
+
+
+
+
+

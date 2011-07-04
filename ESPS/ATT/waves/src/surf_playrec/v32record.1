@@ -1,0 +1,98 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)v32record.1	1.1 1/15/93 ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH V32RECORD 1\-ESPS 1/15/93
+.SH NAME
+v32record - mono or stereo record to disk or pipe for VME AT&T or Heurikon Surf board with Ariel Pro Port
+.PP
+.SH SYNOPSIS
+.B v32record
+[
+.BI \-d " duration"
+] [
+.BI \-f " sample rate"
+] [
+.BI \-r 
+] [
+.BI \-s
+] 
+.I file
+.PP
+.SH DESCRIPTION
+.PP
+.PP
+\fIV32record\fP provides mono or stereo sampling at selected rates up to at least 48kHz when
+recording to local disk.  Direct recording onto network disks is often
+feasible as well.  Output files have ESPS FEA_SD headers.
+Output may optionally be directed to
+\fIstdout\fP. 
+.PP
+When stereo recording
+is selected (see the -s option) channels 0 and 1 alternate in the file, with
+channel 0 being first.  Note that processes consuming the output of
+\fIv32record\fP on a pipe must be able to keep up with the average aggregate
+sampling frequency.  
+.PP
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-d " duration" [10]
+Specifies the maximum duration of the recording session in seconds.
+Recording may be interrupted before this time expires with SIGINT.
+The default \fIduration\fP is 10 seconds.
+The upper limit is set only by disk space.
+.TP
+.BI \-f " frequency" [16000]
+Specifies the sampling frequency.  The closest frequency to that
+requested will be selected from those available and the user will be notified
+if the selected value differs from that requested.  If -f is not
+specified, the default sampling frequency of 16kHz is used (assuming the
+standard Ariel crystal).
+.TP
+.BI \-r  
+By default v32record samples and stores single-channel data from channel A.
+Setting the \fB-r\fR option, causes v32record to record from channel B.  
+.TP
+.BI \-s
+This option enables dual channel recording.
+.PP
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.PP
+.SH ESPS COMMON
+.PP
+ESPS Common is not read or written.
+.PP
+.SH WARNINGS
+.PP
+The maximum rate over the network is unpredictable in general, but we
+routinely achieve 16kHz stereo at Entropic Research Laboratory.  Of
+course rate limitations due to network speed will be less severe for
+single-channel recording.
+.PP
+.SH FILES
+.B "ESPS_BASE/32cbin/"
+the directory that contains the DSP32C board code.
+.PP
+.SH BUGS
+.PP
+There is currently no reliable notification in the event of loss of
+realtime.
+.PP
+.SH EXPECTED CHANGES
+.PP
+Implement a locking mechanism to prevent collision of multiple simultaneous
+attempts to use the Ariel board.
+.PP
+Implement a robust check for loss of real-time operation.
+.PP
+.SH SEE ALSO
+.PP
+SD (5\-\s-1ESPS\s+1), \fItestsd\fP (1\-\s-1ESPS\s+1), \fIcopysd\fP
+(1\-\s-1ESPS\s+1), \fIv32play\fP (1\-\s-1ESPS\s+1), \fIsfconvert\fP (1\-\s-1ESPS\s+1)
+.PP
+.SH AUTHORS
+.PP
+David Talkin 

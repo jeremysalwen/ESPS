@@ -1,0 +1,594 @@
+
+
+
+PLOT3D(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     plot3d - interactive 3-d plots (perspective plots with  hid-
+     den lines removed) of data from FEA files.
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     ppppllllooootttt3333dddd [ ----dddd _d_e_p_t_h ] [ ----ffff """"_f_i_e_l_d[[[[_r_a_n_g_e]]]]"""" ] [ ----oooo _o_r_i_e_n_t_a_t_i_o_n ]
+     [ ----rrrr _r_a_n_g_e ] [ ----xxxx _d_e_b_u_g__l_e_v_e_l ] [ ----BBBB _l_e_n_g_t_h,,,,_w_i_d_t_h,,,,_h_e_i_g_h_t ] [
+      ---- IIII  {aaaaAAAAbbbbBBBBccccCCCCppppPPPP} . . .   ]  [   ---- PPPP   _p_a_r_a_m   ]   [     ----  RRRR
+     _b_e_a_r_i_n_g,,,,_e_l_e_v_a_t_i_o_n,,,,_r_o_t_a_t_i_o_n ] [ ----SSSS _h__s_k_e_w::::_v__s_k_e_w ] [ ----wwww ] [ ----
+     MMMM ] _f_i_l_e
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     _p_l_o_t_3_d reads data from a specified field of an ESPS FEA file
+     and  constructs  a three-dimensional plot of the data versus
+     two  independent  variables.   A  plot  of  data  from   the
+     _r_e__s_p_e_c__v_a_l  field  of  a  FEA_SPEC file, for example, could
+     show time along one axis, frequency along another axis,  and
+     spectral  power  density  (or its log) along the third axis.
+     In general, the _x-axis corresponds to the order  of  records
+     in the file, the _y-axis corresponds to the order of elements
+     in the field, and the _z-axis  represents  the  data  values.
+     The  three-dimensional  plot  is rendered in a window on the
+     screen as a perspective drawing.
+
+     The user has complete control over the scaling, orientation,
+     depth  of perspective, and angle of view of the plot.  These
+     plotting  parameters  are  set  initially  by   command-line
+     options or values in an ESPS parameter file, but they can be
+     adjusted interactively with mouse-operated sliders and other
+     controls  in a control-panel window, or with mouse movements
+     in the plot window.  Operating the controls causes  a  wire-
+     frame  drawing  of  the bounding box of the plot to move and
+     change size accordingly, and clicking on  a  button  in  the
+     control-panel  window causes the plot to be redrawn with the
+     new parameters.  The current set of parameters can be  saved
+     to  a  file  so that other plots may later be drawn with the
+     same viewpoint.  Saved parameter sets may be loaded  from  a
+     file at any time.
+
+     Data may be loaded from a file interactively; the file name,
+     range  of records to be read, field name, and range of items
+     in the field may all be respecified.
+
+     A moving cursor, controlled by the mouse, allows the coordi-
+     nates of points of the graph to be read off numerically.
+
+     In addition to the display on the user's  screen;  the  plot
+     image  may  be saved in a file, so that it can be printed or
+     imported into a word processing system.  The plot image  can
+     be  saved  as either PostScript or PCL.   It can be directly
+     sent to a printer, if there is no need  to  save  the  image
+     file.
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+PLOT3D(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following options are supported.  Values in brackets are
+     defaults.
+
+     ----dddd _d_e_p_t_h [50]
+          Depth of perspective.  A value of 0 corresponds to pro-
+          jection   of   the   3-dimensional  plot  onto  the  2-
+          dimensional   plotting   surface   from   an   infinite
+          distancei.e.   parallel projection.  Positive values of
+          _d_e_p_t_h correspond to projection from  inversely  propor-
+          tional finite distances with the result that foreground
+          features are shown at  a  somewhat  larger  scale  than
+          features farther from the viewer.  The default value of
+          50 is reasonable for normal viewing  distances.   Large
+          values produce highly exaggerated perspective effects.
+
+     ----ffff """"_f_i_e_l_d[[[[_r_a_n_g_e]]]]"""" ["re_spec_val[0:<_l_a_s_t>]"]
+
+     ----ffff _f_i_e_l_d
+          Name of a field in an ESPS FEA file and range  of  ele-
+          ments in field to be plotted.  (Numbering of field ele-
+          ments starts with 0.)  The quotes are  needed  only  to
+          suppress  the  shell's  usual special interpretation of
+          brackets.  The bracketed _r_a_n_g_e, if  present,  may  have
+          any of the forms acceptable to _r_a_n_g_e__s_w_i_t_c_h(3-ESPSu).
+
+          _e_l_e_m_e_n_t
+               A single integer specifies a single field  element
+               (not at present useful with _p_l_o_t_3_d).
+
+          _f_i_r_s_t::::_l_a_s_t
+               A pair of integers specifies an inclusive range of
+               elements.
+
+          _f_i_r_s_t::::++++_i_n_c_r
+               The form with  the  plus  sign  is  equivalent  to
+               _f_i_r_s_t::::_l_a_s_t with _l_a_s_t = _f_i_r_s_t + _i_n_c_r.
+
+          If the specified range contains elements not present in
+          the field, the range is reduced as necessary.
+
+     ----oooo _o_r_i_e_n_t_a_t_i_o_n [L]
+          Left-handed coordinate  system  ("L")  or  right-handed
+          ("R")?   When  the  axes  are  in their default initial
+          position, record number increases  with  distance  from
+          the  viewer,  element  number  increases  from  left to
+          right, and data values increase in  the  upward  direc-
+          tion.   For some possible positions, a mirror-reflected
+          orientation  may  seem  more  natural.   Specifying   _R
+          instead  of _L effectively reverses the direction of the
+          _y (element number) axis.
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+
+
+
+
+PLOT3D(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+     ----rrrr _r_a_n_g_e [1:<_e_n_d _o_f _f_i_l_e>]
+          Range of records in the file to  be  read  and  plotted
+          (counting  the first as number 1.)  The allowable forms
+          for _r_a_n_g_e are those for _r_a_n_g_e__s_w_i_t_c_h(3-ESPSu); see  the
+          discussion  of   ---- ffff  above  or the _r_a_n_g_e__s_w_i_t_c_h manual
+          entry.
+
+     ----xxxx _d_e_b_u_g__l_e_v_e_l [0]
+          Values greater than 0 cause various debugging  messages
+          to  be printed as the program runs.  Larger values call
+          out more messages.  The default level of  0  suppresses
+          all debugging messages.
+
+     ----BBBB _l_e_n_g_t_h,,,,_w_i_d_t_h,,,,_h_e_i_g_h_t [400,250,150]
+          Dimensions, in pixels, of a rectangular box that bounds
+          the 3-d plot (except for axis labels and the like).
+
+     ----IIII {aaaaAAAAbbbbBBBBccccCCCCppppPPPP} . . . [abcp]
+          Initial actions, taken when the plot  window  is  first
+          brought  up.   Draw  axes (a, A), draw bounding box (b,
+          B), bring up control panel (c, C), or plot data (p, P).
+          A  lower-case  letters (a, b, c, p) invokes the action,
+          and upper-case (A, B, C, P) suppresses it.
+
+     ----PPPP _p_a_r_a_m__f_i_l_e [params]
+          Name of parameter file to be read initially.
+
+     ----RRRR _b_e_a_r_i_n_g,,,,_e_l_e_v_a_t_i_o_n,,,,_r_o_t_a_t_i_o_n [45.00,35.26,0.00]
+          Three angles of rotation  (measured  in  degrees)  that
+          describe  the  relative  positions of the 3-dimensional
+          plot and the 2-dimensional plotting window.  The  _b_e_a_r_-
+          _i_n_g  and _e_l_e_v_a_t_i_o_n determine the direction, relative to
+          the 3-d coordinate system, of the line  normal  to  the
+          window  at  its  center.  Changing the bearing lets you
+          look at the plot from various sides, and increasing the
+          elevation  lets you look at it from the top.  The third
+          degree of freedom, ``_r_o_t_a_t_i_o_n,'' corresponds to a rota-
+          tion  about the line normal to the window at its center
+          and for most purposes is probably best set equal to 0.
+
+     ----SSSS _h__s_k_e_w::::_v__s_k_e_w [0,0]
+          Changing _h__s_k_e_w moves the front parts of the  plot  one
+          way  horizontally  and  the  back parts of the plot the
+          opposite way, in proportion to the distance forward  or
+          back with respect to the plane of the plot window.  The
+          effect is somewhat similar to adjusting  _b_e_a_r_i_n_g  ( ---- RRRR
+          above)  in  that  both  adjustments let you see more or
+          less of the left or right side of the  plot.   However,
+          adjusting  _h__s_k_e_w  does not produce a rotation:  planes
+          parallel to the plane of the  plot  window  remain  so.
+          Similarly, changing _v__s_k_e_w moves the front parts of the
+          plot one way vertically and the back part of  the  plot
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+
+
+
+
+
+PLOT3D(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+          the  opposite  way.   The effect is somewhat similar to
+          adjusting _e_l_e_v_a_t_i_o_n in that both  adjustments  let  you
+          see  more  or  less  of  the top of the plot.  However,
+          adjusting _v__s_k_e_w does not produce a rotation of  planes
+          parallel to the plot window.
+
+     ----wwww    This option causes _p_l_o_t_3_d to attempt to connect to  an
+          _x_w_a_v_e_s+(1 - ESPS) running with its server mode enabled.
+          If this connection is made, then _p_l_o_t_3_d will send  cur-
+          sor  movement  commands  to  _x_w_a_v_e_s+ to maintain cursor
+          time alignment between the view in _p_l_o_t_3_d and the  view
+          in _x_w_a_v_e_s+.   Note that _p_l_o_t_3_d has no way of knowing if
+          the files  being  viewed  in  _p_l_o_t_3_d  and  _x_w_a_v_e_s+  are
+          related  and if the time alignment makes sense.  A side
+          effect of invoking this mode is to put  the  axis  into
+          time  and  frequency display mode.   If the information
+          in the displayed file cannot support this mode then the
+          ----wwww  option  is ignored.   For example, if the displayed
+          file has no _r_e_c_o_r_d__f_r_e_q generic  then  then  it  cannot
+          send time cursor movements to _x_w_a_v_e_s+. If the displayed
+          file, is not a FEA_SPEC file, then it cannot send  fre-
+          quency cursor movements to _x_w_a_v_e_s+.
+
+          When this option  is  used,  the  environment  variable
+          WWWWAAAAVVVVEEEESSSS____HHHHOOOOSSSSTTTT  is  read  to determine the name of the host
+          that is running the _x_w_a_v_e_s server.   If  WWWWAAAAVVVVEEEESSSS____HHHHOOOOSSSSTTTT  is
+          undefined,  then  the  connection  is  attempted  to an
+          _x_w_a_v_e_s+ on the same host as _p_l_o_t_3_d is running on.   The
+          default socket port number of the attempt is determined
+          by a ESPS wide default which is compiled in.    If  the
+          environment  variable  WWWWAAAAVVVVEEEESSSS____PPPPOOOORRRRTTTT  is defined, then its
+          value is used instead as the socket port. This  program
+          uses  the  facility  of  _s_e_n_d__x_w_a_v_e_s(3 -ESPS).  See its
+          manual page for details.
+
+     ----MMMM    This option forces _p_l_o_t_3_d to paint everything in black
+          and  white (monochrome), useful if you're doing screen-
+          dumps.
+
+
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     The parameter file is not required to be present,  as  there
+     are  default values for all parameters.  If the file exists,
+     the parameters below may be read.  These provide an alterna-
+     tive  way  of  specifying quantities that can also be deter-
+     mined by command-line options.  The general rule is that  if
+     a  command-line option is specified, it takes precedence; if
+     the command-line option is not specified, then the parameter
+     file  is consulted; and if a quantity is not given either on
+     the command line or in the parameter file, then a default is
+     used.   Eventually  this program will support parameter-file
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 4G4        4
+
+
+
+
+
+
+PLOT3D(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+     entries corresponding to all command-line options except ---- xxxx
+     and ----PPPP.  These parameters may also be adjusted interactively
+     from the control panel.  Current values may be  saved  to  a
+     file,  and new values may be read from a file interactively.
+     (See the discussion of the _l_o_a_d _p_a_r_a_m_s and _s_a_v_e _p_a_r_a_m_s items
+     on  the  _f_i_l_e_s  button  menu under "Control Panel and Menus"
+     below.
+
+     _b_o_x__l_e_n_g_t_h - _i_n_t_e_g_e_r
+
+     _b_o_x__w_i_d_t_h - _i_n_t_e_g_e_r
+
+     _b_o_x__h_e_i_g_h_t - _i_n_t_e_g_e_r
+          These correspond to the arguments  _l_e_n_g_t_h,  _w_i_d_t_h,  and
+          _h_e_i_g_h_t of the ----BBBB option.
+
+     _d_e_p_t_h - _f_l_o_a_t
+          This corresponds to the argument of the ----dddd option.
+
+     _h_o_r_i_z_o_n_t_a_l__s_k_e_w - _f_l_o_a_t
+
+     _v_e_r_t_i_c_a_l__s_k_e_w - _f_l_o_a_t
+          These correspond to the arguments _h__s_k_e_w and _v__s_k_e_w  of
+          the ----SSSS option.
+
+     _o_r_i_e_n_t_a_t_i_o_n - _s_t_r_i_n_g
+          This corresponds to the argument of the ----oooo option.
+
+     _b_e_a_r_i_n_g - _f_l_o_a_t
+
+     _e_l_e_v_a_t_i_o_n - _f_l_o_a_t
+
+     _r_o_t_a_t_i_o_n - _f_l_o_a_t
+          These correspond to the arguments of ----RRRR.
+
+CCCCOOOONNNNTTTTRRRROOOOLLLL PPPPAAAANNNNEEEELLLL AAAANNNNDDDD MMMMEEEENNNNUUUUSSSS
+     The _l_e_n_g_t_h, _w_i_d_t_h, and _h_e_i_g_h_t sliders in  the  first  column
+     adjust  the dimensions of the bounding box of the plot.  The
+     _s_c_a_l_e slider allows all three dimensions to be increased  or
+     decreased  by  the  same  factor  simultaneously.  The _d_e_p_t_h
+     slider in the second column adjusts the  same  parameter  as
+     the  parameter-file  entry  _d_e_p_t_h  or  the   ----dddd command-line
+     option.  Likewise the _H. _s_k_e_w and _V.  _s_k_e_w  sliders  in  the
+     second column, the _o_r_i_e_n_t_a_t_i_o_n selector in the third column,
+     and the _r_o_t_a_t_i_o_n, _b_e_a_r_i_n_g, and _s_k_e_w  sliders  in  the  third
+     column  adjust  the  same  parameters as the similarly named
+     parameter-file  entries  or  command-line   arguments.    To
+     operate  a  slider, move the cursor to the slider bar, press
+     the left mouse button, and, while holding the  button  down,
+     move the cursor left or right.
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 5G5        5
+
+
+
+
+
+
+PLOT3D(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+     There are buttons in the bottom row and the center top posi-
+     tion  that  perform various functions.  To invoke one of the
+     functions, move the cursor to the panel button and click the
+     left  mouse button.  In addition, the three buttons (_f_i_l_e_s ,
+     _a_x_e_s and _p_l_o_t) marked with small triangles  have  associated
+     menus.  To bring up one of the menus, move the cursor to the
+     panel button and press the right mouse button.
+
+     The _p_l_o_t button redraws the plot.  The associated  menu  has
+     two items related to printing the graphic image of the plot.
+     The _p_r_i_n_t _s_e_t_u_p item invokes a setup panel that  allows  the
+     user  to  configure  the  graphic  print  feature.    Select
+     PostScript or PCL, Portrait or Landscape, resolution of out-
+     put device, scaling factor, and output to a file or printer.
+     In most cases a scale factor of about 4 is correct to fill a
+     page  with  the  plot.    The  _p_r_i_n_t _g_r_a_p_h_i_c item causes the
+     image on the screen to be  rerendered  with  the  parameters
+     selected from the _p_r_i_n_t_e_r _s_e_t_u_p panel.
+
+     The _a_x_e_s button draws or removes graduated _x-,  _y-,  and  _z-
+     axes  labeled  with the values at the two ends.  The associ-
+     ated menu has an _o_n/_o_f_f item that performs the same function
+     and two other items that control the scaling and labeling of
+     two of the axes.
+
+     Selecting the _r_e_c_o_r_d _l_a_b_e_l_i_n_g item brings up a submenu  with
+     various options for the _x-axis.  The default is to scale the
+     axis in terms of record number  (counting  from  1  for  the
+     first  record  in the file).  The item _t_i_m_e (_f_r_o_m _r_e_c #) can
+     be selected when the header item "record_freq" is defined in
+     the  input  file  header.   It relabels the axis in units of
+     time, where the time associated with a record is  _s_t_a_r_t__t_i_m_e
+     +   (_r_e_c_o_r_d__n_u_m_b_e_r - 1)/_r_e_c_o_r_d__f_r_e_q.   If  the  header  item
+     "start_time" is not present, 0 is used for  _s_t_a_r_t__t_i_m_e.  The
+     item  _t_a_g can be selected when the input file is tagged.  It
+     relabels the axis in terms of tags (_i._e.  record  or  sample
+     numbers  in  the ``refer'' file of the input filesee _E_S_P_S(5-
+     ESPS) or _F_E_A(5-ESPS)).  The item  _t_i_m_e  (_f_r_o_m  _t_a_g)  can  be
+     selected  when  the input file is tagged and the header item
+     "src_sf" is defined in its  header.   (In  a  FEA_SPEC  file
+     without  "src_sf",  the  header item "sf" is accepted in its
+     place.)  This item relabels the axis in units of time, where
+     the time associated with a record is (_t_a_g-1)/_s_r_c__s_f.
+
+     Selecting the _i_t_e_m _l_a_b_e_l_i_n_g item of  the  _a_x_e_s  button  menu
+     brings  up  a  submenu  with  options  for  the _y-axis.  The
+     default is to scale the axis  in  terms  of  element  number
+     (counting  from  0  for  the first element of a field).  The
+     item _f_r_e_q_u_e_n_c_y can be selected when  the  input  file  is  a
+     FEA_SPEC  file whose "freq_format" (see _F_E_A__S_P_E_C(5-ESPS)) is
+     not SPFMT_ARB_VAR.  It relabels the axis in  units  of  fre-
+     quency,  where  the  frequency  of  each  field  element  is
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 6G6        6
+
+
+
+
+
+
+PLOT3D(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+     determined by values in the  file  header  (see  _F_E_A__S_P_E_C(5-
+     ESPS)).
+
+     If a file has nonuniformly spaced tags, switching the _x-axis
+     labeling between _r_e_c_o_r_d or _t_i_m_e (_f_r_o_m _r_e_c #) and _t_a_g or _t_i_m_e
+     (_f_r_o_m _t_a_g) renders the plot incorrect.  It  is  not  redrawn
+     automatically,  so  you  should do it manually with the _p_l_o_t
+     button.  Similarly, if the input file  is  a  FEA_SPEC  file
+     whose  "freq_format" is SPFMT_ARB_FIXED, and the frequencies
+     defined in the header are nonuniformly  spaced,  you  should
+     redraw  the plot after switching the _y-axis labeling between
+     _i_t_e_m _n_u_m_b_e_r and _f_r_e_q_u_e_n_c_y.
+
+     Selecting the item _e_n_a_b_l_e _w_a_v_e_s _c_u_r_s_o_r_s causes  the  program
+     to  attempt  to  connect to an _x_w_a_v_e_s+ in server mode.   See
+     the section about the ----wwww option.
+
+     The item _d_i_s_a_b_l_e _w_a_v_e_s _c_u_r_s_o_r turns off this mode.
+
+     The _b_o_x button draws or removes  the  bounding  box  of  the
+     plot.
+
+     The _c_l_e_a_r button clears the plot window.
+
+     The _p_o_i_n_t_s button plots individual data points without  con-
+     necting lines or hidden-line removal.
+
+     The _h_e_l_p button brings up a  window  containing  the  _p_l_o_t_3_d
+     manual entry.
+
+     The _q_u_i_t button terminates the program.
+
+     The _f_i_l_e button  has  an  associated  menu  with  items  for
+     interactively  reading  new data, reading new parameters, or
+     writing out the current parameters.  Clicking on this  panel
+     button  with  the left mouse button activates the first menu
+     item, _l_o_a_d _d_a_t_a. Clicking with the right mouse button brings
+     up the menu and lets any item be selected.
+
+     The _l_o_a_d _d_a_t_a menu item brings up a panel for  reading  data
+     from  a  new file or reading a different part of the data in
+     the same file.  The panel has various text fields  that  you
+     can  type  into and a _l_o_a_d button for reading the data after
+     the text fields are filled in  to  your  satisfaction.   The
+     _d_i_r_e_c_t_o_r_y  field may be left blank.  If it contains a direc-
+     tory, the program supplies a terminating  "/"  and  prefixes
+     the result to the _f_i_l_e field to get the pathname of the file
+     to be read.  The text field labeled _f_i_e_l_d should  contain  a
+     FEA  file field name defined in the header of the file to be
+     read.  The pair of fields after -_r determine  the  range  of
+     records  to  be  read.   Either  of the forms _f_i_r_s_t::::_l_a_s_t and
+     _f_i_r_s_t::::++++_i_n_c_r allowed with the ----rrrr command-line option  may  be
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 7G7        7
+
+
+
+
+
+
+PLOT3D(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+     used.  Leaving the fields blank gets the defaults.  The same
+     holds for the pair of  fields  between  brackets  after  the
+     field  name,  which determine the range of field elements to
+     be read.
+
+     The _l_o_a_d _p_a_r_a_m_s menu item brings up a panel  for  redefining
+     parameter  values by reading a file.  To use it, fill in the
+     text fields to specify a file that has the format of an ESPS
+     parameter  file  (see  _r_e_a_d__p_a_r_a_m_s (_3-_E_S_P_S_u)); then click on
+     the _l_o_a_d button.
+
+     The _s_a_v_e _p_a_r_a_m_s menu item brings up a panel for  saving  the
+     current  parameter  values  to  a  specified  file  in  ESPS
+     parameter-file  format.   If  the  specified  file   already
+     exists, it is overwritten.
+
+     Moving the mouse cursor into the base rectangle of the  plot
+     box in the plot window brings up a set of cursors with which
+     you can use the mouse to select values  of  the  independent
+     variables  (_e._g.   time  and frequency) and see these values
+     together  with  the  corresponding  data  value  in  digital
+     readouts  at  the  top of the plot window.  Moving the mouse
+     anywhere in the plot window with a  mouse  button  depressed
+     gives  you alternative ways of doing things you could accom-
+     plish with the controls in the control panel.  With the left
+     button down, horizontal and vertical mouse movements control
+     the horizontal skew  parameters.   With  the  middle  button
+     down,  horizontal and vertical mouse movements control bear-
+     ing and elevation.  Pressing the right mouse  button  brings
+     up a menu with items that duplicate some of the panel-button
+     functions:  _p_l_o_t, _a_x_e_s, _b_o_x, _p_r_i_n_t _s_e_t_u_p, _p_r_i_n_t and _c_l_e_a_r.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     The ESPS common file is not accessed.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     FEA_SPEC(5-ESPS), FEA(5-ESPS), ESPS(5-ESPS),
+     read_params(3-ESPS), range_switch(3-ESPS), plotspec(3-ESPS),
+     image(3-ESPS), send_xwaves(3-ESPS)
+
+DDDDIIIIAAAAGGGGNNNNOOOOSSSSTTTTIIIICCCCSSSS
+     Many error conditions  will  print  diagnostic  messages  to
+     _s_t_d_o_u_t.  Some  errors  in  the  use  of  the _l_o_a_d _d_a_t_a, _l_o_a_d
+     _p_a_r_a_m_s, and _s_a_v_e _p_a_r_a_m_s panels cause error messages  in  red
+     to appear in the panels.
+
+BBBBUUUUGGGGSSSS
+     There are positions for the plot for  which  transformations
+     used  in the hidden-line-elimination algorithm become singu-
+     lar, with disastrous results for the appearance of the plot.
+     This  can  occur,  for example, if you are viewing planes of
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 8G8        8
+
+
+
+
+
+
+PLOT3D(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+     the plot directly edge-on.  Usually, slightly perturbing the
+     position  of  the  box  or moving the _d_e_p_t_h control a little
+     away from 0 will clear up the problem.  If you view the plot
+     from  a  position such that some planes of the plot are seen
+     from the front and some from the  back,  you  may  notice  a
+     break  in  the  edge between the two parts of the plot.  The
+     axes and the box can  interfere:   a  line  segment  of  one
+     superposed  on  a segment of the other yields a segment of a
+     third color that may be invisible, or nearly so, against the
+     background.   The  cursors  in the base plane may get out of
+     coordination with the actual mouse position.   Toggling  the
+     axes on and off will get them back in step.
+
+FFFFUUUUTTTTUUUURRRREEEE CCCCHHHHAAAANNNNGGGGEEEESSSS
+     Fix the bugs noted above.  Allow adding straight lines  con-
+     necting  the edges of the plot to the edges of the base rec-
+     tangle.  Show underside of the plot.  Allow plotting "longi-
+     tudinal" traces (connecting points in different records, but
+     with the same element number) instead of, or in addition  to
+     the  present "lateral" traces (connecting points in the same
+     record, but with different element numbers).  Allow  select-
+     ing slices with the mouse for plotting in a separate window.
+     Parameters and command-line options for controlling the axis
+     limits  (now  determined automatically from the data).  Con-
+     trol over box dimensions by mouse movements in the plot win-
+     dow.   Better  rendering  of  axes.  "Footprint" (color base
+     rectangle differently from background).  Decent-looking axis
+     titles.   Other  choices  for  axis labeling (e.g. specified
+     header item or scalar field).  Allow specifying input record
+     and element ranges in "engineering units."  Intuitive inter-
+     face for controlling all three rotational degrees of freedom
+     with  mouse  movements in the plane.  Control over the color
+     scheme.
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Rodney Johnson.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 9G9        9
+
+
+

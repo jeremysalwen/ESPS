@@ -1,0 +1,135 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     mu2esps - convert a headerless mu-encoded file  to  an  ESPS
+     file
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>mu2esps</STRONG> [ -<EM>s</EM> ] [ <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> ] <EM>infile</EM> <EM>outfile</EM>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     <EM>Mu2esps</EM> converts a headerless, mu-encoded file into an  ESPS
+     sampled  data file.  The sampling frequency is assumed to be
+     8000 samples/second.  The program <STRONG><A HREF="../man1.html/addgen.1.html">addgen (1 - ESPS)</A></STRONG>  can  be
+     used  to  change  the ESPS header value (<EM>record</EM>_<EM>freq</EM>) if the
+     data has a different sampling frequency.
+
+     If <EM>infile</EM> is replaced by  "-", <EM>mu2esps</EM> will read from  stan-
+     dard input, and if <EM>outfile</EM> is replaced by "-", standard out-
+     put is written.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following options are supported:
+
+     <STRONG>-s</STRONG>    This option is only available on  SUN  platforms.   It
+          indicates  <EM>infile</EM>  has  a  SUNOS 4.1 audio file header.
+          This causes <EM>mu2esps</EM> to skip the header  before  reading
+          and converting the data.
+
+     <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM>
+          If <EM>debug</EM>_<EM>level</EM> is positive, <EM>mu2esps</EM>  prints  diagnostic
+          messages.   The  default level is zero, which causes no
+          debug output.
+
+
+</PRE>
+<H2>ESPS HEADER</H2><PRE>
+     A <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD (5-ESPS)</A></STRONG> header is written.
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     This program does not access the parameter file.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     This program does not access common.
+
+
+</PRE>
+<H2>DIAGNOSTICS</H2><PRE>
+     None.
+
+
+</PRE>
+<H2>WARNINGS</H2><PRE>
+     <STRONG><A HREF="../man1.html/mu2esps.1.html">mu2esps (1-ESPS)</A></STRONG> maps the mu-encoded values into  the  range
+     -8059 to 8059. If the original linear data had a full 16 bit
+     dynamic range, the output data can be  scaled  up  by  using
+     <STRONG><A HREF="../man1.html/copysd.1.html">copysd (1-ESPS)</A></STRONG>.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man3.html/mu_to_linear.3.html">mu_to_linear (3-ESPS)</A></STRONG>, <STRONG><A HREF="../man3.html/linear_to_mu.3.html">linear_to_mu (3-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man1.html/play.1.html">play (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/esps2mu.1.html">esps2mu (1-ESPS)</A></STRONG>
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     None known.
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Manual page and code by David Burton.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

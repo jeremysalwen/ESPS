@@ -1,0 +1,14 @@
+#! /bin/sh
+#wait_for @(#)wait_for	1.2 6/5/90
+#wait an initial $1 seconds, then check lockfile every second before 
+#returning when lockfile is gone  (see also lock_play) 
+
+lock_file=/tmp/erlplay.lock
+
+sleep $1
+
+until test ! -f $lock_file
+do
+	sleep 1
+done
+

@@ -1,0 +1,1188 @@
+
+
+
+
+
+
+
+                         ENTROPIC RESEARCH LABORATORY, INC.
+
+
+
+
+
+
+                                INTRODUCTION TO THE
+
+                      ENTROPIC SIGNAL PROCESSING SYSTEM (ESPS)
+
+
+                            John Shore  and Alan Parker
+
+
+                         Entropic Research Laboratory, Inc.
+                           Washington Research Laboratory
+                       600 Pennsylvania Ave. S.E., Suite 202
+                               Washington, D.C. 20003
+                                   (202)547-1420
+
+
+
+
+       1 .  INTRODUCTION
+
+       The Entropic Signal Processing System (ESPS) is a set  of  interacting
+       signal  processing programs.  It is a third-generation system that was
+       developed over a three-year period with these main goals:
+
+         +  to provide a useful set of easy-to-use programs for  direct  sup-
+            port  of  such  traditional  operations as analog I/O, filtering,
+            spectrum analysis, quantization, pattern  classification,  signal
+            editing, file editing, plotting, etc;
+
+         +  to provide a toolkit that supports the rapid development  of  new
+            signal processing programs;
+
+         +  to exploit UNIXr| tools and features (e.g., pipes)
+
+         +  to facilitate record keeping in such a way that ESPS  files  con-
+            tain a complete history of the origin of the data in the file and
+            of all intermediate processing steps;
+
+         +  to allow easy user-extensions to ESPS file types  (including  the
+            creation of new file types) in such a way that the extensions are
+            supported automatically  by  standard  ESPS  plotting,  printing,
+            editing, and database programs;
+       ____________________
+          c Copyright  1987-1993  Entropic  Research  Laboratory,  Inc.;  All
+       rights reserved.
+
+
+
+
+
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                            page 2
+
+
+       ESPS currently includes approximately 85 user-level  programs  (called
+       from  the  UNIX  shell) for file manipulation, sampled-data I/O, plot-
+       ting, and signal processing operations.  Also included is a library of
+       approximately  200 functions that support the modification of existing
+       programs and the development of new programs.  The ESPS  library  con-
+       tains  functions  that perform signal processing primitives as well as
+       functions that support the creation and manipulation  of  ESPS  files.
+       ESPS  provides  5 built-in file types; it also provides the ability to
+       modify these file types and to create new file types.
+
+       The ESPS library was developed with disciplined  software  engineering
+       methods,  including information-hiding.  The library functions perform
+       extensive error-checking, and a complete LINT library is included.
+
+       ESPS main programs and most of the library functions are written in C.
+       However,  the  ESPS  library  also supports FORTRAN so that new signal
+       processing operations can be written either in C or FORTRAN.
+
+       2 .  ESPS DOCUMENTATION
+
+       The principal documentation for ESPS is the  ESPS  Users  Manual.  [1]
+       This  contains UNIX-style manual pages for all programs, library func-
+       tions, and file types.  The ESPS Manual is organized in the usual UNIX
+       style,  with  Section  1  describing  user-level  programs,  Section 3
+       describing the ESPS library, and Section 5 describing ESPS  file  for-
+       mats.   Section 3 is further divided into two sections, one for signal
+       processing functions and one for ESPS utility  functions.   References
+       to  ESPS programs, library functions, and file types usually include a
+       parenthetical pointer to the section of the ESPS Manual in  which  the
+       manual  page  is located.  For example, "(3-ESPS)" indicates Section 3
+       of the ESPS Manual.
+
+       The entire ESPS Manual is available on-line and can be viewed with the
+       eman  (1-ESPS) program, which operates just like the UNIX man (1) pro-
+       gram (including the -k option to search for  programs  whose  descrip-
+       tions contain a given keyword).
+
+       The ESPS documentation also includes a series of  technical  memoranda
+       that explain ESPS data files, [2] ESPS parameter and common files, [3]
+       and ESPS feature files,  [4] files.  Also provided are  ESPS  program-
+       ming  guidelines,  [5]  an  applications note on filtering, [6] and an
+       applications note on ESPS record keeping. [7]
+
+       3 .  ESPS FILES
+
+       ESPS files have a common structure  consisting  of  a  variable-length
+       header  followed  by  data  records.   Within  a single ESPS file, the
+       records have a fixed-length that depends on information in the header.
+       Record-lengths vary, however, even among files of the same basic type.
+       ____________________
+          | UNIX is a trademark of AT&T Bell Laboratories
+
+
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                            page 3
+
+
+       The ESPS header is the primary means by which record-keeping  is  per-
+       formed  within ESPS.  An ESPS header includes the values of all impor-
+       tant parameters to the program that created the ESPS  file.   It  also
+       includes the headers of any files that were inputs to the program that
+       created the file.  Since the header is a  recursive  structure,  these
+       included headers themselves may contain the headers of previous source
+       files.  It follows that most ESPS files contain a complete history  of
+       the origin of the data in the file and all the intermediate processing
+       steps.  In addition to this formal record-keeping mechanism,  informal
+       comments  can  be  added  to  any ESPS file header by means of comment
+       (1-ESPS).  For details about  the  ESPS  history  mechanism,  see  the
+       applications note. [7]
+
+       ESPS file headers and data records are viewed in ASCII form  by  means
+       of  the  program  psps  (1-ESPS),  which  includes options for viewing
+       recursively all of the embedded headers.  The output from psps identi-
+       fies  values  from header and data-records fields by name. Within pro-
+       grams, the fields are also referred to by name.
+
+       On some systems, ESPS files can be created directly from analog inputs
+       and  played  out  over digital to analog converters.  Also, conversion
+       programs are available for ASCII files, ILSr| sampled-data files,  and
+       MASSCOMPr Laboratory Workbench (LWB)| files.
+
+       3 .1 .  Built-in File Types
+
+       Older versions of ESPS contained the following built-in file types:
+
+         SD      contains sampled data
+
+         FILT    contains digital filters
+
+         SCBK    contains scalar quantization codebooks
+
+         FEA     contains arbitrary features
+
+       Except for FEA files, which are discussed further below, these  built-
+       in  files  have  a  predefined  record structure.  That is, their data
+       records comprise fields with pre-defined names and  data  types.   The
+       definitions  are suitable for the types of data stored in these built-
+       in file types.  Similarly, the headers of the built-in  types  contain
+       pre-defined fields for relevant information.  However, any program can
+       add additional header fields through the use of generic  header  items
+       (see  Section 7.1.3).  Generic header items can also be added by means
+       of the user-level program addgen (1-ESPS).
+
+
+       ____________________
+          | ILS is a trademark of Signal Technology, Inc.
+          |  MASSCOMP  and  LWB  are  trademarks  of  Massachusetts  Computer
+       Corporation.
+
+
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                            page 4
+
+
+       Section 5 of the ESPS Manual contains detailed information about  what
+       is stored in the various ESPS file types.
+
+       3 .2 .  Feature Files and User-Defined File Types
+
+       The current version of ESPS uses feature files for all data.  The  FEA
+       file  type  is  a  general purpose file type that can be used to store
+       arbitrary information in fixed-length records; optionally, the records
+       can  point  to positions in various source files.  Unlike the case for
+       the other ESPS file types - the names, sizes, and data  types  of  the
+       fields  in  FEA  records  are  not  pre-defined.  Because of this, and
+       because of the ways in which FEA files are supported by standard  ESPS
+       file  manipulation  and  plotting  programs,  FEA files can be used to
+       create user-defined ESPS files that have all of the advantages of  the
+       built-in  file  types.   This  can  be  done by using the ESPS library
+       whether or not ESPS source is available. [4]
+
+       We call FEA files self-describing because the structure of a FEA  file
+       is defined in the file header, rather than in some external specifica-
+       tion.  In particular, the self-description portion of the  FEA  header
+       is  contained  in  the  type-specific  section  of  the header, and is
+       displayed by fea_element (1-ESPS), or  by  psps  (1-ESPS)  withthe  -v
+       option.  In many cases, non-ESPS binary files can be converted to ESPS
+       FEA files using addfeahd (1-ESPS).
+
+       When a new file type is implemented using FEA files, it is referred to
+       as  a  FEA  file  sub-type.  Several such implementations are provided
+       with ESPS, including the following:
+
+         FEA_SD
+              used for single and multi-channel sampled data (including  com-
+              plex sampled data).
+
+         FEA_SPEC
+              used for storing spectral information, such as  power  spectra.
+              Each  record  contains  a  vector of spectral values (powers or
+              power densities in the case of power  spectra),  together  with
+              certain  optional  fields - total power, an imaginary-part vec-
+              tor, number of frequencies, and a vector of frequencies -  that
+              are present or absent according to the values of certain header
+              items;
+
+         FEA_ANA
+              suitable for speech processing;  contains  spectral  parameters
+              (various  representations),  pulse lengths, powers, and voicing
+              information;
+
+         FEA_VQ
+              contains vector quantization codebooks;
+
+         FEA_FILT
+              contains digital filters;
+
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                            page 5
+
+
+         FEA_STAT
+              contains statistical  information  (means,  covariances,  etc.)
+              suitable for pattern-classification;
+
+       By using access functions provided with the ESPS  Library,  users  can
+       implement their own FEA file sub-types.  They can also extend existing
+       FEA file types, like those mentioned above, by adding  whatever  addi-
+       tional record fields are desired.
+
+       The power of FEA files is enhanced by the existence of  ESPS  programs
+       like the following, which work on any FEA file (including user-defined
+       or user-extended FEA files):
+
+         psps(1-ESPS)
+              produces ASCII  representation  of  any  ESPS  file  (including
+              headers), with all fields referred to by name;
+
+         genplot(1-ESPS)
+              plots information from FEA file records in precise,  multi-line
+              format;
+
+         fea_edit(1-ESPS)
+              permits you to edit an ASCII representation of a FEA file using
+              the  editor of your choice; Thus, you can modify the data in an
+              existing FEA file or create a new  file  with  arbitrary  data.
+              Both file headers and data records can be edited with fea_edit.
+
+         select(1-ESPS)
+              treats ESPS FEA files as  a  database  and  allows  interactive
+              selection   of  records  that  satisfy  user-supplied  queries;
+              selected records can be output to another FEA  file;  Here  are
+              some examples of queries on an input FEA_ANA file:
+
+              ->select (spec_param[0] > .96) && (frame_type == "VOICED")
+                      123 records selected
+
+              ->select ((spec_param[0] + spec_param[1]) > 1.5) && (frame_len > 100)
+                      21 records selected
+
+              ->select (spec_param[0] > spec_param[1]) && (log(sqrt(raw_power[0])) > 7)
+                      13 records selected
+
+              ->select (mean(raw_power) > 1.75E10) || (raw_power[0] > 1.75E10)
+                      100 records selected
+
+              Here, "spec_param", "frame_type", "frame_len", and  "raw_power"
+              are the names of fields in a FEA_ANA file.  Similar queries can
+              be constructed for any FEA file using the names  of  fields  in
+              the  FEA  file.   Queries can be constructed using simple rela-
+              tional expressions  involving  the  elements  in  FEA  records,
+              built-in  arithmetic  operators (*,+,-,/,^), built in functions
+              (sin, cos, tan, atan, log, log10, exp, sqrt), and  user-defined
+              functions  implemented  as external programs.  Also, the "eval"
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                            page 6
+
+
+              command in select allows you to  specify  arbitrary  arithmetic
+              expressions  on  the FEA fields and have the results printed on
+              standard output.
+
+         fea_stat(1-ESPS)
+              Computes means,  covariances,  eigenvalues,  eigenvectors,  and
+              other  statistics  from  the  records  in a FEA file; outputs a
+              FEA_STAT file;
+
+         classify(1-ESPS)
+              performs classification of FEA file records  using  information
+              in FEA_STAT files;
+
+       Another useful aspect of FEA files  is  a  mechanism  called  "segment
+       labelling",  which  makes  it  easy to associate FEA file records with
+       positions or ranges in sampled-data files.  If a FEA file is  declared
+       to  be  segment-labelled,  then its records automatically include file
+       name, starting position, and length fields (these need to be filled in
+       by  user  programs,  but  the field support is there).  This mechanism
+       could be used, for example, to support  a  database  of  phonetically-
+       labelled  sampled  data  files by implementing a FEA file containing a
+       phoneme code  (or  string)  in  each  segment-labelled  record.   Then
+       select(1-ESPS)  could  be  used  to  process sets of these files.  For
+       example, the select command
+
+               ->select phoneme == "AW" || phoneme == "OW"
+
+       would yield records that provide file names, starting  positions,  and
+       lengths for all occurrences of the two named phonemes.
+
+       4 .  ESPS PROGRAMS AND UNIX PIPES
+
+       So that pipes can be used, most ESPS programs are written so that they
+       use  standard input and output as well as specific files.  As an exam-
+       ple, consider the following sequence of ESPS commands:
+
+               %refcof data.sd data.fana
+               %me_spec data.fana data.spec
+               %plotspec data.spec
+
+
+       The first command causes the  reflection  coefficients  computed  from
+       data  frames  in  the SD file data.sd to be placed in the FEA_ANA file
+       data.fana.  The second  command  computes  spectra  for  each  set  of
+       reflection  coefficients  and  puts  the  results  in  the  SPEC  file
+       data.spec.  The third command plots all  the  spectra  on  the  screen
+       using  a single set of axes.  If there is no need to retain the inter-
+       mediate FEA_ANA  and  FEA_SPEC  files,  one  could  do  the  following
+       instead:
+
+               %refcof data.sd - | me_spec - - | plotspec -
+
+
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                            page 7
+
+
+       Similarly, if only the FEA_SPEC file is wanted, the first two commands
+       could be replaced by:
+
+               %refcof data.sd - | me_spec - data.spec
+
+
+       An important consideration in using pipes with ESPS programs  is  that
+       record  keeping  is  not  compromised.   Thus,  the  file  header  for
+       data.spec in the command above will include the  header  of  the  file
+       produced by refcof (i.e., the header of data.fana in the first version
+       of this sequence of operations, above). For a more  detailed  example,
+       see. [7]
+
+       5 .  PARAMETERS FOR ESPS PROGRAMS
+
+       Signal processing programs often are affected by a large set of  input
+       parameters.  Rather than requiring that all parameters be specified on
+       the  command  line,  which  is  not  only  error-prone  but  leads  to
+       ridiculously-long command lines, ESPS provides a mechanism that uses a
+       distinguished ASCII file called the parameter  file.   Parameters  are
+       specified  in  this  file  using  a C-like syntax that allows the user
+       either to provide specific values for the parameters within the param-
+       eter  file  or to have the program prompt the user for their values at
+       run time.  The default convention  for  the  parameter  file  name  is
+       "params"  in  the  current directory, but for all programs this can be
+       changed using the -P command-line option.
+
+       For example, refcof  (1-ESPS)  computes  reflection  coefficients  for
+       fixed-length  segments  of sampled-data.  To do so it requires parame-
+       ters that specify the starting point, the number of points to analyze,
+       the frame length, and the order of the analysis.  The call
+
+           %refcof -P params.3 john.sd john.fana
+
+       indicates that reflection coefficients are to be computed for data  in
+       the  file  john.sd  using  parameter  values in the file params.3 (the
+       nuser may be prompted for some of the values), and  that  the  results
+       are to be written to the file john.fana.
+
+       The ESPS distribution contains a "default" parameter  file  for  every
+       ESPS  program  that  processes a parameter file.  Easy access to these
+       parameter files is provided by  eparam  (1-ESPS),  which  invokes  any
+       given ESPS program with its default parameter file. The default param-
+       eter files are written to prompt for all values so  you  can  override
+       each  default.   Here is an example of running vqdes (1-ESPS) by means
+       of eparam:
+
+           %eparam vqdes rc.fana rc.cbk
+           max_iter [100]:
+           fea_dim [10]:
+           vq_size [32]: 16
+           fea_field [spec_param]:
+           cbk_type [MISC]:
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                            page 8
+
+
+           cbk_struct [FULL_SEARCH]:
+           conv_ratio [0.050000]: .01
+           dist_type [MSE]:
+           %
+
+
+       Here, the defaults were taken  for  all  parameters  but  vq_size  and
+       conv_ratio.
+
+       The ESPS parameter file provides a convenient means for users to  com-
+       municate parameter values to signal processing programs.  In many sig-
+       nal processing applications, however, there is also  a  need  for  one
+       program to communicate parameter values to another program that is run
+       subsequently.  In ESPS, this need is met by the ESPS common  file.  If
+       the  common file exists and was written more recently than the parame-
+       ter file, then parameter values in the common file may supersede those
+       in  the  parameter  file (for a detailed discussion of the conditions,
+       see.  ESPS parameters Thus, a program can write a value into the  com-
+       mon  file  and  have  that value be used by a subsequent program.  For
+       example, suppose that plotsd (1-ESPS) is used to plot the first 10,000
+       points of an SD file in a graphics window:
+
+               %plotsd -p1:10000 file.sd
+
+       After this plot is made, the user can run range (1-ESPS) to  select  a
+       portion of the displayed data (using the mouse).  When range exits, it
+       writes the selected range and the filename  "file.sd"  into  the  ESPS
+       common file.  If the user then runs
+
+               %plotsd
+
+       (i.e., without any command line options), the selected  range  of  the
+       same file will be displayed.  Similarly, if the user runs
+
+               %play
+
+       (again, without options), the selected range of the same file will  be
+       played out over the system D/A converter.
+
+       The default ESPS common file is ".espscom " in the user's home  direc-
+       tory, but this default can be changed by using the UNIX shell environ-
+       ment variable ESPSCOM.  Thus, for csh users,
+
+               %setenv ESPSCOM /u/shore/common.3
+
+       resets the common file to /u/shore/common.3.  This facility for chang-
+       ing  the  common  file  is  needed  so  that users can prepare and run
+       several shell scripts without having them interfere with  each  other.
+       Common  processing can also be turned off entirely by setting the UNIX
+       environment variable USE_ESPS_COMMON to "off".  By default, ESPS  pro-
+       vides detailed user-feedback about the parameter values taken from the
+       parameter and common files.  The verbosity of the  resulting  messages
+       is  controlled  by  the  UNIX  environment variable ESPS_VERBOSE.  The
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                            page 9
+
+
+       default value is 3; a value of 0 inhibits all messages.
+
+       To summarize, ESPS programs get their parameters from three sources:
+
+            +  the ESPS parameter file
+
+            +  the ESPS common file
+
+            +  command line options
+
+       In general, if a command-line option is available to set  a  parameter
+       value, its use overrides any of the other mechanisms by which programs
+       get parameter values.  For details about  ESPS  parameter  and  common
+       file processing see. [3]
+
+       6 .  CONVERSIONS TO OR FROM ESPS FILES
+
+       Most ESPS users have occasion to import non-ESPS data into ESPS files,
+       and  also to export data from ESPS files for use by non-ESPS programs.
+       Here is a list of the ESPS programs that are the  main  utilities  for
+       converting  back  and forth between ESPS files and ASCII or headerless
+       binary data:
+
+         addfea -  adds a new FEA file field based  on ASCII data
+
+         addfeahd -adds an ESPS feature file header to non-ESPS binary or ASCII data
+
+         addgen -  adds a generic header item to an existing  nor new ESPS file header
+
+         bhd -     behead an ESPS file
+
+         btosps -  convert binary sampled data file to an ESPS FEA_SD file
+
+         comment - displays or appends to comment field in ESPS file headers
+
+         demux -   (demultiplex) extract real or complex channels from a FEA_SD file
+
+         eman -    displays or prints ESPS manual pages
+
+         eparam -  run an ESPS program with parameter prompts
+
+         esps2mu - convert an ESPS sampled data file to a headerless mu-encoded file
+
+         fea2mat - converts FEA to MATLAB .mat
+
+         fea_edit -feature file editor
+
+         fea_element -prints binary format table for ESPS FEA files
+
+         fea_print - print data from FEA records with user-controlled formatting
+
+         feafunc - apply function, gain factor, additive constant, and type change to FEA fields
+
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                           page 10
+
+
+         fea_deriv -derive a new FEA file containing elements from an existing one
+
+         hditem -  print an item from an ESPS header
+
+         ils_esps -convert an ILS sampled data file to an ESPS file
+
+         mat2fea - converts from MATLAB .mat to FEA
+
+         mergefea -merge two FEA files so that output records contain fields from both
+
+         mux -     multiplex sampled-data files into a single multichannel or complex file
+
+         mu2esps - converts mu-encoded data to ESPS FEA_SD file
+
+         pplain -  print values from ESPS file in "plain format"
+
+         epsps -   print headers and data from ESPS file in "pretty format"
+
+         select -  applies arbitrary queries to select records from FEA files
+
+         testsd -  make test signal (sine wave, square wave, noise, pulses, ASCII input, etc.)
+
+         xeparam - run an ESPS program with X Window parameter prompts
+
+         exprompt -interactive ESPS parameter entry in a pop-up window
+
+         expromptrun -interactive ESPS parameter entry and program run
+
+       ESPS also includes facilities for  dealing  directly  with  headerless
+       files as well as with files that have foreign (non-ESPS) headers.  One
+       type of foreign header - NIST (Sphere) sampled data headers - are read
+       directly  by  ESPS  programs.  For a detailed discussion discussion of
+       file conversion and foreign data, see the ESPS applications note "Con-
+       verting Data to and from ESPS FEA Files".
+
+       7 .  PROGRAMMING WITH ESPS FILES
+
+       This section contains a brief introduction to the  C  structures  used
+       for  ESPS  headers and records, as well as to some of the ESPS library
+       routines that  facilitate  ESPS  file  processing.   If  you  are  not
+       interested  in  ESPS programming, skip to Section 7.  For an introduc-
+       tion to ESPS file headers see. [7]
+
+       7 .1 .  ESPS File Headers
+
+       The standard ESPS file header  consists  of  two  primary  parts,  the
+       universal  section  and  the  type-specific section.  All header items
+       (including generics) are referred to by name in programs.  This  makes
+       it  easier  to write, read, and maintain programs.  Also, when headers
+       are output in ASCII  form  using  psps  (1-ESPS),  all  of  the  items
+       (including generics) are identified by name.
+
+
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                           page 11
+
+
+       7 .1 .1 .  The Universal Section of the Header
+
+       As the name implies, the universal section of the ESPS header has  the
+       same  definition  for all ESPS file types.  This section of the header
+       is divided into a fixed-length portion called the common section,  and
+       a variable-length portion called the variable section.
+
+       The universal section of an ESPS header contains information about the
+       type  of data in the file, the program that created the file, the user
+       who created the file, the creation date, version  information,  house-
+       keeping  information  required  by the header access routines, history
+       data, etc.  When user programs need to refer directly to these  items,
+       they do so by name.  For example, consider the items "tag" in the com-
+       mon portion and "refer" in the  variable  portion.   "Tag"  determines
+       whether  or not the records in the file each contain a tag pointing to
+       a particular record in some pre-existing source file; if they do, then
+       "refer"  is  the name of the source file to which they refer.  Here is
+       an example of how these header items are referred to in source code:
+
+           #include <esps/sps.h>
+           struct header *h;
+           . . .
+           if (h->common.tag) printf("source file for tags is %s0, h->variable.refer);
+
+       In most cases, ESPS programs do not refer directly  to  items  in  the
+       universal  section  of  the  header because these items are maintained
+       directly or indirectly by utility routines in the ESPS  library.   For
+       example,  the  universal  section  of  the header contains a variable-
+       length comment field that is used to record arbitrary ASCII  comments.
+       Programs  add comments to an existing header though use of add_comment
+       (3-ESPS), as in
+
+           add_comment(h, "This file contains clipped values.0);
+
+       The user-level program comment (1-ESPS), mentioned in Section 3 above,
+       is implemented by means of calls to add_comment.
+
+       7 .1 .2 .  The Type-Specific Section of the Header
+
+       As the name implies, this section of the  header  is  used  to  record
+       information relevant to the specific file type.  The items defined for
+       a particular file type are described in the manual page for that  file
+       type  in  Section  5 of the ESPS Manual.  For example, see SD (5-ESPS)
+       for the type-specific header definition for sampled data  files.   For
+       FEA files, the type-specfic section contains the field definitions.
+
+       7 .1 .3 .  Generic Header Items
+
+       The pre-defined items in the universal and type-specific  header  sec-
+       tions  are  intended to be useful in a broad range of typical applica-
+       tions.  However, they cannot anticipate every application.  For  exam-
+       ple,  the SD file type does not make provision for storing in the file
+       header the average rate of zero crossings, but applications arise when
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                           page 12
+
+
+       it  is convenient to do so.  To address such needs, ESPS provides gen-
+       eric header items.
+
+       Generic header items provide programmers with the  ability  to  create
+       arbitrary  named fields in the header of any ESPS file.  Utility func-
+       tions in the ESPS library facilitate the creation and manipulation  of
+       generics.   For example, the function add_genhd_f (3-ESPS) can be used
+       to create a generic header comprising one or more floats.  Here's  one
+       example   of   its   use   to   create   and   fill   an  item  called
+       "zero_cross_rate":
+
+           struct header *hd;
+           float time;
+           long nzeros;
+           . . .
+           *add_genhd_f("zero_cross_rate", NULL, 1L, hd) = nzeros / time;
+
+
+       Similarly, get_genhd (3-ESPS) returns a pointer to an existing generic
+       and might be used as follows:
+
+           struct header *hd;
+           long estim_zeros;
+           float time;
+           . . .
+           /*compute estimated number of zeros*/
+           estim_zeros = time * (*(float *) get_genhd("zero_cross_rate", hd));
+
+
+       Generic header items can store any type of C variable values,  includ-
+       ing  characters (and strings).  Also provided are generic header items
+       to store enumerated types (also called  coded  types).   These  header
+       items  store  an  integer value but allow those values to be expressed
+       symbolically via a set of pre-defined strings.For example,  this  code
+       creates and fills a generic header item called "filter_type":
+
+           /*defined constants for filter_type*/
+           #define MISC0
+           #define LOW_PASS1
+           #define HIGH_PASS2
+           #define BAND_PASS3
+
+           /*string array of filter_type values*/
+           char * f_types[] = {"MISC", "LOW_PASS", "HIGH_PASS", "BAND_PASS", NULL};
+
+           /*create generic header item and fill it*/
+           *add_genhd_e("filt_type", NULL, 1L, f_types, hd) = MISC;
+           . . .
+           /*change filt_type item in header*/
+           *(short *) get_genhd("filt_type", hd) = BAND_PASS;
+
+
+
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                           page 13
+
+
+       The psps (1-ESPS) listing for a file processed as above will show  the
+       item symbolically, i.e.:
+
+           . . .
+           filt_type: BAND_PASS
+           . . .
+
+
+       Also, programs that read a file with such a generic  item  defined  in
+       the  header  can refer to the contents symbolically, as in the follow-
+       ing:
+
+           struct header *hd;
+           short filter_class;
+           . . .
+           filter_class = *(short *) get_genhd("filt_type", hd);
+           . . .
+           switch (fitler_class) {
+                   case LOW_PASS:
+                       . . .
+                       break;
+                   case HIGH_PASS:
+                       . . .
+                       break;
+                   case BAND_PASS:
+                       . . .
+                       break;
+                   case MISC:
+                       . . .
+                       break;
+                   default:
+                       ERROR_EXIT("invalid filter type encountered");
+           }
+
+
+       Note that one can also add generic header items to existing  files  by
+       means of the user-level program addgen (1-ESPS).
+
+       7 .2 .  ESPS Record Structures
+
+       The ESPS header is followed by a set  of  fixed-length  data  records.
+       When  any  record  is read into memory (through use of an ESPS library
+       routine), it is stored as a C structure  that  is  documented  in  the
+       relevant Section 5 manual page of the ESPS Manual.  As is the case for
+       file headers, programmers need not be concerned with the actual format
+       of  ESPS data records.  For example, suppose that the variable scbkrec
+       is pointer to a SCBK file record (each record contains a scalar quant-
+       ization  codebook  plus  related  design information).  Then the final
+       distortion value for that codebook and the population of the ith code-
+       word are referred to as
+
+           scbkrec->final_dist
+
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                           page 14
+
+
+       and
+
+           scbkrec->final_pop[i]
+
+       respectively (see SCBK (5-ESPS)).
+
+       This symbolic form of reference for ESPS data records also applies  to
+       FEA  files.  For  example,  if  anarec  is a pointer to a FEA_ANA file
+       record, the ith filter pole in that record is referred to as
+
+           anarec->filt_poles[i]
+
+       (see FEA_ANA (5-ESPS). As mentioned earlier, users  can  define  their
+       own FEA file sub-types and extend existing subtypes. New fields in FEA
+       file records are defined through use of  add_fea_fld  (3-ESPS),  which
+       creates  a new field with a given name size, numerical type, etc.  The
+       new fields are accessed by means of  of  get_fea_ptr  (3-ESPS),  which
+       returns a pointer to a field with a given name from a given record.
+
+       7 .3 .  The ESPS Library
+
+       To support the writing of  new  user-level  ESPS  programs,  the  ESPS
+       library  contains  various  routines  for processing ESPS headers, for
+       processing ESPS data records, and for performing various  signal  pro-
+       cessing  functions.   At  present,  there are over 110 routines in the
+       library.
+
+       A full ESPS lint library is included so  that  ESPS  programs  can  be
+       fully  checked  with  the  standard UNIX lint(1) utility for C program
+       checking.  As a further aid to programmers, echeck (3-ESPS)  looks  up
+       entries  in  the  ESPS  lint  library  and  prints  the proper calling
+       sequence.  For emacs users, a mock-lisp file provides for  echeck  use
+       from  within  emacs.   The  scripts  emake (1-ESPS), ecc (1-ESPS), and
+       elint (1-ESPS) facilitate compiling and checking programs  under  ESPS
+       (for details, see.[5])
+
+       Here are a few examples of functions in the ESPS library:
+
+       7 .3 .1 .  Signal Processing Support Library Functions
+
+        analyze  compute prediction error filter and reflection coefficients
+        block-filterfilter a data array
+        convolv  convolution of polynomials or auto-correlations
+        covar    compute reflection coefficients with covariance method
+        fdbk_laticfeedback filtering with lattice form
+        feedbk_filfeedback filtering with transversal form
+        gauss    compute Gaussian random numbers
+        get_auto compute auto-correlation coefficients
+        get_burg compute reflection coefficients with Burg or modified
+                 Burg method
+        get_fft  compute fast Fourier transform
+        hamm_dec decode (8,4) Hamming code
+        hamm_enc encode with (8,4) Hamming code
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                           page 15
+
+
+        interp_filtperform interpolation filtering
+        is_dist_tdcompute Itakura-Saito distortion
+        pc_to_lsfconvert prediction coefficients to line spectrum frequencies
+        rand_intnrsample without replacement from uniformly
+                 distributed integers
+        refl_to_filtconvert reflection coefficients to filter coefficients
+        remove_dcremove DC, using exponential weighting
+        vqdesign design a full-search vector quantization codebook
+
+
+       7 .3 .2 .  File Support Library Functions
+
+        add_comment  adds a string to the comment field of an ESPS header
+        add_fea_fld  add a new field to data record in a FEA file
+        add_genhd    adds a generic header item to a ESPS header
+        add_source_fileadd the header of a source file to an ESPS header
+        copy_header  copies an ESPS header to a new header
+        genhd_list   returns a list of defined generic header items
+        get_cmd_line returns pointer to string containing program's command line
+        get_fea_fld  returns pointer to named field in a FEA record
+        get_genhd    returns pointer to named generic header item
+        get_spec_rec get next spectral record from ESPS SPEC file
+        get_sym      get a parameter value after read_params called
+        new_header   create new ESPS file header
+        print_fea_recprints a FEA file record
+        put_fea_rec  writes a FEA file record
+        put_sym      put value in ESPS common file
+        range_switch parse the argument to a command-line range switch
+        read_header  read an ESPS file header
+        read_params  read the parameters in ESPS parameter or common file
+        skiprec      skip records in ESPS file
+        write_header write an ESPS file header
+
+
+       8 .  EXAMPLE USER-LEVEL ESPS PROGRAMS
+
+       This section lists some user-level ESPS programs of general  interest.
+       Note  that the entire ESPS Manual is stored on-line.  The manual pages
+       can be viewed with the eman (1-ESPS) command, which is an ESPS version
+       of  the  UNIX  man  command. Eman includes the -k option to search the
+       manual for programs whose one-line descriptions include a  given  key-
+       word.
+
+       8 .1 .  Conversion and Related Support Programs
+
+        addfea   adds a FEA file field from ASCII data
+        addfeahd adds a FEA file header to binary data
+        addgen   adds generic header item to ESPS file header
+        atofilt  convert ASCII file to FILT file
+        atosps   converts ASCII output to ESPS file (see spstoa)
+        bhd      behead an ESPS file
+        eitem    prints item from ESPS file header
+        ils_sps  converts ILS sampled data file to ESPS SD file
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                           page 16
+
+
+        pplain   print values from ESPS files in "plain" ASCII format
+        spstoa   convert ESPS file to machine-independent ASCII format
+        testsd   make SD file with sine wave, pulses, Gaussian noise, or from ASCII data
+
+
+       8 .2 .  Signal I/O and Processing
+
+        addsd    adds SD files with scaling
+        ana      perform speech analysis from SD file
+        me_spec  compute spectra (FEA_SPEC file) from FEA_ANA file
+        distort  compute distortion measures between ESPS files
+        classify classify records in FEA files
+        fea_statscompute statistics from FEA files
+        fft      produces FEA_SPEC file by doing fft on SD file
+        filter   performs digital filtering on SD file
+        lloydcbk design a scalar quantizer using Lloyd's algorithm
+        notch_filtdesign a notch filter
+        play     play portions of SD files
+        playtest step through an "A-B" listening test with control options
+        randplay create play scripts for randomized "A-B" listening comparisons
+        record   digitize data using Masscomp EF-12M
+        refcof   compute reflection coefficients from sampled data (FEA_ANA output)
+        rem_dc   remove DC component from SD file
+        sdcomp   listening program for detailed comparison of two sampled data files
+        spectranstransform FEA_ANA from one spectral representation to another
+        stats    computes statistics from ESPS files
+        synt     synthesize speech from ANA file
+        testsd   make SD file with sine wave, pulses, Gaussian noise, or from ASCII data
+        vqdes    design a vector quantization codebook from a FEA file
+        vq       encode FEA file with a vector quantization codebook
+        wmse_filtdesign FIR filter using weighted mean square error criterion
+        iir_filt design recursive filter
+
+
+       8 .3 .  File Manipulation and Plotting
+
+        aplot    plot an array of ASCII data
+        comment  displays or adds comments in the header of an ESPS file
+        copysd   copy selected portions of SD files to a new file
+        fea_edit edit a FEA file in ASCII form
+        genplot  plot elements from any ESPS file in precise, multiline format
+        histogramsort data into bins for plotting histograms
+                 (screen, Imagen, or Tektronix)
+        mlplot   plot SD file in precise, multiline format
+                 (screen, Imagen, or Tektronix)
+        plotsd   plot sampled data (screen, Imagen, or Tektronix)
+        plotspec plot spectra from FEA_SPEC file (screen, Imagen, or Tektronix)
+        psps     print ESPS file headers and records
+        range    select a range from a graphics plot
+        select   select FEA records that satisfy queries
+        scatplot make a scatter plot
+
+
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                           page 17
+
+
+       9 .  FUTURE CHANGES
+
+       Everything discussed in the foregoing is  available  in  ESPS  Version
+       3.3.   In  this section, we mention some of the things that will added
+       in later versions.
+
+       Current ESPS FEA files are restricted to  fixed  length  records,  one
+       record  type  per file, with record fields containing only the machine
+       primitive data types (integer,  float,  double,  character).   All  of
+       these restrictions should be relaxed.
+
+       We will provide support for engineering units, so  that  plotting  and
+       printing  programs  can  display  data in terms of externally relevant
+       units (volts, pressure, etc.).
+
+       We will provide some additional facilities to  support  ESPS  program-
+       ming.   For  example,  there  will be a program for the semi-automatic
+       generation of new FEA file sub-types, and there will be a program  for
+       the automatic generation of C skeletons for user-level programs.
+
+       The ESPS parameter file format  might  be  simplified  so  that  users
+       didn't  have  to  specify  types (they don't on command lines).  Also,
+       ESPS user-level programs will be modified to take all parameters  from
+       the  parameter  file  (with  possible  command-line overrides) so that
+       every program can be run interactively  using  eparam  (1-ESPS)  (some
+       programs in Version 3.3 require command line arguments for some or all
+       parameters).
+
+       Another significant enhancement  will  be  provided  by  an  interface
+       between  ESPS  and a UNIX relational data base system.  This interface
+       will create data base records from ESPS file headers so that the  data
+       base system can be used to manage sets of ESPS files.
+
+       10 .  REFERENCES
+
+       1.   Entropic Signal Processing System Version 3.0 User's Manual.
+
+       2.   "Data Files in the Entropic Processing System," , ETM-S-86-13.
+
+       3.   "Parameter and Common  Files  in  ESPS,"  ,  ETM-S-86-12:jtb  1.2
+            11/12/86.
+
+       4.   "Guidelines for Implementing ESPS Feature File Subtypes," ,  ETM-
+            S-86-25.
+
+       5.   "Entropic Signal Processing  System  Programming  Guidelines,"  ,
+            ETM-S-86-14 .
+
+       6.   "ESPS APPLICATIONS NOTE: Filtering Sampled Data," .
+
+       7.   "ESPS APPLICATIONS NOTE:  File  Headers  and  Record  Keeping  in
+            ESPS," .
+
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+
+
+
+
+
+       INTRODUCTION TO ESPS                                           page 18
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       Version 3.6                      ERL                           1/22/93
+
+
+

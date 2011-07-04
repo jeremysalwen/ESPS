@@ -1,0 +1,20 @@
+#! /bin/sh
+# @(#)frame.test	1.1 5/31/88 ESI
+# test script for frame
+echo "1 1 1 1 1 1 1 1 1 1" | testsd -a- test.sd
+echo "should show 2 frames of 1s"
+cat test.sd | frame -l5 - - | psps -H -fsd -
+echo "now use hamming window"
+frame -l5 -whamming test.sd - | psps -H -fsd -
+echo "now use triangular window"
+frame -l5 -wtriang test.sd - | psps -H -fsd -
+echo "1 2 3 4 5 6 7 8 9 10 11 12 12 14 15" | testsd -a- test.sd
+echo "skip points; should show two records with 1-5 and 11-15"
+frame -l5 -S10 test.sd - | psps -H -fsd -
+echo "overlapping records; should show two with 1-5 and 3-7 in field sd3"
+frame -fsd3 -l5 -S2 -p1:7 test.sd - | psps -H -fsd3 -
+echo "should show one field sd_field with 1-10"
+echo "1 2 3 4 5 6 7 8 9 10" | testsd -a- - | frame -fsd_field - - | psps -Hf sd_field -
+echo "header should show generics window type HAMMING, window length 10"
+echo "1 2 3 4 5 6 7 8 9 10" | testsd -a- - | frame -whamming - - | psps -lD -
+

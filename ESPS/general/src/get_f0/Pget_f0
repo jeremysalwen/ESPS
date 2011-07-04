@@ -1,0 +1,66 @@
+# @(#)Pget_f0	1.6 2/9/94 ERL
+int start ?= 1: "starting sample position";
+int nan ?= 0: "number of samples to process, 0 means end of file";
+
+float cand_thresh ?= .3: "crosscorrelation peak threshhold";
+#Determines crosscorrelation peak height required for a peak to be
+#considered a pitch-peak candidate. [.01 .99]
+#
+float lag_weight ?= .3:"weight to pitch interval shortness";
+#Amount of weight given to the shortness of the proposed pitch interval.
+#Higher numbers make high F0 estimates more likely [0 1]
+#
+float freq_weight ?= .02:"weight to F0 continuity";
+#Strength of F0 continuity.  Higher numbers impose smoother contours. [0 1]
+#
+float trans_cost ?= .005:"cost of voicing-state transition";
+#Fixed cost of making a voicing-state transition.  Higher numbers discourage
+#state changes. [0 1]
+#
+float trans_amp ?= .50:"trans_cost modulated by local rate of amp change";
+#Voicing-state transition cost modulated by the local rate of amplitude
+#change.  Higher numbers discourage transitions EXCEPT when the rate of
+#amplitude change is great. [0 100]
+#
+float trans_spec ?= .5:"trans_cost modulated by local rate of spectral change";
+#Voicing-state transition cost modulated by the local rate of spectral
+#change.  Higher numbers discourage transitions EXCEPT when the rate of
+#spectral change is great. [0 100]
+#
+float voice_bias ?= 0.0:"weight for voice state preference";
+#Determines fixed preference for voiced or unvoiced state.  Positive
+#numbers encourage the voiced hypothesis, negative numbers the
+#unvoiced. [-1 1]
+#
+float double_cost ?= .35:"cost of a rapid one-octave F0 change";
+#The cost of a rapid one-octave (up or down) F0 change.  High numbers
+#discourage any jumps, low numbers permit octave jumps. [0 10]
+#
+float min_f0 ?= 50.0:"minimum F0 to search for (Hz)";
+#Minimum F0 to search for. Note that computational cost grows as 1/min_f0.
+#[10 < min_F0]
+#
+float max_f0 ?= 550.0:"maximum F0 to search for (Hz)";
+#Maximum F0 to search for. [>min_F0 <Fs/2]
+#
+float frame_step ?= .01:"frame step interval (sec)";
+#Analysis frame step interval. Computation increases as 1/frame_step. [1/Fs .1sec]
+#
+float wind_dur ?= .0075:"correlation window duration (sec)";
+#Size of correlation window.  Computation increases as wind_dur. [10/Fs .1]
+#
+int n_cands ?= 20:"max number of candidate F0-peaks in any frame";
+#The maximum number of correlation peaks considered as possible
+#F0-peak candidates in any frame.  At most, the top n-cands candidates
+#are considered in each frame. The computational cost grows approximately
+#as n_cands SQUARED! [3 100]
+#
+############################## unused parameters
+float mean_f0 = 200.0;
+#Does nothing yet.  Will allow biasing toward a speaker's characteristic F0.
+#
+float mean_f0_weight = 0.0;
+#Does nothing yet.  Used with "mean_F0".
+#
+int conditioning = 0;
+#Does nothing yet.

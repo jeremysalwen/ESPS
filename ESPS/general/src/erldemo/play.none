@@ -1,0 +1,5 @@
+# play.none  	@(#)play.none	1.1 6/3/90
+# play command for no speech output 
+# should change later to display $1.txt
+
+sleep 1

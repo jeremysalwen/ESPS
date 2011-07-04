@@ -1,0 +1,81 @@
+#!/bin/sh
+#@(#)iir_filt.tes	1.2 1/7/93 ESI
+ESPS_VERBOSE=0; export ESPS_VERBOSE
+echo "Plot 24 filter responses -- 6 for each design method"
+echo "      LowPass(LP), HighPass(HP), BandPass(BP)-Wide and Narrow band"
+echo "         BandStop(BS)-Wide and Narrow band"
+echo "Click on QUIT button before proceed to next plot"
+echo " "
+echo "All filters designed has passband loss 1, stopband loss 20, freq 8000"
+cat > paramf << EOD
+string filt_method = "YYYY";
+float samp_freq = 8000;
+float gain = 1;
+string filt_type = "XXXX";
+float pass_band_loss = 1: "Desired maximum pass band loss (dB).";
+float stop_band_loss = 20.: "Desired minimum stop band attenuation (dB).";
+float p_freq1 = 001;
+float p_freq2 = 002;
+float s_freq1 = 003;
+float s_freq2 = 004;
+EOD
+
+########### note: for narrow band Ellipitcal filter, needs to specify
+#a higher stopband loss than desired.
+for METHOD in BUTTERWORTH CHEBYSHEV1 CHEBYSHEV2 ELLIPTICAL
+do
+
+echo $METHOD" Low Pass"
+sed s/XXXX/LP/ paramf > param1
+sed s/001/1000/ param1 > param2
+sed s/003/1100/ param2 > param3
+sed s/YYYY/$METHOD/ param3 > param4
+iir_filt -Pparam4 test
+filtspec -s8000 test - | plotspec -y-30:10 -t"Lowpass, passband 1000, stop 1100" - 
+
+echo $METHOD" Highpass"
+sed s/XXXX/HP/ paramf > param1
+sed s/003/1000/ param1 > param2
+sed s/001/1100/ param2 > param3
+sed s/YYYY/$METHOD/ param3 > param4
+iir_filt -Pparam4 test
+filtspec -s8000 test - | plotspec -y-30:10 -t"HighPass, stopband 1000, pass 1100" - 
+
+echo $METHOD" BandPass"
+sed s/XXXX/BP/ paramf > param1
+sed s/003/900/ param1 > param2
+sed s/001/1000/ param2 > param3
+sed s/002/3000/ param3 > param4
+sed s/004/3100/ param4 > param5
+sed s/YYYY/$METHOD/ param5 > param6
+iir_filt -Pparam6 test
+echo "     Wide band"
+filtspec -s8000 test - | plotspec -y-30:10 -t"BandPass, stop 900/3100, passband 1000/3000" - 
+sed s/002/1300/ param3 > param4
+sed s/004/1500/ param4 > param5
+sed s/YYYY/$METHOD/ param5 > param6
+iir_filt -Pparam6 test
+echo "     Narrow band"
+filtspec -s8000 test - | plotspec -y-30:10 -t"BandPass, stopband 900/1500, passband 1000/1300" - 
+
+echo $METHOD" BandStop"
+sed s/XXXX/BS/ paramf > param1
+sed s/001/900/ param1 > param2
+sed s/003/1000/ param2 > param3
+sed s/004/3000/ param3 > param4
+sed s/002/3100/ param4 > param5
+sed s/YYYY/$METHOD/ param5 > param6
+iir_filt -Pparam6 test
+echo "     Wide band"
+filtspec -s8000 test - | plotspec -y-30:10 -t"BandStop, stopband 1000/3000, passband 900/3100" - 
+sed s/004/1300/ param3 > param4
+sed s/002/1500/ param4 > param5
+sed s/YYYY/$METHOD/ param5 > param6
+iir_filt -Pparam6 test
+echo "     Narrow band"
+filtspec -s8000 test - | plotspec -y-30:10 -t"BandStop, stop 1000/1300, pass 900/1500" - 
+
+done
+
+rm -f param*
+rm test

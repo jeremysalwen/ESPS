@@ -1,0 +1,126 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)zst.1	1.3 7/23/93 ERL
+.TH ZST 1\-ESPS 7/23/93
+.SH NAME
+.nf
+zst \- set start time to zero in ESPS FEA and label files
+.fi
+.SH SYNOPSIS
+.B
+zst
+[
+.BI \-l " label_directory"
+]
+[
+.BI \-g " label_file_extension"
+]
+[
+.BI \-d " data_file_extension"
+]
+[
+.BI \-x " debug_level"
+] datafile[s]
+.SH DESCRIPTION
+.PP
+.I zst
+is used to reset the start time information in ESPS FEA files and
+waves label files.  ESPS FEA files may contain a header item
+\fRstart_time\fP which specifies the time 
+of the first record in seconds.
+If the data is transformed into a 
+file format which does not retain this initial offset information, 
+the time marks in associated label files will be incorrect. 
+.I zst
+can be used to reset the start time to zero and adjust the time 
+information in the label file before the data file is transformed.
+
+For each specified data file,
+.I zst
+first reads the generic header item
+\fRstart_time\fP from each data file and 
+sets it to 0 in that file.  
+.I zst
+then
+finds the label file corresponding to the data file
+and subtracts the original start time from the times in label file.
+The labels are then consistent with data that starts at time 0.
+The original label file 
+.I labfile
+is copied to 
+.I labfileBAK.
+
+.I zst 
+is a shell script.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-l " label_directory"
+specifies a complete path to the directory containing the 
+label files.  Otherwise each label file is assumed to be
+in the same directory as the data file it labels.
+.TP
+.BI \-g " label_file_extension \fR[.lab]\fP
+specifies the extension used in contructing the label file name
+from the data file name.  
+.TP
+.BI \-d " data_file_extension \fR[.wav]\fP
+specifies data file extension.  It is replaced by the 
+label file extension to form the label file name. 
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If 
+.I debug_level
+is positive,
+.I zst
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the  
+.I debug_level
+increases.  If \fIdebug_level\fP is 0 (the default), no messages are
+printed.  
+.SH ESPS PARAMETERS
+.PP
+None read.
+.SH ESPS COMMON
+.PP
+Not used.
+.SH ESPS HEADERS
+.PP
+Header item \fRstart_time\fP set to zero in all specified data files.
+.SH EXAMPLES
+.PP
+Suppose a data file \fRfoo.fea\fP and its label file \fRfoo.phn\fP
+are in the current directory. Their start times can be adjusted by
+executing
+
+$> zst -g phn -d fea foo.fea
+
+If the label file is stored in the directory \fRlabels\fP, and the data file
+is in the current directory, their start times can be adjusted by
+executing
+
+$> zst -l labels -g phn -d fea foo.fea
+
+If an aribtrary number of data files \fRfooXXX.fea\fP are in the directory
+\fRdata\fP 
+and their label files \fRfooXXX.phn\fP 
+are in the directory
+\fRlabels\fP,
+their start times can be adjusted by
+executing
+
+$> zst -l labels -g phn -d fea ./data/foo*.fea 
+
+.SH BUGS
+.PP
+None known.
+.SH "SEE ALSO"
+.PP
+addgen (1\-ESPS), xwaves(\1-ESPS), xlabel(\1-ESPS)
+.SH AUTHOR
+.PP
+Bill Byrne
+
+
+
+

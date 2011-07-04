@@ -1,0 +1,67 @@
+#!/bin/csh -f
+# @(#)fftzoom	1.4 9/9/93
+# This script is designed to be used as an xwaves "add_op" program.
+# To use it with xwaves, send a command like
+# 
+#   add_op name Fzoom menu spect command zoomer _t_marker_yval _b_marker_yval \
+#          _l_marker_time _r_marker_time _file _out.g.
+# 
+# (Commands like this can either be entered directly into the xwaves
+# command window in the "COMMAND (or @file)" line, or from an external
+# process via the "send_xwaves" program (see eman send_xwaves).)
+
+# This will add a menu entry to the waveform display menu that will
+# produce a zoomed-in spectrogram with a bandwidth and center frequency
+# consistent with the top and bottom markers on the spectrogram at the time
+# the menu selection is made.
+#
+# By modifying the $frame_len and $order variables below, you can effectively 
+# increase or decrease the frequency resolution as needed.  The resolution, 
+# in Hz, will be the bandwidth, specified by ($1 - $2), divided by the FFT 
+# size.
+
+if ( $#argv < 6 ) then
+  echo Usage: fftzoom high_cf low_cf start_t end_t input.fspec output.fspec
+endif
+
+set frame_len = 256
+set order = 8
+
+set input = `epsps -D -lv $5 | grep 'Source files:' | sed 's/Source files\://'`
+
+set sf = `hditem -i record_freq $input`
+set st = `hditem -i start_time $input`
+set r1 = `echo  $3 $st - $sf \* p q | dc`
+set r2 = `echo  $4 $st - $sf \* p q | dc`
+
+# Center Frequency
+set cf = `echo 5 k $1 $2 + 2 / p q | dc`
+
+# Analysis bandwidth
+set fr = `echo 5 k $1 $2 - p q | dc `
+set bw = `echo $sf $fr / p q | dc`
+set bw = `echo $sf $bw / p q | dc`
+
+# Range of points to include in zoomed analysis (e.g. -r1234:23000)
+set range = -r$r1\:$r2
+
+set output = $6
+
+# Analysis frame interval for FFT (sec)
+set frint = .004
+set step = `echo $frint $bw \* p q | dc`
+
+set np = `echo $range | sed 's/\-r//' | sed 's/\:/ /'`
+set npoints = `echo $np[2] $np[1] - 1 + p q | dc`
+
+echo int new_sample_freq = $bw";" > /tmp/Pspar$$
+
+testsd -c -r $sf -p $npoints -f -$cf - | multsd $range -t -z $input - - | \
+esfconvert -v 2 -P/tmp/Pspar$$ - - | \
+fft -z -l256 -S $step -o8 -O$cf -wHANNING - - | \
+feafunc -fre_spec_val -f- -tBYTE  - - | \
+clip -m0:118 -fre_spec_val -f- - $output
+
+rm -f /tmp/Pspar$$
+
+

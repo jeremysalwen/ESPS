@@ -1,0 +1,462 @@
+
+
+
+MUX(1-ESPS)                                 ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     mux - multiplex sampled-data files into a single multichannel or complex file
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     mmmmuuuuxxxx [ ----{pppprrrrssss} _r_a_n_g_e ] . . . [ ----xxxx _d_e_b_u_g__l_e_v_e_l ] [ ----JJJJ ] [   ---- PPPP
+     _p_a_r_a_m__f_i_l_e ] _i_n_p_u_t_1._f_s_d [ _i_n_p_u_t_2._f_s_d . . . ] _o_u_t_p_u_t._f_s_d
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     The _m_u_x (``multiplex'') program combines its input  sampled-
+     data FEA_SD(5-ESPS) files, or equal-length portions of them,
+     into a single multichannel output sampled-data file,  possi-
+     bly  also  combining  real channels in pairs to form complex
+     channels.
+
+     Normally the number of output channels is the  total  number
+     of channels in all the input files.  Each output record con-
+     tains the data from the _s_a_m_p_l_e_s field in one record of  each
+     input file.  This is organized as a single vector containing
+     one sample value from  each  channel  of  each  input  file.
+     Within  the vector, the data from the first input file comes
+     first, followed by the data from the second, and so  on,  in
+     the  order of the file names on the command line.  The chan-
+     nels of any one input file keep the same  relative  ordering
+     in the output file that they had in the input file.
+
+     When the ----JJJJ option is used, the number of output channels is
+     only  half  the normal number; input channels of a real data
+     type are combined in pairs into single  output  channels  of
+     the corresponding complex type.
+
+     The input files must be consistent in data type and sampling
+     frequency; the output file has the same data type (unless ----JJJJ
+     is used) and the same sampling frequency as the input files.
+     Any fields other than _s_a_m_p_l_e_s in the input are ignored.
+
+     By default, the first output record contains data  from  the
+     first record in each input file, and in general the _nth out-
+     put record contains data from the _nth record in  each  input
+     file;  but  a later starting point in each input file can be
+     chosen with the ----pppp, ----rrrr, or ----ssss option.  By  default,  records
+     are  processed  until  an input file runs out of data, but a
+     shorter range of data can be chosen with ----pppp, ----rrrr, or ----ssss.
+
+     If ``-'' is written for an input file, the standard input is
+     used.   At most one input file may be standard input.  Names
+     of disk files, however, may be repeated  (duplicating  chan-
+     nels).   Since different ----pppp, ----rrrr, and ----ssss options may apply to
+     each instance of a repeated input file name, it is  possible
+     to  align and juxtapose different portions of a single input
+     file.  If ``-'' is written for the output, the standard out-
+     put is used.
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+MUX(1-ESPS)                                 ENTROPIC RESEARCH LAB
+
+
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following options are supported:
+
+     ----pppp _r_a_n_g_e
+          For this program ----pppp and ----rrrr are synonymous.  See ----rrrr  for
+          the interpretation and the format of the argument.
+
+     ----rrrr _f_i_r_s_t::::_l_a_s_t
+
+     ----rrrr _f_i_r_s_t::::++++_i_n_c_r
+          Determines the range of points (records)  to  be  taken
+          from  an  input  file.   In  the  first form, a pair of
+          unsigned integers gives the numbers of  the  first  and
+          last records of the range.  (Counting starts with 1 for
+          the first record in the file.)  If _f_i_r_s_t is omitted,  1
+          is  used.   If  _l_a_s_t is omitted, the last record in the
+          file is used.  The second form  is  equivalent  to  the
+          first with _l_a_s_t = _f_i_r_s_t + _i_n_c_r .
+
+          This option and the ----pppp and ----ssss options may  be  repeated
+          up  to  a maximum total number, for all three kinds, of
+          the number of input files.  The first ----pppp, ----rrrr,  or   ---- ssss
+          option  applies  to the first input file, the second to
+          the second, and so on.  If there are fewer ----pppp, ----rrrr, and
+          ---- ssss  options  than  input  files,  the last such option
+          applies to all the remaining input files.  In  particu-
+          lar,  if  there  is  only  one ----pppp, ----rrrr, or ----ssss option, it
+          applies to all the input files.
+
+          If two options disagree as to the number of records  to
+          be  processed, the smaller number applies.  In fact _m_u_x
+          stops processing as soon as it  encounters  either  the
+          end  of  a specified range or the actual end of file in
+          any input file.  Certain inconsistencies in these vari-
+          ous  stopping criteria will evoke warning messages; see
+          the Diagnostics section for details.
+
+     ----ssss _s_t_a_r_t::::_e_n_d
+
+     ----ssss _s_t_a_r_t::::++++_i_n_c_r
+          Determines the range in seconds of the data to be taken
+          from  an  input  file.   In  the  first form, a pair of
+          floating-point numbers give the beginning time and end-
+          ing  time  of the range.  The second form is equivalent
+          to the first with _l_a_s_t = _f_i_r_s_t + _i_n_c_r. Each sample  has
+          a  time  given  by _s + (_r-1)/_f, where _s is the value of
+          the generic header item "start_time", _r is  the  record
+          number,  and  _f is the sampling frequency, given by the
+          generic  header  item  "record_freq".   This  time  may
+          depend  on  the  channel number, since the "start_time"
+          item may be a vector with a component per channel;  for
+          present  purposes  the  value  for  the  first  channel
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+
+
+
+
+MUX(1-ESPS)                                 ENTROPIC RESEARCH LAB
+
+
+
+          (number 0) is used.  The range  selected  by  the   ---- ssss
+          option  consists  of  the records for which the time is
+          less than _e_n_d but not less than _s_t_a_r_t.
+
+          This option and the ----pppp and ----rrrr options may  be  repeated
+          to  supply  different ranges for different input files.
+          See the ----rrrr option for details.
+
+     ----xxxx _d_e_b_u_g__l_e_v_e_l
+          If _d_e_b_u_g__l_e_v_e_l is positive, the program  prints  debug-
+          ging messages as it progresses---the higher the number,
+          the more messages.  The default  level  is  0,  for  no
+          debugging output.
+
+     ----JJJJ    Join pairs of input channels to  form  single  complex
+          output  channels.   The total number of channels in the
+          input files must be even, and the output file has  half
+          that  number of channels.  The input channels are taken
+          in the usual order and grouped in  pairs  to  form  the
+          real  and  imaginary parts of the output channels.  The
+          pairing is without regard to whether two input channels
+          come  from  the  same  input file or consecutive files.
+          The last channel of a file, if not paired with the pre-
+          vious  input  channel, is paired with the first channel
+          of the next input file.
+
+          The input files must all have the same real data  type:
+          DOUBLE,  FLOAT, LONG, SHORT, or BYTE.  (See _F_E_A(5-ESPS)
+          for an explanation of these type  codes.)   The  output
+          file   has   the   corresponding   complex  data  type:
+          DOUBLE_CPLX,  FLOAT_CPLX,  LONG_CPLX,  SHORT_CPLX,   or
+          BYTE_CPLX.
+
+          If two channels with with different time alignments are
+          combined   into  one  complex  channel,  time-alignment
+          information may be lost.  A warning message is  printed
+          in  that  case.  See the discussion of the "start_time"
+          generic header item in the section on ESPS Headers.
+
+     ----PPPP _p_a_r_a_m__f_i_l_e
+          The name of the parameter file.  The  default  name  is
+          ``params''.
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     The parameter file is not required to be present,  as  there
+     are  default values for all parameters.  If the file exists,
+     the following parameters may be read if they are not  deter-
+     mined by command-line options.
+
+     _s_t_a_r_t - _i_n_t_e_g_e_r _a_r_r_a_y
+          The starting record number in  each  input  file.   The
+          array  elements  are matched with input files in order.
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+
+
+
+
+
+MUX(1-ESPS)                                 ENTROPIC RESEARCH LAB
+
+
+
+          If there are more input files, the last  array  element
+          applies to the unmatched file.  If there are more array
+          elements, the unmatched ones are ignored.  This parame-
+          ter  is  not read if the ----pppp, ----rrrr, or ----ssss option is speci-
+          fied.  The default is all 1's, meaning the beginning of
+          each input file.
+
+     _n_a_n - _i_n_t_e_g_e_r
+          The number of records to process in each input file.  A
+          value  of  0  (the  default)  means continue processing
+          until the end of an input file is reached.  This param-
+          eter  is not read if the ----pppp, ----rrrr, or ----ssss option is speci-
+          fied.
+
+     _m_a_k_e__c_o_m_p_l_e_x - _s_t_r_i_n_g
+          A value of "YES" or "yes"  means  join  pairs  of  real
+          channels  to  form complex channels as if the ----JJJJ option
+          is in force.  A value of "NO"  or  "no"  means  make  a
+          separate  output  channel  for  each  input  channel as
+          usual.  No other values are allowed.  This parameter is
+          not  read  if  the ----JJJJ option is specified.  The default
+          value is "NO".
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     The ESPS Common file is not read.
+
+     If Common processing is enabled, and the output file is  not
+     standard  output,  the  program writes the Common parameters
+     _p_r_o_g, _f_i_l_e_n_a_m_e, _s_t_a_r_t, and _n_a_n to record the program's name,
+     the  name  of the output file, the starting record number of
+     the output file (always 1), and the number of points in  the
+     output file.
+
+     ESPS Common  processing  may  be  disabled  by  setting  the
+     environment  variable  USE_ESPS_COMMON  to  _o_f_f. The default
+     ESPS Common file is _e_s_p_s_c_o_m in the  user's  home  directory.
+     This  may  be  overidden by setting the environment variable
+     ESPSCOM to the desired path.  User feedback of  Common  pro-
+     cessing   is   determined   by   the   environment  variable
+     ESPS_VERBOSE, with 0 causing no feedback and increasing lev-
+     els causing increasingly detailed feedback.  If ESPS_VERBOSE
+     is not defined, a default value of 3 is assumed.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+     The  output  header  is  a  new  FEA_SD  file  header,  with
+     appropriate items copied from the input headers.
+
+     The generic header item "record_freq", which must  have  the
+     same  value  in  all  input files, is copied into the output
+     header.
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 4G4        4
+
+
+
+
+
+
+MUX(1-ESPS)                                 ENTROPIC RESEARCH LAB
+
+
+
+     The generic header item "start_time"  records  the  starting
+     time  for each output channel.  It is a single number if all
+     output channels have the same starting time; otherwise it is
+     a  vector  with  one element per channel.  The starting time
+     for a channel is its starting time in the input file plus an
+     offset  in  case  the  data taken from the input file do not
+     start with the first record.  The offset is given by (_r-1)/_f
+     where  _r is the starting record number in the input file and
+     _f is the  sampling  frequency  given  by  the  "record_freq"
+     header  item.   The   ---- JJJJ option can create complex channels
+     whose real and imaginary parts  have  inconsistent  starting
+     times.  When that happens, a warning message is printed, and
+     the starting time for the  real  part  is  recorded  in  the
+     "start_time" header item.
+
+     If every input file has a "max_value" header item, then  the
+     output  file  has  a  "max_value" header item containing the
+     same information.
+
+EEEEXXXXAAAAMMMMPPPPLLLLEEEESSSS
+     Multiplex data from three input files to produce  an  output
+     file  _x_x_x.  Processing  begins  with the sampled data in the
+     first record in each input file.  The output  file  has  the
+     same length as the shortest input file.
+
+          _m_u_x _a_a_a _b_b_b _c_c_c _x_x_x
+
+     Start at time 0.5 in each input file and process 0.5 seconds
+     of  data from each.  (Suppose the sampling frequency is 8000
+     Hz, and the start times in the three input  files  are  0.0,
+     0.0,  and  0.5.   Then the starting record numbers are 4001,
+     4001, and 1, respectively.  The start  time  in  the  output
+     file is 0.5 for all channels.)
+
+          _m_u_x -_s_0._5:_1._0 _a_a_a _b_b_b _c_c_c _x_x_x
+
+     Start at time 0.5 in file _a_a_a and with the first  record  in
+     the  other  two  input  files.  (With the assumptions of the
+     previous example, the starting record numbers in  the  three
+     input  files  are  4001,  1, and 1, respectively.  The start
+     times in the output file header are 0.5 for data from  files
+     _a_a_a and _c_c_c and 0.0 for data from file _b_b_b.)
+
+          _m_u_x -_s_0._5: -_p_1: _a_a_a _b_b_b _c_c_c _x_x_x
+
+     Juxtapose data from an input file with  a  test  signal  and
+     pass the result to another program.
+
+          _t_e_s_t_s_d - | _m_u_x _a_a_a - - | _m_o_r_e__p_r_o_c_e_s_s_i_n_g -
+
+     If _a_a_a has two channels of real data, this will  convert  it
+     to a single-channel file _z_z_z of complex data.
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 5G5        5
+
+
+
+
+
+
+MUX(1-ESPS)                                 ENTROPIC RESEARCH LAB
+
+
+
+          _m_u_x -_J _a_a_a _z_z_z
+
+     If _a_a_a and _b_b_b are single-channel files of real  data,  this
+     will join them into a single-channel file of complex data.
+
+          _m_u_x -_J _a_a_a _b_b_b _z_z_z
+
+     Multiplex a portion of a file with a later  portion  of  the
+     same file.
+
+          _m_u_x -_p_1_0_0_1:_2_0_0_0 -_p_2_5_0_1: _a_a_a _a_a_a _x_x_x
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     demux(1-ESPS), copysps(1-ESPS), addgen(1-ESPS),
+     FEA_SD(5-ESPS), FEA(5-ESPS)
+
+DDDDIIIIAAAAGGGGNNNNOOOOSSSSTTTTIIIICCCCSSSS
+     The program exits with an error message if any of  the  fol-
+     lowing occur.
+       The command line cannot be parsed.
+       Fewer than two file names are specified (one in, one out).
+       Fewer input file names are specified than ----pppp, ----rrrr, and  ---- ssss
+     options.
+       More than one input file name is ``-''.
+       An input file cannot be opened or is not an ESPS  sampled-
+     data file.
+       The input files do not all have  the  same  sampling  fre-
+     quency.
+       The input files do not all have the same data type.
+       The ----JJJJ option is specified with input files of  a  complex
+     data type.
+       The ----JJJJ option is specified, and the total number of  input
+     channels is odd.
+       A starting record specified with a ----pppp, ----rrrr, or  ---- ssss  option
+     does not exist in all the files that the option applies to.
+
+     The program issues a warning message if the end of  a  range
+     specified  by a ----pppp, ----rrrr, or ----ssss option is not reached, and the
+     option argument (see  the  Options  section)  ends  with  an
+     explicit _l_a_s_t, _e_n_d, or ++++_i_n_c_r.  (This doesn't apply to option
+     arguments that default to end-of-file by omitting what  fol-
+     lows  the  colon.)   The  end  of  the  range may fail to be
+     reached either because the end of an input file  is  reached
+     first or because another ----pppp, ----rrrr, or ----ssss option causes an ear-
+     lier stop.
+
+     The program issues a warning message if processing for the ----
+     JJJJ  option  joins  two  channels  that are not properly time-
+     aligned (so that they would require conflicting  entries  in
+     the output "start_time" header item).
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 6G6        6
+
+
+
+
+
+
+MUX(1-ESPS)                                 ENTROPIC RESEARCH LAB
+
+
+
+BBBBUUUUGGGGSSSS
+     The ----ssss option is not implemented in this version of the pro-
+     gram.
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Manual page by Rodney Johnson.  Program by Alan Parker.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 7G7        7
+
+
+

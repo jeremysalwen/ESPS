@@ -1,0 +1,72 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)copyheader.3	1.13 30 Apr 1997 ESI
+.TH COPY_HEADER 3\-ESPSu 30 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+copy_header \- copies an ESPS file header to a new header of the same type
+.SH SYNOPSIS
+.ft B
+struct header *
+.br
+copy_header(src)
+.br
+struct header *src;
+.ft
+.SH DESCRIPTION
+.I copy_header
+allocates memory for a new ESPS file header of the same type as \fIsrc\fR.
+All values from the type specific part of the header are copied from the
+source header to the new header.
+All values, except \fIcommon.prog, 
+common.vers, common.date, common.progdate, common.hdvers, 
+common.edr\fR and
+\fIhd.fea->field_order\fR (assuming the file is a feature file) are copied
+from the source header to the new header. The item \fIcommon.hdvers\fR 
+is filled in
+with the current version of \fI<esps/header.h>\fR. 
+Except for \fIcommon.edr\fR the others mentioned here 
+are cleared.   The values of \fIvariable.refer and
+\fIvariable.typtxt\fR are copied from the variable part of the header.
+All generic header items are copied.
+.PP
+If the Unix environment variable \fBESPS_EDR\fR is defined and has a
+value of \fIon\fR, then the header item \fIcommon.edr\fR is set to
+YES, which means that this data file will be written to the disk in
+Entropic's external data representation (EDR).  Otherwise the file is
+written in the 
+host machine's native data format.
+The default action is not to have
+\fBESPS_EDR\fR defined and to write files in native format.
+File written with \fIcommon.edr\fR \fIon\fR can be read by any ESPS
+implementation on any supported machine.   Files written in native
+format will be more efficient on some machines, but might not be
+usable on all ESPS implementations.   That is, all implementations can
+read both their own representation and EDR.   In addition, some
+implementations can read their own format, EDR, and other formats (for
+example SPARC and 680X0 machines can read files in EDR, their own
+native, SUN 386i, and the DEC DS3100 (MIPs CPU)).
+.PP
+Since all generic header items are copied, if the items
+\fIforeign_hd_length\fR and \fIforeign_hd_ptr\fR are defined in the
+source header they will be copied to the desitnation header.  This has
+the side effect of copying the foreign header block when the destination
+header is written out.   If it is desired to not copy the foreign
+header, then change the value of the \fIforeign_hd_length\fR generic 
+to zero in the destination header after \fIcopy_header\fR is called
+and before \fIwrite_header\fR is called.
+.SH EXAMPLE
+b_hd = copy_header(a_hd)   /* copy header a to header b */
+.SH DIAGNOSTICS
+None.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+add_source_file(3\-ESPSu), add_comment(3\-ESPSu), comment(1\-ESPS)
+copy_genhd(3\-ESPSu), eopen(3\-ESPSu), new_header(3\-ESPSu), 
+read_header(3\-ESPSu), write_header(3\-ESPSu)
+.fi
+.SH AUTHOR
+Original version by Joe Buck.
+.br
+Modified by Alan Parker for new header structures.

@@ -1,0 +1,138 @@
+/* CodeCenter Project File */
+/* Options for project */
+setopt ansi
+setopt auto_compile
+unsetopt auto_reload
+setopt auto_replace
+unsetopt batch_load
+unsetopt batch_run
+setopt cc_prog              cc
+setopt ccargs               -g
+unsetopt create_file
+unsetopt debug_child
+unsetopt echo
+unsetopt edit_jobs
+unsetopt edit_line
+unsetopt edit_line_file
+unsetopt editor
+unsetopt edit_query
+unsetopt edit_line_query
+unsetopt edit_pause
+unsetopt edit_wakeup
+unsetopt eight_bit
+setopt email_address        codecenter-support@centerline.com
+unsetopt ignore_sharp_lines
+unsetopt instrument_all
+unsetopt instrument_byte
+setopt instrument_space     2
+setopt histchar             35
+setopt line_edit
+unsetopt line_meta
+setopt lint_load            2
+setopt lint_run             2
+setopt list_action
+unsetopt load_flags
+setopt long_not_int
+setopt old_make
+unsetopt make_args
+setopt make_hfiles
+unsetopt make_offset
+setopt make_prog            emake
+setopt make_symbol          #
+setopt mem_config           16384
+unsetopt mem_trace
+unsetopt page_cmds
+setopt page_list            10
+unsetopt page_load
+unsetopt path
+setopt proto_path           . /auto/sbus/local/CenterLine/c_4.0.0/sparc-sunos4/proto /auto/sbus/local/CenterLine/general/proto
+unsetopt preprocessor
+setopt program_name         a.out
+unsetopt print_custom
+setopt print_pointer
+setopt print_string         20
+unsetopt save_memory
+setopt sbrk_size            1048576
+unsetopt swap_uses_path
+setopt sys_load_flags       -L/lib -L/usr/lib -L/usr/local/lib -I/auto/sbus/local/CenterLine/include/CodeCenter -I/usr/include -Dunix -Dsun -Dsparc
+unsetopt tab_stop
+unsetopt terse_suppress
+unsetopt terse_where
+setopt unset_value          191
+unsetopt win_fork_nodup
+unsetopt win_no_raise
+unsetopt win_message_list
+unsetopt win_project_list
+/* Suppressions for project */
+suppress 5 
+/* DEFAULT SUPPRESSION: Over/underflow unsigned <minus> */
+suppress 7 
+/* DEFAULT SUPPRESSION: Over/underflow unsigned <plus> */
+suppress 52 
+/* DEFAULT SUPPRESSION: Information lost <float> */
+suppress 97 in xfree 
+/* DEFAULT SUPPRESSION: Freeing memory */
+suppress 157 on __builtin_va_alist 
+/* DEFAULT SUPPRESSION: Formal variable */
+suppress 465 /usr/include/ 
+/* DEFAULT SUPPRESSION: Nested comment */
+suppress 481 
+/* DEFAULT SUPPRESSION: Extra text in directive */
+suppress 500 on alloca 
+/* DEFAULT SUPPRESSION: Too few macro arguments */
+suppress 1073 /lib/libsuntool.a(sel_common.o) 
+/* DEFAULT SUPPRESSION: Text/data redefinition */
+suppress 1075 
+/* DEFAULT SUPPRESSION: `static' formerly `extern' */
+suppress 1076 
+/* DEFAULT SUPPRESSION: CenterLine function redefined */
+suppress 1102 
+/* DEFAULT SUPPRESSION: Non-ANSI field syntax */
+suppress 1103 
+/* DEFAULT SUPPRESSION: Result of ?: used as lvalue */
+suppress 1104 
+/* DEFAULT SUPPRESSION: Result of cast used as lvalue */
+
+/* Contents of project */
+load  /usr/lib/libc.sa.1.6
+load  /usr/lib/libc.so.1.6
+load  NamePix.c chrs.c draw_line.c make_icon.c text.c mcd.c
+link
+
+/* Instrumented files */
+
+
+/* Signals caught and ignored */
+catch HUP
+catch INT
+catch QUIT
+catch ILL
+catch TRAP
+catch IOT
+catch EMT
+catch FPE
+catch KILL
+catch BUS
+catch SEGV
+catch SYS
+catch PIPE
+catch TERM
+catch STOP
+catch TSTP
+catch TTIN
+catch TTOU
+catch XCPU
+catch XFSZ
+catch LOST
+catch USR1
+catch USR2
+ignore ALRM
+ignore URG
+ignore CONT
+ignore CHLD
+ignore IO
+ignore VTALRM
+ignore PROF
+ignore WINCH
+
+/* Status of project */

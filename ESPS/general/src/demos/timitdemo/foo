@@ -1,0 +1,138 @@
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)Makefile	1.7 11/5/91 ERL
+# 
+# Makefile for: TIMIT demo
+#
+# Written by:  
+# Checked by:
+# Revised by:
+
+
+DEMONAME = timitdemo
+
+MAIN_DEMODIR = $(SPSDIR)/newdemos
+
+#line below is for testing (replaces line above
+#MAIN_DEMODIR = /h2/shore/demo
+
+D_DIRS = files wcommands menus bin params binary_files
+
+D_TOP_FILES = README rundemo rundemo.sh
+
+D_COLORMAPS = 
+
+D_WCOMMANDS = demoinit.WC demoquit.WC
+
+D_MENUS = dcolors.WM demofiles.BM tfiles.BM dcontrols.WM timit.BM setup.BM
+
+D_PARAMS = params.sgram
+
+D_SCRIPTS = backplay null_play guess_audio play_timit dotimit showhead showtext
+
+D_HELP =
+
+D_FILES = wave_pro
+
+D_BINARY_FILES_cjf = si648.phn si648.txt si648.wav si648.wrd
+D_BINARY_FILES_rws = sa2.phn sa2.txt sa2.wav sa2.wrd
+
+SCCS_FILES = $(D_TOP_FILES) $(D_COLORMAPS) $(D_WCOMMANDS) $(D_MENUS) \
+	$(D_PARAMS) $(D_SCRIPTS) $(D_FILES) $(D_HELP)
+
+DEMODIR=$(MAIN_DEMODIR)/$(DEMONAME)
+READMOD=0444
+DIRMODE=0755
+EXMODE=0555
+SHELL=/bin/sh
+
+install: 	top $(D_DIRS)
+
+top:
+		rm -rf $(DEMODIR)
+		mkdir $(DEMODIR)
+		chmod $(DIRMODE) $(DEMODIR)
+		cp $(D_TOP_FILES) $(DEMODIR)
+		chmod $(READMOD) $(DEMODIR)/*
+		chmod $(EXMODE) $(DEMODIR)/rundemo
+		chmod $(EXMODE) $(DEMODIR)/rundemo.sh
+
+wcommands:	top
+		mkdir $(DEMODIR)/wcommands
+		chmod $(DIRMODE) $(DEMODIR)/wcommands
+		cp $(D_WCOMMANDS) $(DEMODIR)/wcommands
+		chmod $(READMOD) $(DEMODIR)/wcommands/*
+
+files:		top
+		mkdir $(DEMODIR)/files
+		chmod $(DIRMODE) $(DEMODIR)/files
+		cp $(D_FILES) $(DEMODIR)/files
+		mkdir $(DEMODIR)/files/cjf
+		mkdir $(DEMODIR)/files/rws
+		cd binary_files; cp $(D_BINARY_FILES_cjf) $(DEMODIR)/files/cjf
+		cd binary_files; cp $(D_BINARY_FILES_rws) $(DEMODIR)/files/rws
+		chmod $(READMOD) $(DEMODIR)/files/*
+		chmod $(DIRMODE) $(DEMODIR)/files/cjf
+		chmod $(DIRMODE) $(DEMODIR)/files/rws
+		chmod $(READMOD) $(DEMODIR)/files/cjf/*
+		chmod $(READMOD) $(DEMODIR)/files/rws/*
+
+#colormaps:	top
+#		mkdir $(DEMODIR)/colormaps
+#		chmod $(DIRMODE) $(DEMODIR)/colormaps
+#		cp $(D_COLORMAPS) $(DEMODIR)/colormaps
+#		chmod $(READMOD) $(DEMODIR)/colormaps/*
+
+#help:		top
+#		mkdir $(DEMODIR)/help
+#		chmod $(DIRMODE) $(DEMODIR)/help
+#		cp $(D_HELP) $(DEMODIR)/help
+#		chmod $(READMOD) $(DEMODIR)/help/*
+
+menus: 		top
+		mkdir $(DEMODIR)/menus
+		chmod $(DIRMODE) $(DEMODIR)/menus
+		cp $(D_MENUS) $(DEMODIR)/menus
+		chmod $(READMOD) $(DEMODIR)/menus/*
+
+params:		top
+		mkdir $(DEMODIR)/params
+		chmod $(DIRMODE) $(DEMODIR)/params
+		cp $(D_PARAMS) $(DEMODIR)/params
+		chmod $(READMOD) $(DEMODIR)/params/*
+
+bin:		top
+		mkdir $(DEMODIR)/bin
+		chmod $(DIRMODE) $(DEMODIR)/bin
+		cp $(D_SCRIPTS) $(DEMODIR)/bin
+		chmod $(EXMODE) $(DEMODIR)/bin/*
+
+esccs:		
+		esccs $(DEMONAME) get $(SCCS_FILES)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

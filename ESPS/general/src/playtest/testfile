@@ -1,0 +1,17 @@
+#
+# simple testfile for playtest
+# @(#)testfile	3.2 1/9/93 ESI
+#
+echo make a play file
+cat >playfile <<END
+play a b
+play b a
+play c d
+play d a
+END
+echo this is the playfile
+cat playfile
+#
+echo Now run it with the playfile in debug mode 
+playtest -x1 playfile
+rm playfile

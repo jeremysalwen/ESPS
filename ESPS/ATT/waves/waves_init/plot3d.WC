@@ -1,0 +1,17 @@
+enable_server
+add_espsn menu spect name "3D Plot" command plot3d -w -o R
+return
+
+# @(#)plot3d.WC	1.2 1/6/93
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,45 @@
+.\" Copyright (c) 1987, 1989 Entropic Speech, Inc. All rights reserved.
+.\" @(#)genhdtype.3	1.7 21 Dec 1989 ESI
+.TH GENHD_TYPE 3\-ESPSu 21 Dec 1989
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+genhd_type \- get the type and size of an generic header item
+.SH "SYNOPSIS"
+.ft B
+#include <esps/esps.h>
+.PP
+.ft B
+int
+.br
+genhd_type(name, size, hd)
+.br
+char *name;
+.br
+int *size;
+.br
+struct header *hd;
+.ft R
+.SH "DESCRIPTION"
+.I genhd_type
+returns a code indicating if \fIname\fR is defined as an generic
+header item for the ESPS file header pointed to by \fIhd\fR and its type.
+.PP
+If \fIname\fR is defined then one of 
+\s-1\fBDOUBLE, FLOAT, LONG, SHORT\s+1, CODED\fR, or \fB\s-1CHAR\fR\s+1
+is returned as the function value and the size of the item is returned
+through \fIsize\fR.
+\fB\s-1HD_UNDEF\s+1\fR is returned if \fIname\fR is not defined.
+.SH EXAMPLE
+.PP
+int size;
+.br
+if (genhd_type("zeta",&size,hd) != \s-1\fBHD_UNDEF\s+1\fR) ...
+.br
+  if (size == 1) ...
+.SH "SEE ALSO"
+.PP
+add_genhd(3\-ESPSu), get_genhd(3\-ESPSu),
+genhd_list(3\-ESPSu), copy_genhd(3\-ESPSu)
+.SH "AUTHOR"
+.PP
+Alan Parker

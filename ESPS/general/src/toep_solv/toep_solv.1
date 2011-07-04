@@ -1,0 +1,260 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.  All rights reserved.
+.\" @(#)toep_solv.1	1.3 12/2/92 ESI/ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.if n \{\
+. ds R_ \x'1'R\d\dij\u\u
+. ds r_ \x'1'r\d\d|i-j|\u\u
+. ds r0 \x'1'r\d\d0\u\u
+. ds r1 \x'1'r\d\d1\u\u
+. ds rm \x'1'r\d\dm\u\u
+. \}
+.if t \{\
+. ds R_ \fIR\v'15u'\s-3i\^j\s+3\|\v'-15u'\fP
+. ds r_ \fIr\fP\v'15u'\s-3|\|\fIi\|\(mi\^j\fP\^|\s+3\v'-15u'
+. ds r0 \fIr\fP\v'15u'\s-3\fR0\fP\s+3\v'-15u'
+. ds r1 \fIr\fP\v'15u'\s-3\fR1\fP\s+3\v'-15u'
+. ds rm \fIr\v'15u'\s-3m\s+3\v'-15u'\fP
+. \}
+.TH TOEP_SOLV 1\-ESPS 12/2/92
+.SH "NAME"
+toep_solv \- Solve real symmetric Toeplitz systems of linear equations
+.SH "SYNOPSIS"
+.B toep_solv
+[
+.BI \-f " crsfield"
+] [
+.BI \-x " debug_level"
+] [
+.BI \-F " autfield"
+] [
+.BI \-P " param"
+] [
+.BI \-W " pwrfield"
+]
+.I autocor.fea
+.I crosscor.fea
+.I output.filt
+.SH "DESCRIPTION"
+.PP
+.I Toep_solv
+repeatedly obtains an ``autocorrelation vector''
+.I r
+from its first input file
+and a corresponding ``cross-correlation vector''
+.I v
+from its second file.
+For each such pair of vectors, it solves the system of equations
+.PP
+.I Rw = v
+.PP
+where
+.I R
+is a Toeplitz matrix with coefficients given by
+.PP
+\*(R_\ =\ \*(r_
+.PP
+and writes the solution vector
+.I w
+to the output file.
+.PP
+The first input file is typically a FEA_ANA file
+containing normalized autocorrelations,
+as indicated by a value AUTO for the header item
+.I spec_rep
+(see FEA_ANA(5\-ESPS)).
+However, any FEA file having a scalar field
+.I raw_power
+and a vector field
+.I spec_param
+of type FLOAT is accepted,
+and in fact alternative field names may be chosen
+with the
+.B \-W
+and
+.B \-F
+options.
+A vector
+.I r
+is obtained from these two fields in each input record.
+The value of \*(r0 is the contents of the
+.I raw_power
+field,
+and the values of \*(r1,\ .\ .\ .\ ,\ \*(rm
+are obtained by multiplying the contents of the
+.I spec_param
+field by \*(r0.
+Here
+.I m,
+the size of the
+.I spec_param
+field, equals the order of the autocorrelations.
+.PP
+The second input file may be any FEA file having a vector field
+.I cross_cor
+of type FLOAT, and an alternative field name may be chosen
+with the
+.B \-f
+option.
+For example files written by the program
+.IR cross_cor (1\-ESPS)
+are acceptable.
+The vector
+.I v
+obtained from each record is simply the contents of the given field.
+The size of the field must be
+.IR m "\|+\|1,"
+where
+.I m,
+as above, is the size of the
+.I spec_param
+field in the first input file.
+.PP
+The output file is a FEA_FILT file.
+The elements of each solution vector
+.I w
+are treated as coefficients of a FIR filter and written in an output
+record as elements of 
+.I re_num_coeff.
+.PP
+The solution vectors are computed by
+.IR stsolv (3-ESPS),
+which uses Levinson's method \-
+reflection coefficients are computed as intermediate results,
+and a warning is printed
+if a reflection coefficient with magnitude 1 or greater is computed.
+In that case
+the output record contains the solution of a system of some reduced order.
+.SH "OPTIONS"
+.PP
+The following options are supported.  Default values are shown in brackets.
+.TP
+.BI \-f " crsfield" " \fR[cross_cor]"
+The name of the field in the second input file that contains the
+cross-correlation vectors
+.I v.
+.TP
+.BI \-x " debug_level" " \fR[0]"
+A positive value causes various debugging messages to be printed to the
+standard error output \- the higher the value, the more messages.
+At the default level of 0, no messages are printed.
+.TP
+.BI \-F " autfield" " \fR[spec_param]"
+The name of the field in the first input file that contains the normalized
+autocorrelation vectors used in computing the autocorrelation vectors
+.I r.
+.TP
+.BI \-P " param" " \fR[params]"
+.TP
+.BI \-W " pwrfield" " \fR[raw_power]"
+The name of the field in the first input file
+that contains the total power \*(r0
+used in computing the autocorrelation vectors
+.I r.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file does not have to be present,
+since all the parameters have default values.
+The following parameters are read, if present, from the parameter file:
+.TP
+.I "crsfield \- string"
+The name of the field in the second input file
+that contains the cross-correlation vectors.
+This parameter is not read if the
+.B \-f
+option is used.
+The default is "cross_cor".
+.TP
+.I "autfield \- string"
+The name of the field in the first input file
+that contains the normalized autocorrelation vectors.
+This parameter is not read if the
+.B \-F
+option is used.
+The default is "spec_param".
+.TP
+.I "pwrfield \- string"
+The name of the field in the first input file
+that contains the total power.
+This parameter is not read if the
+.B \-W
+option is used.
+The default is "raw_power".
+.SH "ESPS COMMON"
+The ESPS common file is not accessed.
+.SH "ESPS HEADERS"
+The value of
+.I common.type
+is checked in the two input file headers.
+The output header is a new FEA_FILT file header.
+The generic header item 
+.I max_num
+is set equal to the number of output filter coefficients,
+which is the same as the number of elements
+of an input cross-correlation vector;
+.I max_denom
+becomes 0.
+The values given to
+.I type
+and
+.I method
+are FILT_ARB and PZ_PLACE.
+All other FEA_FILT generic header items are filled in with
+NONE, 0, or NULL.
+Generic header items
+.I crsfield, autfield,
+and
+.I pwrfield
+are added to record the values obtained from the command line,
+from the parameter file, or by default.
+As usual, the command line is added as a comment, and the headers of the
+input files are added to the output file header as source files.
+.SH "EXAMPLE"
+.PP
+Sometimes one needs to estimate the coefficients of a linear filter,
+give two pieces of information:
+an original version of a signal
+and the corresponding filtered version, possibly with added noise.
+An estimate may be obtained as the solution
+.I w
+of a Toeplitz system for which the matrix elements \*(r_
+are autocorrelations of the original signal,
+and the right-hand side
+.I v
+consists of cross-correlations of the filtered signal with the original.
+The problem can thus be solved by
+.I toep_solv
+together with
+.IR auto (1-ESPS)
+and
+.IR cross_cor (1-ESPS).
+Suppose for example that the original signal is a thousand-sample segment
+of a sampled-data file
+.I orig.sd
+starting at sample 1001,
+and that the filtered signal is in a sampled-data file
+.I filt.sd
+starting at sample 501.
+The following commands will estimate an order-10 causal FIR filter
+that will transform the original signal to one as close as possible to
+the filtered signal in a least-squares sense.
+.nf
+.IP
+auto \-p1001:2000 \-o10 orig.sd auto.fana
+cross_cor \-p501:1500 \-p1001:2000 \-o0:10 filt.sd orig.sd ccor.fea
+toep_solv auto.fana ccor.fea filter.filt
+.fi
+
+.SH "SEE ALSO"
+.PP
+stsolv(3-ESPSsp), auto(1-ESPS), cross_cor(1-ESPS), FEA(5-ESPS), FEA_ANA(5-ESPS),
+FEA_FILT(5-ESPS)
+.SH "BUGS"
+.PP
+There should be an option \-r to allow selecting a subrange of the records in
+the input files.  Tags are ignored.
+.SH "FUTURE CHANGES"
+.PP
+Accommodate double-precision data.
+.SH "AUTHOR"
+Rodney Johnson. Modified to write FEA_FILT files by Bill Byrne.

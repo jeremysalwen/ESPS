@@ -1,0 +1,88 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)refltoauto.3	1.6 29 Jul 1991 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH REFL_TO_AUTO 3\-ESPSsp 29 Jul 1991
+.SH NAME
+
+refl_to_auto \- convert reflection coefficients and prediction filter error to autocorrelation coefficients.
+.SH SYNOPSIS
+.ft B
+refl_to_auto (refl_coeff, pfe, autocorrn, order)
+.br
+float *refl_coeff, pfe, *autocorrn;
+.br
+int     order;
+.SH DESCRIPTION
+.PP
+.I refl_to_auto
+converts 
+.I order 
+reflection coefficients 
+.I refl_coeff
+and the prediction filter error 
+.I pfe 
+(also called the linear predictive analysis gain or error)
+into the equivalent
+.I order + 1 
+autocorrelation coefficients
+.I autocorrn.
+For the input, only
+.I refl_coeff[1]
+to
+.I refl_coeff[order]
+are processed and
+.I refl_coeff[0]
+is ignored.  On return
+.I autocorrn[1]
+to 
+.I autocorrn[order+1]
+are the desired autocorrelation coefficients and
+.I autocorrn[0]
+should be ignored.
+.SH EXAMPLE
+.PP
+.nf
+/*
+ * We want to convert \fIorder\fP reflection coefficients to
+ * \fIorder + 1\fP autocorrelation coefficients. Assume the
+ * array ref_coeff contains \fIorder\fP reflection coefficients
+ * starting from ref_coeff[0] to ref_coeff[order - 1] and the
+ * autocorrelation coefficient array auto_corr has enough memory
+ * to hold \fIorder + 1\fP coefficients.
+ *
+ */
+
+	int	order = 3;
+	float	ref_coeff[3] = {	/* reflection coefficients */
+		 -0.248618, 0.81, 0.0
+		};
+	float	alpha = 10.0;	/* prediction filter error, AKA alpha */
+	float	auto_corr[4];	/* order + 1 array */
+
+	/*
+	 * The following statement will convert the order ref_coeff
+	 * array to the proper order + 1 auto_corr array.
+	 *
+	 */
+
+	refl_to_auto (ref_coeff - 1, alpha, auto_corr, order);
+
+	/*
+	 * Notice we are sending (ref_coeff - 1) pointer;
+	 * it is the one before ref_coeff[0].
+	 * Therefore, in the refl_to_auto routine,
+	 * refl_coeff[1] will actually be ref_coeff[0].
+	 * 
+	 */
+.fi
+.SH REFERENCES
+[1] Programs for Digital Signal Processing, edited by the Digital Signal Processing
+Committee, IEEE Acoustics, Speech, and Signal Processing Society, Chapter 4.3,
+pp 4.3-1 to 4.3-7.
+.SH "SEE ALSO"
+covar(3\-ESPSsp),  get_atal(3\-ESPSsp),
+get_burg(3\-ESPSsp), lar_to_rc(3\-ESPSsp),
+refl_to_filter(3\-ESPSsp)
+.SH AUTHOR
+Code by Ajaipal S. Virdy, manual page by D. Burton and A. Virdy.

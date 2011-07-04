@@ -1,0 +1,313 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)addfeahd.1t	1.13 4/2/97 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH ADDFEAHD 1\-ESPS 4/2/97
+.SH "NAME"
+addfeahd - adds an ESPS feature file header to binary or ASCII data
+.SH "SYNOPSIS"
+.B addfeahd
+[
+.BI \-P
+.I params
+] [
+.BI \-S
+.I "bytes to skip"
+] [
+.B \-F
+] [
+.BI \-t
+.I "fea sub-type code"
+] [
+.BI \-c " comment"
+] [
+.BI \-C " comment_file"
+] [
+.B \-E
+] [
+.B \-a
+]
+.I "format_file input_file feafile.out"
+
+.SH "DESCRIPTION"
+.PP
+\fIAddfeahd\fR is used to import non-ESPS files into ESPS.
+\fIAddfeahd\fR accepts as input an ASCII \fIformat_file\fR and a
+binary or ASCII \fIinput_file\fR. It converts the input file to an ESPS
+feature file.  If the input file is binary, it is assumed to have fixed
+length records
+and a structure that corresponds to the description given in the
+\fIformat_file\fR.
+If the input file is ASCII, it is assumed to have a fixed number of fields and
+a structure and format that is specificed by the description given in the
+\fIformat_file\fR.
+If you are converting sampled data, a more convenient 
+interface is provided by \fIbtosps\fP (1\-\s-1ESPS\s+1).  
+.PP
+The \fIformat_file\fR consist of a line for each field in a record of
+the input file.
+The items in each line are separated by white space.
+There are three items per line for binary input files, and the same three plus
+one or two additional items for ASCII input files.
+The first three items are the field name, the data type of the
+field, and the number of elements in the field.
+For ASCII input, the element count is followed by one or two format strings,
+whose use is described below.
+Any additional information on the line is ignored.  For example, the
+following is a valid \fIformat_file\fR for binary input:
+.sp
+.TS
+tab(;);
+l l l l.
+;frame_len;LONG;1
+;lpc_power;FLOAT;1
+;p_pulse_len;FLOAT;1
+;num_pulses;LONG;1
+;spec_param;FLOAT;10
+;frame_type;CODED;1
+;voiced_fraction;FLOAT;1
+;raw_power;FLOAT;1
+.TE
+.sp
+.PP
+Note that this is the same format as the first three columns of
+\fIfea_element\fR output.
+.PP
+The valid values for the data type field are: DOUBLE, FLOAT, LONG,
+SHORT, CODED, CHAR, BYTE, DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX,
+SHORT_CPLX, CHAR_CPLX, and BYTE_CPLX i.e., the types that are possible
+in all ESPS files).  Feature file field names must start with an
+alphabetic character, and can consist of alphabetics, numerics and the
+underscore "_" after the first character.  Feature file field names
+are case sensitive.
+.PP
+An equivalent \fIformat_file\fR for ASCII input would be:
+.sp
+.TS
+tab(;);
+l l l l l l.
+;frame_len;LONG;1;%ld
+;lpc_power;FLOAT;1;%f
+;p_pulse_len;FLOAT;1;%f
+;num_pulses;LONG;1;%ld
+;spec_param;FLOAT;10;%f
+;frame_type;CODED;1;%hd
+;voiced_fraction;FLOAT;1;%f
+;raw_power;FLOAT;1;%s;%f
+.TE
+.sp
+.PP
+As shown in the example above, \fIformat_file\fR lines for ASCII input end
+with one or two strings appropriate for use as format string arguments
+in calls to \fIfscanf\fR(3).  If only one format string is provided,
+that string is used to convert characters in the ASCII input file into
+field element values.  \fIfscanf\fR(3) is called once for each element
+in the field (but see discussion below regarding CHAR fields).
+If two format strings are specified for a field,
+\fIfscanf\fR(3) is called once with the first format string to skip
+past characters in the input file before converting input to field values.
+Then \fIfscanf\fR(3) is called with the second format string once for
+each element in the field.
+.PP
+Conversion of CHAR fields is handled somewhat differently.
+Following an optional call to \fIfscanf\fR(3) to skip characters if two
+format strings are specified, the field conversion
+string is passed in a SINGLE call to \fIfscanf\fR(3), and the results
+stored in a buffer that is one character longer than the field's specified
+element count.  Up to (element count) characters from that buffer are than
+transferred to the elements of the field.
+.PP
+\fIAddfeahd\fR reads the \fIformat_file\fR and uses this information
+to build the header of the output feature file.  For each line in the
+\fIformat_file\fR a field is created of the given name, data type, and
+size.  This header is then used to read the input file using
+\fIget_fea_rec\fR (for binary files) or \fIfscanf\fR(3) (for ASCII files)
+and to write the output ESPS feature file.  If the
+\fIformat_file\fR correctly described the input, then the data will be
+properly converted to a feature file.  \fIPsps\fR should be used after
+the conversion to check the data.  There may be some padding in binary
+\fIinput_file\fR structures that the user may not normally think of as
+being part of the data record.  Appropriate lines must be inserted in
+the \fIformat_file\fR for these.  For example, if there was a 16 bit
+pad, after the field \fIlpc_power\fR above, you could add the line:
+.sp
+.TS
+tab(;);
+l l l l.
+;pad1;SHORT;1
+.TE
+.sp
+right after the line for \fIlpc_power\fR.
+.PP
+By default, the output ESPS data file is written with the data
+elements in order by data type.  This will probably result in the
+order of the data elements being different than the original file.  If
+it is desired to preserve the data elements in the same order as the
+original non\-ESPS file, the \s-1UNIX\s+1 environment variable
+\fBFIELD_ORDER\fR should be defined and set to any value other than
+\fIoff\fR.  If this is done, the output file will be written in
+field_order which will be the same as the input file and the ESPS
+feature file can be converted back into the original format by
+removing the ESPS header with \fIbhd(1\-ESPS)\fR.
+.PP
+For record-keeping purposes,
+.I addfeahd
+stores an ASCII comment in the header of of the output file.  The
+comment should describe the origins of the data in \fIinput_file\fR.
+If a comment is not supplied in the parameter file or by means of the
+\fB\-c\fR or \fB\-C\fR options, the user is prompted for one.  If
+\fIaddfeahd\fP is called on a pipe with \fIinput_file\fP or
+\fIformat_file\fP as standard input, the comment must be supplied
+directly as the user cannot be prompted.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-P " param" " \fR[params]\fP"
+Specifies the name of the parameter file.
+.TP
+.BI \-t " feature sub-type code " 
+If this option is given, the feature file sub-type code is filled in
+with the given code.   The symbolic name of the sub-type code must be
+given, for example FEA_ANA.   For a complete list of defined sub-type
+codes, see FEA(5\-ESPS).   Use of this option doesn't ensure that the file
+has the correct format for the defined subtype.  The user should use this
+option only in cases where he knows that he is producing a file with the
+correct fields.  See the section 5 man pages for the defined feature
+file types.
+.TP
+.BI \-S " bytes to skip" " \fR[0]\fP"
+This many bytes at the beginning of \fIinput_file\fR are skipped.  This
+would be used to skip over a header in data file.  This option cannot be
+used with the \fB-a\fR option.
+.TP
+.B \-F
+If this option is used, then the \fB-S\fR option described above must
+also be used.   
+This option causes the data skipped at the beginning of the file to be
+saved in the output ESPS file, as a \fIforeign header\fR.   Two generic
+header items are created in the output file; \fIforeign_hd_length\fR and
+\fIforeign_hd_ptr\fR.   The item \fIforeign_hd_length\fR is given the
+value of the \fB-S\fR option; i.e. the number of bytes to skip.  The
+item \fIforeign_hd_ptr\fR is set to the in memory address of this block
+of data after it is read from the input file.   This is used by
+\fIwrite_header\fR(3\-ESPS) to save this information in the ESPS file.
+The intention here, is to allow a non-ESPS header that might already be
+on a file, to be preserved as the file is converted to ESPS.
+On the ESPS file, the foreign header is physically
+located between the ESPS header and the data records.   
+The program \fIbhd\fR(1\-ESPS) can be used to remove the ESPS header and
+leave the original foreign header.  Also see \fIread_header\fR(3\-ESPS) 
+and \fIwrite_header\fR(3\-ESPS).   
+.sp
+Note that the machine independent file I/O cannot operate on foreign
+headers (since we have no way of knowing the internal structure).   
+If an ESPS file containing a foreign header is moved to a machine of a
+different data format than the one on which it was created, the foreign
+header will not be translated as the ESPS header and data is.
+.sp
+A user written program can use the value of the generic
+\fIforeign_hd_ptr\fR in order to access any information that is in the
+foreign header.   The type of this generic is \fBlong\fR, so it must be
+cast to a \fB(char *)\fR and then it can be used to address into the
+foreign header.
+.TP
+.BI \-c " comment"
+Specifies that the ASCII string 
+.I comment
+be added as a comment in the header of the output file.  If this option is
+used, it overides the parameter file value.
+.TP
+.BI \-C " comment_file"
+Specifies that the contents of the file
+.I comment_file
+be added as a comment in the header of the output file.  If this option is
+used, it overides the parameter file value.
+.TP
+.B \-E
+By default, the input file is assumed to be in the machine's native
+data representation.  If this option is used, the input is taken to be
+in ESPS EDR representation.  This would be the case, for example, if
+the input file was an ESPS that was processed with \fIbhd\fR on a
+system that produced EDR format files.  Regardless of the format of
+the input file, the output file format is controlled by the
+\fBESPS_EDR\fR environment variable, as are all programs which produce
+ESPS files.  If the Unix environment variable \fBESPS_EDR\fR has the
+value of \fIon\fR, then the output file is in Entropic's external data
+representation and can be read by any ESPS implementation on any
+supported machine.  If this variable is not defined, then the output
+file is in the machine's native format.  This format can be read by
+some ESPS implementations, but not all.
+.TP
+.B \-a
+Specifies that the input file is in ASCII format.  The default expectation
+is that the input file is a binary file.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file does not have to be present if all of the parameters are
+specified by means of command-line options.  The following parameters are
+read, if present, from the parameter file:
+.IP
+.I "subtype \- string"
+.IP
+Same as the \fB\-t\fR option.
+.IP
+.I "skip \- integer"
+.IP
+Same as the \fB\-S\fR option.
+.IP
+.I "comment \- string"
+.IP
+This provides an ASCII comment that is added to the comment field in the
+output file.  The comment should describe the origins of the data in
+\fIinput_file\fP.  If this parameter is not present in the parameter file and
+is not specified by the \fB\-c\fP or \fB\-C\fP options, then the user is
+prompted for a comment provided that \fIaddfeahd\fP is not called 
+with \fIformat_file\fP or \fIinput_file\fP as standard input.
+.PP
+Remember that command line option values override 
+parameter file values.
+.SH "ESPS COMMON"
+.PP
+ESPS Common is not read or written by \fIaddfeahd\fP.  
+.SH "SEE ALSO"
+.PP
+.nf
+\fIbhd\fP(1\-\s-1ESPS\s+1), \fIbtosps\fP(1\-\s-1ESPS\s+1), \fIaddgen\fP(1\-\s-1ESPS\s+1), 
+\fIaddfea\fP(1\-\s-1ESPS\s+1), \fIcomment\fP(1\-\s-1ESPS\s+1), \fIfea_element\fR(1\-\s-1ESPS\s+1),
+\fIpsps\fP(1\-\s-1ESPS\s+1), \fIpplain\fP(1\-\s-1ESPS\s+1), \fIselect\fP(1\-\s-1ESPS\s+1), 
+\fIfea\fR(5\-\s-1ESPS\s+1)
+.fi
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+\fIAddfeahd\fP will exit with an error message if the feature file
+header cannot be created due to bad data in \fIformat_file\fR.
+.PP
+\fIAddfeahd\fP will exit with an error message if the input file is
+ASCII and format conversion fails, or if the end of the input file
+is found other than at the end of a complete record.
+.PP
+\fIAddfeahd\fP will exit with an error message if both \fIformat_file\fP 
+and \fIinput_file\fP are "\-".  
+.PP
+\fIAddfeahd\fP will exit with an error message if, when \fIaddfeahd\fP is
+called either of the input files as standard input, a comment is not
+supplied in the parameter file or via \fB\-c\fP or \fB\-C\fP.  
+.PP
+It can be surprisingly difficult to provide correct format strings for
+converting ASCII input files.  Many incorrect input format strings can
+cause core dumps.  Here are some guidelines.  It is critical to correctly
+specify the length of field elements in the format strings.  Use some form
+of %lf for DOUBLE, %f for FLOAT, %ld for LONG, %hd for SHORT and CODED,
+and %c for BYTE.  If a "skip" format string is specified, it may contain
+conversion descriptors, but they MUST include the assignment suppression
+character '*' (e.g. %*f).  No format string may include a space character.
+The \\character representation for tabs, newlines,
+etc. are not supported in the current version.
+Conversion descriptions for CHAR fields should always include a maximum
+field width specification to avoid buffer overflow.
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Alan Parker

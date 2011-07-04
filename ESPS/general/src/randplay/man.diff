@@ -1,0 +1,140 @@
+.\" Copyright (c) 1987, 1989 Entropic Speech, Inc.; All rights reserved
+.\" @(#)randplay.1	3.3 3/2/90
+.TH RANDPLAY 1\-ESPS 3/2/90
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+randplay \- create script of commands for randomized "A-B" listening comparisons
+.SH "SYNOPSIS"
+.B randplay
+[
+.B \-a
+[ [
+.B \-s
+] [
+.BI \-d " path"
+] [
+.BI \-n " program"
+]
+.I compfile
+[
+.I play-options
+]
+.SH "DESCRIPTION"
+.PP
+.I Randplay 
+accepts an ASCII file containing ESPS FEA_SD file names and produces
+on standard output a script that can be used for randomized listening
+comparisons.  The input file
+.I compfile
+lists groups of FEA_SD files that are to be compared within the group.  
+Groups are separated by a line containing the single character "#".  
+Within each group, FEA_SD file names are separated by white space or white
+space followed by a newline.  Thus files can be listed one per-line 
+or several per-line.  It is not necessary for the "#" marker to follow 
+the final group.
+.PP
+For each group of FEA_SD files,
+.I randplay
+determines all possible two-file comparisons.  For each two-file 
+comparison, 
+.I randplay 
+outputs a command that plays the two files in random order using the
+specified FEA_SD play program (see 
+.B \-n
+).  The entire set of output commands for all groups (each causing two
+files to be played) is itself output in random order.  
+.PP
+If 
+.I compfile
+is "\-", standard input is read.  All characters after 
+.I compfile
+in the command line are assumed to be option flags for the play 
+program and are passed on to the play program each time it is 
+called in the output script.  
+.PP
+.I Randplay
+does not check to see if the FEA_SD files exist.  
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read by 
+.I randplay.
+.SH "ESPS COMMON"
+.PP
+The ESPS common file is not written by 
+.I randplay.
+.SH OPTIONS
+.PP
+The following options are supported:  
+.TP
+.B\-a
+Specifies that all "A-B" comparisons are to be made, including
+comparisons of each file to itself.  Otherwise, files are compared to
+other files in the same line from 
+.I compfile
+but not to themselves.  
+.TP
+.BI \-d " path"
+Specifies a directory path that will be prepended to all of the 
+file names in the output script.  A "/" is added to the 
+.I path
+by 
+.I randplay.  
+If the 
+.B \-d
+option is not used, file names will appear exactly as they do in 
+the input file 
+.I compfile.
+.TP
+.BI \-n " program \fR[play]\fP"
+Determines the name of the play program that is used in the 
+output shell script.  
+.TP
+.BI \-s
+Specifies that a scoring sheet be output in the file 
+.I scoresheet
+in the current directory.  The scoring sheet is the sheet filled out by
+listeners.  
+.SH "EXAMPLES"
+.PP
+.nf
+
+     %cat > rtest
+     jes.sd kle.sd 
+     rap.sd 
+     #
+     jtb.sd sn.sd jpb.sd
+     ^D
+     %randplay rtest > rtestscript
+     %cat rtestscript
+     play rap.sd kle.sd
+     play rap.sd jes.sd
+     play kle.sd jes.sd
+     play jpb.sd sn.sd
+     play jtb.sd sn.sd
+     play jpb.sd jtb.s
+
+.fi
+.PP
+To play two files without knowing their order, one could do the 
+following:
+.nf
+
+     %echo "file1.sd file2.sd" | randplay - | sh
+
+.fi
+.SH "FUTURE CHANGES"
+.PP
+.SH "SEE ALSO"
+.PP
+play(1\-ESPS), sdcomp(1\-ESPS), ESPS(5\-ESPS), FEA_SD(5\-ESPS)
+.SH "WARNINGS"
+.PP
+
+.SH "BUGS"
+.PP
+None known.
+.SH "AUTHOR"
+.PP
+Manual page and program by John Shore
+
+

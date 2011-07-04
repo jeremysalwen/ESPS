@@ -1,0 +1,238 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)lpcana.1	3.12 02 Apr 1997 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH LPCANA 1\-ESPS "02 Apr 1997"
+.SH NAME
+lpcana \- Performs LPC analysis using a crude pitch-synchronous method
+.SH SYNOPSIS
+.B lpcana
+[
+.BI \-P " param_file"
+] [
+.BI \-r " range"
+] [
+.B \-p " range"
+] [
+.BI \-m " anal_method"
+] [
+.B \-F
+] [
+.BI \-x " debug_level"
+]
+.I input_sd output_fea
+.SH DESCRIPTION
+.PP
+Use of this program is not recommended.  For pitch synchronous
+analysis, see \fIepochs\fR (1\-\s-1ESPS\s+1) and \fIps_ana\fR (1\-\s-1ESPS\s+1).
+.I lpcana
+takes as input an ESPS sampled data FEA_SD (5\-\s-1ESPS\s+1) file
+.i input_sd,
+and it computes LPC filter coefficients and the excitation parameters
+using a crude pitch-synchronous method.  The results are stored in the
+FEA_ANA (5\-\s-1ESPS\s+1) file \fIoutput_fea\fP.  For each analysis frame of data,
+\fIlpcana\fP generates reflection coefficients, power, and voicing
+information.  An output FEA_ANA record is generated for each pulse
+(several pulses per analysis frame), with enough information to enable
+\fIlpcsynt\fP (1\-\s-1ESPS\s+1) to re-synthesize speech.  The nominal
+frame size is set by the parameter \fIlpc_frame_size\fP but is
+determined adaptively by the program.  If the \fB-F\fP option is 
+not used, \fIrefcof\fP performs an additional spectral analysis on 
+each pulse within the analysis frame and puts out a different set
+of reflection coefficients for each pulse (if \fB-F\fP is used, 
+all pulses from the same analysis frame have the same reflection 
+coefficients).  
+.PP
+If "\-" is used in place of 
+.I input_sd,
+standard input is used.  If "\-" is used in place of
+.I output_fea,
+standard output is used.
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-P " param_file"
+uses the parameter file
+.I param_file
+rather than the default file
+.I params.
+.TP
+.BI \-p " range"
+Selects a subrange of points to be analyzed. The start and end
+points are defined with respect to the original SD file that is the
+source of the input FEA_ANA file.  The range is specified using the format 
+.I start\-end
+or
+.IR start:end
+or
+.IR start:+nan .
+Either 
+.I start
+or 
+.I end
+may be omitted, in which case the omitted parameter defaults respectively
+to the start or end of the input SD file.  
+.TP
+.BI \-r " range"
+\fBr\fP is a synonym for \fBp\fP.
+.TP
+.BI \-m " anal_method\fR[mburg]"
+Specifies the spectrum analysis method.  The default is the modified
+Burg method.  Also available are the autocorrelation method ("autoc"),
+ovariance method ("cov"), Burg method ("burg"), fast modified Burg
+method ("fburg"), stuctured covariance ("strcov" and "strcov1"), and
+vector Burg ("vburg", fast approximation to structured covariance.  Of
+the two structured covariance methods, the first ("strcov" is
+considerably faster and better behaved; "strcov1" is older but
+included as it may prove useful on occasion.  The \fB-m\fP option
+overrides the value that may be in the parameter file.  The default
+applies only if there is no value in the parameter file.
+.TP
+.B \-F
+Specifies use of the framing method of the previous version of
+\fIrefcof\fP, in which the reflection coefficients for each pulse in
+an analysis frame are determined by a spectral analysis of the entire
+frame.  If \fB-F\fP is not used, an additional spectrum analysis is
+performed for each pulse.  
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+option specifies that various information or debugging messages be
+printed on standard error.
+.SH ESPS HEADER
+.PP
+The generic header item \fIstart_time\fP (type DOUBLE) is written in
+the output file.  The value written is computed by taking the
+\fIstart_time\fP value from the header of the input file (or zero, if
+such a header item doesn't exist) and adding to it the offset time
+(from the beginning of the input file) of the first point or record
+processed.  Unlike many other ESPS programs, \fIlpcana\fP does
+\fInot\fP write the generic header item \fIrecord_freq\fP (used by
+\fIwaves\fP+ for time synchronization); this is because the output
+records from \fIlpcana\fP result from a variable frame length
+analysis.
+.PP
+The following generic header items are added (in addition to the
+standard ones (FEA_ANA\-5):
+.IP
+.I "p_offset - integer"
+.IP
+How many points before the beginning of the pulse the spectrum
+analysis window is started.
+.sp
+.IP
+.I "dcrem - string"
+.IP
+Yes means that the DC component was removed before the data was analyzed.
+.sp
+.IP
+.I "psynch - string"
+.IP
+Yes means that the spectrum analysis is done pitch synchronously.
+.sp
+.IP
+.I "matsiz - integer"
+.IP
+The size of the autocorrelation matrix that was used in the spectrum
+analysis.
+.sp
+.SH "ESPS PARAMETERS"
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+The following parameters are read from the parameter file:
+.IP
+.I "start - integer"
+.IP
+This is the starting point in the input file.
+Its value is superseded
+by a \fB\-p\fR value. The default value is 1.
+.sp
+.IP
+.I "nan - integer"
+.IP
+This is the number of points to analyze. Its value is superseded
+by a \fB\-p\fR value.
+.sp
+.IP
+.I  "lpc_filter_order - integer"
+.IP
+This is the order of the linear prediction filter that represents the
+vocal tract.
+The maximum allowable size is 20.
+The default value is 10.
+.sp
+.I  "lpc_frame_size - integer"
+.IP
+This is the nominal frame size for performing spectral analysis. 
+The default value is 160.
+.sp
+.I  "minimum_pulse_length - integer"
+.IP
+This specifies the minimum pitch period. The algorithm has been well
+tested for the pitch range of 50-400 Hz. Thus a typical value of
+this variable is 20, assuming a sampling rate of 8000 Hz.
+The default value is 20.
+.sp
+.I "method - string"
+.IP
+The spectrum analysis method to use.  The available methods are
+autocorrelation ("autoc"), covariance ("covar"), Burg ("burg"),
+modified Burg ("mburg"), fast modified Burg method ("fburg"),
+stuctured covariance ("strcov" and "strcov1"), and vector Burg
+("vburg", a fast approximation to structured covariance.  If no value
+is given in the file, the modified Burg method is used by default.
+The \fImethod\fP is not read from the parameter file if the command
+line option \fB\-m\fP is used. 
+.SH ESPS COMMON
+If the input
+is standard input, COMMON is not read. If COMMON is read and the 
+command line input filename does match the filename listed in COMMON
+then, the following items are read. If the two filenames do not
+match, then no further parameters are read from COMMON.
+.IP
+.I "start - integer"
+.IP
+This is the starting point in the input file. Any \fB\-p\fR
+option value supersedes the COMMON specified value.
+.IP
+.I "nan - integer"
+.IP
+This is the number of points to analyze. A \fB\-p\fR specified value
+supersedes the COMMON specified value.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.SH COMMENTS
+The algorithm has been developed for speech sampled at 8000 Hz. It
+works best when the data is recorded using a good microphone. Its
+quality is degraded, when working with telephone speech (especially
+if carbon microphone is used).
+.PP
+The speech data is not pre-emphasized prior to LPC analysis, and
+the modified Burg method is used for computing the LPC parameters.
+.SH FUTURE CHANGES
+NONE.
+.SH BUGS
+If the input data consists of a long string of zeros, the program
+bombs.
+.SH SEE ALSO
+.PP
+\fIrefcof\fP (1\-\s-1ESPS\s+1), \fIlpcsynt\fP (1\-\s-1ESPS\s+1), 
+FEA_ANA (5\-\s-1ESPS\s+1),
+.br
+\fIFEA_SD\fP (5\-\s-1ESPS\s+1), 
+\fIcompute_rc\fP (3\-\s-1ESPS\s+1sp)
+.SH AUTHOR
+S. Shankar Narayan.  ESPS 3.0 modification by David Burton.
+Modified for \fIcompute_rc\fP (3\-\s-1ESPS\s+1sp) and for single-pulse output by 
+John Shore.  
+
+
+

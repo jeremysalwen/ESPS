@@ -1,0 +1,10 @@
+# @(#)Pauto	1.4	8/11/91 ESI
+# Default parameter file for AUTO
+string window ?= "RECT" : "Data Window type": {"RECT", "HAMMING", "HANNING", "COS4", "TRIANG"};
+int order ?= 10: "Number of autocorrelation lags to compute";
+int frame_len ?= 160: "Number of samples to use in autocorrelation computation";
+int start ?= 1: "Starting point in sampled data file";
+int nan ?= 0: "Number of points to process";
+int step_size ?= 0: "Number of points between frames";
+string power ?= "unwindowed": "Compute power on windowed or unwindowed data?";
+string strcov_auto ?= "no": "Use structured covariance algorithm?" : {"yes", "no"};

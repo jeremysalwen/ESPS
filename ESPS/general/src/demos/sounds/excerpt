@@ -1,0 +1,7 @@
+#! /bin/sh
+# @(#)excerpt	1.1 7/25/91 ERL
+
+copysd $1 $2 files/newaudio/$2.sd
+addgen -F -g start_time -t double -v 0.0 files/newaudio/$2.sd
+send_xwaves make name sounds file files/newaudio/$2.sd
+

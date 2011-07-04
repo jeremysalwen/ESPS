@@ -1,0 +1,1049 @@
+                         ENTROPIC RESEARCH LABORATORY, INC.
+
+
+       TECHNICAL MEMORANDUM
+
+       SUBJECT: Parameter and Common Files in ESPS
+
+       ID: ETM-S-86-12:jtb
+
+       VERSION: 3.5
+
+       DATE: 1/22/93
+
+       AUTHOR: Joe Buck
+
+       LAST REVISED BY: John Shore
+
+       REFERENCES:
+
+        [1] Entropic Signal Processing System (ESPS),  Programmers  Reference
+            Manual
+
+        [2] ETM-S-86-13:rap, Data Files in  the  Entropic  Signal  Processing
+            System (ESPS)
+
+        [3] ETM-S-86-25, Guidelines for Implementing ESPS Feature  File  Sub-
+            types
+
+        [4] J. Shore and R.  Parker, Introduction to the Entropic Signal Pro-
+            cessing System (ESPS)
+
+        [5] ETM-S-86-14, Entropic Signal Processing System Programming Guide-
+            lines
+
+       1 .  Introduction
+
+       This document describes the Entropic Signal Processing  System  (ESPS)
+       parameter and common files, and presents information required to write
+       programs using them.
+
+       Unix command-line options  provide  a  convenient  means  for  passing
+       parameters,  but  this mechanism quickly becomes clumsy in the case of
+       signal processing programs that have a large number of  input  parame-
+       ters.  A suitable mechanism should achieve the following goals:
+
+         +  It should be easy to prepare parameter sets.
+
+
+       ____________________
+          c
+            Copyright  1987-1993  Entropic  Research  Laboratory,  Inc.;  All
+       rights reserved.
+
+
+
+
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                 page 3
+
+
+         +  It should be easy to review existing parameter sets, change  some
+            values and re-run the program.
+
+         +  The preparation of parameter sets in advance  should  not  be  an
+            absolute  requirement.   Programs should have a mode in which the
+            user is prompted for parameter values.
+
+         +  Parameter files should optionally contain  hints  that  could  be
+            used  when  prompting  users  or  processing  inputs;  such hints
+            include a list of acceptable values  or  a  range  of  acceptable
+            values, and descriptive strings for use when prompting the user.
+
+         +  There should be system-wide defaults  for  parameter  sets,  with
+            these  defaults being changeable easily by the system administra-
+            tor.
+
+       The ESPS parameter mechanism was designed with these goals in mind.
+
+       Readers of this document should also read the  ESPS  manual  pages  in
+       reference  [1].   These  manual pages are in the standard UNIX format;
+       section 1 describes user commands, section 3  describes  library  rou-
+       tines,  and section 5 describes the format of ESPS files (see also [2]
+       and [3]).  For a general introduction to ESPS, see [4].
+
+       2 .  Relevant Programs and Library Functions
+
+       3 .  User Level Programs
+
+       Most ESPS programs process ESPS parameter files, and all that do  sup-
+       port a command line option (-P) to specify a particular parameter file
+       (the default name is "params").  A few programs are intended  specifi-
+       cally  to aid in the preparation or application of parameter files, or
+       to provide relevant information, namely:
+
+         eparam -  run an ESPS program with parameter prompts
+
+         xeparam - run an ESPS program with X Window parameter prompts
+
+         exprompt -interactive ESPS parameter entry in a pop-up window
+
+         expromptrun -interactive ESPS parameter entry and program run
+
+         getparam -prints value of ESPS parameter from parameter file or ESPS Common
+
+         espsenv - display relevant UNIX environment variables
+
+       3 .1 .  Library Functions
+
+       The following utility library functions relate to  parameter  process-
+       ing:
+
+         read_params -create symbol table from ESPS Parameter or Common file
+         symlist - get list of parameter names and return number of parameters
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                 page 4
+
+
+         symtype - return the type of a parameter
+         symsize - return the size of a parameter
+         symdefinite -indicates whether or not a run-time parameter prompt will occur
+         symchoices -get list of discrete choices for a parameter's value
+         symrange - get the value range for a parameter
+         symprompt -returns the prompt string for a parameter
+         getsym_X -get parameter value of type X from the symbol table
+         getsymdef_X -get default parameter value of type X from the symbol table
+         putsym_X -put a parameter value of type X into the ESPS Common file
+         fputsym_X -put a parameter value of type X into an arbitrary file
+
+
+       4 .  Introductory Example
+
+       You can can provide parameter values to most programs by means  of  an
+       ASCII  file  containing  the data types, names, and values of relevant
+       parameters.  Here, for example, is a parameter file suitable  for  the
+       vector quantizer design program vqdes (1-ESPS):
+
+           #parameter file for for vqdes
+           int    fea_dim     = 10;
+           float  conv_ratio  = .1;
+           int    vq_size     = 16;
+           string dist_type   = "MSE";
+           string cbk_struct  = "FULL_SEARCH";
+           string cbk_type    = "MISC";
+           string init_file   = "test.cbk";
+           int    init_rec    = 3;
+           string init_behav  = "INIT_CLUSTER";
+           string fea_field   = "spec_param";
+
+
+       By default, ESPS programs look for a parameter file named "params"  in
+       the  current  directory; you can override this default by providing an
+       explicit parameter file name by means of the -P option, which is  sup-
+       ported by all programs that process parameter files.
+
+       If you want to enter certain parameters interactively, changing a  "="
+       in  the parameter file to a "?=" causes the program to prompt for that
+       parameter after the program starts up.   Such  parameters  are  termed
+       "indefinite parameters". The value in the parameter file is then given
+       as a default - i.e., if you type a return in response to  the  prompt,
+       the  default  is  used.   The  standard prompt is just the name of the
+       required parameter; however, you can  also  provide  your  own  prompt
+       string  in  the parameter file.  Here, for example, is a modified ver-
+       sion of the VQ parameter file; it specifies that  the  program  prompt
+       for conv_ratio and vq_size, and it gives an explicit prompt string for
+       vq_size:
+
+           #parameter file for vqdes
+           int    fea_dim     = 10;
+           float  conv_ratio ?= .1;
+           int    vq_size    ?= 16 : "Enter size of VQ codebook to be designed";
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                 page 5
+
+
+           string dist_type   = "MSE";
+           string cbk_struct  = "FULL_SEARCH";
+           string cbk_type    = "MISC";
+           string init_file   = "test.cbk";
+           int    init_rec    = 3;
+           string init_behav  = "INIT_CLUSTER";
+           string fea_field   = "spec_param";
+
+
+       Here is what happens when vqdes is run with  the  foregoing  parameter
+       file:
+
+           %vqdes -Pvqparams rc.fana rc.cbk
+           Enter size of VQ codebook to be designed [16]: 32
+           conv_ratio [0.100000]: 0.25
+           %
+
+       The ESPS distribution contains a "default" parameter  file  for  every
+       ESPS  program  that  processes a parameter file.  Easy access to these
+       parameter files is provided by  eparam  (1-ESPS),  which  invokes  any
+       given ESPS program with its default parameter file. The default param-
+       eter files are written to prompt for all values so  you  can  override
+       each default.  Here is an example of running vqdes by means of eparam:
+
+           %eparam vqdes rc.fana rc.cbk
+           max_iter [100]:
+           fea_dim [10]:
+           vq_size [32]: 16
+           fea_field [spec_param]:
+           cbk_type [MISC]:
+           cbk_struct [FULL_SEARCH]:
+           conv_ratio [0.050000]: .01
+           dist_type [MSE]:
+           %
+
+
+       In this example, the  defaults  were  taken  for  all  parameters  but
+       vq_size  and  conv_ratio.   Notice  the  user was not prompted for the
+       parameters init_file and init_rec.  This is because  these  parameters
+       are  relevant  only if the -i option for vqdes is used.  ESPS programs
+       take values from the parameter file (or prompt  for  them)  only  when
+       they are actually called for by the program at run time.
+
+       Besides the optional prompt string, parameter files can contain  other
+       hints  that  can  be  exploited when prompting the user for indefinite
+       parameters.  In particular, if a parameter should be restricted  to  a
+       discrete  set of values (e.g., the parameter cbk_struct in the example
+       above), one can include the list of possible choices in the  parameter
+       file.   This  list  is available within C programs by means of an ESPS
+       library function.  Similarly, if a parameter should be  restricted  to
+       lie  within  some continuous range, the parameter file can include the
+       limits of that range.
+
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                 page 6
+
+
+       5 .  ESPS Parameter Files, the Common File, and Command Lines
+
+       The parameter file is only one mechanism by which  ESPS  programs  get
+       their parameters.  In general, parameters come from three sources:
+
+            +  the ESPS parameter file
+
+            +  the ESPS common file
+
+            +  command line options
+
+       The ESPS Common file is an ASCII file with the same general format  as
+       the  parameter file.  The main difference between the two is that peo-
+       ple prepare parameter files whereas programs  write  values  into  the
+       Common  file.   The purpose of this is to provide a mechanism by which
+       one ESPS program can communicate parameter values to one that  is  run
+       subsequently.   (Of  course,  there's  no  reason  why a program can't
+       prepare a parameter file also; indeed, that's what xprompt does.)
+
+
+       5 .1 .  Parameter Precedence Rules
+
+       In general, if a command-line option is available to set  a  parameter
+       value,  its  use  overrides possible values in a parameter file or the
+       Common file.  For parameters that are not  specified  on  the  command
+       line  (either  because  no option is available or because an available
+       option is not used), the parameters usually are obtained from an  ESPS
+       parameter file
+
+       Sometimes, a value in the parameter file is superseded by a  value  in
+       the ESPS common file - this is determined by the following rules.  For
+       some programs, the parameter file value is superseded if rules (1)-(3)
+       are  satisfied;  for other programs the parameter file value is super-
+       seded if rules (1)-(4) apply.
+
+            (1)  Common file processing has not been  disabled.   (Users  can
+                 disable Common file processing by means of the Unix environ-
+                 ment variable USE_ESPS_COMMON (see below).  Individual  pro-
+                 grams  can  also disable Common processing; if they do, this
+                 is noted in the manual page for the program.)
+
+            (2)  The common file exists and is  younger  than  the  parameter
+                 file.
+
+            (3)  The common file contains a value for the parameter in  ques-
+                 tion.
+
+            (4)  A file name stored in the common file matches the name of an
+                 input  file.  (Whether or not this rule applies is stated in
+                 the program's manual page.)
+
+       The purpose of the ESPS common file is to allow one  ESPS  program  to
+       communicate  parameter  values  to  another  ESPS  program that is run
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                 page 7
+
+
+       subsequently.  For example, suppose that plotsd (1-ESPS)  is  used  to
+       plot the first three seconds of a sampled-data file:
+
+                   %plotsd -s3 file.sd
+
+       After this plot is made, the user can run range (1-ESPS) to  select  a
+       portion  of  the  displayed  data.   When  range  exits, it writes the
+       selected range and the filename "file.sd" into the ESPS  common  file.
+       If the user then runs
+
+                   %plotsd
+                   %play
+
+       (i.e., without any command line options), the selected  range  of  the
+       same  file  will be displayed and then played.  Note that waves+ has a
+       mode (global parameter write_common non-zero) in which the ESPS Common
+       is written whenever the mouse is used to mark a segment of a displayed
+       ESPS file.
+
+       For most ESPS programs,  common  file  processing  is  enabled  (i.e.,
+       parameter  file  values  will  be  superseded by Common file values if
+       rules (2)-(3) or (2)-(4) above apply).  Rule  (4)  was  introduced  to
+       make  it  easier for ESPS programs to do what users expect - often, it
+       would be annoying or a mistake to use values from ESPS  common  unless
+       one  is  processing  the  same file that was being processed when ESPS
+       common was written.  Which set of rules applies can be determined from
+       the "ESPS COMMON" section of the manual pages.
+
+       5 .2 .  Common File Location
+
+       The default ESPS common file is ".espscom" in the user's  home  direc-
+       tory,  but  this  can  be  reset by using the ESPSCOM UNIX environment
+       variable, e.g.:
+
+           %setenv ESPSCOM /usr/shore/fftcommon
+
+       5 .3 .  User Control of Common Processing
+
+       Before running an ESPS program, you can  always  disable  common  file
+       processing  by removing the common file or touching the parameter file
+       (so that the common file is not  younger  than  the  parameter  file).
+       Also, you can disable common processing completely by setting the Unix
+       environment variable USE_ESPS_COMMON to "off".  For example, with csh,
+       the following will do the trick:
+
+           %setenv USE_ESPS_COMMON off
+
+
+       In a sh script, common can be disabled by means of the following:
+
+           USE_ESPS_COMMON=off
+           export USE_ESPS_COMMON
+
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                 page 8
+
+
+       5 .4 .  User Feedback of Parameter and Common file Processing
+
+       Parameter sets for different ESPS programs  can  be  combined  in  one
+       parameter  file  -  since  each  program  only reads the parameters it
+       needs, no harm is done by having other parameters in  the  same  file.
+       One  result  of  this  is that some users prefer to maintain one large
+       parameter file for all of the programs they run.  This  can  be  error
+       prone as it's easy to forget what's in such a file.  Further confusion
+       can arise from common file processing,  since  the  final  values  for
+       parameters can depend on the relative age of the common file, on which
+       program is being run, and on which programs have been run previously.
+
+       For these reasons, ESPS provides a mechanism by which you can see  the
+       parameter  values  that actually are used by a particular program. The
+       degree of feedback is determined  by  the  Unix  environment  variable
+       ESPS_VERBOSE  according  to  the  following  scheme  (higher values of
+       ESPS_VERBOSE include the feedback provided by lower values):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                 page 9
+
+
+                 __________________________________________________
+                 |_______ESPS_Parameter_Processing_Feedback________|
+                 |ESPS_VERBOSE =  |            Feedback            |
+                 |________________|________________________________|
+                 |_______0________|_no_feedback____________________|
+                 |       1        | reports if common is processed |
+                 |________________|________________________________|
+                 | 2 or greater   | reports  parameter  file  used |
+                 |                | and    individual    parameter |
+                 |                | values  as  taken   from   the |
+                 |                | parameter  file  or the common |
+                 |________________|_file___________________________|
+
+
+
+       The default setting of ESPS_VERBOSE is 2.  As you become more  experi-
+       enced with ESPS, you should set a lower value for ESPS_VERBOSE in your
+       .login file.
+
+       As an example, consider a case where the range of a sampled data  file
+       is selected by running plotsd (1-ESPS) followed by range (1-ESPS):
+
+           %plotsd test.sd
+           %range
+
+
+       After range finishes, the contents of ESPS Common is as follows:
+
+           string filename = "test.sd";
+           string prog = "range";
+           int start = 192;
+           int nan = 4251;
+           int beginplot = 0;
+           int endplot = 8000;
+
+
+       Next, suppose you run refcof (1-ESPS)  with  the  following  parameter
+       file:
+
+           int start = 1;
+           int nan = 1024;
+           int frame_len = 1024;
+           int order = 10;
+
+
+       If ESPS_VERBOSE = 3, you would see the following output:
+
+           %refcof test.sd test.spec
+           read_params: Common processed.
+           getsym_i: symbol start, value 192, taken from Common.
+           getsym_i: symbol nan, value 4251, taken from Common.
+           getsym_i: symbol frame_len, value 1024 taken from param file.
+           getsym_i: symbol order, value 10 taken from param file.
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                page 10
+
+
+       If you happened to use the -l0 option on refcof (so that the the  full
+       range  is treated as a single frame), you would see the following out-
+       put:
+
+           %refcof -l0 test.sd test.spec
+           read_params: Common processed.
+           getsym_i: symbol start, value 192, taken from Common.
+           getsym_i: symbol nan, value 4251, taken from Common.
+           getsym_i: symbol order, value 10 taken from param file.
+
+
+       6 .  Format of Parameter and Common Files
+
+       Parameter files and common files are written  in  a  C-like  language.
+       Parameters  may have six types: integer, real (stored as double preci-
+       sion values), string, character, array of integer, and array of real.
+
+       For each parameter, the parameter file contains the following:
+
+            parameter type
+
+            parameter name
+
+            definite assigned value (operator  "=")  or  indefinite  assigned
+            value (operator "?=")
+
+            (optional) prompt string
+
+            (optional) parameter limitations (discrete choices  or  range  of
+            values)
+
+       If the assigned value for a parameter is indefinite (indicated by  the
+       assignment  operator "?=" or "=?"), then the user will be prompted for
+       the value to be used. The  prompt  will  occur  at  runtime  when  the
+       corresponding  getsym  (3-ESPS)  call is made.  If the optional prompt
+       string was supplied in the parameter file, that string will be used as
+       the  prompt;  otherwise  the parameter name will be used.  If the user
+       enters a RETURN in answer to the prompt, the  default  value  will  be
+       used.
+
+       If the optional parameter limitations are supplied, they are  appended
+       to  the  prompt string that is used for indefinite assignments.  While
+       they are not enforced by the getsym (3-ESPS) routines, the limitations
+       are  available  to  user  programs by means of symchoices (3-ESPS) and
+       symrange (3-ESPS).  (The program xprompt (1-ESPS), for  example,  does
+       exploit this information.)
+
+       A simplified grammar follows. In this  grammar,  parentheses  indicate
+       that  the contents may be repeated zero or more times. Square brackets
+       indicate that the contents are optional  (zero  or  one  repetitions).
+       Vertical  bars  indicate  "or".  CHRVAL,  STRVAL,  FLOVAL,  and INTVAL
+       represent legal C tokens for characters,  strings,  real  values,  and
+       integers  respectively.  IDENT  represents  any legal C variable name,
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                page 11
+
+
+       other than one of the reserved keywords. Case is significant, and  all
+       characters  of  names are significant (the restriction imposed by LEX,
+       which builds the lexical analyzer, is about 200  characters).  Most  C
+       escape  sequences like '\n' are supported in character and string con-
+       stants. Character constants like '^b',  meaning  control-b,  are  also
+       supported.  However,  octal and hexadecimal numbers are not supported.
+       Multiline strings are not supported.
+
+           file      :==  ( statement )
+           statement :== type decl ( ',' decl ) ';'
+           type      :== "int" | "float" | "char" | "string" | "char *"
+           decl      :== IDENT assop value [prompt] [limits]
+           value     :== CHRVAL | STRVAL | FLOVAL | INTVAL | array
+           array     :== '{' num ( ',' num ) '}'
+           num       :== INTVAL | FLOVAL
+           prompt    :== ':' STRVAL
+           limits    :== choices | range
+           choices   :== ':' strarray
+           strarray  :== '{' STRVAL ( ',' STRVAL) '}'
+           range     :== ':' '[' num ',' num ']'
+           assop     :== '=' | '=' '?' | '?' '='
+
+       The following keywords are reserved: int, char,  string,  float,  yes,
+       no,  true, false. The keywords "yes" and "true" are treated as integer
+       constants with value one (the  C  convention  for  expressing  logical
+       true);  the keywords "no" and "false" are integer constants with value
+       zero.
+
+       The comment convention is different from C. It is the same as for  the
+       C shell. A '#' character indicates that the rest of the line is a com-
+       ment, unless it is contained in a character or string constant.   This
+       makes it easier to comment out lines.
+
+       Here is an example of a parameter file:
+
+           int order      ?= 10 : "Model order"; # ask for prompt
+           int verbose     = no;
+           #preemphasis specification
+           int preflg      = yes;
+           float pre_num   = { 0.9, -0.5 },   # zeros of preemph filter
+                 pre_den   = { 0.99, -0.99 }, # poles of preemph filter
+                 scale     = 0.25;
+           int frmlen     ?= 150: "Length of analysis window";
+           int nshft      ?= 180: "Distance between frames";
+           #method for autocorrelation computation
+           string method   = "BURG"; #Burg method
+
+
+       6 .1 .  Parameter Assignment Statements
+
+       There are three types of assignment statements.  The most basic state-
+       ment is something like
+
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                page 12
+
+
+           int M = 22;
+
+       In this type of statement, a symbol named M is created,  assigned  the
+       type  integer  and the value 22.  If the name has been declared previ-
+       ously, an error occurs.  Type conversions, where sensible,  work.   An
+       integer or character value may be assigned to a floating variable, and
+       a character may be assigned to an integer variable.  Integers  in  the
+       range  0:127  may  be assigned to character variables.  Arrays may mix
+       integers and floating values, provided that the array is assigned to a
+       floating variable.  Some things that don't work:
+
+           int n    = 12.0; # cannot assign float to int
+           char q   = "a"; # cannot assign string (even 1 char) to char
+           string a = 'c'; # cannot assign character to string
+           char a   = 'b', *c = "def"; # unlike C, "char *" is just
+                                       # a synonym for "string";
+                                       # no mixing allowed
+
+       The other two types of assignment statements attach a default value to
+       a  variable  and  are indicated by adding a question mark to the equal
+       sign (either before or after). An optional prompt string  may  appear,
+       separated by a colon from the declaration.
+
+           int M ?= 22 : "Model order";
+
+       When an attempt is made to retrieve  the  value  of  M,  the  user  is
+       prompted.   If no prompt string is given, the variable name is used as
+       the prompt.  The default value is placed in square brackets:
+
+           M [22]:
+           Model order [22]:
+
+
+       Here is an example that includes some parameter limitations:
+
+           int M ?= 22 : "Model order": [1,30];
+           string method ?= "BURG" : "Enter the analysis method" : {"BURG", "AUTO", "MBURG"};
+
+
+       7 .  Programming Procedures for Parameter and Common Files
+
+       Parameter processing takes place in two steps: building a symbol table
+       from  the  parameter  and  common  files, and reading values from that
+       table.
+
+       7 .1 .  Building the Symbol Table
+
+       The program read_params (3-ESPS) is called to  process  the  parameter
+       and  common  files  and  to  build an internal symbol table from which
+       parameter values can be retrieved. Read_params has various  parameters
+       to  specify  the name of the parameter file, to control whether or not
+       ESPS common is processed, and to control whether or not rule (4) (Sec-
+       tion 2.1) is to be enforced.  For example, the call
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                page 13
+
+
+           /*sd file is the name of an input SD file*/
+           (voi-) read params("params", SC CHECK FILE, sd file);
+                      -                   -     -        -
+       specifies that the parameter file is "params" (the ESPS  default  con-
+       vention),  and  that  the ESPS common file is to be processed provided
+       that its  "filename"  entry  matches  the  contents  of  the  variable
+       "sd_file".   Similarly,
+
+           (void) read params("params", SC CHECK FILE, NULL);
+                      -                   -     -
+       processes the parameter file and the common file without regard to any
+       "filename" entry in the common file.
+
+       Read_params detects following types of errors:
+
+           It was asked to read a parameter file but couldn't (returns -1)
+           It was asked to read common but couldn't (returns -2)
+           It was asked to read both parameter and common files but couldn't (returns -3)
+           File contains syntax errors
+           Symbols multiply defined
+           Type conflicts
+
+       If the parameter and possibly the common file are opened successfully,
+       read_params  attempts  to  process  them  entirely  even if errors are
+       encountered, printing appropriate messages on the standard error  out-
+       put.   Each  syntax  error message indicates the line of the parameter
+       file where it occurred.  However, a program exit will occur after pro-
+       cessing  is complete if any errors were present in the file.  The rou-
+       tine either returns successfully, in which  case  a  symbol  table  is
+       built, or the program exits.
+
+       7 .2 .  Reading Parameter Values
+
+       Once the internal symbol table has been built by calling  read_params,
+       programs  can  retrieve  the values of specific symbols by calling the
+       various "getsym" library routines noted in the following table:
+
+
+                       _____________________________________
+                       |_____Reading_Parameter_Values_______|
+                       | Type of Symbol   | Program to Call |
+                       |__________________|_________________|
+                       |int               | getsym_i        |
+                       |double (or float) | getsym_d        |
+                       |char              | getsym_c        |
+                       |string            | getsym_s        |
+                       |int array         | getsym_ia       |
+                       |double_array______|_getsym_da_______|
+
+
+
+       As described earlier, if the parameter file indicates that the  symbol
+       is indefinite, the user is prompted for a value.  The default value is
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                page 14
+
+
+       used if the user types a RETURN in response to the prompt.
+
+       If, for any of the routines described above, the requested  symbol  is
+       undefined  or  has  the wrong type, an error message is printed on the
+       standard error output and a zero or null value is returned.  The  sym-
+       bol  table  module  keeps  track  of  errors;  the routine symerr_exit
+       (3-ESPS), which takes no arguments and returns no  value,  causes  the
+       program  to  exit  if any of the getsym routines caused an error.  The
+       reason for doing things this way is to detect as many errors as possi-
+       ble  in one run (having the getsym routines cause the programs to bomb
+       on errors may mean the user has to repeatedly edit a  parameter  file,
+       discovering only one error at a time).
+
+       Three types of errors can occur in  the  getsym  routines:   undefined
+       symbol,  type  mismatch,  or  overflow (number of values given exceeds
+       maxval).  For all these errors, an error message is printed  when  the
+       error is detected and calling symerr_exit will cause program exit.
+
+       Another useful library routine is symtype (3-ESPS), which returns  the
+       type  of a given symbol.  In particular, it returns one of the integer
+       symbolic  constants  ST_INTVAL,   ST_CHRVAL,   ST_FLOVAL,   ST_STRVAL,
+       ST_FARRAY, ST_IARRAY, or ST_UNDEF (undefined).
+
+       7 .3 .  Writing Values to ESPS Common
+
+       Programs can leave values in ESPS Common for use by other programs. To
+       do  this,  they call the following "putsym" routines (which correspond
+       to the "getsym" routines discussed earlier):
+
+
+                       _____________________________________
+                       |___Writing_Value_to_ESPS_Common_____|
+                       | Type of Symbol   | Program to Call |
+                       |__________________|_________________|
+                       |int               | putsym_i        |
+                       |double (or float) | putsym_f        |
+                       |char              | putsym_c *      |
+                       |string            | putsym_s        |
+                       |int array         | putsym_ia *     |
+                       |double_array______|_putsym_da_*_____|
+
+
+       (* = not implemented yet)
+
+       Because program communication through the Common file is not  reliable
+       if  the programs involved are all on a series of connected pipes, most
+       ESPS programs do not write the Common file if the output  is  standard
+       output.
+
+       7 .4 .  Standard I/O
+
+       Programs should not read common if the input file is  standard  input.
+       Programs  should  not  write  common  when  an output file is standard
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                page 15
+
+
+       output. These rules are to prevent confusion from  arising  when  pro-
+       grams are used in pipes.
+
+       7 .5 .  Example
+
+       Here is a sketch of code used to process parameters from the parameter
+       and common files:
+
+           main(argc, argv)
+           int argc;
+           char **argv;
+           char *paramfile = "params";
+           {
+            .
+            .
+            .
+           /* parse command line for parameters */
+           while ((c = getopt(argc, argv, "p:P:")) != EOF)
+                  switch (c)
+               {
+                      case 'p':
+                            prange = optarg;
+                            pflag++;
+                            break;
+                      case 'P':
+                            prange = optarg;
+                            break;
+                      default:
+                            SYNTAX;
+                  }
+            .
+            .
+            .
+           /*process input SD file -- name is sd file, header is ih*/
+            .                                   -
+            .
+            .
+           /*set default values for start and nan*/
+           start = 1;
+           nan = MAXLONG;
+           /*build parameter symbol table*/
+           (void) read params(paramfile, SC CHECK FILE, sd file);
+           /* now read-in the values of the-param-ters fro- the symbol table */
+           /*start and nan are optional in parameter file*/
+           if (symtype("start") != ST UNDEF) start = getsym i("start");
+           if (symtype("nan") != ST U-DEF) nan = getsym i("-an");
+          /*the other parameters ar- not optional*/    -
+           decrem = getsym s ("decrem");
+           harmonic mult =-getsym d ("harmonic mult");
+           symerr e-it();      /*-exit if any -rrors occurred */
+           last =-start + nan - 1;
+
+
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                page 16
+
+
+           /*command-line option might override start and last*/
+           if (pflag) range switch(prange, &start, &last, 0);
+            .              -
+            .
+            .
+           /*write values to ESPS Common*/
+           if (strcmp(oname, "<stdout>") != 0) {
+               if (putsym s("filename", sd file) == -1)
+                      (vo-d) fprintf (stde-r, "error writing filename symbol in Common.\n");
+               if (putsym i("start", start) == -1)
+                      (vo-d) fprintf (stderr, "error writing start symbol in Common.\n");
+               if (putsym i("nan", nan) == -1)
+                      (vo-d) fprintf (stderr, "error writing nan symbol in Common.\n");
+           }
+           exit(0);
+           }
+
+
+       This  example  includes  an  example  of  using  the  library  routine
+       range_switch  (3-ESPS)  to  aid  in  processing  options  of  the form
+       -pstart:last.
+
+       7 .6 .  Advanced Parameter Processing
+
+       As shown in the example above, most programs can do what's needed with
+       a combination of the functions read_params, symtype, getsym_X, putsym,
+       and symerr_exit.  This is usually the  case  if  the  input  parameter
+       names  are known in advance and if no use will be made of the optional
+       parameter limits.  In the more general case,  however,  the  functions
+       symlist,  symdefinite,  symchoices,  symrange, symprompt, getsymdef_X,
+       and fputsym_X may be needed (see the one-line descriptions in  Section
+       2).
+
+       8 .  Parameter Processing from Shell Scripts
+
+       As is typically the case with UNIX-based applications, one  can  write
+       an  ESPS  shell  script with the same user-interface as an ESPS C pro-
+       gram.  In the case of parameter processing, this means  that  a  shell
+       script  must  be  able to process the standard -P option (specifying a
+       parameter file).  The program getparam makes this easy; it processes a
+       named  parameter  file  and Common and returns (in ASCII) the value of
+       any named parameter.
+
+       9 .  Parameter file implementation notes
+
+       The routine read_params is implemented as a YACC grammar that calls  a
+       lexical  analyzer  built  by  LEX.  As the input is parsed, symbols in
+       ESPS Common are added to a hash table.  LEX imposes a couple of  limi-
+       tations  on  the input: tokens (including character strings) can be no
+       more than 200 characters long (in the input form, including quotes and
+       backslashes),  and  there  may  be no null characters (ASCII 0) in the
+       input (LEX will interpret a null character as end of file).  The  hash
+       table has a limited size; it is large enough so this is not a concern.
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-12:jtb                                                page 17
+
+
+       Strings and identifier names are stored  in  dynamic  memory,  as  are
+       arrays.   Arrays are stored internally as linked lists, mainly because
+       these are easier to build recursively using YACC rules.
+
+       The programmer should not depend on any of  these  characteristics  of
+       the implementation, as all are subject to change (though I doubt we'll
+       scrap LEX and YACC).
+
+       10 .  Possible Changes
+
+       Included files may be added to parameter files. If nesting is allowed,
+       only a fairly shallow level of nesting will be permitted. One possible
+       syntax is a line containing only "@filename".  The format of parameter
+       files might also be changed to something more user-friendly.
+
+       11 .  Relation Between Parameter Names and Header Items
+
+       If the value of a parameter affects data in output  ESPS  files,  then
+       the  parameter  value  should be stored in the output file header. The
+       names of parameters should be the same as the names of  header  items;
+       thus  we  have  parameters like "order" corresponding to the structure
+       tag "order".  Some optional header parameters correspond  to  rational
+       functions  in  the  Z  domain;  these  parameters are specified as two
+       floating array parameters, one with the suffix "_z" (to represent  the
+       zero  polynomial)  and one with the suffix "_p" (to represent the pole
+       polynomial). Thus to specify a filter transfer function, we might have
+
+           float filter_z = { b0, b1, b2 },
+                 filter_p = { a0, a1, a2, a3};
+
+       where the bn and an terms are replaced by appropriate values.
+
+       Parameters that only affect terminal or graphic output for a  specific
+       program  may  have arbitrary names and are not stored in file headers;
+       all names must be documented along with the programs they affect.  See
+       the "ESPS PARAMETERS" sections of [1, Section 1] man pages.
+
+
+
+                                       (end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       Version 3.5                      ERL                           1/22/93
+
+
+

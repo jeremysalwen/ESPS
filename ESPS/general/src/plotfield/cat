@@ -1,0 +1,198 @@
+
+
+
+PLOTFIELD(1-ESPS)                           ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     plotfield - plot arbitrary named field from a FEA file
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     pppplllloooottttffffiiiieeeelllldddd ----ffff _f_i_e_l_d [ ----rrrr _r_a_n_g_e ] [ ----tttt _t_e_x_t ] [ ----xxxx _d_e_b_u_g__l_e_v_e_l
+     ] [ ----yyyy _r_a_n_g_e ] [ ----TTTT _d_e_v_i_c_e ] [ ----YYYY _r_a_n_g_e ] _f_i_l_e._f_e_a
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     _p_l_o_t_f_i_e_l_d plots a named field from  an  ESPS  FEA  _f_i_l_e._f_e_a.
+     Fields  containing  complex  data are not supported yet.  If
+     _f_i_l_e._f_e_a is "-", the standard input is  read.   By  default,
+     the  output  is  in Unix GPS (``Graphics Primitive String'')
+     format and is displayed on the graphics  display,  but  with
+     the   ---- TTTT  option,  this may be sent to the standard output,
+     obtained in Tektronix format rather than GPS, or plotted  on
+     an Imagen laser printer.
+
+     If the ----rrrr option is omitted, then the named _f_i_e_l_d is plotted
+     from the first record of _f_i_l_e._f_e_a.
+
+     _P_l_o_t_f_i_e_l_d finds the  maximum  and   minimum  values  of  the
+     points to be plotted and computes appropriate scales for the
+     _x- and _y-axes.  These automatic values can be  overriden  by
+     the ----yyyy or ----YYYY options.
+
+     The color and line style of output  to  ``gps''  or  ``mcd''
+     depend  on  the environment variable BUNDLE.  The default is
+     GPS bundle number 20, which gives solid lines on  monochrome
+     displays.
+
+     The fieldname to plot must be given with the ----ffff flag.   This
+     is not optional and there is no default.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following options are supported:
+
+     ----rrrr _r_e_c_o_r_d
+
+     ----rrrr _f_i_r_s_t:_l_a_s_t
+
+     ----rrrr _f_i_r_s_t:+_i_n_c_r
+          Determines the records from which the  named  _f_i_e_l_d  is
+          plotted.   In  the first form, a single integer identi-
+          fies one record from which _f_i_e_l_d is plotted.   The  _x -
+          axis  shows  element number within the field and the _y-
+          axis shows element value.
+
+          In the second form, a pair of unsigned  integers  gives
+          the  first  and  last points of the range.  If _f_i_r_s_t is
+          omitted, 1 is used.   If  _l_a_s_t  is  omitted,  the  last
+          record  in  _f_i_l_e._f_e_a  is  assumed.   The  third form is
+          equivalent to the first with _l_a_s_t = _f_i_r_s_t + _i_n_c_r.  When
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+PLOTFIELD(1-ESPS)                           ENTROPIC RESEARCH LAB
+
+
+
+          more than one record is plotted, the element values are
+          catenated together before plotting  with  the  _x - axis
+          showing  the  cumulative element number.  (For example,
+          if _f_i_e_l_d has ten elements and two records are  plotted,
+          the _x-axis will be labelled 1-20).
+
+     ----tttt _t_e_x_t
+          A line of  text  to  be  printed  below  the  plot.  By
+          default,  _p_l_o_t_f_i_e_l_d prints a line giving the fieldname,
+          record number, and file name.  An additional  line  may
+          be printed via the ----tttt option.
+
+     ----xxxx _d_e_b_u_g__l_e_v_e_l
+          If _d_e_b_u_g__l_e_v_e_l is  nonzero,  debugging  information  is
+          written to the standard error output.  Default is 0 (no
+          debugging output).
+
+     ----yyyy _l_o_w:_h_i_g_h
+          Specifies approximate lower and upper  limits  for  the
+          _y-axis.   The  values  are  adjusted by _p_l_o_t_f_i_e_l_d in an
+          attempt to make an  esthetically  pleasing  plot.   See
+          also  the ----YYYY option.  If neither ----yyyy or ----YYYY is specified,
+          limits are calculated automatically.
+
+     ----TTTT _d_e_v_i_c_e
+          _D_e_v_i_c_e may be ggggppppssss, mmmmccccdddd, tttteeeekkkk, or iiiimmmmaaaaggggeeeennnn.  The default is
+          ----TTTTmmmmccccdddd,,,, which displays the output on the graphics screen
+          by piping it through _m_c_d(1G).  Specifying ---- TTTTggggppppssss  sends
+          output to the standard output in Masscomp Unix GPS for-
+          mat.  Specifying ----TTTTtttteeeekkkk causes output to be sent to  the
+          standard  output in Tektronix 4000-series format, and ----
+          TTTTiiiimmmmaaaaggggeeeennnn plots it on an Imagen  laser  printer  in  Tek-
+          tronix 4014 emulation mode.
+
+     ----YYYY _l_o_w:_h_i_g_h
+          Specifies exact lower and upper limits for the _y-axis.
+
+EEEEXXXXAAAAMMMMPPPPLLLLEEEESSSS
+     pppplllloooottttffffiiiieeeelllldddd ----ffff ssssppppeeeecccc____ppppaaaarrrraaaammmm ----rrrr5555 speech.fana
+
+     plots the _s_p_e_c__p_a_r_a_m field from record 5 of speech.fana.
+
+          pppplllloooottttffffiiiieeeelllldddd <_o_p_t_i_o_n_s> <_f_i_l_e_n_a_m_e>
+
+     is equivalent to
+
+          pppplllloooottttffffiiiieeeelllldddd ----TTTTggggppppssss <_o_p_t_i_o_n_s> <_f_i_l_e_n_a_m_e> |||| mmmmccccdddd
+
+     The second form may be used if nondefault  options  for  _m_c_d
+     are desired.
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+
+
+
+
+PLOTFIELD(1-ESPS)                           ENTROPIC RESEARCH LAB
+
+
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     No ESPS parameter file is read.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     ESPS Common processing is disabled.
+
+DDDDIIIIAAAAGGGGNNNNOOOOSSSSTTTTIIIICCCCSSSS
+     _P_l_o_t_f_i_e_l_d complains and exits if _f_i_l_e._f_e_a does not exist  or
+     is  not  a FEA file.  It also exits if the nemaed field con-
+     tains complex data.
+
+IIIIMMMMPPPPLLLLEEEEMMMMEEEENNNNTTTTAAAATTTTIIIIOOOONNNN NNNNOOOOTTTTEEEE
+     The current version of _f_i_e_l_d_p_l_o_t is implemented as  a  shell
+     script  that  pipes  the  output  of _p_p_l_a_i_n (1-ESPS) through
+     _t_e_s_t_s_d (1-ESPS) and _p_l_o_t_s_d (1-ESPS).  This is an example  of
+     how  ESPS  programs  can  be  combined  with the "Unix tools
+     approach" - see the simplified example on  the  _p_p_l_a_i_n  (1 -
+     ESPS) man page.
+
+EEEEXXXXPPPPEEEECCCCTTTTEEEEDDDD CCCCHHHHAAAANNNNGGGGEEEESSSS
+     Many more options may be added.
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     plotsd(1-ESPS) plotspec(1-ESPS), mlplot(1-ESPS),
+     genplot(1-ESPS)
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Manual page by John Shore
+     Program by Alan Parker
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+
+

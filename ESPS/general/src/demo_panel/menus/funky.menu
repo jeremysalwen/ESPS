@@ -1,0 +1,4 @@
+#@(#)funky.menu	1.1 6/18/91 ERL - funny button panel
+"Waves+ Calculator" make_panel name calc title "C a l c u l a t o r" icon_title CALC file bcalc
+"Self Modifying" @reloc.w
+

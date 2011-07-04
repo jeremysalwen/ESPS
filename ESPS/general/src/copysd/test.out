@@ -1,0 +1,162 @@
+MAKE A FEW SD FILES
+testsd -p9000 t1.sd
+testsd -p128 t2.sd
+testsd -p3200 t3.sd
+DO SOME COPIES
+copysd -x3 -p100:+1500 t1.sd t4.sd
+copysd: output file is t4.sd
+copysd: checking ESPS common
+copysd: first input file is t1.sd
+copysd: full range is 100 to 1600
+copysd: range for t1.sd is 100 to 1600
+copysd: copying file t1.sd
+copysd: need total of 1501 in chunks of 8192
+copysd: asked for 1501 samples, got 1501
+copysd: 1501 records so far, 0 to go
+copysd: copied 1501 total records from file t1.sd
+copysd: grand total records so far = 1501
+copysd: normal exit
+cat t4.sd | copysd -x3 t1.sd - t2.sd t3.sd - > t5.sd
+copysd: output file is <stdout>
+copysd: first input file is t1.sd
+copysd: input file is <stdin>
+copysd: input file is t2.sd
+copysd: input file is t3.sd
+copysd: full range is 1 to 2147483647
+copysd: range for t1.sd is 1 to 9000
+copysd: range for <stdin> is 1 to 2147483647
+copysd: range for t2.sd is 1 to 128
+copysd: range for t3.sd is 1 to 3200
+copysd: copying file t1.sd
+copysd: need total of 9000 in chunks of 8192
+copysd: asked for 8192 samples, got 8192
+copysd: 8192 records so far, 808 to go
+copysd: asked for 808 samples, got 808
+copysd: 9000 records so far, 0 to go
+copysd: copied 9000 total records from file t1.sd
+copysd: grand total records so far = 9000
+copysd: copying file <stdin>
+copysd: need total of 2147483647 in chunks of 8192
+copysd: asked for 8192 samples, got 1501
+copysd: 1501 records so far, 2147482146 to go
+copysd: copied 1501 total records from file <stdin>
+copysd: grand total records so far = 10501
+copysd: copying file t2.sd
+copysd: need total of 128 in chunks of 8192
+copysd: asked for 128 samples, got 128
+copysd: 128 records so far, 0 to go
+copysd: copied 128 total records from file t2.sd
+copysd: grand total records so far = 10629
+copysd: copying file t3.sd
+copysd: need total of 3200 in chunks of 8192
+copysd: asked for 3200 samples, got 3200
+copysd: 3200 records so far, 0 to go
+copysd: copied 3200 total records from file t3.sd
+copysd: grand total records so far = 13829
+copysd: normal exit
+AFTER SCRIPT COMPLETES, RUN psps -a ON t5.sd AND SEE IF IT MAKES SENSE
+TOTAL NUMBER OF RECORDS SHOULD BE 13829
+NOW TEST WITH INPUT OUT OF RANGE
+copysd -x3 -p1:50 t1.sd t4.sd
+copysd: output file is t4.sd
+copysd: checking ESPS common
+copysd: first input file is t1.sd
+copysd: full range is 1 to 50
+copysd: range for t1.sd is 1 to 50
+copysd: copying file t1.sd
+copysd: need total of 50 in chunks of 8192
+copysd: asked for 50 samples, got 50
+copysd: 50 records so far, 0 to go
+copysd: copied 50 total records from file t1.sd
+copysd: grand total records so far = 50
+copysd: normal exit
+copysd -x3 -p100:+8192 t1.sd t4.sd t6.sd
+copysd: output file is t6.sd
+copysd: first input file is t1.sd
+copysd: input file is t4.sd
+copysd: full range is 100 to 8292
+copysd: range for t1.sd is 100 to 8292
+copysd: WARNING - no records in range for file t4.sd
+copysd: range for t4.sd is 100 to 50
+copysd: copying file t1.sd
+copysd: need total of 8193 in chunks of 8192
+copysd: asked for 8192 samples, got 8192
+copysd: 8192 records so far, 1 to go
+copysd: asked for 1 samples, got 1
+copysd: 8193 records so far, 0 to go
+copysd: copied 8193 total records from file t1.sd
+copysd: grand total records so far = 8193
+copysd: copying file t4.sd
+copysd: need total of -49 in chunks of 8192
+copysd: copied 0 total records from file t4.sd
+copysd: grand total records so far = 8193
+copysd: WARNING - no records copied for file t4.sd
+copysd: normal exit
+cat t4.sd | copysd -x3 -p100:+8192 t1.sd - t6.sd
+copysd: output file is t6.sd
+copysd: first input file is t1.sd
+copysd: input file is <stdin>
+copysd: full range is 100 to 8292
+copysd: range for t1.sd is 100 to 8292
+copysd: range for <stdin> is 100 to 8292
+copysd: copying file t1.sd
+copysd: need total of 8193 in chunks of 8192
+copysd: asked for 8192 samples, got 8192
+copysd: 8192 records so far, 1 to go
+copysd: asked for 1 samples, got 1
+copysd: 8193 records so far, 0 to go
+copysd: copied 8193 total records from file t1.sd
+copysd: grand total records so far = 8193
+copysd: copying file <stdin>
+copysd: need total of 8193 in chunks of 8192
+copysd: asked for 8192 samples, got 0
+copysd: copied 0 total records from file <stdin>
+copysd: grand total records so far = 8193
+copysd: WARNING - no records copied for file <stdin>
+copysd: normal exit
+copysd -x3 -p100:+8192 t1.sd - t6.sd < t4.sd
+copysd: output file is t6.sd
+copysd: first input file is t1.sd
+copysd: input file is <stdin>
+copysd: full range is 100 to 8292
+copysd: range for t1.sd is 100 to 8292
+copysd: WARNING - no records in range for file <stdin>
+copysd: range for <stdin> is 100 to 50
+copysd: copying file t1.sd
+copysd: need total of 8193 in chunks of 8192
+copysd: asked for 8192 samples, got 8192
+copysd: 8192 records so far, 1 to go
+copysd: asked for 1 samples, got 1
+copysd: 8193 records so far, 0 to go
+copysd: copied 8193 total records from file t1.sd
+copysd: grand total records so far = 8193
+copysd: copying file <stdin>
+copysd: need total of -49 in chunks of 8192
+copysd: copied 0 total records from file <stdin>
+copysd: grand total records so far = 8193
+copysd: WARNING - no records copied for file <stdin>
+copysd: normal exit
+TEST TYPE CONVERSION, SCALING, AND CLIPPING
+echo '1 2 40000 -55000 2 1' | testsd -a- - | copysd -x3 -s2 -ds -p2:5 - t7.sd
+copysd: output file is t7.sd
+copysd: first input file is <stdin>
+copysd: full range is 2 to 5
+copysd: range for <stdin> is 2 to 5
+copysd: copying file <stdin>
+copysd: need total of 4 in chunks of 8192
+copysd: asked for 4 samples, got 4
+copysd: 4 records so far, 0 to go
+copysd: copied 4 total records from file <stdin>
+copysd: grand total records so far = 4
+copysd: normal exit
+DO A COPY BASED ON ESPS COMMON
+stats -r100:109 t1.sd
+stats: filename: t1.sd, start: 100, end: 109
+Element   Minimum    at     Maximum    at      Mean      Std. Dev     Magnitude
+    1        -500   109         500   101     46.1933     400.285           0
+copysd t8.sd
+copysd: input file name t1.sd taken from ESPS Common
+copysd: starting record = 100 taken from ESPS Common
+copysd: number records = 10 taken from ESPS Common
+ 
+DON'T FORGET TO CLEAN UP SD FILES

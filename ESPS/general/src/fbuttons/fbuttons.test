@@ -1,0 +1,48 @@
+#! /bin/sh 
+# test script for fbuttons
+# @(#)fbuttons.test	1.7 6/18/93 ERL
+
+touch zfoo fbfoo1 fbfoo2 fbfoo3 fbfoo4
+
+cat > Ffile << ZAP
+"file: zfoo"   zfoo
+"file: fbfoo1" fbfoo1
+"file: fbfoo2" fbfoo2
+"file: fbfoo2" fbfoo2
+"file: fbfoo3" fbfoo3
+"file: fbfoo4" fbfoo4
+"fbuttons" MENU
+  "file: fbuttons" fbuttons
+  "file: fbuttons.test" fbuttons.test
+"fbuttons" END
+ZAP
+
+cat > Lfile << ZAP1
+file
+ls -l
+ZAP1
+
+cat > Sfile << ZAP2
+"file type"  file
+"file specs"  ls -l
+"number of lines"  wc -l 
+ZAP2
+
+fbuttons  -Q "print 'leaving' and quit" -l "echo leaving" -F Ffile -L Lfile -w "Test 1 of fbuttons" -i "test 1" z b a&
+
+fbuttons -q0 -a -S Sfile -w "Test 2 of fbuttons" -i "test 2" Makefile fbuttons.1 fbfoo? &
+
+fbuttons -M menu1.test -S Sfile -w "Test 3 of fbuttons" -i "test 3" Makefile fbuttons.1 fbfoo? &
+
+fbuttons -b 3 -M menu1.test -S Sfile -w "Test 4 of fbuttons" -i "test 3" Makefile fbuttons.1 fbfoo? &
+
+fbuttons -b 2 -M menu1.test -S Sfile -w "Test 5 of fbuttons" -i "test 3" Makefile fbuttons.1 fbfoo? &
+
+fbuttons -b 1 -M menu1.test -S Sfile -w "Test 6 of fbuttons" -i "test 3" Makefile fbuttons.1 fbfoo? &
+
+fbuttons -M menu1.test -c -S Sfile -w "Test 7 of fbuttons" -i "test 3" Makefile fbuttons.1 fbfoo? &
+
+fbuttons -R '^f' -M menu1.test -s 5 -S Sfile -w "Test 8 of fbuttons" -i "test 4" Makefile &
+
+fbuttons -a -R '^f' -M menu1.test -s 5 -S Sfile -w "Test 9 of fbuttons" -i "test 5" Makefile &
+

@@ -1,0 +1,62 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)edemos.1	1.1 8/5/91 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH EDEMOS 1\-ESPS 1.1
+.SH NAME
+edemos - put up a button control panel for the demos
+.SH SYNOPSIS
+.B edemos
+[
+.I " tmp_directory"
+]
+.SH DESCRIPTION
+.PP
+\fIedemos\fP (1\-\s-1ESPS\s+1) pops up a push-button control panel containing a
+\fIQUIT\fP
+button and pull-down menu buttons for each demo.
+By default,
+\fIedemos\fP (1\-\s-1ESPS\s+1) 
+creates a directory on /usr/tmp. Any files created by the
+demos
+go into this directory.
+\fIedemos\fP (1\-\s-1ESPS\s+1) has an optional argument to allow
+the user to specify the location of any output files; this directory
+must be writable by the demo user.
+.PP
+A crude locking scheme is implemented to stop individual demos from
+interfering with each other. You may need to manually remove a lock
+file,
+and start again under some circumstances. \fIedemos\fP(1\-\s-1ESPS\s+1)
+will tell you the location of the lock file.
+.PP
+\fIedemos\fP (1\-\s-1ESPS\s+1) is intended to present some interesting
+displays, show some applications of ESPS and
+\fIwaves\fP+(1\-\s-1ESPS\s+1),
+and provide some examples of how to configured ESPS and \fIwaves\fP+ (1\-\s-1ESPS\s+1) for different tasks.
+.PP
+\fIedemos\fP (1\-\s-1ESPS\s+1)
+is a shell script that runs \fImbuttons\fP (1\-\s-1ESPS\s+1) and
+presents a button panel. Under each button is a shell script. These
+shell scripts run ESPS and waves+ commands. 
+If you do not have both ESPS and \fIwaves+\fP,
+\fIedemos\fP (1\-\s-1ESPS\s+1) will not work.
+.SH OPTIONS
+.PP
+There are none.
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.SH ESPS COMMON
+.PP
+The common file is not used.
+.SH BUGS
+None known.
+.SH EXPECTED CHANGES
+.PP
+.SH "SEE ALSO"
+.PP
+.SH AUTHOR
+.PP
+Shore and Burton.
+
+

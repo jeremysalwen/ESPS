@@ -1,0 +1,134 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     sdtofea - convert sampled-data file to FEA_SD file
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>sdtofea</STRONG> [ <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> ] <EM>input</EM>.<EM>sd</EM> <EM>output</EM>.<EM>fea</EM>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     This program accepts an ESPS <STRONG><A HREF="../man5.html/SD.5.html">SD(5-ESPS)</A></STRONG>  file  <EM>input</EM>.<EM>sd</EM>  and
+     writes an ESPS <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD(5-ESPS)</A></STRONG> file <EM>output</EM>.<EM>fea</EM> containing the
+     same sampled data.  If the value of  <EM>hd</EM>.<EM>sd</EM> - &gt;<EM>nchan</EM>  in  the
+     type-specific  part  of the input header is 1 or greater, it
+     gives the number of channels---each output  record  consists
+     of  that  number of consecutive samples from the input file.
+     A value of either 0 or 1 indicates  a  single-channel  file.
+     The  output  data  type  is  the  same (DOUBLE, FLOAT, LONG,
+     SHORT, or BYTE) as the input data type.
+
+     If <EM>input</EM>.<EM>spec</EM> is "-", standard input is used for  the  input
+     file.  If <EM>output</EM>.<EM>fea</EM> is "-", standard output is used for the
+     output file.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following option is supported:
+
+     <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM>
+          Positive values of <EM>debug</EM>_<EM>level</EM> cause debugging informa-
+          tion  to  be  printed.   The  default value is 0, which
+          suppresses the messages.
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     No parameter file is read.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     The ESPS common file is not accessed.
+
+
+</PRE>
+<H2>ESPS HEADERS</H2><PRE>
+     The  output  header  is  a  new  FEA_SD  file  header,  with
+     appropriate  items  copied from the input header.  The value
+     of the item <EM>sf</EM> in the type-specific part of the input header
+     is recorded in a generic header item <EM>record</EM>_<EM>freq</EM> in the out-
+     put.  The type-specific input header items <EM>equip</EM>, <EM>max</EM>_<EM>value</EM>,
+     <EM>src</EM>_<EM>sf</EM>, <EM>synt</EM>_<EM>method</EM>, <EM>scale</EM>, <EM>dcrem</EM>, <EM>q</EM>_<EM>method</EM>, <EM>v</EM>_<EM>excit</EM>_<EM>method</EM>,
+     <EM>uv</EM>_<EM>excit</EM>_<EM>method</EM>, <EM>synt</EM>_<EM>interp</EM>, <EM>synt</EM>_<EM>pwr</EM>, <EM>synt</EM>_<EM>rc</EM>, <EM>synt</EM>_<EM>order</EM>,
+     <EM>start</EM>,  and <EM>nan</EM>, except those with null values, are saved as
+     like-named generic header items  in  the  output  file.   (A
+     ``null'' value is a value, such as zero, NONE, or NULL, that
+     indicates that an item is inapplicable.)  If <EM>preemphasis</EM>  in
+     the  input  header  is  non-NULL, it gives rise to 3 generic
+     header    items    in    the    output:     <EM>preemphasis</EM>_<EM>siz</EM>,
+     <EM>preemphasis</EM>_<EM>zeros</EM>,      and      <EM>preemphasis</EM>_<EM>poles</EM>      (see
+     <STRONG><A HREF="../man3.html/add_genzfunc.3.html">add_genzfunc(3-ESPSu)</A></STRONG>).   Similarly  <EM>de</EM>_<EM>emp</EM>,  if   non-NULL,
+     gives rise to <EM>de</EM>_<EM>emp</EM>_<EM>size</EM>, <EM>de</EM>_<EM>emp</EM>_<EM>zeros</EM>, and <EM>de</EM>_<EM>emp</EM>_<EM>poles</EM> in
+     the output.  Generic header items in the input  file  header
+     are  copied  to  the  output  header after being renamed, if
+     necessary, to avoid name conflicts.  As usual,  the  command
+     line  is  added  as a comment, and the header of <EM>input</EM>.<EM>sd</EM> is
+     added as a source file to <EM>output</EM>.<EM>fea</EM>.
+
+
+</PRE>
+<H2>FUTURE CHANGES</H2><PRE>
+     None planned.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man5.html/SD.5.html">SD(5-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA.5.html">FEA(5-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD(5-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man3.html/add_genzfunc.3.html">add_genzfunc(3-ESPSu)</A></STRONG>, <STRONG><A HREF="../man3.html/featosd.3.html">featosd(3-ESPSu)</A></STRONG>.
+
+
+</PRE>
+<H2>WARNINGS AND DIAGNOSTICS</H2><PRE>
+     The program exits with an error message if the command  line
+     contains  unrecognized  options  or too many or too few file
+     names.
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     None known.
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Manual page and program by Rodney Johnson.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

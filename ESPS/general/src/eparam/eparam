@@ -1,0 +1,52 @@
+#! /bin/sh 
+
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc. 
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)eparam	1.6	8/15/91	ESI/ERL
+# 
+# Written by:  Alan Parkar
+# Checked by:
+# Revised by:  Nelson/Shore
+# 
+# Brief description: ESPS script for eparam (1-ESPS) and xeparam 
+
+PARAMDIR=`get_esps_base`/lib/params
+
+# turn off common processing
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+
+if test x$1 = x
+ then
+ echo "usage: (x)eparam program_name program_options"
+ exit 1
+fi
+
+# get name of ESPS program to invoke
+progname=$1
+
+# add param file option and rest of options
+shift
+
+# un-comment the next line to have the command line printed
+#echo $command
+
+#execute command
+if test `basename $0` = xeparam
+then
+  command="$progname $*"
+  exec expromptrun -h $progname -P$PARAMDIR/P$progname $command
+else
+  command="$progname -P$PARAMDIR/P$progname $*"
+  exec $command
+fi

@@ -1,0 +1,44 @@
+#! /bin/sh
+# @(#)hditem.test	1.1 6/17/88 ESI
+#
+#  This material contains proprietary software of Entropic Speech, Inc.   
+#  Any reproduction, distribution, or publication without the prior	   
+#  written permission of Entropic Speech, Inc. is strictly prohibited.
+#  Any public distribution of copies of this work authorized in writing by
+#  Entropic Speech, Inc. must bear the notice			
+# 								
+#      "Copyright (c) 1988 Entropic Speech, Inc.; All rights reserved."
+# 				
+#
+# test script for hditem(1-ESPS)
+# @(#)hditem.test	1.1 6/17/88 ESI
+#
+#
+# Make a sampled data file to run eitem on
+#
+echo Making sampled data file . . . 
+echo "testsd a.sd"
+testsd a.sd
+#
+# Run hditem on all the universal items and the standard generics
+echo Run hditem on all the universal items and the standard Generics
+echo " "
+echo "program = `hditem -i program a.sd`"
+echo "version = `hditem -i version a.sd`"
+echo "progdate = `hditem -i progdate a.sd`"
+echo "date = `hditem -i date a.sd`"
+echo "typtxt = `hditem -i typtxt a.sd`"
+echo "comment = `hditem -i comment a.sd`"
+echo "current_path = `hditem -i current_path a.sd`"
+echo "hostname = `hditem -i hostname a.sd`"
+echo "cwd = `hditem -i cwd a.sd`"
+echo "ndrec = `hditem -i ndrec a.sd`"
+echo "hdvers = `hditem -i hdvers a.sd`"
+echo "type = `hditem -i type a.sd`"
+echo "user = `hditem -i user a.sd`"
+echo "frequency = `hditem -i frequency a.sd`"
+echo "level = `hditem -i level a.sd`"
+echo "test_type = `hditem -i test_type a.sd`"
+echo " "
+rm a.sd
+echo "All done; check that reasonable values were printed"

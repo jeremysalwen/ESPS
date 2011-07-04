@@ -1,0 +1,42 @@
+DSPDEV	NEW,CODEC,FREQ=3072
+DSP32SL	/usr/local/dsp32
+DSP3LIB	/usr/local/dsp32/lib
+#
+# NOTE: The above two lines (DSP32SL and DSP3LIB) are not currently 
+#       used by ESI WAVES+.
+#
+# @(#)dspinfo	1.1 6/27/91 ERL
+#
+# NAME:
+#	/etc/dspinfo	Information file for dsp32 boards and
+#	software locations.  For each machine with a dsp board,
+#	copy this file to /etc and customize.
+#
+#	DSPDEV - describes dsp board and location of utility programs;
+#		see `./src/setrate.c' .  Options are:
+#		OLD/NEW : new boards have DAC in addition to codec
+#		CODEC/PCM56 : use codec or DAC (NEW only) for D/A
+#		FREQ : usually 3072 for old boards, 2048 for new
+#		PATH : home of dsp32 up/downsample programs
+#
+# DESCRIPTION:
+#	Each non-comment line contains the name of an environment
+#	variable and its value (exactly two fields).  Value fields
+#	must not contain "$XYZ" references, as this file is sometimes
+#	read directly by programs.
+#	
+#	For faster processing, non-comment lines come first in the
+#	file so that scanning can stop at the first comment line.
+#
+#
+# FILES:
+#	dspinit	- Script used to set environment variables defined in
+#		/etc/dspinfo.  See dspinit in /usr/local/bin or
+#		$DSP32SL/local/bin for further documentation.
+# 
+# VARIABLES:
+#
+#	DSP32SL - root directory of dsp32 Software Library.
+#
+#	DSP3LIB - home of `libds.a' and `dsp32.h' .
+#

@@ -1,0 +1,58 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)copyfeafld.3	1.5 30 Apr 1997 ESI
+.TH COPY_FEA_FLD 3\-ESPSu 30 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+copy_fea_fld \- replicate a feature field definition
+.SH SYNOPSIS
+.ft B
+#include <esps/fea.h>
+.br
+int
+.br
+copy_fea_fld(hd1, hd2, name)
+.br
+struct header *hd1;
+.br
+struct header *hd2;
+.br
+char	*name;
+.ft
+.SH DESCRIPTION
+.I copy_fea_fld
+attempts to add a definition of the feature field \fIname\fP from
+\fIhd2\fP to \fIhd1\fP.  If \fIname\fP exists in \fIhd2\fP, then
+a corresponding field with the same name, size, rank, etc. is
+created in \fIhd1\fP (see FEA(5\-ESPS) for details concerning
+feature field definitions).   Only the field definition is copied,
+not the actual data contents of the feature field \fIname\fP.  The
+program returns a zero if successful.
+.PP
+If \fIname\fP is either NULL or does not exist in \fIhd2\fP, the
+program returns a -1.
+The program prints a message on stderr and terminates
+if either \fIhd1\fP or \fIhd2\fP do not point to ESPS Feature File
+headers.
+.SH EXAMPLE
+.if n .ta 33
+.if t .ta 3i
+.nf
+
+struct header *hd1, *hd2;
+
+if (copy_fea_fld(hd1,hd2,"field_name") == -1) . . . /* trouble */
+.fi
+.SH DIAGNOSTICS
+.nf
+copy_fea_fld: called with non fea hd
+.fi
+.SH BUGS
+None known.
+.SH SEE ALSO
+.PP
+.nf
+\fIadd_fea_fld\fR(3\-ESPSu), \fIcopy_fea_fields\fR(3\-ESPSu), 
+\fIcopy_fea_rec\fR(3\-ESPSu), FEA(5\-ESPS)
+.fi
+.SH AUTHOR
+Man page by Ajaipal S. Virdy.

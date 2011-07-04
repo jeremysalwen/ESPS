@@ -1,0 +1,739 @@
+.lo
+.he '\fBwaves\fP+ Version 3.1 Release Notes''page %'
+.ce 3
+.b
+\fBwaves\fP+ Version 3.1 Release Notes
+.sp
+Document Version: 1.1 2/1/93
+.sh 1 "INTRODUCTION"
+.lp
+This new release of \fBwaves\fP+, prepared for distribution in January 1993,
+provides new features requested by our customers.  It also provides
+fixes to many bugs and removal of numerous annoyances.  In addition,
+the software and documentation improvements embodied in this release
+are part of the groundwork for significant feature enhancements to
+come in future releases.
+
+.sh 2 "Version 3.1 Release Highlights"
+.ip \ \ \ \(bu
+\fIxchart\fP: a new display method for lattices of time-series labels
+.ip \ \ \ \(bu
+full editing and display support for aperiodically sampled time series
+.ip \ \ \ \(bu
+streamlined software license facilities
+.ip \ \ \ \(bu
+improved control of output file destinations
+.ip \ \ \ \(bu
+enhanced control over "server mode" operation
+.ip \ \ \ \(bu
+greatly improved D/A and A/D (play and record) programs
+.ip \ \ \ \(bu
+enhanced scrolling and random access in long data files
+.ip \ \ \ \(bu
+\fIxspectrum\fP now permits FFT's of unlimited size
+.ip \ \ \ \(bu
+fine-grained control of harmonic spectrum cursors
+.ip \ \ \ \(bu
+enhanced \fIxwaves\fP startup environment and control panels
+.ip \ \ \ \(bu
+updated documentation
+
+.sh 2 "Compatibility with Previous Versions"
+.lp 
+\fIXwaves\fP is backwards compatible with Version 2.1 with the following
+exceptions:
+.lp
+The program \fIxwaves\fP now has only one official name.  Similarly, the
+attachments, \fIxspectrum\fP, \fIxlabel\fP, \fIxchart\fP and
+\fIxmarks\fP have only one official name each.  We provide an
+installation option to generate symbolic links to the various aliases
+(xvwaves, waves+, xwaves+, ...), but we encourage you to join us in
+eliminating this confusion once and for all!  The name \fBwaves\fP+ is
+now used only to refer to the collection of programs and documentation
+comprising the whole product.
+.lp
+\fIxwaves\fP is only available for use with the \fIX\fP window system.  The
+Sunview version is no longer available.
+.lp
+The display server potential of \fIxwaves\fP has been significantly
+increased by allowing \fIsend_xwaves\fP to block (by default) until
+the sent command is complete.  Shell scripts that counted on
+non-blocking behavior should be changed by inserting the \fB-B\fP
+command-line option in the \fIsend_xwaves\fP calls.
+.lp
+\fIWcheckout\fP has been eliminated.  All auxiliary \fIxwaves\fP programs
+now run whether \fIxwaves\fP is running or not.  This should make life more
+pleasant, but if you have old UNIX scripts that ran \fIwcheckout\fP,
+you should remove these calls.
+.lp
+Filenames entered into \fIxwaves\fP no longer have "./"
+automatically prepended to the internal representation.  This behavior
+caused subquent references to files loaded into \fIxwaves\fP to be
+incorrect, since the user had no way of knowing that the name (as far
+as \fIxwaves\fP was concerned) had a leading "./".  This fixes
+apparent bugs in several commands (e.g.  \fIalign\fP) that reference
+specific files.  If you worked around this deficiency in your shell
+scripts or \fIsend_xwaves\fP calls, you may need to remove the leading
+"./" from scripts that reference these files.
+.lp
+The programs \fIwplay\fP and \fIwrecord\fP have been replaced by
+\fIv32play\fP and \fIv32record\fP, respectively.  These provide
+dual-channel D/A and A/D with the AT&T/Heurikon SURF VME board, and
+provide single-channel play and record for the old AT&T dsp32 "FAB2"
+board.  The new programs read/write directly from/to disk and have
+several other improvements.
+.lp
+The scope of the \fIxwaves\fP parameters \fIimage_clip\fP and
+\fIimage_range\fP has been broadened to include adjustments for
+color/greyscale systems.  Formerly, these only influenced the
+intensity mapping for monochrome dithered spectrograms and images.
+Since they now provide control of color/greyscale as well, you may
+discover that the settings in your personal .wave_pro profile or in
+the default profile found in $ESPS_BASE/lib/waves/.wave_pro are not to
+your taste.  Increasing \fIimage_clip\fP darkens the image; decreasing
+\fIimage_range\fP increases the contrast.
+.lp
+You may now have to find some other reason to take long coffee
+breaks; we've eliminated three.  \fIXwaves\fP and the attachments can
+no longer hang up the mouse and monitor.  Previous versions
+occasionally did this, requiring you to login remotely or reboot your
+system to regain control.  Another impact on coffee breaks comes
+from the new program \fIfreewaves\fP.  Previously, if \fIxwaves\fP exited
+ungracefully, e.g. by a UNIX \fIkill\fP command, the license was left
+occupied for three minutes.  It is now left for only 30 seconds, and
+if this is too long, just issue the \fIfreewaves\fP command to free it
+immediately.  Finally, the license control daemon \fIelmd\fP now only
+requires one minute to initialize, rather than the three minutes
+required in Version 2.1.
+
+.sh 1 "NEW FEATURES"
+.lp
+The primary aim of the Version 3.1 release of \fBwaves+\fP is to fix
+problems and ro make the overall operation of the system smoother.
+This also lays the groundwork for major enhancements to come later
+in the Spring of 1993.  Entropic has, however added the new features
+listed below to Version 3.1.
+
+.sh 2 \fIxwaves\fP
+.lp
+The \fIxwaves\fP \fIspectrogram\fP command now has four additional,
+optional arguments.  The keywords \fIheight\fP and \fIwidth\fP
+(in pixels) permit specification of the presentation dimensions on the
+screen.  If horizontal and vertical rescale are enabled (with
+h_spect_rescale and v_spect_rescale), the spectrogram will be scaled
+to fit the requested dimensions.  If scaling is disabled, the
+spectrogram display will either clip the data image or be limted in
+maximum size to the data image.  The new keywords \fIrange\fP and
+\fIthreshold\fP provide means for specifying the intensity mapping
+parameters when the spectrogram is created.  Previously, this was only
+available via the separate \fIcolormap\fP command.
+.lp
+A new time display mode has been added to \fIxwaves\fP.  When the cursor is
+in the scrollbar region near the top of the display, the time readout
+is now for the whole file. This allows accurate direct access to any
+part of the signal.  Note that the time/frequency cursor is now frozen
+when the mouse is in the scrollbar region.  The "Time:" item changes
+to "Time(f):" when the mouse is in the scrollbar region.  Thus: if it
+is necessary to scroll to a particular time in a long file: move the
+mouse pointer into the scrollbar region; move it right or left until
+the "Time(f):" display reads approximately the desired time; press the
+middle mouse button.  The desired time will then be centered in the
+display.
+.lp
+The startup environment invoked by the .wave_pro entry 
+.ce 1
+init_file  $ESPS_BASE/lib/waves/commands/xw_init.WC
+has been improved.  (This \fIinit_file\fP is what brings up the
+"Miscellaneous \fIxwaves\fP Controls" button panel.)  Changes include:
+.ip \ \ \ \(bu
+spectral averaging can be added to image menus
+.ip \ \ \ \(bu
+hardcopy ESPS plots can be added to menus
+.ip \ \ \ \(bu
+some buttons are now menu-buttons to provide shortcuts
+.ip \ \ \ \(bu
+there's a quick way to turn rescale on and off
+.ip \ \ \ \(bu
+when plot3d is added, server mode is enabled
+.lp
+\fIXwaves\fP now reads, displays, edits and writes ESPS tagged FEA
+files correctly.  This means \fIxwaves\fP can be used to manipulate
+any aperiodically-sampled time series.  It also aligns these correctly
+with other data types.  Thus, all ESPS signal files, including
+those produced by programs like \fIlpcana\fP, may now be displayed correctly
+using \fIxwaves\fP.  The ESPS manual describes how to write ESPS
+tagged files from C programs.  If you have aperiodic data in ASCII
+form generated by some non-ESPS process, you can build a tagged ESPS
+file acceptable to \fIxwaves\fP and ESPS programs with a UNIX script
+like the following:
+.sp
+.nf
+-------------------------------------------------------------------------
+#!/bin/sh
+#
+# $1	data type: DOUBLE, FLOAT, LONG, or SHORT
+# $2	size: number of elements per record (columns), not counting tag
+# $3	src_sf: sampling frequency of the data to which the tags refer
+# $4	input: name of ASCII input file
+# $5	output: name of output tagged FEA file
+
+# The first column in the input file contains the "tags".  These are
+# sample (record) indices into the file from which the remaining columns
+# were derived.  This "source" file was sampled at "src_sf" samples per
+# second.  This script assumes the remaining columns are all of the data
+# type specified by $1.
+
+USE_ESPS_COMMON=off; export USE_ESPS_COMMON
+
+prog=$0
+
+case $# in
+5)
+    type=$1
+    size=$2
+    freq=$3
+    input=$4
+    output=$5
+    ;;
+*)
+    echo "Usage: $prog type size src_sf input_file output_file"
+    exit 1
+    ;;
+esac
+
+# Pick a format string for reading data of the specified type with scanf.
+
+case $type in
+DOUBLE)
+    fmt="%lf"
+    ;;
+FLOAT)
+    fmt="%f"
+    ;;
+LONG)
+    fmt="%ld"
+    ;;
+SHORT)
+    fmt="%hd"
+    ;;
+*)
+    echo "$prog: can't handle type $type"
+    exit 1
+    ;;
+esac
+
+# Create a format file for use with addfeahd.
+
+fmtfile=/tmp/fmt$$
+cat >$fmtfile <<EOF
+Tag	 LONG	1	%ld
+data	 $type	$size	$fmt
+EOF
+
+# Create output file (untagged).
+# Tag data go into an ordinary field named "Tag".
+
+addfeahd -c "$0 $*" -a $fmtfile $input $output 2>/dev/null
+
+# Now make a couple of changes with fea_edit to turn the output file
+# into a tagged file:
+# 1) Change the "common.tag" flag to indicate a tagged file by changing
+#    the first 0 to 1 in the first line ("0 0 0 << do not edit >>") of the
+#    fea_edit display.
+# 2) Remove the field definition for "Tag".
+# (This oblique technique for generating tagged files from ESPS-external
+# data will not be necessary in future Entropic software releases.)
+
+EDITOR=ed; export EDITOR
+fea_edit $output <<EOF 2>/dev/null 1>&2
+1s/0/1/
+/Tag LONG/d
+w
+q
+
+EOF
+
+# Put the "source sample frequency" in the header so the sample numbers
+# can (optionally) be used to determine time by programs using the data.
+
+addgen -g src_sf -t DOUBLE -v $freq $output
+
+# clean up
+
+rm -f $output.bak
+rm -f $fmtfile
+exit 0
+-------------------------------------------------------------------------
+
+.fi
+.lp
+The initial adjustments for the spectrogram threshold level and
+displayed dynamic range may now be set on both color and monochrome
+systems using the \fIimage_clip\fP and \fIimage_range\fP globals.
+These are established in the .wave_pro profile or via an \fIxwaves\fP
+\fIset\fP command.  When the color map is adjusted using the middle
+mouse button in the spectrogtram display window, the values of
+\fIimage_clip\fP and \fIimage_range\fP are updated accordingly.  The
+current value of them may be retrieved with the \fIget attributes\fP
+command.  \fIImage_range\fP is identical to the \fIrange\fP variable
+settable via the \fIcolormap\fP and \fIspectrogram\fP commands.
+\fIImage_clip\fP is related to \fIthreshold\fP via the formula:
+.ce 1
+	threshold = 105 - image_clip - image_range
+This somewhat convoluted variable set was devised to maintain backward
+compatability while providing a degree of control needed by many users.
+
+.sh 2 "Auxiliary Programs"
+.lp
+All Entropic D/A conversion (play) programs, when used with \fIxwaves\fP,
+support the feature that repositions the signal display centered on
+the point at which the playback operation is interrupted by a left
+button press in the display window.  A simple modification to
+non-Entropic D/A programs, documented in the \fIsplay\fP manual page,
+will provide this interrupt-and-reposition function for them as well.
+To use this feature on a long file, only a fraction of which is
+displayed in a \fIxwaves\fP window: Select a play function, like "play
+entire file", from the data window menu.  Allow the playback to
+proceed until you hear the point of interest. Immediately press the
+left button in the data window.  D/A will stop and the window will
+jump to roughly center the point of interest in the display.
+.lp
+\fISend_xwaves\fP will now wait for a command to complete before
+proceeding.  The utility of send_xwaves was previously limited by its
+completely asynchronous coupling with \fIxwaves\fP.  Commands via
+send_xwaves are now executed and completed in the order in which they
+are given.  This feature extends to commands that involve other
+processes external to \fIxwaves\fP and to the attachments.  If the old
+asynchronous send_xwaves behavior is desired, the interlock may be
+disabled with the -B send-xwaves command-line option.  See the new
+send_xwaves manual page.
+.lp
+All Entropic A/D (record) programs optionally can send a display message
+to \fIxwaves\fP to display the signal just recorded.  This simplifies
+recording followed immediately by analysis or editing.  To use this
+feature: Have \fIxwaves\fP running in the server mode (e.g. start it with
+the -s option).  Issue a record command, like "srecord -S output.sd".
+If the record operation is then interrupted or allowed to run to
+completion, the data just collected will be displayed immediately in
+an \fIxwaves\fP window.  See the \fIsrecord\fP manual for more details.
+
+.sh 2 Attachments
+.lp
+There is a new attachment called \fIxchart\fP.  This has all of the
+features present in the \fIxlabel\fP program, plus the ability to
+handle segment lattice displays.  These displays consist of multiple,
+possibly overlapping, segment labels, such as might be generated by an
+automatic time-series labeling system, or a speech recognizer "front
+end".  See the new \fIxchart\fP manual page.
+.lp
+\fIXspectrum\fP now controls the highest visible harmonic cursor
+when harmonic cursors are on.  The mouse cursor keeps jumping to
+higher and higher harmonics as the frequency of the fundamental is
+lowered, and to lower harmonics as the fundamental is raised.  The
+maximum number of harmonic cursors has been increased to 20.
+Thus, it is now possible to make extremely accurate fundamental
+frequency determinations using \fIxspectrum\fP.
+.lp
+\fIXspectrum\fP now provides on/off control of the horizontal (magnitude)
+cursors.  It is often desirable to disable these when hard copies are
+being prepared.
+
+.sh 1 "ANNOYANCES REMOVED"
+.sh 2 \fIxwaves\fP
+.lp
+\fIXwaves\fP now has only one name: \fIxwaves\fP.  We no longer put the names
+waves, xvwaves, xwaves+, waves+, ... in the $ESPS_BASE/bin directory.
+We also no longer supply a covering script that attempts to determine
+the window system in use.  When you run \fIxwaves\fP, you will be running
+the target binary file designed for the window system named X.  Some
+installations may wish to continue to link the multiple names to
+\fIxwaves\fP, but Entropic has decided to cut the cord!  We are sorry if
+this causes temporary inconvenience, but it will simplify all our
+lives in the long run.  We were continally finding that, through our
+fault or theirs, customers were actually running the wrong version of
+our software because links had turned into copies, etc.  We suggest
+uniformly changing all references in scripts, etc to \fIxwaves\fP.  (Note,
+however, that command files interpreted by \fIxwaves\fP should continue to
+send messages to "waves" as before.)
+.lp
+\fIXwaves\fP now recognizes any homogeneous ESPS FEA file with a field
+called "F0" as a file containing fundamental-frequency (pitch)
+information.  These are now displayed using the F0-specific method,
+appropriate for such signals.  If the file also has a field called
+"P(voice)" or "prob_voice", this signal element will be used to enable
+the the waveform display of the F0 data.  Data records in which
+prob_voice is > .5, will have F0 displayed.  This behavior was
+formerly only available when the pitch information was stored in the
+AT&T SIGnal format.  The \fIformant\fP program now only optionally
+emits the extra SIGnal version of the pitch data (i.e. the .f0.sig
+file).
+.lp
+The use of the UNIX environment variable \fIDEF_HEADER\fP and the
+internal \fIxwaves\fP variable \fIdef_header\fP has been made more
+consistent and more clearly defined: If \fIDEF_HEADER\fP is defined
+before \fIxwaves\fP is run, its value will be adopted by \fIxwaves\fP
+(\fIdef_header\fP will be set to its value).  If \fIdef_header\fP is set
+in \fIxwaves\fP AFTER \fIxwaves\fP is started, all programs run BY
+\fIxwaves\fP (i.e. as child processes) will inherit the new
+definition.  Thus, it is possible to change \fIdef_header\fP between
+calls to external programs (e.g. calls via D/A play commands or
+\fIadd_espsf\fP) and have the external ESPS programs use the new definition.
+.lp
+The limit on the number of files that may be specified on the command
+line as signals for \fIxwaves\fP to display has been raised from seven to
+50.
+.lp
+The data-display cursor now returns to its pre-menu-display position
+after a window menu selection is performed.
+.lp
+\fIXwaves\fP now scales signals for D/A playback based on the generic
+header item \fImax_val\fP, if it is present, rather than based on only
+the maximum found in the display buffer.  If \fImax_val\fP is not
+present, \fIxwaves\fP assumes the maximum value is 32767 and does not scale
+at all.
+.lp
+It is no longer necessary to have \fIfea_sd_special\fP set to get
+reasonable behavior on non-short-integer data with the built-in boards
+(or external program calls, for that matter).  Thus, one can display a
+floating-point file as floating point and still play it from within
+\fIxwaves\fP.  (It is still necessary to set fea_sd_special to get
+spectrograms of non-short-integer data with the built-in boards).
+
+.sh 2 "Auxiliary Programs"
+.lp
+All Entropic play programs now read the input and send output to the D/A
+simultaneously.  Previously, \fIsplay\fP and some of the others, read the
+entire file before beginning, a particularly annoying trait when the
+file was an hour long!
+.lp
+Similarly, all Entropic record programs send the data directly to disk as
+the data comes in from the A/D.  All record programs can write to stdout.
+.lp
+The play programs (\fIsplay\fP, \fIsgplay\fP, \fIs32cplay\fP, \fIc30play\fP, ...) now read ESPS
+files or headerless files correctly from standard input.  Thus,
+command sequences like
+.ce 1
+	testsd -C 1000 -s4 - | splay -
+will work as expected.
+.lp
+\fIFormant\fP now permits specification of an output directory, rather than
+requiring that the output files it creates be placed in the same
+directory as the input file.  This was implemented as an optional
+command-line argument "-O" where the directory path may be specified.
+\fIFormant\fP still generates several files with names ending in .hp, .sd,
+\.f0, etc, but they will be in the specified directory, rather in the
+same directory with the input file.  if "-O" is not specified, the old
+behavior obtains.
+.lp
+\fIFormant\fP now supports the standard ESPS range [-r] option making
+it easier to integrate with \fIxwaves\fP \fIadd_espsf\fP functions.
+It still requires a covering script for \fIadd_espsf\fP
+implementation, but the operation is more efficient, since less
+copying will be required and the use of \fIcopysd\fP is no longer
+necessary to obtain the range limits.  See the \fIformant\fP manual
+page for examples.  The algorithms embodied in the formant program
+will be reimplemented for greater speed and to provide a more regular
+I/O syntax in the Spring 1993 release.
+.lp
+\fIFormant\fP no longer forces the creation of a SIGnal file containing the
+F0 information, since \fIxwaves\fP now reads the ESPS version of this data
+correctly.  Thus only the ".f0" files are created by default. These
+are now read and displayed by \fIxwaves\fP exactly as the ".f0.sig" files
+were.  Users requiring the SIGnal files for other reasons can use the
+[-S] command-line option to enable the old behavior.
+.lp
+\fIFormant\fP now uses the standard UNIX \fIgetopt()\fP function to
+process the command line, making it insensitive to spaces between
+option switches and their arguments, etc.
+.lp
+Processing of commands sent to \fIxwaves\fP via \fIsend_xwaves\fP was
+overly restrictive about the format of the command string.  Its
+unnecessary sensitivity to the presence or absence of whitespace and
+newlines has now been eliminated.
+.lp
+All \fIxwaves\fP file name specifications are now processed for possible
+UNIX environment symbols of the form $NAME.  All such symbols are now
+expanded correctly.
+.lp
+\fIWcheckout\fP has been eliminated.  If the user has a valid \fBwaves+\fP
+license, all of the auxiliary programs will run, whether \fIxwaves\fP is
+running or not.  All references to \fIwcheckout\fP in scripts, etc. may
+be eliminated.
+.lp
+The program \fIwplay\fP has been replaced by a new program
+\fIv32play\fP. This new program provides D/A conversion via either the
+AT&T FAB2 dsp32 board or the AT&T or Heurikon SURF dsp32c board.
+Unlike \fIwplay\fP, \fIv32play\fP reads its data directly from disk
+files (or stdin) during conversion, and is thus much faster in
+response.  It may also be used on files of unlimited length.
+\fIV32play\fP behaves like all of the other Entropic D/A programs,
+with respect to command-line arguments and UNIX signals (see eman
+\fIv32play\fP).  With the SURF board, \fIv32play\fP provides both
+single- and dual-channel output.
+.lp
+The AT&T/Heurikon SURF record program, \fIwrecord\fP, has been
+replaced by the program \fIv32record\fP which performs A/D directly to
+disk (unlike \fIwrecord\fP which buffered everything to memory first).
+\fIV32record\fP also records either single- or dual-channel signals.
+
+.sh 2 "Attachments"
+.lp
+As with \fIxwaves\fP, we have uniformly singled out names for all of
+the attachments.  Thus, we retain the names \fIxlabel\fP,
+\fIxspectrum\fP and \fIxmarks\fP.  All references to these attachments
+must use those names.  Optionally, your site may choose to
+symbolically link the old names (like xvlabel) to the now-standard
+names.  However, we encourage you to make the change now.  We promise
+never to change the names again!
+.lp
+Attachment of an \fIxlabel\fP window to a particular \fIxwaves\fP signal view has
+now been correctly implemented.  When the \fIxlabel\fP display is created by
+a command like
+.nf
+	send make  name foo   file foo.lab   signal foo.sd
+.fi
+the \fIxlabel\fP window remains connected to the foo.sd display, regardless
+of other signals that may subsequently included in the foo display
+ensemble.  If several signals are included in foo, and the original
+signal (foo.sd in this case) is removed, \fIxlabel\fP reverts to the old
+behavior of attaching to the most recently created signal display.
+.lp
+The \fIxspectrum\fP "Window Limits From:" panel item has new choice labels
+to more clearly reflect the semantics of this control item.
+.br
+Now: "Cursor +- step/2" and "Markers"
+.br
+Was: "Local" and "Host"
+.lp
+\fIXspectrum\fP no longer repositions the markers or recomputes the
+spectrum if the "Window limits from:" item is changed.  Formerly, if
+the markers had been carefully positioned in preparation for a new
+spectrum computation, and the user then switched the limits source,
+the hand-set window limits would be lost.
+
+.sh 1 "BUGS FIXED"
+.sh 2 \fIxwaves\fP
+.lp
+Commands added to the \fIxwaves\fP menus by the \fIadd_espsf\fP facility
+previously did not handle multiple output files correctly.  Now, if a
+process creates several related output time series as the result of
+operations on an \fIxwaves\fP signal, these may all be displayed
+automatically.  (See the discussion of \fIoutputs\fP under the \fIadd_esps\fP
+command in the \fIxwaves\fP manual.)
+.lp
+Multiple views of the same signal in \fIxwaves\fP now display correctly.
+There was a bug that caused incorrect displays to be generated if more
+than one view of the same signal was generated in the display
+ensemble.  Now it is possible to have several views of the same signal
+displayed correctly at different scales.
+.lp
+When \fIxwaves\fP was being used to manipulate headerless files, or files
+with foreign headers, it would eventually use up all available file
+descriptors and refuse to display any more files.  This has been
+corrected.  An unlimited number of cycles of load and destroy may now
+be performed on such files.
+.lp
+The \fIverbose\fP startup messages issued by \fIxwaves\fP regarding the use of
+DSP hardware were often confusing (or just plain wrong).  These are
+now correct.
+.lp
+The \fIxwaves\fP file-browser windows did not follow symbolic directory
+links correctly.  This has now been corrected.
+.lp
+The \fIxwaves\fP file-browser facility would fail to detect that a typed
+specification was a directory unless a final "/" was entered.  As a
+consequence, \fIxwaves\fP would load such nodes as though they were signals!
+All directory nodes are now displayed as directories whether entered
+with, or without the trailing "/".
+.lp
+When \fIxwaves\fP exited before a "play" command was complete, some types of
+internal DSP hardware were not reset correctly and would endlessly
+repeat fragments of the output.  All play operations in progress are
+now stopped before \fIxwaves\fP exits.
+.lp
+Previously, the SGI Indigo internal "play" function locked out \fIxwaves\fP
+interaction for the duration of the play operation.  This has now been
+fixed.  The workaround for this had been to use the external play
+program (sgplay) as the definition for \fIplay_prog\fP.  This has the
+disadvantage of being somewhat slower, so SGI users that resorted to
+this should now comment out the play_prog specifications in their
+\.wave_pro and/or command files.
+
+.sh 2 "Auxiliary Programs"
+.lp
+A/D and D/A conversion on the SGI Indigo is now possible for all
+Indigo sample rates for stereo and mono files.  Previously, a bug in
+our buffer specifications prevented correct operation at frequencies
+over 24kHz.
+.lp
+Dual-channel play on SURF from within \fIxwaves\fP now works correctly.
+Several other play deficiencies in FAB2 and SURF \fIxwaves\fP play operations
+were also fixed.
+.lp
+The \fIxwaves\fP-internal play function has been fixed to handle non-ESPS
+files correctly when the played region is not in display window.
+Formerly this could cause extreme distortion due to variances in data
+type or byte ordering.
+.lp
+\fIXwaves\fP now handles incorrect colormap names gracefully.  Previously,
+it would load the current directory (!!) as a colormap if the
+specified colormap didn't exist, causing bizarre spectrogram displays.
+.lp
+Single-record FEA_SPECT files may now be displayed as spectrograms.
+Previously, this caused a core dump.
+.lp
+There were several situations which caused \fIxwaves\fP to exit without
+freeing the Entropic license.  This prevented subsequent use of that
+license until after a three-minute timeout period.  This has now been
+fixed for all cases except an explicit SIGKILL (e.g. via kill -9
+<pid>).  A new command, \fIfreewaves\fP, has been added to handle this latter
+case and the timeout period has been reduced to 30 seconds.
+.lp
+\fIXwaves\fP now uses the \fIoutput_dir\fP specification much more rationally:
+If the user specifies a fully qualified name (i.e as beginning with a
+directory, ./ or /) output_dir is ignored.  Output_dir is only applied
+to automatically generated names (e.g. temporary files) and those
+output files specified as simple base names by the user.
+.lp
+Simple filenames entered into \fIxwaves\fP no longer have "./" automatically
+prepended.  This behavior caused subquent references to files loaded
+into \fIxwaves\fP to be incorrect, since the user had no way of knowing that
+the name (as far as \fIxwaves\fP was concerned) had a leading "./".  This
+fixes apparent bugs in several commands (e.g. align) that reference
+specific files.
+.lp
+If the \fIstart\fP and \fIend\fP time specifications for a \fIspectrogram\fP command
+are omitted, the spectrogram will now be computed over the entire
+\fIxwaves\fP buffer interval automatically.  Previously, if these were
+omitted, no spectrogram was computed.  Users who resorted to the
+workaround of setting \fIstart\fP 0.0 and \fIend\fP 10000 (or some such) may now
+revert to a more rational model if they wish.  In fact, if the file is
+10000 seconds long, the new \fIxwaves\fP will compute the whole spectrogram,
+so be careful!
+.lp
+In some cases the temporary files created during computation of
+spectrograms by \fIxwaves\fP-external processes were getting crossed up so
+that the spectrogram that was eventually displayed was not of the
+desired signal.
+.lp
+Formerly, spectrogram segments saved using \fIxwaves\fP' "save segment in
+file" facility, were not saved correctly and could not be used with
+many Entropic programs (such as plotsgram).  This has been fixed.
+.lp
+Quantization by \fIxwaves\fP of the start and end times sent to external
+spectrogram programs would cause these to fail with messages about bad
+start and/or end times.  This was particularly troublesome for files
+with start and/or end times greater than 99 sec.  The spectrogram
+programs (e.g. \fIsgram\fP, \fIs32csgram\fP) have relaxed their requirements by
+simply limiting the spectrogram computation to the file limits if
+necessary.  Also, the quantization of the time specifications by
+\fIxwaves\fP has been made much finer.
+.lp
+Temporary waveform files created by the spectrogram command are now
+placed in \fIoutput_dir\fP, and are automatically deleted.
+.lp
+Previously, spectrogram computations launched by \fIxwaves\fP, but executed
+by an external program (such as \fIsgram\fP) were limited to signal segments
+that were buffered in \fIxwaves\fP.  That is, if an external program is
+called to compute a spectrogram, the entire segment upon which it was
+to be based needed to be present in \fIxwaves\fP' display buffer. In Version 3.1, segments
+of any size consistent with the limits of the file being analyzed may
+now be specified for the \fIstart\fP and \fIend\fP values to the \fIspectrogram\fP
+command.  Specifications exceeding the file limits will be
+automatically adjusted as necessary.
+
+.sh 2 Attachments
+.lp
+The tendency for \fIxwaves\fP and the attachments to hang up the computer's
+mouse and display has now been eliminated.  \fIXwaves\fP and the attachments
+can no longer "grab all input".
+.lp
+The tendency for \fIxwaves\fP and the attachments to loose synchronization
+has been greatly reduced.  A new inter-process communication technique
+has been implemented that makes interactions faster and less error
+prone.  Problems eliminated include: negative times being printed in the
+\fIxlabel\fP window; failure of label files to load correctly; lock up of
+attachments; and failure to execute commands.
+.lp
+Previously, the \fIxlabel\fP and \fIxmarks\fP label displays
+positioned themselves to overlap the signal view and obscured the
+lower part of its window.  This has been corrected.
+.lp
+\fIXlabel\fP now automatically inherits the current display ensemble name
+from \fIxwaves\fP.  This eliminates the "Object doesn't exist (can't add
+file ...)" message from \fIxlabel\fP (unless it is really true!).
+.lp
+When \fIoutput_dir\fP is specified, \fIxlabel\fP now applies it correctly.
+Previously, two bugs caused bizarre things (including core dumps) when
+\fIoutput_dir\fP was specified and \fIxlabel\fP was used.  Now, if the
+label file name is fully qualified (begins with ./ or /), it will be
+used unchanged.  If only a basename is specified, \fIoutput_dir\fP
+will be prepended.
+.lp
+\fIXspectrum\fP now responds correctly to the \fIxwaves\fP
+\fIdo_color\fP setting.  When black-and-white plots are requested by
+setting \fIdo_color\fP 0, the \fIxspectrum\fP window is rendered accordingly
+and can now be dumped to a hardcopy printer/plotter.  Previously, some
+\fIxwaves\fP colormaps caused all-black \fIxspectum\fP hardcopies.
+.lp
+\fIXspectrum\fP had a display instability when two or more spectrum displays
+overlapped.  They could keep sending refresh messages to one another
+and alternately perform "raise" operations (forever!) if
+\fIxspectrum_datwin_forward\fP was enabled.  This has been fixed.
+.lp
+\fIXspectrum\fP occasionally crashed when the related \fIxwaves\fP
+display object was killed.  This has been fixed.
+.lp
+\fIXspectrum\fP now permits computation of extremely large FFT's
+(limited only by the user's patience and hardware).  A soft limit is
+still implemented via the \fIxspectrum\fP global \fImax_fft_size\fP,
+which defaults to 65536, to protect against accidents!  To change
+this, just send a command to \fIxspectrum\fP like
+.ce 1
+send set max_fft_size 1000000".
+.lp
+The \fIxspectrum\fP manual page had several errors regarding maximum window
+sizes, and it has also been corrected.
+
+.sh 1 NOTES
+.lp
+Smooth operation of \fIxwaves\fP is dependent upon the configuration
+of your operating environment.  For an overview, please refer to the
+document $ESPS_BASE/xview/README (also available under the "Other
+Documents" item on the \fIeinfo\fP menu).  In particular, you may need
+to put the following items in your $HOME/.Xdefaults file:
+.sp
+.nf
+	*Foreground:			black
+	*Background:			white
+	window.color.foreground:	black
+	window.color.background:	white
+	4Dwm*positionIsFrame:		T
+	4Dwm*positionOnScreen:		T
+	4Dwm*interactivePlacement:	F
+	4Dwm*clientAutoPlace:		false
+	Mwm*interactivePlacement:	False
+	Mwm*clientAutoPlace:		False
+	XView.ICCCMCompliant:		False
+.fi
+.lp
+This release of \fBwaves+\fP comes without a Sunview version.  The old
+program \fIwaves+\fP, (alias svwaves, waves, svwaves+, ...) no longer
+exists.  Entropic no longer ships or maintains a Sunview-compatible
+version of \fIxwaves\fP.  We strongly urge users of \fBwaves\fP+ to try the new X
+version which has all of the features you are familiar with, is very
+robust, and has many new features never available under Sunview.
+.lp
+\fIWplay\fP and \fIwrecord\fP have been eliminated.  They have been
+replaced by a family of play and record programs with considerably
+enhanced capabilities.  See "eman play" and "eman record".
+.lp
+All programs are now linked "static".  Although this results in larger
+program binaries, it should greatly ease the installation and
+maintenance problems for \fIxwaves\fP and related programs.
+Previously, it was necessary to either force the use of the graphics
+libraries shipped from Entropic through use of the LD_LIBRARY_PATH
+UNIX environment variable, or run the risk of having version skews in
+the dynamically-loaded libraries.  These complications have been
+eliminated.  All references to Entropic directories can be removed
+from the LD_LIBRARY_PATH definition (e.g. in .cshrc files).

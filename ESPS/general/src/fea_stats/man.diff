@@ -1,0 +1,434 @@
+.\" Copyright (c) 1987, 1988 Entropic Speech, Inc. All rights reserved.
+.\" @(#)fea_stats.1t	1.11  6/18/98  ESI
+.TH FEA_STATS 1\-ESPS 6/18/98
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+fea_stats \- compute various statistics from an ESPS FEA file
+.SH SYNOPSIS
+.B fea_stats
+[
+.B \-b
+] [
+.B \-d
+] [
+.BI \-f " field"
+] [
+.B \-h " file"
+] [
+.BI \-i " grange"
+] [
+.BI \-n " class"
+] [
+.BI \-r " range"
+]
+.br
+[
+.BI \-x " debug_level"
+] [
+.B \-A
+] [
+.B \-C
+] [
+.B \-E
+] [
+.BI \-I
+] [
+.BI \-M
+] [
+.B \-R
+]
+.I "infile"
+.br
+[
+.I "outfile"
+]
+.SH DESCRIPTION
+.PP
+.I Fea_stats
+computes various statistics from an ESPS FEA file. It
+treats an ESPS FEA file, \fIinfile\fP, as a series of feature records;
+each record consists of a number of named "fields" that hold numeric
+or "coded" data or arrays of such data.  \fIFea_stats\fP
+can only compute statistics on numeric fields,
+and computation on fields that contain complex values is not supported
+yet.  If \fIinfile\fP is
+equal to "\-", then standard input is used.  If \fIoutfile\fP is equal
+to "\-", then standard output is used.
+.PP
+By default, for each numeric field,
+.I fea_stats
+catenates the field vectors in the specified range of records
+into a single array and computes
+the sample mean, an unbiased estimate of the standard deviation,
+the maximum value, the minimum value,
+and the record numbers where the maximum and minimum values are located.
+These statistics will be called non-stat-file output.
+The default, to output statistics for all fields,
+can be overridden by specifying the field name using the
+.B \-f
+option.
+This option can be specified more than once.  
+The
+.B \-R
+option allows each item in each field to be treated separately,
+and the
+.B \-f
+or
+.B \-i
+option can be used to select only certain items from a field.
+.PP
+.I Fea_stats
+will also compute the mean vector if the \fB\-M\fP option is specified,
+the covariance matrix if the \fB\-C\fP option is specified,
+the inverse covariance matrix if the \fB\-I\fP option is specified,
+and the eigenvalues and eigenvectors if the \fB\-E\fP option is specified.
+These options are
+referred to as stat-file options, and they can only be computed if a
+field name is explicitly specified with the \fB\-f\fP option.
+Specifying the \fB\-C\fP option or the \fB\-I\fP option sets the
+\fB\-M\fP option (i.e. the mean vector is automatically computed
+since it is required in the computation of the covariance matrix),
+and specifying the \fB\-I\fP or \fB\-E\fP option sets the \fB\-C\fP option.
+If any of these stat-file options are given, then the name of the class
+that the statistics summarize must also be given by using the \fB\-n\fP
+option.  The non-stat-file output is suppressed if any of the above
+options are specified ( 
+.B \-M, \-I, \-C,
+or
+.B \-E
+), unless the \fB\-A\fP option is also given.
+.PP
+If any stat-file option
+.RB ( \- { MICE })
+is given, then an output file,
+\fIoutfile\fP, must also be specified.  \fIOutfile\fP is an ESPS FEA_STAT
+file (see \fIFEA_STAT\fP(5\-ESPS)) that is created by
+\fIfea_stats\fP if the file does not exist, or is updated if the
+file exists.  However, if \fIoutfile\fP already exists, then
+\fIfea_stats\fP checks to see that it contains statistics for the field
+specified by the call to \fIfea_stats\fP
+(The input field name given by the \fB\-f\fP
+option must be the same as the generic header item \fIstatfield\fP in the
+existing FEA_STAT file, \fIoutfile\fP; also if \fIstatfield\fP is
+a derived field then the source fields from the input file must
+match the source fields in the \fIvariable.refhd\fP header item of
+\fIoutfile\fP. Do \fIeman 5 FEA_STAT\fP for more details.) An additional
+record containing the results is appended to the existing FEA_STAT
+file when it is updated.
+.PP
+For non-stat-file options, ASCII output is sent to stdout.  If the
+\fB\-A\fP option is specified (along with the stat-file options),
+then non-stat-file ASCII output is sent to stdout and the stat-file
+output is sent to \fIoutfile\fP.  For stat-file output, the results
+are stored in separate fields of the FEA_STAT feature file.  For
+instance, if the \fB\-C\fP option is given, then the output is
+written into the
+.I covar
+and
+.I mean
+"fields" of \fIoutfile\fP.  
+.PP
+.I Fea_stats
+can also write out the raw data for
+histogram computation or other processing
+(see 
+.B \-h
+below).
+.SH EXAMPLES
+.PP
+.nf
+/*
+ * Compute non-stat-file output over the specified range of records
+ * treating each element in all the fields seperately.
+ */
+
+% fea_stats \fB\-R \-r\fP\fI0:899 /u/esps/data.fea\fP
+.fi
+.sp
+.TS
+tab(?);
+c s s s s s s s
+c c c c c c c c 
+c c c c c c c c 
+c c c c c c c c 
+c c c c c c c c 
+c c c c c c c c 
+c c c c c c c c 
+c c c c c c c c.
+fea_stats \-R \-r0:899 /u/esps/data.fea
+field name?element?Min.?at?Max.?at?Mean?Std. Dev
+alpha?0?\-45?423?543?66?270.83?19.89
+alpha?1?\-30?213?43?206?21.3?9.90
+alpha?2?\-1?42?103?99?70.7?6.61
+alpha?3?\-95?43?10?891?\-33.3?12.1
+alpha?4?\-115?883?813?6?423.8?23.3
+beta?1?\-0.89?159?0.954?668?\-0.085?0.230
+.TE
+.sp 1
+/*
+ * Compute non-stat-file output over all records, but for specific
+ * elements of a specific field only.
+ */
+
+% fea_stats \fB\-f\fI alpha\fB[\fI1,4\fB] \-R\fI /u/esps/data.fea\fR
+.br
+.sp
+.TS
+tab(?);
+c s s s s s s s
+c c c c c c c c
+c n n n n n n n
+c n n n n n n n.
+fea_stats \-i1,4 \-f alpha /u/esps/data.fea
+field name?element?Min.?at?Max.?at?Mean?Std. Dev
+alpha?1?\-30?213?43?206?21.3?9.90
+alpha?4?\-115?883?813?6?423.8?23.3
+.TE
+.sp 1
+/*
+ * Another way of getting the same output as in the previous example.
+ */
+
+% fea_stats \fB\-i\fP\fI1,4\fP \fB\-f\fP\fI alpha /u/esps/data.fea\fP
+.br
+.sp 1
+/*
+ * Compute stat-file output (in this case the covariance matrix) over
+ * all records, but for a specific field only.  No printed output is
+ * generated in this case.
+ */
+
+% fea_stats \fB\-C \-n\fP \fIvoiced\fP \fB\-f\fP \fIalpha /u/esps/data.fea out.stats\fP
+.br
+% fea_element \fB\-f\fP \fICOVAR\fP \fB\-f\fP \fIMEAN out.stats\fP
+.PP
+.TS
+tab(;);
+l l l l.
+Name;Type;Size;Element
+=
+MEAN;DOUBLE;5;1
+COVAR;DOUBLE;25;2
+.TE
+.sp
+.nf
+/*
+ * Compute stat-file output (in this case the covariance matrix) over
+ * all records, but for a specific field only.  The \-A option causes
+ * output to be generated also.
+ */
+
+% fea_stats \fB\-C \-A \-n\fP \fIvoiced\fP \fB\-f\fP \fIalpha /u/esps/data.fea out.stats\fP
+.fi
+.sp
+.TS
+tab(?);
+c s s s s s s s
+c c c c c c c c 
+c c c c c c c c 
+c c c c c c c c 
+c c c c c c c c 
+c c c c c c c c 
+c c c c c c c c.
+fea_stats \-C \-A \-R \-r0:899 \-f alpha /u/esps/data.fea out.stats
+field name?element?Min.?at?Max.?at?Mean?Std. Dev
+alpha?0?\-45?423?543?66?270.83?19.89
+alpha?1?\-30?213?43?206?21.3?9.90
+alpha?2?\-1?42?103?99?70.7?6.61
+alpha?3?\-95?43?10?891?\-33.3?12.1
+alpha?4?\-115?883?813?6?423.8?23.3
+.TE
+.SH "ESPS PARAMETERS"
+No parameters are read from a 
+.I params
+file.
+.SH "ESPS COMMON"
+The ESPS common file is not read or written.
+.SH "ESPS HEADER"
+An ESPS header is written by this program only if a stat-file option
+\-{\fBMICE\fP} is given.  The generic header items \fIstatsize\fP and
+\fIstatfield\fP are also stored in the output ESPS header.
+The \fIvariable.refhd\fP in the FEA_STAT
+output file is set to be a pointer to the header of the input FEA file,
+\fIinfile\fP.
+.SH OPTIONS
+The following options are supported:
+.TP
+.B \-b 
+If specified and basic statistics are being written to standard out 
+(neither \fB\-M, \-I, \-C,\fP nor \fB\-E\fP is specified),
+then a brief output format is used. In the brief output format, 
+the locations of the \fImin\fP and \fImax\fP are not reported.
+.TP
+.B \-d 
+If specified without 
+.B \-R
+(see below), 
+statistics are computed on the difference between adjacent elements
+(element_2 minus element_1, element_3 minus element_2, and so on).
+Note that the last element in the first record is considered
+adjacent to the first element in the next record.
+.TP
+.BI \-f " field"
+.TP
+\fB\-f "\fIfield-name\fB\^[\^\fIgrange\fB\^]\^"\fR
+Compute statistics on the named field
+or on a specified subset of the elements of the named field.
+The bracketed
+.I grange,
+if present, must be of a form acceptable to
+.IR grange_switch (3-ESPSu);
+it specifies a list of indices of field elements.
+The numbering starts with 0 for the first element of the field.
+This option can be
+specified more than once for different fields,
+and if no field name is
+specified, all fields are processed.
+However, the option can only
+be specified once if used in conjunction with any of the stat-file
+options:
+.B \-M, \-I, \-C,
+and
+.B \-E,
+and in that case the bracketed
+.I grange
+is not allowed.
+To obtain stat-file output for a subrange of a field, or for several fields,
+first use
+.IR fea_deriv (1-ESPS)
+to collect the desired elements into a single, new field;
+then specify that field to
+.I fea_stats
+with the
+.B \-f
+option.
+.TP
+.BI \-h " file"
+When 
+.B \-h
+is specified,
+.I fea_stats
+writes out the raw ASCII data used in the computation of the
+statistics to the named file.
+An integer equal to the number of elements processed
+or the number of records processed is written first.  This is
+followed by the raw floating point data.
+.TP
+.BI \-i " grange"
+Compute statistics over the selected list of indices within each field.
+The list can be specified in a general format
+(see \fIgrange_switch\fP(3\-ESPS)
+for full details of generic range specification.)
+This option implies the
+.B \-R
+option as well.
+It may not be used if any stat-file options
+.RB ( "\-M, \-I, \-C, \-E" )
+are specified.
+.TP
+.BI \-n " class"
+Specify the name of the class the statistic summarizes.  This option
+must be given with the stat-file options.  When an ESPS FEA_STAT file
+is updated or created, \fIfea_stats\fP appends the name of
+the class the statistic summarizes (specified by the \fB\-n\fP option)
+to the record field \fIclass\fP in the header of the ESPS FEA_STAT file.
+Thus, the \fIclass\fP field in the output ESPS FEA_STATS file contains
+a list of all possible types of classes available (see \fIFEA_STAT\fP(5\-ESPS)
+for more details).
+.TP
+.BI \-r " range"
+Select a range of records to be processed.  By default, all records
+in the file are processed.  As is usual for ESPS programs, however, a
+range is specified as follows:  two numbers separated by a colon
+(beginning : end), a single number (a range consisting of one
+value), a number followed by a colon (the largest possible value
+determines the end of the range), or a colon followed by an number
+(the default is to start the range at the smallest possible value).
+(See 
+.I range_switch(3) 
+for full details of range specification.)
+.TP
+.BI \-x " debug_level"
+.I debug_levels
+greater than 0 cause messages to be printed.
+The default level is zero, which causes no debug output.
+.TP
+.B \-A
+Specify this option with
+.B \-M, \-I, \-C,
+or
+.B \-E
+to compute sample mean, standard-deviation estimate, maximum,
+median, and minimum value.  
+.PP
+For the following four options (\c
+.B \-C, \-E, \-I, \-M\c
+) an explicit field name must be specified
+using the \fB\-f\fP option.
+The \fB\-R\fP option is automatically set.
+.TP
+.BI \-C
+Compute the covariance matrix.
+.TP
+.B \-E
+Compute the eigenvalues and eigenvectors.
+.TP
+.BI \-I
+Compute the inverse covariance matrix.
+.TP
+.B \-M
+Compute the mean vector.
+.TP
+.B \-R
+Compute statistics over all specified records treating each element
+in a field seperately.
+.SH DIAGNOSTICS
+.PP
+.nf
+fea_stats: The \-n option can only be given once.
+fea_stats: The \-E, \-d, and \-h options have not been implemented yet.
+fea_stats: please specify an output stat file with \-{MICE} option(s).
+fea_stats: please specify classification name using the \-n option.
+fea_stats: please specify ONE feature field name with \-{MICE} option(s).
+fea_stats: cannot open \fIinfile\fP for reading.
+fea_stats: cannot open \fIoutfile\fP for writing.
+fea_stats: \fIinfile\fP is not an ESPS FEA file.
+fea_stats: only \fIn_rec\fP records in file.
+fea_stats: \fIoutfile\fP not an ESPS FEA file.
+fea_stats: \fIoutfile\fP not an ESPS FEA_STAT file.
+fea_stats: incompatible statfields: infile = \fIname\fP, outfile = \fIname\fP
+fea_stats: cannot compute statistics on \fIdata_type\fP field, \fIfield_name\fP.
+fea_stats: cannot compute statistics on rank \fIrank\fP field, \fIfield_name\fP.
+fea_stats: field name \fIfield_name\fP does not exist in \fIinfile\fP.
+fea_stats: field \fIfield_name\fP has \fIn_items\fP items only.
+fea_stats: \-i option: incorrect item range specified.
+fea_stats: incompatible statsizes: infile = \fIsize\fP, outfile = \fIsize\fP
+fea_stats: derived fields not same in \fIinfile\fP and \fIoutfile\fP->ref_hdr
+fea_stats: derived fields not equal in \fIinfile\fP and \fIoutfile\fP->ref_hdr:
+	   derived field names: input = \fIname\fP, output->ref_hdr = \fIname\fP.
+fea_stats: different number of derived fields in \fIinfile\fP and \fIoutfile\fP.
+fea_stats: calloc: could not allocate memory for \fIarray\fP.
+fea_stats: f_mat_alloc: could not allocate memory for \fImatrix_name\fP.
+fea_stats: non_stat: calloc: could not allocate memory for \fIarray\fP.
+fea_stats: non_stat: ran out of data after record number \fIrec_num\fP.
+fea_stats: stat: f_mat_alloc: could not allocate memory for \fImatrix_name\fP.
+fea_stats: stat: ran out of data after record number \fIrec_num\fP.
+fea_stats: stat: init_feastat_hd: could not initialize FEA_STAT header.
+fea_stats: stat: premature EOF on \fIfile_name\fP.
+fea_stats: stat: Covariance matrix is singular to working precision.
+.fi
+.SH WARNINGS
+The \fB\-E, \-d,\fP and \fB\-h\fP options have not been implemented yet.
+Computation on fields that contain complex data is not supported yet.
+.SH BUGS
+.SH EXPECTED CHANGES
+Add remaining options.
+.SH SEE ALSO
+.PP
+.nf
+select(1\-ESPS), stats(1\-ESPS), fea_element(1\-ESPS), classify(1\-ESPS), 
+get_fea_deriv(3\-ESPSu), set_fea_deriv(3\-ESPSu), FEA(5\-ESPS), 
+FEA_STAT(5\-ESPS)
+.fi
+.SH AUTHOR
+Ajaipal S. Virdy, Entropic Speech, Inc.

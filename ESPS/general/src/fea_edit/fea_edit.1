@@ -1,0 +1,98 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\"@(#)fea_edit.1	3.3 1/4/93 ESI
+.TH FEA_EDIT 1\-ESPS 1/4/93
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+fea_edit \- feature file editor
+.SH SYNOPSIS
+.B fea_edit
+[
+.BI \-n
+] [
+.BI \-g
+]
+.I " file"
+[
+.I "output_file"
+]
+.SH DESCRIPTION
+.PP
+.I Fea_edit
+converts an ESPS feature file into a form suitable for editing with a text
+editor, opens the editor of your choice on it and then converts the
+edited file back to a feature file.   The environment variable EDITOR is
+checked for the name of your editor.  If EDITOR is not in the
+environment, then \fIvi\fR(1) is used.  The (temporary) text file 
+is created in the directory specified by the environment variable 
+ESPS_TEMP_PATH (default /usr/tmp). 
+.PP
+.I Fea_edit
+can be used to edit both the feature file data records and the header.
+.PP
+The following options are supported:
+.TP
+.BI \-n 
+If the \-n option is given, then the header from the input file is
+not saved as a source header in the output file.
+.TP
+.BI \-g
+If the \fB\-g\fR option is given, then generic header items are also
+presented for editing.  Otherwise, they are copied from the input to
+the output, but not included in the text for editing.
+.PP
+The ascii file to be edited consists of the header information followed
+by the data records.   The first line in the text contains the value of
+the \fIcommon.tag\fR value, the feature file type code, and the
+\fIsegment_labeled\fR value.   These values are given in hex (without
+a leading 0x).   You may edit these values if you know what you are
+doing.
+.PP
+The next group of lines in the text are the feature file record
+definitions from the header.   They consist of the field name, followed
+by the type of the field (\fB\s-1SHORT, FLOAT,\fR\s+1 etc), the size of the
+field, the rank, and the dimension values if rank is greater than 1 (see
+\fIFEA\fR(5\-ESPS)).   If the field is of type \fB\s-1CODED\fR\s+1, 
+then the possible
+values follow this line, each value to a line with a leading blank.
+This blank is required and must be maintained if the header is edited.
+Field definitions may be added, deleted, or changed.   If a field type
+or size is changed be sure that data for that field is in the correct
+format in the record part of the file.   If a field is added, then
+there should be no references to that field in the data records.
+.PP
+After the field definitions, there is a blank line, followed by any
+generic headers if the \fB\-g\fR option is used.  All generic header
+item names are preceded by an '@' (at sign). The type, size, and the
+values assigned follow the names. For the coded generic items,
+the list of possible coded values are given between brackets ('[' and ']')
+after the size of the generic field.
+The white space must always exist before and after the brackets.
+Following the possible coded types is the actual coded type(s) that is
+assigned to the coded generic item.
+.PP
+The generic headers are followed by a blank line, then the data records.
+The format is
+simply the field name, followed by data of the appropriate type.   If
+fewer data items are given than required, then the record is zero
+filled.  If too many data items are given for the field size, then the
+extra items are ignored.
+.SH ESPS PARAMETERS
+The ESPS parameter file is not referenced.
+.SH ESPS COMMON
+The ESPS Common file is not referenced.
+.SH DIAGNOSTICS
+.PP
+If the edited text cannot be parsed, \fIfea_edit\fR will print a
+message and ask if you want to edit the text again or abort.
+.SH BUGS
+.PP
+This version of the program does not handle feature files with any
+complex fields.   The next version will.
+.PP
+The conversion from ASCII back to the feature file is fairly rigid.
+When editing keep the format the same as the program produced. 
+Do not delete any blank lines or comments.
+Future versions will be more fault\-tolerant.
+.SH AUTHOR
+.PP
+Alan Parker and Ajaipal S. Virdy

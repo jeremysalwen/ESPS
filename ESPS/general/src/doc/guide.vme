@@ -1,0 +1,1215 @@
+.lo
+.de SM          \"macro to shrink left margin
+.br
+.nr $i \\n($i+\\$1i
+..
+.de RM          \"macro to restore original left margin
+.br
+.nr $i 0
+..
+.if t .ds - \(em\h'-0.2m'\(em
+.if n .ds - ---
+.if t .ds co \(co
+.if n .ds co (c)
+.AU "Joe Buck, Alan Parker, and John Shore"
+.RB "Rodney Johnson"
+.SJ "Entropic Signal Processing System (ESPS) Programming Guidelines"
+.TM ETM-S-86-14 3.6 1/22/93
+.*R
+ETM-S-86-13:rap/jtb, Data Files in the Entropic Signal Processing System (ESPS)
+.*R
+ETM-S-86-12:jtb, Parameter and Common Files in ESPS
+.*R
+ETM-S-86-25:rap, Guidelines for Implementing ESPS Feature File Subtypes
+.*R
+ESPS Users Manual 
+.*R
+J. Shore and R. Parker, Introduction to the Entropic Signal Processing System (ESPS)
+.*R
+ETM-S-89-49:rwj, FEA_SD files\*-Feature Files for Sampled Data in ESPS
+.sh 1 Introduction
+.lp
+This document describes various programming conventions and guidelines
+for the Entropic Signal Processing System (ESPS).  
+.(f
+Copyright \*(co 1987\-1990 Entropic Speech, Inc.  Copyright \*(co 1990\-1993
+Entropic Research Laboratory, Inc.  All rights reserved.  
+.)f
+Readers of this document should also read [1-3].  A general
+familiarity with the reference manual [4] is also assumed.  For a
+general introduction to ESPS, see [5].
+.lp
+This document describes the command line format of ESPS programs,
+internal program structure, programming conventions, and the
+organization of the ESPS directory tree.  
+.sh 1 "Directory Structure"
+.lp
+The ESPS distribution comprises a directory tree.
+In release 4.0 of ESPS, the root directory (or a link to it)
+had to be at /usr/esps.
+With release 4.1, ESPS has been made position independent
+(see "Position Independence" below):
+the root can be put anywhere,
+and programs that need to locate files in the directory tree
+find the root location in the environment variable "ESPS_BASE".
+Therefore, in what follows, the root directory is denoted by "$ESPS_BASE".
+Here is a sketch of the ESPS directory tree:
+.(b
+.nf
+.ta 1.5i +1.5i +1.5i +1.5i +1.5i
+.lc \-
+	|\-32bin
+	|\-32cbin
+	|\-bin
+	|\-demo	|\-doc
+	|\-doc	|\-h
+	|	|\-lib
+	|	|	|\-man1
+	|\-general|\-man|\-man3
+	|	|	|\-man5
+	|	|
+	|	|	|\-lib
+	|	|	|\-lib_header
+	|	|	|\-lib_sp
+	|	|\-src|\-libxv
+	|		|\-misc
+	|		|\-prog1
+	|\-include|\-esps	|\-prog2
+	|	|\-xview	|\-prog...
+	|		|\-progN
+	|	|\-colormaps
+	|	|\-filters
+	|	|\-keys
+|\-$ESPS_BASE|\-lib|\-lisp
+	|	|\-maclib
+	|	|\-menus
+	|	|\-params
+	|	|\-waves
+	|
+	|	|\-cat1
+	|	|\-cat3
+	|\-man|\-cat5
+	|	|\-man1
+	|	|\-man3
+	|	|\-man5
+	|
+	|	|\-demo3d
+	|	|\-filterdemo
+	|	|\-sounds
+	|\-newdemos|\-testsignal
+	|	|\-timitdemo
+	|	|\-tryme
+	|	|\-wintro
+	|
+	|	|\-shellforms
+	|	|\-tek2ps
+	|\-pub|\-tpipe
+	|	|\-xgrabsc
+	|	|\-xloadimage
+	|		|\-cross_cor
+	|\-src_examples|\-esps|\-lib
+	|	|	|\-sgram
+	|	|
+	|	|\-waves|\-spectrum
+	|
+	|\-xview|\-fonts
+.re
+.fi
+.)b
+.lp
+The following are brief descriptions of the main ESPS directories
+under $ESPS_BASE.
+.ip 32bin: 
+Binary code for the AT&T DSP32 board ("Fab 2 Board").
+.ip 32cbin: 
+Binary code for the AT&T DSP32C board ("Surfboard").
+.ip bin: 
+Executable programs in the general release.  This directory should be
+added to ESPS users' paths.
+.ip demo: 
+Shell scripts and data files for various ESPS demos.
+.ip doc:
+ESPS documents, such as this one, describing features of ESPS as a whole.
+.ip general:
+The root of a tree containing sources
+for programs and other files elsewhere in the ESPS hierarchy.
+.ip general/src:
+Source directory for programs and library functions.
+This directory has subdirectories for all major programs.
+The source code stored here is \fISCCS get\fR versions.
+The \fISCCS\fR directories are maintained elsewhere.
+Files in this directory should be read-only.
+Source for a few simple (one-module) ESPS programs is in general/src/misc.
+Source for library routines is in general/src/lib, general/src/lib_sp,
+general/src/lib_header, and general/src/libxv.
+.ip general/h:
+Include files\*-sources for $ESPS_BASE/include/esps.
+.ip general/doc:
+Sources for $ESPS_BASE/doc.
+Both source files (for nroff/troff) and ASCII document files
+should be stored in this directory.
+.ip general/lib:
+Public ESPS files.
+.ip general/man:
+Sources for $ESPS_BASE/man.
+Most of the manual page sources for Section 1 programs are not here,
+but are in the individual subdirectories of general/src.  
+.ip include:
+Include files for ESPS source programs.  There are two subdirectories.
+.ip include/esps
+Include files for functions that read or write ESPS files,
+use ESPS data types, or call ESPS library functions.
+(See "ESPS Include Files and Library Functions" below).
+.ip include/xview
+Sun include files for programs that use the XView toolkit.
+.ip lib:
+The location of public ESPS files.
+This is the location for the ESPS binary libraries.
+.ip lib/colormaps
+Some 16-entry colormap files for use with \fIimage\fP(1\-\s-1EPSP\s+1).
+.ip lib/filters
+Filters (FEA_FILT files).
+.ip lib/keys
+License key files created by \fIelmadmin\fP(1\-\s-1ESPS\s+1) when Entropic
+license are installed.
+.ip lib/lisp
+Lisp files for GNU emacs support of ESPS programming;
+in particular, the file lib/lisp/esps.el contains definitions of the
+interactive functions "eman" and "echeck"\*-these facilitate calling 
+the ESPS programs \fIeman\fP(1\-\s-1ESPS\s+1) and \fIecheck\fP
+(1\-\s-1ESPS\s+1) from within GNU emacs. 
+.ip lib/maclib
+Mock-lisp files for Unipress emacs support of ESPS programming.  
+.ip lib/menus
+Menu files in olwm/sunview format used by programs such as
+\fIfbuttons\fP(1\-\s-1ESPS\s+1) and \fImbuttons\fP(1\-\s-1ESPS\s+1).
+.ip lib/params
+Default parameter files of ESPS programs.
+.ip lib/waves
+Library files and subdirectories specific to the
+\fIwaves+/xwaves+\fP(1\-\s-1ESPS\s+1) programs.
+.ip man:
+The root of a tree containing the on-line ESPS manual pages
+(i.e., this is where \fIeman\fP(1\-\s-1ESPS\s+1) looks).
+Subdirectories include: 
+.ip man/man1:
+Manual pages for user-level programs.  
+.ip man/man3:
+Manual pages for library routines.
+.ip man/man5:
+Manual pages for file formats.
+.ip
+There are also associated man/cat? directories for the 
+formatted manual pages (created by \fIeman\fP).
+.ip newdemos:
+A collection of subdirectories containing demos that are newer (of course!)
+than those under "demo" and either demonstrate or utilize some of the more
+recent additions to ESPS.
+.ip pub:
+A collection of non-Entropic software whose authors permit free distribution
+and use; we pass these programs on free as a courtesy to our customers.
+.ip src_examples:
+Some illustrative sample source code
+that is available to those without an ESPS source license
+for use as models in writing their own programs using the ESPS library.
+.ip xview:
+Some non-Entropic files that are part of the OpenLook distribution,
+including the window manager, the
+.i cmdtool
+program, and some fonts that you may need to install if you are not
+running OpenLook.
+.sh 1 "Position Independence"
+.lp
+As mentioned, since release 4.1, the root of the ESPS directory tree
+does not have to be accessible as /usr/esps;
+all that is necessary is to make sure
+that the Unix environment variable ESPS_BASE
+contains the root location, whatever it may be.
+Programs that need to access directories in the tree
+use the environment find the root.
+Further provisions have been made
+to allow customizing of the search paths for certain types of files.
+For example, when
+.i read_params (3\-\s-1ESPS\s+1)
+is searching for a parameter file
+given to a program with the \fB\-P\fP option,
+its default behavior is to search first in the current working directory
+and then in the directory $ESPS_BASE/lib/params in the ESPS tree.
+However, if the environment variable ESPS_PARAMS_PATH is set,
+this default search path (".:$ESPS_BASE/lib/params") is overridden,
+and the value of ESPS_PARAMS_PATH is used instead.
+The key to this flexibility is the ESPS utility function
+.i find_esps_file (3\-\s-1ESPS\s+1)
+and a set of macros defined in $ESPS_BASE/include/esps/epaths.h.
+For example, if
+.i param
+is a string containing an argument to \fB\-P\fP, the C statement
+.vS
+.nf
+
+    full_path = FIND_ESPS_PARAM_FILE((char *) NULL, param);
+
+.vE
+.fi
+suffices to get a full path name to the right parameter file
+and assign it to the string variable
+.i full_path.
+The macro invocation on the right-hand side expands to
+.vS
+.nf
+
+    find_esps_file((char *) NULL, param,
+		    ".:$ESPS_BASE/lib/params", "ESPS_PARAMS_PATH")
+
+.vE
+.fi
+and the function does the rest.
+See the manual page for
+.i find_esps_file (3\-\s-1ESPS\s+1)
+for more details, and look in $ESPS_BASE/include/esps/epaths.h
+for the full set of default paths and environment variables.
+.sh 1 "ESPS Compilation Environment"
+.lp
+The ESPS environment is a set of variables that specify
+compilation options and the locations of key esps directories.
+To aid programmers who are working on ESPS programs, we provide scripts
+.i ecc (1\-\s-1ESPS\s+1),
+.i elint (1\-\s-1ESPS\s+1),
+and 
+.i emake (1\-\s-1ESPS\s+1).
+The first two of these call
+.i cc (1)
+and
+.i lint (1)
+with flags identifying the location of ESPS include files and libraries.
+The 
+.i emake
+script calls 
+.i make (1)
+with flags that pass appropriate environment variables.
+The script has the following form,
+though this is a greatly abbreviated verson;
+the variables are listed in full further down.
+.SM .2i
+.lp
+.(b
+.nf
+.ft CW
+#! /bin/sh
+exec make \\\\
+BINDIR=`get_esps_base`/bin \\\\
+LINT="lint -b -c " \\\\
+LINTFLAGS=" -I`get_esps_base`/include -DSUN4" \\\\
+MANMOD=0644 \\\\
+PARAMDIR=`get_esps_base`/lib/params \\\\
+PROGCFLAGS=" -DSCCS -I`get_esps_base`/include -DSUN4 -DOS4" \\\\
+PROGMOD=0755 \\\\
+SINC=`get_esps_base`/include/esps \\\\
+STRIP="strip" \\\\
+LINTLIB=`get_esps_base`/lib/llib-lespsg.ln \\\\
+$*
+.ft LR
+.fi
+.)b
+.RM
+.lp
+Note that directory names in the ESPS tree are given in terms of the value
+returned by a function
+.i get_esps_base (1\-\s-1ESPS\s+1);
+this returns the value of the environment variable ESPS_BASE, if defined,
+and otherwise returns "/usr/esps" as a default.
+.lp
+Users of 
+.i emake (1\-\s-1ESPS\s+1)
+should start with an ESPS makefile that looks like this:
+.SM .2i
+.lp
+.nf
+.ft CW
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)guide.vme	3.6 1/22/93 ERL
+# 
+# Makefile for: foo
+#
+# Written by:  
+# Checked by:
+# Revised by:
+ 	
+CFLAGS = -g $(PROGCFLAGS) 
+
+OBJS = foo.o
+SRCS = foo.c
+PROGNAME = foo
+MANNAME = foo.1
+DEFPARAM = Pfoo
+
+
+$(PROGNAME): $(SPSLIB) $(OBJS)
+	cc  $(CFLAGS) $(OBJS) $(SPSLIB) -lm -o $(PROGNAME)
+
+$(OBJS): $(SINC)/esps.h 
+
+install: $(PROGNAME)
+	$(STRIP) $(PROGNAME)
+	-mv -f $(BINDIR)/$(PROGNAME) $(OLDBIN)/$(PROGNAME)
+	-chmod $(PROGMOD) $(OLDBIN)/$(PROGNAME)
+	mv -f $(PROGNAME) $(BINDIR)/$(PROGNAME)
+	chmod $(PROGMOD) $(BINDIR)/$(PROGNAME)
+	-diffmk $(MANDIR)/man1/$(MANNAME) $(MANNAME) man.diff
+	@echo diffmked man page left in man.diff
+	-rm $(MANDIR)/man1/$(MANNAME)
+	cp $(MANNAME) $(MANDIR)/man1/$(MANNAME)
+	chmod $(MANMOD) $(MANDIR)/man1/$(MANNAME)
+# install the default parameter file
+	-rm -f $(PARAMDIR)/$(DEFPARAM)
+	cp $(DEFPARAM) $(PARAMDIR)/$(DEFPARAM)
+	chmod $(LIBMOD) $(PARAMDIR)/$(DEFPARAM)
+
+clean:	
+	-rm -f $(OBJS) $(PROGNAME) core 
+	
+lint:	$(SRCS) 
+	$(LINT) $(LINTFLAGS) $(SRCS) $(LINTLIB) > lint
+
+test:	$(PROGNAME)
+	sh $(PROGNAME).test
+
+.fi
+.RM
+.ft LR
+.lp
+An example makefile may be found on line;
+the location is <\fI$ESPS_BASE/lib/makefile.ex\fP>.
+.lp
+All of the macros used are passed in as environment variables or by
+.i emake (1\-\s-1ESPS\s+1),
+except for CFLAGS, which is passed in as PROGCFLAGS.
+This is done so that the programmer can add additional options,
+such as \-g or \-O.
+.lp
+Here is a full list of the esps compilation environment (most of these
+are not usually dealt with explicitly by users):
+.SM .25i
+.lp
+.nf
+.ta 1.5i
+
+ADDEV		The pathname of the analog-to-digital converter device.
+ADTYPE		The name of the ADDEV.  (See equipment codes in
+		<\fIesps/header.h\fP>.)
+BINDIR		The directory for esps user level executables.
+CC		The C compiler command (e.g. cc).
+CLKDEV		The data acquisition system clock device.
+DADEV		The digital-to-analog converter device.
+DEFAULT_PAGER	The system wide default pager program (e.g. more).
+EHDRLIB		Header library for linking with ESPS functions.
+EQN		Filter for typesetting equations (e.g. eqn).
+EXVLIB		Library of ESPS functions that use the XView toolkit.
+FLOAT		The cc option switch for the floating point type.
+HMOD		File access mode for header library functions.
+LIBCFLAGS 	The CFLAGS for use with the library C files.
+LIBDIR		The directory for the esps object library and lint library.
+LIBFFLAGS	Flags for compiling library functions in Fortran.
+		Currently unused.
+LIBMOD		The file access mode of the items that go into the library.
+LIBNAME		Name of the esps library binary.  Used by library makefile.
+LINK		Command to link binaries (e.g., "ln -s").
+LINT		The lint command to use (e.g. "lint -b -c").
+LINTFILE	Name of the lint library source file.  Used by echeck.
+LINTFLAGS	The flags to use with lint
+LINTLIB		The name of the lint library
+LLIBNAME	Name of the lint library binary. 
+MACH		The code for the machine type (M5600, SUN3, etc)
+MANDIR		The parent of the man page directory (e.g. $ESPS_BASE/man)
+MANMOD		The access mode of the man pages
+MAXAD		The max value from this A/D
+MAXDA		The max value from this D/A
+MCD		Command for displaying GPS output from plot programs
+		(e.g. xmcd)
+MINAD		The min value from this A/D.
+MINDA		The min value from this D/A.
+MKLINTLIB	The command to make the lint libary. Used only by the
+		library makefile.
+OLDBIN		The place for old versions of esps binaries
+OLIBCFLAGS	``Other'' CFLAGS, used for a few library functions.
+PARAMDIR	Directory of default parameter files (e.g.
+		$ESPS_BASE/lib/params).
+PLOTCOMMAND	Command for plotting Tektronix-style output from plot
+		programs.  (e.g. esps_plot)
+PLOTDIR		The directory for plotting programs that are called by
+		cover programs.
+PROGCFLAGS	The CFLAGS for use in compiling C programs.  Contains a
+		-I option with the correct path to the esps include
+		files.
+PROGFFLAGS	Flags for compiling Fortran programs.  Currently unused.
+PROGMOD		The access mode of esps user programs.
+RANLIB		Command for converting a library to a form that loads more
+		rapidly.  (e.g. ranlib)
+SINC		The directory of esps include files.
+SPOOL_CMD	Command for spooling files to a printer (e.g. ipr).
+SPSDIR		The parent esps install directory.
+SPSLIB		The full paths of all esps libraries.  Used for programs
+		that require an ESPS license to run (cf. WSPSLIB).
+STRIP		equal to "-strip" if binaries are to be stripped. see
+		strip(1).  
+VTROFF		The name of the program to typeset man pages.
+WAVESDIR	Files related to the waves+ program.
+WHDRLIB		Header library for linking with waves+-related programs.
+WINDOWS		Compiler option selecting a window system.  (e.g. -DXWIN)
+WINLIBS		Loader option selecting window-system libraries.
+		(e.g. -lX11)
+WSPSLIB		Used instead of SPSLIB for programs that will run under
+		either a waves or an ESPS license.
+XVIEW_B_OPT	C compiler option that specifies whether the XView object
+		libraries are loaded statically (non-shared) or dynamically
+		(shared).
+XVIEW_INC	Directory of include files for programs that use XView.
+XVIEW_LIB	Loader options selecting XView libraries.
+XWIN		Use X windows?  (e.g. YES or NO)
+
+.re
+.fi
+.RM
+.lp
+SPSLIB normally contains names of three libraries:
+the library for XView-dependent ESPS functions,
+the general ESPS library for header-related functions,
+and the general library for other functions (e.g. 
+"$ESPS_BASE/lib/libexv.a $ESPS_BASE/lib/libhdre.a $ESPS_BASE/lib/libespsg.a").
+WSPSLIB differs in having "libhdrw.a" in place of "libhdre.a".
+.sh 1 "Manual Pages"
+.lp
+Every ESPS program must have a \s-1UNIX\s+1-style manual page.
+In most cases,
+this should be written and reviewed before the program itself is
+written.  ESPS manual pages have several sections in addition to 
+those that are conventional for \s-1UNIX\s+1, namely the following:
+.nf
+.ta .75i
+
+	ESPS PARAMETERS
+	ESPS COMMON
+	ESPS HEADERS
+	FUTURE CHANGES
+
+.re
+.fi
+The "ESPS PARAMETERS" section lists the parameters that are read from the
+parameter or common file and gives their types.  The section should
+explain how the program uses each of these parameters.  
+.lp
+The "ESPS COMMON" section describes how the ESPS Common file is
+processed (e.g., whether the \fIfilename\fP in Common is required to
+match a particluar file name), and what items, if any, are written to
+the Common file.  
+.lp
+The "ESPS HEADERS" section lists
+the generic header items and other header items that are read by the program,
+and it explains how the program depends on them.
+This section also lists the header items that are written by the program.  
+.lp
+The "FUTURE CHANGES" section is intended to record ideas for enhancing
+the program.  This section should be included even when the manual 
+page is written before the program, since its contents may affect 
+the program structure.  
+.sh 1 "Command Line Format and Pipelines"
+.lp
+The command line for any ESPS program will be
+.(l
+\fIprog options input-files output-files
+.)l
+Options, if present, will be of the standard
+\s-1UNIX\s+1 form (
+.b \-x
+,
+.b \-x
+\fI\ text,\fR or 
+\fB\-x\fP\fItext\fR
+).
+.lp
+By default, the parameter file for the program is the file "params"
+in the current directory.  All ESPS programs that process parameters will
+recognize the option 
+.(l
+\fB\-P \fIparamfile\fR,
+.)l
+which can specify an alternative parameter file name.
+.lp
+If the output of the program is ASCII text then the default output is
+standard output.   This can be redirected by the user, if desired, by
+using the standard \s-1UNIX\s+1 shell facilities.    If the output of the
+program is binary data, then an output file must be specified.
+If a minus sign is given, then standard output is
+used.  The intent here is to reduce the chance that a
+user will accidently send binary data to his terminal.
+Any source file name may be replaced by a minus sign, meaning that this
+source is read from the standard input (if a program takes multiple source
+files, only one may be read from standard input, however). 
+Standard input or standard output are never to be the default if
+a binary data file is involved.
+.lp
+Where reasonable, pipelines should be allowed.  If a program performs
+random I/O on its input, that fact should be included in the user
+documentation. If a program reads from a pipe, it writes the string
+"<stdin>" as the source file name in the output header.  Note that 
+programs that read ESPS files from pipes can not depend on the header
+item common.ndrec\*-see ESPS(5\-\s-1ESPS\s+1).  
+.lp
+Programs that perform plots or dumps, or that compute statistics, have
+different syntax. For one thing, they do not accept parameter files. They
+are invoked by lines of the form
+.(l
+\fIprog options src1 [src2 ...]\fR
+.)l
+The output should go to the standard output.  Where reasonable, the
+default behavior should be to plot on the user's screen.  Also,
+device-specific output should be specifiable with the \fB\-T\fR
+switch on the command line.  Where possible, values for the \fB\-T\fR
+option will agree with those of the \s-1UNIX\s+1 \fIplot(1)\fR
+command where possible.  
+Common ESPS supported options here are \fBgps, mcd, tek, \fP and
+\fBimagen\fP.  
+.sh 1 "Standard Option Letters"
+.lp
+When appropriate, ESPS programs should use the the following standard
+options:
+.nf
+.ta .5i
+
+	\fB\-c\fP = comment
+	\fB\-f\fP = fieldname 
+	\fB\-g\fP = gain
+	\fB\-h\fP = history file
+	\fB\-k\fP = clock, keyword
+	\fB\-m\fP = mode, method
+	\fB\-n\fP = number, value
+	\fB\-r\fP = records
+	\fB\-s\fP = seconds
+	\fB\-t\fP = text, title, data type
+	\fB\-u\fP = unvoiced speech
+	\fB\-v\fP = voiced speech/records
+	\fB\-w\fP = width, window
+	\fB\-x\fP = debug level 
+	\fB\-y\fP = y-axis 
+	\fB\-z\fP = suppress 
+	\fB\-P\fP = parameter file name
+	\fB\-T\fP = device type
+	\fB\-X\fP = x-axis
+	\fB\-Y\fP = y-axis
+	\fB\-Z\fP = suppress
+
+.re
+.fi
+.lp
+The \fB\-x\fP and \fB\-P\fP options in particular are nearly universal.
+.lp
+The \fB\-r\fP option is commonly used to specify a range of input records,
+counting from 1 for the first record of a file.
+Programs that read sampled data
+used to use \fB\-p\fP ("points") in a similar way;
+however, current practice is to favor \fB\-r\fP,
+and programs that accept \fB\-p\fP and \fB\-r\fP as synonyms
+do so for the sake of backward compatibility.
+The \fB\-s\fP option is commonly used to specify an input range in seconds.
+For interpreting the arguments of \fB\-r\fP and \fB\-s\fP,
+special library support is available:
+.i range_switch (3\-\s-1ESPS\s+1u),
+.i lrange_switch (3\-\s-1ESPS\s+1u),
+.i frange_switch (3\-\s-1ESPS\s+1u),
+.i trange_switch (3\-\s-1ESPS\s+1u).
+.lp
+The \fB\-f\fP option often accepts an extended "field name" that includes
+a bracketed specification of a subset of the field elements; see
+.i fld_range_switch (3\-\s-1ESPS\s+1u),
+.i grange_switch (3\-\s-1ESPS\s+1u).
+.sh 1 "Command Line Options and Parameter File Values"
+.lp
+In general analysis conditions are specified in a file read by the
+ESPS program (see reference (2) for details of the parameter file).  
+However, if the programmer decides that certain parameter values will
+change often from run to run, then these values can be specified on
+the command line as options.  When used, command line values will
+override values in the parameter file given for the variable.
+Analysis parameter values should be stored in the output file header,
+using either built-in header fields or generics; this holds whether the 
+parameters were specified on the command line or in the parameter file.  
+For compatibility with current ESPS, programs should be 
+written so that all parameters are obtained from the parameter file 
+(with possible command-line overrides).  
+.lp
+For programs that process parameter and common files, the manual 
+page must include the sections "ESPS PARAMETERS" and "ESPS COMMON".  
+The first of these should document all of the parameters that are 
+read from the parameter file.  The second should explain how ESPS common
+is handled by the program (ignored, processed, or processed with 
+a filename restriction\*-see [3]), and it should document any 
+values that are written to ESPS common.  
+.lp
+In order to allow new analysis condition options to be added for
+testing or experiments, without modifying the data file headers
+immediately, but still record all analysis conditions in the output
+file header, all ESPS programs will store the command line that invoked
+them in the comment field of the of the output file header.
+A library function, 
+.i get_cmd_line
+(3\-\s-1ESPS\s+1)
+returns the command line as a string for inclusion in the header.
+.sh 1 "Internal Structure of ESPS Programs"
+.lp
+Programs should conform to the following general structure:  
+.nf
+.ta 1i
+
+	include files
+	defines
+	system functions and variables
+	external ESPS functions and variables
+	global variables (not too many please)
+	main program
+	functions
+
+.re
+.fi
+All ESPS programs go through similar steps at the beginning and at the end.
+First, the options, if any, are parsed using the \fIgetopt(3)\fR subroutine
+(note:  \fIgetopt\fR is standard in System V.  We have a public-domain
+version in the ESPS library).  A \s-1USAGE\s+1 message should be printed if
+the command line is incorrect.  Source file headers are read using the
+\fIread_header\fR(3\-\s-1ESPS\s+1) routine and the various generic header
+access routines:
+.i genhd_list
+(3\-\s-1ESPS\s+1), 
+.i genhd_type
+(3\-\s-1ESPS\s+1), and
+.i get_genhd
+(3\-\s-1ESPS\s+1).  The routine \fIeopen\fP(3\-\s-1ESPS\s+1) can be
+used to facilitate file opening, header reading, and file type
+checking.  Then \fIread_params\fR(3\-\s-1ESPS\s+1) is called to read
+the parameter and common files and create a symbol table; needed
+parameters are checked and retrieved from the symbol table using the
+symbol table access routines (\fIgetsym_X\fR(3\-\s-1ESPS\s+1)).  The
+routine \fIsymerr_exit\fR(3\-\s-1ESPS\s+1) is called after all
+parameter values are retrieved; it cleans up and exits after any
+symbol table errors.  Parameter values and header values are checked
+for consistency (documentation for individual programs will describe
+the checks performed), and the program exits if the any source files
+are the wrong type or if they are inconsistent with one another.
+For details about programming procedures for parameter and common files,
+see [2].
+.lp
+Record keeping is performed using
+.i add_source_file,
+.i get_cmd_line,
+and 
+.i add_comment
+(3\-\s-1ESPS\s+1). 
+.lp
+Output headers are created with
+.i new_header
+(3\-\s-1ESPS\s+1), 
+.i copy_header
+(3\-\s-1ESPS\s+1), and the generic header routines
+\fIadd_genhd\fR_X(3\-\s-1ESPS\s+1).  In most cases, all fields of the
+output file header will be known before any processing is performed.
+If so, the output header(s) is(are) written by calling
+\fIwrite_header\fR(3\-\s-1ESPS\s+1) and any data to be written by the
+program is appended.  If this is not possible, output is directed to
+a temporary file, then the header is written, and then the temporary
+file is dumped to the output and deleted.  This method is preferred
+to patching up header locations by doing disk seeks since it allows
+the output to be a pipe.  Definition of FEA file records using
+.i add_fea_fld
+(3\-\s-1ESPS\s+1)
+must also take place before the header is written.  
+.lp
+All programs return zero exit status if the program's operation was
+successful, and nonzero exit status if an error occurred, so shell scripts
+are notified of the error condition.
+.sh 1 "Compile-time vs. Run-time Symbols"
+.lp
+Many analysis conditions are given as character strings for names of
+methods, such as AUTO_SAM, HAMMING, LPC10, etc.    These strings are
+associated with C compile-time \fB#define\fR values.  For example, in
+.i <header.h>
+there is the statement
+.vS
+.nf
+
+    #define HAMMING 1
+
+.fi
+.vE
+The value that actually gets stored to identify the method in this
+case is 1, but the programs all reference that value as HAMMING.
+There is no built-in connection between the run-time reading of the
+parameter file and the compile-time symbol HAMMING.  Of course, we
+don't want to read the integer 1 from the parameter file (or command
+line) in this case, and we don't want to see it in listings from
+\fIpsps\fP(1\-\s-1ESPS\s+1).  To make the connection between the compile-time symbols
+and the run-time reading of the parameter file, there are arrays that
+contain these symbols.  A function,
+.i lin_search
+(3\-\s-1ESPS\s+1), searches these arrays and returns the index if the symbol
+is found.  By using these arrays and this function, the programmer
+can easily read character strings from the parameter file or the
+command line and get the value associated with that string for
+comparison against the compile-time symbols.  See
+.i lin_search
+(3\-\s-1ESPS\s+1) and
+.i lin_search2
+(3\-\s-1ESPS\s+1) for details.
+.lp
+These arrays can also be used to return the string associated with a
+particular compile-time symbol.  For example:
+.(l
+printf("Method is %s",method_array[method_code]);
+.)l
+will print the symbol associated with the current value of 
+.i method_code.
+The values for many of these arrays are stored in 
+.i <header.h>
+or .\|.\|.\|general/src/lib/methods.c.
+Others can be found by reading the
+relevant program documentation.  
+.sh 1 "ESPS Include Files and Library Functions"
+.lp
+Include files for ESPS programs are stored in a directory 
+.i $ESPS_BASE/include/esps.  
+Programs include such files by means of a line of the form
+.vS
+.nf
+
+     #include <esps/include_file.h>
+
+.fi
+.vE
+The install script makes sure that ESPS compilations are done with
+the appropriate \fB\-I\fP flag to cause the ESPS include directory to 
+be searched before the standard locations.  Here are some of the
+most important ESPS include files:
+.ip anafea.h 10
+Includes declarations needed for FEA_ANA files;
+.ip constants.h 10
+Includes some useful constant declarations, in particular, PI.
+.ip epaths.h 10
+Convenient macros for using
+.i find_esps_file (3\-\s-1ESPS\s+1)
+to locate files at standard locations in the ESPS directory tree
+or at alternative locations specified by standard environment variables.
+This file is included automatically by <esps.h>.
+.ip esps.h 10
+Includes some useful macro definitions and includes
+epaths.h, ftypes.h, header.h, limits.h, param.h, and spsassert.h.
+All ESPS programs should include this file, and not
+make specific reference to those files.
+.ip exview.h 10
+Main include file for libxv.
+Includes exv_keys.h, exv_icon.h, exv_colors.h, exv_bbox.h, and exv_func.h,
+which should not be included directly by programs that include this file.
+.ip fea.h 10
+Includes declarations for FEA files.  
+.ip feafilt.h 10
+Includes declarations for FEA_FILT files.
+.ip feasd.h 10
+Includes declarations for FEA_SD files.
+.ip feaspec.h 10
+Includes declarations for FEA_SPEC files.
+.ip feastat.h 10
+Includes declarations for FEA_STAT files.  
+.ip ftypes.h 10
+Includes declarations for file type constants.
+This file is included automatically by <esps.h>.  
+.ip header.h 10
+Includes declarations for header structure, header access routines
+and character arrays containing 
+.i methods
+and
+.i codes
+values for use with 
+.i lin_search. 
+This file is included automatically by <esps.h>.  
+.ip limits.h 10
+Limits on values representable in various C numeric data types.
+See "Defined Constants for Numerical Limits" below.
+This file is included automatically by <esps.h>.
+.ip param.h 10
+Includes declarations for parameter file access routines.
+This file is included automatically by <esps.h>.
+.ip spsassert.h 10
+Definition of the macro
+.i spsassert (3\-\s-1ESPS\s+1u)
+This file is included automatically by <esps.h>.
+.ip scbk.h 10
+Includes declarations for SCBK files.  
+.ip unix.h 10
+Declarations for the standard Unix library functions with
+.i ifdef s
+for machine type.
+Programs should include this file and not define the Unix functions directly,
+since the return types vary from implementation to implementation,
+and a declaration that is correct for one may fail on another.
+.ip vq.h 10
+Includes declarations for FEA_VQ files.  
+.lp
+In most cases, an ESPS program will include \fI<esps/esps.h>\fR and one
+or more type specific include files, depending on the type of data
+files the program handles.  See the Section 5 manual pages [4].  
+.sh 1 "Defined Constants for Numerical Limits"
+.lp
+ESPS programs sometimes need to be written in terms of the 
+limits on the values representable in various C numeric data types.
+A set of defined constants giving the maximum and minimum 
+values for various data types is available and should be 
+used when appropriate.  Here are the names of the defined 
+constants and typical values for a machine with IEEE floating point:
+.nf
+.ta .5i 2i
+
+	CHAR_MAX	127
+	CHAR_MIN	-128
+	SHRT_MAX	32767
+	SHRT_MIN	-32768
+	LONG_MAX	2147483647
+	LONG_MIN	-2147483648
+	FLT_MAX	(float)	3.40282346638528860e+38
+	DBL_MAX		1.79769313486231470e+308
+
+.re
+.fi
+.lp
+These are available in programs that contain the line
+.vS
+.nf
+
+    #include <esps/limits.h>
+
+.vE
+.fi
+and since that line is in the ESPS include file esps.h,
+the constants are also automatically available in programs that contain
+.vS
+.nf
+
+    #include <esps/esps.h>
+
+.vE
+.fi
+Instead of containing private definitions like
+.vS
+.nf
+
+    #define MAX_FLOAT 1.0e37
+
+.vE
+or
+.vS
+
+    #define REALLY_BIG_NUMBER 1.0e30
+
+.vE
+.fi
+ESPS programs should simply refer to an appropriate constant, such as
+FLT_MAX, from the list above.  They should also avoid referring to
+similar definitions in the system include file /usr/include/values.h;
+on Masscomp systems, for example, some of the values in values.h
+cannot be processed correctly by some versions of the C compiler.  
+.lp
+The following names are reserved for future expansion of
+esps/limits.h:  INT_MIN, INT_MAX, FLT_EPSILON, DBL_EPSILON, FLT_MIN,
+DBL_MIN.  (FLT_EPSILON is intended to be the smallest positive
+\fIx\fP of type \fIfloat\fP such that 1.0 + \fIx\fP != 1.0.  FLT_MIN
+is intended to be the minimum positive value of type \fIfloat\fP\*-a
+small positive number, not a big negative number.  DBL_EPSILON and
+DBL_MIN are the analogous quantities for type \fIdouble\fP.)  These
+names, and the ones already defined in esps/limits.h, are taken from
+a draft of the forthcoming ANSI C standard.  Under an ANSI
+implementation all these constants and a number of others could be
+made available by making esps/limits.h a two-line file containing
+.nf
+
+    \fB#include\fP <limits.h>
+    \fB#include\fP <float.h>.
+
+.fi
+.sh 1 "ESPS File Types"
+.lp
+The file
+.i ftypes.h ,
+as described above, defines a symbol for various ESPS file types.
+These symbols all begin with FT_ ;
+for example, ESPS feature files have the type FT_FEA
+stored in the header type field.
+FEA file (type FT_FEA) also have subtype codes, such as
+FEA_ANA and FEA_VQ.  
+The various specialized file types other than FT_FEA are obsolescent
+and have been replaced with subtypes of FT_FEA.
+For example, former special file types
+for sampled data (FT_SD) and spectrum data (FT_SPEC)
+have been superseded by FEA subtypes FEA_SD and FEA_SPEC.
+In the case of sampled-data files, provisions have been made to allow
+programs that read FEA_SD files
+to automatically accept the old FT_SD files as well\*-see [6].
+.sh 1 "Type Specific I/O"
+.lp
+For each of the defined data file types and FEA subtypes,
+there is a set of data access functions
+(see the manual entries for each type or subtype in reference [4]).
+For example for FEA_SPEC(5\-\s-1ESPS\s+1) files, one can use
+.i allo_feaspec_rec (3\-\s-1ESPS\s+1u)
+to allocate memory for a FEA_SPEC record
+(the size of the record depends on values in the data file header),
+.i get_feaspec_rec (3\-\s-1ESPS\s+1u)
+to read a FEA_SPEC record from a file into the FEA_SPEC record structure, and
+.i put_feaspec_rec (3\-\s-1ESPS\s+1u)
+to write a FEA_SPEC data structure onto a file.   
+.lp
+Some older programs use a function
+.i get_gen_recd (3\-\s-1ESPS\s+1u)
+that supports non-type-specific data-file input 
+by reading the next record from an ESPS data file into a vector;
+access to a field element requires knowledge
+of the starting location of the field within the vector.
+This style of file access is obsolete now that FEA subtypes have replaced
+file types other than FT_FEA.
+.lp
+New programs should use the general FEA file facilities,
+which use the self-documenting property of FEA files and,
+among other things, allow access to fields within a record by name.
+See [3] for information on how to program with FEA files,
+how to create new FEA subtypes for general or private use,
+and how to create extensions of existing FEA subtypes.
+.sh 1 "NULL POINTERS"
+.lp
+Whenever NULL is passed as a function argument,
+it must be cast to something.  No exceptions.
+(Otherwise it is liable to be passed as an integer 0,
+and on some machines a null pointer may have a different size or
+representation.)
+.lp
+NULL pointers can be de-referenced on \s-1MASSCOMP\s+1s, but not 
+on Suns and many other machines.
+Accordingly, there should be no such de-references in ESPS code. 
+.sh 1 "Example"
+.lp
+Here is a sketch of an ESPS program (this does 
+.i not
+correspond exactly to the current ESPS program
+\fIfft\fP(1\-\s-1ESPS\s+1)):
+.ds - \-
+.vS
+.nf
+
+    /*
+     * system include files
+     */
+    #include <stdio.h>
+    /*
+     * include files
+     */
+    #include <esps/esps.h>
+    #include <esps/feasd.h>
+    #include <esps/feaspec.h>
+    /*
+     *defines
+     */
+    #define Fprintf (void)fprintf
+    #define SYNTAX USAGE( \
+    "fft [-o order] [-{pr} range][-x debug_level] [-P param] file.sd file.spec")
+    /*
+     * external functions
+     */
+     . . .
+    /*
+     * main program
+     */
+    main(argc, argv)
+        int   argc;
+        char  **argv;
+    {
+        char  *ProgName = "fft";
+        char  *Version = "1.19";
+        char  *Date = "2/20/90";
+	char  *param_file = NULL;	/* parameter file name */
+        FILE  *ifile = stdin,
+              *ofile = stdout;		/* input and output file streams */
+        struct header	*ih, *oh;	/* input and output file headers */
+        char  *iname, *oname;		/* input and output file names */
+        struct feaspec	*spec_rec;	/* record for spectral data */
+        struct feasd	*sd_rec;	/* record for input data */
+        char  *prange = NULL;		/* string to specify range (-p, -r) */
+        int   p_flag = 0;		/* flag for range option */
+        long  nframes = 1;		/* number of frames to process */
+        float *x, *y;			/* arrays for data and fft of data */
+        int   more = 1;			/* flag to indicate more sampled data */
+        int   err;			/* return code from init_feaspec_hd */
+        float sf;			/* sampling frequency */
+        . . . 
+        /*
+         * process command line options
+         */
+        while ((ch = getopt(argc, argv, "o:p:r:x:P:")) != EOF)
+            switch (ch) {
+                case 'o':
+                    order = atoi(optarg);
+                    break;
+                case 'p': 
+                case 'r':
+                    prange = optarg;
+                    p_flag++;
+                    break;
+                case 'x': 
+                    debug_level = atoi(optarg);
+                    break;
+                case 'P':
+                    param_file = optarg;
+                    break;
+                default: 
+                    SYNTAX;
+                    break;
+            }
+        /*
+         * open input FEA_SD file 
+         */
+        if (optind < argc) 
+            iname = eopen(ProgName, argv[optind++],
+                                "r", FT_FEA, FEA_SD, &ih, &ifile);
+        else {
+            Fprintf(stderr,
+                "%s: no input sampled-data file specified.\n", ProgName);
+            SYNTAX;
+        }
+        /*
+         * open output FEA_SPEC file
+         */
+        if optind < argc) 
+            oname = eopen(ProgName, argv[optind++],
+                                "w", NONE, NONE, &oh, &ofile);
+        else {
+            Fprintf(stderr, "%s: no output file specified.\n", ProgName);
+            SYNTAX;
+        }
+        /*
+         * read range from ESPS common, if range option not used; 
+         * the filename in common must match that of the input sampled-data file
+         */
+        if (!p_flag) read_params(param_file, SC_CHECK_FILE, iname);
+        get_range(&first, &last, prange, p_flag);
+        symerr_exit();  /* exit if any of the parameters were missing */
+        . . .
+        nan = last - first + 1;
+        length = ROUND(pow(2.0, (double) order));
+        /*
+         * allocate input record and set up pointer to data
+         */
+        sd_rec = allo_feasd_recs(ih, FLOAT, length, (char *) NULL, NO);
+        spsassert(sd_rec, "Can't allocate record for input data");
+        x = (float *) sd_rec->data;
+        y = (float *) malloc((unsigned) length * sizeof(float));
+        spsassert(y, "Can't allocate space for imaginary part");
+
+        /*
+         * create output FEA file header and fill in universal portion
+         */
+        oh = new_header(FT_FEA);
+        oh->common.tag = YES;
+        (void) strcpy(oh->common.prog, ProgName);
+        (void) strcpy(oh->common.vers, Version);
+        (void) strcpy(oh->common.progdate, Date);
+        oh->variable.refer = iname;
+        add_source_file(oh, iname, ih);    
+        add_comment(oh, get_cmd_line(argc, argv));
+        /*
+         * Set up FEA_SPEC header
+         */
+        sf = *get_genhd_d("record_freq", ih);
+        err = init_feaspec_hd(oh, YES, SYM_EDGE, ST_DB, YES, 
+                (length/2+1), SPFRM_FIXED, (float *) NULL,
+                sf, length, FLOAT),
+        spsassert(!err, "Error filling FEA_SPEC header");
+
+        /*
+         * add generic header items
+         */
+        *add_genhd_l("fft_length", (long *) NULL, 1, oh) = length;
+        /*
+         * write FEA_SPEC file header and allocate FEA_SPEC record
+         */
+        write_header(oh, ofile);
+        spec_rec = allo_feaspec_rec(oh, FLOAT); 
+        /*
+         * move to starting position in FEA_SD file
+         */
+        if (first > 1) skiprec(ifile, first - 1, size_rec(ih));
+        /*
+         * main loop
+         */
+        position = first;
+        nframes = 1 + (nan - 1)/length;
+
+        for (i = 0; i < nframes && more; i++) {
+            /*
+             * initialize data arrays
+             */
+            for (j = 0; j < length; j++) x[j] =  y[j] = 0.0;
+            /*
+             * get sampled data and perform fft
+             */
+            if (get_feasd_recs(sd_rec, 0L, length, ih, ifile) == 0) {
+                more = 0;
+                Fprintf(stderr, "%s: WARNING, EOF reached in input file\n", ProgName);
+            }
+            get_fft(x, y, order);
+            /*
+             * fill in and write out spectral record
+             */
+            spec_rec->tag = first;
+            for (j = 0; j < (length/2+1); j++)
+                spec_rec->re_spec_val[j] = 10 * log10(x[j]*x[j] + y[j]*y[j]);
+            spec_rec->tag = position;
+            position += length;
+            put_feaspec_rec(spec_rec, oh, ofile);
+        }
+    
+    /*
+     * put FEA_SD file info into ESPS common
+     */
+        if (strcmp(iname, "<stdout>") != 0) {
+            (void) putsym_s("filename", iname);
+            (void) putsym_s("prog", ProgName);
+            (void) putsym_i("start", (int) first);
+            (void) putsym_i("nan", (int) nan);
+        }    
+        exit(0);
+    }
+
+    void
+    get_range(srec, erec, rng, rflag)
+    long *srec;			/* starting record */
+    long *erec;			/* end record */
+    char *rng;			/* range string from range option */
+    int rflag;			/* flag for whether range option used */
+    {
+        *srec = 1;
+        *erec = LONG_MAX;
+        if (rflag) 
+    	lrange_switch (rng, srec, erec, 1);	
+        else {
+    	if(symtype("start") != ST_UNDEF) *srec = getsym_i("start");
+    	if(symtype("nan") != ST_UNDEF) *erec = *srec + getsym_i("nan") - 1; 
+        }
+    }
+    
+.fi
+.vE
+        
+        

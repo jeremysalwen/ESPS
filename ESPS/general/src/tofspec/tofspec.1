@@ -1,0 +1,427 @@
+.\" Copyright (c) 1988-90 Entropic Speech, Inc.
+.\" Copyright (c) 1991-93 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)tofspec.1	1.10 3/31/97 ESI/ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.if n .ds - ---
+.if t .ds - \(em\h'-0.2m'\(em
+.TH TOFSPEC 1\-ESPS 3/31/97
+.SH "NAME"
+tofspec \- transforms data from arbitrary FEA field to FEA_SPEC file
+.SH "SYNOPSIS"
+.B tofspec
+[
+.BI \-d
+] [
+.BI \-f " fea_field"
+] [
+.BI \-i " input_range"
+] [
+.BI \-o " output_range"
+] [
+.BI \-r " record_range"
+] [
+.BI \-s " sf"
+] [
+.BI \-v " freqs"
+] [
+.BI \-x " debug_level"
+] [
+.BI \-F " freq_format"
+] [
+.BI \-P " params"
+] [
+.BI \-R
+] [
+.BI \-S
+]
+.I "input output"
+.SH "DESCRIPTION"
+.PP
+.I Tofspec
+accepts an arbitrary FEA file \fIinput\fP and produces a FEA_SPEC file
+\fIoutput\fP.  The "power spectrum" in the FEA_SPEC output \*- i.e.,
+the contents of the re_spec_val field \*- is taken from the field in
+\fIinput\fP specified by the \fB\-f\fP option.  The main purpose of
+\fItofspec\fP is to allow \fIwaves\fP+ users to display arbitrary FEA
+data in spectrogram form.
+.PP
+The output FEA_SPEC file has frequency format SYM_EDGE by default (see
+.IR FEA_SPEC (5\-ESPS)).
+However, there is an option for specifying frequency format ARB_FIXED instead,
+which also requires specifying an explicit list of frequencies to be stored
+in the output file header (see the
+.B \-F
+and
+.B \-v
+options).
+The spectrum type is DB (logarithmic power spectral density in decibels; see
+.IR FEA_SPEC (5\-ESPS)).
+To conserve space, the file is stored in BYTE format.
+Unless the\fB\-S\fP option (no scaling) is
+specified, \fITofspec\fP clips the input data to the input range
+specified by the \fB\-i\fP option, scales the resulting data to the
+default output range (\-64, +50), and stores the scaled data as float
+values in the re_spec_val field of \fIoutput\fP.  The output range can
+be changed from the default range of (\-64, +50) by means of the
+\fB\-o\fP option, although the BYTE format of the output file forces
+the range to stay within (\-64, +63).  If the \fB\-i\fP option is not
+used, the input data are not clipped \*- the miminum and maximum values
+are determined from the input data and this range is scaled to the
+output range.  If the \fB\-S\fP option is specified, no scaling is
+performed \*- input data are copied directly to output data with
+clipping at the limits of the output range.  If the \fB\-d\fP is
+specified, the log (base 10) of the (possibly clipped) input data is
+taken before the data are stored (after possible scaling) in
+re_spec_val of \fIoutput\fP.
+.PP
+The data type of the field \fIfea_field\fP can be any supported FEA
+data type.  If the type is complex, only the real part is used.  
+.PP
+If \fIinput\fP is "\-" and the input range is specified by the
+\fB\-i\fP option or is determined from the parameter file, then the
+input is taken from standard input. (Standard input can not be used if
+the input range is determined automatically from the input data.)  If
+\fIoutput\fP is "\-", the output is directed to standard output.
+.PP
+The default output range provides 115 levels, from \-64 to +50.  This
+is intended to use the first 115 entries in the \fIwaves\fP+ color
+map.  The entire color map has 128 values, but the top 13 levels are
+used for cursors, borders, and backgrounds.  Thus, if the full 128
+levels are covered in the \fItofspec\fP output, various colors will
+intrude when data is displayed using the grey scale map. 
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-d 
+Apply log (base 10) to input data before scaling (no \fB\-S\fP) or 
+storing (\fB\-S\fP) .  
+.TP
+.BI \-f " field_name" "\fR [sd]"
+Specifies the name of the data field in \fIinput\fP to be converted.
+The default name is "sd".
+.TP
+.BI \-i " low_input" : "high_input" " \fR[(determined from data)]"
+.TP
+.BI \-i " low_input" :+ "incr"
+The first form gives the low and high limits of the range of input
+data to scale to the output range.  This option is ignored if the
+\fB\-S\fP option is used.  
+If 
+.IR high_input " = " low_input " + " incr,
+the second form (with the plus sign) specifies the same range as the
+first.  If this option is not used, the limits are determined from the
+data.  
+.TP
+.BI \-o " low_output" : "high_output" " \fR[\-64:+50]"
+.TP
+.BI \-o " low_output" :+ "incr"
+The first form gives the low and high limits of the output 
+range.  
+If 
+.IR high_output " = " low_output " + " incr,
+the second form (with the plus sign) specifies the same range as the
+first.  If \fIlow_output\fP < \-64, it is reset to \-64 and a warning is
+printed.  If \fIhigh_output\fP > 63, it is set to 63 and a warning is
+printed.  This option specifies the range of output data.  Unless
+the\fB\-S\fP option is specified, the input range is scaled to the
+output range (see also \fB\-d\fP).  If \fB\-S\fP is specified, the input
+range is ignored, and the input data are clipped to the output 
+range (see also \fB\-d\fP). 
+.TP
+.BI \-r " start" : "last" "\fR [1:(last in file)]"
+.TP
+.BI \-r " start" :+ "nan"
+In the first form, a pair of unsigned integers specifies the range
+of records to be processed.
+Either
+.I start
+or
+.I last
+may be omitted; then the default value is used.
+If
+.IR last " = " start " + " nan,
+the second form (with the plus sign) specifies the same range as the first.
+The \fB\-r\fP overrides the values of \fIstart\fP and \fInan\fP from 
+the parameter file.  
+.TP
+.BI \-s " sf" "\fR [0]"
+Specifies the value to be used for the generic header item \fIsf\fP
+in \fIoutput\fP.
+As a result, if the frequency format of
+.I output
+is SYM_CTR, the frequency scale will range from 0
+to \fIsf\fP/2 when \fIoutput\fP is displayed with \fIwaves\fP+.
+(If the output
+.I freq_format
+is ARB_FIXED,
+.I sf
+plays no role in setting the frequency scale, which is determined
+by an explicit list of values in the header instead\*-see the
+.B \-F
+and
+.B \-v
+options.)
+If the option argument is 0 (the default), the generic's value is set to
+2*(\fIsize\fP \- 1), where \fIsize\fP is the size of the input field
+\fIfea_field\fP (this is done so that the implicit "frequencies"
+correspond to element number in the input field).
+.TP
+.BI \-v " freqs" "\fR [(none)]"
+A list of frequencies to be stored as the value of the generic header item
+.I freqs
+in the output file (see
+.IR FEA_SPEC (5\-ESPS)).
+This option is ignored unless the
+.I freq_format
+of the output file is specified as ARB_FIXED, either with the
+.B \-F
+option or with the
+.I freq_format
+parameter in a parameter file.
+The format of the argument is a list of real numbers,
+separated by commas or blanks.
+If blanks are present, they must be escaped with back slashes (\\),
+or the argument must be enclosed in double quotes (").
+.TP
+.BI \-x " debug_level" "\fR [0]"
+Print diagnostic messages as program runs (for debugging purposes
+only).
+Higher levels give more messages.
+The default level of zero suppresses all debugging messages.
+.TP
+.BI \-F " freq_format" "\fR [SYM_EDGE]"
+The value to assign to the
+.I freq_format
+generic header item in the output file (see
+.IR FEA_SPEC (5\-ESPS)).
+Currently supported values are SYM_EDGE and ARB_FIXED (case-insensitive).
+If ARB_FIXED is specified,
+a list of frequency values must be given also, either with the
+.B \-v
+option or with the
+.I freqs
+parameter in a parameter file.
+.TP
+.BI \-P " params" " \fR[params]\fP"
+Specifies the name of the parameter file.
+.TP
+.BI \-R
+Reverse the order of elements in the \fIfea_field\fP before writing 
+to \fIoutput\fP.  This is useful if you want to invert the orientation
+of the display shown when \fIoutput\fP is displayed with \fIwaves\fP+.  
+.TP
+.BI \-S
+Do not scale the data.  This means that any input range is ignored.  
+The input data (or the log of the input data, if \fB\-d\fP) 
+are stored in \fIoutput\fP with clipping at the output range limits. 
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file does not have to be present, since all the
+parameters have default values.  The following parameters are read, if
+present, from the parameter file:
+.TP
+.I "field_name \- string"
+This is the name of the source field in \fIinput\fP.
+The default is "sd".  This parameter is not read if the \fB\-f\fP
+option is used.  
+.TP
+.I "freq_format \- string"
+The value to assign to the
+.I freq_format
+generic header item in the output file (see
+.IR FEA_SPEC (5\-ESPS)).
+This parameter is not read if the
+.B \-F
+command-line option is specified.
+Currently supported values are SYM_EDGE (the default) and ARB_FIXED
+(both case-insensitive).
+If ARB_FIXED is specified,
+a list of frequency values must be given with the
+.B \-v
+option or the
+.I freqs
+parameter.
+.TP
+.I "freqs \- float array"
+A list of frequencies to be stored as the value of the generic header item
+.I freqs
+in the output file (see
+.IR FEA_SPEC (5\-ESPS)).
+This option is not read if the
+.B \-v
+command-line option is specified,
+and it is ignored unless the
+.I freq_format
+of the output file is specified as ARB_FIXED with the
+.B \-F
+option or the
+.I freq_format
+parameter.
+.TP
+.I "start \- integer"
+This is the first record of \fIinput\fP to process.  The default is 1.  It
+is not read if the \fB\-r\fP option is used.
+.TP
+.I "nan \- integer"
+This is the number of records to process.  It is not read if the \fB\-r\fP
+option is used.  A value of zero means all subsequent records in the file;
+this is the default.
+.TP
+.I low_input \- string (converted to float)
+Lower limit of range of input data to scale to the output range.  Data
+below this value are clipped.  If the string "determine from file" is
+entered, the limit is determined from the file.  This parameter is not
+read if the
+.B \-i
+option is specified.  If the command-line option is not specified and
+the parameter is not present in the parameter file, the default used is
+the minimum value of the input data.  
+.TP
+.I high_input \- string (converted to float)
+Upper limit of range of input data to scale to the output range.  Data
+above this value are clipped.  If the string "determine from file" is
+entered, the limit is determined form the file.	This parameter is not
+read if the
+.B \-i
+option is specified.  If the command-line option is not specified and
+the parameter is not present in the parameter file, the default used is
+the maximum value of the input data.  
+.TP
+.I low_output \- float
+Lower limit of range of output data.  Data in the input range are 
+scaled to the output range.  This parameter is not read if the
+.B \-o
+option is specified.  If the command-line option is not specified and
+the parameter is not present in the parameter file, the default used
+is \-64.  
+.TP
+.I high_output \- float
+Upper limit of range of output data.  Data in the input range are 
+scaled to the output range.  This parameter is not read if the
+.B \-o
+option is specified.  If the command-line option is not specified and
+the parameter is not present in the parameter file, the default used
+is +50.  
+.TP
+.I "sf \- float"
+Specifies the value to be used for the generic header item \fIsf\fP
+in \fIoutput\fP.
+As a result, if the frequency format of
+.I output
+is SYM_CTR, the frequency scale will range from 0
+to \fIsf\fP/2 when \fIoutput\fP is displayed with \fIwaves\fP+.
+(If the output
+.I freq_format
+is ARB_FIXED,
+.I sf
+plays no role in setting the frequency scale, which is determined
+by an explicit list of values in the header instead\*-see the parameters
+.I freq_format
+and
+.IR freqs. )
+If the parameter value is 0 (the default), the generic's value is set to
+2*(\fIsize\fP \- 1), where \fIsize\fP is the size of the input field
+\fIfea_field\fP (this is done so that the "frequencies" correspond to
+element number in the input field).  This parameter is not read if 
+the option \-\fBs\fP is used.  
+.PP
+Remember that command line option values override parameter file
+values.
+.SH "ESPS COMMON"
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overridden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+The following items are written into the ESPS Common file 
+provided that \fIoutput\fP is not <stdout>.  
+.IP
+.I "start \- integer"
+.IP
+The starting point from the input file.
+.sp
+.I "nan \- integer"
+.IP
+The number of points in the selected range.
+.sp
+.I "prog \- string"
+.IP
+This is the name of the program ("tofspec" in this case).
+.sp
+.I "filename \- string"
+.IP
+The name of the input file \fIinput\fP.
+.SH ESPS HEADERS
+.PP
+The \fIoutput\fP header is a FEA_SPEC file header.  The generic items
+\fIstart\fP and \fInan\fP  are written to store the range of input
+data records processed.  The items \fIlow_input, high_input,
+low_output,\fP and \fIhigh_output\fP 
+are written to record the range of input data that was transformed to
+the output data.  If the \fB\-d\fP was used the log of the 
+input range limits are also written as generics \fIlog_low_input\fP
+and \fIlog_high_input\fP.  
+.PP
+The generic header item \fIstart_time\fP is written in the output
+file.  The value written is computed by taking the \fIstart_time\fP
+value from the header of the input file (or zero, if such a header
+item doesn't exist) and adding to it the relative time from the first
+record in the file to the first record processed.  The computation of
+\fIstart_time\fP depends on the value of the generic header item
+\fIrecord_freq\fP in the input file.  If this item is not present,
+\fIstart_time\fP is just copied from the input file to the output
+file.  
+.PP
+The generic header item \fIsf\fP is written in the output file;
+the value is specified by the parameter \fIsf\fP or the value given in the
+\fB\-s\fP option.
+See the discussions of the parameter and the option for details.
+.PP
+If the input file is tagged, then the output, and the generic header item
+.I src_sf
+is written in the output file header.
+In that case, the value of
+.I src_sf
+is copied from the input if the input header contains a
+.I src_sf
+item; otherwise the values is taken from
+.I sf
+in the input header.
+(A warning message is printed if a tagged input file has neither
+.I src_sf
+nor
+.I sf
+in its header.)
+.PP
+As usual, the command line is added as a comment and the header of
+\fIinput\fP is added as a source file to \fIoutput\fP.  
+.SH "SEE ALSO"
+.PP
+.nf
+\fIFEA_SPEC\fP(5\-\s-1ESPS\s+1), \fIxwaves\fP(1\-\s-1ESPS\s+1), \fIaddfea\fP(1\-\s-1ESPS\s+1),
+\fIaddfeahd\fP(1\-\s-1ESPS\s+1), FEA(5\-\s-1ESPS\s+1), \fIimage\fP(1\-\s-1ESPS\s+1),
+\fIplotsgram\fP(1\-\s-1ESPS\s+1)
+.fi
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+.I tofspec
+will exit with an error message if any of the following are true:
+the \fB\-d\fP is used and any of the input data are not positive; 
+.I input
+does not exist or is not an ESPS FEA file; 
+the data field does not exist in
+.I input;
+.PP
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Manual page and program by John Shore.  
+

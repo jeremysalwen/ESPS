@@ -1,0 +1,84 @@
+.\" Copyright (c) 1998 Entropic, Inc. All rights reserved.
+.\" @(#)bark_hertz.3	1.1 9/4/98 ESI/ERL/EG
+.ds ]W (c) 1998 Entropic, Inc.
+.TH BARK_HERTZ 3\-ESPSsp 9/4/98
+.SH NAME
+bark_to_hz \- Convert a Bark scale value to the equivalent frequency in Hertz.
+.br
+hz_to_bark \- Convert a frequency in Hertz to the equivalent Bark-scale value.
+.SH SYNOPSIS
+.ft B
+double 
+.br
+bark_to_hz (barkValue)
+.br
+double	barkValue;
+.sp
+.br
+.ft B
+double 
+.br
+hz_to_bark (freqValue)
+.br
+double	freqValue;
+.SH DESCRIPTION
+.PP
+These functions are reciprocal functions that warp a linear-scaled frequency
+value in Hertz to the equivalent Bark-scale value and back.
+.PP
+The frequency
+.I f
+in hertz corresponding to a Bark-scale value
+.I b
+is given by:
+.IP
+.if n \{\
+f = 600 sinh (b/6)
+\}
+.if t \{\
+.IR f " = 600 sinh (" b "/6)"
+\}
+.PP
+as shown in ref. [1].
+The conversion from a frequency value to a Bark scale value is done in the
+obvious manner by
+using the inverse hyperbolic function.
+.SH EXAMPLE
+.nf
+
+double bigNumber = MAXFLOAT, hertz, bark;
+
+/* bark_to_hz can exceed MAXDOUBLE */
+errno = 0;
+hertz = bark_to_hz(bigNumber);
+if (errno)
+  perror("bark_to_hz error");
+
+/* reasonable frequency values are fine */
+hertz = 5000.0;
+bark = hz_to_bark(hertz);
+printf("bark equivalent of 5000 Hz is %f", bark);
+
+/* This makes the variable hertz = 5000.0 */
+hertz = bark_to_hz(bark);
+printf("bark value converted by to hertz is %f", hertz);
+.fi
+.SH WARNINGS
+In general, these functions should not be used with negative valued inputs.
+No checking is done, however, by these functions.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+\fImel_to_hz\fP(3-ESPS), \fIhz_to_mel\fP(3-ESPS), \fIbarkspec\fP(1\-ESPS)
+.fi
+.SH REFERENCES
+.HP
+[1] S. Wang, A. Sekey, and A. Gersho,
+``An objective measure for predicting subjective quality of speech coders,''
+.I "IEEE Journal on Selected Areas in Communications,"
+.BR SAC-10
+(5), 819\-829 (June 1992)
+.sp
+.SH AUTHOR
+Code extracted from \fIbarkspec\fP(1\-ESPS) by David Burton; manual page by David Burton.

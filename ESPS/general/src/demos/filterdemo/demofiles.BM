@@ -1,0 +1,20 @@
+"rundemo.sh   (startup script)" xtext -F rundemo.sh
+
+"filters.BM   (control panel menu file)"	xtext -F menus/filters.BM
+
+"demoinit.WC   (initial xwaves+ command file)" xtext -F wcommands/demoinit.WC
+
+"filters.WM   (xwaves+ button panel menu file)"	xtext -F menus/filters.WM 
+
+"call_xpz   (script to call xpz program)"	xtext -F bin/call_xpz
+
+"demoquit.WC  (xwaves+ termination command file)" xtext -F wcommands/demoquit.WC
+"demofiles.BM   (menu file for this panel)"	xtext -F menus/demofiles.BM
+
+# @(#)demofiles.BM	1.2 11/5/91 ERL
+
+
+
+
+
+

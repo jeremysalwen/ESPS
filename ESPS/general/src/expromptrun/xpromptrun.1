@@ -1,0 +1,224 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)xpromptrun.1	1.1 6/7/91 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  XPROMPTRUN 1\-ESPS 6/7/91
+.SH "NAME"
+xpromprun \- run ESPS program after interactive parameter entry in a pop-up window
+.SH "SYNOPSIS"
+.B xpromptrun
+[
+.BI \-P
+.I param_file
+] [
+.B \-n
+] [
+.BI \-c
+.I checkfile
+] [
+.BI\-h
+.I help_name
+] [
+.B \-z
+] [
+.BI \-x
+.I debug_level
+]
+command_line
+.SH "DESCRIPTION"
+.PP
+\fIXpromptrun\fP is an X Windows program that displays an interactive
+form for entering ESPS parameters, and then runs the corresponding
+ESPS program.  It is closely related to \fIxprompt\fP
+(1\-\s-1ESPS\s+1), which just prompts for parameters and produces a
+parameter file for subsequent use.
+.PP
+It is assumed that \fIcommand_line\fP is a full command line for 
+an ESPS program (including command line options and file names), 
+with the exception that the standard ESPS \fB-P\fP option is \fInot\fP
+included.  A suitable \fB-P\fP option will be inserted by
+\fIxpromptrun\fP.  
+.PP
+\fIXpromptrun\fR processes the ESPS parameter file \fIparam_file \fP
+and (optionally) ESPS Common.  It then pops up a window containing an
+entry for each of the indefinite parameters in \fIparam_file\fP
+(parameters with values assigned using the "?=" operator).  Each such
+entry has the name of the parameter and a space for filling in the
+desired value.  Default values from the parameter file are filled in
+initially.  If a prompt string was included in the parameter file, the
+string is displayed above the corresponding parameter entry.
+.PP
+If the parameter definition in \fIparam_file\fP includes the
+optional set of discrete choices, the window entry for the parameter
+contains a set of screen buttons, one for each choice \- the user
+selects the parameter value by clicking with the mouse on the desired
+choice.  If discrete choices were not provided in the parameter file,
+the window entry for the parameter contains space in which the user
+can type the desired value.
+.PP
+Before displaying the interactive window, \fIxpromptrun\fP creates a
+temporary parameter file to record the user's parameter entries; this
+temporary parameter file will be used subsequently in running
+\fIcommand_line\fP.  If the environment variable ESPS_TEMP_PATH is
+defined, it will be used as the location for the temporary parameter
+file.  Otherwise, a compiled in default (usually /usr/tmp) will be
+used.  When \fIxpromptrun\fP first creates the temporary parameter
+file, it fills it with definitions for all of the parameters in
+\fIparam_file\fP and ESPS Common (if Common is processed).  The
+initial values are the default values from \fIparam_file\fP, perhaps
+modified by Common processing.
+.PP
+Whenever the user enters a valid new value for a parameter in the
+\fIxpromptrun\fP window, the temporary parameter file is updated.
+Note that that data entry requires that a RETURN by typed at the end
+of the entry string. Input parameters are checked for data type
+format.  If limits are provided for numeric parameters in the
+parameter file, the limits are checked.
+.PP
+Two or three screen buttons are provided in a panel at the top of the 
+\fIxpromptrun\fP window.  The button DEFAULTS reverts all parameter
+values to the defaults that were in the \fIparam_file\fP (as updated by
+Common).  The button DONE causes \fIxpromptrun\fP to exit.  Use this when
+you have finished entering values.  The state of the temporary output parameter
+file will correspond to the state of the window when DONE is selected
+(assuming that RETURNs have been typed as appropriate).  
+.PP
+If the \fB\-h\fP option was used, a HELP button is also provided in
+the parameter prompting window.  Selecting it causes a help file to be
+displayed in a text window.  If the \fIhelp_name\fP specified with
+\fB\-h\fP has a leading "." or "/", it is interpreted as the path to a
+pure ASCII file containing help information.  If there is no leading
+"." or "/", \fIhelp_name\fP is interpreted as the name of an ESPS
+program for which the parameters are intended.  In this case, HELP
+presents a copy of the corresponding ESPS manual page in a text
+window.  (To obtain it, \fIeman\fP is run and the output is stripped
+of format control strings.)  In both cases, the text window includes a
+FIND button to facilitate string searching.
+.PP
+After the user exits the parameter prompt window (by clicking on 
+DONE), \fIxpromptrun\fP builds a new command line from
+\fIcommand_line\fP by inserting a \fB-P\fP after the first 
+item in \fIcommand_line\fP (which is assumed to be a program name).  
+The temporary parameter file created by \fIxpromptrun\fP is used 
+as the argument for the new \fB-P\fP option.  The new command line 
+is then executed via \fIsystem\fP(3).  
+.PP
+Note that \fIxpromptrun\fP does not terminate until after the 
+command generated from \fIcommand_line\fP has completed running.  This
+makes \fIxpromptrun\fP more useful in scripts and as a command tied to
+\fIxwaves\fP+ menus.  The temporary parameter file is deleted before 
+a normal exit from \fIxpromptrun\fP.  
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-P " param_file" " \fR[params]\fP"
+Specifies the name of the ESPS parameter file to process.  If you want
+to force the parameter to come only from ESPS common, use "\fB\-P\fP
+/dev/null".  
+.TP
+.BI \-n 
+Do not process ESPS Common (i.e., always get the parameter value from
+the file specified by the \fB\-P\fP option).  (Within \fIxpromptrun\fP, the
+effect of \fB\-n\fP is to have \fIread_params\fP (3\-\s-1ESPS\s+1)
+called with the SC_NOCOMMON flag.)  Note also that Common processing 
+can also be disabled by setting the unix environment variable
+USE_ESPS_COMMON to "off".  It is an error to specify both \fB\-n\fP and
+\fB\-c\fP.  
+.TP
+.BI \-c " checkfile"
+If the ESPS Common file exists, this option specifies that the Common
+file should be processed only if the \fIcheckfile\fP matches the value
+of the \fIfilename\fP in the Common file.  This option will have no
+effect if the unix environment variable USE_ESPS_COMMON is "off".  It
+is an error to specify both \fB\-n\fP and \fB\-c\fP.
+.TP
+.BI \-h " help_name"
+Causes a HELP button to be provided in the \fIxpromptrun\fP window.
+Selecting this button brings up a help file in a text window.  If
+\fIhelp_name\fP has a leading "." or "/", it is interpreted as the
+path to a pure ASCII file containing help information.  If there is no
+leading "." or "/", \fIhelp_name\fP is interpreted as the name of an
+ESPS program for which the parameters are intended.  In this case,
+HELP presents a copy of the corresponding ESPS manual page in a text
+window.  (To obtain it, \fIeman\fP is run and the output is stripped
+of format control strings.)  In both cases, the text window includes a
+FIND button to facilitate string searching.
+.TP
+.B \-z
+Specifies that \fIxpromptrun\fP operate silently; conditions such as 
+"no parameters" or "no indefinite parameters" are not reported. 
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If \fIdebug_level\fP is positive,
+.I xpromptrun
+outputs debugging messages. The messages proliferate as 
+.I debug_level 
+increases.  For level 0, there is no output.
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file specified by the \fB\-P\fP option is processed
+only to obtain parameter specifications.  In this respect,
+\fIxpromptrun\fP is quite different from most other ESPS programs,
+which use the parameter file to pass parameter values that control the
+operation of the program.
+.SH ESPS HEADERS
+.PP
+No ESPS files are processed by \fIxpromptrun\fP.
+.SH ESPS COMMON
+.PP
+Parameter processing by \fIxpromptrun\fP follows standard ESPS
+conventions: Unless the parameter value is overridden by the value in
+ESPS Common, the default value displayed by \fIxpromptrun\fP is the value
+from the parameter file \fIparam_file\fP.  This default value will be
+overridden by the value in Common (if the Common file exists and
+contains a value for the parameter), provided that ESPS Common
+processing is enabled and that the Common file is younger than the
+parameter file.  If a \fIcheckfile\fP is specified by means of the
+\fB\-c\fP option, the parameter file value for \fIparam_name\fP will be
+overridden by the value in Common only if \fIcheckfile\fP is identical
+to the \fIfilename\fP entry in the Common file.
+.PP
+ESPS Common processing is enabled unless the unix environment variable
+USE_ESPS_COMMON is "off" or the \fB\-n\fP is specified.  The default
+ESPS Common file is .espscom in the user's home directory.  This may
+be overridden by setting the environment variable ESPSCOM to the
+desired path.  User feedback from parameter and Common file processing
+(by the library \fIread_params\fP and \fIgetsym\fP functions) is
+determined by the environment variable ESPS_VERBOSE, with 0 causing no
+feedback and increasing levels causing increasingly detailed feedback.
+If ESPS_VERBOSE is not defined, a default value of 3 is assumed.
+.PP
+It is an error to give both \fB\-n\fP and \fB\-c\fP.
+.SH EXAMPLES
+.PP
+This computes a spectrogram after prompting for all parameters but 
+\fIstart\fP and \fInan\fP:
+.nf
+
+	xpromptrun \-h sgram \-P$ESPS_BASE/lib/params/PWsgram \\
+	     sgram -r1:2000 speech.sd speech.sd.fspec
+
+.fi
+.SH "FUTURE CHANGES"
+.PP
+.SH "SEE ALSO"
+.PP
+\fIxprompt\fP (1\-\s-1ESPS\s+1), \fIgetparam\fP (1\-\s-1ESPS\s+1),
+\fIespsenv\fP (1\-\s-1ESPS\s+1), \fIread_params\fP (3\-\s-1ESPS\s+1)
+.SH "REFERENCE"
+.PP
+"Parameter and Common Files in ESPS",  ETM-S-86-12
+.SH "BUGS"
+.PP
+Array parameters (float and int arrays) are not supported yet.  
+.PP
+Vertical and horizontal scrollbars are provided (their use may be
+necessary in the case of large parameter files).  Owing to bugs in the
+current version of the xview library, however, their behavior is not 
+reliable.  For example, joining a split vertical scrollbar can cause 
+a core dump.  
+.SH "AUTHOR"
+.PP
+Manual page and code by John Shore.  
+
+

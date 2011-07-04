@@ -1,0 +1,42 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of
+# Entropic Research Laboratory, Inc. Any reproduction, distribution,
+# or publication of this work must be authorized in writing by Entropic
+# Research Laboratory, Inc., and must bear the notice:
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc.
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc.
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended
+# publication of this source code.
+#
+# @(#)mlplotdemo	3.5   6/12/91     ESI/ERL
+#
+# Written by:
+# Checked by:
+# Revised by: David Burton
+#
+# Brief description:  Illustrates multiline plots
+#
+
+if test `mach_type` = CONVEX -o `mach_type` = SONY_RISC -o `mach_type` = SONY_68K
+ then
+  echo This script will fail if you do not have write permission on this directory.
+ else
+  if test ! -w . 
+    then
+	echo "You do not have write permission in this directory."
+	exit 1
+  fi
+fi
+set -x
+mlplot -mv -oplotv -n -X10 -l50 -y2048 -p1:500 sine1.sd sine2.sd sines.sd signal.sd 
+xmcd plotv/page1&
+
+sleep 2
+
+mlplot -oplot -n -X10 -l50 -y2048 -p1:500 sine1.sd sine2.sd sines.sd signal.sd 
+xmcd plot/page1&
+
+

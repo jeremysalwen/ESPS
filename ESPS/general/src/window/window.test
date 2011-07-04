@@ -1,0 +1,11 @@
+#! /bin/sh
+# @(#)window.test	1.1 5/31/88 ESI
+# test script for window
+echo "1 1 1 1 1 1 1 1 1 1" | testsd -a- test.sd
+echo "should show 2 frames of 1s hamming windowed"
+cat test.sd | frame -l5 - - | window - - | psps -H -fwind_sd -
+echo "now use triangular window"
+echo "output field should be sd4"
+echo "1 1 1 1 1 1 1 1 1 1" | testsd -a- - | frame -l5 -f sd3 - - | window -wtriang -fsd3 -fsd4 - - | psps -H -fsd4 -
+echo "header should show window length 5 and HAMMING window type"
+cat test.sd | frame -l5 - - | window - - | psps -Dl -

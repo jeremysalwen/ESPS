@@ -1,0 +1,283 @@
+#!/bin/csh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1993  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)test_waves	1.7	6/23/93	ERL
+# 
+# Written by:   David Talkin
+# 
+# Brief description: The beginnings of a test suite for waves+
+#
+
+alias sx send_xwaves
+
+alias pau 'echo Hit "CONTINUE" to proceed. ; echo ; sx pause'
+
+echo \#\!/bin/sh > myecho
+echo 'while test "$1" != ""' >> myecho
+echo do >> myecho
+echo 'echo $1' >> myecho
+echo shift >> myecho
+echo done >> myecho
+chmod +x myecho
+
+set fi = dt.hp
+set sg = /tmp/dt.hp.fspec
+set f0 = dt.f0
+set fb = dt.fb
+set ana = dt.ana
+
+echo If xwaves is running, it should quit.
+echo If it\'s not, you should see an error message.
+
+sx -D 0 quit
+
+echo Waiting for xwaves to load...
+
+xwaves -w ./.wave_pro_test &
+
+sx make name dt file $fi loc_x 0 loc_y 160 width 1000 height 150
+echo Creating a spectrogram.
+sx dt spectrogram loc_y 350 output $sg start 1 end 2
+sx dt align file $sg
+echo You should see a time aligned spectrogram and waveform.
+echo The spectrogram scale should remain fixed after window resize.
+pau
+
+sx dt set file $sg h_rescale 1 v_rescale 1
+echo The spectrogram should now auto-rescale.
+pau
+
+sx set colormap greymap
+echo The colormap should now be greyscale.
+pau
+
+sx dt colormap range 40 threshold 50
+echo The spectrogram display range and threshold should now be 40 and 50.
+pau
+
+sx key_map key _ op play between marks
+echo The space-bar should now be bound to \"play between marks\".
+pau
+
+# This makes the middle button toggle the reticle in the channel under
+# the cursor on/off.
+# To enable the toggle, select roff for middle-button operation from
+# the button modes menu.
+sx add_op name ron command \#_name set file _file chann _cursor_channel reticle_on 1 middle_op roff
+sx add_op name roff command \#_name set file _file chann _cursor_channel reticle_on 0 middle_op ron
+sx set all t middle_op \"roff\"
+sx set all t spec_middle_op roff
+echo The middle button should now toggle the reticle on and off in all views.
+sx make file $fb loc_y 700 height 300
+pau
+
+sx set all t reticle_grid 0
+echo The reticles should now be OFF in all views.
+pau
+sx set all t reticle_grid 1
+echo The reticles should now be ON in all views.
+pau
+
+sx dt set file $fb left_op "zoom in"
+sx dt set file $fb middle_op zoom out
+echo The multi-trace view should now have ZOOM IN and ZOOM OUT bound to the
+echo left and middle buttons.
+pau
+
+sx dt activate file $fb num 0 1 2 3
+sx dt set file $fb background 121
+sx dt set file $fb channels \"0 1\" line_type 2
+sx dt set file $fb channel 2 line_type 3 plot_min 0
+sx dt set file $fb channel 3 line_type 4 plot_min 0
+sx dt bracket file $fb start 1 end 2
+echo The multi trace view should now show channels 0,1,2,3 on a color
+echo background.  Channels 0 and 1 should be displayed with line tupe
+echo 2\; channel 2 with line type 3\; and channel 3 with line_type 4.
+echo The minimum data value plotted on channels 2 and 3 should be zero.
+pau
+
+sx set all t middle_op foo bar
+sx set all t spec_middle_op buff car
+echo This should be preceded by three error messages.
+echo \(The middle op in all views should now be NO OP.\)
+pau
+
+sx add_op menu wave name \"show variables\" op myecho _variables \; echo
+sx add_op menu spect name \"show settables\" op myecho _settables \; echo
+sx add_op menu none name \"show operators\" op myecho _operators \; echo
+sx add_op menu none name \"show w_ops\" op myecho _waves_commands \; echo
+sx add_op menu all  name \"show object commands\" op myecho _object_commands \; echo
+sx key_map key o op show object commands
+sx key_map key w op \"show w_ops\"
+sx dt set file $fb middle_op \"show variables\"
+sx dt set file $fi middle_op \"show operators\"
+sx dt set file $sg left_op \"show w_ops\"
+sx dt set file $sg middle_op show settables
+echo Hit \"o\" key to see commands for display objects.
+echo Hit the left mouse button in the spectrogram to see waves commands.
+echo Hit the middle button in the single-trace view to see view operators.
+echo Hit the middle button in the multi-trace view to see variable names.
+echo Hit the middle button in the spectrogram to see view settables.
+pau
+
+sx add_op name testit menu DT op send_xwaves save_add_ops output /tmp/ops \; cat /tmp/ops
+sx key_map key _ op testit
+echo Hit the space bar to see all current add_op commands.
+pau
+
+sx add_op name log menu wave op echo _cursor_values
+sx key_map key _ menu wave op log
+echo Hit space bar in waveform views to log data values.
+pau
+
+echo ' '`send_xwaves dt get aname variables` | sed 's/ / _/g' > /tmp/vars
+sx add_op name WORLD op myecho `cat /tmp/vars`
+echo Select WORLD from the view menus to see all variable values.
+pau
+
+sx set xspectrum_datwin_x \"500\" xspectrum_datwin_y \"400\" xspectrum_datwin_width \"500\" xspectrum_datwin_height \"400\" xspectrum_window_limits \"0\" xspectrum_window_size .1
+sx attach function xspectrum
+echo Waiting for xspectrum to attach.
+
+set foundit = 255
+while ( $foundit != 0 )
+  sx save_menus menu wave output /tmp/tmp$$
+  grep xspectrum /tmp/tmp$$
+  set foundit = $status
+end
+
+echo Xspectrum should now be operating.  Space bar should cause new
+echo spectrum computation when cursor is in single-trace view.
+sx send function xspectrum op dt mark file $fi time 1.5
+sx key_map key _ op xspectrum
+pau
+
+sx delete_all_items menu wave
+echo 'The waveform menu should now be empty (i.e. It should no longer appear'
+echo 'when the right button is pressed). The spectrogram menu should be'
+echo  'unchanged.'
+pau
+
+sx @/tmp/tmp$$
+echo The waveform menu should now be restored to its previous state.
+pau
+
+sx save_menus menu spect output /tmp/tmp$$
+sx delete_all_items menu spect
+echo The spectrogram menu should now be empty.
+pau
+
+sx @/tmp/tmp$$
+echo The spectrogram menu should now be restored.
+pau
+rm -f /tmp/tmp$$
+
+sx send set xspectrum_cep_liftering 1 xspectrum_cep_cutoff .005 xspectrum_analysis_type 10
+echo Xspectrum should now be operating in the cepstral smoothing mode.
+pau
+
+rm -f dt.lab
+sx set xlabel_ctlwin_y 800
+sx dt bracket start .5 end 2.5 file dt.hp
+sx attach function xlabel
+
+sx send function xlabel op xlabel make name dt file dt.lab signal dt.hp
+sx send function xlabel op dt mark time 1.5 label Hello World
+echo Xlabel should now be attached.  Its control panel should be near
+echo the bottom of the screen.  Hello World should appear in the label
+echo window.
+pau
+
+sx detach function xlabel
+echo Xlabel should have gone away.  Xspectrum should still be there.
+pau
+
+sx detach
+echo All attachments should now be absent.
+pau
+
+sx kill name dt file $sg
+echo The spectrogram should have disappeared.
+pau
+
+echo 'send_xwaves $1 bracket file $2 start $3 end $4' > zoom$$
+echo 'send_xwaves $1 set file $2 channels $5 plot_min $6 plot_max $7' >> zoom$$
+chmod +x zoom$$
+echo 'send_xwaves $1 op file $2 op zoom full out' > zout$$
+echo 'send_xwaves $1 set file $2 v_rescale 1' >> zout$$
+chmod +x zout$$
+sx add_op name MAGNIFY menu wave op zoom$$ _name _file _l_marker_time _r_marker_time _t_marker_chan _b_marker_yval _t_marker_yval
+sx add_op name zout menu none op zout$$ _name _file
+foreach f (`sx dt get aname files`)
+   sx dt set file $f left_op \"up/down move\" middle_op zout
+end
+echo There should now be a menu item called MAGNIFY on the waveform menus.
+echo Using the left mouse button, position the abscissa markers and \(with
+echo the shift key depressed\) the ordinate markers to bracket a region to
+echo magnify.  Then select MAGNIFY.  Press the middle button to zoom full
+echo out.
+pau
+
+foreach f (`sx dt get aname files`)
+	sx dt op file $f op zout
+end
+echo All waveforms should now be zoomed full out.
+pau
+
+sx set output_dir /tmp append_extensions 0
+sx add_op name SAVE menu none op send_xwaves _name save file _file start _l_marker_time end _r_marker_time outputname _out.g.test
+sx key_map key _ op SAVE
+sx set all t middle_op play between marks
+echo The middle button should now be bound to \"play between marks\" and
+echo the space bar should save the currently-marked segment in a file and
+echo then display the segment.
+pau
+
+
+sx kill
+echo All data views should now be absent
+pau
+
+sx set xspectrum_window_limits 1
+sx attach function xspectrum
+sx make name dt file $fi loc_x 10 loc_y 200 width 1100 height 200
+sx add_op name \"mark\" menu all op \# _name mark time _cursor_time
+sx add_op name \"clear\" menu all op \#_name unmark all t
+sx add_op name \"foo\" menu all op \# _name play start _l_mark_time end _r_mark_time
+sx set samp_range_prefix -r
+sx add_op name \"eplay\" menu all op sgplay _mark_range_samp _file
+sx add_op name \"s\" menu all op \#send function xspectrum op _name mark signal _file rstart _l_mark_time rend _r_mark_time
+sx add_op name \"xspectrum\" menu all op \#send function xspectrum prognum 90245 versnum 15 command _name mark signal _file time _cursor_time rstart _l_marker_time rend _r_marker_time
+sx key_map key s op s
+sx key_map key x op eplay
+sx key_map key z op foo
+sx key_map key c op clear
+sx key_map key _ op mark
+sx set blowup_op mark
+sx dt set file $fi middle_op 'blow up; function'
+echo The space bar should now apply marks wherever the cursor at the time
+echo the bar is hit.  The z and x keys should both play the region
+echo delimited by the two marks closest to the cursor when the key is hit.
+echo Xspectrum should be attached.  Hitting the s key should cause the
+echo region delimited by the nearest marks to have its spectrum computed
+echo and displayed.  Hitting the c key should erase all marks.
+echo
+echo The middle mouse button should be bound to \"blow up; function\" and,
+echo when pressed, should expand the waveform.  When the middle button is
+echo released, a mark should be applied.
+pau
+
+sx quit
+echo Xwaves should have exited.  The test is complete.
+
+rm -f zoom$$ zout$$ myecho
+

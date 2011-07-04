@@ -1,0 +1,6 @@
+# @(#)Pzcross	1.1	6/5/88	EPI
+# default parameter file for pwr
+string	sd_field_name ?= "sd": "Input sampled_data field name";
+string	power_field_name ?= "raw_power": "Output power field name";
+int	start ?= 1: "First record from input file to process";
+int	nan ?= 0: "Number of records from input file to process";

@@ -1,0 +1,238 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     pwr - computes power of sampled data in FEA records
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>pwr</STRONG> [ <STRONG>-l</STRONG> ] [ <STRONG>-P</STRONG> <EM>params</EM> ] [ <STRONG>-f</STRONG> <EM>sd</EM>_<EM>field</EM> [ <STRONG>-f</STRONG> <EM>power</EM>_<EM>field</EM> ]] [
+     <STRONG>-r</STRONG> <EM>range</EM> ] [ <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> ] <EM>input</EM> <EM>output</EM>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     <EM>Pwr</EM> accepts a FEA file <EM>input</EM> containing  a  vector  sampled-
+     data  field  in  each  record  (there may be other fields as
+     well).  It produces a FEA file <EM>output</EM> with records  contain-
+     ing  the  raw  power  (or log raw power) of the sampled-data
+     field from that record.  Each field of sampled data  may  be
+     thought  of  as  a  separate frame of data, such as might be
+     produced by <STRONG><A HREF="../man1.html/frame.1.html">frame (1-ESPS)</A></STRONG>.  The default name for  the  sam-
+     pled data field in <EM>input</EM> is <EM>sd</EM>, and the default name for the
+     power field in <EM>output</EM> is <EM>raw</EM>_<EM>power</EM> (<EM>log</EM>_<EM>power</EM> if  <STRONG>-l</STRONG>  option
+     used).  Both  defaults  can  be  changed  by means of the <STRONG>-f</STRONG>
+     option.  If <EM>input</EM> is "-", standard input  is  used  for  the
+     input  file.   If  <EM>output</EM> is "-", standard input is used for
+     the output file.
+
+     The power is computed by summing the squares of the  sampled
+     data  values  and  dividing  by  the number of points in the
+     frame.  If <EM>input</EM> is not a segment-labelled FEA file (see FEA
+     (5 - ESPS)),  the frame is considered to comprise all of the
+     points in the sampled data field, so the frame length  is  a
+     constant  set  to  the size of the sampled data field (which
+     can be determined  from  the  file  header).   If  <EM>input</EM>  is
+     segment-labelled,  the  size  of  the  sampled data field is
+     really a maximum size, and the frame size for  a  particular
+     record  is  given by the <EM>segment</EM>_<EM>length</EM> field (this field is
+     always  present  in  segment-labelled  files).   Thus,   for
+     segment-labelled  files,  the frame from any input record is
+     the first <EM>segment</EM>_<EM>length</EM> points of the sampled data field.
+
+     If the <STRONG>-l</STRONG> is used, the (base 10) log of  the  raw  power  is
+     stored  in  the output file instead of the raw power itself.
+     To avoid computational overflow,  logs  are  not  taken  for
+     power  values  less  than 10/DBL_MAX; in these cases the log
+     power stored is log10(10/DBL_MAX),  which  is  approximately
+     -307.55.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following options are supported:
+
+     <STRONG>-l</STRONG>    Specifies that the log (base 10) of the raw  power  be
+          computed  instead  of the raw power.  If this option is
+          used, the default name for the output  power  field  is
+          <EM>log</EM>_<EM>power</EM>; this name can be changed via the <STRONG>-f</STRONG> option.
+
+     <STRONG>-P</STRONG> <EM>param</EM> [params]
+          Specifies the name of the parameter file.
+
+     <STRONG>-r</STRONG> <EM>start</EM><STRONG>:</STRONG><EM>last</EM> [1:(last in file)]
+
+     <STRONG>-r</STRONG> <EM>start</EM><STRONG>:+</STRONG><EM>nan</EM>
+          In the first form, a pair of unsigned  integers  speci-
+          fies  the  range  of  records  to be processed.  Either
+          <EM>start</EM> or <EM>last</EM> may be omitted; then the default value is
+          used.  If <EM>last</EM> = <EM>start</EM> + <EM>nan</EM>, the second form (with the
+          plus sign) specifies the same range as the first.   The
+          <STRONG>-</STRONG> <STRONG>r</STRONG>  overrides  the  values  of  <EM>start</EM> and <EM>nan</EM> from the
+          parameter file.
+
+     <STRONG>-f</STRONG> <EM>field</EM>_<EM>name</EM>
+          If this option is used once, it specifies the  name  of
+          the  sampled data field in <EM>input</EM>.  If it is used twice,
+          the second time it specifies  the  name  of  the  power
+          field  in  <EM>output</EM>.   The default names for these fields
+          are "sd"  and  "raw_power",  respectively.  If  the  <STRONG>-l</STRONG>
+          option is used, the default name for the power field is
+          "log_power".
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     The parameter file does not have to be  present,  since  all
+     the  parameters  have default values.  The following parame-
+     ters are read, if present, from the parameter file:
+
+          <EM>sd</EM>_<EM>field</EM>_<EM>name</EM> - <EM>string</EM>
+
+          This is the name of the sampled data  field  in  <EM>input</EM>.
+          The  default  is  "sd".   A  paramter  file  value  (if
+          present) is overidden by  the  first  use  of  the  <STRONG>-</STRONG> <STRONG>f</STRONG>
+          option.
+
+          <EM>power</EM>_<EM>field</EM>_<EM>name</EM> - <EM>string</EM>
+
+          This is the name of the raw power field in <EM>output</EM>.  The
+          default  is  "raw_power".   A  parameter file value (if
+          present) is overidden by the  second  use  of  the  <STRONG>-</STRONG> <STRONG>f</STRONG>
+          option.
+
+          <EM>power</EM>_<EM>function</EM> - <EM>string</EM>
+
+          This is the function to apply to value of the raw power
+          before  storing  in  the  output  file.  The default is
+          "none", which means that the output file is to  contain
+          the  raw  power value.  The only other recognized value
+          is "log", which means that the output file is  to  con-
+          tain the log of the raw power.
+
+          <EM>start</EM> - <EM>integer</EM>
+
+          This is the first record  of  <EM>input</EM>  to  process.   The
+          default is 1.  It is not read if the <STRONG>-r</STRONG> option is used.
+
+          <EM>nan</EM> - <EM>integer</EM>
+
+          This is the number of records to process.   It  is  not
+          read  if  the <STRONG>-r</STRONG> option is used.  A value of zero means
+          all  subsequent  records  in  the  file;  this  is  the
+          default.
+
+     Remember that command line option values override  parameter
+     file values.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     ESPS Common  processing  may  be  disabled  by  setting  the
+     environment  variable USE_ESPS_COMMON to "off".  The default
+     ESPS Common file is .espscom in the user's  home  directory.
+     This  may  be  overidden by setting the environment variable
+     ESPSCOM to the desired path.  User feedback of  Common  pro-
+     cessing   is   determined   by   the   environment  variable
+     ESPS_VERBOSE, with 0 causing no feedback and increasing lev-
+     els causing increasingly detailed feedback.  If ESPS_VERBOSE
+     is not defined, a default value of 3 is assumed.
+
+     ESPS Common is not processed by <EM>pwr</EM>  if  <EM>input</EM>  is  standard
+     input.   Otherwise,  provided  that the Common file is newer
+     than the parameter file,  and  provided  that  the  <EM>filename</EM>
+     entry  in  Common matches <EM>input</EM>, the Common values for <EM>start</EM>
+     and <EM>nan</EM> override those that may be present in the  parameter
+     file.
+
+     The following items are written into the  ESPS  Common  file
+     provided that <EM>output</EM> is not &lt;stdout&gt;.
+
+          <EM>start</EM> - <EM>integer</EM>
+
+          The starting record from the input file.
+
+          <EM>nan</EM> - <EM>integer</EM>
+
+          The number of records in the selected range.
+
+          <EM>prog</EM> - <EM>string</EM>
+
+          This is the name of the program (<EM>pwr</EM> in this case).
+
+          <EM>filename</EM> - <EM>string</EM>
+
+          The name of the input file <EM>input</EM>.
+
+
+</PRE>
+<H2>ESPS HEADERS</H2><PRE>
+
+     The <EM>output</EM> header is a new FEA file header.  If the  generic
+     header item <EM>src</EM>_<EM>sf</EM> exists in the input file, it is copied to
+     the output file.  The items <EM>start</EM> and  <EM>nan</EM>  are  written  to
+     contain  the  starting  record  number and number of records
+     processed.
+
+     The size of the input sampled data field is written  to  the
+     generic <EM>frmlen</EM>.
+
+     The generic header item <EM>start</EM>_<EM>time</EM> is written in the  output
+     file.    The   value  written  is  computed  by  taking  the
+     <EM>start</EM>_<EM>time</EM> value from the header of the input file (or zero,
+     if such a header item doesn't exist), adding to it the rela-
+     tive time from the first record in the  file  to  the  first
+     record processed, and adding a displacement corresponding to
+     half of <EM>frmlen</EM>.  The computation of  <EM>start</EM>_<EM>time</EM>  depends  on
+     the  value  of  the  generic header item <EM>src</EM>_<EM>sf</EM> in the input
+     file (which is assumed to be the sampling rate of the actual
+     data   in  each  field).   If  this  item  is  not  present,
+     <EM>start</EM>_<EM>time</EM> is just copied from the input file to the  output
+     file.
+
+     As usual, the command line is added as  a  comment  and  the
+     header  of  <EM>input</EM>  is  added  as  a  source  file to <EM>output</EM>.
+     Another comment gives the name of the field added by <EM>pwr</EM>.
+
+
+</PRE>
+<H2>FUTURE CHANGES</H2><PRE>
+     Control over the type of the output power field.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man1.html/frame.1.html">frame (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA.5.html">FEA (5-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/fea_stats.1.html">fea_stats (1-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man1.html/stats.1.html">stats (1-ESPS)</A></STRONG>
+
+
+</PRE>
+<H2>WARNINGS AND DIAGNOSTICS</H2><PRE>
+     <EM>pwr</EM> will exit with an error message if any of the  following
+     are  true:  <EM>input</EM> does not exist or is not an ESPS FEA file;
+     the sampled-data field does not exist in  <EM>input</EM>;  the  power
+     field already exists in <EM>input</EM>.
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     None known.
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Manual page by John Shore.  Program by Rodney Johnson.
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

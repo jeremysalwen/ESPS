@@ -1,0 +1,75 @@
+.\" @(#)emake.1t	1.4 7/23/93 ESI
+.\" Copyright (c) 1987, 1990 Entropic Speech, Inc. All Rights Reserved.
+.TH EMAKE 1\-ESPS 7/23/93
+.SH NAME
+emake \- run make with the ESPS compilation environment
+.SH SYNOPSIS
+.B emake
+[
+\fImake flags and arguments\fR
+]
+.SH DESCRIPTION
+.PP
+\fIemake\fR runs the Unix \fImake\fR(1) command and passes
+it the ESPS compilation environment. 
+.PP
+The following macro definitions are passed to make:
+.TS
+tab(;);
+l l.
+AUDIOLIB;Path to audio library for SGI
+BINDIR;The directory where ESPS executables go
+CC;Name of C compiler
+DEFAULT_PAGER;Default UNIX pager (i.e. more)
+EQN;UNIX eqn command
+LIBCFLAGS;CFLAGS for ESPS library functions
+LIBDIR;The directory where the ESPS library and lint library are
+LIBMOD;The mode of the ESPS library
+LINK;Unix symbolic link command
+LINT;The name of the lint program to use (eg. "att lint")
+LINTFLAGS;Flags for use with lint
+LLIBNAME;Name of lint library
+MACH;Machine type code (i.e. SUN4, HP700, etc)
+MANDIR;The parent of the man page directory (parent of man1, man3, etc)
+MANMOD;The mode of the ESPS man pages
+MKLINTLIB;Command to make the lint library
+MOTIF_INC;Path to Motif include directory
+MOTIF_LIB;Path to Motif libraries
+OLDBIN;The directory where the previous version of executables go
+PARAMDIR;The directory where default parameter files go
+PLOTDIR;Directory where plot programs go that have cover programs
+PROGCFLAGS;CFLAGS for ESPS programs
+;contains -I to the correct include
+;file directories
+PROGMOD;The mode of ESPS executables
+RANLIB;UNIX ranlib command
+SINC;The directory of the ESPS include files 
+;(eg.  /usr/esps/include/esps)
+SPOOL_CMD;UNIX line printer spool command
+SPSLIB;The full path of the ESPS library 
+;(eg. /usr/esps/lib/libespsg.a).
+SPSDIR;The parent ESPS install directory
+STRIP;The UNIX strip command
+SUNAUDIOLIB;Path to Sun audio library
+WAVESDIR;The waves library directory
+WINDOWS;Alternate window system libraries
+WINLIBS;Paths to window system libraries
+XVIEW_INC;Path to include directory for XView
+XVIEW_LIB;Path to XView library
+.TE
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read.
+.SH "ESPS HEADERS"
+.PP
+ESPS data files are not read or written.
+.SH "WARNINGS"
+.PP
+No error messages are produced by these programs.  Various error and
+warning messages are possible from cc, the loader and make.
+.SH "SEE ALSO"
+cc(1), ld(1), make(1), ecc(1\-ESPS), elint(1\-ecc), lecc(1\-ESPS),
+lelint(1\-ESPS)
+.SH "AUTHOR"
+.PP
+Alan Parker

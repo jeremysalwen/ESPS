@@ -1,0 +1,66 @@
+.\" Copyright (c) 1998 Entropic, Inc. All rights reserved.
+.\" @(#)phon_to_sone.3	1.1 9/4/98 ESI/ERL/EG
+.ds ]W (c) 1998 Entropic Research Laboratory, Inc.
+.TH PHON_TO_SONE 3\-ESPSsp 9/4/98
+.SH NAME
+phon_to_sone \- Convert loudness level in phons to subjective loudness in sones
+.SH SYNOPSIS
+.ft B
+double 
+.br
+phon_to_sone(phonValue)
+.br
+double	phonValue;
+.SH DESCRIPTION
+.PP
+The increase in level (phons) needed to double the subjective
+loudness is not constant with loudness level.
+This function nonlinearly compresses the phon loudness scale 
+in the audible region to 
+better match the subjective loudness scale (sones). See [1] and its references
+for details.
+.PP
+The level in 
+.I sones
+corresponding to a loudness level in
+.I phons 
+is given by:
+.IP
+\fIsoneValue = 2^(phonValue \- 40)/10\fP
+.PP
+The input phon level is in dBs.
+.SH EXAMPLE
+.nf
+
+double sone, phon, bigNumber = 10000;
+
+/* phon_to_sone may exceed MAXDOUBLE */
+errno = 0;
+sone = phon_to_sone(bigNumber);
+if (errno)
+  perror("phon_to_sone error");
+
+/* reasonable frequency values are fine */
+phon = 100;
+sone = phon_to_sone(phon);
+printf("sone equivalent of 100 phons is %f", sone);
+.fi
+.SH WARNINGS
+In general, this function should not be with a negative valued input.
+No checking is done, however, by this function.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+\fIbs_dist\fP(1\-ESPS)
+.fi
+.SH REFERENCES
+.HP
+[1] S. Wang, A. Sekey, and A. Gersho,
+``An objective measure for predicting subjective quality of speech coders,''
+.I "IEEE Journal on Selected Areas in Communications,"
+.BR SAC-10
+(5), 819\-829 (June 1992)
+.sp
+.SH AUTHOR
+Code extracted from \fIbs_dist\fP(1\-ESPS) by David Burton; manual page by David Burton.

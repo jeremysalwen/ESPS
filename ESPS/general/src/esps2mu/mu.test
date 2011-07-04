@@ -1,0 +1,7 @@
+#! /bin/sh
+# @(#)mu.test	1.1 12/19/89 	ESI
+
+echo There should be no diff output for the following:
+echo " "
+echo "testsd - | esps2mu - - | > tmp;  diff tmp mu.od"
+testsd - | esps2mu - - | od > tmp;  diff tmp mu.od

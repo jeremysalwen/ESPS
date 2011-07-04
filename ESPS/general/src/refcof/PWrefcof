@@ -1,0 +1,15 @@
+# @(#)PWrefcof	1.2 6/11/91 ESI
+# default xwaves parameter file for refcof
+#
+# this leaves start and nan to be determined by -r, and it sets 
+# frame_len and step explicitely to force a single frame given by the 
+# -r boundaries
+
+int frame_len = 0: "Number of points per analysis frame; 0 means nan";
+int step = 0: "Number or points between start of successive frames; 0 means frame_len";
+string window_type ?= "RECT": "Window to apply to data": {"RECT", "HAMMING", "TRIANG", "HANNING", "COS4"};
+int order ?= 15: "Number of reflection coefficients to compute per frame)";
+string method ?= "AUTOC": "Analysis method":{"AUTOC", "COV", "BURG", "MBURG", "FBURG", "VBURG", "STRCOV", "STRCOV1"};
+float strcov_test ?= 1e-5: "convergence test value for STRCOV";
+int strcov_maxiter ?= 20: "maximum number of iterations for STRCOV";
+

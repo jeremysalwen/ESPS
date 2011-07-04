@@ -1,0 +1,435 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991-1993 Entropic Research Laboratory, Inc.  All rights reserved.
+.\" @(#)feafunc.1	1.8	01 Apr 1997 ESI/ERL
+.TH FEAFUNC 1\-ESPS 01 Apr 1997
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.if n .ds - ---
+.if t .ds - \(em\h'-0.2m'\(em
+.SH "NAME"
+
+feafunc \- apply optional function, gain factor, additive constant, and type change to FEA fields
+.SH "SYNOPSIS"
+.B feafunc
+[
+.BI \-d " add_constant"
+] [
+.BI \-f " input_field"
+[
+.BI \-f " output_field"
+]] [
+.BI \-g " gain_factor"
+] [
+.BI \-r " range"
+] [
+.BI \-t " output_type"
+] [
+.BI \-x " debug_level"
+] [
+.BI \-F " function"
+] [
+.BI \-P " params"
+]
+.I "input output"
+.SH "DESCRIPTION"
+.PP
+.I feafunc
+accepts a FEA file \fIinput\fP containing arbitrary fields.
+It produces a FEA file \fIoutput\fP with records that are copies of the
+input records except that there is a field
+.I output_field
+containing the values of the functional form \fIg*F(element) + d\fP
+for each element of the selected field \fIinput_field\fP.
+Here \fIg\fP is a multiplicative constant,
+\fIF\fP is a single-valued scalar function
+(\fInone, abs, arg, atan, conj, cos, exp, exp10, im, log, log10, re,
+recip, sgn, sin, sqrt, sqr, tan\fP), and \fId\fP is an additive constant.
+The output field has the same size, rank, and dimensions as
+.I input_field
+and, by default, the same data type.
+However, with the
+.B \-t
+option, the result may be converted to an arbitrary numeric data type.
+Normally,
+.I output_field
+is a new field, different from any in the input file.
+However, the output field may replace an existing field, including
+.I input_field.
+In that particular case, the program transforms the contents of
+.I input_field
+by applying the functional form to each element.
+.PP
+If \fIinput\fP is "\-", standard input is used for the input file.
+If \fIoutput\fP is "\-", standard output is used for the output file.
+The input and output should not be the same file;
+however, it is okay to run the program as a filter by specifying "\-"
+for both input and output.
+.PP
+The defaults for \fB\-F\fP, \fB\-g\fP, and \fB\-a\fP respectively 
+are "none", 1, and 0.  ("None" is a function that just returns the
+input value\*-i.e., it does not modify the argument.)  These defaults
+imply no changes at all to the data, which is useful since
+\fIfeafunc\fP can then be used to change the name or numeric type of 
+a field.  
+.PP
+Note that the \fB-f\fP option is used to specify both the input and
+output field names.  If an output name isn't specified (the option is
+used once), the output name defaults to the input name followed by 
+a suffix giving the name of the applied function.  
+.PP
+Function values 
+.I F(element)
+are computed by the ESPS function
+.IR arr_func (3-ESPSsp).
+See the
+.I arr_func
+manual entry for more information on particular functions
+.I F.
+The result is as though the input values were converted to DOUBLE_CPLX,
+the computations done with complex arithmetic,
+and the result converted to the output type.
+A more direct method is actually used internally when the input and
+output types and the multiplicative and additive constants permit;
+for example, if these are all real, real arithmetic is used.
+Type conversions are done by
+.IR type_convert (3-ESPS).
+Briefly, conversion from complex to real discards the imaginary part,
+conversion from float or double to an integral type
+rounds rather than truncating,
+and conversion from one type to another type with a narrower numerical range
+may entail clipping; in the latter case a warning message is printed.
+See the
+.I type_convert
+manual page for more details on type conversions.
+.PP
+.I feafunc
+preserves FEA subtype information\*-for example,
+if the input is a FEA_SPEC file, the output file header will contain the
+subtype code indicating a FEA_SPEC file,
+and the output file will in fact be a FEA_SPEC file
+if one precaution is observed.
+Namely, if the output field is one that the FEA subtype specification
+subjects to requirements, the requirements must not be violated.
+It is unadvisable, for instance, though possible, to use
+.I feafunc
+with the
+.B \-t
+option to make a file that appears to be a FEA_SPEC file
+but has a field named
+.I re_spec_val
+whose data type is LONG_CPLX.
+(The
+.IR FEA_SPEC (5-ESPS)
+manual entry requires it to be FLOAT or BYTE.)
+It is always legitimate to add a new field with a name not mentioned in the
+subtype specification.
+.PP
+For scaling and shifting the data in FEA_SD files,
+\fIcopysd\fP(1\-\s-1ESPS\s+1) is probably a better choice than \fIfeafunc\fP. 
+For changing types and formats in FEA_SPEC files,
+.IR copysps (1-ESPS)
+is probably better.
+For more general computations, consider \fIselect\fP(1\-\s-1ESPS\s+1).
+.SH OPTIONS
+.PP
+The following options are supported.  Default values are shown in brackets.
+.TP
+.BI \-d " add_constant \fR[0]\fP"
+Specifies an additive constant \fId\fP for the expression
+\fIg*F(element) + d\fP that is computed for each element of
+\fIinput_field\fP and stored in the output file.  The function \fIF\fP
+and the multiplicative constant in the expression
+are obtained respectively from the \fB\-F\fP and \fB\-g\fP options.
+A complex constant is specified with a comma, in the form
+.IB real_part , imaginary_part.
+.TP
+.BI \-f " field_name" "\fR [samples]"
+.TP
+.BI \-f " field_name" "\fR [(input field name plus suffix)]"
+.TP
+.B \-f \-
+If this option is used once, it specifies the name of the source field
+\fIinput_field\fP in \fIinput\fP.  If it is used twice, the second
+time it specifies the name of the destination field \fIoutput_field\fP
+in \fIoutput\fP.  The default name for the input field is "samples".
+The default name for the output field is the input field followed by a
+suffix identifying the function type (see \fB\-F\fP).
+If the output field has the same name as some field in the input file,
+the original contents of the field are lost.
+A warning message is normally printed in that case.
+However, if the output field is specified as "\-", the name of the input
+field is used instead, and the warning message is suppressed.
+.TP
+.BI \-g " gain_factor \fR[1]\fP"
+Specifies a multiplicative constant (gain factor) for the expression
+\fIg*F(element) + d\fP that is computed for each element of the
+\fIinput_field\fP and stored in the \fIoutput_field\fP.  The function
+\fIF\fP and the additive constant in the expression are obtained
+respectively from the \fB\-F\fP and \fB\-d\fP options.
+A complex factor is specified with a comma, in the form
+.IB real_part , imaginary_part.
+.TP
+.BI \-r " start" : "last" "\fR [1:(last in file)]"
+.TP
+.BI \-r " start" :+ "incr"
+.TP
+.BI \-r " start"
+In the first form, a pair of unsigned integers specifies the range
+of records to be processed.
+Either
+.I start
+or
+.I last
+may be omitted; then the default value is used.
+If
+.IR last " = " start " + " incr,
+the second form (with the plus sign) specifies the same range as the first.
+The third form (omitting the colon) specifies a single record.
+The \fB\-r\fP overrides the values of \fIstart\fP and \fInan\fP from 
+the parameter file.
+The value of
+.I nan
+becomes 1 +
+.IR last " \- " start
+(first form), 1 +
+.I incr
+(second form), or 1 (third form).
+.TP
+.BI \-t " output_type" "\fR [(same as input)]"
+Specifies the type of the \fIoutput_field\fP.  Allowable values are
+DOUBLE, FLOAT, LONG, SHORT, BYTE, (or CHAR), DOUBLE_CPLX, FLOAT_CPLX,
+LONG_CPLX, SHORT_CPLX, and BYTE_CPLX.
+The case doesn't matter:  upper is not distinguished from lower.
+The default type is the same
+type as that of the \fIinput_field\fP.
+.TP
+.BI \-x " debug_level" "\fR [0]"
+A positive value specifies
+that debugging output be printed on the standard error output.
+Larger values result in more output.
+The default is 0, for no output.
+.TP
+.BI \-F " function \fR[none]\fP"
+Specifies a function \fIF\fP to be applied to each element of the
+\fIinput_field\fP before storing \fIg*F(element) + d\fP in
+the output file.  The possible functions are
+\fIabs\fP (absolute magnitude),
+\fIarg\fP (phase angle),
+\fIatan\fP (arctangent),
+\fIconj\fP (complex conjugate),
+\fIcos\fP (cosine),
+\fIexp\fP (exponential),
+\fIexp10\fP (10 to the given power),
+\fIim\fP (imaginary part),
+\fIlog\fP (natural logarithm),
+\fIlog10\fP (base 10 logarithm),
+\fInone\fP (no change\*-the identity function),
+\fIre\fP (real part),
+\fIrecip\fP (reciprocal),
+\fIsgn\fP (signum; for a complex number \fIz\fP off the real axis, the value is
+.IR z /| z |),
+\fIsin\fP (sine),
+\fIsqr\fP (square),
+\fIsqrt\fP (square root),
+\fItan\fP (tangent).
+The case doesn't matter:  upper is not distinguished from lower.
+The multiplicative and additive constants in the expression
+\fIg*F(element) + d\fP are obtained from the \fB\-g\fP and \fB\-d\fP options.
+The default function ("none") does nothing:
+it just returns its argument unchanged.
+.TP
+.BI \-P " param" " \fR[params]\fP"
+Specifies the name of the parameter file.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file does not have to be present,
+since all the parameters have default values.
+The following parameters are read, if present, from the parameter file:
+.TP
+.I "add_real \- float"
+.IP
+This is the value for \fId\fP in the expression \fIg*F(element) + d\fP,  
+or the real part of
+.I d
+if
+.I d
+is complex.  The default is 0.
+This parameter is not read if the \fB\-d\fP option is used. 
+.TP
+.I "add_imag \- float"
+.IP
+This is the imaginary part of
+.I d
+in the expression \fIg*F(element) + d\fP.
+The default is 0.  This parameter is not read if the \fB\-d\fP option is used.
+.TP
+.I "input_field \- string"
+.IP
+This is the name of the selected data field in \fIinput\fP.
+The default is "samples".  A parameter file value (if present) is overridden
+by the first use of the \fB\-f\fP option.  
+.TP
+.I "output_field \- string"
+.IP
+This is the name of the \fIoutput\fP field in which the the values of
+\fIg*F(element) + d\fP are stored.  The default name is that of
+\fIinput_field\fP with a suffix that identifies the function \fIF\fP.
+A parameter file value (if present) is overridden by the second use of
+the \fB\-f\fP option.
+.TP
+.I "gain_real \- float"
+.IP
+This is the factor \fIg\fP in the expression \fIg*F(element) + d\fP,
+or the real part of
+.I g
+if
+.I g
+is complex.  
+The default is 1.  This parameter is not read if the \fB\-g\fP option is used.
+.TP
+.I "gain_imag \- float"
+This is the imaginary part of
+.I g
+in the expression \fIg*F(element) + d\fP.
+The default is 0.  This parameter is not read if the \fB\-g\fP option is used.
+.TP
+.I "start \- integer"
+.IP
+This is the first record of \fIinput\fP to process.  The default is 1.
+It is not read if the \fB\-r\fP option is used.
+.TP
+.I "nan \- integer"
+.IP
+This is the number of records to process.  It is not read if the
+\fB\-r\fP option is used.  A value of zero means all subsequent
+records in the file; this is the default.
+.TP
+.I "output_type \- string"
+.IP
+This is the desired data type of \fIoutput_field\fP.  Allowable values
+are double, float, long, short, byte (or char), double_cplx, float_cplx,
+long_cplx, short_cplx, and byte_cplx (case insensitive).  The
+default is the type of \fIinput_field\fP.  A parameter file 
+value is not read if the \fB\-t\fP option is used.  
+.TP
+.I "function_type \- string"
+The function \fIF\fP.
+Allowable values are
+abs, arg, atan, conj, cos, exp, exp10, im, log, log10, none, re, recip,
+sgn, sin, sqr, sqrt, and tan (case insensitive).
+This parameter is not read if the command-line
+option
+.B \-F
+is specified.  If the option is omitted and if no value is found in
+the parameter file, the default used is "none".
+See the discussion of the \fB\-F\fP option.
+.PP
+Remember that command line option values override parameter-file
+values.
+.SH "ESPS COMMON"
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overridden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+ESPS Common is not processed by 
+.I feafunc
+if \fIinput\fP is 
+standard input.  Otherwise, provided that the Common file is newer 
+than the parameter file, and provided that the \fIfilename\fP entry in 
+Common matches \fIinput\fP, the Common values for \fIstart\fP and 
+\fInan\fP override those that may be present in the parameter file. 
+.PP
+The following items are written into the ESPS Common file 
+provided that \fIoutput\fP is not <stdout>.  
+.IP
+.I "start \- integer"
+.IP
+The starting point from the input file.
+.sp
+.I "nan \- integer"
+.IP
+The number of points in the selected range.
+.sp
+.I "prog \- string"
+.IP
+This is the name of the program 
+.RI ( feafunc
+in this case).
+.sp
+.I "filename \- string"
+.IP
+The name of the input file \fIinput\fP.
+.SH ESPS HEADERS
+.PP
+The \fIoutput\fP header is a new FEA file header.  All generic header
+items are copied from the input header to the output header.  The
+generic header item \fIstart_time\fP is written with a value computed
+by taking the \fIstart_time\fP value from the header of the input file
+(or zero, if such a header item doesn't exist) and adding to it the
+relative time from the first record in the file to the first record
+processed.  The computation of \fIstart_time\fP depends on the 
+value of the generic header item \fIrecord_freq\fP in the input file.
+If this item is not present, \fIstart_time\fP is just copied from 
+the input file to the output.  
+.PP
+The items \fIstart\fP and \fInan\fP are rewritten (if they already
+exist) to contain the starting record number and number of records
+processed.  Generic header items are added for the
+\fIfunction_type\fP, \fIgain_real\fP, \fIgain_imag\fP, \fIadd_real\fP,
+\fIadd_imag\fP, \fIinput_field\fP, and \fIoutput_field\fP.
+As usual, the command line
+is added as a comment, and the header of \fIinput\fP is added as a
+source file to \fIoutput\fP.
+.SH "FUTURE CHANGES"
+.PP
+.SH "SEE ALSO"
+.nf
+\fIaddfea\fP(1\-\s-1ESPS\s+1), \fIaddgen\fP(1\-\s-1ESPS\s+1),\fIcopysps\fP(1\-\s-1ESPS\s+1), 
+\fIcopysd\fP(1\-\s-1ESPS\s+1),\fIclip\fP(1\-\s-1ESPS\s+1),\fIframe\fP(1\-\s-1ESPS\s+1),
+\fImergefea\fP(1\-\s-1ESPS\s+1), \fIpwr\fP(1\-\s-1ESPS\s+1), \fIselect\fP(1\-\s-1ESPS\s+1),
+\fIarr_func\fP(3\-\s-1ESPS\s+1),\fItype_convert\fP(3\-\s-1ESPS\s+1sp),FEA(5\-\s-1ESPS\s+1)
+.fi
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+When functions (\fB\-F\fP option) or conversions (\fB\-t\fP option) lead
+to undefined or out-of-bounds values, the results vary with the
+machine on which \fIfeafunc\fP is run.  If floating-point exceptions
+are generated, \fIfeafunc\fP exits with an error message.  On some
+machines, such values do not result in exceptions; they are specially
+coded (NaN, Infinity, etc.) and can be observed using
+\fIpsps\fP(1\-\s-1ESPS\s+1).
+.PP
+If an unknown option is specified, if
+.B \-f
+is used more than twice, or if the number of file names is wrong,
+.I feafunc
+prints a synopsis of command-line usage and exits.
+The program exits with an error message if any of the following are true: 
+an unknown function name is specified;
+.I input
+does not exist or is not an ESPS FEA file; 
+.I input
+is the same as
+.I output
+(but not "\-");
+the \fIinput_field\fP does not exist in
+.I input;
+the \fIoutput_type\fP is not known or nonnumeric;
+a bad range is specified with
+.BR \-r .
+The program prints a warning and continues if an explicit
+.I output_field
+(that is, not specified as "\-") already exists in
+.I input.
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Manual page and program by John Shore.  Treatment of complex values
+revised and additional functions added by Rod Johnson.

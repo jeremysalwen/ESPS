@@ -1,0 +1,46 @@
+			The Menu Styles Control Panel
+			-----------------------------
+
+INTRODUCTION
+------------
+You may change the waves+ menus by using these buttons. "Waveform" displays
+have one or more time series (connected points) in them, and "image" displays
+have signal intensity represented by color or density of dots. These two 
+display types can have pull-down menus that contain different operations,
+or as in the default configuration here, the menus can be identical. The user
+can decide on the menu configurations by use of startup  scripts, or
+interactively change them by using the "Add Menu Function" buttons, as shown
+here. This "Menu Styles" control panel provides access to a limited set of
+display operations, and is for illustrative purposes only. You may add your 
+own commands and many other ESPS and waves+ commands to the waves+ menus.
+
+SELECT WAVEFORM MENU
+--------------------
+The "Select Waveform Menu" button allows you two choices of default menus and 
+the ability to clear the waveform menu completely. See "Add Menu Function"
+to rebuild your own waves+ pull-down menu.
+
+SELECT IMAGE MENU
+-----------------
+The "Select Image Menu" button does the same thing as the "Select Waveform 
+Menu", except it applies to image-style displays.
+
+ADD MENU FUNCTION
+-----------------
+"Add Menu Function" adds commands to both the waveform and image menus. If
+the command already exists on those menus, no action is taken. For example,
+try selecting the "Segment statistics" command from this list of functions;
+Now look at the bottom of the waves+ displaymenus; you should see it there.
+
+ADD IMAGE MENU FUNCTION
+-----------------------
+You can selectively add commands to only waveform or only image display menus,
+and "Add Image Menu Function" provides one example adding a command to
+an image menu. Try adding the 3D Plot command, and using it on the 
+"Image Display" found on the "Input Files" control panel.
+
+
+
+
+(@(#)menus.doc	1.1 7/29/91 ERL)
+

@@ -1,0 +1,150 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)comment.1	3.7 9/21/98 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH COMMENT 1\-ESPS 9/21/98
+.SH "NAME"
+comment - displays or adds strings in comment or typtxt field in existing ESPS file headers
+.SH "SYNOPSIS"
+.B comment
+[
+.BI \-C
+.I commfile
+]
+[
+.BI \-c
+.I comment
+]
+[
+.BI \-t
+]
+[
+.BI \-a
+]
+[
+.BI \-S
+]
+.I espsfile
+.SH "DESCRIPTION"
+.PP
+When called without the options, 
+.I comment 
+writes the contents of the 
+.I variable.comment
+field in the header of the ESPS file 
+.I spsfile
+to standard output.  Normally this field contains the command line
+that was used to create the file along with informal comments added
+subsequently (using
+.I comment \fB\-c\fR).
+Other options result in the output of comments from all the embedded
+headers thereby yielding a complete history of
+.I espsfile
+(\fB\-a\fR), the addition of new comments (\fB\-c\fR and \fB\-C\fR)
+and the treatment of the
+.I variable.typtxt
+field instead of the
+.I variable.comment
+field.
+If 
+.I espsfile
+is not an ESPS file,
+.I comment
+prints an error message and exits.  
+.I Comment
+prepends the comment with a line containing the user name and the
+current date and time (this can be suppressed using the \fB-S\fP
+option).
+.PP
+\fIcomment\fP creates a temporary file in the directory specified
+by the environment variable ESPS_TEMP_PATH (default /usr/tmp). 
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-C
+Causes 
+.I comment 
+to add a comment to 
+.I espsfile.
+If the argument
+.I commfile
+is given and is the name of an ASCII file, the contents of 
+.I commfile 
+are added to 
+.I variable.comment
+in the header of 
+.I espsfile.
+If the argument
+.I commfile
+is "\-",
+the user is prompted for the comment,
+which is then 
+typed in directly and terminated with a blank line or a \fB^\fRD.
+If the argument
+.I commfile
+is given but is not the name of an ASCII file, 
+.I comment
+exits with an error message.
+.TP
+.BI \-t
+Causes 
+.I comment
+to work on 
+.I variable.typtxt
+instead of
+.I variable.comment.
+The
+.I typtxt
+field is normally used to record the text corresponding to sampled data.
+.TP
+.BI \-c\ \fIcomment\fR
+The ASCII string
+.I comment
+is added as a comment.
+.TP
+.BI \-a
+Causes
+.I comment
+to output the comments from all the embedded headers.
+Since the comment field includes the command line used to generate the
+header, the \fB\-a\fR option yields an informal history of \fIespsfile\fR.
+.TP
+.BI \-S
+Suppresses the (otherwise automatic) comment that records the 
+user name, current date, and current time).  
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read by 
+.I comment.  
+.SH ESPS HEADERS
+.PP
+When a comment is added to the header, the input ESPS file is not
+treated as a source file within the output recursive header (since the
+input and output files are the "same").  The \fIdate\fP field in the
+universal portion of the output header is not affected by
+\fIcomment\fP (i.e., it is the same as that of the input header).
+Besides the usual command line in the comment field, a comment is
+added giving the name of the added generic header item, the user's name,
+and the date/time at which it was added.
+.SH WARNINGS
+.PP
+Sphere, esignal and PC WAVE file formats are not supported.
+You need to create an ESPS version by using copysps(1-ESPS) to add 
+a comment.
+.SH "FUTURE CHANGES"
+.PP
+None Contemplated.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIpsps\fP (1\-\s-1ESPS\s+1), \fIaddgen\fP (1\-\s-1ESPS\s+1), \fIpplain\fP (1\-\s-1ESPS\s+1), 
+\fIinhibit_hdr_date\fP (3\-\s-1ESPS\s+1), ESPS(5-ESPS)
+.fi
+.SH "WARNINGS"
+.PP
+.SH "BUGS"
+.PP
+.SH "AUTHOR"
+.PP
+Alan Parker

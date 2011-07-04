@@ -1,0 +1,149 @@
+#! /bin/sh
+# @(#)pplain.test	1.2 6/2/88 ESI
+
+ESPSCOM=espscom
+export ESPSCOM
+rm -f espscom
+
+cat > out.1.a <<ZAP
+1 
+2 
+3 
+4 
+5 
+0 
+9 
+8 
+7 
+6 
+ZAP
+cat > out.2.a <<ZAP
+461.94 
+500 
+461.94 
+353.553 
+191.342 
+-0.00011832 
+-191.342 
+-353.553 
+-461.94 
+-500 
+-461.94 
+-353.553 
+-191.342 
+0.00023664 
+191.342 
+353.554 
+461.94 
+500 
+461.94 
+353.553 
+191.341 
+-0.000354961 
+-191.342 
+-353.554 
+-461.94 
+-500 
+-461.94 
+-353.553 
+-191.341 
+0.000473281 
+191.342 
+353.554 
+461.94 
+500 
+461.94 
+353.553 
+191.341 
+-0.000591601 
+-191.342 
+-353.554 
+-461.94 
+-500 
+-461.94 
+-353.553 
+ZAP
+cat >out.3.a <<ZAP
+461.94 
+500 
+461.94 
+353.553 
+191.342 
+-0.00011832 
+-191.342 
+-353.553 
+-461.94 
+-500 
+-461.94 
+-353.553 
+-191.342 
+0.00023664 
+191.342 
+353.554 
+461.94 
+500 
+461.94 
+353.553 
+191.341 
+-0.000354961 
+-191.342 
+-353.554 
+-461.94 
+-500 
+-461.94 
+-353.553 
+-191.341 
+0.000473281 
+191.342 
+353.554 
+461.94 
+500 
+461.94 
+353.553 
+191.341 
+-0.000591601 
+-191.342 
+-353.554 
+-461.94 
+-500 
+-461.94 
+-353.553 
+-191.341 
+0.000709921 
+191.342 
+ZAP
+cat >com <<ZAP
+string filename = "<stdin>";
+string prog = "pplain";
+int start = 1;
+int nan = 10;
+ZAP
+echo this should result in the pplain usage message and no input file msg
+pplain
+echo "1 2 3 4 5 0 9 8 7 6" | testsd -a- - | pplain - > out.1
+echo this diff should find no differences
+diff out.1 out.1.a
+testsd -p50 test.sd 
+pplain -r4:47  > out.2
+echo this diff should find no differences
+diff out.2 out.2.a
+pplain -r4:500  > out.3
+echo this diff should find no differences
+diff out.3 out.3.a
+echo should complain about not being more than 1 element
+pplain -e3 test.sd
+echo this should complain that its not a feature file.
+pplain -f foo test.sd
+rm a.fea
+pplain -r1:100 test.sd | addfea -chi -ffield - a.fea
+echo this should complain that field foo is not in file a.fea
+pplain -f foo test.sd
+echo this should work
+rm espscom
+pplain -r1:100 -ffield a.fea >out.1
+pplain  -r1:100 test.sd >out.2
+echo no difference expected
+diff out.1 out.2
+echo this should complain about only one element in field
+pplain -f"field[2]" a.fea
+rm out.1 out.2 out.3 out.1.a out.2.a out.3.a espscom test.sd com a.fea

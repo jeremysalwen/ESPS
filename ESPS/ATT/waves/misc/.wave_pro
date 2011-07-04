@@ -1,0 +1,972 @@
+# This file specifies many of the parameters for the program xwaves.
+# Specifications take the form
+#		key_word <value>
+# One or several of these pairs may appear on each line.  Lines in this
+# file which begin with # are ignored.  The comments and blank lines seen here
+# are optional and may be deleted in personalized copies.  A full set of
+# specifications is included here as documentation, but any subset
+# is acceptable.  If specifications are to be deleted, remove both the
+# keyword and the value.  Empty text values can be indicated with a
+# double quote ("").
+
+# In this file, each global variable symbol is preceded by a brief
+# description of its meaning.  For more detail, refer to the "Symbols"
+# section of the xwaves manual.  In some cases, the definition is
+# commented out, in others, a reasonable, or recommended setting is
+# specified.  To remove a specification, it may either be commented out,
+# or deleted entirely.  Any symbols not defined here are automatically
+# given reasonable values.
+
+# As of xwaves version 5.0, many of these variables are simply used as
+# default values for the creation of new data views.  Individual views may now 
+# have most of their attributes specified on a per-view basis.
+# The xwaves view "set" command provides this access.
+
+###################################################################
+################ XWAVES GLOBAL SYMBOL DEFINITIONS #################
+###################################################################
+
+# maximum size of signal data buffer (in bytes).  This limit is
+# established to reduce the chance that extremely long signal files will
+# accidently be read in their entirety.  It may also be necessary to
+# avoid exceeding the per-process swap space available.
+max_buff_size	100000000
+
+# whether or not to write ESPS common after marking segments.
+# Generally a bad idea and it slows things down, but might be useful
+# when xwaves calls certain ESPS programs.
+write_common 0
+
+# Filename of a header for use with headerless files or files that do
+# not have ESPS/waves+ format headers (e.g. with foreign headers).  
+# NOTE: in the case of ESPS files, it is better to set the unix environment 
+# variable DEF_HEADER before calling xwaves, as this will have the desired 
+# effect for all ESPS programs as well as xwaves.  The default search path 
+# used for default header file names is
+#    .:$ESPS_BASE/lib/waves/files
+#
+# Default header files available in the directory $ESPS_BASE/lib/waves/files:
+# 1.  def_head.feasd    -- an ESPS FEA_SD header for single-channel, 
+#                          SHORT, sampled-data with sampling rate 8000 Hz.
+# 2.  def_head.sig      -- a header for SIGnal format files.
+# 3.  def_head.HTK10khz -- a header for HTK 2.0 format waveform files,
+#                          with 10kHz sampling rate.
+# 4.  def_head.HTK16khz -- a header for HTK 2.0 format waveform files,
+#                          with 16kHz sampling rate.
+# 5.  def_head.sunau8   -- a header for Sun audio format waveform files,
+#                          with mu-encoded, 8KHz sampling rate data.  
+def_header $ESPS_BASE/lib/waves/files/def_head.feasd
+
+# initial height in pixels of waveform display frame (Sun CRT screen
+# is 900 high)
+# Limits:	50 to 900  (pixels)
+wave_height     200
+
+# initial width in pixels of waveform display frame (Sun CRT screen is
+# 1152 wide)
+# Limits:	50 to 1152  (pixels)
+wave_width	1380
+
+# minimum height in pixels of spectrogram windows 
+# If min_spec_height is larger than the "natural" height of 
+# spectrogram windows (which is related to the number of FFT 
+# points), and if vertical rescaling is enabled (v_spect_rescale == 1), 
+# then spectrogram windows will be rescaled vertically when painted.  
+# Set this to 50 to avoid any rescaling on initial window display (i.e.,
+# for fastest painting)
+# Limits:	50 to 900  (pixels)
+min_spec_height 400
+
+# minimum width in pixels of spectrogram windows 
+# Initial spectrogram painting puts up one pixel-column per record 
+# (i.e., per FFT). The "natural" width is somewhat more than the 
+# number of records (if this fits on the screen).  If min_spec_width
+# is larger than the number of records, a larger window is created.  
+# You might want larger windows to see more of the digital readouts.  
+# Limits:	50 to 1152  (pixels)
+min_spec_width 350
+
+# whether or not to display the reticle grid on spectrogram and waveform
+# displays (0 means don't display grid).
+reticle_grid  1
+
+# whether or not to draw lines across the reticle grid on spectrogram and
+# waveform displays.  If major_lines is set to 1, it draws lines across 
+# the display; if it is 0 it doesn't draw lines across the display.  
+# reticle_grid must be 1 (display reticle grid) for this to work. 
+# By default is does not draw lines across the plot.  Default value is 0.
+major_lines 0
+
+# whether or not to interpolate spectrogram displays (0 means plot 
+# uniform rectangles)
+spect_interp  1
+
+# whether or not to rescale spectrogram displays vertically (1 means
+# rescale, 0 means don't rescale); note that rescaling can be an 
+# expensive operation
+v_spect_rescale 1
+
+# whether or not to rescale spectrogram displays horizontally (1 means
+# rescale, 0 means don't rescale); note that rescaling of interpolated 
+# data can be an expensive operation if spect_rescale_scope has the 
+# value "buffer"
+h_spect_rescale 1
+
+# whether horizontal rescaling of interpolated data is computed for the
+# entire xwaves buffer (value is "buffer") or for just the current
+# window width (value is "view").  Rescaling for the entire buffer can
+# be quite slow if the ratio of the current view to the entire buffer is
+# large, but has the advantage that horizontal scrolling is very fast
+# once the new image is computed (since it is stored).  Rescaling just
+# the current view is faster, but has the disadvantage that the
+# rescaling takes place every time the viewpoint is moved (i.e.,
+# scrolling is slower).  
+spect_rescale_scope view
+
+# files specifying parameters for generating spectrograms
+# These are text files with format similar to that used herein.
+nb_spect_params	 $ESPS_BASE/lib/waves/files/nb_params
+wb_spect_params	 $ESPS_BASE/lib/waves/files/wb_params
+
+# location of upper left of first waveform frame ((0,0) is upper left of CRT)
+# Limits:	x: 0 to 1152-wave_width;  y: 0 to 900-wave_width  (pixels)
+first_x		5
+first_y		180
+
+# location of the upper left corner of the xwaves control window (pixels)
+# if tempted to set both of these to 0, it's better to use 1 since that
+# permits twm users to set usePPosition "non-zero".  Note that standard
+# xview command line option "-Wp <x> <y>" can be used to set position from 
+# command line 
+ctlwin_x 2
+ctlwin_y 2
+
+# whether or not the main control panel is iconized or not on startup; 
+# control panel will be visible unless ctlwin_iconized is nonzero; Note that
+# the standard xview command line options -Wi (iconic) and +Wi (open) 
+# can be used to determined the initial iconization state.  Also, 
+# the position of the icon can be determined by the standard xview 
+# command line option "-WP <x> <y>".  
+ctlwin_iconized 0
+
+# number of pixels to advance upon creation of subsequent waveform frames
+# Limits:	x: 0 to 1152; y: 0 to 900  (pixels)
+x_increment	0
+y_increment	200
+
+# set initial state of xwaves to color or monochrome 
+# This must be 1 (for color) or 0 (for monochrome)
+# This is set automatically on startup -- uncomment to override
+# do_color 1
+
+# plotting style to use for waveforms.
+# 1 ==> standard "connect-the-dots;" 2 ==> additional lines are drawn from the
+# true data point to the base line (histogram like).
+# 3 ==> DSP-style (vertical lines from zero to to data points);
+# 4 ==> 1 and 3 combined
+line_type 1
+
+# height in pixels of the region used to display and operate the scrollbars
+scrollbar_height 10
+
+# height in pixels of the region above the scrollbar used to display
+# digital readouts.
+readout_bar_height 15
+
+# link various signal data and view manipulations across all members of
+# a display ensemble (booleans).
+scroll_ganged 1
+zoom_ganged 0
+edit_ganged 0
+
+# default signal input file (appears in Waveform Manipulator panel)
+# May be a complete or partial pathname (completed after xwaves is run).
+#inputname	speech.sd
+
+# default output file (or file containing lists of output names)
+# See xwaves Help frame for output name usage.
+outputname	foo1
+
+# default name to put in "Overlay name:" item in command 
+# window (does not load file) 
+#overlayname ""
+
+# a default name to use for the first display ensemble generated by xwaves
+# If omitted it becomes the simplified basename of the first file read.
+# objectname ""
+
+# colormap used for waveform and spectrogram displays
+# The program cmap may be used to generate these RGB colormaps.
+colormap	$ESPS_BASE/lib/waves/colormaps/greymap
+
+# default (initial) duration of waveform displays (page size); (sec)
+# The upper limit on this is determined by your patience or the value
+# of max_buff_bytes, whichever is smaller.  (E.g. 10sec of 16kHz, short
+# integer data is 320000 bytes)
+ref_size	20.0
+
+# default step size for waveform "paging" (sec)
+ref_step	3.0
+
+# default (initial) starting location in speech file (sec)
+# This should be less than the file duration + start time.
+ref_start	0.0
+
+# ratio used for "zoom" operations on waveforms
+# Any value except zero should work.
+zoom_ratio	0.5
+
+# Specify an external function (program) to "attach" to xwaves on startup.
+# The ones currently available are the labelers (xlabel, xchart and xmarks)
+# and a frequency-spectrum estimation program, (xspectrum).
+# The user's existing unix search path is used to find the actual 
+# program to execute. 
+#funcname	xspectrum
+
+# Specify the attachment options to be provided as pushbuttons on the
+# main xwaves Control Panel.  The specifications are in the form of a
+# list of space-separated attachment program names.  If the
+# distinguished string "none" is used for the value, no attachment
+# options will appear in the xwaves control panel.
+attachments "xspectrum xlabel"
+
+# variables which set: (1) the fraction of "F0" displays used for the
+# F0 feature (2) the minimum F0 displayed (Hz); and (3) the range (in
+# Hz) of F0 displayed.
+# These apply only to the specialized F0 view created for FEA files
+# with a field named "F0".
+# f0_min 50, f0_range 150 is good for normal pitch-range male speakers
+# f0_min 100, f0_range 250 is good for normal pitch-range female speakers
+# f0_min 50, f0_range 250 accomodates both male and female speakers
+f0_size	.6
+f0_min	00
+f0_range 250
+
+# Determine the plotting style for F0; argument elements are type,
+# plotting char., x-offset and y-offset, respectively.  If type is 0,
+# the usual connect-the-dots paradigm is used; if type is 1, the data
+# points are discretely plotted using the plot character.  x- and
+# y-offsets are pixel offsets required to center the data points (font
+# dependent).  BUG: The plot character specification is ignored in xwaves.  
+# A solid square is always used instead of a character because no way of
+# plotting text in the "transparent" mode has been found in xview.
+f0_plot_specs 1 * 4 6
+
+# The globals plot_max and plot_min provide a flexible means of
+# overriding the automatic vertical scaling of plot data.  These may be
+# set globally, or on a view-specific basis.  The global defaults may be
+# overridden after the view is created using the view "set" command.
+# If plot_max is greater than plot_min, xwaves will scale every new plot
+# so that the top and bottom of the windows correspond to the specified
+# values.  Values outside of the range are simply clipped by the top and
+# bottom of the display window (extending into the scrollbar).  Setting
+# the view-specific boolean "v_rescale" to 1 will cause auto scaling to
+# resume.
+plot_max 0.0
+plot_min 0.0
+
+# sig_max_override is used to specify a fixed maximum to be assumed for
+# all internal D/A operations.  If its value is zero, the default
+# behavior of xwaves is to left shift all samples prior to D/A operation
+# so as to maintain approximately constant audio output, regardless of
+# the overall scaling of the signal in the file.  If non-zero, the D/A
+# scaling is performed as though sig_max_override were the actual
+# waveform absolute maximum in the file.  Thus, large numbers cause less
+# scaling up; small numbers cause more scaling up.  0 means use
+# autoscaling.
+sig_max_override 32000
+
+# Determine the initial definitions of left and middle button presses
+# for new waveform windows.
+# left_op and middle_op can be set to any of the waveform view
+# menu items, either built-in, or defined using the add_op command.
+# They may also be any of the following, distinguished items:
+# "up/down move" "move closest" "modify signal"
+# "repeat previous"  "blow up; function" "blow up time"
+left_op	up/down move
+middle_op play between marks
+
+# Determine the initial definitions of left and middle button presses
+# for new spectrogram windows.
+# spec_left_op and spec_middle_op can be set to any of the spectrogram
+# menu items, either built-in, or defined using the add_op command.
+# They may also be any of the following, distinguished items:
+# "modify intensity" "move contour" "up/down move"
+# "repeat previous" "mark formants" "move closest"
+spec_left_op	up/down move
+spec_middle_op modify intensity
+
+# Move_op is a new event-handling feature implemented in xwaves.  This
+# permits binding of any xwaves hard or soft command to the cursor
+# movement event (the event that happens on each pixel crossing as the
+# cursor is moved in a view).  move_op is settable and gettable in the
+# same way that "middle_op" and "left_op" are.  No distinction is made
+# between spectrogram views and waveform views (though, of course, the
+# variable can be set individually for any view).  The hope was that, for
+# instance, this "move_op" allows the connection of xspectrum to the
+# xwaves cursor so that whenever the cursor is moved, the corresponding
+# short-time spectral display is updated continuously as the cursor was
+# moved.  This is rather slow on older machines, but yields quite
+# acceptable performance on, for instance, SGI Indy R4600 machines.
+move_op ""
+
+# name (and options, if any) of external program to call for 
+# spectrogram calculations
+sgram_prog   sgram
+
+# name (and options, if any) of external program to call for D/A
+# operations.  Most architectures automatically do the right thing and
+# use the audio code in xwaves to play directly to the hardware audio. 
+# This is the case for SUN (except with old 8-bit CODEC), SGI, HP, and,
+# Linux.  The default case for DEC Alpha is to use play_prog eplay
+# (see below).  If play_prog is not explicitly set and internal audio code is 
+# available (SUN, SGI, HP, Linux), then you do not need to set play_prog 
+# unless you specifically want to use an external play program for some 
+# reason.  However, if you are running on a SUN with 8-bit CODEC audio 
+# or specifically want to use another external play program, you will
+# need to change the value of play_prog.  
+# NOTE: play_prog is only activated if use_internal_audio is set to 0.  
+# Normally, the use_internal_audio global SHOULD NOT be set in the profile, 
+# since xwaves tries to do the "right thing" if use_internal_audio is not 
+# specified.  (use_internal_audio is automatically set to 0 for xwaves at 
+# startup on the DEC Alpha and set to 1 for architectures with internal
+# audio code in xwaves.)
+# Possible values for play_prog include, but are not limited to: 
+# splay, s16play, sgplay, hpplay, decplay, lplay, c30play, s32cplay, v32play.  
+# Any program that can accept a "range" argument and an ESPS FEA_SD file 
+# as input is acceptable.  See eman play.  
+# Uncomment the following line to use splay if you have 8-bit CODEC 
+# audio on a SUN; be sure to set use_internal_audio to 0 also.
+# play_prog   splay
+# The play_prog setting below makes xwaves use decplay if you run on a 
+# DEC Alpha.  If you want to use some other external play program, 
+# comment it out and set play_prog appropriately and use_internal_audio to 0.
+#
+# eplay is an architecture specific link to a stand alone play program. 
+# Doing it this way, allows the etsm play extensions to work from the
+# xwaves menus.
+play_prog $ESPS_BASE/bin/Mplay
+
+# In release 5.1.1 of xwaves, the xwaves-internal play function for SUN, 
+# SGI, HP, and Linux is disabled if use_internal_audio is 0.  This is a 
+# mechanism for forcing external play operations, if required, for example for
+# remote play operations.  Set the external play program with the
+# symbol play_prog.  Normally, the use_internal_audio global SHOULD
+# NOT be set in the profile, since xwaves tries to do the "right
+# thing" if use_internal_audio is not specified.  NOTE: use_dsp32 and
+# use_internal_audio are alternate names for the same symbol. 
+use_internal_audio 0
+
+# show_play_position provides control over cursor tracking during playback.  
+# If it is set to 0, the cursor will not track in any views; if it is 1, 
+# the cursor will track only in the view representing the actual signal 
+# being played; if it is set to a value greater than 1, the cursor will
+# track in all views in the ensemble.  The default value is 1.
+# show_play_position 1
+
+# da_stop_pos_view allows you to control whether the data view will be 
+# repositioned to center on the sample which was being played when
+# D/A output is interrupted (interrupt with the left mouse button).  
+# The view will not reposition if da_stop_pos_view is zero.  The default, 
+# compiled-in value is 1, and the data view is repositioned to be centered 
+# on the last played data sample.
+# da_stop_pos_view 1
+
+# If da_location is set, it should be given the sample around which 
+# xwaves needs to focus its window when D/A output is interrupted with 
+# the left mouse button.  This is the only moment at which xwaves looks 
+# at this value.  The internal D/A software and the ESPS play programs 
+# set this value.  For examples on how to use it yourself, see chapter 17.  
+# If gotten with the "get" command during playback, it gives the value of 
+# the sample that is currently played.  If you do two "get"s in sequence 
+# and this value does not change, you may be sure that xwaves has stopped 
+# the playback operation.
+# da_location 0
+
+# By default, the value of stop_play_error is 1, and waves will stop a 
+# playback on an underflow error ("Lost realtime connection").  If set 
+# to 0, then a message will be printed but playback will continue on 
+# such errors.  
+# stop_play_error 1
+
+# Try setting play_buff_factor to a positive integer (e.g., 2, 3, 8) if
+# you experience problems with the audio output "stuttering" during
+# playback or get the message "lost realtime operation" during audio
+# playback.  If the value is non-zero, then use this factor to increase play
+# buffer size.  You should choose the smallest number that works for you.
+# The default value is 0.
+# play_buff_factor 2
+
+# If remote_path is defined (and not overriden by either 
+# remote_input_path or remote_output_path as described below), it
+# is prefixed to the basename of all input and output file names in
+# external calls (play operations, spectrogram operations, operations
+# from add_esps*).  This is useful for operation in an NFS directory
+# with rsh.  If remote_path is defined, it overrides output_dir in the
+# case of external calls.
+#remote_path
+
+# If remote_input_path is defined, it is prefixed to the basename of all
+# input file names in external calls.  It overrides any definition of
+# remote_path.
+#remote_input_path
+
+# If remote_output_path is defined, it is prefixed to the basename of all
+# output file names in external calls.  It overrides definitions of
+# remote_path and output_dir
+#remote_output_path
+
+# whether or not to show numeric values for each trace in a waveform 
+# display (1 means show the values)
+show_vals    1
+
+# whether or not to show field labels for each trace in a waveform 
+# display (1 means show the labels)
+show_labels  1
+
+# Image_clip is used to determine the upper clipping limit for mapping
+# spectrogram or other 2D image levels to display color/intensity.  For
+# monochrome displays (or when do_color is zero) it is used by the
+# digital halftone algorithm.  The halftone algorithm assumes that the
+# maximum displayed value, MAX, is 127.  Values between MAX and (MAX
+# -image_clip) are displayed in black.  The default value is 7 (i.e., in
+# spectrogram terms, everything above 119dB is shown in black).  For
+# color/greyscale displays the interpretation of image_clip is slightly
+# different, but it has approximately the same effect.  In this case all
+# levels above image_clip are represented as the same (high) entry in
+# the colormap table.
+image_clip 7
+
+# Image_range is the range (e.g. in dB) over which the display
+# intensity/color is linearly modulated by the data levels.  For
+# dithered monochrome images, everything below (MAX - image_clip -
+# image_range) is shown in white.  The default is 40 (i.e., in
+# spectrogram terms, assuming 7 as the value of image_clip, everything
+# more than 47db down from the maximum possible value is shown in white.
+# For greyscale/color displays, the available colormap entries are
+# linearly interpolated over the range specified by image_range.
+# Everything below (MAX - image_clip - image_range) is set to the same
+# (low) colormap entry.
+image_range 40
+
+# Some X servers reverse the sense of monochrome images.  
+# Setting invert_dither to 1 causes the display of
+# digital-halftone images to appear with black and white pixels reversed
+invert_dither 0
+
+# the path for xwaves temporary files that are destroyed after use.
+temp_path /var/tmp
+
+# number of INET socket port to use when operating in display-server mode
+# This is the INET domain socket port to be used when xwaves is
+# operating as a display server (as the result of the -s option or the
+# enable_server command).  If set, socket_port overrides the
+# WAVES_PORT environment variable or the value given by the -p
+# option.  Note that this port number is no longer relevant for the
+# send_xwaves program.  It is, however, still used when communicating
+# with the send_xwaves (3-ESPS) library calls and with the program
+# plot3D.  This inconsistency will be removed in a future release.
+# If not specified, the default value is 4050.  Xwaves and the socket library
+# have 4050 as the default value for socket port.  
+#socket_port
+
+# name of a command file to be executed on startup
+# if init_file is omitted, a default will be invoked (providing
+# a standard button control panel).  If you don't want any init_file
+# behavior (including the default), then use "/dev/null" as the 
+
+init_file $ESPS_BASE/lib/waves/commands/init_file.WC
+#init_file $ESPS_BASE/lib/waves/commands/init_file_optional.WC
+
+# name of a writable directory to used for all xwaves output files.  
+# Do not define this global unless you want it used, and make sure that
+# the named directory exists and is writable.  If output_dir is defined,
+# all output files from xwaves, xspectrum, and xlabel will go into 
+# this directory (including edited files, saved file segments, spectrogram
+# output files, outputs from add_espsf, etc.).  It is OK to include
+# environment variables in the path.  
+output_dir $HOME/waves/tmp
+
+# If command_step is non-zero, the execution of command files is paused after
+# every command; pressing "CONTINUE" will execute the next command. 
+command_step   0
+
+# When enabled, the "save" command and the "save segment in file" menu
+# operator will append "extensions" to the saved file's name that are
+# related to the file type.  Else, the extensions are not appended.
+append_extensions 0
+
+# The operator to be invoked after the menu operator item "blow up;
+# function" is executed.  Attachments typically bind their own "mark"
+# operation to blowup_op, but you can bind any existing operator to it.
+blowup_op ""
+
+# This disables the saving of spectrogram data files on most contexts
+# where signal files would normally be saved.  If you really need to do
+# operations like "save segment in file" on spectrograms, be sure this
+# boolean is 0.
+dont_save_sgrams 1
+
+# When editing waveforms by "drawing" on the view with a mouse button,
+# this boolean causes the data values to be written immediately after
+# the drawing button is released.  Otherwise the data is not written
+# until the view is destroyed or xwaves exits.
+rewrite_after_edit 1
+
+# When editing data by "drawing" on the view with a mouse button,
+# redraw_on_release causes the view to be redrawn each time the drawing
+# button is released.  For some view types, this might be painfully
+# slow, so you may prefer to disable this behavior.
+redraw_on_release 1
+
+# When vector signals are overlaid on spectrograms (e.g. "formant
+# trajectories"), the overlay positions can be indicated as numerals,
+# rather than as colored dots.  Enabling this boolean causes numbers to
+# be used.  This can be helpful when preparing monochrome hardcopy or
+# when working on monochrome monitors.
+overlay_as_number 0
+
+# The internal convention in xwaves is to represent samples in a file
+# starting the count at 0.  Other programs (including most ESPS
+# programs) start counting at 1.  "s_range_offset" is a means to adjust
+# this discrepancy or to allow you to define built-in offsets for some
+# other purpose (perhaps to compensate for a system delay, etc.)  This
+# offset is added to all "sample number" view-specific variables.  Its
+# default value is 1.  It has no other impact on xwaves operation.
+s_range_offset 1
+
+# The internal convention in xwaves is to represent channels in a file
+# starting the count at 0.  ESPS programs also start counting at 0.  
+# "c_range_offset" is a means to allow you to define built-in offsets 
+# for some other purpose.  This offset is added to all "channel number" 
+# view-specific variables.  Its default value is 0.  It has no other 
+# impact on xwaves operation. 
+c_range_offset 0
+
+# The string contained in this variable is prepended to all sample
+# "ranges", of the form M:N, returned by the view-specific symbols
+# "range_samp" and "mark_range_samp".  By default it is "-r" which
+# meshes well with ESPS programs that have a command-line range option.
+# You may specify a null prefix with \"\".
+samp_range_prefix -r
+
+# If enabled, this boolean causes the file name displayed in the
+# upper-left corner of each data view to be simplified to its base name
+# with any path prefix removed.
+shorten_header 0
+
+# The string contained in this variable is prepended to all time
+# "ranges", of the form A:B, returned by the view-specific symbols
+# "range_time" and "mark_range_time".  By default it is "-r".
+# You may specify any prefix, including a null prefix with \"\".
+time_range_prefix -s
+
+# If a Heurikon or AT&T SURF or a FAB2 DSP board is present, xwaves
+# will use it for play and spectrogram operations by default.  You can
+# disable use of the board by setting use_dsp32 to 0 (in which case
+# external ESPS programs will be used for the play and spectrogram
+# operations).  Setting use_dsp32 to 1 will result in the board being
+# used again.  Normally, the use_dsp32 global SHOULD NOT be set in the
+# profile, since xwaves tries to do the "right thing" if use_dsp32 is
+# not specified.  NOTE: use_dsp32 and use_internal_audio are alternate names
+# for the same symbol.
+#use_dsp32 0
+
+# If one of the DSP boards mentioned above is present, it requires data
+# in SHORT format for the fast, on-board spectrogram computations.
+# If fea_sd_special == 1, xwaves will convert all ESPS FEA_SD 
+# files to SHORT on input.  Note that this is not in general a 
+# good thing to do unless necessary.  If a board is detected, 
+# fea_sd_special is set to 1 on startup, but you can override this
+# by uncommenting the following (you can also use the "set" command
+# after startup) 
+fea_sd_special 0
+
+# By default, a primitive lock-and-wait mechanism is used to allow 
+# more than one program to use a DSP board.  dsp32_wait is the maximum 
+# amount of time (in seconds) to wait for board access.  Note that the
+# locking mechanism can be disabled by setting the environment 
+# variable DSP_NO_LOCK (see espsenv (1-ESPS))
+dsp32_wait     5
+
+# if 1 (default) means correct P8574 part is on the Ariel analog
+# module for the AT&T Surfboard; set to 0 if the wrong (A) part is there
+#P8574_type 1
+
+# ARIEL_16 specifies which crystal is on the Ariel VME-16 ProPort 
+# Ariel analog module for the AT&T Surfboard.  Set to 0 (the default), to
+# specify the standard 24 Mhz crystel; set to 1 to specify the 16 Mhz crystal. 
+#ARIEL_16 0
+
+# ARIEL_HK enables processing appropriate for the Ariel ProPort and
+# Heurikon dsp32c (SURF) combination.  Its value is irrelevant if your
+# system does not have a SURF board.
+# ARIEL_HK 1
+
+# non-zero values for debug_level result in various debugging-related output 
+# messages; higher values yield more messages
+debug_level     0
+
+# non-zero values for verbose results in assorted output messages that
+# inform the user about what xwaves is doing.  A value of 0 yields 
+# silent operation.  The default level of 1 yields the following: 
+# (1) startup messages (reporting on the profile that is read and 
+# whether or not a DSP board has been detected); (2) the command lines
+# of any external program calls caused by play, spectrogram, add_espsn, 
+# add_espsf, add_espst, and shell commands; (3) the pid of any forked 
+# process; (4) notification that a forked process has terminated.  
+# If verbose is 2 or higher, you get all of the above, plus some details
+# about xwaves command processing.  
+verbose        0
+
+
+# Cross_level and find_crossing are global and view-specific variables
+# that control the positioning of the cursor (and hence the markers) in
+# relation to level crossings in the signal.  If find_crossing is
+# non-zero, the cursor will only jump to locations in the waveform
+# corresponding to positive crossings of the signal level cross_level.
+# This is convenient when cutting and splicing is done, since it ensures
+# reasonable waveform continuity between segments cut consistently at
+# positive crossings of a particular level.  It is wise to set these
+# only on a view-specific basis, since you may not want this behavior
+# enabled in all views, but it is possible to initialize them from the
+# globals defined herein.  Note that if the signal on view does not
+# contain a crossing of cross_level, the cursor will move as usual.
+cross_level	0.0
+find_crossing	0
+
+# Show_processes is a boolean that enables a "process pending"
+# indication in xwaves.  An optional GUI widget appears if the global
+# "show_processes" is nonzero and if any external processes launched
+# from xwaves are pending.  The simple display shows the list of PID's
+# of all top-level processes pending.  Mousing the PID's on this list
+# opens a display showing the full command-line.  This expanded process
+# view also has an option to kill the process.
+show_processes 0
+
+# By default, most xwaves errors show up in a popup message panel,
+# (the error message GUI) rather than going to the tty window that
+# started xwaves (standard error (stderr)).  "show_error_gui" enables
+# and disables the error message GUI of xwaves.  It is easier to debug
+# scripts if the error messages just come to stderr.  If
+# show_error_gui is set to 0, the error messages come to the stderr. 
+show_error_gui 0
+
+# Mark_reference is a variable to determine the time reference for
+# finding time marks on objects.  If undefined, it is assumed that the
+# "mark" variables (l_mark_time, l_mark_samp, r_mark_time,...) are found
+# in relation to the time location of the cursor (i.e. in relation to
+# cursor_time).  If mark_reference is defined as the name of a
+# "readable" variable (any global or view-specific numeric variable),
+# the marks to the immediate left and right of the value of the named
+# variable are referenced.  Mark_reference is both a global creation
+# variable and a view-specific variable.  Mark_reference may take on the
+# value of any defined global or view-specific symbol name.  Its default
+# value is "cursor_time".  Of course, it can also assume the name of
+# user-defined symbols.  Thus, one way to get the time locations of the
+# marks immediately to the left and right of, say .34 seconds from a
+# display object named bob1 with a command like:
+#   send_xwaves set mark_reference my_time my_time .34:: \
+# 	bob1 get aname l_mark_time r_mark_time
+# Of course, if you don't mind moving the cursor, the same operation
+# can be performed without redefining mark_reference, thus:
+#   send_xwaves bob1 set cursor_time .34:: \
+# 	bob1 get aname l_mark_time r_mark_time
+mark_reference cursor_time
+
+# hold_audio_port is for the sparc only.  This eliminates the clicking
+# (e.g., in the Sparc 10 audio) when the audio device is opened.  By
+# default it is initialized to 0.  If it is set to be non-zero, then it
+# holds the audio port open once it has been used once.  We think that
+# the clicking results from the device reverting to single channel, 8
+# bit, mulaw upon open, and then it is set to the desired mode.   
+#hold_audio_port 1
+
+# As of 5.0.x we have implemented a new global max_cmap_size which
+# allows specification of the number of entries used by xwaves.  By
+# default xwaves uses 128 colors in its colormap.  Thus, if entries
+# are tight, one can set max_cmap_size to, say 64 or less, and still
+# possibly have dynamic colormap control (i.e. it may not be 
+# necessary to use -c).  This was easy fallout from implementing support
+# for colormap plane depths less than 8 bits.  
+max_cmap_size 64
+
+# In older sphere files, the "sample_count" field means total samples,
+# NOT samples per channel (or records).  If this is non-zero, then the
+# old format is used.  If zero, then current rule is used, which is that
+# sample_count means samples per channel (like esps).  For example, the
+# 1992 Credit Card CD is old format, but the sample files in the current
+# NIST source directory are in current format.
+old_sphere_format 0
+
+# If show_current_chan is non-zero it enables the unique display of
+# the sample value field (in red) for the channel that the cursor is
+# over.  By default it is 0.  Like other channel view specific fields,
+# if you set the global like "set show_current_chan 1", then it will
+# affect all views after that.  If you want to affect a particular
+# view, do ". set file view_name show_current_chan 1", where view_name
+# is the name of the view.  If you want to affect all views that
+# already exist, then do ". set all t show_current_chan 1".  
+show_current_chan 0
+
+
+#########################################################################
+####################  GRAPHICS EXPORT CONTROL ###########################
+#########################################################################
+# The setting of the following items affect xwaves and all attachments
+# that perform graphical export (or hardcopy).  These attributes may be
+# modified using the printer setup widget invoked with the "print_setup"
+# command.
+
+# Specify the attachments that support the waves print_ensemble
+# command and that, if active, are to contribute to print_ensemble
+# output.  If an attachment is omitted from this list, the windows
+# it displays will not be included in xwaves print_ensemble output.
+# Attachments on this list must support the print_ensemble command
+# by responding correctly to a command ("print_ESPS_temp") that
+# xwaves sends to request an attachment to create graphics output
+# for a specified object.  The allowable attachments are
+# xspectrum, xlabel, and xchart.
+ens_print_atts "xspectrum xlabel"
+
+# Enable graphic output to a printer or to a file. 1==>printer; 0==>file
+print_graphic_printer 1
+
+# the number of dots (pixels) per inch resolution for the output device.
+print_graphic_resolution 300
+
+# The orientation of the plot on the page (real or virtual page).
+# This value may be either "Portrait" or "Landscape".
+print_graphic_orientation Landscape
+
+# The output printer format to use.  This value may be either
+# "PostScript" or "PCL".
+print_graphic_type PostScript
+
+# default name to use if output is to a file.
+print_graphic_file waves.prt
+
+# The exact UNIX command that should be executed to produce hardcopy.
+# This is the same command you would issue to print a PostScript or PCL
+# file from the command line.
+print_graphic_command lpr
+
+# Size multiplication factor.  This can be any reasonable positive
+# scale factor.  1.0 gives a very small image; 1 dot per pixel.
+print_graphic_scale 2.5
+
+# Switch into and out of "exact replica" mode.  When this value is 0,
+# xwaves attampts to create an exported image that replicates that on
+# the screen.  When 1, some of the image decorations are removed as
+# might be more appropriate for presentation/journal graphics.
+print_only_plot 0
+
+# the "PostScript level".  Level 1 is more universal, but does not
+# support color reproduction.  Level 2 provides color output, but might
+# not work with some printers or systems.  This may be 1 or 2.
+print_ps_level 2
+
+
+####################################################################
+################### ATTACHMENT-SPECIFIC VARIABLES ##################
+####################################################################
+# The following items have no effect on the operation of xwaves, but do
+# establish initial conditions for some of the attachments (xspectrum,
+# xchart and xlabel).  Xwaves simply makes the values of these symbols
+# available to the attachments.  As far as xwaves is concerned, these
+# items are indistinguishable from any special symbols you may define in
+# this file or define using the "set" command.
+
+####################################################################
+# The values of these symbols control the initial state of xlabel
+# (xchart).
+####################################################################
+#These two set the X and Y positions of the xlabel control window:
+xlabel_ctlwin_x 500
+xlabel_ctlwin_y 1
+
+# This determines the default height (pixels) of each label window section.
+xlabel_label_height 60
+
+# the menu of symbols and operators to use in labeling windows of
+# xlabel or xchart.
+xlabel_menufile $ESPS_BASE/lib/waves/menus/labelmenu
+
+# the "active fields" to display in labeling windows.
+# xlabel_fields 1 2 3
+
+# the object name to initialize the item in the xlabel/xchart control
+# panel.  This would ordinarily be set by a "make" command, or
+# automatically by xwaves, but can be established here.
+# xlabel_name ""
+
+# If the font is not specified in the label menu file, the font
+# specified by "xlabel_font" will be the one used.
+# xlabel_font "-adobe-courier-bold-r-normal--34-240-100-100-m-200-iso8859-1"
+
+# The "insert mode" determines if xlabel/xchart is initially operating in one
+# of its three modes as follows: 0 ==> REPLACE; 1 ==> INSERT; 2 ==> MOVE.
+# The modes can be switched interactively as explained in the
+# xlabel manual.
+xlabel_insert_mode 1
+
+# the initial chart file name to be accessed by the xchart attachment.
+# This would ordinarily be set from the xchart control panel or from a
+# script, but can also be initialized here.
+# xchart_chartfile ""
+
+# The menu to be associated by default with charts on display in xchart.
+xchart_chartmenu $ESPS_BASE/lib/waves/menus/chartmenu
+
+# the name of the output file to be accessed (or created).  This would
+# usually be set from a "make" command, but can be established here.
+xlabel_labelfile ""
+
+# xlabel_frame_voff and xlabel_frame_hoff are vertical and horizontal
+# pixel offsets to be applied when xlabel is positioning its label
+# panel relative to the parent data display.  This permits compensation
+# for the vagaries of various window managers via initialization of
+# these variables here in .wave_pro or under direct control via "send
+# set" commands.
+# Suitable values for SUN OpenLook: 
+#   xlabel_frame_voff -25;  xlabel_frame_hoff -5
+# Suitable values for DEC Alpha mwm: 
+#   xlabel_frame_voff 40;  xlabel_frame_hoff 0
+# xlabel_frame_voff 33
+# xlabel_frame_hoff 0
+
+####################################################################
+# The following establish the initial state of the xspectrum attachment.
+####################################################################
+# These two set the X and Y positions of the xspectrum control window:
+xspectrum_ctlwin_x      390
+xspectrum_ctlwin_y      0
+
+#These two set the width and height of xspectrum data (plot) windows
+#(there can be more than one plot window - one per object):
+xspectrum_datwin_height 250
+xspectrum_datwin_width  425
+
+# xspectrum_datwin_x and xspectrum_datwin_y control the initial
+# position of the xspectrum data (plot window) if there is only one
+# display object.  Positive values for xspectrum_datwin_x or
+# xspectrum_datwin_y specify respectively the X and Y position of the
+# xspectrum plot window if there is only one display object at the time
+# the plot window is displayed.  If there is more than one display
+# object, the xspectrum plot window is aligned with the first display
+# window of the corresponding xwaves display object, with the xspectrum
+# display directly underneath the left side of the xwaves window.  If
+# xspectrum_data_win_x is negative, the top of all xspectrum plot
+# windows is positioned slightly below the first xwaves display
+# window of the corresponding object.  If xspectrum_data_win_y is
+# negative, the left side of all xspectrum plot windows is lined up
+# (vertically) with the left side of the first xwaves display window of
+# the corresponding object.
+xspectrum_datwin_x      -1
+xspectrum_datwin_y      -1
+
+# If xspectrum_datwin_forward is non-zero, the xspectrum plot window 
+# will be brought to the foreground every time a new spectrum is computed.  
+xspectrum_datwin_forward 1
+
+# This is the maximum LPC (maximum entropy) order that xspectrum 
+# is allowed to use when computing autoregressive models.  The 
+# limit is enforced on the xspectrum control panel.
+# The value must be less than or equal to 200
+xspectrum_max_lpc_order 200
+
+# when using the "CEPST" spectral analysis type, this determines the type
+# of liftering performed as follows: 0 ==> no liftering; 1 ==> Lowpass;
+# 2 ==> Highpass
+xspectrum_cep_liftering 1
+
+# when using the "CEPST" analysis type, the transition region (in
+# seconds) from full to zero cepstral energy.
+xspectrum_cep_trans .005
+
+# the nominal cutoff time (sec) for the lifter.  The transition region
+# is distributed equally on either side of this point.
+xspectrum_cep_cutoff .004
+
+# the time weighting used for spectral analysis.  This is decoded as
+# follows: 0 ==> rectangular; 1 ==> Hamming; 2 ==> cos^4; 3 ==> Hanning
+xspectrum_window_type 3
+
+# the default setting of LPC order to appear in the panel
+xspectrum_lpc_order 18
+
+# the default time window duration (sec).
+xspectrum_window_size .025
+
+# the duration of the interval to be inverse filtered should that
+# option be selected from the xspectrum data window.
+xspectrum_inv_filt_dur 0.1
+
+# after inverse filtering, a leaky integrator with this constant is
+# applied to the result (This might, for example, convert a glottal-flow
+# derivative estimate into a glottal flow estimate.)
+xspectrum_inv_filt_integ 0.0
+
+# the coefficient of a first-order filter to be applied before spectrum
+# estimation.
+xspectrum_preemp 0.98
+
+# the initially-selected spectral analysis type.  This is decoded as
+# follows: 0==>DFT; 1==>DFTR; 2==>AUTOC; 3==>COV; 4==>BURG; 5==>MBURG;
+# 6==>FBURG; 7==>VBURG; 8==>STRCOV; 9==>STRCOV1; 10==>CEPST
+xspectrum_analysis_type 0
+
+# the maximum range, in dB, to show on the spectrum data view.
+xspectrum_range_db 100
+
+# the maximum FFT size to permit when performing DFT or CEPST
+# analyses.  This limit is intended to prevent accidental requests for
+# unreasonable window sizes.  The practical limit is set by your swap
+# space and your patience.
+xspectrum_max_fft_size 2000000
+
+# this enables or disables the printout of complex poles when LPC
+# (maximum entropy) spectral estimation is being performed.
+xspectrum_formants 0
+
+# this enables horizontal cursor plotting in the spectrum data view.
+xspectrum_horiz_cursors 0
+
+# enable plotting the frequency-amplitude reticle on the data view
+xspectrum_reticle 1
+
+# determine the type of amplitude scaling to use as follows: 0==>dB;
+# 1==>magnitude; 2==>power
+xspectrum_plot_scale 0
+
+# enable amplitude  and/or  frequency "auto-zooming".  When auto-zooming
+# is enabled the  view automatically expands to show only  the bracketed
+# region  (in frequency  or  amplitude)  as  soon  as  the  markers  are
+# positioned.
+xspectrum_a_autozoom 0
+xspectrum_f_autozoom 1
+
+# enable "harmonic cursors".  Up to 20 frequency cursors space
+# themselves out at multiples of the fundamental to aid in
+# identification or measurement of harmonic series.
+xspectrum_harmonic_cursors 0
+
+# determine whether the analysis window limits are set by the
+# xwaves markers, or simply by the cursor.  If enabled,
+# xspectrum_window_limits causes exactly the region bracketed by the
+# left and right xwaves markers to be analyzed.  If disabled, it uses
+# the current window "size (sec)" centered on the xwaves cursor.
+xspectrum_window_limits 1
+
+# xspectrum_reference_level is taken to be the 0 dB level for spectrum
+# displays, and the spectrum dB reticle and numeric cursor readout
+# values are adjusted accordingly.  It is only effective for the "log
+# pwr (dB)" scale mode. This can be set either via a command like:
+# 	send function xspectrum op xspectrum set xspectrum_reference_level
+# or by putting the spectrum frequency cursor on a spectrum value that
+# should become the reference level, and then selecting "set dB
+# reference" from the spectrum window menu.  This will cause the
+# indicated level to become 0 dB on the scale.
+xspectrum_reference_level 0
+
+

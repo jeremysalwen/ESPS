@@ -1,0 +1,201 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)tofeasd.1	1.5 3/31/97 ESI
+.TH TOFEASD 1\-ESPS 3/31/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+tofeasd \- converts data from arbitrary FEA field to FEA_SD (sampled data) file
+.SH "SYNOPSIS"
+.B tofeasd
+[
+.BI \-P " params"
+] [
+.BI \-f " fea_field"
+] [
+.BI \-r " record_range"
+] [
+.BI \-R " record_freq"
+] [
+.BI \-x " debug_level"
+]
+.I "input output"
+.SH "DESCRIPTION"
+.PP
+.I Tofeasd
+accepts an arbitary FEA file \fIinput\fP and produces a FEA_SD file
+\fIoutput\fP.  The data for the "samples" field in the FEA_SD output
+\- i.e., the sampled data \- are taken from the field in \fIinput\fP
+specified by the \fB-f\fP option.  The size and numeric data type of
+the output field are the same as those of the intput.  (Thus,
+\fItofeasd\fP will produce a multi-channel FEA_SD file if the input
+field is a vector.)  If the input field is a vector and the the
+desired output is a single channel FEA_SD file with data resulting
+from the catenation of the data in each input record, use
+\fImake_sd\fP(1\-\s-1ESPS\s+1) instead.  
+.PP
+The sampling rate (generic header item \fIrecord_freq\fP) normally is
+set to that of the input file, but an arbitrary value can be forced by
+means of the \fB-R\fP option.  If a single component of an input
+vector field is desired, use \fIdemux\fP(1\-\s-1ESPS\s+1) after
+\fItofeasd\fP.
+.PP
+If \fIinput\fP is "\-", the input is taken from standard input.  If
+\fIoutput\fP is "\-", the output is directed to standard output.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-P " params" " \fR[params]\fP"
+Specifies the name of the parameter file.
+.TP
+.BI \-f " field_name" "\fR ["samples"]"
+Specifies the name of the data field in \fIinput\fP to be converted.
+.TP
+.BI \-r " start" : "last" "\fR [1:(last in file)]"
+.TP
+.BI \-r " start" :+ "nan"
+In the first form, a pair of unsigned integers specifies the range
+of records to be processed.
+Either
+.I start
+or
+.I last
+may be omitted; then the default value is used.
+If
+.IR last " = " start " + " nan,
+the second form (with the plus sign) specifies the same range as the first.
+The \fB\-r\fP overrides the values of \fIstart\fP and \fInan\fP from 
+the parameter file.  
+.TP
+.BI \-R " record_freq" "\fR [value from input file]"
+Forces a given value for the generic header item \fIrecord_freq\fP in
+the output file.  If this option isn't used, the value is set to that
+of the generic in the input file, if such a generic exists; otherwise,
+\fIrecord_freq\fP is set to 1.  
+.TP
+.BI \-x " debug_level" "\fR [0]"
+Print diagnostic messages as program runs (for debugging purposes
+only).  Higher levels give more messages.  The default level of zero
+suppresses all debugging messages.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file does not have to be present, since all the
+parameters have default values.  The following parameters are read, if
+present, from the parameter file:
+.TP
+.I "field_name \- string"
+.IP
+This is the name of the source field in \fIinput\fP.
+The default is "samples".  This parameter is not read if the \fB-f\fP
+option is used.  
+.TP
+.I "start \- integer"
+.IP
+This is the first record of \fIinput\fP to process.  The default is 1.  It
+is not read if the \fB\-r\fP option is used.
+.TP
+.I "nan \- integer"
+.IP
+This is the number of records to process.  It is not read if the \fB\-r\fP
+option is used.  A value of zero means all subsequent records in the file;
+this is the default.
+.TP
+.I "record_freq \- float"
+.IP
+This provides a value for the \fIrecord_freq\fP generic header item in
+the output file \- i.e., the sampling rate (since the output is
+FEA_SD).  If the parameter isn't provided (or if it is provided and is
+not positive), the value from the input file is copied.  
+.PP
+Remember that command line option values override parameter file
+values.
+.SH "ESPS COMMON"
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overridden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+The following items are written into the ESPS Common file 
+provided that \fIoutput\fP is not <stdout>.  
+.IP
+.I "start \- integer"
+.IP
+The starting point from the input file.
+.sp
+.I "nan \- integer"
+.IP
+The number of points in the selected range.
+.sp
+.I "prog \- string"
+.IP
+This is the name of the program ("tofeasd" in this case).
+.sp
+.I "filename -\ string"
+.IP
+The name of the input file \fIinput\fP.
+.SH ESPS HEADERS
+.PP
+The \fIoutput\fP header is a FEA_SD file header.  The generic items
+\fIstart\fP and \fInan\fP are written to store the range of input data
+records processed.  
+.PP
+The generic header item \fIstart_time\fP is written in the output
+file.  The value written is computed by taking the \fIstart_time\fP
+value from the header of the input file (or zero, if such a header
+item doesn't exist) and adding to it the relative time from the first
+record in the file to the first record processed.  The computation of
+\fIstart_time\fP depends on the value of the generic header item
+\fIrecord_freq\fP in the input file.  If this item is not present,
+\fIstart_time\fP is just copied from the input file to the output
+file.  
+.PP
+The generic \fIrecord_freq\fP (sampling rate, in this case) is copied
+from the input to the output, unless the value is overriden by the
+\fB-R\fP option (or a value from the parameter file). 
+.PP
+As usual, the command line is added as a comment and the header of
+\fIinput\fP is added as a source file to \fIoutput\fP.  
+.SH "SEE ALSO"
+.PP
+.nf
+\fImake_sd\fP(1\-\s-1ESPS\s+1), \fImux\fP(1\-\s-1ESPS\s+1), \fIdemux\fP(1\-\s-1ESPS\s+1),
+\fIaddgen\fP(1\-\s-1ESPS\s+1), \fIaddfea\fP(1\-\s-1ESPS\s+1), \fIaddfeahd\fP(1\-\s-1ESPS\s+1),
+FEA_SD(5\-\s-1ESPS\s+1), FEA(5\-\s-1ESPS\s+1), FEA_SPEC(5\-\s-1ESPS\s+1),
+ESPS(5\-\s-1ESPS\s+1), \fIxwaves\fP(1\-\s-1ESPS\s+1)
+.fi
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+.I tofeasd
+will exit with an error message if any of the following are true: 
+.I input
+does not exist or is not an ESPS FEA file; the data field does not
+exist in
+.I input;
+.PP
+In FEA_SPEC files of BYTE data format, spectral values are represented as
+integers in a limited range and with an offset of 64 dB: values from -64.0 
+dB to 63.0 dB are represented by bytes ranging from 0 to 127.  A program
+such as \fIpsps\fP(1-ESPS) reads and offsets the data before writing it out
+to standard output to reflect true dB values.
+When converting BYTE data of FEA_SPEC file to FEA_SD file, \fItofeasd\fR
+does not offset the data by -64 dB.  Use \fIfeafunc\fP(1-ESPS) to do the
+offseting.
+.SH "BUGS"
+.PP
+None known.  
+.SH "FUTURE CHANGES"
+.PP
+A later version of this program will subsume the functions
+of \fImake_sd\fP(1\-\s-1ESPS\s+1).
+Also, it would in general be better if one could
+run FEA_SD programs directly on arbitrary FEA files (naming the field
+to be treated as "samples"), rather than having to convert to an
+intermediate file by means of \fItofeasd\fP.  In a later release of 
+ESPS, we intend to include a general mechanism for this.  
+.SH "AUTHOR"
+.PP
+Manual page and program by John Shore.

@@ -1,0 +1,279 @@
+# testfile for addfea @(#)testfile	1.2 7/15/88 ESI
+
+rm a.fea aa.fea b.fea bb.fea c.fea cc.fea data
+
+echo getting ascii data file
+cat >data <<FOO
+1           	2           	3           	4           	5           
+6           	7           	8           	9           	10          
+11          	12          	
+FOO
+echo getting a.fea
+atosps - a.fea <<FOO
+{
+01 d
+02 6a1a
+03 Wed May  4 11:10:24 1988 
+04 1.56
+05 addfea
+06 1.2
+07 7/15/88
+53 parker
+08 c
+0b 1
+12 addfea -ffoo -chi data a.fea Field foo added by addfeahi Converted from a.fea by spstoa.
+52
+0 0 0
+foo FLOAT 1 1 
+
+}
+
+#foo	1 
+
+#foo	2 
+
+#foo	3 
+
+#foo	4 
+
+#foo	5 
+
+#foo	6 
+
+#foo	7 
+
+#foo	8 
+
+#foo	9 
+
+#foo	10 
+
+#foo	11 
+
+#foo	12 
+FOO
+
+rm aa.fea
+echo addfea -ffoo -chi data aa.fea
+addfea -ffoo -chi data aa.fea
+echo there should be no significant differences
+echo pspsdiff a.fea aa.fea
+pspsdiff a.fea aa.fea
+
+echo getting b.fea
+atosps - b.fea <<FOO
+{
+01 d
+02 6a1a
+03 Wed May  4 11:19:32 1988 
+04 1.56
+05 addfea
+06 1.2
+07 7/15/88
+53 parker
+08 2
+0b 6
+12 addfea -ffoo -chi -s6 data b.fea Field foo added by addfeahi Converted from b.fea by spstoa.
+52
+0 0 0
+foo FLOAT 6 1 
+
+}
+
+#foo	1 2 3 4 5 6 
+
+#foo	7 8 9 10 11 12 
+FOO
+echo getting c.fea
+atosps - c.fea <<FOO
+{
+01 d
+02 6a1a
+03 Wed May  4 11:20:03 1988 
+04 1.56
+05 addfea
+06 1.2
+07 7/15/88
+53 parker
+08 2
+0b 8
+12 addfea -ffoo -chi -s8 data c.fea Field foo added by addfeahi Converted from c.fea by spstoa.
+52
+0 0 0
+foo FLOAT 8 1 
+
+}
+
+#foo	1 2 3 4 5 6 7 8 
+	
+
+#foo	9 10 11 12 0 0 0 0 
+FOO
+
+rm bb.fea
+echo There should be no signficant differences
+echo addfea -ffoo -chi -s6 data bb.fea
+addfea -ffoo -chi -s6 data bb.fea
+echo pspsdiff b.fea bb.fea
+pspsdiff b.fea bb.fea
+
+rm cc.fea
+echo There should be no signficant differences
+echo addfea -ffoo -chi -s8 data cc.fea
+addfea -ffoo -chi -s8 data cc.fea
+echo pspsdiff c.fea cc.fea
+pspsdiff c.fea cc.fea
+
+echo addfea -fbar -chi data aa.fea
+addfea -fbar -chi data aa.fea
+atosps - a.fea <<FOO
+{
+01 d
+02 6a1a
+03 Wed May  4 11:26:52 1988 
+04 1.56
+05 addfea
+06 1.2
+07 7/15/88
+53 parker
+08 c
+0b 2
+10 a.fea
+12 addfea -fbar -chi data a.fea Field bar added by addfeahi Converted from a.fea by spstoa.
+52
+0 0 0
+foo FLOAT 1 1 
+bar FLOAT 1 1 
+
+{
+01 d
+02 6a1a
+03 Wed May  4 11:25:15 1988 
+04 1.56
+05 addfea
+06 1.2
+07 7/15/88
+53 parker
+08 c
+0b 1
+12 addfea -ffoo -chi data a.fea Field foo added by addfeahi Converted from a.fea by spstoa.
+52
+0 0 0
+foo FLOAT 1 1 
+
+}
+}
+
+#foo	1 
+#bar	1 
+
+#foo	2 
+#bar	2 
+
+#foo	3 
+#bar	3 
+
+#foo	4 
+#bar	4 
+
+#foo	5 
+#bar	5 
+
+#foo	6 
+#bar	6 
+
+#foo	7 
+#bar	7 
+
+#foo	8 
+#bar	8 
+
+#foo	9 
+#bar	9 
+
+#foo	10 
+#bar	10 
+
+#foo	11 
+#bar	11 
+
+#foo	12 
+#bar	12 
+FOO
+echo pspsdiff a.fea aa.fea
+pspsdiff a.fea aa.fea
+
+rm aa.fea
+echo 1 2 3 | addfea -chi -ffoo -s5 -tshort - aa.fea
+atosps - a.fea <<FOO
+{
+01 d
+02 6a1a
+03 Wed May  4 11:34:33 1988 
+04 1.56
+05 addfea
+06 1.2
+07 7/15/88
+53 parker
+08 1
+0d 5
+12 addfea -chi -ffoo -s5 -tshort - a.fea Field foo added by addfeahi Converted from a.fea by spstoa.
+52
+0 0 0
+foo SHORT 5 1 
+
+}
+
+#foo	1 2 3 0 0 
+FOO
+echo should be no signficant differences
+pspsdiff a.fea aa.fea
+addfea -chi -fbar -s3 data aa.fea bb.fea
+atosps - b.fea <<FOO
+{
+01 d
+02 6a1a
+03 Wed May  4 11:37:16 1988 
+04 1.56
+05 addfea
+06 1.2
+07 7/15/88
+53 parker
+08 1
+0b 3
+0d 5
+10 a.fea
+12 addfea -chi -fbar -s3 data a.fea b.fea Field bar added by addfeahi Converted from b.fea by spstoa.
+52
+0 0 0
+foo SHORT 5 1 
+bar FLOAT 3 1 
+
+{
+01 d
+02 6a1a
+03 Wed May  4 11:34:33 1988 
+04 1.56
+05 addfea
+06 1.2
+07 7/15/88
+53 parker
+08 1
+0d 5
+12 addfea -chi -ffoo -s5 -tshort - a.fea Field foo added by addfeahi
+52
+0 0 0
+foo SHORT 5 1 
+
+}
+}
+
+#foo	1 2 3 0 0 
+#bar	1 2 3 
+FOO
+pspsdiff b.fea bb.fea
+
+echo 1 2 3 4 5 6 7 8 9 10 | addfea -chi -ffoo -tbyte -s3 - x.fea
+echo should be field foo with 1 2 3, 4 5 6, 7 8 9, 10 0 0
+psps x.fea
+rm x.fea

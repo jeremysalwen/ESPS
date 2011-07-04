@@ -1,0 +1,141 @@
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)lplay.1	1.2 4/2/97 ERL
+.ds ]W (c) 1996 Entropic Research Laboratory, Inc.
+.TH LPLAY 1\-ESPS 4/2/97
+.SH NAME
+lplay - send sampled data (PCM) to Linux audio driver
+.PP
+.SH SYNOPSIS
+.B lplay
+[
+.BI \-r " range"
+] [
+.BI \-s " start time"
+] [
+.BI \-e " end time"
+] [
+.BI \-f " sample rate"
+] [
+.BI \-c " channel"
+] [
+.BI \-x " debug-level"
+] [
+.BI \-H
+] [[
+.BI \-i
+]
+.I file
+] [
+.I more-files
+]
+.PP
+.SH DESCRIPTION
+.PP
+.I Lplay
+sends all or a portion of one or more ESPS, SIGnal, NIST or headerless
+sampled data files to the Linux audio driver for use by a compatible sound 
+card.
+.PP
+A subrange of data within the files may be chosen; this
+subrange may be specified in seconds or sample points.  Dual-channel
+(stereo) or single-channel (monaural) data may be converted.
+Single-channel input data may be directed to either or both output
+channels.
+.PP
+Playback may be stopped by sending the terminal's interrupt character
+(normally control-C) after playback has started.
+.PP
+If "\-" is given for a filename, then the input is taken from standard
+input and must be an ESPS file or a headerless file (i.e., SIGnal or
+NIST/Sphere files cannot be used with standard input).
+.PP
+The audio can be controlled by running one of the available mixer programs,
+such as \fIxmixer\fR.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-r " range"
+Select a subrange of points to be played, using the format
+.I start\-end
+,
+.I start:end 
+or
+.IR start:+count .
+Either the start or the end may be omitted; the beginning or the end of the
+file are used if no alternative is specified. 
+.IP
+If multiple files were specified, the same range from each file is played.
+.TP
+.BI \-s " start time"
+Specify the start time in seconds.  Play will continue to the end of file or
+the end time specified with -e.  -s may not be used with -r.
+.TP
+.BI \-e " end time"
+Specify the playback end time in seconds.  Play will start at the
+beginning of file or the time specified by -s.  -e may not be used
+with -r.
+.TP
+.BI \-f " frequency"
+Specifies the sampling frequency.  The closest frequency to that
+requested will be selected from those available and the user will be notified
+if the selected value differs from that requested.  If -f is not
+specified, the sampling frequency in the header is used, else
+the default value for headerless files is 16kHz.
+.TP
+.BI \-c " channel"
+Select the output channel configuration.  For files with headers, the
+behavior is to play stereo if the file is stereo and to provide
+identical output on both channels if the file is single-channel.
+If the file has no header, the default is to assume single-channel
+data and provide identical output to both channels.  For headerless
+files, this may be changed with -\fIc\fP 2 (stereo data, stereo output).
+.TP
+.BI \-H
+Force \fIlplay\fP to treat the input as a headerless file.  This is probably unwise
+to use unless the gain on your loudspeaker or earphones is way down, since
+a file that really does have a header, or a file composed of data types other
+than shorts (of the correct byte order!) will cause a terrible sound.
+.TP
+.BI \-i " input file"
+Specify a file to be D/A converted.  Use of -i before the file designation is optional
+if the filename is the last command-line component.  If no input file is
+specified, or if "-" is specified, input is taken from stdin.
+.TP
+.BI \-x " debug_level"
+Setting debug_level nonzero causes several messages to be printed as
+internal processing proceeds.  The default is level 0, which causes no debug
+output.
+.PP
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.PP
+.SH ESPS COMMON
+.PP
+ESPS Common is not read or written.
+.PP
+.SH DIAGNOSTICS
+.PP
+.I Lplay
+informs the user if the input file does not exist, if inconsistent
+options are used, or if an unsupported sample rate is requested.
+Also see \fBWARNINGS\fP below.
+.PP
+If the starting point requested is greater than the last point in the
+file, then a message is printed.  If
+the ending point requested is greater than the last point in the file,
+it is reset to the last point and processing continues.
+.PP
+.SH SEE ALSO
+.PP
+FEA_SD (5\-\s-1ESPS\s+1), \fItestsd\fP (1\-\s-1ESPS\s+1), \fIcopysd\fP
+(1\-\s-1ESPS\s+1),
+.br
+\fIlrecord\fP (1\-\s-1ESPS\s+1), \fIsfconvert\fP (1\-\s-1ESPS\s+1),
+.br
+\fIsgram\fP (1\-\s-1ESPS\s+1), \fIxmixer\fR
+.PP
+.SH AUTHOR
+.PP
+David Talkin and Alan Parker at Entropic Research Laboratory.

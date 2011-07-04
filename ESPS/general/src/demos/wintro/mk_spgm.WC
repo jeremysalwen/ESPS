@@ -1,0 +1,10 @@
+kill name signal file files/signal.fft.spgm
+make name signal file files/signal.fft.spgm loc_x 510 loc_y 225 width 500
+
+signal bracket file files/signal.fft.spgm start .2 end .6
+
+signal marker time .2 do_left 1
+
+signal marker time .6 do_left 0
+
+#@(#)mk_spgm.WC	1.2 11/5/91 ERL

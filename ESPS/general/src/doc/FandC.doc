@@ -1,0 +1,528 @@
+
+
+
+
+
+
+
+
+                         ENTROPIC RESEARCH LABORATORY, INC.
+
+
+
+
+
+             ESPS APPLICATIONS NOTE: Calling FORTRAN subroutines from C
+
+
+
+                                    David Burton
+
+
+                         Entropic Research Laboratory, Inc.
+                        600 Pennsylvania Ave. SE, Suite 202
+                               Washington, D.C. 20003
+                                   (202) 547-1420
+
+
+
+
+       1 .  INTRODUCTION
+
+
+            Although the Entropic Signal Processing System (ESPS) is  written
+       entirely  in the C programming language, FORTRAN functions and subrou-
+       tines can be linked into ESPS programs. This capability is a  function
+       of  the  C  and FORTRAN language implementations, and is not a private
+       feature of ESPS. This applications note shows most  of  the  necessary
+       rules for linking in existing FORTRAN routines.
+
+            ESPS provides a rich set of signal processing  and  file  utility
+       functions  and  a  complete programming environment.  Before modifying
+       programs to link in private FORTRAN routines, you  should   check  the
+       ESPS library for an appropriate routine (see section 3 of the manual -
+       use eman -k).  Also, consider writing new functions in C; most likely,
+       you will be more productive by using the ESPS programming tools.
+
+            The rest of this document  contains  the  following:   section  2
+       describes  the  C  and  FORTRAN naming conventions for global symbols;
+       section 3 lists the corresponding C and FORTRAN data types; section  4
+       shows  how  argument variables are passed from C to FORTRAN in subrou-
+       tines and functions; section 5 describes the  convention  for  FORTRAN
+       function return values; section 6 explains how to hook up FORTRAN I/O;
+       and section 7 shows a full example of  linking  a  FORTRAN  subroutine
+       into a C calling program.
+
+       2 .  GLOBAL SYMBOLS AND COMPILER NAMING CONVENTIONS
+
+            Global symbols are named by FORTRAN and C compilers in  different
+       manners. FORTRAN truncates the name to 6 characters, converts the name
+       to lower case, and prepends and appends an underscore. For example,
+
+
+
+
+
+
+
+
+
+
+       FORTRAN FROM ESPS                                               page 2
+
+
+               SUBROUTINE FSUB()
+
+               INTEGER*4 GLOBAL
+
+               COMMON /EARTH/ GLOBAL
+               ....
+
+               END
+
+
+       results in the definition of two global symbols:  _fsub_ and  _earth_.
+       Note that it is impossible to reference a C language upper-case symbol
+       from a FORTRAN routine.
+
+            A C compiler names global symbols by simply prepending an  under-
+       score  to the variable name. No truncation or case conversion is done.
+       In the following code fragment, the global symbols produced by  the  C
+       compiler corresponding to the variables earth_ and fsub_ are "_earth_"
+       and "_fsub_", respectively.
+
+               extern long int earth_
+
+               main()
+               {
+                       earth_ = 0;
+                       ...
+
+                       fsub_();
+                       ...
+
+                       exit(0);
+               }
+
+
+       Thus, by using the appropriate variable names, reference to  variables
+       defined  in FORTRAN subroutines or functions can be made directly in C
+       calling routines.
+
+            Note, however, if EARTH in the FORTRAN subroutine is a  mulivari-
+       able  COMMON  block,  then earth_ should be declared as an array. If a
+       COMMON block contains mixed data types, the calling program is respon-
+       sible  for  keeping  track of which bytes contain what data types.  If
+       the COMMON block is all one data type, the calling program can  simply
+       declare an array of the appropriate type, and then use it as one would
+       use any array.
+
+
+       3 .  DATA TYPES
+
+            You must understand  the  relationship  between  how  values  are
+       stored  in  memory for C and FORTRAN in order to pass values between C
+       routines and FORTRAN subroutines.   The  following  data  declarations
+       have identical memory representations:
+
+
+       1.3                            '9/11/91
+
+
+
+
+
+
+
+       FORTRAN FROM ESPS                                               page 3
+
+
+               FORTRAN                 C               Number of bytes
+
+               INTEGER*2                       short                   2
+               INTEGER*4                       long                    4
+               REAL*4                  float                   4
+               REAL*8                  double          8
+               COMPLEX*8                       float_cplx              8
+               COMPLEX*16                      double_cplx             16
+               LOGICAL*2                       short                   2
+               LOGICAL*4                       long                    4
+               CHARACTER*n s           char s[n]               n
+
+
+       Note that the FORTRAN declaration INTEGER*2 is not supported under all
+       FORTRAN  implementations,  and  that the C declarations float_cplx and
+       double_cplx are ESPS extensions of C data types.  Also, there  are  no
+       FORTRAN  equivalents  to  the  ESPS  data  type extensions short_cplx,
+       long_cplx, and byte_cplx.
+
+       4 .  ARGUMENT LISTS
+
+            In addition to global variables, it is  possible  to  share  data
+       between C and FORTRAN by use of argument lists in function and subrou-
+       tine calls.  The C and FORTRAN compilers both place the function argu-
+       ments on the stack in the same order. C arguments are passed by value,
+       however, and FORTRAN arguments are passed by  reference.  ("Passed  by
+       reference"  means  that  the address of arguments is put on the stack,
+       while "passed by value" means that argument values are placed directly
+       on the stack.)
+
+            In calling a FORTRAN language  routine  from  a  C  program,  the
+       addresses  of  the  argument  variables  must be passed instead of the
+       variable values themselves.  C has an operator to do this for you;  it
+       is  the  address operator "&". C also has an indirection operator "*";
+       this is used to show that a variable contains an address rather than a
+       value  (it  is  a  "pointer"  variable).  Finally,  there  is  a close
+       correspondence between "array A" and "pointer to  A."  When  an  array
+       name  appears  in  an  argument  list (actually when it appears in any
+       expression), the type is converted from "array" to "pointer  to,"  and
+       the  value  of the array name is converted to a pointer containing the
+       address of the first element of the array.  This  means  that  pointer
+       variables and array names can be passed directly into FORTRAN routines
+       without any modification; regular scalar variable must  be  passed  by
+       using the address operator.
+
+            The following is an example of the data declarations and function
+       calls  for  a  FORTRAN subroutine being called from a C program:  note
+       where and when the address operator "&" is used."
+
+
+       /* C main program */
+
+       main()
+
+
+       1.3                            '9/11/91
+
+
+
+
+
+
+
+       FORTRAN FROM ESPS                                               page 4
+
+
+       {
+
+       short i = 10, m = 4;
+       long k = 10, *j = &k;
+       float f = 20.;
+       static double_cplx dc = {10., 20.};
+       static long array[] = {1, 2, 3, 4};
+        ....
+
+           fsub_(&i, j, &f, &dc, array, &m);
+        ....
+
+           exit(0);
+       }
+
+
+       C..  FORTRAN subroutine definition
+
+              SUBROUTINE FSUB(SHORT, LONG, FLOAT, DC, ARRAY, SIZE)
+
+              INTEGER*2 SHORT, SIZE
+              INTEGER*4 LONG
+              REAL*4 FLOAT
+              COMPLEX*16 DC
+              INTEGER*4 ARRAY(SIZE)
+              ....
+
+              END
+
+
+       In the C main() routine the variable j is of type "pointer  to  long";
+       it  contains  the  address  of  the variable k , and thus is in a form
+       directly acceptable to the FORTRAN routine.  Similarly,  the  variable
+       array gets passed as the address of the first element in the array (or
+       &array[0] ), and is correct for passing into a FORTRAN  routine.   The
+       rest of the variables need to be passed by using the address operator.
+
+       5 .  FUNCTION RETURN VALUES
+
+            FORTRAN functions that return  INTEGER*2,  INTEGER*4,  LOGICAL*2,
+       LOGICAL*4,  REAL*4, and REAL*8 values have equivalent standard C types
+       and can be used  directly  in  C  routines.  For  functions  returning
+       float_cplx  or  double_cplx,  an  extra  argument must be added to the
+       function argument list. Below is an example showing a FORTRAN function
+       that  returns  a  double_cplx being called from a C routine. The first
+       argument in the C subroutine call ( z in cadd_(z, &z1, &z2) )  is  the
+       address where the evaluated function result gets stored.
+
+
+       /* C main program */
+
+       main()
+       {
+
+
+       1.3                            '9/11/91
+
+
+
+
+
+
+
+       FORTRAN FROM ESPS                                               page 5
+
+
+       double_cplx *z, z1, z2;
+        ....
+
+               cadd_(z, &z1, &z2);
+               ....
+       }
+
+
+
+       C..   FORTRAN function definition
+
+                COMPLEX*16 FUNCTION CADD(Z1, Z2)
+
+                COMPLEX*16 Z1, Z2
+
+                CADD = Z1 + Z2
+
+                RETURN
+                END
+
+
+
+       6 .  FORTRAN I/O
+
+            From within a C program, FORTRAN I/O can be initialized by  using
+       the  "f_init()"  function  and closed up by using the "f_exit()" func-
+       tion. Both are called with no arguments.  The "f_init()" call connects
+       the  C  data  streams stderr, stdout, and stdin to the FORTRAN logical
+       units 0, 5, and 6, respectively.
+
+       7 .  AN EXAMPLE
+
+            To build a C program that links in FORTRAN object  modules,  FOR-
+       TRAN  libraries must also be linked into the program.  You may need to
+       link in "libF77" (standard FORTRAN calls), "libI77" (standard  FORTRAN
+       I/O  calls), and/or "libU77" (FORTRAN system calls), depending on what
+       calls the FORTRAN subroutine makes.  The order  of  the  libraries  is
+       also  important  on  some  machines:   "libF77 builds on "libI77", and
+       "libI77" builds on "libU77".  (Note that in the  MASSCOMP  C  compiler
+       version  1.3  the order of "libF77" and "libI77" must be reversed from
+       the rule stated above, and on the CONVEX C2 compiler, libD77 and  lib-
+       mathC2 must also be included.)
+
+            Below is an example of a C main that calls a FORTRAN  subroutine.
+       Several of the rules mentioned above are shown in use in this program.
+       To compile and run this program, first compile  the  FORTRAN  function
+       into an object module:
+
+
+               f77 -c fsub.f
+
+
+       This produces "fsub.o".  Next compile and link this object module with
+
+
+       1.3                            '9/11/91
+
+
+
+
+
+
+
+       FORTRAN FROM ESPS                                               page 6
+
+
+       the calling C program:
+
+
+               ecc cmain.c fsub.o -lF77 -lI77 -o test
+
+
+       ecc is the ESPS cover script for the standard  C  compiler  "cc."  ecc
+       automatically  links  in  the  appropriate  ESPS libraries and include
+       files. test is the executable binary that calls  the  FORTRAN  subrou-
+       tine.  If FORTRAN system calls were also used in fsub.f , then "-lU77"
+       would be added to the C compile command.
+
+
+                       -------------------------------------
+
+
+       /*
+          This shows how to call FORTRAN subroutines from within a C program.
+          The use of scalars, arrays, and complex numbers are shown in this example.
+          Also, notice the global variable naming convention ( earth_ and fsub_ ) and
+          how to do I/O from within the FORTRAN subroutine ( f_init() and f_exit() ).
+
+          When compiling programs that link in FORTRAN functions, the following
+          libraries should be linked in at compile time, if they are appropriate:
+                  libf77 - gives you standard FORTRAN calls, other than I/O
+                  libI77 - standard FORTRAN I/O calls
+                  libU77 - system subroutines and functions ("system calls")
+        */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       1.3                            '9/11/91
+
+
+
+
+
+
+
+       FORTRAN FROM ESPS                                               page 7
+
+
+       # include <stdio.h>
+       # include <esps/esps.h>
+
+       extern long int earth_;
+
+       main()
+       {
+       short i = 10, m = 4;
+       long k = 10, *j = &k;
+       float f = 20.;
+       static double_cplx dc = {10., 20.};
+       static long array[] = {1, 2, 3, 4};
+
+       earth_ = 0;
+
+       /*
+        set up FORTRAN I/O
+       */
+
+            f_init();
+
+       /*
+        print variable values before FORTRAN function
+       */
+
+           (void)fprintf(stderr, "\ni = %d\nj = %d\nf = %f\ndc.real = %lf\tdc.imag = %lf
+           \nearth_ = %d\narray[0 - 3] = %d, %d, %d, %d\n\n", i, *j, f, dc.real, dc.imag,
+           earth_, array[0], array[1], array[2], array[3]);
+
+       /*
+        call FORTRAN subroutine
+       */
+
+           fsub_(&i, j, &f, &dc, array, &m);
+
+       /*
+        print variable values after FORTRAN function
+       */
+
+          (void)fprintf(stderr, "\ni = %d\nj = %d\nf = %f\ndc.real = %lf\tdc.imag = %lf
+          \nearth_ = %d\narray[0 - 3] = %d, %d, %d, %d\n\n", i, *j, f, dc.real, dc.imag,
+          earth_, array[0], array[1], array[2], array[3]);
+
+       /*
+        close FORTRAN I/O and exit program
+       */
+
+          f_exit();
+          exit(0);
+       }
+                       -------------------------------------
+
+
+
+
+       1.3                            '9/11/91
+
+
+
+
+
+
+
+       FORTRAN FROM ESPS                                               page 8
+
+
+       C..  FORTRAN subroutine definition
+
+              SUBROUTINE FSUB(SHORT, LONG, FLOAT, DC, ARRAY, SIZE)
+
+              INTEGER*4 GLOBAL
+              INTEGER*2 SHORT, SIZE
+              INTEGER*4 LONG
+              REAL*4 FLOAT
+              COMPLEX*16 DC
+              INTEGER*4 ARRAY(SIZE)
+
+              COMMON /EARTH/ GLOBAL
+
+              SHORT = 2*SHORT
+
+              LONG = LONG/FLOAT
+
+              FLOAT = FLOAT/SHORT
+
+              DC = DC + DC
+
+              GLOBAL = 1
+
+       C..  unit 0 is stderr, unit 5 is stdin, and unit 6 is stdout
+              WRITE(6,*) "ARRAY VALUES FOLLOW:"
+              WRITE(6,*) ARRAY
+
+              RETURN
+              END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       1.3                            '9/11/91
+
+
+

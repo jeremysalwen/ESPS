@@ -1,0 +1,163 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)mbrot.1	1.5W 03 Apr 1997 ESI
+.TH MBROT 1\-ESPS 03 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+mbrot - compute elements of Mandelbrot set
+.SH "SYNOPSIS"
+.B mbrot
+[
+.BI \-b " bottom_edge"
+] [
+.BI \-t " top_edge"
+] [
+.BI \-l " left_edge"
+] [
+.BI \-r " right_edge"
+] [
+.BI \-c " confidence"
+] [
+.BI \-g " grid_pts"
+] [
+.B \-C
+] [
+.B \-x
+]
+.I "output_file"
+.SH "DESCRIPTION"
+.PP
+.I Mbrot
+computes points that are in the Mandelbrot set.
+This is the set of all points \fIZ\fR in the complex plane such
+that C = C * C + \fIZ\fR stays bounded as it is recursively
+repeated.
+.PP
+.I Mbrot
+produces an ESPS feature file, FEA(5-ESPS), that contains
+two fields: \fIX_pos\fP ( type DOUBLE) and \fImbrot\fP (type SHORT).
+\fIX_pos\fP is a scalar variable and is 
+the x-axis coordinate of the vertical data vector
+stored in the \fImbrot\fP field.
+\fImbrot\fP is a vector of size \fIgrid_pts\fP + 1 (see \fB\-g\fP);
+the zeroth element of the \fImbrot\fP field has y-axis
+coordinate of \fIbottom_edge\fP (see \fB\-b\fP).
+If "\-" is supplied in place of
+.I output_file,
+then standard output is used.  
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-b " bottom_edge \fR[\-1.]\fP"
+Specifies the lower edge of the region over which the Mandelbrot
+set is computed.
+.TP
+.BI \-t " top_edge \fR[1.]\fP"
+Specifes the upper edge of the region over which the Mandelbrot
+set is computed.
+.TP
+.BI \-l " left_edge \fR[\-1.9]\fP"
+Specifies the left edge of the region over which the Mandelbrot set 
+is computed.
+.TP
+.BI \-r " right_edge \fR[.6]\fP"
+Specifies the right edge of the region over which the Mandelbrot set 
+is computed.
+.TP
+.BI \-c " confidence \fR[342]\fP"
+Specifies the number of iterations used to decide whether
+the point is in the set.
+That is, if after \fB\-c\fR specified iterations of the
+recursion the point is still bounded (real and imaginary
+parts less than 2 in magnitude), then the point is considered
+to be in the set.
+The larger the \fIconfidence\fR factor, the sharper
+the set boundaries become (and often the more interesting the
+image looks).
+.TP
+.BI \-g " grid_pts \fR[100]\fP"
+Specifies the number of grid cells to use in dividing
+the region of interest. 
+Often, the larger the number of \fIgrid_pts\fR, the
+more interesting the image looks.
+.TP
+.B \-C
+By default, \fImbrot\fR returns 0 if the point is not in the set
+and 1 if the point is in the set.
+By specifying \fB\-C\fR, each point is assigned a value between
+\-64 and 50. Points in the set get 50.
+Proportionally lower values
+are given to all other points based on how close there are to
+being in the set. For example, if the \fIconfidence \fR factor
+is 114 and the point falls out of the set after 90 iterations,
+the value given this point is 26 ( = 90 \- 64 ). To make full
+use of the \fIxwaves\fP colormaps, make sure that
+the \fB\-c\fR specified value is an integer multiple of 114.
+.TP
+.B \-x 
+If 
+specified,
+debug information is printed to stderr.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file is not processed.
+.SH "ESPS COMMON"
+.PP
+ESPS Common is not read by 
+.I mbrot.
+.SH ESPS HEADERS
+.PP
+In addition to the usual header values for FEA (5\-\s-1ESPS\s+1) files, 
+.I mbrot
+writes the following values:
+\fInum_grid_pts\fR (LONG),
+\fInum_iterations\fR (LONG),
+\fIleft_edge\fR (DOUBLE),
+\fIright_edge\fR (DOUBLE),
+\fIbottom_edge\fR (DOUBLE),
+\fItop_edge\fR (DOUBLE),
+\fIX_inc\fR (DOUBLE),
+\fIY_inc\fR (DOUBLE),
+.SH "FUTURE CHANGES"
+.PP
+Parameter file processing will be added.
+.SH EXAMPLES
+.PP
+By default, \fImbrot\fP (1\-\s-1ESPS\s+1) produces the classical
+fuzzy bug. Try the following:
+.sp
+.RS
+%mbrot \- |  image \-embrot \-S500:400 \-
+.RE
+.sp
+.PP
+For a more interesting display, try
+.sp
+.RS
+%mbrot \-C \-l\-1.254 \-r\-1.2536 \-b.0234 \-t.0238 \-g800 \-c798 \- | 
+.RE
+.RS
+tofspec \-fmbrot \- mbrot.fspec&
+.RE
+.sp
+.lp
+This will take a while to complete, but when it is done use 
+\fIxwaves\fP to view the FEA_SPEC (5\-\s-1ESPS\s+1) file.
+.PP
+In general, the more interesting images are found on the edges of the
+set.
+.SH "SEE ALSO"
+.PP
+\fIimage\fP (1\-\s-1ESPS\s+1), \fIxwaves\fP (1\-\s-1ESPS\s+1), \fItofspec\fP (1\-\s-1ESPS\s+1)
+.SH "WARNINGS AND DIAGNOSTICS"
+.SH "BUGS"
+.PP
+None known.  
+.SH "REFERENCES"
+.PP
+James Gleick, \fICHAOS\fR,  New York, PENGUIN BOOKS, 1987
+.SH "AUTHOR"
+.PP
+Program and manual page by David Burton
+
+

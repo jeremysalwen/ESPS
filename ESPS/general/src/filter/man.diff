@@ -1,0 +1,410 @@
+.mc |
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)filter.1	3.15 1/15/93 ESI/ERL
+.TH FILTER 1\-ESPS 1/15/93
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.mc
+.SH NAME
+.mc |
+filter \- Performs digital filtering on a sampled data file.
+.mc
+.SH SYNOPSIS
+.mc |
+.B filter
+.mc
+[
+.BI \-P " param_file"
+]
+[
+.BI \-p " range"
+]
+[
+.BI \-r " range"
+]
+[
+.BI \-d " data_type"
+]
+[
+.mc |
+.BI \-f " filtername"
+.mc
+]
+[
+.BI \-F " filt_file"
+]
+[
+.BI \-x " debug_level"
+]
+[
+.mc |
+.BI \-i " up/down"
+]
+[
+.mc
+.B \-z 
+]
+.mc |
+.I in_file out_file
+.mc
+.SH DESCRIPTION
+.PP
+.mc |
+This program is considered obsolete and will be eliminated in future
+next Entropic software releases and replaced by the new program,
+currently called \fIfilter2\fR.  See the manual entry for \fIfilter2\fR.
+.mc
+.PP
+.mc |
+The program
+.I filter
+takes the input sampled data file,
+.I in_file,
+and produces an output sampled data file,
+.I out_file,
+after performing a digital filtering operation on it.
+The output sampled data file is of type FEA_SD (5\-\s-1ESPS\s+1).
+\fIFilter\fR allows the user to change the data type of the output file
+by using the \fB\-d\fR option; see below for more details.
+The program accepts "\-" for either the input file or the output file
+to use the standard input and standard output, respectively. 
+.mc
+.PP
+.mc |
+The program may implement either finite impulse response (FIR) or
+infinite impulse response (IIR) filters.
+A set of numerator coefficients and (optionally) a set of denominator coefficients are specified either in the parameter file or in the FEAFILT file.  Currently, only real filters
+may be used; if a filter is complex, it's imaginary part is ignored.
+The numerator coefficients then become the {a\di\u} and the denominator
+coefficients become the {b\di\u} in the following
+z-domain transfer function:
+.nf
+
+        
+                       a\d0\u + a\d1\uz\u-1\d + a\d2\uz\u-2\d + ... + a\dm-1\uz\u-m+1\d
+        H(z)  =   ___________________________________
+
+                       b\d0\u + b\d1\uz\u-1\d + b\d2\uz\u-2\d + ... + b\dn-1\uz\u-n+1\d
+
+
+.fi
+An FIR filter corresponds to the case where, in the equation above, b\d0\u = n = 1.
+An FIR filter may also be specified by choosing the order of the denominator
+to be zero, and entering no denominator coefficients at all.
+.mc
+.PP
+.mc |
+The program uses a different initialization procedure for FIR filters
+than it uses for IIR filters. 
+For FIR filtering, the first output will be computed from data samples
+occurring before the starting point in the input file (as defined by the parameter
+.I start
+, for example), if they exist.  Data samples which would occur before
+the first sample in the input file are assumed to be zero.
+For IIR filtering, all inputs and outputs occurring before the starting
+point are assumed to be zero.
+.mc
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-P " param_file"
+uses the parameter file 
+.mc |
+.I param_fil
+rather than the default, which is
+.I params.
+.br
+.mc
+.TP
+.mc |
+.BI \-r " range"
+Perform the filtering operation on the specified range of points.
+.I range
+is a character string which is interpreted in the format
+understood by
+.I range_switch (3-ESPSu).
+\fBr\fP and \fBp\fP are synonyms.
+.br
+.mc
+.TP
+.mc |
+.BI \-p " range"
+Perform the filtering operation on the specified range of points.
+.I range
+is a character string which is interpreted in the format
+understood by
+.I range_switch (3-ESPSu).
+\fB\-r\fP is a synonym for \fB\-p\fP.
+.br
+.mc
+.TP
+.mc |
+.BI \-d " data_type"
+The argument \fIdata_type\fR is a character representing
+the desired output data type in \fIout_file\fR: \fIb\fR for byte,
+\fIs\fR for short, \fIl\fR for long, \fIf\fR for float, and \fId\fR
+for double. This data type conversion is often
+useful when the input data type is short and the filtering operation
+produces sample values greater in magnitude than 2\u15\d . The output type 
+is real or complex in agreement with the input type; for example if
+\fId\fP is specified, the output type is DOUBLE if the input is
+real and DOUBLE_CPLX if the input is complex.
+.br
+.mc
+.TP
+.mc |
+.BI \-f " filtername"
+.mc
+If the coefficients are being read from the parameter file, then
+.mc |
+.I filtername
+is the body of the name of the variable that contains
+the number of coefficients and the actual coefficients.
+This means that the coefficients will be
+found in the arrays
+.I filtername_num
+and
+.I filtername_den
+and the size of those arrays will be specified by
+.I filtername_nsiz
+and
+.I filtername_dsiz,
+respectively.
+The default name in this case is
+.I filter.
+.mc
+.IP
+If the coefficients are being read from a FEAFILT file, then
+.mc |
+.I filtername
+is the number of the filter record to use.
+.mc
+The default name in this case is 1, the first record in the file.
+.mc |
+.br
+.mc
+.TP
+.BI \-F " filt_file"
+.mc |
+Read the coefficients from the FEAFILT file
+.I filt_file
+.mc
+rather than from the parameter file.
+.mc |
+In this case the header of 
+.I filt_file
+is added to the header of the program output as a source file.
+.br
+.mc
+.TP
+.mc |
+.BI \-x " debug_level"
+A value of zero (the default value) will cause
+.I filter
+to do its work silently, unless there is an error.
+A nonzero value will cause various parameters to be printed out
+during program initialization.
+.br
+.mc
+.TP
+.mc |
+.BI \-i " up/down"
+Perform interpolation filtering such that the output sampling rate is
+equal to 
+.I (src_sf)*(up/down).
+Both 
+.I up
+and
+.I down
+are integers.
+Effectively, the program increases the sampling rate to
+.I up*(src_sf),
+filters this signal with the specified filter, and then downsamples the
+resulting signal by a factor of
+.I down.
+.TP
+.BI \-z
+By specifying \fB\-z\fP,
+the \fIstart_time\fP generic value is reduced by the value of the
+\fIdelay_samples\fP generic header value, if it exists. 
+.mc
+This often helps time align a filtered
+.mc |
+signal with the input signal. 
+Note that
+if \fIdelay_samples\fP is not defined in the input file header,
+a value of 0 is assumed.
+.sp
+.mc
+.SH ESPS PARAMETERS
+.mc |
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.PP
+.mc
+The following parameters are read from the parameter file:
+.mc |
+.IP
+.I "start \- integer"
+.IP
+.mc
+The first point in the input sampled data file that is processed.
+The samples are assumed to be numbered starting with one so that
+.mc |
+setting 
+.I "start = 1"
+will cause processing to begin with the first sample.
+.sp
+.I "nan \- integer"
+.mc
+.IP
+.mc |
+The number of points in the sampled data file to process.
+.sp
+.I "filtername_nsiz \- integer"
+.mc
+.IP
+.mc |
+The number of numerator coefficients in the transfer function for the filter
+.I filtername.
+.sp
+.I "filtername_dsiz \- integer"
+.mc
+.IP
+.mc |
+The number of denominator coefficients in the transfer function for the filter
+.I filtername.
+A value of zero means that a denominator coefficient array need not be
+entered.
+.sp
+.I "filtername_num \- float array"
+.mc
+.IP
+.mc |
+The numerator coefficients.  They are specified in order starting with
+a\d0\u.
+.mc
+.sp
+.mc |
+.I "filtername_den \- float array"
+.mc
+.IP
+.mc |
+The denominator coefficients.  They are specified in order starting with
+b\d0\u.
+.mc
+.sp
+.mc |
+.SH ESPS COMMON
+If the input
+is standard input, COMMON is not read. 
+The following items may be read from COMMON:
+.IP
+.I "filename \- string"
+.IP
+This is the name of the input file. If the command line specifies only one 
+filename, it is assumed to be the output filename and COMMON is read 
+to get the input filename. If the input filename is specified on the
+command line, it must match \fIfilename\fR in COMMON or the other
+items (below) are not read.
+.IP
+.I "start \- integer"
+.IP
+This is the starting point in the input file.
+.IP
+.I "nan \- integer"
+.IP
+This is the number of points to process. 
+.mc
+.PP
+.mc |
+If the output is standard output,
+COMMON is not written.
+Otherwise the following items are written to COMMON.
+.mc
+.IP
+.mc |
+.I "filename \- string"
+.mc
+.IP
+.mc |
+This is the name of the output file.
+.mc
+.IP
+.mc |
+.I "start \- integer"
+.mc
+.IP
+.mc |
+This is the starting point in the output file
+and is always equal to one.
+.IP
+.I "nan \- integer"
+.IP
+This is the number of points in the output file.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.mc
+.sp
+.SH ESPS HEADER
+.mc |
+The file header of
+.I out_file
+will contain mostly the same information as is contained in that of
+.I in_file,
+except where they are altered by the parameters in the parameter file.
+The -i option changes the
+.I record_freq
+header item.
+The filter coefficients will be stored in the output header as the
+.I filter
+zfunc.
+.mc
+.PP
+.mc |
+A generic header item \fIstart_time\fR (type DOUBLE), is added
+to the output file header. It contains the starting time in seconds of the
+first point in the output file. This start time is relative to the original
+sampled data file. This means that if the input file has a \fIstart_time\fR
+generic in it, the output file's \fIstart_time\fR value is computed
+relative to the input file's \fIstart_time\fR. Also see the \fB\-z\fP
+option.
+.mc
+.PP
+.mc |
+For example, if the input file has a \fIstart_time\fR = 1.0 seconds,
+the input file's sampling frequency = 8000 samples/second, and the 
+starting point in the input file = 2000, the output file's 
+\fIstart_time\fR = 1.0 + 2000/8000 = 1.25 seconds. 
+.mc
+.SH SEE ALSO
+.PP
+.mc |
+filter2(1\-ESPS), notch_filt(1\-ESPS), FEAFILT(5\-ESPS), atofilt(1\-ESPS), 
+wmse_filt(1\-ESPS), iir_filt(1\-ESPS), block_filter2(3-\ESPS)
+.SH BUGS
+.mc
+.PP
+.mc |
+Due to the direct form implementation of the IIR filter, this program is
+numerically unstable and will not be supported in the next release.
+This program will be replaced by \fIfilter2\fR.  
+.mc
+.SH AUTHOR
+.PP
+.mc |
+Brian Sublett; ESPS 3.0 modifications by David Burton.
+.lp
+FEA_SD modifications by David Burton; multichannel and 
+complex FEA_SD 
+modifications by Bill Byrne.  
+.mc

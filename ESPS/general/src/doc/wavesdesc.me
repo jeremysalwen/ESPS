@@ -1,0 +1,306 @@
+.lo
+.de SM          \"macro to shrink left margin
+.br
+.nr $i \\n($i+\\$1i
+..
+.de RM          \"macro to restore original left margin
+.br
+.nr $i 0
+..
+.he 'WAVES+ PRODUCT DESCRIPTIONS''page %'
+.fo 'Version 1.8'\\*(ep'5/18/89'
+.nf
+.ce 
+\s+4\fB\*(ep ENTROPIC SPEECH, INC.\fR\s-4
+.sp 1i
+.ce 100
+\s+1\fBWAVES+ PRODUCT DESCRIPTIONS\s-1\fR
+
+
+.sp .3i
+Entropic Speech, Inc.
+Washington Research Laboratory
+600 Pennsylvania Ave. S.E., Suite 202
+Washington, D.C. 20003
+202-547-1420 (voice)
+202-546-6648 (FAX)
+.sp .5i
+.fi
+.sh 1 "INTRODUCTION"
+.lp
+This note contains a brief description of \fIwaves\fP+, the
+interactive graphics interface to the Entropic Signal Processing
+System (ESPS).  It also describes the differences among the various
+\fIwaves\fP+ products.
+.sh 1 "AT&T WAVES"
+.lp
+Entropic's \fIwaves\fP+ products are derived from \fIwaves\fP, a
+program written by David Talkin of AT&T Bell Laboratories, Murray
+Hill, and licensed by Entropic.
+.lp
+\fIWaves\fP exploits windows, pop-up menus, and mouse interaction to
+facilitate the time-synchronous viewing, spectrum analysis, editing,
+annotation, and playback of multiple signal representations.
+Time-coordinated windows with synchronous cursors can display
+sampled-data, spectrograms, and analysis-parameter tracks.
+.lp
+For example, the time series data from a speech waveform can be
+displayed together on the same monitor with its spectrogram and its
+fundamental frequency contour.  Cursor movement in one view is time
+aligned with the other views (all views may be time-synchronized or
+displayed independently), so finding an event in one view of the data
+results in finding the event in all the data views.  
+.lp
+\fIWaves\fP operates on files written with the SIGnal header system.
+It runs on Sun workstations (Sun 3, Sun4, Sun 386i).  To compute
+spectrograms and to provide for speech I/O, \fIwaves\fP depends on a
+proprietary AT&T DSP32 board.  This board requires a VME bus and
+operates with Sun 3 and Sun 4 workstations.  A PC bus board that
+operates with Sun 386i workstations will be supported shortly.
+Spectrogram parameters (window size, window type, time step,
+pre-emphasis, FFT order, etc.) can be controlled by the user from
+ASCII parameter files.  Once displayed, the data in spectrogram
+windows will not be re-scaled if the window is re-sized.  
+.sh 2 "Waves Menus"
+.lp
+Via pop-up menus, \fIwaves\fR supports the playing of selected speech
+segments through the proprietary AT&T DSP32 board, moving forward or
+backward in the data display, zooming in or zooming out, computation
+and display of both wide band (fine temporal resolution) and narrow
+band (fine frequency resolution) spectrograms in near real-time using
+the DSP32 board, saving marked segments to a named file, cutting and
+pasting a segment from a data display, and editing a displayed
+waveform.  When \fIwaves\fP is being run on a monochrome monitor and a
+spectrogram is computed on the DSP32 board, the DSP32 uses a digital
+halftone algorithm to compute and return a dithered spectra for
+display on the monochrome monitor.  Spectral files written by
+\fIwaves\fP for later viewing can only be viewed on color (i.e.,
+greyscale) monitors.  The spectrogram displays are not
+.lp
+When \fIwaves\fP runs on a color monitor, mouse movements can be 
+used dynamically to change contour thresholds and intensity mappings.  
+.sh 2 "Waves Attachments"
+.lp
+\fIWaves\fP supports "attachments", separately-running programs that
+communicate with \fIwaves\fP via \fIunix\fP pipes and allow extended
+operations to be performed on signals being viewed under \fIwaves\fP.
+Two attachments are provided with \fIwaves\fP.  One is
+\fIspectrum\fP, which allows the user to apply various spectrum
+analysis methods to sampled data being viewed under \fIwaves\fP. The
+other is \fIlabel\fP, which supports the interactive annotation of
+sampled data files.  \fIWaves\fP also comes with the standalone 
+program \fIformant\fP, which computes fundamental frequencies, 
+formant frequencies, and formant bandwidths for speech sampled data.  
+.sh 2 "Waves Command Files"
+.lp
+\fIWaves\fR may be customized to perform a variety of specialized
+tasks through the use of \fIwaves\fP command files.  Commands can be
+used to control the display parameters (such as what colormap to use,
+where to place the display windows, etc.), control the data displays
+(such as what file to overlay, where to put markers on a file, etc.),
+and interact with the displayed files (such as play marked region,
+compute spectrogram, connect attachment, etc.).
+.sh 1 "WAVES+"
+.lp
+Changes from \fIwaves\fP to \fIwaves\fP+ fall into the several areas
+described in the following subsections.  For details, see the
+\fIwaves\fP+ (1\-\s-1ESPS\s+1) manual page.
+.lp
+Like \fIwaves\fP, \fIwaves\fP+ runs on Sun workstations (Sun 3, Sun4,
+Sun 386i).  A future version will run on other systems under X Windows.  
+.sh 2 "ESPS File I/O"
+.lp
+\Waves\fP+ reads and writes ESPS SD and FEA files (it also reads files
+with SIGnal headers).  All \fIwaves\fP operations are supported for ESPS
+files, including the cut, paste, and edit operations.  When plotting
+FEA files, all fields are labelled from the self-description in the
+file header.  Numeric types may vary from field to field.
+\fIWaves\fP+ preserves ESPS record keeping and adds notations of
+\fIwaves\fP+ editing to the comment section of output ESPS file
+headers.  Output headers also contain the pre-\fIwaves\fP+ history.
+Arbitrary fields from FEA files can be displayed in "spectrogram"
+style, and the parameter tracks from arbitrary fields can be overlayed
+on such "spectrogram" displays.  
+.lp
+When running on a monochrome monitor, \fIwaves\fP+ uses a digital
+halftone algorithm to display a dithered version of any
+spectrogram-style display from FEA files.  All spectrogram-style
+displays, include dithered displays, are interpolated to fill the
+display window.  Spectrograms are re-scaled vertically to fill the
+window if the window is re-sized (applies to both color and monochrome
+monitors).  
+.sh 2 "Execution of External ESPS Programs"
+.lp
+\fIWaves\fP+ allows the user to run external ESPS programs on marked
+signal segments and to view the results in new windows.  Two classes
+of such external calls are supported.  The first class comprises ESPS
+programs that produce ASCII output \- the results are displayed by
+\fIwaves\fP+ in a new Sun text window.  Example programs in this class
+include \fIpsps\fP (1\-\s-1ESPS\s+1), \fIpplain\fP (1\-\s-1ESPS\s+1),
+\fIstats\fP (1\-\s-1ESPS\s+1), and \fIfea_stats\fP (1\-\s-1ESPS\s+1).
+The second class comprises ESPS programs that produce ESPS file
+outputs (e.g., \fIfilter\fP (1\-\s-1ESPS\s+1), \fIrefcof\fP
+(1\-\s-1ESPS\s+1), and \fItranspec\fP (1\-\s-1ESPS\s+1)).  As is the
+case with \fIsgram\fP, \fIwaves\fP+ can run such external ESPS
+programs elsewhere on the network.  Users can also write their own
+ESPS programs or shell scripts that produce ESPS files or ASCII output
+and call them from \fIwaves\fP+.  
+.sh 2 "Independence of DSP32 Board"
+.lp
+If the DSP32 board is not present (or is disabled), \fIwaves\fP+
+computes spectrograms via a system call to the ESPS program
+\fIsgram\fP (1\-\s-1ESPS\s+1).  If this program is available,
+spectrograms are computed and then displayed by \fIwaves\fP+.  Such
+external spectrogram computations can be done by the CPU on which
+\fIwaves\fP+ is running, or by another CPU elsewhere on the network
+(e.g., a faster Sun or a Convex).  If ESPS is installed and the
+\fIwaves\fP+ global \fIsgram_prog\fP is changed to "me_sgram",
+maximum-entropy spectrograms are computed instead of FFT spectrograms
+(using the ESPS program \fIme_sgram\fP (1\-\s-1ESPS\s+1)).  
+.lp
+Requests for D/A conversion are turned into a system call to the ESPS
+program \fIplay\fP.  If this program is available (it can be any
+program or script that performs D/A conversion on ESPS files), speech
+output can be performed from \fIwaves\fP+ without the DSP32 board.
+This can be done using local hardware or network facilities.  
+.sh 2 "Remote Use of DSP32 Board for Spectrogram Computations"
+.lp
+Entropic has developed a version of the standalone ESPS spectrogram
+program \fIsgram\fP to compute spectrograms in near real time by means
+of the DSP32 board.  This program, \fIdspsgram\fP (1\-\s-1ESPS\s+1),
+can be run directly (or indirectly via shell scripts) by a local
+user.  It can also be run remotely by users on other workstations 
+by means of \fIrsh\fP and NFS or \fIunix\fP pipes.  
+.sh 2 "New Global Parameters"
+.lp
+\fIWaves\fP+ has several new global parameters:
+.nf
+.ta .3i 1.6i
+
+	\fIdebug_level\fP \-	if non-zero, triggers varying amount of debug output
+	\fIverbose\fP \-	if non-zero, enables verbose progress messages
+	\fIuse_dsp32\fP \-	toggles use of DSP32 board (if installed)
+	\fIdsp32_wait\fP \-	specifies number of retries for DSP32 operations
+	\fIsgram_prog\fP \-	the name of the external spectrogram program
+	\fIplay_prog\fP \-	the name of the external D/A program
+	\fIremote_path\fP \-	prepended to file names for external ESPS calls
+	\fIimage_clip\fP \-	sets simulated greyscale limits on monochrome display
+	\fIimage_range\fP \-	sets simulated greyscale limits on monochrome display
+	\fIcommand_step\fP \-	if non-zero, command files will be executed single-step
+	\fIshow_labels\fP \-	if zero, suppresses field names in signal displays
+	\fIshow_vals\fP \-	if zero, suppresses field numerical values in signal displays
+
+.fi
+.sh 2 "Waves+ Attachments"
+.lp
+The attachments \fIspectrum\fP and \fIlabel\fP have been modified to
+operate properly with ESPS files.  The standalone program
+\fIformant\fP has been modified to read ESPS SD files and write ESPS
+FEA files.
+.sh 2 "Documentation via eman"
+.lp
+On-line and hardcopy documentation for \fIwaves\fP+, \fIspectrum\fP,
+\fIlabel\fP, and \fIformant\fP has been changed to use the ESPS
+program \fIeman\fP (1\-\s-1ESPS\s+1) \- the ESPS version of the UNIX
+\fIman\fP program.
+.sh 1 "AVAILABLE WAVES+ PRODUCTS"
+.sh 2 "Basic Waves+"
+.lp
+Basic waves+ consists of \fIwaves\fP+, \fIspectrum\fP, \fIlabel\fP,
+and \fIformant\fP \- all as described in Section 3.  The ESPS program
+\fIeman\fP is included (for the HELP commands), but no other ESPS
+programs are included.  This means, for example, that spectrograms can
+only be done with the AT&T DSP32 board.
+.lp
+This version of \fIwaves\fP+ is mainly of interest to those who
+already have ESPS installed.  The product numbers are W+-S3 and
+W+-S4 for Sun 3 and Sun 4 Workstations respectively, and W+-S386i for 
+the Sun 386i.  
+.sh 2 "Standalone waves+"
+.lp
+Standalone \fIwaves\fP+ consists of Basic \fIwaves\fP+ and sixteen
+ESPS binary support programs.  The ESPS support programs facilitate
+the import and export of non-ESPS ASCII and binary files, and the 
+computation of spectrograms without the DSP32 board.  This version is 
+of interest to those who do not have ESPS, but who wish to use
+\fIwaves\fP+ to view and manipulate data computed by non-ESPS
+programs, and who wish to compute and view spectrograms.  
+.lp
+The following ESPS programs are included in Standalone \fIwaves\fP+:
+.nf
+.ta .3i 1.6i
+
+	\fIaddfea\fP \-	adds a new FEA file field based  on ASCII data
+	\fIaddfeahd\fP \-	adds an ESPS feature file header to non-ESPS binary data
+	\fIaddgen\fP \-	adds a generic header item to an existing  or new ESPS file header
+	\fIbhd\fP \-	behead an ESPS file
+	\fIbtosps\fP \-	convert binary sampled data file to an ESPS SD file
+	\fIcomment\fP \-	displays or appends to comment field in ESPS file headers
+	\fIeman\fP \-	displays or prints ESPS manual pages
+	\fIeparam\fP \-	run an ESPS program with parameter prompts
+	\fIfea_element\fP \-	prints binary format table for ESPS FEA files
+	\fIhditem\fP \-	print an item from an ESPS header
+	\fIhdshrink\fP \-	remove embedded headers from an ESPS file
+	\fIils_esps\fP \-	convert an ILS sampled data file to an ESPS file
+	\fIpplain\fP \-	print values from ESPS file in "plain format"
+	\fIpsps\fP \-	print headers and data from ESPS file in "pretty format"
+	\fIpspsdiff\fP \-	differential ESPS file comparator
+	\fIsgram\fP \-	compute FFT-based narrow- or wide-band spectrogram
+	\fIsigtosd\fP \-	convert SIGnal sampled data file to ESPS
+	\fItofspec\fP \-	converts FEA data to FEA_SPEC file (for spectrogram displays)
+.fi
+.lp
+The product numbers for Standalone \fIwaves\fP+ are W+SA-S3 and
+W+SA-S4 for Sun 3 and Sun 4 Workstations respectively, and W+SA-S386i
+for the Sun 386i.  
+.sh 2 "Full ESPS with waves+"
+.lp
+When full ESPS is installed together with Basic \fIwaves\fP+, all of
+the Standalone \fIwaves\fP+ features are available plus more.  
+.lp
+ESPS signal processing programs can be used to extend the operations
+available from \fIwaves\fP+ menus.  Here are some examples:
+\fIme_sgram\fP can be used in place of \fIsgram\fP to compute
+maximum-entropy-based (rather than FFT-based) spectrograms;
+\fIfilter\fP can be used to filter marked segments, with \fIwaves\fP+
+automatically displaying the filtered signal in a window that is
+time-synchronized with the unfiltered signal (the ESPS programs
+\fIwmse_filt\fP and \fIiir_filt\fP can be used to design the filters);
+and \fIfea_stats\fP can be used to compute statistics on marked
+segments, with \fIwaves\fP+ automatically displaying a text-window
+containing the results.
+.lp
+ESPS file manipulation programs can be used to extend the operations
+that can be performed on data converted to ESPS FEA files.  For
+example, \fIfea_edit\fP edits arbitrary ESPS FEA files, \fIselect\fP
+applies arbitrary queries to allow interactive record selection from
+FEA files and to compute expressions on the data in FEA fields;
+\fIfea_deriv\fP allows the merging of data from separate FEA fields;
+and \fIclassify\fP performs maximum-likelihood pattern classification
+of data in FEA fields.
+.lp
+ESPS standalone plot programs support hardcopy plotting of
+sampled-data, spectra, and FEA field data, and they extend the
+\fIwaves\fP+ plotting capabilities to include scatter plots,
+histograms, and spectrograms scaled to arbitrary window sizes.
+.lp
+Those with ESPS source licenses may find useful the source to the
+generic \fIplay\fP program.  If this program is modified to provide
+D/A by means of locally-available facilities, it can be used to
+provide speech output from \fIwaves\fP+.
+.sh 2 "Waves+ DSP32-Support Package"
+.lp
+Sun 3 and Sun 4 \fIwaves\fP+ users with access to the AT&T DSP32 board
+can use it for \fIwaves\fP+ spectrogram computations and speech I/O.
+The \fIwaves\fP+ DSP32-Support Package includes all of the necessary
+drivers, support programs, and installation instructions.  Also
+included are standalone \fIrecord\fP, \fIplay\fP, and \fIdspsgram\fP
+programs that use the board for respectively for A/D conversion, D/A
+conversion, and near real-time spectrograms.  
+.lp
+The ESI product number for the DSP32-Support Package is W+DSP32.
+
+
+
+
+

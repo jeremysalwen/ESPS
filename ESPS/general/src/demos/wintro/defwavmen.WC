@@ -1,0 +1,17 @@
+delete_all_items menu wave
+add_waves menu wave builtin "window ahead" 
+add_waves menu wave builtin "window back"
+add_waves menu wave builtin "align & rescale" 
+add_waves menu wave builtin "bracket markers" 
+add_waves menu wave builtin "zoom in" 
+add_waves menu wave builtin "zoom out" 
+add_waves menu wave builtin "zoom full out" 
+add_waves menu wave builtin "kill window" 
+add_espst menu wave name "Show segment data" command epsps -H
+return
+
+# @(#)defwavmen.WC	1.2 2/5/92 ERL 
+
+
+
+

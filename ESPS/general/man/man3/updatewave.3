@@ -1,0 +1,102 @@
+." Copyright (c) 1988, 1989, 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)updatewave.3	1.9 27 Sep 1997 ESI
+.TH UPDATE_WAVES_GEN 3\-ESPSu 27 Sep 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+update_waves_gen \- update waves-relevant generic header items record_freq and start_time
+.SH SYNOPSIS
+.ft B
+#include <esps/esps.h>
+.sp
+void
+.br
+update_waves_gen(ih, oh, start, step)
+.br
+struct header *ih, *oh;
+.br
+float start, step;
+.sp
+.ft
+.SH DESCRIPTION
+.PP
+This function is intended primarily for use by programs that produce
+files that will be displayed using \fIxwaves\fP(1\-\s-1ESPS\s+1).  It
+writes the generic header items which \fIwaves\fP+ requires in order
+to properly display files in a time-synchronized manner, namely the
+generics "start_time" and "record_freq".
+.PP
+The header pointers \fIih\fP and \fIoh\fP refer respectively to an
+ESPS input file and an ESPS output file.  These should both be FEA
+files, but for compatibility with previous versions, they can also
+point to old-style SD files.  
+.PP
+The parameter \fIstart\fP is the starting record position in the input
+file that corresponds to the start of the output file (e.g., the
+starting sample for FEA_SD or SD files).  The parameter \fIstep\fP is
+the number of input records that correspond to one output record.  (if
+\fIstep\fP is 0, \fIupdate_waves_gen\fP does not compute and write
+"record_freq".)  Although integer values for \fIstart\fP and
+\fIstep\fP are the most common case, they are n specified as FLOATs to
+handle special cases (for example, \fIstep\fP will be less than 1 in
+the case of a sampling rate increase).
+.PP
+When both \fIih\fP and \fIoh\fP both point to FEA headers (including
+FEA_SD), \fIupdate_waves_gen\fP has the following behavior: It expects
+to find the generic header items "start_time" and "record_freq" in the
+input header \fIih\fP.  If these are not present, they default to 0
+and 1 respectively.  \fIUpdate_waves_gen\fP uses the generic
+"record_freq" and the parameter \fIstart\fP to compute a starting time
+relative to the beginning of the file, it adds this value to the value
+of the "start_time" generic in \fIih\fP, and it writes the result as
+the "start_time" generic in \fIoh\fP.  If "start_time" in \fIih\fP is
+a vector, the relative start time is added to each component before
+the results are written to \fIoh\fP.  
+.PP
+If \fIstep\fP is non-zero, the number of output records per second is
+computed by dividing the input generic "record_freq" with the
+parameter \fIstep\fP (this parameter gives the number of input records
+that correspond to one output record).  The resulting value is written
+as the generic "record_freq" in the output header.  (For example, if
+\fIstep\fP == 1, the output "record_freq" is the same as that of the
+input.)  If \fIstep\fP is 0, then the header item "record_freq" is not
+written.  Programs that output FEA_SD (or SD) files often use
+\fIstep\fP == 1 or \fIstep == 0\fP, in cases where they compute and
+set the sampling rate ("record_freq") outside of
+\fIupdate_waves_gen\fP.
+.PP
+If the input header \fIih\fP is an old-style SD header, the input
+header item \fIih->hd.sd->sf\fP is used instead of the generic
+"record_freq".  If the output header \fIoh\fP is an an old-style SD
+header, the output generic "record_freq" is not written, since it is
+assumed that the header item \fIoh->hd.sd->sf\fP is set correctly.
+.PP
+Note that the generic header items written by \fIupdate_waves_gen\fP
+are not physically written to an output file until \fIwrite_header\fP
+(3\-\s-1ESPS\s+1) is called (\fIupdate_waves_gen\fP just modifies the
+header structures).
+.SH DIAGNOSTICS
+.PP
+The function exits with an assertion failure if \fIih\fP and \fIoh\fP
+do not point to SD or FEA files, or if the input "record_freq" (or
+\fIih->hd.sd->sf\fP) is less than equal to zero.  If \fIih\fP is a FEA
+file and does not contain "record_freq" and "start_time" generics, a
+warning is printed on standard error if the global variable
+debug_level is non-zero.
+.SH BUGS
+None known.
+.SH SEE ALSO
+\fIadd_genhd\fP(3\-\s-1ESPS\s+1),
+\fIget_genhd_val\fP(3\-\s-1ESPS\s+1), 
+.br
+\fIcopy_genhd\fP(3\-\s-1ESPS\s+1), 
+\fIgenhd_type\fP(3\-\s-1ESPS\s+1),
+\fIgenhd_list\fP(3\-\s-1ESPS\s+1), 
+.br
+\fIgenhd_codes\fP(3\-\s-1ESPS\s+1), 
+ESPS(5\-ESPS), FEA(5\-\s-1ESPS\s+1), 
+.br
+FEA_SD(5\-\s-1ESPS\s+1)
+.SH AUTHOR
+Manual page by John Shore, code by Alan Parker and John Shore
+

@@ -1,0 +1,64 @@
+.\" Copyright (c) 1991-1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getespsbas.3	1.5 18 Apr 1997 ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GET_ESPS_BASE 3\-Eu 18 Apr 1997
+.SH NAME
+.nf
+get_esps_base \- returns a string pointing to esps base directory. 
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+char *get_esps_base(char *base_name)
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+Returns a string (char *) containing the path to the ESPS base
+directory.  Uses the environment variable ESPS_BASE if it exists,
+else uses the default "/usr/esps".  The path is placed in the
+string parameter \fIbase_name\fR which is also returned from the
+function.  The argument provided as \fIbase_name\fR
+should be large enough to hold the maximum path length of the
+Unix you are running.  If \fIbase_path\fR is NULL then
+a newly allocated string containing the ESPS base path is returned.
+You should deallocate the string when you are done with it.
+.PP
+The ESPS base directory is the top of the ESPS release tree.
+Examples of the useful directories found here are \fIlib\fR, \fIbin\fR, 
+\fIman\fR, and \fIdemo\fR. 
+.SH EXAMPLES
+.PP
+char espsbase[255];
+.br
+(void) get_esps_base(espsbase);  /* string is provided */
+.PP
+char *espsbase;
+.br
+espsbase = get_esps_base(NULL);  /* allocates new string */
+.SH ERRORS AND DIAGNOSTICS
+.PP
+None.  Always returns something unless too small a string is provided
+which could cause problems if other memory addresses are overwritten.
+.SH FUTURE CHANGES
+.PP
+None known.
+.SH BUGS
+.PP
+If the user provided string is too small then who knows what will happen.
+.SH REFERENCES
+.PP
+None.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIfind_esps_file\fP(3\-\s-1ESPS\s+1u), \fIbuild_filename\fP(3\-\s-1ESPS\s+1u), 
+\fIget_esps_base\fP(1\-\s-1ESPS\s+1), \fIfind_esps_file\fP(1\-\s-1ESPS\s+1)
+.fi
+.SH AUTHOR
+Ken Nelson wrote the routine and the man page.
+.PP
+
+
+

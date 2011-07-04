@@ -1,0 +1,19 @@
+
+refcof.c
+==============
+(375)  warning: sincn may be used before set
+(539)  warning: main() returns random value to invocation environment
+warning: possible pointer alignment problem
+    (289)  	    (291)  	    (293)  
+    (295)  	    (297)  	    (318)  
+    (319)  	    (320)  	    (321)  
+    (322)  	
+
+
+==============
+name defined but never used
+    nomemory   	refcof.c(106)
+value type declared inconsistently
+    put_sd_recd   	llib-lespsg.c(215) :: refcof.c(659)
+function argument ( number ) used inconsistently
+    pr_farray( arg 2 )   	refcof.c(623) :: refcof.c(442)

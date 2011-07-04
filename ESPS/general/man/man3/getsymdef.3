@@ -1,0 +1,126 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getsymdef.3	1.2 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GETSYMDEF 3\-ESPSu 18 Apr 1997
+.SH "NAME"
+getsymdef_c, getsymdef_d, getsymdef_i, getsymdef_s, getsymdef_ia, getsymdef_da, getsymdef_fa  - get default parameter value from the symbol table created by read_params
+.SH "SYNOPSIS"
+.B #include <stdio.h>
+.br
+.B #include <esps/param.h>
+.PP
+.B char getsymdef_c (symbol)
+.br
+.B char	*symbol;
+.PP
+.B double getsymdef_d (symbol)
+.br
+.B char	*symbol;
+.PP
+.B int getsymdef_i (symbol)
+.br
+.B char	*symbol;
+.PP
+.B char *getsymdef_s (symbol)
+.br
+.B char	*symbol;
+.PP
+.B int getsymdef_ia (symbol, arr, maxval)
+.br
+.B char	*symbol;
+.br
+.B int arr[];
+.br
+.B int maxval;
+.PP
+.B int getsymdef_da (symbol, arr, maxval)
+.br
+.B char	*symbol;
+.br
+.B double arr[];
+.br
+.B int maxval;
+.PP
+.B int getsymdef_fa (symbol, arr, maxval)
+.br
+.B char	*symbol;
+.br
+.B float arr[];
+.br
+.B int maxval;
+.SH "DESCRIPTION"
+.PP
+The functions all read the specified \fIsymbol\fP from the symbol
+table created by \fIread_params\fP and return its default value, either a
+character, double, integer, string, pointer to an array of integers or
+a pointer to an array of doubles.  If a definite value was given in
+the parameter file (i.e., if the assignment operator "=" was used),
+these functions all return the same value as the corresponding
+\fIgetsym\fP(3\-\s-1ESPS\s+1) function.  
+.PP
+.I getsymdef_c
+returns a character if and only if \fIsymbol\fP exists in the symbol
+table and the symbol is a character.  Otherwise, it returns a zero.
+.PP
+.I getsymdef_d
+returns a double if and only if \fIsymbol\fP exists in the symbol
+table and the symbol is a float or a double.  Otherwise, it returns a
+zero.
+.PP
+.I getsymdef_i
+returns an integer if and only if \fIsymbol\fP exists in the symbol
+table and the symbol is an integer.  Otherwise, it returns a zero.
+.PP
+.I getsymdef_s
+returns a string if and only if \fIsymbol\fP exists in the symbol
+table and the symbol is a string.  Otherwise, it returns NULL.
+.PP
+.I getsymdef_ia, getsymdef_da,
+and
+.I getsymdef_fa
+all read the specified \fIsymbol\fP from the symbol table and return
+the length of the array \fIarr\fP.  \fImaxval\fP is an input parameter
+specifying the maximum length of the array \fIarr\fP.  If \fIsymbol\fP
+does not exist in the symbol table, then these functions return a -1.
+If the length of \fIarr\fP is greater than \fImaxval\fP, then these
+functions return a zero and they print a message on stderr.  A pointer
+to the default data from the symbol table is passed through \fIarr\fR.
+.PP
+.I getsymdef_da
+and
+.I getsymdef_fa
+return entries from the parameter file that are declared as type float.
+The values returned are the same; the only difference is that one
+returns an array of floats and the other returns doubles.
+.PP
+Unlike the \fIgetsym\fP(3\-\s-1ESPS\s+1) functions, these functions
+do not provide feedback in terms of Common processing.  However, note
+that \fIread_params\fP may process Common when creating the symbol
+table, so a default value returned by \fIgetsymdef\fP may have
+originated in ESPS Common (see \fIread_params\fP(3\-\s-1ESPS\s+1)).
+.SH DIAGNOSTICS
+.PP
+Undefined Symbol:  \fIsymbol\fP
+.br
+Not a valid real value
+.br
+Not a valid integer
+.br
+Symbol \fIsymbol\fP is not (symbol-type)
+.br
+Array \fIsymbol\fP is too long to fit into supplied buffer
+.SH "BUGS"
+.PP
+.SH "SEE ALSO"
+.PP
+.nf
+\fIread_params\fP(3\-\s-1ESPS\s+1), \fIgetsym\fP(3\-\s-1ESPS\s+1), \fIsymerr_exit\fP(3\-\s-1ESPS\s+1),
+\fIputsym\fP(3\-\s-1ESPS\s+1), \fIfputsym\fP(3\-\s-1ESPS\s+1), \fIsymtype\fP(3\-\s-1ESPS\s+1),
+\fIsymsize\fP(3\-\s-1ESPS\s+1), \fIsymlist\fP(3\-\s-1ESPS\s+1), \fIsymdefinite\fP(3\-\s-1ESPS\s+1),
+\fIsymchoices\fP(3\-\s-1ESPS\s+1), \fIsymrange\fP(3\-\s-1ESPS\s+1), \fIsymprompt\fP(3\-\s-1ESPS\s+1)
+.fi
+.SH "REFERENCES"
+[1] ETM-S-86-12:jtb, Parameter Files in the Speech Processing System
+.SH "AUTHOR"
+man page by John Shore. 

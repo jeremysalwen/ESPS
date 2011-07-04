@@ -1,0 +1,126 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of
+# Entropic Research Laboratory, Inc. Any reproduction, distribution,
+# or publication of this work must be authorized in writing by Entropic
+# Research Laboratory, Inc., and must bear the notice:
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc.
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc.
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended
+# publication of this source code.
+#
+# @(#)vqdemo	3.10   8/15/91     ESI/ERL
+#
+# Written by:
+# Checked by:
+# Revised by: David Burton
+#
+# Brief description:  Illustrates basic VQ processing
+#
+
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+ESPS_VERBOSE=3
+export ESPS_VERBOSE
+
+if test `mach_type` = CONVEX
+ then
+  echo This script will fail if you do not have write permission on this directory.
+ else
+  if test ! -w . 
+    then
+	echo "You do not have write permission in this directory."
+	exit 1
+  fi
+fi
+# Make empty parameter file to turn off Warnings
+rm -f params; touch params
+echo " "
+echo "				Example of VQ encoding"
+echo " "
+sleep 4
+echo "VQDEMO: This demo uses ESPS_VERBOSE=3 to illustrate parameter file processing."
+echo " "
+#make VQ codebook from Gaussian noise
+echo "VQDEMO: Make Gaussian training sequence, and"
+echo "VQDEMO: process noise into 40 sets of 10th-order reflection coefficients."
+echo "VQDEMO: This codebook represents white Gaussian noise."
+echo "VQDEMO: (refcof parameters determined by parameter file refparams):"
+echo "VQDEMO:   %testsd -Tgauss - | refcof -Prefparams - rc.fana"
+echo " "
+testsd -Tgauss - | refcof -Prefparams - rc.fana
+echo " "
+sleep 3
+echo "VQDEMO: Design codebook with these parameters:"
+echo "VQDEMO:   %cat vqparams"
+cat vqparams
+echo " "
+sleep 3
+echo "VQDEMO: designing codebook rc.cbk -- history in vqdeshist"
+echo "VQDEMO:   %vqdes -Pvqparams -x2 rc.fana rc.cbk"
+vqdes -Pvqparams -x2 rc.fana rc.cbk
+echo " "
+echo "VQDEMO: Codebook designed."
+echo " "
+sleep 3
+echo "VQDEMO: now quantize the training sequence"
+echo "VQDEMO:   %vq  rc.cbk rc.fana rc.vq"
+vq  rc.cbk rc.fana rc.vq
+echo " "
+echo 'VQDEMO: That was an example of VQ codebook design (by using vqdes) and'
+echo 'VQDEMO: VQ encoding or quantization (by using vq).'
+echo " "
+rm -f input.dst class.cbk
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+echo " "
+echo " 				Example of VQ classification"
+echo " "
+sleep 4
+echo "VQDEMO: Let's build a VQ classifier to separate speech from noise."
+echo 'VQDEMO: First, analyze speech (using refcof) and then make'
+echo 'VQDEMO: a VQ codebook (using vqdes) to represent it.'
+echo "VQDEMO: Use the same parameters as above to build the new VQ codebook."
+echo " "
+echo "VQDEMO:   %refcof -Prefparams speech.sd  speech.ana"
+echo "VQDEMO:   %vqdes  -Pvqparams speech.ana speech.cbk"
+refcof -Prefparams speech.sd speech.ana
+vqdes -Pvqparams speech.ana speech.cbk
+echo " "
+sleep 3
+echo "VQDEMO: Make a VQ classification codebook called class.cbk. This contains"
+echo 'VQDEMO: 1 codebook record representing  Gaussian noise (from rc.cbk) and'
+echo 'VQDEMO: 1 codebook record representing speech (from speech.cbk).'
+echo " "
+echo "VQDEMO:  %addclass -r5 -s NOISE -n channel_1 -f spec_rep \ "
+echo "VQDEMO:   -p RC rc.cbk class.cbk"
+echo " "
+addclass -r5 -s NOISE -n channel_1 -f spec_rep -p RC rc.cbk class.cbk
+echo " "
+echo "VQDEMO:  %addclass -r5 -s SPEECH -n channel_1 -f spec_rep \ "
+echo "VQDEMO:  -p RC speech.cbk class.cbk"
+echo " "
+addclass -r5 -s SPEECH -n channel_1 -f spec_rep -p RC speech.cbk class.cbk
+echo " "
+echo "VQDEMO: class.cbk now has a VQ codebook representing each type of source:"
+echo "VQDEMO: speech data and nosie data."
+echo " "
+sleep 3
+echo 'VQDEMO: Now use vqdst to compare an unknown input (generated with testsd)'
+echo "VQDEMO: with each source representation in class.cbk. Write the"
+echo "VQDEMO: results to the file input.dst"
+echo " "
+echo "VQDEMO:  %testsd -Tuniform  - | refcof -Prefparams - - |\ "
+echo "VQDEMO:  vqdst -f spec_param - class.cbk input.dst"
+testsd -Tuniform  - | refcof -Prefparams - - | vqdst -f spec_param - class.cbk input.dst 
+echo " "
+sleep 3
+echo "VQDEMO: Classify unknown input by using vqclassify."
+echo "VQDEMO: Source with the most votes is classification decision."
+echo " "
+echo "VQDEMO:   %vqclassify -v input.dst"
+echo " "
+echo " "
+vqclassify -v input.dst

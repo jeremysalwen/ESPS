@@ -1,0 +1,68 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\ @(#)getatal.3	1.5 07 Nov 1990 ESI
+.TH GET_ATAL 3\-ESPSsp 07 Nov 1990
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+get_atal \- get reflection coefficients from auto-correlations using Levinson.
+.SH SYNOPSIS
+.ft B
+get_atal (r, order, c, rc, pgain)
+.br
+float    c[], rc[], *pgain;
+.br
+double  r[];
+.br
+int     order;
+.SH DESCRIPTION
+This routine computes the reflection coefficients,
+.B
+rc[1], ..., rc[order],
+and the lpc filter coefficients,
+.B
+c[1], ..., c[order],
+corresponding to the given set of normalized auto-correlation coefficients,
+.B
+r[1], ..., r[order],
+using standard Levinson's algorithm.
+If stability problem is encountered in the computation of reflection
+coefficient
+.B
+rc[k],
+the reflection coefficients
+.B
+rc[k]
+to
+.B
+rc[order]
+are set to zero and a message is displayed on
+.I
+stderr.
+.SH BUGS
+None
+.SH COMMENTS
+The auto-correlation coefficients needed can be obtained from the data using
+.I
+get_auto
+function.
+The maximum value of
+.B 
+order
+allowed is 1000. User should be aware of it.
+.SH FUTURE CHANGES
+The restriction on
+.B
+order
+will be removed. If instability is noticed during Levinson recursion,
+this information should be transmitted back to the calling program
+by appropriately changing the parameter
+.B
+order.
+.SH SEE ALSO
+get_auto (3-ESPSsp).
+.SH REFERENCES
+[1] L. R. Rabiner and R. W. Schafer,
+.I
+Digital Processing of Speech Signals.
+Prentice Hall, NJ. 1978.
+.SH AUTHOR
+Shankar Narayan

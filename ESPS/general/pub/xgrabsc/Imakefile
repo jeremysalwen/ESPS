@@ -1,0 +1,20 @@
+/*========================================================================
+ *
+ * Name - Imakefile
+ *
+ * Version:	1.4
+ *
+ * ccsid:	@(#)Imakefile	1.4 - 9/4/90 16:35:19
+ * from: 	ccs/s.Imakefile
+ * date: 	7/26/91 13:22:26
+ *
+ * Description: imake file to build xgrabsc.  Use simple.mak if you
+ *              don't have imake.
+ *
+ *========================================================================
+ */
+
+LOCAL_LIBRARIES = $(XLIB)
+
+SimpleProgramTarget(xgrabsc)
+

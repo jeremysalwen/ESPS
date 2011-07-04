@@ -1,0 +1,58 @@
+# testfile for addgen
+# @(#)testfile	1.5 9/17/96 ERL
+#
+ESPSCOM=/dev/null
+export ESPSCOM
+
+echo " "
+echo make sd file with testsd.
+testsd -p10 a.sd
+echo run psps -Dl on this file.  Should just be standard header items.
+echo " "
+psps -Dl a.sd
+echo add generic header items of each type
+echo " "
+echo "addgen -gaddgen_test1 -tchar -vTEST a.sd"
+echo "addgen -gaddgen_test2 -tdouble -v10e40 a.sd"
+echo "addgen -gaddgen_test3 -tfloat -v-10.5 a.sd"
+echo "addgen -gaddgen_test4 -tlong -v64000 a.sd"
+echo "addgen -gaddgen_test5 -tshort -v32000 a.sd"
+echo "addgen -gaddgen_test6 -tefile -v/dev/null a.sd"
+echo "addgen -gaddgen_test7 -tafile -v/dev/null a.sd"
+addgen -gaddgen_test1 -tchar -vTEST a.sd
+addgen -gaddgen_test2 -tdouble -v10e40 a.sd
+addgen -gaddgen_test3 -tfloat -v-10.5 a.sd
+addgen -gaddgen_test4 -tlong -v64000 a.sd
+addgen -gaddgen_test5 -tshort -v32000 a.sd
+addgen -gaddgen_test6 -tefile -v/dev/null a.sd
+addgen -gaddgen_test7 -tafile -v/dev/null a.sd
+echo " "
+echo add several at once
+echo " "
+echo "addgen -gaddgen_char1 -tchar -vONE \\
+	-gaddgen_char2 -t char -vTWO \\
+	-gaddgen_double1 -tdouble -v111.1111 \\
+	-gaddgen_double2 -tdouble -v222.2222 \\
+	-gaddgen_float1 -tfloat -v1.11 \\
+	-gaddgen_float2 -tfloat -v2.22 \\
+	-gaddgen_long1 -tlong -v1000000 \\
+	-gaddgen_long2 -tlong -v2000000 \\
+	-gaddgen_short1 -tshort -v1000 \\
+	-gaddgen_short2 -tshort -v2000 \\
+	a.sd"
+addgen -gaddgen_char1 -tchar -vONE \
+	-gaddgen_char2 -t char -vTWO \
+	-gaddgen_double1 -tdouble -v111.1111 \
+	-gaddgen_double2 -tdouble -v222.2222 \
+	-gaddgen_float1 -tfloat -v1.11 \
+	-gaddgen_float2 -tfloat -v2.22 \
+	-gaddgen_long1 -tlong -v1000000 \
+	-gaddgen_long2 -tlong -v2000000 \
+	-gaddgen_short1 -tshort -v1000 \
+	-gaddgen_short2 -tshort -v2000 \
+	a.sd
+echo " "
+echo run psps -Dl on a.sd and check for new generic header items
+echo " "
+psps -Dl a.sd
+echo done

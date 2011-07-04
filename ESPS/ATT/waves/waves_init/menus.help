@@ -1,0 +1,206 @@
+The various menu items on this panel allow you to change the waveform
+and image menus interactively.  By looking at the menu configuration
+file (available via the Help button) and at some of the scripts cited
+within it, you can see yow to create your own environment.  
+
+Select Waveform Menu / Select Image Menu
+========================================
+
+These allow the selection of various "canned" menu combinations.  
+To see how its done (in case you want to prepare your own), select
+Help->"Show menu file for this panel..." and find the appropriate
+waves command file (e.g., $ESPS_BASE/lib/waves/commands/wavmen1.WC 
+for "Style 1" waveform menus).  
+
+Add Built-in Waveform Op / Add Built-in Image Op
+================================================
+
+These allow you to select any of the built-in operations for addition
+to either the waveform or image menus.  (You could start by 
+selecting "Select Waveform Menu"->"Clear menu" and then building 
+up from an empty menu.) 
+
+Add Extended Waveform Op 
+========================
+
+The various items on this menu add extended waveform operations.  Most
+add calls to ESPS programs or to specialized scripts (you'll find them
+in $ESPS_BASE/bin)that run on waveforms.  Here are some brief
+descriptions (for more information in all cases, see the relevant ESPS
+man pages):
+
+bracket horiz. markers
+----------------------
+
+Resets the plot_min and plot_max to the values corresponding to the 
+bottom and top (horizontal) markers -- these markers are set by 
+holding the SHIFT key down and click-dragging the left mouse.  
+
+show full amplitude
+-------------------
+
+Resets plot_min and plot_max to 0; this has the effect of displaying the
+full amplitude.  
+
+bracket box (both markers)
+--------------------------
+
+Zooms the display to show only the data between the left, right, top, 
+and bottom markers.  Please not that this operation writes a file 
+into the current directory (needed for Undo).  
+
+undo bracket box
+----------------
+
+Reverses the effect of the most recent "Bracket box"; this uses the 
+file mentioned above, and then deletes it.  
+
+custom spectrogram (sgram)
+--------------------------
+Runs sgram (1-ESPS) after prompting for parameters.  
+
+custom spectrogram (fft)
+------------------------
+Runs fft (1-ESPS) after prompting for parameters.  Note that (unlike sgram)
+fft can be used on complex sampled data files.  
+
+MAXENT (LPC) spectrogram (W.B.)
+-------------------------------
+Runs me_sgram (1-ESPS) using parameters that simulate wideband (fft) 
+spectrograms.  
+
+MAXENT (LPC) spectrogram (N.B.)
+-------------------------------
+Runs me_sgram (1-ESPS) using parameters that simulate narrowband (fft) 
+spectrograms.  
+
+custom MAXENT (LPC) spectrogram
+-------------------------------
+Runs me_sgram (1-ESPS) after prompting for parameters.  
+
+complex FFT pwr spectrum
+------------------------
+After prompting for the FFT order and the window type, uses fft
+(1-ESPS) to compute and displays a single-frame complex power
+spectrum.
+
+MAXENT (LPC) pwr spectrum
+-------------------------
+Runs refcof (1-ESPS) and me_spec (1-ESPS) to compute a maximum 
+entropy power spectrum after prompting for parameters.  The same
+computation can be done (more conveniently) with xspectrum, but 
+this menu item yields slightly more parametric control (includes 
+convergence test value and maximum number of iterations for the 
+structured covariance method).  
+
+power
+-----
+Use frame (1-ESPS) and pwr (1-ESPS) to compute the power 
+in a sequence of frames between the marks; the user is prompted 
+for the framing parameters.  
+
+zero crossings
+--------------
+Use frame (1-ESPS) and zcross (1-ESPS) to compute the zero crossing
+rate in a sequence of frames between the marks; the user is prompted
+for the framing parameters.
+
+F0 analysis
+-----------
+
+Uses get_f0 (1-ESPS) to compute F0 and other related parameters; the
+results are displayed in a special waveform-style display.  A temp
+file on /usr/tmp is used. 
+
+segment statistics
+------------------
+Runs fea_stats on the marked segment and pops up a display giving the 
+(ASCII) results.  
+
+show segment data
+-----------------
+show header (brief) and segment
+-------------------------------
+show header (full) and segment
+------------------------------
+These three items use psps (1-ESPS) with various options to show (as
+ASCII) the marked data along with varying information from the ESPS 
+header.  
+
+Add Extended Image Op 
+=====================
+
+The various items on this menu all add calls to ESPS programs
+specialized ESPS scripts (you'll find them in $ESPS_BASE/bin)that run
+on images.  Here are some brief descriptions (for more information in
+all cases, see the relevant ESPS man pages):
+
+bracket frequency markers (uses external file)
+----------------------------------------------
+Uses spec_subr (1-ESPS) to create a new FEA_SPEC file containing 
+data delineated by the time (vertical) and frequency (horizontal) 
+markers.  Note that the frequency markers are set by holding down 
+SHIFT while clicking/dragging with the left mouse (down at one 
+end of the range, up at the other).  Please note that this 
+bracket-markers operation creates an external file.  In a 
+later release, the same function will be available as an internal 
+operation.  
+
+FFT frequency zoom
+------------------
+This uses an external script ($ESPS_BASE/bin/fftzoom) to perform a
+high-resolution FFT analysis in the frequency range delineated by the
+time (vertical) and frequency (horizontal) markers.  fftzoom
+re-analyzes the original sampled data by downshifting the desired
+frequency band to baseband, low-pass filtering the resulting data,
+resampling it, and performing an FFT analysis.  Note that an external
+file is created.  Also, fftzoom will fail if it cannot tell the original
+sampled data source (typically, this will happen if the displayed 
+spectrogram is more than "one step removed" from the original sampled 
+data).  For example, fftzoom will fail if the input is itself
+the output of fftzoom.  
+
+formants (w/overlay)
+--------------------
+Uses formant (1-ESPS) to compute formants and formant bandwidths from
+the original sampled data, and then overlays the formants on the
+current spectrogram display.  This command creates several additional
+files (e.g., the ".f0" formant/bandwidth file).  We leave them in
+place since you might want to load or overlay them manually.  See
+formant (1-ESPS) for a description of the various files.  Remember to
+clean up.  See also the "Formants" and "F0 analysis" items that can be
+added to waveform menus.  The operation will fail if the original
+sampled data source cannot be detected (typically, this will happen if
+the displayed spectrogram is more than "one step removed" from the
+original sampled data.
+
+3D Plot
+-------
+Runs plot3d (1-ESPS) on the data between the time markers.  The 3D 
+cursor in the resulting plot3d display is linked dynamically to the 
+waves cursors.  
+	
+spectral block average
+----------------------
+After prompting for the block (window) size and window type, 
+computes an average of the spectrogram data (as a function of time) 
+and displays the results in another image window.  
+
+segment statistics
+------------------
+Runs fea_stats on the marked segment and pops up a display giving the 
+(ASCII) results.  
+
+show segment data
+-----------------
+show header (brief) and segment
+-------------------------------
+show header (full) and segment
+------------------------------
+These three items use psps (1-ESPS) with various options to show (as
+ASCII) the marked data along with varying information from the ESPS 
+header.  
+
+
+# @(#)menus.help	1.4 9/9/93
+

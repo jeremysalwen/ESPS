@@ -1,0 +1,100 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)isdisttd.3	1.7 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH IS_DIST_TD 3\-ESPSsp 18 Apr 1997
+.SH NAME
+is_dist_td \- compute the Itakura-Saito distortion between two autoregressive power spectra given time domain information.
+.SH SYNOPSIS
+.ft B
+double is_dist_td (autocorrn, autocorrn_err, codeword, codeword_err, size)
+.br
+double *autocorrn, autocorrn_err, *codeword, codeword_err;
+.br
+int     size;
+.PP
+.SH DESCRIPTION
+.PP
+.I is_dist_td
+computes the
+Itakura-Saito distortion  between two power spectra
+that are defined by
+.I autocorrn 
+and 
+.I codeword.
+.I gnis_dist_td 
+computes the distortion by using equation (7) in [1]
+in which 
+.I autocorrn 
+corresponds to the first spectral argument and 
+.I codeword 
+corresponds to the second spectral argument.
+.I autocorrn 
+is a set of equally spaced, time-domain autocorrelations 
+that start with the zero lag autocorrelation,
+.I autocorrn_err
+is the linear predictive analysis squared error that is associated with
+the 
+.I autocorrn
+set of autocorrelations,
+.I codeword
+is 
+the autocorrelation of autoregressive filter coefficients,
+and
+.I codeword_err
+is the linear predictive analysis squared error term associated with
+the 
+.I codeword
+set of filter coefficients.
+.I size
+is the number of 
+.I autocorrn
+and 
+.I codeword
+values, and
+.I is_dist_td
+returns the computed distortion value.
+.SH WARNINGS
+.PP
+.I is_dist_td
+ignores the first term (element 0) in the arrays,
+.I autocorrn
+and
+.I codeword.
+It assumes the arrays are defined from
+.I autocorrn[1]
+to
+.I autocorrn[size]
+and
+.I codeword[1]
+to
+.I codeword[size].
+.SH EXAMPLE
+.PP
+.nf
+/* Assume the equally spaced, time-domain autocorrelation,
+ * \fIauto_corr\fP,  is  defined  from  element 1  to element  6 and the
+ * autocorrelation of the autoregressive filter coefficients,
+ * \fIcdwd\fP, is defined from element 0 to element 5  (i.e. \fIsize\fP = 6).
+ * Also assume that the linear predictive analysis squared error
+ * terms \fIac_err\fP and \fIcdwd_err\fP have been computed. To compute
+ * the Itakura-Saito distortion measure between the two power spectras,
+ * we would have to call \fIis_dist_td\fP with the following arguments:
+ */
+
+    IS_distortion = is_dist_td(auto_corrn, ac_err, cdwd \- 1, cdwd_err, 6);
+.fi
+.SH REFERENCES
+[1] J. E. Shore and D. K. Burton, Discrete Utterance Speech Recognition Without
+Time Alignment," IEEE Transactions on Information Theory, Vol. IT-29, No. 4, July
+1983, pp 473-491
+.PP
+[2] R. M. GRAY, A. Buzo, A. H. Gray, and Y. Matsuyama, "Distortion Measures for
+Speech Processing," IEEE Transactions on Acoustics, Speech, and Signal Processing,
+Vol. ASSP-28, No. 4, August 1980, pp 367-376
+.SH "SEE ALSO"
+.nf
+\fIgnis_dist_td\fP(3\-ESPSsp), \fIgois_dist_td\fP(3\-ESPSsp)
+.fi
+.SH AUTHOR
+Code by A. Virdy, manual page by D. Burton

@@ -1,0 +1,135 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)cbkd.1	1.3 4/2/97 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH CBKD 1\-ESPS 1/14/91
+.SH "NAME"
+cbkd \- Find distances between codewords in vector quantizer codebooks.
+.sp
+.SH "SYNOPSIS"
+.B cbkd
+[
+.BI \-P " param"
+][
+.BI \-r " range"
+][
+.BI \-t " table_field"
+][
+.BI \-x " debug_level"
+]
+.I cbk_in
+.I cbk_out
+.sp
+.SH "DESCRIPTION"
+\fICbkd\fP reads a vector quantizer codebook,
+finds the distances between the codewords, and forms a table
+of the distances.  This allows quick computation of distances
+when processing quantized data.
+.PP
+Codebooks are read from the FEA_VQ (5-ESPS) file \fIcbk_in\fP,
+and the euclidean
+distances between the codewords are found and are written to the FEA_VQ
+file \fIcbk_out\fP. 
+For each codebook in the specified input file records, an array
+\fBtable\fP, of size \fBcurrent_size x current_size\fP is formed,
+where \fBcurrent_size\fP is the number of words in the codebook.
+Element \fBtable[i][j]\fP is the distance between codewords \fBi\fP
+and \fBj\fP.
+The specified records of the input file are copied to the
+output file and the distance data is stored in the 
+\fBdesign_size\fP x \fBdesign_size\fP dimensional field
+\fItable_field\fP. By default, codebooks are read from all records in \fIcbk_in\fP
+and the corresponding distance tables are written to the same records
+in \fIcbk_out\fP  (see the \fB\-r\fP option).
+.sp
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP
+.BI \-P " param"
+Uses the parameter file \fIparam\fP, rather than the default, which is \fIparams\fP. 
+.TP
+.BI \-r " first":"last"
+.TP
+.BI \-r " first\-last"
+.TP
+.BI \-r " first" :+ "incr" 
+In the first two forms, a pair of unsigned integers specifies the
+range of records from \fIcbk_in\fP to process.  
+If \fIlast\fP = \fIfirst\fP + \fInan\fP, the last form specifies the
+same range as the first.  If \fIfirst\fP is omitted, the default value
+1 is used. If \fIlast\fP is omitted, the default is to process all
+records from \fIstart\fP to the last in the file.  This option
+overides the values of \fIstart\fP and \fInan\fP in the parameter file.
+.TP
+.BI \-t " table_field"
+Name of the field in the FEA_VQ file \fIcbk_out\fP which will
+contain the codeword distance table.  By default, this field name
+is "distance_table".
+.TP
+.BI \-x " debug_level"
+A positive value causes debugging output to be printed on the standard
+error output. Larger values give more output.  The default is 0, for
+no output.
+.sp
+.SH ESPS PARAMETERS
+The parameter file is not required to be present; there are default
+values which will apply.  If the parameter file does exist, the following
+parameters are read:
+.TP
+.I start - integer
+The first record in the input FEA_VQ file for which the codebook
+distances are computed and written to the FEA_VQ output file.  
+This parameter is not used if the \fB\-r\fP option
+is used.  If \fIstart\fP is not specified and \fB\-r\fP is not used,
+the default is to begin processing at the first record in the input
+file. 
+.TP
+.I nan - integer
+The number of records from the input FEA_VQ file to process. This
+parameter is not used if the \fB\-r\fP option is used.  If \fInan\fP
+is not specified and \fB\-r\fP is not used, the default is to process
+all records of \fIcbk_in\fP from \fIstart\fP to the last record in
+the file.
+.TP
+.I table_field - string 
+Name of the field in the FEA_VQ file \fIcbk_out\fP which will
+contain the codeword distance table.  See the \fB\-t\fP option; this
+paramter is not read if the \fB\-t\fP option is used.
+.TP
+.I debug_level - int
+A positive value causes debugging output to be printed on the standard
+error output.  Larger values give more output.  The default is 0, for
+no output.  This parameter is not read if the \fB\-t\fP option is used.
+.sp
+.SH ESPS COMMON
+ESPS Common is not read or written.
+.sp
+.SH ESPS HEADER
+\fICbkd\fP copies the FEA_VQ file header of \fIcbk_in\fP 
+as the header of \fIcbk_out\fP.  
+The input line is added as a comment and \fIcbk_in\fP
+is added as a source.
+.PP
+The contents of the FEA_VQ records of \fIcbk_in\fP are copied to 
+\fIcbk_out\fP and the field \fIdistance_table\fP is
+created; \fIdistance_table\fP contains the distances between codewords
+and is a two dimension field of data type DOUBLE and 
+contains \fBdesign_size x design_size\fP elements.
+.sp
+.SH "SEE ALSO"
+.nf
+\fIvq\fP(1-ESPS), \fIvqdes\fP(1-ESPS), \fIvqdesign\fP(3-ESPS), \fIdtw\fP(1-ESPS), 
+\fIdtw_rec\fP(1-ESPS), \fIdtw\fP(3-ESPS), \fId_mat_alloc\fP(3-ESPS), 
+FEA_VQ (5-ESPS)
+.fi
+.SH BUGS
+None known.
+.SH AUTHOR
+Program and manual pages by Bill Byrne.
+
+
+
+
+
+
+

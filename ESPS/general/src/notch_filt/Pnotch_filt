@@ -1,0 +1,7 @@
+#
+# default param file for notch_filt
+# @(#)Pnotch_filt	3.3 2/15/88 ESI
+#
+float band_width ?= 30: "6 dB band width";
+float samp_freq ?= 8000: "sampling frequency";
+float notch_freq ?= 60: "notch frequency";

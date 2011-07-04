@@ -1,0 +1,63 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)mat2fea.1	1.2 7/23/91 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH MAT2FEA 1\-ESPS 7/10/91
+.sh NAME
+.nf
+mat2fea \- convert Matlab .mat file data to FEA file
+.SH SYNOPSIS
+.B mat2fea
+[
+.BI \-c " comment_text"
+] [
+.BI \-x " debug_level"
+] [
+.BI \-m
+] 
+.BI \-f " variable_name"
+.I infile.mat outfile.fea
+.SH DESCRIPTION
+This program reads the Matlab matrix variable \fIvariable_name\fP from 
+the Matlab data file \fIinfile.mat\fP, creates the ESPS FEA file 
+\fIoutfile.fea\fP,
+and writes the variable data 
+to the FEA field \fIvariable_name\fP.
+The variable is taken as a \fIM x N\fP matrix.
+The default behavior is to create a field of size \fIN\fP in the output
+file and write row \fIn\fP to record \fIn\fP so that \fIoutfile.fea\fP
+has \fIN\fP records.  If \fB\-m\fP is specified, the output field is
+created as a \fIM x N\fP matrix and the data is written to a single record of 
+\fIoutfile.fea\fP.  Matlab string variables (ASCII data) are not supported.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-x " debug_level" "\fR [0]\fP"
+Increasing values provide more detailed commentary on program's progress.
+.TP
+.BI \-m 
+Write data to single record output file as a matrix. Default behavior is
+is to write one record for each row of the matrix.
+.TP
+.BI \-f " field_name" 
+Name of variable in the input file from which data is read - this field
+must be provided.
+.SH ESPS PARAMETERS
+.PP
+No parameter file is read.
+.SH ESPS COMMON
+.PP
+No common processing is performed.
+.SH ESPS HEADERS
+The command line and comment string, if provided, are added to the
+output header as comments.  The output field \fIvariable_name\fP
+has data type DOUBLE or DOUBLE_CPLX, depending on the input data.
+.SH BUGS
+Sometimes has trouble reading information about the variables when 
+\fIinfile.mat\fP contains more than one
+variable.
+.SH "SEE ALSO"
+fea2mat(1\-ESPS), FEA(5\-ESPS)
+.SH AUTHOR
+Program and man page by Bill Byrne.
+

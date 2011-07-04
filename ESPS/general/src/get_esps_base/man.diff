@@ -1,0 +1,51 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)getespsbas.1	1.4 4/1/97 
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH GET_ESPS_BASE 1\-ESPS 4/1/97
+.SH NAME
+.nf
+get_esps_base \- returns the name of the esps base directory. 
+.fi
+.SH SYNOPSIS
+get_esps_base
+.SH DESCRIPTION
+.PP
+Returns the name of the top of the ESPS base directory.  No arguments.
+The value returned is either the value of environment variable
+\fBESPS_BASE\fR or \fB/usr/esps\fR if the environment variable is empty.
+.PP
+The ESPS base directory is the top of the ESPS release tree.
+Examples of the useful directories found here are \fIlib\fR , \fIbin\fR, 
+\fIman\fR , and \fIdemo\fR. 
+.SH EXAMPLES
+.br
+if [ -r `get_esps_base`/scripts/runesps ]; then
+.br
+  `get_esps_base`/scripts/runesps
+.br
+fi
+.br
+.SH ERRORS AND DIAGNOSTICS
+.PP
+None known.
+.SH FUTURE CHANGES
+.PP
+None known.
+.SH BUGS
+None known.
+.SH REFERENCES
+.PP
+None.
+.SH "SEE ALSO"
+.PP
+\fIfind_esps_file\fP(3\-\s-1ESPSu\s+1), 
+\fIget_esps_base\fP(3\-\s-1ESPSu\s+1), 
+\fIfind_esps_file\fP(1\-\s-1ESPS\s+1)
+.SH AUTHOR
+Ken Nelson wrote the routine and the man page.
+.PP
+
+
+
+
+

@@ -1,0 +1,12 @@
+This demo features operations on the TIMIT database.
+
+The demo tries to set up the default D/A output according to what
+hardware is available.  You can change this default by right-mousing
+the "Setup Output" button.
+
+The bottom part of the control panel shows the prefix name of two 
+files from the TIMIT database.  When you press one of these button, 
+the operation selected in the middle part of the panel is performed
+on the named file.  
+
+@(#)README	1.4 1/16/93 ERL

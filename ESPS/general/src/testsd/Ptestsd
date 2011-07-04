@@ -1,0 +1,13 @@
+# @(#)Ptestsd	1.7 9/18/90 ESI
+# default parameter file for testsd
+float freq ?= 500 : "Frequency for periodic signals";
+float phase ?= 0 : "Phase for periodic signals";
+int samp_rate ?= 8000 : "Sampling rate";
+float level ?= 500 : "Signal power level";
+float sweep_rate ?= 0 : "Frequency sweep rate for periodic signals (0 means no sweep)";
+float decay_time ?= 0 : "Exponential decay time (0 means no decay)";
+char *ascii_file ?= "" : "Input file for ASCII conversions (use - to enter directly from testsd)";
+int length ?= 8000 : "Number of points to create";
+int seed ?= 1234567 : "Random seed for noise signals";
+char *data_type =? "SHORT" : "Signal data type": {"DOUBLE", "FLOAT", "LONG", "SHORT", "BYTE", "DOUBLE_CPLX", "FLOAT_CPLX", "LONG_CPLX", "SHORT_CPLX", "BYTE_CPLX"};
+char *type =? "SINE" : "Signal type": {"SINE", "SQUARE", "TRIANGLE", "SAWTOOTH", "PULSES", "GAUSS", "UNIFORM", "ASCII"};

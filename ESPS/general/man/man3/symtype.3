@@ -1,0 +1,138 @@
+.\" Copyright (c) 1987,1988,1989,1990 Entropic Speech, Inc.; All rights reserved
+.\"@(#)symtype.3	1.5 09 Mar 1990 ESI
+.TH SYMTYPE 3\-ESPSu 09 Mar 1990
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+symtype \- return the type of a parameter 
+symsize \- return the size of a parameter 
+symlist \- get list of parameter names and return number of parameters
+symdefinite \- indicates whether a run-time parameter prompt will occur
+symchoices \- get list of discrete choices for a parameter's value
+symrange \-  get the value range for a parameter 
+symprompt \- returns the prompt string for a parameter
+.SH SYNOPSIS
+.ft B
+#include <esps/esps.h>
+.br
+int
+.br
+symtype(name)
+.br
+char	*name;
+
+.br
+int
+.br
+symsize(name)
+.br
+char	*name;
+
+.br
+char **
+.br
+symlist(nparams)
+.br
+int *nparams;
+
+.br
+int
+.br
+symdefinite(name)
+.br
+char	*name;
+
+.br
+char **
+.br
+symchoices(name, nchoices)
+.br
+char	*name;
+.br
+int     *nchoices;
+
+.br
+int
+.br
+symrange(name, min, max)
+.br
+float   *min, *max;
+
+.br
+char *
+.br
+symprompt(name)
+.br
+char	*name;
+.br
+.ft
+.SH DESCRIPTION
+.PP
+These functions all obtain information from the symbol table created
+by calling \fIread_params\fP (3\-\s-1ESPS\s+1).  For the values
+themselves, use the appropriate \fIgetsym\fP (3\-\s-1ESPS\s+1)
+function.  
+.PP
+.I symtype
+returns the type of the symbol \fIname\fP.  Valid symbol types are
+ST_INT, ST_CHAR, ST_FLOAT, ST_STRING, ST_IARRAY, ST_FARRAY, and also
+ST_UNDEF.  These are defined in <esps/param.h>.
+.PP
+.I symsize
+returns the size of the symbol \fIname\fR.  That is, for a scaler it
+returns 1 and for an array it returns the array size.   If \fIname\fR is
+undefined, then \fIsymsize\fP returns -1.
+.PP
+.I symlist
+returns a list of the defined symbols in the form of a null-terminated
+array of character pointers (the same form as used by \fIlin_search\fP
+(3\-\s-1ESPS\s+1)).  If the pointer \fInparams\fP is not NULL, the
+corresponding variable is set to the number of symbols in the symbol
+table (number of symbols that were defined in the parameter file
+specified in the call to \fIread_params\fP).  If there are no
+parameters defined in the symbol table, \fIsymlist\fP returns NULL and
+sets *\fInparams\fP to 0 (if \fInparams\fP is non-NULL).
+.PP
+.I symdefinite
+returns 1 if the parameter symbol \fIname\fP was assigned a definite
+value in the parameter file (i.e., if "=" was used as the assignment
+operator).  If the assigned value was indefinite (i.e., "?=" or
+"=?" was used as the assignment operator), 0 is returned.  (An
+indefinite value causes a runtime prompt when the appropriate
+\fIgetsym\fP is called.)  If \fIname\fR is undefined, then
+\fIsymdefinite\fP returns -1.
+.PP
+.I symchoices 
+returns, a list of the possible choices for the value of the symbol
+\fIname\fP, represented as a null-terminated array of character
+pointers (suitable for use with \fIlin_search\fP (3\-\s-1ESPS\s+1)).
+If the pointer \fInchoices\fP is not NULL, the corresponding variable
+is set to number of choices.  If the choices were not given for
+\fIname\fP in the parameter file, \fIsymchoices\fP returns NULL and
+sets *\fInchoices\fP to 0 (if \fInchoices\fP is non-NULL).  Note that
+it is acceptable to provide a list of discrete choices for a numeric
+parameter.
+.PP
+.I symrange
+returns 1 if an (optional) parameter range was given in the parameter
+file for the symbol \fIname\fP, and 0 if no range was given.  If a
+range was given the minimum and maximum values are returned as floats
+via the parameters \fImin\fP and \fImax\fP.  If no range was given,
+NULL is assigned to \fImin\fP and \fImax\fP.   Note that it is an
+error to provide a range for a non-numeric parameter.  
+.PP
+.I symprompt
+returns the (optional) prompt string for the symbol \fIname\fP; if no
+prompt string was provided in the parameter file, NULL is returned.  
+.SH DIAGNOSTICS
+None.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.PP
+\fIread_params\fP (3\-\s-1ESPS\s+1), \fIgetsym\fP (3\-\s-1ESPS\s+1),
+\fIgetsymdef\fP (3\-\s-1ESPS\s+1), \fIputsym\fP (3\-\s-1ESPS\s+1),
+\fIfputsym\fP (3\-\s-1ESPS\s+1), ESPS (5\-\s-1ESPS\s+1)
+.SH AUTHOR
+Man page by Ajaipal S. Virdy, Entropic Speech, Inc.; additions by John
+Shore 

@@ -1,0 +1,185 @@
+#! /bin/sh
+#
+# initetut: ESPS tutorial initialization script.  @(#)initetut	1.7 11/25/91 ERL
+#
+#
+# decide what the symbol ESPS should be
+if test `mach_type` = "SUN386i"
+then
+	ESPS=/files/esps
+else 
+	ESPS=`get_esps_base`
+fi
+ESPSLIB=$ESPS/lib
+WAVESLIB=$ESPSLIB/waves
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+#
+echo \
+"initetut:  Initialize an ESPS tutorial directory.  @(#)initetut	1.7 11/25/91 ERL"
+#
+if test ! \( -d $ESPS/demo \)
+then	{
+	echo "ERROR: the ESPS directory $ESPS/demo doesn't seem to exist."
+	echo "Please consult your system manager."
+	echo "ESPS tutorial initialization aborted."
+	exit
+	}
+fi
+#
+if test ! \( -f $ESPS/demo/speech.sd \)
+then	{
+	echo "ERROR: the ESPS tutorial file $ESPS/demo/speech.sd"
+	echo "doesn't seem to exist.  Please consult your system manager."
+	echo "ESPS tutorial initialization aborted."
+	exit
+	}
+fi
+if test ! \( -f $ESPS/demo/speech.ratios \)
+then	{
+	echo "ERROR: the ESPS tutorial file $ESPS/demo/speech.ratios"
+	echo "doesn't seem to exist.  Please consult your system manager."
+	echo "ESPS tutorial initialization aborted."
+	exit
+	}
+fi
+
+#if test ! \( -f $ESPS/demo/speech.sgram \)
+#then	{
+#	echo "ERROR: the ESPS tutorial file $ESPS/demo/speech.sgram"
+#	echo "doesn't seem to exist.  Please consult your system manager."
+#	echo "ESPS tutorial initialization aborted."
+#	exit
+#	}
+#fi
+
+cp $ESPS/demo/speech.sd $ESPS/demo/speech.ratios  .
+#End of remove
+
+#
+if test \( -d $ESPSLIB \)
+then	{
+	echo
+	echo "NOTE: the ESPS library directory path is:"
+	echo
+	echo "		$ESPSLIB"
+	echo
+	}
+else	{
+	echo "ERROR: the ESPS directory $ESPS/lib/waves doesn't seem to exist."
+	echo "Please consult your system manager."
+	echo "ESPS tutorial initialization aborted."
+	exit
+	}
+fi
+if test \( -d $WAVESLIB \)
+then	{
+	echo
+	echo "and the WAVES library directory path is:"
+	echo
+	echo "		$WAVESLIB"
+	echo
+	}
+fi
+#
+
+if printenv ELM_HOST > /dev/null 
+then
+	continue		
+else
+	{
+	echo "The environment variable ELM_HOST must be set to the"
+	echo "hostname of the computer running the license manager."
+	echo "Please check with your system manager for this information,"
+	echo "and set ELM_HOST to the appropriate value."
+	echo "Retry "initetut" after doing this."
+	echo " "
+	exit 1
+	}
+fi
+#
+if test \( -f $WAVESLIB/.wave_pro \)
+then	{
+	cp $WAVESLIB/.wave_pro .
+	}
+fi
+#
+if test \( -f $WAVESLIB/files/nb_params \)
+then	{
+	cp $ESPSLIB/waves/files/nb_params .
+	}
+fi
+#
+if test \( -f $WAVESLIB/files/wb_params \)
+then	{
+	cp $WAVESLIB/files/wb_params .
+	}
+fi
+#
+if test \( -f $WAVESLIB/colormaps/Colormap \)
+then	{
+	cp $ESPSLIB/waves/colormaps/Colormap .
+	}
+fi
+#
+if test \( -f $WAVESLIB/colormaps/greymap \)
+then	{
+	cp $WAVESLIB/colormaps/greymap .
+	}
+fi
+#
+if test \( -f $WAVESLIB/menus/labelmenu \)
+then	{
+	cp $WAVESLIB/menus/labelmenu .
+	}
+fi
+#
+# add current directory and ESPS/bin to PATH
+PATH=.:$ESPS/bin:$PATH;export PATH
+#
+
+# make noexist program
+rm -f noexist 
+echo "#! /bin/sh" 					>  noexist
+echo "IFS=:" 	  					>> noexist
+echo "for i in $PATH"					>> noexist
+echo "	do"						>> noexist
+echo "		if test -r \$i/\$1 -a ! -d \$i/\$1" 	>> noexist
+echo "			then"				>> noexist
+echo "			exit 1"				>> noexist
+echo "		fi"					>> noexist
+echo "	done"						>> noexist
+echo "exit 0"						>> noexist
+#
+# make executable
+chmod a+x noexist
+
+# Check if ESPS programs are on the PATH
+if noexist eman
+then
+	{
+	echo "ERROR: the executable program \"eman\" doesn't seem to"
+	echo "exist in $ESPS/bin.  Please consult your system manager."
+	echo "ESPS tutorial initialization aborted."
+	exit
+	}
+fi
+
+# Create an empty params file
+touch params
+
+#Create triangle.dat
+testsd -r 120 -t short -T triangle -l 3 -f 10 -s 1 - | bhd - >triangle.dat
+
+#Create mystery.dat
+testsd -f 1 -C 500 -p 20392 -l 1000 -r 10000 -T SAWTOOTH -t short - |\
+bhd - >mystery.dat
+
+
+# Run ESPS teaser
+demoetut
+#
+echo " "
+echo " "
+echo "ESPS tutorial initialization complete."
+

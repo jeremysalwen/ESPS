@@ -1,0 +1,39 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)ps2frame.1	1.2 7/9/93 ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH PS2FRAME 1\-ESPS 7/9/93 
+.SH "NAME"
+ps2frame \- Modify PostScript Output for Framemaker Graphics Import
+.SH "SYNOPSIS"
+.B ps2frame
+.I filename
+.SH "DESCRIPTION"
+.PP
+.I Ps2frame
+takes an embedded PostScript file produced by doing a \fIgraphic
+export\fR from \fIwaves+\fR or other Entropic programs and modifies it
+so that it can be imported into Framemaker.   This is to work around a
+bug in Framemaker.  The particular problem is that Framemaker will not
+allow the \fBBounding Box\fR comment to be used with the \fB(atend)\fR
+operator.   This program is simply a script that moves the \fBBounding
+Box\fR statement from the end of the file to the beginning.
+.SH "OPTIONS"
+.PP
+This program has no options.
+.SH ESPS PARAMETERS
+.PP
+This program does not process any ESPS Parameters.
+.PP
+.SH "ESPS COMMON"
+.PP
+This program does not process ESPS Common.
+.SH "SEE ALSO"
+.PP
+\fIxwaves\fP (1\-\s-1ESPS\s+1), \fIplot3d\fP (1\-\s-1ESPS\s+1)
+.SH "REFERENCES"
+.PP
+PostScript Language Reference Manual, Second Edition, Adobe Systems Inc.
+.SH "AUTHOR"
+.PP
+Alan Parker, after help from
+Ken Blackwell of Bristol Technology, Inc.

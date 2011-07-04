@@ -1,0 +1,505 @@
+This help file contains a brief introduction to waves+ operations and
+a list of waves+ global parameters and commands.  For more information, 
+see the full waves+ man page.  To do so, run "eman waves+" in a
+shelltool window or, if you are using X Windows, click on the "waves+ 
+manual" button in the control panel.
+
+WAVES+ STARTUP
+==============
+
+Waves+ starts up with the following steps: 
+
+(1) It checks to see if any optional DSP board is installed (by trying
+to open /dev/dsp32).  If a board is found, waves+ will use it for
+spectrograms and speech output, and all FEA_SD files will be read in
+as SHORTs.  If no board is found, waves+ will use external ESPS
+programs for spectrogram computation and speech output, and it will
+not transform the type of FEA_SD files.  
+
+(2) It reads global parameter settings from a startup file.  The file
+is (in order of precedence) (a) whatever is specified by the -w
+option; (b) the file .wave_pro in your home directory; or (c)
+$ESPS_BASE/lib/waves/.wave_pro.  Any file specified by -w or in the
+profile is searched for on the path "$HOME:$ESPS_BASE/lib/waves/.wave_pro".
+The search path used can be overriden by setting the unix environment variable
+WAVES_PROFILE_PATH before starting xwaves+.
+
+(3) It processes whatever signal or command files may be listed on the
+command line.
+
+WAVES+ CONTROL PANEL
+====================
+
+The values of panel items ending with a colon may be modified by left
+mousing (to activate the item) followed by text or numeric input.  Use
+<delete> to delete the previous character entered and <CTRL-u> to
+remove the entire line.  Any new or changed value must be "entered"
+(while activated) by hitting the return key.  The "PAUSE", "CONTINUE,"
+"QUIT!," "HELP!", and "waves+ manual" items perform the corresponding
+functions immediately when moused.  Here are brief explanations of the
+panel items.  For details, see the man page.
+
+
+ INPUTfile:  
+     The relative or absolute pathname of a signal to be
+      displayed.  A search path ".:$ESPS_BASE/lib/waves/files" 
+      is used, but can be overriden with the environment variable 
+      WAVES_INPUT_PATH.  Multiple views on a given file may be 
+      established by entering the same file name several times.  
+      Files with ESPS headers, SIGnal headers, and no headers are 
+      handled. 
+
+ OUTPUTfile:
+      Base name of files to be created by the "save
+      segment in file" function.  NO CHECK IS MADE FOR
+      OVERWRITING EXISTING FILES! A list of all files
+      generated during a given run of waves+ may be browsed
+      by right mousing the OUTPUTfile item.  
+
+ OBJECT name:
+     The name by which to refer to a display ensemble.  All
+     data views in an ensemble have their time cursors and
+     markers synchronized and are treated as a unit during
+     interaction and in other respects.  If a new object
+     name is specified, subsequently generated data views
+     become part of a logically distinct ensemble of signals
+     and displays.
+
+  COMMAND(or @file):
+     A direct command to the xwaves+ program or to an object
+     displayed by xwaves+, or the pathname of a text file
+     (preceded by the "@" character) containing commands.
+     This item may be changed at any time (even in the middle 
+     of execution of a command file).  The default search path
+     ".:$ESPS_BASE/lib/waves/commands" is used for command files,
+     but can be overriden with the environment variable 
+     WAVES_COMMAND_PATH.
+
+  PAUSE
+     Mousing this item while a command file is running causes the 
+     command file to suspend execution, much as though a "pause" 
+     command had been encountered in the file.
+
+  CONTINUE
+     Mousing this item causes waves+ to resume reading from
+     a command file after encountering a "pause" in that file (or
+     after the PAUSE button has been moused). 
+
+  Attach:
+     The name of a function to attach to waves+.  If the
+     function is in ESPS/bin it may be referred to simply by
+     its basename.  Otherwise, its full pathname must be specified.
+
+  Overlay name:
+     The relative or absolute name of a SIGnal formant-bandwidth 
+     file or any ESPS FEA file.  Each element of each FEA field is 
+     overlayed with a separate track labelled with the field name 
+     and element number.  By default, the overlay takes place on 
+     the most recently read or computed spectrogram display.  
+
+  HELP
+     Mousing this item displays this file. 
+
+  QUIT
+     Mousing this item causes waves+ to clean up (saving files), 
+     return the license, and exit.  
+
+WAVES+ GLOBALS 
+==============
+
+The waves+ global parameters can all be initialized at startup from
+the .wave_pro file in your home directory.  To change them after 
+waves+ starts, enter
+
+          set <global name> <global value>
+
+in the space after the "COMMAND(or @file):" prompt in the control
+panel, or enter the name of a command file containing a sequence of 
+"set" commands.  Here is a list of the current globals, with brief 
+descriptions.  For details, see the man page. 
+
+  bg_color
+       background color for window frames (6 digits; 2
+       each for red, green, blue) (see also fg_color)
+
+  colormap
+       file name of an RGB color map (see "COLORMAPS"
+       below)
+
+  command_step
+       Allows the user to single-step through command
+       files.  
+
+  ctlwin_x
+       x coordinate of upper left of control window
+
+  ctlwin_y
+       y coordinate of upper left of control window
+
+  debug_level
+       > 0 causes debug messages to be printed.  
+
+  def_header
+       filename of a header for use with headerless
+       data; the default startup profile
+       ($ESPS_BASE/lib/waves/.wave_pro) sets this to
+       $ESPS_BASE/lib/waves/files/def_head.feasd, which
+       is an ESPS FEA_SD header for single-channel,
+       SHORT, sampled-data, with sampling rate 8000 Hz.
+       A default SIGnal header is in
+       $ESPS_BASE/lib/waves/files/def_head.sig.  The
+       default search path used for default header file
+       names is ".:$ESPS_BASE/lib/waves/files"; this
+       can be overriden by setting the unix environment
+       variable WAVES_INPUT_PATH before starting
+       waves+. If the environment variable DEF_HEADER is
+       defined when waves+ starts up, its value takes 
+       precedence over def_header.  Thus, if you want
+       def_header to change for different input files while
+       waves+ is running, then DEF_HEADER should not be defined.
+
+  do_color
+       0 or 1 to enable B&W or color operation; This
+       global is set automatically on startup prior to
+       reading the startup profile. 
+
+  dsp32_wait
+       Specifies the number of attempts (at one second
+       intervals) that waves+ will make to use an
+       installed DSP32 board before giving up. 
+
+  edit_ganged
+       1 to edit all signals in object, 0 for just one
+
+  fea_sd_special
+       1 to treat ESPS FEA_SD files as a special case,
+       0 to treat in standard FEA manner.  If
+       fea_sd_special == 1, the sampled data from ESPS
+       FEA_SD files are read in as SHORTs (regardless
+       of their external representation). 
+
+  fg_color
+       foreground color for window frames (6 digits; 2
+       each for red, green, blue) (see also bg_color)
+
+  first_x
+       x coordinate of upper left of first window created
+
+  first_y
+       y coordinate of upper left of first window created
+
+  funcname
+       an attached function (like "label" or "spectrum")
+
+  f0_min
+       minimum frequency to display for F0 files
+
+  f0_plot_specs
+       plotting method and optional ASCII symbol to use.  
+
+  f0_range
+       range in Hz to display for F0 files
+
+  f0_size
+       fraction of canvas for plotting F0 for F0 files
+
+  image_clip
+       This is used by the digital halftone algorithm
+       when spectrograms are displayed on a monochrome
+       monitor.  Values between MAX and (MAX -image_clip) 
+	    are displayed in black. 
+
+  image_range
+
+       Everything below (MAX - image_clip - image_range) 
+       is shown in white for spectrograms on monochrome monitor
+
+  inputname
+       default pathname to appear at "INPUT file" prompt
+
+  invert_dither
+       If set to non-zero, this causes digital-halftone images
+       to appear with black and white pixels reversed ("inverse video").  
+
+  line_type
+       plotting algorithm to use for plotting generic vector signals.  
+
+  left_op
+       text corresponding to desired left button operation.
+
+  max_buff_size
+       determines a limit on the number of bytes of
+       storage that waves+ will attempt to allocate for
+       in-memory data storage for any one signal.
+
+  middle_op
+       text string corresponding to desired middle button op
+
+  min_spec_height
+       minimum height in pixels of spectrogram windows
+
+  min_spec_width
+       minimum width in pixels of spectrogram windows
+
+  nb_spect_params
+       file with parameters for "narrowband" spectrograms 
+	    (see also wb_spect_params)
+
+  objectname
+       default name to appear at "OBJECT name" prompt
+
+  options
+       hexidecimal magic number (see "OPTIONS" below)
+
+  outputname
+       default pathname to appear at "OUTPUTfile" prompt
+
+  overlayname
+       pathname to file which can be overlaid on a
+       signal (Note that setting a default inputname does not cause
+       waves+ to read in the file).
+
+  play_prog
+       The name of the D/A play program to use when the
+       DSP32 board is not present or disabled (use_dsp32 == 0).
+
+  readout_bar_height
+       height in pixels of the readout bar (X Windows only)
+
+  ref_size
+       initial size of the display buffer (seconds)
+
+  ref_start
+       default starting time for file display (sec)
+
+  ref_step
+       page step size for "page ahead/back" (seconds)
+
+  remote_path
+       This string is prepended to to file names when
+       ESPS external commands are run 
+
+  scrollbar_height
+       height of the scrollbar in new windows (pixels)
+
+  scroll_ganged
+       1 to scroll all signals in object, 0 for just
+       one (see also zoom_ganged)
+
+  sgram_prog
+       The name of the spectrogram program to use when
+       the DSP32 board is not present or disabled.  
+
+  show_labels
+       if 1 (default), display FEA field names on every parameter track
+
+  show_vals
+       if 1 (default), display numerical values on every parameter track 
+       as cursor moves
+
+  temp_path
+       directory in which waves+ will write temporary files 
+
+  use_dsp32
+       1 to use dsp board, 0 to ignore dsp board; this
+       is normally set by waves+ on startup 
+
+  verbose
+       Values > 0 cause various feedback messages to be printed
+
+  wave_height
+       height of new waveform windows
+
+  wave_width
+       width of new waveform windows
+
+  wb_spect_params
+       file with parameters for "wideband" spectrograms
+       (see also nb_spect_params)
+
+  write_common
+       If 1, write ESPS Common each time markers are set
+
+  x_increment
+       horizontal displacement between successive windows
+
+  y_increment
+       vertical displacement between successive windows
+
+  zoom_ratio
+       fractional change caused by "zoom" operations
+
+  zoom_ganged
+       1 to zoom all signals in object, 0 for just one
+       (see also scroll_ganged)
+
+WAVES+ COMMANDS
+===============
+
+Waves+ commands may be executed by entering them manually in the 
+control panel, or by running a command file containing a sequence of 
+commands.  The available commands are listed below.  The command name 
+is shown on the left followed by a short description enclosed in ">>" 
+and "<<" brackets.  Most commands have one or more optional 
+attribute-value pairs that follow the command name.  The available
+attributes are listed, one-per-line, right after the command.  For
+explanations, see the man page.  The following should be used as 
+reminders about the commands, not as a means for learning them.  
+
+  set          >> SET GLOBAL PARAMETERS FOR THE PROGRAM <<
+         <global name>
+
+  add_espsf    >> ADD EXTERNAL ESPS-TO-FILE CALL TO WAVES+ MENU <<
+         name 
+         out_ext
+         display
+         command
+
+  add_espst    >> ADD EXTERNAL ESPS-TO-TEXT CALL TO WAVES+ MENU <<
+         name 
+         command
+
+  add_espsn    >> ADD EXTERNAL ESPS (NO OUTPUT) CALL TO WAVES+ MENU <<
+         name 
+         command
+
+  cd           >> CHANGE WORKING DIRECTORY <<
+         path 
+
+  detach       >> DETACH ANY FUNCTION CURRENTLY ATTACHED TO waves+ <<
+
+  attach       >> ATTACH A FUNCTION (LIKE label (1-ESPS)) <<
+         function
+
+  send         >> SEND A MESSAGE TO THE FUNCTION ATTACHED TO waves+ <<
+         <any string>
+
+  pause        >> PAUSE READING FROM COMMAND FILE FOR INTERACTION <<
+
+  kill         >> DESTROY ONE OR MORE DATA VIEWS <<
+         <none>
+         name 
+         file 
+
+  make         >> CREATE A DATA VIEW AND/OR DISPLAY ENSEMBLE <<
+         name 
+         file 
+         identifiers
+         numbers
+         <any 'set' keyword>
+              as described above for the "set" command.  A few
+              of the more commonly used variables have been
+              given aliases for convenience:
+                 duration
+                 start
+                 width
+                 height
+                 loc_x
+                 loc_y
+
+  quit         >> CAUSES waves+ TO QUIT AND RETURN TO UNIX <<
+
+  sleep        >> SLEEP WHILE BACKGROUND PROCESS OCCURS (e.g. D/A) <<
+         seconds
+
+  shell        >> SEND COMMANDS TO A UNIX SHELL <<
+     <unix command line>
+
+  branch       >> TRANSFER CONTROL TO ANOTHER WAVES COMMAND FILE <<
+         commandname
+
+  call         >> CALL A WAVES COMMAND FILE AS A SUBROUTINE <<
+         commandname
+
+  return       >> RETURN TO THE CALLING WAVES COMMAND FILE <<
+
+  ----------------------------------------------------------
+
+  The following commands and keyword/arguments may be sent to
+  display ensembles (named as in the "make" command above):
+
+  ----------------------------------------------------------
+
+  align        >> ALIGN ALL VIEWS IN A DISPLAY ENSEMBLE <<
+         file   
+
+  activate     >> ENABLE/DISABLE PLOTTING OF SELECTED VECTOR ELEMENTS <<
+         file         
+         op           
+         numbers      
+         identifiers
+ 
+  close        >> CLOSE A DATA VIEW AND TURN INTO AN ICON<<
+         file 
+
+  open         >> OPEN A DATA VIEW THAT IS CLOSED (ICONIZED) <<
+         file 
+
+  bracket      >> CHANGE VIEW STARTING TIME AND TIME SCALE <<
+         file 
+         start
+         end  
+
+  overlay      >> OVERLAY PARAMETER TRACKS ON SPECTROGRAMS <<
+         file 
+         on_file
+      
+  page         >> PAGE SIGNAL IN WINDOW<<
+         file 
+         step 
+         ref_step
+
+  play_wind    >> PLAY WINDOW <<
+         file 
+
+  save         >> SAVE SEGMENT IN OUTPUT FILE<<
+         file 
+         start
+	 end
+	 get
+
+  get          >> GET INFO. FROM waves+ (FOR ATTACHED FUNCTIONS ) <<
+         attributes
+         file 
+	 output
+	 aname
+
+  cursor       >> MOVE THE TIME/FREQUENCY CURSOR <<
+         time 
+         frequency
+
+  marker       >> MOVE THE RIGHT OR LEFT TIME MARKER <<
+         time 
+         do_left
+
+  colormap     >> CHANGE THE COLORMAP USED FOR SPECTROGRAMS <<
+         file 
+         threshold
+         range
+
+  spectrogram  >> MAKE A SPECTROGRAM OF DISPLAYED PCM DATA <<
+         file 
+         loc_x
+         loc_y
+         type 
+         start
+         end  
+
+  play         >> D/A CONVERT DATA IN A PCM VIEW <<
+         file 
+         start
+         end  
+
+  mark         >> APPLY TIME MARKS TO ALL VIEWS IN THE ENSEMBLE <<
+         time 
+         color
+
+  unmark        >> REMOVE TIME MARKS FROM THE ENSEMBLE <<
+         all   
+         time 
+         color
+
+-----
+waves+ help file Version 1.11 of 8/14/91; 
+Copyright (c) 1988, 1989, 1989, 1990, 1991 ESI/AT&T
+

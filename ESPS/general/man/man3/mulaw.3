@@ -1,0 +1,74 @@
+.\" Copyright (c) 1989-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)mulaw.3	1.6 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH MULAW 3\-ESPSsp 18 Apr 1997
+.SH "NAME"
+.nf
+linear_to_mu - converts 14-bit integer data to 8-bit \fImu\fP-law compressed data
+mu_to_linear - converts 8-bit \fImu\fP-law compressed data to 14-bit data
+.fi
+.SH "SYNOPSIS"
+int
+.br
+.B "linear_to_mu(inbuf, outbuf, bufsize)"
+.br
+.B " short *inbuf;"
+.br
+.B " char  *outbuf;"
+.br
+.B " long   bufsize;"
+.br
+.sp
+int
+.br
+.B "mu_to_linear(inbuf, outbuf, bufsize)"
+.br
+.B " char   *inbuf;"
+.br
+.B " short  *outbuf;
+.br
+.B " long    bufsize;"
+.br
+.sp
+.SH "DESCRIPTION"
+.PP
+These two functions do quasi-logarithmic companding (compression and
+expansion) of 2-byte integer data by using the \fImu\fP-law with a value
+of \fImu\fP = 255. This is the North American PCM standard [1].
+This compression law is linear for small amplitudes
+and logarithmic for large amplitudes.
+\fIInbuf\fP contains input data to be converted;
+\fIoutbuf\fP contains the converted data; and
+\fIbufsize\fP is the number of elements in
+the \fIinbuf\fP array.
+.PP
+\fILinear_to_mu\fR converts
+integer data with 14 significant bits (including sign) to 8 bits by using
+a 15-segment, piecewise linear approximation to the \fImu\fP-law  
+compression characteristic [1]. 
+The conversion is done by using a binary search through an ordered 
+list of input signal magnitudes.
+No checking of input data magnitudes is done by \fIlinear_to_mu\fP,
+so the calling routine should insure that all input samples have
+magnitude <= 8159.
+.PP
+\fIMu_to_linear\fR converts 
+8-bit, logarithmically compressed data to 14-bit linear 
+data by using
+the piecewise-linear \fImu\fP-law approximation.
+A table lookup procedure is used to decode the magnitudes of the compressed
+values.
+.SH "SEE ALSO"
+.PP
+.SH "BUGS"
+.PP
+None Known.
+.SH REFERENCES
+[1] John C. Bellamy, "Digital Telephony", Appendix B
+.SH "AUTHOR"
+.PP
+Manual page and program by David Burton. 
+
+
+

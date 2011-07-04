@@ -1,0 +1,222 @@
+.\" Copyright (c) 1990 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)erldemo.1	1.3 1.3 ERL
+.TH ERLDEMO 1\-ESPS 10/7/90
+.ds ]W "Entropic Research Laboratory, Inc."
+.SH "NAME"
+erldemo \- X-Windows control panel for waves+ and ESPS demos 
+.SH "SYNOPSIS"
+.B erldemo
+[
+.BI \-m
+.I io_type
+] [
+.B \-s
+] [
+.BI \-W
+.I wavesintro
+] [
+.BI \-S
+.I slideshow
+] [
+.BI \-T
+.I trywaves
+] [
+.BI \-I 
+.I more_info_file
+] [
+.BI \-A 
+.I about_file
+] [
+.BI \-t
+.I window_title
+] [
+.BI \-X
+.I x_loc
+] [
+.BI \-Y
+.I y_loc
+] [
+.BI \-x
+.I debug_level
+] 
+.SH "DESCRIPTION"
+.PP
+\fIerldemo\fP puts up an X-Windows control panel from which one can
+run various demos of ESPS and \fIwaves\fP+.  The panel is divided 
+into two areas.  In the top area there are three screen buttons:  
+one causes the display of a text file describing the demos,
+another causes the display of a text file providing some general
+information about ESPS and \fIwaves\fP+ (including information about
+how to contact ERL), and the third causes \fIerldemo\fP to exit.  
+.PP
+The bottom area of the control panel has controls the demos themselves.
+There are two basic choices: an automated demo of \fIwaves\fP+ and
+ESPS (often referred to as the "demo"), and a limited but interactive 
+test of \fIwaves\fP+ itself (often called the "\fIwaves\fP+ tryout".  
+.PP
+The automated demo is started by the screen button "Start demo".
+Whether it runs once or continuously is determined by the state of
+push-buttons on the right side of the control panel (under "Demo
+options:").  The demo consists of one or both of two parts.  The first
+part is an an introduction to \fIwaves\fP+, and it consists of
+\fIwaves\fP+ itself running "live" on a series of command files.  The
+second part is a series of static images (the "slide show") that
+illustrate various aspects of ESPS and \fIwaves\fP+.  Two "check
+boxes" under the "Demo options:" portion of the control panel
+determine whether the demo consists of the \fIwaves\fP+ introduction,
+the slide show, or both.  The commands called by \fIerldemo\fP to
+implement these two parts are determined by the \fB-W\fP and \fB-S\fP
+options.  At least one of these must be provided, and in most cases 
+both are.  If one or the other is not provided, \fIerldemo\fP will 
+disable the corresponding choice (e.g., for a demo on a monochrome 
+display, the slide show may be disabled).  
+.PP
+All of the controls under "Demo Options:" and "Audio Output:" can be
+operated while the demo is running.  For example, switching from
+"continuous" to "single" while the demo is running, will cause the
+demo to stop after the current loop (the label of the "single" button
+changes in this context).  If the exit button is "pressed" while a
+demo is running, \fIerldemo\fP will exit immediately and the demo will
+exit as soon as practicable.  In particular, the demo will exit at the
+end of the \fIwaves\fP+ portion or slide show portion (whichever comes
+first).  If it is the \fIwaves\fP+ that is running, the user can
+achieve a faster exit by clicking on QUIT from the \fIwaves\fP+
+command window.
+.PP
+The \fIwaves\fP+ tryout is started by the screen button "Interactive
+waves".  It causes \fIwaves\fP+ to run on a command file that opens 
+various display windows and then pauses to allow the user to interact.
+Interactions are limited (for example, no files can be written), but 
+the user should be able to explore basic \fIwaves\fP+ capabilities.  
+The \fIwaves\fP+ is terminated by the user when desired, by clicking
+on QUIT in the \fIwaves\fP+ command window.  The command run by 
+\fIerldemo\fP to implement the \fIwaves\fP+ tryout is determined 
+by the \fB-T\fP option.  If it isn't supplied, the corresponding
+screen button is disabled (pressing it yields a suitable message). 
+.PP
+Both the demo and tryout provide explanatory audio output if the 
+supported by the machine hardware.  The relevant output options are 
+controlled by the "Audio Output" push buttons.  
+.PP
+The contents of the demo and \fIwaves\fP+ tryout are not determined by
+\fIerldemo\fP, rather \fIerldemo\fP accepts via the \fB-W\fP,
+\fB-S\fP, and \fB-T\fP options the names of three shell scripts that
+respectively are assumed to implement the live \fIwaves\fP+
+introduction, the slide show, and the \fIwaves\fP+ tryout.  These
+scripts are not invoked directly by \fIerldemo\fP.  Rather, they are
+invoked indirectly by means of the following three fixed shell scripts
+that \fIerldemo\fP uses for demo control:
+.TP
+.B one_demo.sh
+This implements a single run of the demo consisting of one or both of
+the \fIwaves\fP+ introduction and the slide show.  It runs one or both
+of the scripts passed via \fB-W\fP and \fB-S\fP.
+.TP
+.B erldemo.sh
+This top level demo script invokes one_demo.sh once or continuously
+(until the single demo mode is set).  
+.TP
+.B erlwtry.sh
+This script runs the \fIwaves\fP+ tryout by running a copy of the
+script passed via \fB-T\fP (if that option is supplied). 
+.PP
+These three scripts should not be edited or replaced (except as part
+of maintenance of \fIerldemo\fP).  Customization of the demo is
+intended to take place via the three scripts passed via the \fB-W\fP,
+\fB-S\fP, and \fB-T\fP options.
+.PP
+\fIerldemo\fP does not assume that the user has write-permission
+anywhere other than in /tmp.  Demo control is implemented by means of
+lock files, indicator (flag) files, and script links that are placed
+in /tmp.  Logging information (including stdout and stderr output) is
+directed to /tmp/erldemo.log; this log file is cleared at the start of
+each demo loop.  If you would like the log output to appear in the
+window from which \fIerldemo\fP was called, temporarily edit
+erldemo.sh and erlwtry.sh (see the comments in these scripts).
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-m " io_type \fR[sun_sparc]\fP"
+Causes slightly different options to come up under the "Audio Output:"
+portion of the control panel.  Possible (case-insensitive) values are
+"sun_sparc", "sun_vme", "masscomp", "sony", "network", and "none". For
+example, "\fB-m\fP sun_sparc" results in control panel choices for
+SPARCstation internal speaker, SPARCstation external speaker, or no
+output (silent demo).  Each time one of these is pressed,
+\fIerldemo\fP links an appropriate command to /tmp/play, which is the
+actual play command used by all the demos.  The mosts generic choice
+is "network", which should be used if the other cases do not apply.
+In this case, \fIerldemo\fP uses the script play_script/play.net,
+which can be adjusted as appropriate.  See also \fB-s\fP.
+.TP
+.B \-s
+Forces silent demos.  In this case \fIerldemo\fP refuses to allow any
+other button but "None" to be pressed under "Output Options:".  Note
+that this behavior is different from that obtained with "\fB-m\fP
+none", which inhibits the "Output Options:" list entirely.
+.TP
+.BI \-W " wavesintro" 
+Specifies the command to be run for the introductory \fIwaves\fP+
+demo.  At least one of \fB-W\fP and \fB-S\fP must be supplied. 
+.TP
+.BI \-S " slideshow"
+Specifies the command to be run for the slide show. At least one of
+\fB-W\fP and \fB-S\fP must be supplied.
+.TP
+.BI \-T " wavestry"
+Specifies the command to be run for the interactive \fIwaves\fP+
+tryout. This option must be supplied.  
+.TP
+.BI \-I " more_info_file \fR[edemo.info]\fP"
+Specifies the text file to be associated with the screen button 
+"For more information...".  
+.TP
+.BI \-A " about_file \fR[edemo.about]\fP"
+Specifies the text file to be associated with the screen button 
+"About this demo...".  
+.TP
+.BI \-t " window_title \fR[Entropic Demo]\fP"
+.TP
+Specifies a title for the \fIerldemo\fP command window.  
+.TP
+.BI \-X " x_loc \fR[670]\fP"
+Specifies the x-coordinate (in pixels) of the upper left corner of the
+command window.  
+.TP
+.BI \-Y " y_loc \fR[0]\fP"
+Specifies the y-coordinate (in pixels) of the upper left corner of the
+command window.  
+.TP 
+.BI \-x " debug_level \fR[0]\fP"
+Values other than 0 result in debugging output; higher values provide
+more output.  
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read by \fIerldemo\fP.  
+.SH ESPS HEADERS
+.PP
+No ESPS files are processed by \fIerldemo\fP.
+.SH ESPS COMMON
+.PP
+ESPS Common is neither read nor written by \fIerldemo\fP. 
+.SH "SEE ALSO"
+.PP
+\fIxwaves+\fP (1\-\s-1ESPS\s+1), \fIxloadimage\fP (1\-\s-1ESPS\s+1)
+.SH "FILES"
+.PP
+Besides the commands passed via the options, \fIerldemo\fP requires the
+presence of the three scripts: erldemo.sh, one_demo.sh, and
+erlwtry.sh.  Various files are placed in /tmp to control the operation
+of the demo.  Logging info is sent to /tmp/erldemo.log; this log file 
+is cleared at the start of each demo loop.  
+.SH "BUGS"
+.PP
+Only one copy of erldemo can run at a time (if they share the same 
+/tmp file system).  This is due to clashes in the temporary files.  
+It should be changed at some point.  
+.SH "AUTHOR"
+.PP
+Manual page and code by John Shore.  
+
+

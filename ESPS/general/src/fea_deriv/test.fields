@@ -1,0 +1,6 @@
+field = phi
+spec_param[5:9]
+raw_power[0]
+field = psi
+lpc_power[0]
+spec_param[5,0:4]

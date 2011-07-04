@@ -1,0 +1,108 @@
+#
+#  This material contains proprietary software of Entropic Speech, Inc.   
+#  Any reproduction, distribution, or publication without the the prior	   
+#  written permission of Entropic Speech, Inc. is strictly prohibited.
+#  Any public distribution of copies of this work authorized in writing by
+#  Entropic Speech, Inc. must bear the notice			
+# 								
+#      "Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved"
+# 				
+#
+# 	
+# @(#)makefile	1.46 21 Mar 1998 makefile for SPS library
+
+CFLAGS =  -O3 $(CCKR) $(LIBCFLAGS)
+FFLAGS =  $(LIBFFLAGS)
+
+OBJS =	\
+addstr.o anafeasupp.o atoarray.o atoh.o copy_fea_rec.o \
+dcopy.o faterr.o fcopy.o fea_compat.o feasdsupp.o \
+feaspecsupp.o feastatsupp.o feasupport.o filtsupport.o fldrangesw.o \
+fmatalloc.o frngswitch.o ftypes.o gensupport.o genzfunc.o getcmdline.o \
+getddata.o getderiv_vec.o getfdata.o getopt.o grngswitch.o index.o \
+is_complex.o  lin_search.o  locks.o lrngswitch.o \
+marg_index.o methods.o miio.o    \
+pfparser.o printarr.o printmat.o putddata.o putfdata.o putsym.o rngswitch.o \
+savstring.o scbksupport.o sdsupport.o sizerec.o sizetype.o skiprec.o \
+specsupport.o strchr.o strpbrk.o strrchr.o strtok.o symbols.o \
+tmpfile.o typeconver.o uniq_name.o updatewave.o vqsupport.o \
+execcom.o tempname.o feadstsupp.o isespsfile.o \
+pr_farray.o typesiz.o findespsfi.o getespsbas.o sendwaves.o feafiltsupp.o \
+buildespsp.o convertlab.o trngswitch.o malloc.o ereader.o wavesshow.o \
+is_numeric.o xsend.o audio_.o  audio_mac.o usleep.o eddy.o
+
+SRCS =	\
+addstr.c anafeasupp.c atoarray.c atoh.c copy_fea_rec.c \
+dcopy.c faterr.c fcopy.c fea_compat.c feasdsupp.c \
+feaspecsupp.c feastatsupp.c feasupport.c filtsupport.c fldrangesw.c \
+fmatalloc.c frngswitch.c ftypes.c gensupport.c genzfunc.c getcmdline.c \
+getddata.c getderiv_vec.c getfdata.c getopt.c grngswitch.c index.c \
+is_complex.c  lin_search.c  locks.c lrngswitch.c \
+marg_index.c methods.c miio.c    \
+pfparser.y printarr.c printmat.c putddata.c putfdata.c putsym.c rngswitch.c \
+savstring.c scbksupport.c sdsupport.c sizerec.c sizetype.c skiprec.c \
+specsupport.c strchr.c strpbrk.c strrchr.c strtok.c symbols.c \
+tmpfile.c typeconver.c uniq_name.c updatewave.c vqsupport.c \
+ execcom.c tempname.c feadstsupp.c isespsfile.c \
+pr_farray.c typesiz.c \
+findespsfi.c getespsbas.c sendwaves.c feafiltsupp.c buildespsp.c \
+convertlab.c trngswitch.c malloc.c ereader.c wavesshow.c \
+is_numeric.c xsend.c audio_.c  usleep.c eddy.c
+
+$(LIBDIR)/$(LIBNAME):	$(OBJS)
+	ar rv $(LIBDIR)/$(LIBNAME) $?
+	$(RANLIB) $(LIBDIR)/$(LIBNAME)
+
+#
+
+pfparser.o:	pfparser.c pflexan.c $(SINC)/param.h $(SINC)/esps.h
+sizerec.o:	$(SINC)/header.h $(SINC)/esps.h
+symbols.o:	$(SINC)/param.h $(SINC)/esps.h
+sdsupport.o:	$(SINC)/header.h  $(SINC)/esps.h
+gensupport.o:	$(SINC)/header.h $(SINC)/esps.h
+specsupport.o:	$(SINC)/header.h $(SINC)/spec.h $(SINC)/esps.h
+lin_search.o:	$(SINC)/header.h $(SINC)/esps.h
+methods.o:	$(SINC)/header.h $(SINC)/esps.h
+filtsupport.o:	$(SINC)/esps.h $(SINC)/filt.h
+scbksupport.o:	$(SINC)/esps.h $(SINC)/scbk.h
+feasupport.o:	$(SINC)/header.h $(SINC)/fea.h $(SINC)/esps.h
+feadtsupp.o:	$(SINC)/header.h $(SINC)/feadst.h $(SINC)/esps.h
+anafeasupp.o:	$(SINC)/fea.h $(SINC)/anafea.h $(SINC)/header.h $(SINC)/esps.h
+uniq_name.o:	$(SINC)/esps.h
+genzfunc.o:	$(SINC)/esps.h
+getderiv_vec.o:	$(SINC)/esps.h $(SINC)/fea.h
+marg_index.o:	$(SINC)/esps.h $(SINC)/unix.h
+addstr.o:	$(SINC)/esps.h $(SINC)/unix.h
+fldrangesw.o:	$(SINC)/esps.h $(SINC)/unix.h
+feaspecsupp.o:	$(SINC)/esps.h $(SINC)/unix.h
+updatewave.o:	$(SINC)/esps.h $(SINC)/unix.h
+miio.o:		$(SINC)/esps.h $(SINC)/header.h
+is_complex.o:	$(SINC)/esps.h $(SINC)/fea.h
+fea_compat.o:	$(SINC)/esps.h $(SINC)/fea.h
+xsend.o:	$(SINC)/xwaves_ipc.h 
+	        $(CC) -I$(X_INC) $(CFLAGS) -c xsend.c
+
+
+install:	$(LIBDIR)/$(LIBNAME)
+		rm -f $(SPSDIR)/src_examples/lib/feaspecsupp.c
+		cp feaspecsupp.c $(SPSDIR)/src_examples/lib/feaspecsupp.c
+		chmod $(LIBMOD) $(SPSDIR)/src_examples/lib/feaspecsupp.c
+
+lint:		$(SRCS)	
+		$(LINT) $(LINTFLAGS) $(SRCS) -lm > lint
+
+clean:
+		rm -f $(OBJS) pfparser.c pflexan.c vqdesign.o vqencode.o \
+		$(LIBNAME) $(LLIBNAME)
+
+
+ins_lintlib:	lintlib
+		@echo Installing lint library
+		cp llib-lespsg.c $(LIBDIR)
+		chmod $(LIBMOD) $(LIBDIR)/llib-lespsg.c
+		cp $(LLIBNAME) $(LIBDIR)
+		chmod $(LIBMOD) $(LIBDIR)/$(LLIBNAME)
+
+lintlib:	llib-lespsg.c $(SINC)/header.h $(SINC)/esps.h
+		@echo Making lint library
+		$(MKLINTLIB) llib-lespsg.c

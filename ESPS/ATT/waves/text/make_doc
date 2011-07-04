@@ -1,0 +1,17 @@
+#!/bin/csh
+
+	setenv WAVES_ROOT  $1
+	setenv WAVES_DOC $WAVES_ROOT/doc
+	setenv WAVES_MISC $WAVES_ROOT/lib
+	setenv WAVES_SRC $WAVES_ROOT/src
+	setenv WAVES_BIN $WAVES_ROOT/bin
+	echo 's?\$WAVES_ROOT?'$WAVES_ROOT'?' > sedxx
+	echo 's?\$WAVES_DOC?'$WAVES_DOC'?' >> sedxx
+	echo 's?\$WAVES_MISC?'$WAVES_MISC'?'g >> sedxx
+	echo 's?\$WAVES_SRC?'$WAVES_SRC'?' >> sedxx
+	echo 's?\$WAVES_BIN?'$WAVES_BIN'?' >> sedxx
+	foreach f (`ls *.help.src | sed 's/\.src//'`)
+		rm -f $f
+		sed -f sedxx $f.src > $f
+		chmod 0444 $f
+	end

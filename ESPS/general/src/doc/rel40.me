@@ -1,0 +1,1170 @@
+.lo
+.he 'ESPS Version 4.0c Release Notes''page %'
+.ce 3
+.b
+ESPS Version 4.0c Release Notes
+.sp
+Document version: 1.17 2/25/91
+.sh 1 "INTRODUCTION"
+.lp
+This document provides notes relevant to release 4.0c of ESPS.  Please
+read this document and the Installation Instructions completely before
+installing this release.  These release notes document changes to ESPS
+since the revision 3.3b.  The last section documents known  problems.
+.lp
+Note that there's an option (\fB-u\fP) on the new program
+\fIeversion\fP (1\-\s-1ESPS\s+1) that will display an on-line copy of
+these release notes to any ESPS user.  This provides a convenient way for 
+ESPS users to find out about the changes. 
+.sh 1 "CHANGES SINCE 4.0a AND 4.0b RELEASE"
+.lp
+This release (4.0c) is a maintenance release
+that includes bug fixes and a few new programs.   
+Major changes described were introduced
+in Version 4.0a and 4.0b. (See Sections 3 - 6).   
+.sh 2 "CHANGES SPECIFIC TO 4.0c"
+.lp
+The following are specific changes since 4.0b:
+.np
+The X Window based
+programs (\fIxtext\fR (1\-\s-1ESPS\s+1), \fIxprompt\fR
+(1\-\s-1ESPS\s+1), \fIplot3d\fR (1\-\s-1ESPS\s+1), and \fIimage\fR
+(1\-\s-1ESPS\s+1)) were compiled under Version 2.0 of Sun`s OpenWindows.
+.np
+\fIPlot3d\fR (1\-\s-1ESPS\s+1) has been completed and documented (see
+Section 3.7).
+.np
+\fIinit_feaspec_hd\fR (3\-\s-1ESPS\s+1): Bug fixed: when handling ARB_FIXED files, it would
+put the frequencies in the "num_freqs" header item.
+.np
+\fIprint_feaspec_rec\fR (3\-\s-1ESPS\s+1): Bug fixed: reference to incorrect structure in code for
+ARB_FIXED.  Also improved output formantting.
+.np
+\fIput_feaspec_rec\fR (3\-\s-1ESPS\s+1) and \fIget_feaspec_rec\fR
+(3\-\s-1ESPS\s+1): Bug fixed: Fixed criterion
+for overflow.
+.np
+General FEA_SPEC support: Fixed memory leakage problem.
+.np
+\fIimage\fR (1\-\s-1ESPS\s+1): Now allows FEA_SPEC files in ARB_FIXED format.
+.np
+\fIils_esps\fR (1\-\s-1ESPS\s+1):   There was a bug that caused it to
+dump core if the input file header indicated 0 for the number of channels.  
+This has been fixed.  An indicated value of 0 now implies 1 (single-channel
+data), as intended.   Two other bugs were fixed that prevented the
+\fB-h\fR and the \fB-d\fR options from working correctly.
+.np
+\fIfft_filter\fR (1\-\s-1ESPS\s+1): A bug was fixed that caused incorrect results for
+filters larger than 1024 taps.
+.np
+\fIbtosps\fR (1\-\s-1ESPS\s+1): A bug has been fixed that caused
+ the \fB-S\fR option to fail.
+.np
+The new program \fIxtext\fR (1\-\s-1ESPS\s+1) has been added.  This program runs a Unix
+command line and displays the standard output in a new X window.  It is
+particular useful to attach ESPS commands to the Sun OpenWindow file
+manager.
+.lp
+The remainder of this release note describes changes since version
+3.3b.
+.sh 1 "SUMMARY OF MAJOR CHANGES"
+.lp
+Major changes include the following:
+.ip \ \ \ \(bu
+FEA files now support complex data
+.ip \ \ \ \(bu
+new FEA file for sampled data (including multi-channel and complex data)
+.ip \ \ \ \(bu
+machine-independent I/O
+.ip \ \ \ \(bu
+new programs  (including X Windows 3D plot program)
+.ip \ \ \ \(bu
+X Windows support for all platforms (including Sun) 
+.ip "\ \ \ \(bu" 5
+interactive parameter prompting via pop-up windows (under X)
+.ip \ \ \ \(bu
+ESPS now available for Silicon Graphics
+.ip \ \ \ \(bu
+HP LaserJet support
+.ip \ \ \ \(bu
+revised source and library structure
+.ip \ \ \ \(bu
+floating license servers
+.ip \ \ \ \(bu
+support for SPARCStation and Silicon Graphics codecs
+.ip \ \ \ \(bu
+additional documentation
+.sh 2 "Machine Types Supported" 
+.lp
+ESPS Version 4.0 is available for the following machines:
+.nf
+
+	Convex
+	Concurrent (Masscomp)
+	DecStation 3100
+	Hewlett Packard 300
+	Hewlett Packard 800
+	Silicon Graphics
+	Solborne
+	Sun 3
+	Sun 386i
+	Sun 4/SPARC
+	Apollo (Domain 10.3)
+
+.nf
+.sh 2 "Complex Data Support Added to FEA Files"
+.lp
+In previous ESPS releases, the data types of fields in feature file
+(FEA) records were restricted to the fundamental types BYTE, SHORT,
+LONG, FLOAT, and DOUBLE.  In Version 4.0, support has been added for
+corresponding complex types BYTE_CPLX, SHORT_CPLX, LONG_CPLX,
+FLOAT_CPLX, and DOUBLE_CPLX.  Each complex type has a real and an
+imaginary part of the corresponding integer or floating type.  
+For details see the FEA man page FEA (5\-\s-1ESPS\s+1). 
+.lp
+At the programming level, utility library functions like \fIadd_fea_fld\fP,
+\fIallo_fea_rec\fP, \fIget_fea_ptr\fP, \fIput_fea_rec\fP, and
+\fIget_fea_rec\fP have been extended so that the new types are handled
+in exactly the same manner as the old ones.
+.lp
+All user-level programs that process FEA files have been modified so
+that, when presented with complex data, they either deal correctly
+with it (examples include \fIpsps\fP and \fIaddfeahd\fP), or they exit
+with a message indicating that the current version does not support
+complex data (examples include \fIvqdes\fP and \fIdistort\fP).  Many
+of the user-level programs that currently do not support complex data
+will do so in later versions.  Section 3.4 contains a list of the
+FEA programs that currently operate in general on complex data.
+.sh 2 "Feature File for Sampled Data (FEA_SD)" 
+.lp
+In Version 4.0 ESPS, the built-in file type for sampled data (SD) has
+been replaced by a feature file subtype (FEA_SD).  All of the
+user-level programs that deal with sampled data have been changed to
+support FEA_SD files.  This has been done in a backward-compatible
+manor \- i.e., the current programs will all read the old-style SD
+files in addition to the new FEA_SD files.  We have also included
+conversion programs between the old and new file types (\fIsdtofea\fP
+(1\-\s-1ESPS\s+1) and \fIfeatosd\fP (1\-\s-1ESPS\s+1)).  For details
+about FEA_SD see the man page FEA_SD (5\-\s-1ESPS\s+1).
+.lp
+The new FEA_SD file type supports complex, multi-channel sampled data,
+and there are new user-level programs to support multiplexing
+(\fImux\fP) and demultiplexing (\fIdemux\fP).  Some of the existing
+user-level programs for sampled data have been modified to process
+complex data (e.g., \fIfft\fP, \fIcopysd\fP, \fIaddsd\fP).  Others
+will be modified in later versions.  Section 3.4 contains a list of
+the sampled-data programs that currently operate in general on complex
+data.  In many cases, users can deal with multi-channel and complex
+FEA_SD files by writing scripts that make use of \fImux\fP and
+\fIdemux\fP together with programs that operate on single-channel real
+data.
+.lp
+At the programming level, FEA_SD is supported by a set of access
+routines that are analogous to those that support the old-style SD
+files, including I/O of overlapping frames and the independent
+determination of the data type stored in memory and the data type
+stored in files \- for example, see \fIallo_feasd_recs\fP
+(3\-\s-1ESPS\s+1u).
+.lp
+With the addition of FEA_SD, the current list of supported feature
+files is as follows:
+.nf
+.ta .5i 2i
+
+	FEA_SD \-	sampled data
+	FEA_SPEC \-	spectra
+	FEA_STAT \-	statistical information 
+	FEA_ANA \-	speech analysis
+ 	FEA_VQ \-	vector quantization codebooks
+	FEA \-	 "bare" feature files
+
+.fi	
+.lp
+The introduction of FEA_SD is a major step in our program to replace
+all of the built-in file types with feature files (only filter files
+and scalar codebook files remain).
+.lp
+For details about FEA_SD (including guidelines for converting
+programs), see "FEA_SD Files \- Feature Files for Sampled Data in
+ESPS".
+.sh 2 "Machine-Independent I/O"
+.lp
+In previous versions, ESPS files written on one machine could be read
+by ESPS programs running on another machine only if the two machines
+happened to have identical numerical data formats and byte order.
+This meant, for example, that ESPS files from a Sun 4 could be read by
+a Sun 3 but not by a Sun 386i or a DECStation 3100.  A goal for ESPS
+Version 4.0 was that differences in numeric formats and byte-order
+among machines on the network be hidden from ESPS user programs.
+.lp
+To meet the goal of machine independence, we defined an external ESPS
+format that permits ESPS programs running on different machine
+architectures to work cooperatively on the same files, and we revised
+the ESPS file system accordingly to provide general support for
+machine independent I/O (MIIO).
+.sh 3 "NATIVE vs. EDR Format"
+.lp
+ESPS files in Version 4.0 can be in one of two format: NATIVE or EDR.
+Data in NATIVE format files are written using the native numeric
+formats for a particular machine.  Data in EDR (ESPS Data
+Representation) format files are written in a standard representation:
+floats and doubles are stored using IEEE standard 32 bit and 64 bit
+floating point.  Integers and long integers are stored respectively as
+16 and 32 bit twos-complement integers.  The byte type is stored as an
+8 bit byte.  Character data is stored in ASCII with one character per
+byte.  The byte order is that of the Motorola 680X0 processors.  The
+ESPS external format essentially is the same as the Sun Microsystems
+external data representation (XDR) format.
+.sh 3 "I/O of ESPS Files"
+.lp
+ESPS programs will read files in either NATIVE or EDR format (and also
+files from older versions of ESPS).  By default, ESPS programs write
+files in the NATIVE format for the machine on which the programs are
+run.  EDR format output files can be obtained in general for all
+programs by creating the UNIX environment variable ESPS_EDR and giving
+it the value "on".  The conversion program \fIaddfeahd\fP (add an ESPS
+header to an existing headerless, binary file) has an option to
+specify whether the data are in NATIVE or EDR format.  At the
+programming level, the output format can also be controlled by setting
+the \fIedr\fP flag in the ESPS header before calling
+\fIwrite_header\fP (3\-\s-1ESPS\s+1).  (Note that the header is also
+an argument passed to the data output routines.)
+.lp
+The ESPS input routines can not in general handle files written in
+native mode by other architectures \- files to be exchanged should be
+written in EDR format unless the native modes happen to match.  This
+lack of generality is a compromise that supports file sharing but only
+requires a single machine-dependent conversion module for each
+architecture (the module converts between native mode and ESPS
+external format).  Some exceptions to the foregoing have been allowed
+for.  In particular, the ESPS input routines will recognize cases
+where NATIVE modes differ only with respect to byte order.  Thus, for
+example, NATIVE format files from a DECStation 3100 or Sun 386i can be
+read by ESPS programs running on a Sun 4 or Concurrent (and \fIvice\fP
+\fIversa\fP).
+.lp
+Using the ESPS external format can result in increased file I/O times,
+but the feature can be turned off (so that native formats are always
+used) when it isn't needed.  As mentioned, the default is to use
+native formats.
+.sh 3 "Typical Usage of ESPS_EDR" 
+.lp
+If you have a homogeneous network (all machines of the same type),
+then it is usually appropriate to have all programs write files in
+NAIVE format.  Since this is the default, nothing special has to be
+done.  For heterogeneous networks (mixed machine types), it is
+currently the case that the only difference between NATIVE and EDR
+format is in byte order (this will change as ESPS is ported to more
+machines).  Since the input routines will read NATIVE format files
+from a foreign machine in cases where the only difference in the local
+NATIVE format is byte order, it follows that NATIVE format ESPS files
+from any machine on a heterogeneous network can be read by ESPS
+programs on any other machine.  Of course, EDR format files from any
+machine can also be read by ESPS programs on any other machine.  Thus,
+the choice of whether to write ESPS files in NATIVE or EDR format on a
+particular machine should be based on efficiency, which in turn is
+determined by access patterns.
+.lp
+For example, if a set of files are produced originally on a DECStation
+3100 but used primarly by programs running on a Sun 4, it probably
+makes sense to write the files in EDR format.  Since the EDR format
+happens also to be NATIVE format for the Sun 4, the overhead of byte
+swapping will be avoided each time the files are read on the Sun 4.
+.sh 2 "X Window Support for Suns"
+.lp
+X Window support for ESPS graphics programs (\fIplotsd, plotspec,
+aplot, scatplot, genplot, mlplot, image\fP) has been extended to
+include Sun Microsystems computers.  If the programs are built for
+both X and Suntools, the programs default to X but can be run under
+Suntools by using \fB-T\fPsuntools.  (Analogous behavior occurs with
+Concurrent in the case of X vs MC Windows.)  In addition, the an
+environment variable can be set to cause the ESPS plotting programs to
+use Suntools, rather than X Windows.   See the man pages for the plot
+programs (\fIe.g. plotsd\fR).
+.sh 2 "Use of Sun XView Toolkit"
+.lp
+A number of our graphics programs, including \fIxwaves+\fR,
+\fIxprompt\fR, \fIxtext\fR, and \fIplot3d\fR are built using the XView
+toolkit.  In order to run these programs with a particular X server you
+may have to install the XView fonts that we supply and make certain
+changes to some of your X related configuration files.
+.lp
+XView programs will run on Sun  CPUs with Sun OpenWindows 1.0.1 or
+greater, on HP 300 systems with OS 7.0, and on Masscomp systems with
+RTU 5.0.  An ICCCM complient window manager should be used with
+XView programs and some of the Open Look fonts are necessary.  In
+particular, these programs run well under Sun's OpenLook window
+manager (\fIolwm\fP).  On HP systems they run under the VUE window
+manager or the HP Motif window manager.  On Masscomp systems, they run
+fine under Masscomp's Motif window manager.  
+XView programs will also run using a
+"vanilla" server built from the R4 MIT tape and the \fItwm\fR
+window manager.  On all systems other than Suns running
+OpenWindows, some of the Open Look fonts have to be installed.  We
+provide them under \fI/usr/esps/xview\fR \- see the README file there. We
+also provide a copy of \fIolwm\fP.
+.lp
+In a number of cases we have tried, acceptable
+performance with non-ICCCM complient window managers results from
+adding this resource to the .Xdefaults file:
+.nf
+
+	XView.ICCCMCompliant: False
+
+
+.fi
+.lp
+For complete details about running with you system, consult the README
+file in \fI/usr/esps/xview\fR.  This contains the latest information we
+have about running these programs with different window managers and
+servers.
+.sh 2 "X Window Support for Parameter Prompting" 
+.lp
+The ESPS parameter file mechanism includes features for prompting the
+user for needed values.  A new program \fIxprompt\fP (1\-\s-1ESPS\s+1)
+supplies a similar service, but by means of interactive pop-up
+windows.  \fIxprompt\fP reads a parameter file, pops up a window with
+prompts for all parameters with indefinite parameter assignments
+(i.e., parameters for which the "?=" operator is used in the parameter
+file), and then writes a new parameter file based on the results.
+(The output parameter file can then be read by the relevant ESPS
+program.)  \fIXprompt\fP exploits the new parameter choices and limits
+syntax that is supported in ESPS parameter files (see the discussion
+of \fIsymchoices\fP (3\-\s-1ESPS\s+1), etc., below).
+.sh 2 "X Window Support for 3D Plots" 
+.lp
+\fIPlot3d\fP is new program that produces 3D (hidden-line) plots of
+FEA files.  Like \fIxprompt\fP (1\-\s-1ESPS\s+1), \fIplot3d\fP is
+based on the XView toolkit.  The various OS level and window manager
+issues discussed in the previous Section apply to \fIplot3d\fP as well
+as to \fIxprompt\fP.  
+.lp
+\fIPlot3d\fP has numerous features that support the interactive study
+of the input FEA data.  Users can change the viewpoint using sliders
+in the control panel or mouse movements in the display window, load
+and save viewpoints, plot in point mode or hidden-line mode, and control
+axes labeling and units.  A mouse-driven 3D-cursor drives digital
+readouts.  For more information, see the manual page.  
+.sh 2 "HP LaserJet Support" 
+.lp
+All of the ESPS plot programs (including \fIimage\fP) now include
+support for the HP LaserJet.
+.sh 2 "Revised Source and Library Structure"
+.lp
+Multiple libraries are now supported by the ESPS source hierarchy and
+compilation support programs (\fIemake\fP, \fIecc\fP, etc.)  The ESPS
+library has been split into separate signal processing and utility
+libraries.  As the name implies, the signal processing library
+contains computational functions for signal processing.  The utility
+library contains the functions that implement the ESPS file system
+(header routines, record I/O routines, record keeping routines, etc.).
+In most cases, the utility library is distributed in binary form only.
+So called "Basic ESPS Source".  (Had we called it ESPS Basic Source,
+someone might think we wrote it in BASIC!)
+.sh 2 "Example Source Programs"
+.lp
+A directory of source examples (src_examples) is now shipped with all
+binary releases (programming is possible with the binary releases
+since the libraries are shipped).  Included are the source to
+\fIsgram\fP (1\-\s-1ESPS\s+1), as an example of a user-level program
+that uses a pre-defined FEA subtype (FEA_SPEC), and source to
+\fIcross_cor\fP (1\-\s-1ESPS\s+1), as an example of a program that
+uses "bare" FEA files.  Also included is the library module that
+implements FEA_SPEC.
+.sh 2 "Floating License Servers" 
+.lp
+With ESPS Version 4.0 and \fIwaves\fP+ Version 2.0 right-to-use
+licenses can be "checked-out" temporarily for use as needed by
+individuals on a local area network.  Many customers have asked for a
+license policy that would permit them to purchase licenses based on
+expected usage patterns rather than based on the number of machines
+that happen to be on their network.  The so-called floating-license
+technology provides this flexibility.
+.lp
+Our previous license policy restricted the use of licensed software to
+pre-specified CPUs or servers, making it difficult for a substantial
+number of occasional users to share a few licenses.  With floating
+licenses, licenses are no longer restricted to specific hardware, but
+are assigned dynamically as needed by users throughout the network.
+.lp
+A right-to-use license is required for each node in simultaneous use
+on a network.  (A network node is any compute-engine with a unique
+host name and network address.)  Right-to-use licenses can be assigned
+automatically ("checked out") by a software license manager until the
+supply of available licenses is exhausted.  Alternatively, if dynamic
+assignment isn't appropriate, the available licenses can be
+pre-allocated.  An ESPS license checked out (or pre-allocated) to a
+particular node may be shared by any number of simultaneous ESPS
+users.
+.lp
+The programs \fIecheckout\fP (1\-\s-1ESPS\s+1) and \fIefree\fP
+(1\-\s-1ESPS\s+1) are used to checkout and return an ESPS license.  
+If a license is checkout out on any given CPU, any user can run 
+any number of ESPS programs on that CPU.  
+.lp
+The new floating-license technology requires that a license server
+(\fIelmd\fP) daemon be run somewhere on the network.  More information
+about this (and about the administration of licenses) is contained in
+the installation instructions.
+.sh 2 "Documentation Additions"
+.lp
+The following new documents are included in this release:
+.nf
+.ta .5i
+
+	"FEA_SD Files \- Feature Files for Sampled Data in ESPS"
+	"Calling FORTRAN Subroutines from ESPS Programs"
+ 	"Applications Note: Converting to and From ESPS Files" 	
+	"Machine-Independent File I/O in ESPS"
+
+.fi
+.sh 1 "CHANGES TO USER-LEVEL ESPS PROGRAMS"
+.sh 2 "New Programs or Major Revisions" 
+.lp
+New programs include \fIxprompt\fP and \fIplot3d\fP, discussed
+earlier.  
+.sh 3 "New Program for Formatted Printing of FEA Records" 
+.lp
+Courtesy of Richard Goldhor (Sensimetrics, Inc.), we are including 
+a program that prints selected elements from selected FEA records 
+using print formats that are defined by the user.  The new program, 
+\fIfea_print\fP (1\-\s-1ESPS\s+1), is modeled after \fIfea_deriv\fP.  
+An ASCII input file names the elements to be printed from each record
+and provides a corresponding (C program) format specification.  A
+common use of \fIfea_print\fP is to print one FEA record per line with
+selected field elements appearing in different columns. 
+.sh 3 "New Program for Conversion from FEA to FEA_SD"
+.lp
+A new program \fItofeasd\fP accepts an arbitrary FEA file and produces
+a sampled data (FEA_SD) output file with the "samples" data being
+taken from a specified field in the input file.  The sampling rate is
+derived from that of the input file, but can also be set directly.
+See also \fImake_sd\fP (1\-\s-1ESPS\s+1).  
+.sh 3 "Enhanced \fIimage\fP and \fIplotsgram\fP" 
+.lp
+The general image display program \fIimage\fP has
+been enhanced to support Postscript output.  Also, \fIimage\fP now
+chooses the default gray-scale algorithm at run-time according to
+whether the system has one or several planes.  An option (\fB-C\fP) was
+added to read colormaps.  An option (\fB-L\fP) was added to choose
+whether to label the axis in points, records, or seconds
+(independently of whether \fB-p\fP, \fB-r\fP, or \fB-s\fP was used to
+specify the range).  An option (\fB-M\fP) was added to control a
+magnification factor for output on Imagen, Postscript, and Hewlett
+Packard printers (thereby permitting lower-resolution but faster
+output).  An option (\fB-D\fP) was added to disable linear
+interpolation and cause a uniformly colored rectangle to be displayed
+for each data point.  A new \fB-f\fP option (ESPS convention for field
+name) has been added as a synonym for \fB-e\fP).
+.lp
+The spectrogram display script \fIplotsgram\fP now has a \fB-x\fP
+option that can be used for debugging.  \fIPlotsgram\fP has
+been modified to exploit the new version of \fIimage\fP.  (Thus, for
+example, a dithered spectrogram display is the default only for
+systems with single-plane graphics.)  All of the new \fIimage\fP
+options can be given to \fIplotsgram\fP for passing on to 
+\fIimage\fP.  For example, \fB-D\fP can be
+given to disable linear interpolation.  A useful side effect of the
+new options is that it is now easier to obtain hard copies of
+\fIwaves\fP+ spectrograms.  Since \fIplotsgram\fP can be used with a
+\fB-r\fP to specify the range, one can set up waves (via the new
+add_espsn command) to call \fIplotsgram\fP on a marked portion of any
+displayed spectrogram.	   
+.sh 3 "Enchanced \fItestsd\fP"
+.lp
+The \fItestsd\fP program generates test sampled data.  In revising it
+to produce FEA_SD files, the following enhancements were made:
+.np
+New signal types were added for constant (DC) data, square waves,
+sawtooth waves, triangle waves, and uniform noise.  (The old types of
+sine waves, Gaussian noise, pulses, and arbitrary input ASCII data are
+still supported.)
+.np
+The type of the output data can now by any supported data type,
+including all of the complex types.  The new options \fB-t\fP and
+\fB-c\fP support type selection (the \fB-i\fP is still supported).
+For the SINE type, complex output is a complex exponential.  For the
+noise types, independent noise is generated for the real and imaginary
+parts.  For the other signal types, the real and imaginary parts are
+identical.
+.np
+All periodic signal types (SINE, SQUARE, TRIANGLE, SAWTOOTH, PULSES) 
+can be specified with an initial phase (\fB-A\fP option).  
+.np
+All periodic signal types can have a linear frequency sweep ("linear
+chirp"), supported by the new \fB-C\fP option.  
+.np
+For all signal types but ASCII, a decaying exponential input can be 
+imposed by means of the new \fB-d\fP option.  
+.np
+Data output is now buffered so that \fItestsd\fP works efficiently as
+the initial program on a pipe.  
+.np
+Parameter file processing was modified to support all of these changes
+(e.g., when \fItestsd\fP is called via \fIeparam\fP).  
+.sh 3 "Multiplication of Sampled Data"
+.lp
+The program \fImultsd\fP supports multiplication of sampled data
+(e.g., for modulation).  Both \fIaddsd\fP and \fImultsd\fP will work
+with complex data.  (Actually, \fIaddsd\fP and \fImultsd\fP are links
+to the same binary, which performs addition or multiplication
+depending on the name used to invoke the program.)  Note that if you
+want to compute expressions more elaborate than possible with
+\fIaddsd/multsd\fP, you can can do so by using a combination of
+\fImergefea\fP and \fIselect\fP (see Section 7). 
+.sh 3 "Program to Facilitate use of ESPS Parameter Files from Shell Scripts"
+.lp
+The program \fIgetparam\fP processes an ESPS parameter file, obtains
+the value of a named parameter, and prints that value in ASCII on
+standard output.  All of the standard parameter file processing
+features are supported, included ESPS Common processing and
+interactive prompting.  The main purpose of \fIgetparam\fP is to
+facilitate writing shell scripts that process ESPS parameter files.
+In particular, \fIgetparam\fP makes it much easier to write ESPS shell
+scripts and C programs with exactly the same user interface.  
+.sh 3 "Program for Computing Mandelbrot Sets"  
+.lp
+The Mandelbrot has become a marketing favorite to show off graphics,
+so of course we ended up having to write one too.  The result is
+\fImbrot\fP (1\-\s-1ESPS\s+1), which we now include in the
+distribution.  The results can be displayed using \fIimage\fP and (via
+\fItofspec\fP) \fIwaves\fP+,
+.sh 3 "Program for mu-law Encoding"
+.lp 
+\fIesps2mu\fP converts an ESPS FEA_SD file to a headerless binary file
+containing mu-encoded data. The format of the data is appropriate for
+use with the SPARCstation 1 codec chip.  (Note that the SPARCstation
+expects data that was sampled at 8000 samples/second data.)
+.sh 3 "Programs for SPARCstation Codec"
+.lp
+The new program \fIsplay\fP provides speech output on the SPARCstation
+I.
+.sh 3 "Program to Display Sun Raster Files"
+.lp
+The program \fIshowras\fP reads a file contain data in Sun rasterfile
+format, creates a window, and displays the image in the window.  
+The program runs only on Sun systems under SunView.  It can be useful,
+for example, if images are generated remotely using the \fB-T\fPras
+option on \fIimage\fP but are to be displayed locally under SunView.  
+.sh 3 "Program for Current ESPS Version"
+.lp
+The new program \fIeversion\fP prints out the current ESPS version
+number.  The \fB-u\fP option displays an on-line copy of these release
+notes \- this is a good way to inform users about changes in the
+current version.
+.sh 2 "Changes to Support FEA_SD" 
+.lp
+All of the programs that accept or produce sampled data files (SD
+files in previous releases) have been changed to accept FEA_SD or 
+(for compatibility) SD files, and to produce FEA_SD files.  The new
+programs \fIsdtofea\fP and \fIfeatosd\fP provide conversions between
+the old and new file types.  
+.lp
+All programs that process sampled data (FEA_SD) files have been
+modified to accept \fB-r\fP as a synonym for the range option
+\fB-p\fP.  Thus, it should now be the case that \fB-r\fP (range in
+records) can be used with any ESPS program that accepts a range
+option.  An associated change in \fIplay\fP, \fIwplay\fP, and
+\fIsdcomp\fP is that the existing \fB-r\fP (repeat) option was changed
+to \fB-R\fP.  Also, an associated change in \fIwaves\fP+ is that all
+external calls to ESPS programs now use \fB-r\fP to specify the marked
+ranged.
+.sh 2 "Programs that Handle Complex Data"
+.lp
+The following FEA_SD programs have been modified to handle (single
+channel) complex sampled data (in the sense that appropriate
+processing is done): \fItestsd, addsd, multsd, copysd, fft fftinv\fP.
+The following general FEA programs have been modified to handle
+complex data: \fIatosps, spstoa, addfea, addfeahd copysps,
+fea_element, mergefea, pplain, psps, ereverse, feafunc\fP.  Other
+programs either "do their thing" on the real part or refuse to run on
+files with complex data.  Additional programs will be modified to
+handle complex data in future releases.
+.lp
+Note that \fIcopysps\fP requires that both input and update file 
+be either EDR or NATIVE.  
+.sh 2 "Other Significant Changes to User-Level Programs"
+.np
+The programs \fIframe\fP, \fIwindow\fP, \fIpwr\fP, and \fIzcross\fP
+have all been changed to no longer copy all of the input fields to the
+output.  Now, the output file contains a single field in each case
+(frame of data, windowed frame, power, zero crossing rate) \- the
+information computed by the particular program.  If combined
+information is needed, use \fImergerfea\fP.  These programs have also
+been fixed to handle correctly various cases of tagged and segment
+labelled files.  
+.np
+A new option (\fB-a\fP) was added to \fIcopysd\fP to permit adding a
+constant to the data before writing it.  Together with \fB-s\fP
+(scale), this means that \fIcopysd\fP can both scale and shift when
+copying.  Note that \fIfea_func\fP can also be used (now that sampled
+data files are FEA files.)  Also, the \fB-d\fP option on \fIcopysd\fP
+has been extended to support conversion to any data type.  Generic
+header items in the output file record the scale and addition
+constants.  
+.np
+\fIsetrange\fP has been changed to work on arbitrary FEA files.
+\fIsetrange\fP accepts a range specified in seconds, transforms this
+to a range of records, and writes the results to ESPS Common (in terms
+of the parameters \fIstart\fP and \fInan\fP) for use by other
+programs.  The revised version of \fIsetrange\fP uses the generic 
+header items start_time and record_freq in performing the
+transformation.  \fIsetrange\fP will still work on old-style SD files.
+.np
+\fIbtosps\fP has been generalized so that it will convert headerless
+sampled data of any ESPS data type to ESPS FEA_SD format; this
+includes complex data.  Also, \fIbtosps\fP will now convert
+multi-channel data.  New options include \fB-t\fP (input data type),
+\fB-n\fP (number of channels), \fB-T\fP (start time), \fB-c\fP (ASCII
+comment), \fB-C\fP (ASCII comment file), and \fB-x\fP (debug level).
+For real (non-complex) data that is not on a pipe, \fIbtosps\fP will
+also determine the maximum absolute value and write the result in the
+generic header item \fImax_value\fP.  The conversions provided by
+\fIbtosps\fP can also be achieved using \fIaddfeahd\fP
+(1\-\s-1ESPS\s+1), \fIaddgen\fP (1\-\s-1ESPS\s+1), and \fIsetmax\fP
+(1\-\s-1ESPS\s+1), but \fIbtosps\fP is more convenient in the case of
+sampled data.  Note that the \fB-s\fP option (number of leading bytes
+to skip) has been changed to \fB-S\fP, and that a comment must now be
+supplied for record keeping purposes.  
+.np
+\fIaddfea\fP has a new option (\fB-T\fP) to permit the explicit
+setting of a FEA subtype code in the output FEA file.  This permits
+conversion, for example, of ASCII data to multi-channel FEA_SD.  In
+principle, you could go from ASCII to FEA_ANA, etc. 
+.np
+\fImake_sd\fP has a new option (\fB-S\fP) to set the sampling rate of
+the output FEA_SD file.  Also, \fImake_sd\fP was modified to preserve
+the data type of the field specified in the input file.  
+.np
+\fIfea_deriv\fP has a new option (\fB-T\fP) to set a FEA subtype code
+in the output file.  Another new option (\fB-t\fP) causes tags to be
+copied from the input to the output.  
+.np
+\fIxmcd\fP and \fImcd\fP were fixed to remove the temporary file when
+killed.  
+.np 
+The previous version of \fIfft_filter\fP ignored any range
+specification; this has been fixed.
+.np
+The parameter prompts for \fIauto\fP (when via \fIeparam\fP) have
+been improved.  
+.np
+\fIespsenv\fP has been updated to add ESPS_EDR to the environment 
+variables reported.  
+.np
+\fIAddgen\fP now adds the user's name to the comment put in the output
+header.  
+.np
+An option (\fB-S\fP) was added to \fItofspec\fP to disable scaling.  
+Input data can now be copied to the output FEA_SPEC file (e.g., for
+display using \fIwaves\fP+) without scaling to an output range.  
+.np
+The order of the file parameters in \fIzero_pole\fP and \fIatofilt\fP
+have been changed so that the order is input file followed by output
+file (the general convention for ESPS).  This will break scripts that
+use the old versions.
+.np
+The possible functions to be applied by \fIfeafunc\fP was expanded to
+include squaring (sqr).  Note that, because \fIfeafunc\fP allows
+specification of the output file type, it can be used to transform the
+data type of any FEA field (the only restriction is that it will not
+cross the boundary between complex and non-complex; e.g., you can go
+from DOUBLE_CPLX to BYTE_CPLX but not from DOUBLE_CPLX to BYTE).  
+.np
+The X version of \fIimage\fP now parses the standard option for X
+geometry.  
+.np
+User-level programs implemented as shell scripts have been modified
+to use full paths when calling ESPS programs (examples include
+\fIsf_convert, plotsgram, plotsd, \fPetc.).  This avoids problems that
+occur when there are name conflicts with local programs.
+.np
+Man pages are now included for \fIemakecats\fP and \fImakewhatis\fP.  
+.np
+Default parameter files for Paddfea \fIdspsgram, fft, refcof, testsd,
+transpec, sgram,\fP and \fIbtosps\fP have been revised to include
+parameter choices and limits.
+.np
+A new option on \fItofspec\fP reverses the order of elements in the
+field.  This is useful when converting files for display in
+\fIwaves\fP+, since the effect is turn turn the display upside down.
+.np
+The \fB-r\fP for \fIlpcsynt\fP has been changed to the ESPS convention
+of specifying the input record range.
+.sh 1 "ESPS LIBRARY ADDITIONS AND CHANGES"
+.sh 2 "Changes and Additions to Support Machine-Independent I/O (MIIO)"
+.lp
+Two items were added to the universal portion of the ESPS header
+structure: \fIedr\fP and \fImachine_code\fP.  The former indicates
+whether the file is stored in EDR or NATIVE format.  The latter
+indicates the machine type that produced the file.  See ESPS
+(5\-\s-1ESPS\s+1).
+.lp
+The information contained in the \fIedr\fP and \fImachine_code\fP
+header items actually is stored in a short preamble that comprises the
+first few bytes of an ESPS file.  The \fIread_header\fP routine first
+reads the preamble (which is always stored in EDR format), determines
+whether the file is an ESPS file, determines the file format (EDR or
+NATIVE), and then either exits (if not an ESPS file) or reads the rest
+of the information for the ESPS header structure.  Users should keep
+in mind that the C structure shown in the man page ESPS
+(5\-\s-1ESPS\s+1) (and defined in header.h) does \fInot\fP correspond
+to the actual format stored in the file, which is why headers I/O
+must be done with \fIread_header\fP and \fIwrite_header\fP.  
+.lp
+When a new header structure is created (by \fInew_header\fP or
+\fIcopy_header\fP), the \fIedr\fP flag in the header is set to 1 (EDR
+format) if the user has a UNIX environment variable ESPS_EDR set to
+"on"; otherwise, \fIedr\fP is set to 0 (NATIVE mode).  This initial
+setting can be changed by programs (e.g., in some cases one might want
+to have a command-line option to force a particular format regardless
+of the environment variable) before calling the I/O routines.  The
+format used in writing the header is determined by the value of the
+\fIedr\fP flag when the header is passed to \fIwrite_header\fP.
+Similarly, the format of file records is determined by the value 
+of the \fIedr\fP flag when the header is passed to (for example)
+\fIput_fea_rec\fP.  (Yes, you can get into serious trouble if you fool
+around with inconsistent header structures.)  
+.lp
+All of the library routines that support header and record I/O were
+modified to support MIIO, including \fIread_header, write_header,
+get_fea_rec,\fP and \fIput_fea_rec.\fP.  The \fIget\fP and \fIput\fP
+routines for the various non-FEA file types were also modified (i.e.,
+for SD, FILT, SCBK, and SPEC files).  The I/O routines for the various
+FEA subtypes (e.g., FEA_ANA, FEA_SPEC, etc.) did not have to be
+modified since they work by calling \fIget_fea_rec\fP and
+\fIput_fea_rec\fP.
+.sh 2 "Changes and Additions to Support Complex Data" 
+.np
+All of the FEA support functions have been generalized to support the
+new complex data types BYTE_CPLX, SHORT_CPLX, LONG_CPLX, FLOAT_CPLX,
+and DOUBLE_CPLX.  In particular, the following have been generalized: 
+.sp .5
+.nf
+.ta 1.5i
+  \fIadd_fea_fld\fP \-	add definition of new field to ESPS FEA file
+  \fIallo_fea_rec\fP\-	allocate memory for an ESPS FEA file record
+  \fIcopy_fea_rec\fP \-	copy data from one ESPS FEA record to another
+  \fIget_fea_rec\fP \-	get the next data record from an ESPS FEA data file
+  \fIprint_fea_rec\fP \-	print an ESPS FEA data record
+  \fIprint_fea_recf\fP \-	print fields in an ESPS FEA data record
+  \fIput_fea_rec\fP \-	put an ESPS FEA data record onto the file
+  \fIget_fea_siz\fP \-	get the size information for a ESPS FEA file field
+
+.fi
+Each complex type has a real and an imaginary part of the
+corresponding integer or floating type.  For details see the FEA man
+page FEA (5\-\s-1ESPS\s+1).
+.np
+The following new functions support the processing of complex FEA files:
+.sp .5
+.nf
+.ta 1.5i
+  \fIis_file_complex\fP \-	does file contain any complex data types
+  \fIis_field_complex\fP \-	is data type of field complex
+  \fIis_type_complex\fP \-	does type code represent complex data
+.fi
+.np
+A real-part addition (\fIrealadd\fP) function was added to the
+functions that support complex arithmetic (see \fIcomplex\fP
+(3\-\s-1ESPS\s+1).  
+.np
+Various support functions that operate on arrays of different data
+types have also been generalized to support the complex types, including:
+.sp .5
+.nf
+.ta 1.5i
+  \fIarr_alloc\fP \-	allocate storage indexed as multidimensional array
+  \fImarg_index\fP \-	allow indexing of allocated storage as multidimensional array
+  \fIarr_free\fP \-	free storage allocated by arr_alloc or marg_index
+.fi
+.np
+The following signal FFT functions have been added to support complex
+processing: 
+.sp .5
+.nf
+.ta 1.5i
+  \fIget_cfft\fP \-	Compute fast Fourier transform of a FLOAT_CPLX data sequence.
+  \fIget_cfftd\fP \-	Compute fast Fourier transform of a DOUBLE_CPLX data sequence.
+  \fIget_cfft_inv\fP \-	Compute inverse fast Fourier transform of FLOAT_CPLX data 
+  \fIget_cfftd_inv\fP \-	Compute inverse fast Fourier transform of DOUBLE_CPLX data
+.fi
+.sh 2 "Changes and Additions to Support FEA_SD" 
+.np
+The usual access functions have been provided for FEA_SD: 
+.sp .5
+.nf
+.ta 1.5i
+  \fIinit_feasd_hd\fP \-	initialize a FEA file header for subtype FEA_SD
+  \fIallo_feasd_recs\fP \-	allocate memory for FEA_SD file records
+  \fIget_feasd_recs\fP \-	get data records from an ESPS FEA_SD data file
+  \fIget_feasd_orecs\fP \-	get overlapping data from an ESPS FEA_SD data file
+  \fIput_feasd_recs\fP \-	write data records to an ESPS FEA_SD file
+.fi
+.sp .5
+Note that FEA_SD supports independent specification of the data type
+stored in the file and the data type stored in memory.  (This is a
+feature of the old-style SD file type that we have preserved.)  Thus,
+one specifies the desired in-memory type for an array of FEA_SD
+records when allocating via \fIallo_feasd_recs\fP, and the
+\fIget_feasd_recs\fP or \fIget_feasd_orecs\fP take care of any
+necessary conversions on input.  
+.np
+\fIeopen\fP (ESPS file, read header, and check type) was modified so
+that, if a FEA_SD header is requested when an old-style SD file is
+read, the SD header is converted to a FEA_SD header and returned.
+This change makes it trivial to convert many programs from SD to
+FEA_SD (provided that they were written using \fIeopen\fP).  By
+changing a call like
+.nf
+.ft CW
+
+   in_file = eopen("filter", argv[optind++], "r", FT_SD, NONE, 
+                   &ih, &fpin);
+\fRto\fP
+.ft CW
+
+   in_file = eopen("filter", argv[optind++], "r", FT_FEA, FEA_SD,
+                   &ih, &fpin);
+
+.fi
+.ft LR
+the revised program will not only read the new FEA_SD files, but it
+will continue to read the old-style SD files.  For more information
+about conversions, see the new document "FEA_SD Files \- Feature Files for Sampled Data in ESPS".
+.np
+To further support the conversion of old programs, the following I/O
+routines for SD files were modified so that they also work on FEA_SD
+files.
+.sp .5
+.nf
+.ta 1.25i
+  \fIget_sd_recd\fP \-	get data from an ESPS sampled-data file in DOUBLE format
+  \fIget_sd_recf\fP \-	get data from an ESPS sampled-data file in FLOAT format
+  \fIget_sd_recs\fP \-	get data from an ESPS sampled-data file in SHORT format
+  \fIget_sd_orecd\fP \-	get overlapping data from an ESPS SD file in DOUBLE format
+  \fIget_sd_orecf\fP \-	get overlapping data from an ESPS SD file in FLOAT format
+  \fIget_sd_orecs\fP \-	get overlapping data from an ESPS SD file in SHORT format
+  \fIput_sd_recd\fP \-	put data onto an ESPS sampled-data file from DOUBLE data
+  \fIput_sd_recf\fP \-	put data onto an ESPS sampled-data file from FLOAT data
+  \fIput_sd_recs\fP \-	put data onto an ESPS sampled-data file from SHORT data
+  \fIget_sd_type\fP \-	get the type of data in an ESPS sampled-data (FEA_SD or SD) file
+.fi
+.sp .5
+That is, if these routines are called with a FEA_SD header, they will
+do the right thing (assuming that the FEA_SD header properly describes
+the data in the file).  In particular, suppose an existing SD program 
+opens files via \fIeopen\fP and does I/O via the foregoing functions.
+Then, if the calls to \fIeopen\fP are modified as described above,
+the I/O calls need not be modified \- they will work regardless of
+whether the input file is SD or FEA_SD.  
+.sh 2 "Changes and Additions to Support Enhanced Parameter Processing" 
+.lp
+The syntax of ESPS parameter files has been extended to include
+optional limitations on a parameter's value.  Two cases are supported:
+(1) a list of discrete choices for the parameter (all data types); (2)
+a minimum and maximum value for the parameter (numeric data types).
+The new information is added to the symbol table constructed by
+\fIread_params\fP (3\-\s-1ESPS\s+1) and is made accessible to user
+programs by means of access functions.  The limitations are not
+enforced by the lowest level ESPS parameter routines (e.g., the
+existing \fIgetsym\fP() routines have not been modified).  Higher
+level functions and programs can choose whether or not to exploit the
+information and how to do so.  For example, the new \fIxprompt\fP
+(1\-\s-1ESPS\s+1) program enforces the parameter limitations if they
+are given.  
+.lp
+The following functions have been added to support parameter file
+processing:
+.sp .5
+.nf
+.ta 1.5i
+  \fIsymsize\fP \-	return the size of a parameter file symbol
+  \fIsymlist\fP \-	get list of parameter names and return number of parameters
+  \fIsymdefinite\fP \-	indicates whether a run-time parameter prompt will occur
+  \fIsymchoices\fP \-	get list of discrete choices for a parameter's value
+  \fIsymrange\fP \-	get the value range for a parameter 
+  \fIsymprompt\fP \-	returns the prompt string for a parameter
+  \fIgetsymdef_X\fP \-	get default parameter value of type X from the symbol table
+  \fIfputsym_X\fP \-	put a parameter value of type X into an arbitrary file
+
+.fi
+.sp .5
+.sh 2 "Other Changes and Additions" 
+.np
+\fIUpdate_waves_gen\fP was generalized to handle FEA_SD.  The
+\fIstart\fP and \fIstep\fP parameters were changed from INT to FLOAT
+in order to handle some important special cases (e.g., less than one
+output record per input record).  Also, the function now handles
+correctly the case in which the generic header item "start_time" is 
+is vector.  
+.np
+Added to support processing of generic header items:
+.sp .5
+.nf
+.ta 1.5i
+  \fIget_genhd_val\fP \-	get the value of a numeric generic header item
+.fi
+.sp .5
+\fIget_genhd_val\fP differs from the existing generic header get
+routines in returning a value rather than a pointer.  Furthermore, the
+value is always returned as a double.
+.np
+Added to support header processing: 
+.sp .5
+.nf
+.ta 1.5i
+  \fIinhibit_hdr_date\fP \-	inhibit updating the header field date
+.fi
+.sp .5
+This routine is used in \fIcomment\fP and \fIaddgen\fP to leave
+unchanged the original header creation data.  
+.np
+Added to support FEA file processing:
+.sp .5
+.nf
+.ta 1.5i
+  \fIfea_compat\fP \-	check compatibility of field definitions in FEA headers	
+.fi
+.np
+Added to support ASCII conversions: 
+.sp .5
+.nf
+.ta 1.5i
+  \fIatoarray\fP \-	convert ASCII file to data array of specified type
+.fi
+.sp .5
+This function generalizes \fIatoarrayf\fP, which is hard-wired to
+produce float arrays.  The new function supports any type (including
+complex types).
+.np
+Added to support general type conversions: 
+.sp .5
+.nh
+.ta 1.5i
+  \fItype_convert\fP \-	convert array from one numeric type to another
+.fi
+.sp .5
+This is an elaborate function,  It supports all data types (including 
+complex types), and it includes a user-definable action on clipping.  
+.np
+Miscellaneous additions: 
+.sp .5
+.nf
+.ta 1.5i
+  \fIzero_fill\fP \-	fill a newly allocated or existing numeric array with zeros
+  \fIdel_fea_fld\fP \-	delete a field from an ESPS Feature File Header
+  \fItypesiz\fP \-	return the size of an element of a given ESPS data type
+  \fIcover_type\fP \-	returns data type that can contain any data from two input types
+.fi
+.sp .5
+Note that these work with all data types (including complex).  
+.np
+Added to support FFT processing:
+.sp .5
+.ta 1.5i
+.nf
+  \fIget_fftd_inv\fP \-	 compute inverse FFT of doubles
+.sp .5
+.np
+\fIwindow\fP (3\-\s-1ESPS\s+1) has been extended to include a new
+window type, WT_ARB, which permits windowing with an arbitary array 
+of coefficients.  
+.np
+The input, output, and state arrays were changed from FLOAT to DOUBLE
+in \fIblock_filter\fP (3\-\s-1ESPS\s+1) and \fIinterp_filt\fP
+(3\-\s-1ESPS\s+1).  
+.np
+Added to support mu-law and A-law coding: 
+.sp .5
+.nf
+.ta 1.5i
+  \fIlinear_to_mu\fP \-	converts 14-bit integer data to 8-bit mu-law compressed data
+  \fImu_to_linear\fP \-	converts 8-bit mu-law compressed data to 14-bit data
+  \fIlinear_to_a\fP \-	converts 13-bit integer data to 8-bit A-law compressed data
+  \fIa_to_linear\fP \-	converts 8-bit A-law compressed data to 13-bit data
+.fi
+.np
+The following functions were added to support maximum entropy (MAXENT)
+and minimum relative-entropy (MRE) calculations:
+.sp .5
+.nf
+.ta 1.5i
+  \fImin_rel_ent\fP \-	compute MAXENT or MRE probability distributions
+  \fIrel_ent\fP \-	compute relative entropy of two probability distributions
+.fi
+.np
+The \fIget_burg\fP functions (computes reflection coefficients using
+standard Burg and modified Burg methods) was modified to use doubles
+for internal variables.
+.sh 1 "MISCELLANEOUS BUG FIXES" 
+.lp
+Numerous minor changes and bug fixes are included in the new release.
+The more important ones are mentioned here.  
+.np
+The \fB-S\fP on \fIbtosps\fP now works.  
+.np
+In Version 4.0a, \fItestsd\fP was introducing slight regularities 
+in noise sequences.  This has been fixed.  
+.np
+FEA_SPEC files of type ARB_FIXED are now supported properly by the 
+FEA_SPEC support functions and by \fIpsps\fP.  
+.np
+\fIme_spec\fP now reads the default parameter file \fIparams\fP if the
+\fB-P\fP is not used (no file was read in the previous version.).
+.np
+The man page for \fIaddgen\fP (1\-\s-1ESPS\s+1) was changed to note
+that \fIaddgen\fP doesn't change "File header date".  (Also,
+\fIaddgen\fP was changed so that the user's name is included in the
+comment that documents when \fIaddgen\fP was run.) 
+.np
+\fIcomment\fP was changed so that the user's name is included in the
+the date/time stamp for an added comment.  
+.np
+\fIbtosps\fP no longer core dumps when the number of samples 
+happens to be a multiple of 1024.  
+.np
+\fIaddsd\fP (1\-\s-1ESPS\s+1) no longer core dumps when writing
+comments in the header about input files that happen to have long path
+names.
+.np
+\fIsfconvert\fP (1\-\s-1ESPS\s+1) now checks to make sure that temporary 
+files can be written.
+.np
+The \fIfea_stats\fP (1\-\s-1ESPS\s+1) man page stated that the program
+computes the sample deviation, but it actually computes the unbiased
+estimate of the population standard deviation.  The man page has been
+corrected.
+.np
+\fIget_fft\fP, \fIget_fft_inv\fP, \fIget_fftd\fP, and \fIget_rfft\fP
+were changed so that they no longer repeatedly allocate storage for new
+versions of internal tables without freeing the old versions.
+\fIget_rfft\fP was fixed so that it no longer gives the wrong answers
+for the special case of length-1 transforms.
+.np
+\fImergefea\fP how handles the \fIstart_time\fP generic in a more
+sensible way (the value is taken from the input file when the output
+file is first created; if the output file already exists,
+\fIstart_time\fP is not changed).  
+.sh 1 "FILE COMPATIBILITY"
+.lp
+ESPS Version 4.0 will read any files written by programs compiled
+under previous releases.  Programs compiled from previous previous
+releases, however, will not in general read files written by Version
+4.0 programs.   In most cases, programs can be converted to 4.0 merely
+by compiling them with the ESPS 4.0 libraries.  (If a sampled data
+program is to be converted to use FEA_SD, some changes will be
+necessary).  
+.sh 1 "WHAT MIGHT BREAK"
+.lp
+We have tried to make changes so that existing scripts (and habits)
+will still work with the new release or will be easy to change.  For
+example, although the \fB-d\fP option on copysd has been generalized
+to use the full standard list of data types (e.g., float, float_cplx,
+etc.), the old codes (e.g., "f" for float) will still work.  Some
+changes, however, were deemed important enough to make even if they
+will break some existing code.  We have tried to keep track of things
+in this category and mention them here.
+.np
+The order of the file parameters in \fIatofilt\fP (1\-\s-1ESPS\s+1)
+and \fIzero_pole\fP (1\-\s-1ESPS\s+1) has been changed so that the
+order is input file followed by output file (the general convention
+for ESPS).  This will break scripts that use the old versions.
+.np
+The meaning of the \fB-r\fP option in \fIwplay\fP, \fIplay\fP,
+\fIsplay\fP, and \fIsdcomp\fP has been changed.  It is now used as a
+range option (to be consistent with all other sampled data programs).
+The repeat function (old meaning of \fB-r\fP) is now handled by
+\fB-R\fP.
+.np
+The \fB-s\fP (bytest to skip) option for \fIbtosps\fP was changed to
+\fB-S\fP.  Also, all calls to \fIbtosps\fP must now supply a comment
+(for record keeping); this can be done in the parameter file or by
+using the \fB-c\fP or \fB-C\fP option.  
+.np
+In the interface to \fIupdate_waves_gen\fP (3\-\s-1ESPS\s+1), the
+parameters \fIstart\fP and \fIstep\fP were changed from INT to FLOAT.
+This will break programs that use \fIupdate_waves_gen\fP if they are
+recompiled under ESPS 4.0 without changing the call.  A simple change
+will suffice:  just cast the two arguments to FLOAT in the call; e.g.,
+.nf
+	int start_rec, step;
+	...
+	update_waves_gen(ihd, ohd, start_rec, step);
+
+should change to 
+
+	int start_rec, step;
+	...
+	update_waves_gen(ihd, ohd, (float) start_rec, (float) step);
+.fi
+.lp
+The input, output, and state arrays were changed from FLOAT to DOUBLE
+in \fIblock_filter\fP (3\-\s-1ESPS\s+1) and \fIinterp_filt\fP
+(3\-\s-1ESPS\s+1).  This will break any programs that use them; change
+the calling arguments to double and recompile.  
+.sh 1 "COMPUTING ARBITRARY EXPRESSIONS FROM FIELDS IN TWO FEA FILES"
+.lp
+The program \fIselect\fP (1\-\s-1ESPS\s+1) offers powerful facilities
+for computing expressions on fields within FEA records.  We are often
+asked about computing expressions that involve fields from more than
+one FEA file.  In many cases, the desired capability can be achieved
+by combining \fImergefea\fP (1\-\s-1ESPS\s+1) with \fIselect\fP.  The
+basic procedure is to use \fImergefea\fP to produce a single FEA file
+with fields from a variety of source files and then to run
+\fIselect\fP on the combined file.  Here's a small example: Suppose
+fea1 is a FEA file containing (among other things) a vector fld1 and a
+scalar field fld2.  And suppose fea2 contains a scalar field fld3.
+Then the following commands will compute the mean of fld1 and add it to
+the log of the square root of fld2 divided by the product of fld3
+times the first element of fld1:
+.nf
+.ft CW
+
+  %mergefea fea1 fea2 fea3
+  %select -e "mean(fld1) + log(sqrt(fld2/(fld3*fld1[0])))" fea3 > output
+
+.fi
+.ft LR
+The results are stored (in ASCII) in the file output.  
+.sh 1 "Known Problems"
+.np
+On Convex systems, with our X programs (and perhaps others?), it is
+necessary to use the Internet address of the X server when setting the
+\fBDISPLAY\fR environment variable.   For example, instead of:
+.nf
+.ft CW
+% setenv DISPLAY fred:0.0
+.fi
+.ft R
+.br
+It is necessary to use the command:
+.nf
+.ft CW
+% setenv DISPLAY 134.45.232.8:0.0
+.fi
+.ft R
+.br
+Where 134.45.232.8 is the Internet address of host fred.
+.np
+On Convex systems, depending on the X server, the \fIxmcd\fR program
+might fail and result in a white plot on a white background.
+(\fIxmcd\fR is called by the plot programs to do the X Window drawing.)
+There is an alternate binary, \fI/usr/esps/bin/xmcd.old\fR, that should
+be renamed to \fIxmcd\fR if the standard \fIxmcd\fR fails.   
+.np
+On Masscomp/Concurrent systems it may be necessary to set the \fIDISPLAY\fR
+environment variable to the full hostname of your system, rather than
+the generic unix:0.0.   For example, if the network hostname of your
+system is fred, then you may have to:
+.nf
+.ft CW
+% setenv DISPLAY fred:0.0
+.fi
+.ft R
+.np
+On systems not running a network, in order the for the license server
+software to operate you need to set the \fBELM_HOST\fR variable to
+\fIlocalhost\fR, instead of the network hostname.   Also in this case,
+you may need to set the X Window \fBDISPLAY\fR variable to localhost
+also (\fIe.g.\fR localhost:0.0).

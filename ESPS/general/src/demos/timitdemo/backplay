@@ -1,0 +1,14 @@
+#!/bin/sh  
+# @(#)backplay	1.4 1/29/92 ERL
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+
+# we have to copy it (ugh) because right now ereverse is dumb and 
+# can't deal with non-NATIVE files (given byte-order, it thinks it 
+# is from a DECStation
+
+rm -f $demo_temp/timit.wavf
+
+copysd files/$1.wav - | setmax - $demo_temp/timit.wavf
+ereverse $demo_temp/timit.wavf - | play -q -
+

@@ -1,0 +1,55 @@
+columns 6 font -misc-*-bold-*-*-*-15-*-*-*-*-*-*-*
+ sil  sil
+  aa   aa
+  ae   ae
+  ah   ah
+  ao   ao
+  aw   aw
+  ax   ax
+ axr  axr
+  ay   ay
+   b    b
+  ch   ch
+   d    d
+  dh   dh
+  eh   eh
+  el   el
+  en   en
+  er   er
+  ey   ey
+   f    f
+   g    g
+  hh   hh
+  ih   ih
+  ix   ix
+  iy   iy
+  jh   jh
+   k    k
+   l    l
+   m    m
+   n    n
+  ng   ng
+  ow   ow
+  oy   oy
+   p    p
+   r    r
+   s    s
+  sh   sh
+   t    t
+  th   th
+  uh   uh
+  uw   uw
+   v    v
+   w    w
+   y    y
+   z    z
+  zh   zh
+  dx   dx
+  nx   nx
+UNLOAD *UNLOAD*
+INSERT *INSERT*
+DELETE! *DEL*
+REPLACE *REPLACE*
+MOVE *MOVE*
+EDIT *EDIT*
+PRINT *PRINT*

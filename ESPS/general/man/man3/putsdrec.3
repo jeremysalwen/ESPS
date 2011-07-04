@@ -1,0 +1,103 @@
+.\" Copyright (c) 1987, 1989 Entropic Speech, Inc. All rights reserved.
+.\" @(#)putsdrec.3	1.3 21 Apr 1997 ESI
+.TH PUT_SD_REC 3\-ESPSu 21 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+put_sd_recd \- put data onto an ESPS sampled-data file from DOUBLE data
+put_sd_recf \- put data onto an ESPS sampled-data file from FLOAT data
+put_sd_recs \- put data onto an ESPS sampled-data file from SHORT data
+.SH SYNOPSIS
+.ft B
+#include <esps/esps.h>
+.sp
+.br
+void
+.br
+put_sd_recd(dbuf, nsmpls, hd, file)
+.br
+double *dbuf;
+.br
+int nsmpls;
+.br
+struct header *hd;
+.br
+FILE *file;
+.sp
+.br
+void
+.br
+put_sd_recf(fbuf, nsmpls, hd, file)
+.br
+float *fbuf;
+.br
+int nsmpls;
+.br
+struct header *hd;
+.br
+FILE *file;
+.sp
+.br
+void
+.br
+put_sd_recs(sbuf, nsmpls, hd, file)
+.br
+short *sbuf;
+.br
+int nsmpls;
+.br
+struct header *hd;
+.br
+FILE *file;
+.ft
+.SH DESCRIPTION
+The
+.I put_sd_rec
+functions
+write \fInsmpls\fR ESPS sampled-data records 
+pointed to by \fIdbuf\fR, \fIfbuf\fR, or \fIsbuf\fR
+onto the stream \fIfile\fR,
+which should be an open ESPS SD file or
+.I single-channel
+FEA_SD file.
+The header must be written out to the file before calling this function.
+The ESPS file header pointed to by \fIhd\fR is consulted
+for the type representation of the data in the file, and the data is
+converted if necessary.
+The type information must be set in the header before calling this function;
+see \fIset_sd_type\fR(3\-ESPSu) for SD files and
+.IR init_feasd_hd (3-ESPSu)
+for FEA_SD files.
+.PP
+These functions were originally written for use with the SD file type,
+which is being replaced with FEA_SD.
+Limited FEA_SD support is provided in these functions
+to help in converting existing programs
+from using SD files to using FEA_SD files.
+More complete FEA_SD support is provided by
+.IR put_feasd_recs (3-ESPSu),
+which should be used in all new programs.
+.SH EXAMPLE
+double data[100];			/* room for 100 samples */
+.br
+(void) put_sd_recd(data, 100, hd, file);/* write them out */
+.br
+.SH DIAGNOSTICS
+If \fIhd\fR does not point to the header
+of an SD or single-channel FEA_SD file,
+then an error message is printed on
+.I stderr,
+and the program is terminated with exit status 1.
+In an SD file, if the type of the data in the output file hasn't been set yet,
+then an error message is printed on
+.I stderr,
+and the program terminates with exit status 1.
+A file error will cause a message to be printed on stderr,
+and the program will terminate with exit status 1.
+.SH SEE ALSO
+ESPS(5\-ESPS), SD(5\-ESPS), FEA_SD(5\-ESPS),
+.br
+set_sd_type(3\-ESPSu), init_feasd_hd(3\-ESPSu), put_feasd_recs(3\-ESPSu), 
+get_feasd_recs(3\-ESPS), get_feasd_orecs(3\-ESPS)
+.SH AUTHOR
+Alan Parker

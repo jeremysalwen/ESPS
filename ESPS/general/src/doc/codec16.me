@@ -1,0 +1,29 @@
+.lo
+.ce 2
+.b
+Using the AT&T DSP32 Board D/A and A/D at 16Khz
+Document Version: 1.1 6/7/89
+.pp
+Normally, the D/A and A/D on the AT&T DSP32 board runs at 12Khz and
+other sample rates are provided by using the DSP to do a rate conversion.
+This is the case when jumper J5 on the board is set to (5,6) and the
+\fBFREQ\fR part of the environment variable \fBDSPDEV\fR is set to 3072 for a board
+with a 24.576Mhz oscillator or 2048 for a board with a 16.384Mhz
+oscillator.   Most recent boards have the 24.576Mhz oscillator.  
+.pp
+To run the board A/D and D/A at 16Khz do the following:
+.np
+Change J5 on the board from (5,6) to (3,4).  This will clock the chip at
+4096Khz, for a 16Khz sample rate.
+.np
+Edit \fI/etc/dspinfo\fR and change the value of FREQ= from 3072 to
+4096.  If you do not have \fI/etc/dspinfo\fR, copy it from
+\fI/usr/esps/lib/waves\fR.
+.np
+Define the environment variable \fBCODEC16\fR.  It can have any value.
+Something like: \fIsetenv CODEC16 1\fR is fine.
+.np
+Note that this environment variable must be defined for each user that
+might use the board so it must go in their .login or .cshrc files.  It
+would have been better to add this to the \fBDSPDEV\fR variable in
+\fI/etc/dspinfo\fR and we'll change it to that in the next version.

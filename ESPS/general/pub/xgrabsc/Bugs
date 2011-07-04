@@ -1,0 +1,33 @@
+/*========================================================================
+*
+* Name - Bugs
+*
+* Version:	1.1
+*
+* ccsid:	@(#)Bugs	1.1 - 9/18/90 16:16:36
+* from: 	ccs/s.Bugs
+* date: 	7/26/91 13:22:26
+*
+* Description: Known bugs and problems.  This list does not include
+*              bugs that have been fixed.  See the patch set README
+*              files for descriptions of the bugs they fix.
+*
+*========================================================================*/
+
+1) While xgrabsc can create puzzle picture files from monochrome screens, the
+   puzzle program will not display pictures with "-picture" on monochrome
+   systems. This is not a "bug" in xgrabsc, but is a "confusing feature".
+
+2) If you run xgrabsc from a Twm menu, be sure to end your exec command with
+   "&". The program may not be able to grab the pointer or server unless you
+   do this.  This will likely happen with any window manager, but has been
+   reported onlyfor Twm.
+
+3) The xwdtoppm program appears to have problems reading xgrabsc XWD output.  I've
+   looked into this problem a bit but have no quick solution for all platforms and
+   compilers.  If "xwd | xwdtoppm | ppmtoxwd | xwud" works on your machine, you
+   may try the simple fix of correcting the color-reading loop in xwdtoppm.c to
+   terminate on reaching "ncolors" instead of "colormap-entries".  You should
+   be able to use xgrabsc output once this is done.  The ppm bugs have been
+   reported to the owner of that project.
+

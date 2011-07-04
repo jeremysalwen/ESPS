@@ -1,0 +1,196 @@
+#!/bin/sh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)clip.test	1.1	7/31/91	ERL
+# 
+# Written by:  Rodney Johnson
+# Checked by:
+# Revised by:
+# 
+# Test script for clip.
+# 
+
+echo "Testing clip."
+echo "There should be no diff output."
+
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+
+# MAKE TEST FILE
+echo "making test file"
+
+testsd -tSHORT -p32 tst.sd
+
+# RUN clip ON FILE
+echo "running clip on file"
+
+./clip -c-200:200 -C500 -m-450:450 tst.sd tstout.sd
+
+# MAKE COMPARISON FILE
+echo "making comparison file"
+
+cat > tstcmp.asc << aArDvArK
+File: tstout.sd
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 32
+Data is not tagged.
+comment text:
+ ./clip -c-200:200 -C500 -m-450:450 tst.sd tstout.sd 
+ function field samples_CLIP added by clip
+Source files: tst.sd
+There is no reference header.
+
+Record 1: 
+samples:  0 
+samples_CLIP:  500 
+
+Record 2: 
+samples:  191 
+samples_CLIP:  500 
+
+Record 3: 
+samples:  354 
+samples_CLIP:  354 
+
+Record 4: 
+samples:  462 
+samples_CLIP:  450 
+
+Record 5: 
+samples:  500 
+samples_CLIP:  450 
+
+Record 6: 
+samples:  462 
+samples_CLIP:  450 
+
+Record 7: 
+samples:  354 
+samples_CLIP:  354 
+
+Record 8: 
+samples:  191 
+samples_CLIP:  500 
+
+Record 9: 
+samples:  0 
+samples_CLIP:  500 
+
+Record 10: 
+samples:  -191 
+samples_CLIP:  500 
+
+Record 11: 
+samples:  -354 
+samples_CLIP:  -354 
+
+Record 12: 
+samples:  -462 
+samples_CLIP:  -450 
+
+Record 13: 
+samples:  -500 
+samples_CLIP:  -450 
+
+Record 14: 
+samples:  -462 
+samples_CLIP:  -450 
+
+Record 15: 
+samples:  -354 
+samples_CLIP:  -354 
+
+Record 16: 
+samples:  -191 
+samples_CLIP:  500 
+
+Record 17: 
+samples:  0 
+samples_CLIP:  500 
+
+Record 18: 
+samples:  191 
+samples_CLIP:  500 
+
+Record 19: 
+samples:  354 
+samples_CLIP:  354 
+
+Record 20: 
+samples:  462 
+samples_CLIP:  450 
+
+Record 21: 
+samples:  500 
+samples_CLIP:  450 
+
+Record 22: 
+samples:  462 
+samples_CLIP:  450 
+
+Record 23: 
+samples:  354 
+samples_CLIP:  354 
+
+Record 24: 
+samples:  191 
+samples_CLIP:  500 
+
+Record 25: 
+samples:  0 
+samples_CLIP:  500 
+
+Record 26: 
+samples:  -191 
+samples_CLIP:  500 
+
+Record 27: 
+samples:  -354 
+samples_CLIP:  -354 
+
+Record 28: 
+samples:  -462 
+samples_CLIP:  -450 
+
+Record 29: 
+samples:  -500 
+samples_CLIP:  -450 
+
+Record 30: 
+samples:  -462 
+samples_CLIP:  -450 
+
+Record 31: 
+samples:  -354 
+samples_CLIP:  -354 
+
+Record 32: 
+samples:  -191 
+samples_CLIP:  500 
+
+aArDvArK
+
+#CHECK OUTPUT
+echo "diffing output with comparison file"
+
+psps tstout.sd \
+    | egrep -v \
+	'^File header date:|^Produced by:|^Hostname:path:|^Machine type:' \
+    | diff tstcmp.asc -
+
+# CLEAN UP
+
+rm tst.sd tstout.sd tstcmp.asc
+
+echo "Done testing clip."

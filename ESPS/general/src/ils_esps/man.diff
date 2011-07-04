@@ -1,0 +1,151 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)ils_esps.1	3.2 2/8/90 ESI
+.TH ILS_ESPS 1\-ESPS 2/8/90
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+ils_esps \- convert an ILS sampled data file to an ESPS sampled data file.
+.SH SYNOPSIS
+.B ils_esps
+[
+.BI \-x " debug_level"
+]
+[
+.BI \-p " range"
+]
+[
+.BI \-r " range"
+]
+[
+.BI \-g " scale"
+]
+[
+.BI \-h " size"
+]
+[
+.BI \-d " type"
+]
+[
+.BI \-q " equip"
+]
+.I in_file out_file
+.SH DESCRIPTION
+.PP
+The program
+.I ils_esps
+takes the ILS sampled data file
+.I in_file
+and produces the ESPS  sampled data file
+.I out_file 
+(FEA_SD).
+The data is scaled by the factor 
+.I scale
+and printed to the output file in the data format specified by
+.I type.
+If
+.I in_file
+is "\-" then the standard input is read.  If
+.I out_file
+is "\-" or left off, the program writes to standard output.
+.PP
+Prior to any processing, the program checks the ILS file type code
+to determine whether the file was produced on another machine that
+requires byte swapping.
+The byte swapping is performed on the file during processing if
+necessary.
+If the appropriate file type code is not produced
+by swapping the type code in the ILS header, an error message is printed to
+.I stderr
+and the program exits.
+\fIIls_esps\fR assumes that the header data is written in long (32 bit) 
+format and that the data is written in short (16 bit) format.
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-x " debug_level"
+A value of 0 (the default value) will cause
+.I ils_esps
+to do its work silently, unless there is an error.
+A nonzero value will cause various parameters to be printed out
+during program initialization.
+.br
+.TP
+.BI \-r " range"
+.BI \-p " range"
+Selects a subrange of points to be converted, where the start and end
+points are defined with respect to the original input ILS file.
+The range is specified using the format 
+.I start\-end
+or
+.IR start:end .
+Either 
+.I start
+or 
+.I end
+may be omitted, in which case the omitted parameter defaults respectively
+to the start or end of the input ILS file.  
+The form 
+.I start:+number
+and
+.I start-+number
+are supported also. They are both equivalent to
+.I start:start + number.
+If the range runs past the end of the file, the program prints
+an error message to the standard error and exits.
+\fBp\fP and \fBr\fP are synonyms.
+.TP
+.BI \-g " scale"
+The integers in the ILS file are multiplied by
+.I scale
+before printing to the output file.
+The default value for 
+.I scale
+is 1.0.
+.br
+.TP
+.BI \-h " size" " \fR[128]\fP"
+Specifies the number of items (longs) in the ILS header.
+.br
+.TP
+.BI \-d " type"
+The data is printed to the ESPS sampled data file in
+.I type
+format.  
+Choices for 
+.I type
+are 'd' for doubles, 'f' for floats, 'l' for longs, and 's' for shorts.
+The default for 
+.I type
+is 'f'.
+.br
+.TP
+.BI \-q " equip"
+The specified equipment code is entered in the header of the output file.
+Choices for the character string
+.I equip
+are "ef12m", "ad12f", "dsc", "lpa11", and "none".  The default for
+.I equip
+is "dsc".
+.SH ESPS PARAMETERS
+The parameter file is not accessed.
+.SH ESPS COMMON
+The Common file is not accessed.
+.SH ESPS HEADER
+A new header is created for the output file.
+The program stores the source file name in the ESPS header
+but does not store a source file header.
+Other appropriate header items such as
+.I src_sf,
+.I sf,
+and
+.I equip
+are also stored in the ESPS header.
+.SH WARNINGS
+Mu law compressed data is not handled by this program.
+ILS files with 16 bit header items are not handled by this
+program.
+.SH BUGS
+.PP
+None known.
+.SH AUTHOR
+Brian Sublett; modified for ESPS by David Burton.
+

@@ -1,0 +1,5 @@
+"play" 			play_sound
+"play backwards" 	backplay
+"plot with spectrogram"	dosound
+
+# @(#)sounds.BM	1.1 7/25/91 ERL

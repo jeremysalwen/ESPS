@@ -1,0 +1,56 @@
+genplot.c:
+
+genplot.c
+==============
+(1623)  warning: main() returns random value to invocation environment
+warning: possible pointer alignment problem
+    (260)  	    (437)  	    (491)  
+    (817)  	    (826)  	    (1668)  
+    (1676)  	    (1684)  	    (1692)  
+init.c:
+chrs.c:
+draw.c:
+gpsplot.c:
+tekplot.c:
+fearangesw.c:
+
+fearangesw.c
+==============
+warning: possible pointer alignment problem
+    (108)  	    (109)  	    (110)  
+
+
+==============
+name used but not defined
+    mkdir   	init.c(61)
+name defined but never used
+    greek   	chrs.c(155)
+value type declared inconsistently
+    exit   	llib-lc(49) :: gpsplot.c(83)
+    free   	llib-lc(353) :: fearangesw.c(163)
+function argument ( number ) used inconsistently
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(45)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(46)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(47)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(48)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(49)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(51)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(57)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(68)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(70)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(73)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(76)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(98)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(99)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(100)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(101)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(102)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(103)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(111)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(122)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(124)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(127)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(130)
+    _flsbuf( arg 1 )   	llib-lc(486) :: tekplot.c(131)
+function returns value which is always ignored
+    sprintf	    _flsbuf	

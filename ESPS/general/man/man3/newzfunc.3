@@ -1,0 +1,44 @@
+.\" Copyright (c) 1987, 1990 Entropic Speech, Inc.; All rights reserved
+.\"@(#)newzfunc.3	1.3 20 Mar 1990 ESI
+.TH NEW_ZFUNC 3\-ESPSu 20 Mar 1990
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+new_zfunc \- creates a new zfunc structure
+.SH SYNOPSIS
+.ft B
+#include <esps/esps.h>
+.br
+struct zfunc *
+.br
+new_zfunc (ns, ds, num, den)
+.br
+int	ns, ds;
+.br
+float	*num, *den;
+.ft
+.SH DESCRIPTION
+.I new_zfunc
+creates a new zfunc structure from dynamic memory. (The zfunc
+structure is defined in ESPS(5\-ESPS)).
+Memory is allocated to store \fIns\fP numerator coefficients and \fIds\fP 
+denominator coefficients of a filter transfer function.
+.SH EXAMPLE
+.if n .ta 33
+.if t .ta 3i
+.nf
+
+struct zfunc *z;
+float *num = { 1.0, 0.5 };
+float *den = { .78, -0.94, -0.32 };
+
+z = new_zfunc (2, 3, num, den);
+.fi
+.SH DIAGNOSTICS
+None.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.PP
+add_genzfunc(3\-ESPSu), get_genzfunc(3\-ESPSu), ESPS(5\-ESPS)
+.SH AUTHOR
+Man page by Ajaipal S. Virdy, Entropic Speech, Inc.

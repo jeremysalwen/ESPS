@@ -1,0 +1,107 @@
+#! /bin/sh
+#  @(#)Ptofeasd @(#)tofeasd.test	1.1 2/28/90 ESI";
+# test script for tofspec
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+echo "" 
+echo "Creating test data."
+echo "1 2 3 4 5 6 7 8 9 10" | addfea -c"test for tofeasd" -f test - t.fea
+echo "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20" | addfea -c"test for tofeasd" -f test2 -s2  - t.fea
+addgen -t double -v 200 -g record_freq -F t.fea
+addgen -t double -v 1.2 -g start_time -F t.fea
+cat > t1.psps <<aArDvArK1
+File: t1.fsd
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+File header date: Mon Feb 19 17:39:56 1990 , header version: 1.73
+Produced by: tofeasd, version: 1.1, of: 2/28/90, user: shore
+Hostname:path: epiwrl:/u2/shore/epi/src/tofeasd
+Machine type: Masscomp; file is in NATIVE format.
+Number of data records: 6
+Data is not tagged.
+comment text:
+ tofeasd -f test -r5:10 -R 100 t.fea t1.fsd 
+Source files: t.fea
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: FEA_SD, segment_labeled: NO, field_count: 1
+field_order: 0, indent: 0
+
+---Generic Part of Header---
+nan:  6 
+record_freq:  100 
+start:  5 
+start_time:  1.22 
+
+     1:      5.0000     6.0000     7.0000     8.0000     9.0000
+     6:     10.0000
+aArDvArK1
+
+cat > t2.psps <<aArDvArK2
+File: t2.fsd
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+File header date: Mon Feb 19 17:39:57 1990 , header version: 1.73
+Produced by: tofeasd, version: 1.1, of: 2/28/90, user: shore
+Hostname:path: epiwrl:/u2/shore/epi/src/tofeasd
+Machine type: Masscomp; file is in NATIVE format.
+Number of data records: 6
+Data is not tagged.
+comment text:
+ tofeasd -f test2 -r5:10 t.fea t2.fsd 
+Source files: t.fea
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: FEA_SD, segment_labeled: NO, field_count: 1
+field_order: 0, indent: 0
+
+---Generic Part of Header---
+nan:  6 
+record_freq:  200 
+start:  5 
+start_time:  1.22 
+
+Record 1: 
+samples:  
+  0:             9            10 
+
+Record 2: 
+samples:  
+  0:            11            12 
+
+Record 3: 
+samples:  
+  0:            13            14 
+
+Record 4: 
+samples:  
+  0:            15            16 
+
+Record 5: 
+samples:  
+  0:            17            18 
+
+Record 6: 
+samples:  
+  0:            19            20 
+
+aArDvArK2
+echo ""
+echo "Testing use of tofeasd for single channel FEA_SD."
+tofeasd -f test -r5:10 -R 100 t.fea t1.fsd
+echo "The following diff output should be trivial:"
+psps -l t1.fsd | diff - t1.psps
+echo ""
+echo "Testing use of tofeasd for multi-channel channel FEA_SD."
+tofeasd -f test2 -r5:10 t.fea t2.fsd
+echo "The following diff output should be trivial:"
+psps -l t2.fsd | diff - t2.psps
+#clean up
+rm t.fea *.fsd *.psps
+

@@ -1,0 +1,222 @@
+
+cross.c,44
+	static char *sccs_id 13,402
+cross(19,510
+
+downsample.c,173
+	static char *sccs_id 9,256
+#define PI 16,408
+Signal *downsample(19,508
+get_abs_maximum(96,2942
+dwnsamp(116,3323
+do_fir(164,4729
+lc_lin_fir(214,6398
+ratprx(248,7238
+
+dpform.c,397
+static char *sccs_id 24,700
+#define MAXCAN	45,1710
+static double MISSING 46,1781
+static double	*fre,56,2438
+		fnom[57,2458
+static int	maxp,61,2700
+		maxf,62,2751
+		ncan,63,2792
+		ncan,  domerge 63,2792
+static short **pc;65,2818
+set_nominal_freqs(71,2887
+Signal *dpform(83,3122
+get_fcand(361,12876
+static int candy(377,13264
+static int canbe(421,14741
+double get_stat_max(430,15044
+
+dpfund.c,1803
+static char *sccs_id 24,697
+#define MAXPEAKS	52,1835
+#define	MAXCANDS	53,1899
+int xpr=55,1970
+double CO_CAND 64,2267
+double PEAK_WT 66,2370
+double LAG_WT 68,2431
+double FREQ_WT 73,2632
+double F_THRESH 75,2712
+Signal *dpfund(81,2980
+get_cand(462,16977
+double is_voiced(503,18199
+static	double	invuv[515,18643
+static	double	vmean[523,18932
+static	double	uvmean[529,19044
+static double	 uvdet 534,19116
+  double dv,538,19226
+  double dv, du,538,19226
+  double dv, du, fe[538,19226
+  double dv, du, fe[6], uvt[538,19226
+  double dv, du, fe[6], uvt[4], vt[538,19226
+  double dv, du, fe[6], uvt[4], vt[4], xu[538,19226
+  double dv, du, fe[6], uvt[4], vt[4], xu[4], xv[538,19226
+  double dv, du, fe[6], uvt[4], vt[4], xu[4], xv[4], *fpv,538,19226
+  double dv, du, fe[6], uvt[4], vt[4], xu[4], xv[4], *fpv, *fpu,538,19226
+  double dv, du, fe[6], uvt[4], vt[4], xu[4], xv[4], *fpv, *fpu, gv,538,19226
+  double dv, du, fe[6], uvt[4], vt[4], xu[4], xv[4], *fpv, *fpu, gv, guv,538,19226
+  double dv, du, fe[6], uvt[4], vt[4], xu[4], xv[4], *fpv, *fpu, gv, guv, pv,538,19226
+        coefv,539,19304
+        coefv, coefuv,539,19304
+        coefv, coefuv, tpisq,539,19304
+        coefv, coefuv, tpisq, tmp;539,19304
+  int	k,540,19339
+  int	k, l,540,19339
+  int	k, l, nfeats;540,19339
+  tpisq 542,19360
+  coefv 543,19411
+  coefuv 544,19449
+  nfeats 545,19488
+  fe[547,19505
+  fe[548,19532
+  fe[549,19598
+  fe[550,19621
+  for(k=0; k < nfeats;552,19648
+    vt[553,19678
+    uvt[554,19708
+  for(k=0, fpv = invvo, fpu = invuv; k < nfeats;557,19745
+    for(l=0, xv[k]=0.0, xu[k]=0.0 ; l < nfeats;558,19801
+      xv[559,19855
+      xu[560,19888
+  for(dv = 0.0, du = 0.0, k=0; k < nfeats;563,19932
+  gv 567,20037
+  guv 568,20069
+  else pv 570,20147
+find_rmsmax(581,20323
+
+foo.c,558
+static char *sccs_id 21,678
+#define VERSION 23,743
+#define DATE 24,766
+#define SYNTAX 38,985
+int debug_level 48,1386
+int debug 49,1418
+int w_verbose 50,1433
+long max_buff_bytes 52,1453
+char *new_ext(62,1779
+main(88,2291
+free_dp_cp(434,12794
+*highpass(457,13191
+#define LCSIZ 472,13423
+formant(511,15027
+double integerize(599,17967
+char *localloc(609,18110
+notify(624,18404
+Round(632,18522
+e_make_sd_hdr(639,18635
+e_make_fea_hdr(658,19250
+char *new_sig_name(680,19877
+put_signal_to_path(696,20186
+Signal *get_signal_from_path(712,20442
+
+formant.c,559
+static char *sccs_id 21,678
+#define VERSION 23,744
+#define DATE 24,767
+#define SYNTAX 41,1027
+int debug_level 51,1428
+int debug 52,1460
+int w_verbose 53,1475
+long max_buff_bytes 55,1495
+char *new_ext(67,1839
+main(93,2359
+free_dp_cp(442,12958
+*highpass(465,13355
+#define LCSIZ 480,13587
+formant(519,15191
+double integerize(607,18131
+char *localloc(617,18274
+notify(632,18568
+Round(640,18686
+e_make_sd_hdr(647,18799
+e_make_fea_hdr(666,19414
+char *new_sig_name(688,20041
+put_signal_to_path(704,20350
+Signal *get_signal_from_path(720,20606
+
+highpass.c,127
+	static char *sccs_id 11,277
+#define PI 17,367
+main(20,390
+highpass(59,1271
+#define LCSIZ 75,1530
+char *new_ext(107,2655
+
+lbpoly.c,213
+	static char *sccs_id 8,214
+#define MAX_ITS	14,324
+#define MAX_TRYS	15,390
+#define MAX_ERR	16,455
+#define MAXORD	17,520
+#define TRUE	18,580
+#define FALSE	19,596
+quad(22,615
+lbpoly(55,1240
+rooti[151,4227
+
+lpc_poles.c,143
+static char *sccs_id 22,703
+#define MAXORDER 32,911
+Signal *lpc_poles(45,1176
+double frand(155,5366
+#define NPM	162,5574
+lpcbsa(164,5611
+
+lpcfloat.c,374
+	static char *sccs_id 11,176
+#define MAXORDER	18,307
+#define FALSE 19,363
+#define TRUE 20,379
+lgsol(23,396
+window(85,1864
+rwindow(106,2333
+cwindow(126,2832
+hwindow(161,3834
+autoc(194,4800
+k_to_a 228,5634
+durbin 250,5977
+a_to_aca 284,6636
+double itakura 310,7184
+lpc(329,7732
+covar(373,9029
+covar2(479,11553
+log_mag(589,14127
+fft 610,14587
+main(677,15972
+
+pole_methods.c,252
+static char *sccs_id 15,450
+write_poles(27,699
+#define A_BUF_SIZE 72,1965
+put_ascii_poles(75,2065
+put_binary_poles(128,3741
+get_ascii_poles(189,5575
+get_binary_poles(291,8483
+read_poles(398,11395
+free_poles(442,12772
+free_pole_data(460,13086
+
+theftable.c,117
+static char *theftable_sccs 2,1
+ int fft_ftablesize 3,71
+static float	fsine[8,170
+static float	fcosine[526,43797
+
+thetable.c,114
+	static char *sccs_id 2,13
+static int	tablesize 5,85
+static double	sine[10,185
+static double	cosine[528,43812
+
+xversion.c,169
+static char *sccs_id 23,768
+char	*ProgName 28,878
+char	*Version 29,905
+char	*Date 30,930
+static char    *VersionFile 32,960
+set_pvd(35,1010
+check_version(49,1315

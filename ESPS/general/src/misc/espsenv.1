@@ -1,0 +1,229 @@
+.\" Copyright (c) 1986-1990 Entropic Speech Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)espsenv.1	1.19 20 Aug 1997 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH ESPSENV 1\-ESPS 20 Aug 1997
+.SH NAME
+espsenv - print values of ESPS environmental variables
+.SH SYNOPSIS
+.B espsenv
+.SH DESCRIPTION
+.PP
+.I Espsenv
+prints to standard output the values for a number of environment
+variables used by ESPS and \fIwaves+\fR.  The file \fIEenv.csh\fP in
+$ESPS_BASE/lib contains \fIcsh\fP commands to set all these variables
+to their default values.  Many users find it convenient to copy this
+file to their $HOME directory and insert a "source Eenv" command into
+their .login file.  An equivalent \fIsh\fP version is contained in
+$ESPS_BASE/lib/Eenv.sh. ($ESPS_BASE represents the base of the
+installed ESPS directory tree, and can be determined by running
+\fIget_esps_base\fP (1\-\s-1ESPS\s+1)).  
+.PP
+A description of the meanings and possible values of the environment
+variables follows.  Note that the various path environment variables
+can themselves have embedded environment variables (preceeded by the
+symbol $).  These environment variables are expanded by
+\fIfind_esps_file\fP (3\-\s-1ESPS\s+1).  If "$ESPS_BASE" is embedded
+within such an environment variable definition but the environment
+variable ESPS_BASE itself is not defined, then \fIfind_esps_file\fP
+expands it to a compiled-in default (/usr/esps).  
+.IP ESPS_VERBOSE
+This variable controls the amount of feedback the user is provided about the
+origin of parameters used by the programs.  It has 3 significant
+settings: 0, 1, and 2.  If it is equal to 0, no feedback is provided.
+If it is equal to 1, programs report the value of any parameters taken
+from ESPS common.  If it is 2 or greater, programs report the values
+of parameters taken from ESPS common, the name of the actual parameter
+file used (if any), and the values of parameters taken from the
+parameter file.  If ESPS_VERBOSE is not set, a value of 2 is assumed.
+Note that parameter file selection is affected by ESPS_PARAMS_PATH.
+.IP USE_ESPS_COMMON
+This controls whether ESPS common is processed by programs. If set to
+"off", common is not read by ESPS programs; otherwise, common is read
+when appropriate.  If this variable is undefined, a value of "YES" is
+assumed.  For a complete description of ESPS parameter and Common file
+processing, see \fIread_params\fP (3\-\s-1ESPS\s+1).  For historical
+reasons, Common processing is enabled by default (i.e., unless
+USE_ESPS_COMMON is defined and set to "off").  However, many users
+find it advisable to disable Common.  This makes ESPS usage 
+somewhat less error-prone.  Also, many programs will run faster if 
+Common is disabled.  
+.IP ESPSCOM
+This specifies the name of the file used for ESPS Common.  If a full
+path is not given, the path is interpreted relative to the directory
+from which any given ESPS program is called.  If ESPSCOM is not
+defined, the default is ".espscom" in the user's home directory.  For
+a complete description of parameter and common processing, see
+\fIgetparam\fP (1\-\s-1ESPS\s+1).
+.IP FIELD_ORDER
+This controls whether the data records are written in data type order or
+field order (see write_header(3\-ESPS) for more details).  If it is
+set to "off" or is undefined, the data records are written in data
+type order; otherwise, the data records are written in field order.
+.IP ESPS_EDR
+This variable determines the data representation format of ESPS files
+written by ESPS programs.   If this variable is not defined or has a
+value other than \fIon\fR the default action is taken.   The default is
+to write ESPS files in the host machine's native data representation
+(this includes such things as byte order and floating point formats).
+ESPS files have a field in the header that indicates whether the file is
+in the machine's native format (NATIVE) or in Entropic's external data
+representation (EDR).   All ESPS implementations on all supported
+machines can read files made on any other implementation if they are in
+EDR format.   In addition all implementations can read files in their
+host machine's native format.   Some implementations can also read files
+in other machine's native format, but this will not generally be the
+case.   If files must be portable then they should be written in EDR
+format.  But if not, then NATIVE mode should be used, since data
+conversions will not be required and programs will run faster.
+.sp
+In summary, this variable should be set \fIon\fR to write files than can
+be read on any valid ESPS implementation.  It should be undefined or set
+to \fIoff\fR for maximum efficiency on the local machine.
+.IP ARIEL_16
+On Sun systems that have the AT&T ("Surfboard") DSP32C installed 
+with an Ariel ProPort option for analog I/O, setting this environment
+variable indicates to the software that a 16 Mhz crystal is installed
+(rather than the standard 24 MHz. crystal).  
+.IP ARIELS32C_BIN_PATH
+For systems with an Ariel S-32C card, this is the location of the 
+directory containing DSP binaries.  Use of this variable is not
+necessary if programs are installed in standard places.  
+.IP CODEC16
+On Sun systems that have the AT&T ("Fab 2") DSP32 board installed and
+our driver software, setting this variable to any value results in the
+on-board codec chip running at 16,000 samples/second. By default, the
+codec chip runs at 12,000 samples/second.
+.IP DSPSPEC
+For systems with an Ariel S-32C card or Ariel ProPort (analog I/O),
+this environment variable should be defined.  Normally, it should have
+the value "DEVICE=/dev/s32c0,PATH=$ESPS_BASE/s32cbin".
+.IP DSP32_BIN_PATH
+For systems with an AT&T FAB2 board, this is the location of the 
+directory containing DSP binaries.  Use of this variable is not
+necessary if programs are installed in standard places.  
+.IP DSP32C_BIN_PATH
+For systems with a Heurikon or AT&T SURF board, this is the location
+of the directory containing DSP binaries.  Use of this variable is not
+necessary if programs are installed in standard places.
+.IP DEF_HEADER
+If this variable is defined, it is assumed to be the path to a file
+containing an ESPS header, which will then be used as a default header
+by \fIread_header\fP (3\-\s-1ESPS\s+1) when reading any non-ESPS or
+non-SIGnal file.  In effect, when any ESPS program (including
+\fP(x)waves\fP+) tries to read a non-ESPS file, the file is treated as
+an ESPS file with the header DEF_HEADER.  Note that, if DEF_HEADER is
+defined, programs will no longer report "non-ESPS file" and exit,
+since they will stick the header in front of any non-ESPS input file.
+The exception for AT&T format SIGnal files (DEF_HEADER is not used for
+them) is made so that \fI(x)waves+\fP continues to read them as SIGnal
+files.
+.IP ELM_HOST
+This variable must be set to the name of the host running the Entropic
+license manager daemon.   
+.IP ELMTIMEOUT
+This variable specifies the time in seconds that the Entropic software
+will wait for a response from the license daemon, before determining
+that it is down.   If the variable is undefined the default timeout
+period is 10 seconds.   You may need to adjust this depending on your
+network environment (a very large and busy network might require a
+longer timeout period).
+.IP ELMRETRIES
+This variable specifies the number of times that an ESPS program
+tries to contact the license manager before giving up. The default
+is 2.  Increase for a heavily
+loaded network, if problems occur.
+.IP ESPS_TEMP_PATH
+This can be set to the directory that you want programs to use for
+temporary files.  Not all programs currenlty pay attention to
+ESPS_TEMP_PATH, but over time they will be modified to do so.
+.IP ESPS_MENU_PATH
+This is the path used by \fImbuttons\fP (1\-\s-1ESPS\s+1) and 
+\fIfbuttons\fP (1\-\s-1ESPS\s+1) to find \fIolwm\fP-format 
+menu files.  If ESPS_MENU_PATH is not defined, the default 
+path used is ".:$ESPS_BASE/lib/menus".  
+.IP ESPS_PARAMS_PATH 
+This is the path used by find ESPS parameter files specified by the
+standard ESPS \fB-P\fP option.  If ESPS_PARAMS_PATH is not defined,
+the default path used is ".:$ESPS_BASE/lib/params".  
+.IP ESPS_FILTERS_PATH 
+This is the path used by certain programs and scripts to 
+locate standard ESPS filter files.  If ESPS_FILTERS_PATH is 
+not defined, the default path used is ".:$ESPS_BASE/lib/filters"
+.IP ESPS_LIB_PATH
+This is the path used by certain programs and scripts to find 
+standard ESPS library files.  If ESPS_LIB_PATH is not defined, 
+the dfault path is "$ESPS_BASE/lib"
+.IP ESPS_INPUT_PATH 
+This is the path used by certain programs and scripts to find 
+certain standard ESPS input files.  If ESPS_INPUT_PATH is not 
+defined, the default path used is ".:$ESPS_BASE/lib/files".  
+.IP LSISC30_BIN_PATH
+For systems with an LSI-SC30 board, this is the location of the 
+directory containing DSP binaries.  Use of this variable is not
+necessary if programs are installed in standard places.  
+.IP WAVES_INPUT_PATH 
+This is the path used by \fIwaves\fP+ and \fIxwaves\fP+ to find all
+input signal files, label files, and labelmenu files.  If
+WAVES_INPUT_PATH is not defined, the default path used is
+".:$ESPS_BASE/lib/waves/files".  
+.IP WAVES_LIB_PATH 
+This is the path used by \fIwaves\fP+ and \fIxwaves\fP+ to find 
+certain library files.  If WAVES_LIB_PATH is not defined, the default
+path used is "$ESPS_BASE/lib/waves".  
+.IP WAVES_MENU_PATH 
+This is the path used by \fIxwaves\fP+ to find \fIolwm\fP-format menu
+files used with the \fIxwaves\fP+ command \fImake_panel\fP.  If
+WAVES_MENU_PATH is not defined, the default path used is
+".:$ESPS_BASE/lib/waves/menus". 
+.IP WAVES_COMMAND_PATH 
+This is the path used by \fIwaves\fP+ and \fIxwaves\fP+ to find 
+command files.  If WAVES_COMMAND_PATH is not defined, the default 
+path used is ".:$ESPS_BASE/lib/waves/commands". 
+.IP WAVES_COLORMAP_PATH 
+This is the path used by \fIwaves\fP+ and \fIxwaves\fP+ to find 
+colormaps.  If WAVES_COLORMAP_PATH is not defined, the default path
+used is ".:$ESPS_BASE/lib/waves/colormaps".
+.IP WAVES_PROFILE_PATH 
+This is the path used by \fIwaves\fP+ and \fIxwaves\fP+ to find 
+the startup profile.  IF WAVES_PROFILE_PATH is not defined, the 
+default path used is "$HOME:$ESPS_BASE/lib/waves". 
+.IP BBOX_QUIT_BUTTON 
+If this variable is defined, it forces a "QUIT"
+button to be included at the top of every button panel created via
+exv_bbox (3-ESPS).  This includes button panels created by
+\fImbuttons\fP (1\-\s-1ESPS\s+1), \fIfbuttons\fP (1\-\s-1ESPS\s+1),
+and the \fIxwaves\fP+ command \fImake_panel\fP.  The variable has no
+effect if a quit button was specified directly using the \fB-q\fP
+option to \fImbuttons\fP or the \fIquit_button\fP keyword of the
+\fIxwaves\fP+ command \fImake_panel\fP.
+.SH OPTIONS
+.PP
+There are none.
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.SH ESPS COMMON
+.PP
+The common file is not used.
+.SH BUGS
+None known.
+.SH EXPECTED CHANGES
+.PP
+More variables will be added.
+.PP
+.SH "SEE ALSO"
+.PP
+\fIgetparam\fP (1\-\s-1ESPS\s+1),\fIread_header\fP (3\-\s-1ESPS\s+1),
+.br
+\fIwrite_header\fP(3\-\s-1ESPS\s+1), \fIe_temp_name\fP(3\-\s-1ESPS\s+1),
+.br
+\fIfind_esps_file\fP (3\-\s-1ESPS\s+1),\fIfind_esps_file\fP(1\-\s-1ESPS\s+1),
+.br
+\fIget_esps_base\fP (1\-\s-1ESPS\s+1)
+.SH AUTHOR
+.PP
+David Burton, John Shore
+
+

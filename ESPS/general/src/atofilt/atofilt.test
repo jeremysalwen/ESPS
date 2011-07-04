@@ -1,0 +1,29 @@
+#!/bin/sh
+#@(#)atofilt.test	3.3	7/28/89 ESI
+ESPSCOM=./espscom
+export ESPSCOM
+echo Make numerator coefficient file: num_coeffs
+cat > num_coeffs << EOD
+3 1 2 3
+EOD
+echo " "
+echo Make denominator coefficient file: den_coeffs
+cat > den_coeffs << EOD
+3
+3
+2
+1
+EOD
+echo " "
+echo Make FILT file
+echo " "
+echo "atofilt -ctest num_coeffs den_coeffs test.filt"
+atofilt -ctest num_coeffs den_coeffs test.filt
+echo " "
+echo Numerator coefficients should be 1, 2, 3
+echo Denominator coefficients should be 3, 2, 1
+echo " "
+echo "psps -H test.filt"
+psps -H test.filt
+
+rm -f num_coeffs den coeffs

@@ -1,0 +1,245 @@
+The add_op_panel provides a convenient interface to the 
+waves add_op command.  A summary of the add_op command
+itself is given later in this helpfile.  Most of this 
+material was extracted from the waves man page.  
+
+Note that, whether or not you use the the add_op
+panel create operators, it can still serve as a quick 
+interactive reference to xwaves commands, command argument 
+names, and variable symbols valid for use in the add_op 
+comand. 
+
+Items on the add_op panel have the following meanings:
+
+"operation name":
+     This corresponds to the name keyword of the
+     add_op command.  The command must be named, so
+     you need to enter the name here.  Any ASCII
+     string is acceptable.  You need not quote names
+     with multiple words.
+
+"add_to_windows":
+     These two buttons determine which, if any, view
+     menus the new operation will appear on.  If nei-
+     ther of these buttons is depressed, the new item
+     will be on the "none" list, meaning it will be
+     available for mapping to other keys and for
+     access by other means, but will not appear on
+     any view menus.
+
+"show variables..."
+     This button opens another panel that displays
+     two scrollable lists of xwaves global symbols
+     and view-specific symbols that may be used as
+     components in add_op commands.  It also permits
+     specification of output file names.
+
+"show commands..."
+     This button opens a panel providing access to
+     the list of view commands and their keyword
+     lists. 
+
+"Enter command..."
+     This text window is the area in which the add_op
+     command will be constructed.  You may type any
+     or all of the components of an op value for an
+     add_op command into this window.  In many cases,
+     you do not actually need to type, since select-
+     ing items from the scrollable lists in the
+     "variables" and "commands" panels automatically
+     adds them to the string being constructed at the
+     current cursor location.
+
+"Apply add_op"
+     Causes the add_op command to be executed with
+     the components you have just constructed.
+     Immediately after you "Apply", you can try out
+     the new operation.
+
+"Dismiss"
+     Closes the add_op_panel, but does NOT cause the
+     add_op under construction to be installed.  If
+     you "Dismiss" without "Applying" first, the
+     add_op being constructed will be lost and
+     ignored.
+
+As an example, we will describe step-by-step the use
+of the add_op panel to construct a command to set the
+vertical display limits of a file to the current hor-
+izontal marker locations (vertical "bracket mark-
+ers").  We assume the add_op panel is open.
+
+  (1) Left mouse the "operation name:" item and type 
+      in a name for the command.
+
+  (2) Press the "show commands" and "show variables" buttons.
+
+  (3) Press the "current object" button in the commands panel.
+
+  (4) Select the "set" command from the "Commands:" list.
+
+  (5) Select "file" from the "Command attributes:" list.
+
+  (6) Select "file" from the "View-Specific Variables:" list.
+
+  (7) Select plot_max from the "Command attributes:" list.
+
+  (8) Select t_marker_yval from the "View-Specific Variables:" 
+      list.
+
+  (9) select plot_min from the "Command attributes:" list.
+
+ (10) Select b_marker_yval from the "View-Specific Variables:" 
+      list.
+
+ (11) Be sure the "waveform" button is in, and the "image" button 
+      is out.
+
+ (12) Press the "Apply add_op" button.
+
+
+Here is the direct xwaves add_op command to create the "vbracket" 
+menu item: 
+
+    add_op name vbracket menu wave op # _name set file _file plot_max \
+           _t_marker_yval plot_min _b_marker_yval
+
+Now we describe the add_op command itself.  It has 
+the following three keyword attributes: 
+
+
+name A simple quoted string specifying the name of
+     the new operator.  This can be any ASCII string
+     with embedded spaces as required.  If the opera-
+     tor is being added to a menu, this is the string
+     that will appear in the menu.
+
+op   A quoted string specifying the operation to be
+     performed.  This operation can either be a com-
+     mand to be executed in a UNIX shell, or a
+     waves-internal command drawn from either the
+     "waves" or "object" commands list.  The keyword
+     command is an exact synonym for op.
+
+menu The menu list in which the new operator is to be
+     placed.  The value is usually one of "wave",
+     "spect", "all", or "none", but can be any name
+     you choose.  The values "wave", "spect", and
+     "all" cause the new operator to appear in the
+     corresponding data-view menus.  Any other name,
+     will prevent the operator from appearing in the
+     menus, but will make it accessible to the
+     key_map and op commands described below.
+
+The add_op command provides the primary means for
+specifying new operators to be added to the xwaves
+command set.  The operators may be added to the data
+view menus, or simply placed on lists internal to
+xwaves for access by other means, such as a keyboard
+bindings.  Several examples of the use of add_op may
+be found in $ESPS_BASE/bin/test_waves.  The syntax
+for the add_op command follows that of all other 
+operators, 
+
+  Symbolic access to xwaves state:
+
+Any string preceded by a non-alpha-numeric character
+and an underline (e.g. "_name") is interpreted as an
+xwaves variable symbol and is evaluated at the time
+the added operator is invoked.  Acceptable symbols
+include any of the view-specific variables, any of
+the built-in or user defined global variables, and
+the distinguished symbol "out." (note that . is the
+last character of the symbol).
+
+The sequence "_out." is interpreted at execution time
+as an output file name generation request.  The name
+of the view from which the operator was invoked is
+processed to take into account the output_dir specif-
+ication, and then has an extension added to make its
+name unique.  The "out." symbol can, itself, have
+extended qualifiers, as follows:
+
+     out.g.[ext]
+     out.t.[ext]
+     out.n.[ext]
+
+The "g." qualifier indicates that the output file
+should be displayed graphically by xwaves after the
+operation is complete.  The "t." qualifier means that
+the new file should be displayed as ASCII information
+in a text window.  The "n." qualifier, or absence of
+any qualifier means that xwaves is not to display the
+new file.  The optional "ext" is a filename extension
+that you would like appended to the other name com-
+ponents.  If "ext" is omitted, xwaves uses the exten-
+sion "out".  The "out." symbol may be used any number
+of times in a given add_op command; each instance
+will result in the generation of a unique name.  As
+files are generated by execution of the new command,
+their names are added to the "new files" list browsed
+by right mousing the "OUTPUT file:" Control Panel
+item.
+
+  Access to xwaves commands or other UNIX processes:
+
+If the first character in the command specification
+is the "#" character, the command will be interpreted
+as an internal waves command drawn from either the
+"waves_commands" or "object_commands" lists.  Com-
+mands not preceded by the "#" will be executed by a
+UNIX shell.
+
+Except for xwaves symbol-value substitution described
+above, text strings to be interpreted as UNIX com-
+mands are passed through unmodified.  Thus, several
+UNIX processes on a pipe, or sequences of semi-
+colon-separated UNIX commands are permitted.  The
+output file specifications described above, may
+appear anywhere in the op value.
+
+A simple add_op command to create a menu item that
+will play (D/A convert) the data from the left edge
+of the window to the cursor position might look like
+this:
+
+     add_op name "LEFT PLAY" op # _name play start 
+            _view_start_time end _cursor_time
+
+As a more interesting example, we will demonstrate
+the use of the add_op command to implement a sorting
+operator using a combination of UNIX and ESPS utili-
+ties.  This operator will sort the samples in a one-
+dimensional signal according to increasing value and
+then create a new "signal" consisting of the sorted
+samples.  Put the following in a file and execute it
+as a waves command file by typing @filename into the
+"COMMAND (or @file):" item of the xwaves Control
+Panel.  Put the whole add_op command on a single line
+and DO NOT include the backslash (\) line continua-
+tion characters.
+
+  add_op name sort menu wave op copysd _range_samp _file - | 
+  pplain - | sort -n | testsd -r \
+  `echo _r_marker_samp _l_marker_samp - p q | dc` -a - _out.g.
+
+This creates the item "sort" on a waveform menu. It
+works like this: Copysd(1-ESPS) extracts the segment
+delimited by the left and right xwaves markers.
+Pplain(1-ESPS) converts the signal to an ASCII
+representation.  The UNIX sort(1) orders the samples
+numerically.  Testsd(1-ESPS) is used to convert the
+sorted samples back into an ESPS sampled data file.
+Note that the sample rate argument to testsd (-r) is
+adjusted to normalize the "duration" of the sorted
+samples to unity by setting the rate equal to the
+number of samples sorted.  The UNIX "desk calculator,
+dc(1) is used to compute the number of samples based
+on the left and right marker positions.  To use this
+new operator, position the left and right markers on
+a waveform view to delimit a second or so of the sig-
+nal.  Then select the "sort" item from the view menu.
+
+
+<end>
+# @(#)add_op.help	1.1 10/1/93

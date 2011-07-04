@@ -1,0 +1,77 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)refltofilt.3	1.7 29 Jul 1991 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH REFL_TO_FILTER 3\-ESPSsp 29 Jul 1991
+.SH NAME
+
+refl_to_filter \- Convert reflection coefficients to autoregressive filter coefficients.
+.SH SYNOPSIS
+.ft B
+int
+.br
+refl_to_filter (refl_coeff, filter, size)
+.br
+float *refl_coeff, *filter;
+.br
+int size;
+.SH DESCRIPTION
+.PP
+.I refl_to_filter
+converts 
+.I size \- 1
+reflection coefficients,
+.I refl_coeff,
+(in positions 1 through
+.I size \- 1
+in the 
+.I refl_coeff
+array)
+into the equivalent
+.I size
+autoregressive filter coefficients 
+.I filter
+(with the first coefficient being = \-1.0).
+\fIrefl_to_filter\fR returns 1 on failure (one of the reflection coefficients
+has magnitude > 1.0) and 0 on successful completion.
+.PP
+Note: this routine uses the sign convention for reflection coefficients
+mentioned in FEA_ANA(5\-ESPS).
+.SH EXAMPLE
+.PP
+.nf
+/* We want to convert 3 reflection coefficients to
+ * 4 autoregressive filter coefficients. Assume the
+ * array \fIref_coeff\fP contains the reflection coefficients
+ * starting from ref_coeff[0] to ref_coeff[2] and the
+ * autoregressive filter coefficient array, \fIfilt_coeff\fP, has
+ * enough memory to hold 4 coefficients.
+ */
+
+	int	size = 3;
+	float	ref_coeff[3] = {	/* reflection coefficients */
+		 \-0.248618, 0.81, 0.0
+		};
+	float	filt_coeff[4];	/* size + 1 array */
+
+/* The following statement will convert the size ref_coeff
+ * array to the proper size + 1 filt_coeff array.
+ */
+
+	refl_to_filter (ref_coeff \- 1, filt_coeff, 4);
+
+/* Notice we are  sending (ref_coeff  \- 1)  pointer; it  is the one
+ * before  ref_coeff[0].    Therefore,  in  refl_to_filt  routine,
+ * refl_coeff[1]  will actually  be ref_coeff[0].
+ */
+.fi
+.SH REFERENCES
+[1] Programs for Digital Signal Processing, edited by the Digital Signal Processing
+Committee, IEEE Acoustics, Speech, and Signal Processing Society, Chapter 4.3,
+pp 4.3-1 to 4.3-7.
+.SH "SEE ALSO"
+.PP
+rc_autopef(3\-ESPSsp)
+.SH AUTHOR
+Code by B. Fraenkel, manual page by D. Burton and A. Virdy.
+

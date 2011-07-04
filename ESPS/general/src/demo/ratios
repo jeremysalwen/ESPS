@@ -1,0 +1,104 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of
+# Entropic Research Laboratory, Inc. Any reproduction, distribution,
+# or publication of this work must be authorized in writing by Entropic
+# Research Laboratory, Inc., and must bear the notice:
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc.
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc.
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended
+# publication of this source code.
+#
+# @(#)ratios	1.3   10/10/97     ESI/ERL
+#
+# Written by:
+# Checked by:
+# Revised by: David Burton
+#
+# Brief description:  Illustrates tool building with ESPS
+#
+
+
+# This script takes three arguments:
+# $1 is the input range in points
+# $2 is the input sampled data file name
+# $3 is the output file name
+
+
+if test $1x = x
+then
+	echo " "
+	echo "Three parameters must be specified:"
+	echo "range in points, input file, and output file"
+	exit 1
+fi
+
+if test $2x = x
+then
+	echo " "
+	echo "Three parameters must be specified:"
+	echo "range in points, input file, and output file"
+	exit 1
+fi
+
+if test $3x = x
+then
+	echo " "
+	echo "Three parameters must be specified:"
+	echo "range in points, input file, and output file"
+	exit 1
+fi
+
+USE_ESPS_COMMON=off
+ESPS_VERBOSE=0
+export USE_ESPS_COMMON
+export ESPS_VERBOSE
+if test `mach_type` = CONVEX
+ then
+  echo This script will fail if you do not have write permission on this directory.
+ else
+  if test ! -w . 
+    then
+	echo "You do not have write permission in this directory."
+	exit 1
+  fi
+fi
+echo " "
+
+# A combination of command line and parameter file 
+# parameter processing is exhibited in this demonstration
+# script. Frame (1-ESPS) reads a parameter file called frm.params.
+
+rm -f $3
+rm  -f /usr/tmp/r$$
+
+
+$ESPS_BASE/bin/filter $1 -F600lp.filt $2 - | tee lp.sd | 
+	$ESPS_BASE/bin/frame -Pfrm.params - - |  \
+	$ESPS_BASE/bin/pwr  -f sd -f pwr1 - - |  \
+	$ESPS_BASE/bin/mergefea -fpwr1 - /usr/tmp/r$$
+
+$ESPS_BASE/bin/filter $1 -F1750bp.filt $2 - |tee bp.sd| \
+	$ESPS_BASE/bin/frame -Pfrm.params - - |  \
+	$ESPS_BASE/bin/pwr  -f sd -f pwr2 - - |  \
+	$ESPS_BASE/bin/mergefea -fpwr2 -  /usr/tmp/r$$
+
+$ESPS_BASE/bin/filter $1 -F3000hp.filt $2 - |tee hp.sd| 
+	$ESPS_BASE/bin/frame -Pfrm.params - - |  \
+	$ESPS_BASE/bin/pwr  -f sd -f pwr3 - - |  \
+	$ESPS_BASE/bin/mergefea -fpwr3 -  /usr/tmp/r$$
+
+$ESPS_BASE/bin/select -e \(pwr2/pwr1\)  /usr/tmp/r$$ | \
+	$ESPS_BASE/bin/addfea -fratio2to1 -c \
+	"added pwr2/pwr1 ratio" -  /usr/tmp/r$$ $3
+
+$ESPS_BASE/bin/select -e \(pwr3/pwr1\) /usr/tmp/r$$ | \
+	$ESPS_BASE/bin/addfea -fratio3to1 -c \
+	"added pwr3/pwr1 ratio" -  $3
+
+$ESPS_BASE/bin/select -e \(pwr3/pwr2\) /usr/tmp/r$$ | \
+	$ESPS_BASE/bin/addfea -fratio3to2 -c \
+	"added pwr3/pwr2 ratio" -  $3
+

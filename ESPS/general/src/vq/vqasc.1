@@ -1,0 +1,124 @@
+.\" @(#)vqasc.1	3.4 4/7/97 ESI
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.TH VQASC 1\-ESPS 4/7/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+vqasc - vector quantize ASCII vectors with a codebook from a FEA file
+.SH "SYNOPSIS"
+.B vqasc
+[
+.BI \-l " max_line_len"
+] [
+.BI \-x " debug_level"
+] [
+.BI \-h " histfile"
+] [
+.BI \-c " record"
+]
+.I "cbk.fea data.in data.out"
+.SH "DESCRIPTION"
+.PP
+.I Vqasc
+reads the ESPS FEA_VQ file 
+.I cbk.fea
+to obtain a vector quantization codebook.  
+.I Vqasc
+then reads an ASCII file
+.I data.in
+containing vectors, it encodes each vector using the 
+codebook, and it outputs to 
+.I data.out
+each resulting quantized vector.  The components of each input vector
+are separated by white space, and the vectors are separated by
+new-lines.  
+If "\-" is supplied in place of 
+.I data.in, 
+then standard input is used.  
+If "\-" is supplied in place of 
+.I data.out,
+then standard output is used.  
+.PP
+.I Vqasc
+determines which distortion measure to use from the information 
+stored in the FEA file.  In many cases, 
+.I vqasc
+will be used with codebooks designed using 
+.IR vqdesasc (1\-ESPS), 
+although this is not required.  It is a requirement
+that the dimensions of the input vectors all be the same as the
+dimension of the codewords in the codebook.  
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-l " max_line_len \fR[500]\fP"
+Specifies the maximum length of input lines.  
+.TP
+.BI \-x " debug_level"
+If 
+.I "debug_level \fR[0]\fP"
+is positive,
+.I vqasc
+outputs debugging messages and other information about the codebook
+design to a history file.  The messages proliferate as 
+.I debug_level 
+increases.  For level 0, there is no output.  For level 1, the size of
+the input sequence, the average distortion, the standard deviation of
+the distortion, and the maximum distortion are output.  For level 2, the
+codebook itself is also output.  For level 3, information is
+output for every input vector, namely the index of the closest codeword,
+the distortion with respect to the closest codeword,
+and the cumulative average distortion.  For level 4, the output also
+includes the input vectors and the output vectors.
+.TP
+.BI \-h " histfile \fR[vqaschist]\fP"
+Specifies the file to use for history and debugging output.  
+.TP
+.BI \-c " record"
+Specifies an integer record number within 
+.I cbk.fea
+to use as the codebook.  If the \fB\-c\fP option is not used, 
+then the last record in 
+.I cbk.fea
+is used as the codebook.  
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read.  
+.SH ESPS COMMON
+.PP
+No values are written to ESPS Common.  
+.SH ESPS HEADERS
+.PP
+.I Vqasc
+reads the usual information from the FEA file header.  No 
+headers are written.  
+.SH "FUTURE CHANGES"
+.PP
+
+.SH "SEE ALSO"
+.PP
+.nf
+vqdesasc(1\-ESPS), vqdes(1\-ESPS), vq(1\-ESPS),
+vqdesign(3\-ESPS), FEA_VQ(5\-ESPS), FEA(5\-ESPS), 
+ESPS(5\-ESPS)
+.fi
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+.I Vqasc
+will exit with appropriate messages if 
+the feature vectors in 
+.I input
+do not all have the same dimension, or if this dimension 
+is not equal to the dimension of the codewords in the codebook.
+.SH "BUGS"
+.PP
+None known.  
+.SH "REFERENCES"
+.PP
+See
+.I vqdesign
+(3\-ESPS).  
+.SH "AUTHOR"
+.PP
+Manual page by John Shore; program by John Shore.  
+

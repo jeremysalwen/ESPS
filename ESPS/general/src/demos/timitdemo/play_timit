@@ -1,0 +1,5 @@
+#! /bin/sh 
+# @(#)play_timit	1.2 10/11/91 ERL
+play -q files/$1.wav
+
+

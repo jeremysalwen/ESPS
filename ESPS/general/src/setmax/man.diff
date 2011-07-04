@@ -1,0 +1,68 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc.; All rights reserved
+.\" @(#)setmax.1	1.3 3/27/97 ESI
+.TH SETMAX 1\-ESPS 3/27/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech,Inc.
+.SH NAME
+setmax - find maximum sampled data value and store in max_value FEA_SD header item
+.sp
+.SH SYNOPSIS
+.B setmax
+[ 
+.BI \-x " debug_level"
+]
+.I input output
+.sp
+.SH DESCRIPTION
+.PP
+.I Setmax
+takes a single-channel, real, FEA_SD file \fIinput\fP, finds the
+maximum and miminum values in the file, and produces an output FE_SD
+file that duplicates \fIinput\fP, but has the correct value stored in
+the \fImax_value\fP generic in the file header.  The value stored in
+\fImax_value\fP is the larger of the absolute values of the minimum
+and maximum.  The principal use of \fIsetmax\fP is to pre-process
+files to be played with a D/A conversion program that can scale the
+data to use the maximum output range.  (Most ESPS processing programs
+do not fill in the generic header item \fImax_value\fP, as headers
+usually are written before the data are processed.)
+.PP
+If 
+.I input
+is "\-" then the input is read from the standard input.  This is
+somewhat less efficient than is the case when \fIinput\fP is a disk
+file because \fIsetmax\fP has to store the data from \fIinput\fP in a
+temporary file.  If \fIoutput\fP is "\-" then the output is directed
+to the standard output.
+.sp
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-x " debug_level" "\fR [0]"
+A positive value specifies that debugging output be printed on the
+standard error output.  Larger values result in more output.  The
+default is 0, for no output.
+.br
+.SH ESPS PARAMETERS
+.PP
+A parameter file is not read by \fIsetmax\fP.
+.SH ESPS COMMON
+.PP
+ESPS Common is not read by \fIsetmax\fP.
+.SH ESPS HEADER
+The file header for \fIoutput\fP is created from the input header by 
+means of \fIcopy_header\fP.  Thus, for example, all of the generic 
+header items are copied over. 
+.SH  SEE ALSO
+.PP
+.nf
+\fIcopysd\fP(1\-\s-1ESPS\s+1), \fIplay\fP(1\-\s-1ESPS\s+1), \fIcopy_header\fP(3\-\s-1ESPS\s+1),
+FEA_SD(5\-\s-1ESPS\s+1)
+.fi
+.sp
+.SH BUGS
+.PP
+Multi-channel or complex FEA_SD files are not handled.  
+.SH  AUTHOR
+.PP
+Man page and program by John Shore.
+

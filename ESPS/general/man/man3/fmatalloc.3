@@ -1,0 +1,57 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)fmatalloc.3	1.5 06 May 1997 ESI
+.TH F_MAT_ALLOC 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+f_mat_alloc \- memory allocator for a pointer to a matrix of floats
+.SH "SYNOPSIS"
+.B #include <stdio.h>
+.br
+.B float **f_mat_alloc (nb_row, nb_col)
+.br
+.B unsigned nb_row;
+.br
+.B unsigned nb_col;
+.SH "DESCRIPTION"
+.PP
+.I f_mat_alloc
+allocates 
+.I nb_row
+by
+.I nb_col
+block of memory.  If successful,
+.I f_mat_alloc
+returns a pointer to a matrix of floats
+otherwise it returns NULL.  The allocated memory is not cleared.  
+.SH "EXAMPLE"
+.PP
+int	row_size, column_size;	/* dimension of memory block required */
+.br
+float	**matrix;		/* two-dimensional array */
+.br
+
+matrix = f_mat_alloc ((unsigned) row_size, (unsigned) column_size)
+.br
+if ( matrix != NULL )
+.br
+   /* successfully allocated memory block */
+.br
+else
+.br
+   /* could not allocate memory */
+
+.SH DIAGNOSTICS
+.PP
+None.
+.SH "BUGS"
+.PP
+None Known.
+.SH "SEE ALSO"
+.PP
+.nf
+f_mat_free(3\-ESPSu), d_mat_alloc(3\-ESPSu), 
+d_mat_free(3\-ESPSu)
+.fi
+.SH "AUTHOR"
+.PP
+John Shore

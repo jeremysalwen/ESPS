@@ -1,0 +1,254 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc. All rights reserved.
+.\" @(#)fft_filter.1	3.10	9/25/98 ESI
+.TH FFT_FILTER 1\-ESPS 9/25/98
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+fft_filter \- Performs FIR digital filtering on a sampled data file using
+frequency domain convolution instead of time domain convolution.
+.SH SYNOPSIS
+.B fft_filter
+[
+.BI \-P " param_file"
+]
+[
+.BI \-x " debug_level"
+]
+[
+.BI \-f " filtername"
+]
+[
+.BI \-F " filt_file"
+]
+[
+.BI \-p " range"
+]
+[
+.BI \-r " range"
+]
+[
+.B \-z 
+]
+.I in_file out_file
+.SH DESCRIPTION
+.PP
+The program
+.I fft_filter
+takes the input sampled data file,
+.I in_file,
+and produces an output sampled data file,
+.I out_file,
+after performing a finite impulse response (FIR) 
+digital filtering operation on it.
+The program accepts "\-" for either the input file or the output file
+to use the standard input and standard output, respectively. 
+This program accomplishes the filtering operation by multiplying in the
+frequency domain, instead of convolving in the time domain.  
+If the filter length is large (i.e.
+> 50 taps), 
+this has
+the effect of greatly reducing the number of computations required
+to perform the filtering operation.
+.PP
+The program performs only FIR filtering.
+A set of numerator coefficients are specified 
+either in a parameter file or in a FEA_FILT(5\-ESPS) file.
+The numerator coefficients then become the {a\di\u}
+in the following
+z-domain transfer function:
+.nf
+
+        
+ 		H(z) = a\d0\u + a\d1\uz\u-1\d + a\d2\uz\u-2\d + ... + a\dm-1\uz\u-m+1\d
+
+
+.fi
+The first output sample will be computed from data samples
+occurring before the starting point in the input file (as defined by the parameter
+.I start
+, for example), if they exist.  Data samples which would occur before
+the first sample in the input file are assumed to be zero.
+.sp
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-P " param_file"
+uses the parameter file 
+.I param_fil
+rather than the default, which is
+.I params.
+.br
+.TP
+.BI \-f " filtername"
+If the coefficients are being read from the parameter file, then
+.I filtername
+is the body of the name in the params file
+that contains both the number of coefficients and the actual coefficients.
+This means that the coefficients will be
+found in the array
+.I filtername_num,
+and the size of that array will be specified by
+.I filtername_nsiz.
+The default name for the body of these parameter file entries is
+.I filter.
+.IP
+If the coefficients are being read from a FEA_FILT file, then
+.I filtername
+is the number of the fft_filter record to use.
+The default name in this case is 1, the first record in the file.
+.br
+.TP
+.BI \-F " filt_file"
+Read the coefficients from the FEA_FILT file
+.I filt_file
+rather than from the parameter file.
+In this case the header of 
+.I filt_file
+is added to the header of the program output as a source file.
+If the denominator size is neither zero nor one an error 
+message will be printed and \fIfft_filter\fR will exit.
+.br
+.TP
+.BI \-x " debug_level"
+A value of zero (the default value) will cause
+.I fft_filter
+to do its work silently, unless there is an error.
+A nonzero value will cause various parameters to be printed out
+during program initialization.
+.br
+.TP
+.BI \-p " range"
+Perform the filtering operation on the specified range of points.
+.I range
+is a character string which is interpreted by
+\fIrange_switch\fP(3-ESPSu).
+\fBp\fP and \fBr\fP are synonyms.
+.br
+.TP
+.BI \-r " range"
+Perform the filtering operation on the specified range of points.
+.I range
+is a character string which is interpreted by
+\fIrange_switch\fP(3-ESPSu).
+\fBp\fP and \fBr\fP are synonyms.
+.TP
+.BI \-z
+If specified,
+the \fIstart_time\fP generic value is reduced by the value of the
+\fIdelay_samples\fP generic header value, if it exists. This often
+helps time align a filtered
+signal with the input signal. 
+Note that
+if \fIdelay_samples\fP is not defined in the input file header,
+a value of 0 is assumed.
+.SH ESPS PARAMETERS
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.PP
+Where command line options conflict with
+parameter file options, the command line values are used.
+The following parameters are read from the parameter file.
+.IP
+.I "start \- integer"
+.IP
+The first point in the input sampled data file that is processed.
+The samples are assumed to be numbered starting with one so that
+setting 
+.I "start = 1"
+will cause processing to begin with the first sample.
+.sp
+.I "nan \- integer"
+.IP
+The number of points in the sampled data file to process.
+.sp
+.I "filtername_nsiz \- integer"
+.IP
+The number of coefficients in the transfer function for the filter
+.sp
+.I "filtername_num \- float array"
+.IP
+The numerator coefficients.  They are specified in order starting with
+a\d0\u.
+.sp
+.SH ESPS COMMON
+If the input
+is standard input, COMMON is not read. If COMMON is read and the 
+command line input filename does not match the filename listed in COMMON,
+no further parameters are read from COMMON. Finally,
+if the two filenames match,
+the following items are read. 
+.IP
+.I "start - integer"
+.IP
+This is the starting point in the input file. Any \fB\-p\fR
+option value supersedes the COMMON specified value.
+.IP
+.I "nan - integer"
+.IP
+This is the number of points to analyze. A \fB\-p\fR specified value
+supersedes the COMMON specified value.
+.PP
+If the output is standard output,
+COMMON is not written.
+Otherwise the following items are written to COMMON.
+.IP
+.I "filename \- string"
+.IP
+This is the name of the output file.
+.IP
+.I "start \- integer"
+.IP
+This is the starting point in the output file
+and is always equal to one.
+.IP
+.I "nan \- integer"
+.IP
+This is the number of points in the output file.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.SH ESPS HEADER
+The file header of
+.I out_file
+will contain much of the same information as is contained in 
+.I in_file,
+except where they are altered by the parameters in the parameter file.
+The filter coefficients will be stored in the output header as the
+.I fft_filter
+zfunc.
+.PP
+A generic header item \fIstart_time\fR (type DOUBLE), is added
+to the output file header. It contains the starting time in seconds of the
+first point in the output file. This start time is relative to the original
+sampled data file. This means that if the input file has a \fIstart_time\fR
+generic in it, the output file's \fIstart_time\fR value is computed
+relative to the input file's \fIstart_time\fR. Also see the \fB\-z\fP
+option.
+.PP
+For example, if the input file has a \fIstart_time\fR = 1.0 seconds,
+the input file's sampling frequency = 8000 samples/second, and the 
+starting point in the input file = 2000, the output file's 
+\fIstart_time\fR = 1.0 + 2000/8000 = 1.25 seconds. 
+.SH FUTURE CHANGES
+.PP
+.SH SEE ALSO
+.PP
+.nf
+\fIFEA_FILT\fP(5-ESPS), \fIfilter\fP(1-ESPS), \fIwmse_filt\fP(1-\ESPS),
+\fIatofilt\fP(1\-ESPS), \fiFEA_SD\fP(5-ESPS), \fIiir_filt\fP(1-ESPS),
+\fIsfconvert\fP(1-ESPS)
+.fi
+.sh BUGS
+.PP
+None known.
+.SH AUTHOR
+.PP
+Brian Sublett; ESPS 3.0 modifications by David Burton; FEA_FILT modifications
+by Bill Byrne

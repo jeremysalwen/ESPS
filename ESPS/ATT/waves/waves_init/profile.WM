@@ -1,0 +1,21 @@
+"Help"  shell xtext -t "Help for Profile Controls" -F `get_esps_base`/lib/waves/profile.help
+
+"Save profile" @save_pro.WC
+
+"Load profile"  shell load_wpro.sh
+
+"Load system default profile" shell load_wpro.sh $ESPS_BASE/lib/waves/.wave_pro
+
+"Restore profile to system default"  shell default_wpro.sh
+
+"Display globals..."  	sh displprof.sh get attributes global
+
+"Display menus..."	sh displprof.sh save_menus
+
+"Display add_ops..."	sh displprof.sh save_add_ops
+
+"Display panels..." 	sh displprof.sh save_panels
+
+"Delete $HOME/.wave_pro_save" shell rm -f $HOME/.wave_pro_save
+
+# @(#)profile.WM	1.5 7/7/93

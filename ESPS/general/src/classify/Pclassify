@@ -1,0 +1,5 @@
+#@(#)Pclassify	1.1 6/9/93 ERL
+string elements ?= "a:b":"field elements";
+string in_field ?= "name":"feature vector name";
+string class_fld_name ?= "class": "output class field name";
+string like_fld_name ?= "posteriors": "output posteriors field name";

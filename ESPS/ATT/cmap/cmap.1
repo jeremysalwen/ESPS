@@ -1,0 +1,120 @@
+.\" Copyright (c) 1989, 1991 Entropic Speech, Inc. All rights reserved.
+.\" @(#)cmap.1	1.6 8/4/93	ESI
+.TH XCMAP 1\-ESPS 8/4/93
+.ds ]W (c) 1992 ERL, Inc.
+.SH "NAME"
+xcmap \- generate or edit a colormap (X Window version)
+.SH "SYNOPSIS"
+.B xcmap
+.SH "DESCRIPTION"
+.PP
+.I Xcmap
+is an interactive program for generating or modifying
+colormaps for use by \fIwaves\fP (1\-\s-1ESPS\s+1)+
+and other programs that read RED, GREEN, and BLUE (RGB)
+intensity values for controlling the displayed color.
+.PP
+As a bit of background,
+on most color monitors,
+the color associated with each pixel on the screen
+is made of the combination of three
+phosphors: red, blue, and green.
+The intensity of all three colors can be modified independently
+to produce a spectrum of colors.
+If all three colors are fully illuminated (set to 255), the 
+resulting color is white; if they are turned off
+(set to a value of 0), the resulting color is black.
+As the intensity of the red, green, and blue varies,
+the three phosphors are mixed to produce a color.
+For example,
+equal parts red and green at full intensity, but no blue, produce yellow.
+.PP
+When invoked,
+\fIxcmap\fP pops up two windows: a control panel and a
+"colormap window".
+The control panel has fields for "INPUT file", "OUTPUT file", and
+"QUIT!", and a slider control for "Brightness".
+The colormap window has a colormap displayed,
+a RED\-BLUE\-GREEN color triangle, and numeric display of
+colormap index (Level), RED intensity (R), GREEN intensity (G), and
+BLUE intensity (B).
+When the mouse cursor is in the colormap or slightly below,
+the Level and R, G, B displays apply
+to the colormap entry closest to the mouse cursor.
+When the mouse is in the color triangle with the left button held down,
+the displays apply to the entry being modified.
+See below for how to modify the colormap.
+.PP
+By default, the colormap displayed
+is a white (left edge) to black (right edge)
+colormap. (Each entry in the colormap table contains equal
+red, blue, and green intensities, but the
+intensities decrease as you move to the right in the displayed
+colormap.)
+An initial colormap for editing can be loaded by
+entering the colormap file name in the "INPUT file" field.
+The "Brightness" slider provides a way to multiply all three
+phosphor intensities by a common value between 0 an 1.
+A brightness value of 1000, multiplies all intensities by 1;
+a brightness value of 500, multiplies by .5; and so on.
+Once you have a colormap that you want to keep,
+simply type its name into the "OUTPUT file" field and hit return on the 
+keyboard;
+it will be immediately written out.
+Clicking the left mouse button on the "Quit!"
+field exits the colormap program.
+.PP
+To modify a colormap, 
+the region of interest is selected by
+clicking the left mouse button in 
+the colormap at three different places. This results in
+"handles" being dropped from the colormap.
+Three adjacent handles define a region of interest.
+When many handles have been dropped
+from the map, the region of interest can be identified
+by finding the thick handle. The handles to the left and
+right of the thick one
+delimit the active region. To activate a new region,
+click the left mouse button near the middle
+handle (but out of the colormap).
+Handles can be deleted by using the middle mouse button.
+.PP
+Color mixing is done by holding the left mouse button
+down while moving the mouse cursor in the RGB color triangle.
+The color of the selected handle (the thick one)
+is directly controlled, and
+RGB intensity levels are linearly interpolated
+between it and the intensities at the two adjacent handles.
+By left mouse clicking in the "Brightness" slider,
+the intensity of the selected handle can be directly
+changed.
+.PP
+Several colormaps are in ../esps/lib/waves;
+you may want to use one of them as a starting point.
+.SH OPTIONS
+None.
+.SH "ESPS PARAMETERS"
+None.
+.SH "ESPS COMMON"
+Neither read nor written.
+.SH "FUTURE CHANGES"
+.PP
+Probably many, but not under suntools.
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+Colormap generation is a bit of an art and \fIxcmap\fP (1\-\s-1ESPS\s+1)
+is a bit crude, so patience is required when using it to
+make colormaps.
+.PP
+The colormap size is fixed at 128 entries.
+No matter how many entries are specified when
+generating a colormap,
+linear interpolation is used to generate the rest
+of the values.
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Code by David Talkin.  Manual page by David Burton.
+Conversion to XView by Rod Johnson.

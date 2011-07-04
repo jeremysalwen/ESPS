@@ -1,0 +1,164 @@
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)srecord.1	1.5 3/28/97 ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH SRECORD 1\-ESPS 10/24/92
+.SH NAME
+srecord - record to disk or pipe for SUN SPARC built-in audio device
+.PP
+.SH SYNOPSIS
+.B srecord
+[
+.BI \-s " duration"
+] [
+.BI \-S
+] [
+.BI \-W " xwaves display args."
+] [
+.BI \-P
+] [
+.BI \-p " prompt string"
+] [
+.BI \-x " debug-level"
+] [
+.BI \-H
+] [
+.BI \-e
+] [[
+.BI \-o
+]
+.I file
+]
+.PP
+.SH DESCRIPTION
+.PP
+.PP
+\fISrecord\fP provides recording to local disk using SUN SPARCstation
+built-in audio device, sampling at 8000 Hz.
+Direct recording onto network disks is often
+feasible as well.  Output data files are linear encoded and have ESPS FEA_SD 
+headers, or,
+optionally, no headers.  Output may optionally be directed to
+\fIstdout\fP.  \fISrecord\fP has special adaptations that permit tight
+coupling with \fIxwaves\fP (see \fIINTERACTION WITH XWAVES\fP below).
+.PP
+Note that processes consuming the output of
+\fIsrecord\fP on a pipe must be able to keep up with the average aggregate
+sampling frequency.  Options are available to control the recording duration, prompting, header suppression, and immediate display by \fIxwaves\fP.
+.PP
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-s " duration" "\fR [10]"
+Specifies the maximum duration of the recording session in seconds.
+Recording may be interrupted before this time expires with SIGINT,
+SIGQUIT or SIGUSR1 (see below).  The default \fIduration\fP is 10 seconds.
+The upper limit is set only by disk space.
+.TP
+.BI \-S
+Enable the \fIxwaves\fP(1\-ESPS) "make" command via \fIsend_xwaves2\fP(3\-ESPS) when the
+requested recording time has elapsed or when recording is interrupted.  This 
+permits immediate examination of the recorded passage using \fIxwaves\fP.  
+See \fIINTERACTION WITH XWAVES\fP below.
+.TP
+.BI \-W
+The argument to this option will be appended to the \fIsend_xwaves\fP
+"make" command to permit display customization (e.g. via
+window location and size specifications).  See \fIINTERACTION
+WITH XWAVES\fP below.
+.TP
+.BI \-P
+Enable a prompt message when A/D has actually commenced.  The default message
+is a "bell ring" and the text "START RECORDING NOW...."  This prompt may be changed
+with the \-p option.
+.TP
+.BI \-p " prompt string"
+\fIPrompt string\fP will be used as the alert that recording is commencing.  Specifying
+\-p forces -P.
+.TP
+.BI \-H
+Suppresses header creation.  A "bare" sample stream will result.  The default is
+to produce an ESPS FEA_SD file.
+.TP
+.BI \-e
+This option causes a/d input to be echoed out the d/a during recording.
+.TP
+.BI \-x " debug_level"
+Setting debug_level nonzero causes several messages to be printed as
+internal processing proceeds.  The default is level 0, which causes no debug
+output.
+.TP
+.BI -o " output"
+Specifies a file for output.  Use of -\fIo\fP before the file designation is optional
+if the filename is not the last command-line component.
+.PP
+.SH "INTERACTION WITH XWAVES"
+.PP
+\fISrecord\fP is designed to optionally use the server mode of \fIxwaves\fP(1\-ESPS) for
+display of its output file on completion of the record operation.
+This is implemented using \fIsend_xwaves2\fP(3\-ESPSu).  The following
+conditions must be met for this feature to work.  (1) \fIXwaves\fP must be
+running in the server mode. (2) The environment variables WAVES_PORT
+and WAVES_HOST must be correctly defined (see \fIespsenv\fP(1\-ESPS)).  (3)
+The record operation must be interrupted with a SIGUSR1 signal (e.g.
+via "kill \-30 pid," where pid is the process ID of the \fIsrecord\fP
+process), or if \fIsrecord\fP is not thus interrupted, the -\fIS\fP flag must have
+been set.  (4) Output must be to a file.
+.PP
+An example \fImbuttons\fP(1\-ESPS) script to implement a primitive record
+control panel follows:
+.PP
+.nf
+.na
+.ne 10
+"RECORD"	exec srecord  -P -s60 -S -W"name $$ loc_y 150" \\
+                xx$$& echo $! > foo
+"STOP"          kill -30 `cat foo`
+"ERASE"         f=`cat foo` ; k=`echo $f 1 - p q | dc` ; \\
+		kill -2 $f ; rm -f xx$k ; send_xwaves kill name $k
+.fi
+.ad
+.PP
+Note how the -\fIW\fP option is used to name the display ensemble and to fix
+the vertical location of the waveform at the same place on consecutive
+invocations.  In general, the -\fIW\fP option can be used to augment the
+display generation as described under the "make" command in the \fIxwaves\fP
+manual.  Note that the "STOP" function is implemented with a "kill
+-30" (SIGUSR1).  This causes \fIsrecord\fP to send the "make" command to
+\fIxwaves\fP.  If either kill -2 (SIGINT) or kill -3 (SIGQUIT) is sent to
+\fIsrecord\fP, it will terminate gracefully, but will not send any messages
+to \fIxwaves\fP.  The -\fIS\fP option causes the \fIxwaves\fP display operation to occur
+even in the non-interrupted case (i.e. after 60 sec of recording).
+The above script is not robust, but may serve as a useful starting
+point for more serious attempts.
+.PP
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.PP
+.SH ESPS COMMON
+.PP
+ESPS Common is not read or written.
+.PP
+.SH WARNINGS
+.PP
+When output is to a file, the ESPS header, if it is present, will
+correctly reflect the absolute maximum sample value encountered during
+recording and the number of samples recorded.  If output is to a pipe,
+these values are not recorded in the header.
+.PP
+If another /fIsrecord/fR process is started while one is in progress,
+it will hang until the device becomes available.  Use the /fI-P/fR option
+to signal when the recording starts.
+.PP
+.SH SEE ALSO
+.PP
+.nf
+FEA_SD(5\-\s-1ESPS\s+1), \fItestsd\fP(1\-\s-1ESPS\s+1), \fIcopysd\fP(1\-\s-1ESPS\s+1),
+\fIsplay\fP(1\-\s-1ESPS\s+1), \fIsfconvert\fP(1\-\s-1ESPS\s+1), \fIsetmax\fP(1\-\s-1ESPS\s+1),
+\fImu2esps\fP(1\-\s-1ESPS\s+1)
+.fi
+.PP
+.SH AUTHOR
+.PP
+Derek Lin

@@ -1,0 +1,510 @@
+.lo
+.ce 2
+.b
+Installation Instructions for Waves+ Version 2.1
+.sp
+Document Version: 1.5 10/10/91
+.sh 1 "In Case of Difficulty"
+.pp
+If you have questions about the installation process, or have
+difficultly with the product please call Entropic for help.
+.sp
+.TS
+box,center,tab(;);
+l | l.
+Entropic Research Laboratory, Inc.;Voice: 202 547-1420
+600 Pa. Ave. SE, Suite 202;FAX: 202 546-6648
+Washington, DC. 20003 USA;Email: esps@wrl.epi.com (uunet!epiwrl!esps)
+.TE
+.sh 1 "Introduction"
+.pp
+This document describes how to install the Waves+ Version 2
+binary distribution.
+.sh 1 "Floating License System"
+.pp
+Waves+ uses floating license technology, which allows you to install the
+actual files at any location on your network you choose.   A license
+manager daemon must be run on a particular host on your network, but
+\fIwaves+\fR can be run on any machine (of the correct
+architecture type) on your network, as long as it can connect to the
+host with the daemon.
+.pp
+After you have installed the tape contents as described below, you will
+run a program on the host where the license daemon will be run; the
+program will return a unique server code.  Call Entropic with this
+code and your sales order number (our number assigned to your order)
+to request your license key.  For customers outside of North America,
+it might be better to request the key via FAX.  Details for getting
+your key are given below.
+.sh 1 "Tape Contents"
+.pp
+The enclosed tape (or diskettes) contains the \fIwaves+\fR binary
+directory (or directories).
+.pp
+The \fIwaves+\fR package consists of a binary subset of the Entropic
+Signal Processing System (ESPS) and the \fIwaves+\fR programs, including
+\fIwaves+\fR, \fIspectrum\fR, and \fIlabel\fR
+(or \fIxwaves+\fR, \fIxspectrum\fR, and \fIxlabel\fR for X Window
+systems).
+The directory 
+on the tape contains a standard ESPS directory
+structure with the \fIwaves+\fR programs and ESPS programs in
+place.  Here is the space you will need for installation:  
+.pp
+.TS
+box, center, tab(;);
+c c c c
+l l l l.
+Machine;Size (MB)
+Mac II;12
+Sun 3 (OS 4.X);12
+Sun 3 (OS 3.X);12
+Sun 4 (Any Sparc);40
+Sun 386i;20
+Masscomp;12
+DEC DS3100;18
+HP300;12
+HP800;14
+_
+.TE
+.pp
+If you also ordered the DSP32 support kit, then that product will be on
+this tape also.
+That directory will be either
+\fIdsp32.sun3_OS3\fR, \fIdsp32.sun3_OS4\fR, \fIdsp32.sun3x\fR, 
+or \fIdsp32.sun4\fR. 
+.pp
+This package also includes (along with these instructions) manual
+pages for all included programs and installation instructions for the
+DSP32 Support Kit, if you also ordered it.
+.sh 1 "Installation Steps"
+.sh 2 "Extract the Installation Software from the tape."
+
+.ip
+First you should change  directory  to  /tmp  (or  just
+about  anywhere)  and tar in the installation programs.  They will
+reside in a directory called install_erl.
+.ip
+You will need write permission in this directory, and the directory
+which you choose to install waves+ into. You may have to be the root
+user (see section below.
+
+.sp 2
+.nf
+             % cd /tmp
+             % tar xvf /dev/rst8
+             install_erl/
+             install_erl/RUNME
+             install_erl/chkdefs
+             install_erl/chkhost
+             install_erl/erl_admin
+             install_erl/sf
+             install_erl/install_erl
+             install_erl/erldefs
+             install_erl/rextract
+             install_erl/tc_inst_keys
+             install_erl/tc_install
+.nf
+.sh 3 "Run the Installation Script"
+.ip
+Then you should cd into /tmp/install_erl  (or  wherever you put it)
+and type  RUNME.
+.sp 2
+.nf
+          %cd /tmp/install_erl
+          %RUNME
+.fi
+.ip
+RUNME is the installation shell script.
+It prompts you for the installation
+settings and then extracts the waves+ software from the tape.
+The installation settings are stored in the file erldefs, which is a
+Unix shell script (/bin/sh).  The following section describes the information
+the installation will require.
+.sh 3 "Installation Information Descriptions"
+.nr $p 0
+.np
+Destination
+.ip
+where would you like to put  the  waves+  binaries
+and support files.  You should have enough space on the
+disk. The directory will be created for you and overwriting an
+existing directory not allowed.
+.np
+Create link
+.ip
+this is a toggle field that asks if you want to  create
+a  link  from  /usr/esps  to the destination directory.
+The default is NO, and we DISCOURAGE setting it to yes.
+.ip
+Another advantage of not creating this link is that without it
+it is possible to leave an old version of ESPS/waves+ in place and operating.
+.np
+Old Installation
+.ip
+Enter the location of your  old ESPS/waves+  installation. If you
+don't have one, leave it empty (the default is empty).
+.np
+Tape Device
+.ip
+the tape device.  On BSD Unix it might be /dev/rst8. On IBM AIX it
+might be /dev/rmt0.1.  This must be given.
+.np
+Non rewinding Tape device
+.ip
+the device name for the tape device that doesn't rewind.  On BSD Unix
+it might be something like /dev/nrst8. On IBM AIX it might be /dev/rmt0.1.
+This must be given.
+.np
+Tape Host
+.ip
+the hostname of the workstation with  the  tape  drive.
+Leave  empty  if  the  tape drive is on the workstation
+that you are logged into.
+
+.np
+Log Installation
+.ip
+a toggle field that allows you to  log
+the installation to stdout, a Unix file or both.  It is
+handy to log it to both.
+.np
+ Log file
+.ip
+the name of the logfile (if both or file is selected in
+the log installation field).
+.nr $p 0
+.sh 1 "Getting Ready to use Waves+"
+.pp
+Users should add a definition of environment variable ESPS_BASE to their
+ \fB.cshrc\fR (or whatever they use).  It should be set to the destination
+that waves+ was installed to. \fIThis variable must be defined for most 
+waves+ to run correctly. \fR
+.pp
+Also edit that file to include \fI$ESPS_BASE/bin\fR on their search path.
+.pp
+The Sun shared XView libraries  must  be  on  the  path
+specified by LD_LIBRARY_PATH (see below).
+.pp
+Remove or rename \fB.wave_pro\f files in your user's home directories.
+Old \fB.wave_pro\f files will not use some of the new features.  The
+best approach for most users is to use the \fB.wave_pro\f in
+$ESPS_BASE/lib/waves .  If you need to customize your environment, copy the
+ \fB.wave_pro\f in $ESPS_BASE/lib to your home directory and edit as needed.
+.pp
+Also note that all of the manual pages are stored online and can be
+accessed by the command \fIeman\fR.
+.pp
+After you are satisfied that all is well, up to this point, you should
+install the DSP board device driver, if you ordered one.   
+Proceed to the instructions for installing the device driver.
+You can delay this,
+however, if you want to, since \fIwaves+\fR will operate without the
+board.  
+.sh 1 "Getting Your Key"
+.pp
+In order to get a license key you must run \fIelmadmin -c\fR to generate a
+server code and to store your key.   Run \fIelmadmin\fR on the host that
+you will be running the license manager daemon on. ENSURE that environment
+varialble ESPS_BASE is set to the directory that waves+ was installed to.
+The key will only
+work if the daemon is run on the same host that the key was generated
+for.   Two pieces of information are required for us to assign you your
+key(s): (1) your server code from \fIelmadmin -c\fR and (2) the
+sales order number (from a sticker on the media).   An Entropic Key Request
+form should accompany your shipment.  Using the form will make getting keys
+easier and less error prone.
+.pp
+You can get your keys either by voice telehone or by FAX.   Keep the
+fact that we are located in the Eastern US time zone in mind when trying
+to call.   For customers outside of North America it might be best to
+FAX your request for your key (keys) to us at 202 546-6648.  We'll FAX
+the keys right back along with instructions for installing the key.
+To avoid errors in the server code, it would be
+best to send the actual output of the \fIelmadmin -c\fR command if
+possible (see the Unix \fIscript\fR command).
+.pp
+If you want to get your keys via voice telephone
+it would be best if you can call us while you are at a terminal.  That
+way we can give you the keys, wait while you enter them and be sure that
+everything is working correctly.   If that is not possible then you will
+have to carefully write down the server code that \fIelmadmin -c\fR
+produces.
+.pp
+If you can call when sitting at a terminal,
+then do so when you are ready.   Call
+Entropic at  202 547-1420, and tell the person that answers that you are
+calling for a "license key".   If possible, you will be given to
+someone who can help you.  If that person is not available, then your
+number will be taken and we will call you back.
+.pp
+If you cannot call from a terminal, run the following command, write
+down the server code and then kill the command when it asks for the key.
+When you copy the server code, watch out for the letter l vs the digit
+1, etc.  Run the following command:
+.nf
+.ft CW
+% elmadmin -c
+Your server code is:   XXX   <- record this code
+Please enter your key: <control>C    <- kill the program now
+.ft R
+.fi
+.pp
+Call Entropic at the above number and request a license key.
+We will need that server code and your sales order number to give you a key.
+.pp
+After you get your keys
+you will use \fIelmadmin\fR to store them.  The command is:
+.nf
+.ft CW
+% elmadmin -c
+Your server code is:   XXX   <- this should be the same as earlier
+Please enter your key: XXX   <- enter the first key given to you
+\fI<some information will be printed about the key>
+.ft CW
+% elmadmin -c
+Your server code is:   XXX   <- this should be the same as earlier
+Please enter your key: XXX   <- enter the second key given to you
+\fI<some information will be printed about the key>
+.ft R
+.fi
+.sh 1 "Starting the License Manager"
+.pp
+Before you can run \fIwaves+\fR or any of the \fIwaves+\fR programs,
+you must start the license manager daemon and allow it time to
+initialize.    To start the daemon, ensure that ESPS_BASE points the the place
+where waves+ was installed, and simply type the command:
+.nf
+.ft CW
+% elmd
+.ft R
+.fi
+.ft R
+.fi
+.pp
+This will spawn a background process and exit.   If you prefer, you can
+put this command into your
+\fI/etc/rc.local\fR, so that it will be executed
+each time your machine boots.  (If you do this, you will have to give the
+full path as \fI$ESPS_BASE/bin/elmd\fR).
+.pp
+After you start the license manager daemon, you have to wait about four
+minutes before it will respond to a request for a license.   You can verify
+that elmd is running by running \fBecheckout(ESPS-1)\f .  It will tell you
+that elmd is initializing and how long it will be until a key can be checked
+out.
+.pp
+The license manager daemon makes entries in the file
+\fI$ESPS_BASE/lib/elm.log\fR.    If you have trouble getting our programs
+to work correctly, we may ask you to look in this file and tell us what
+is in there.   This file will grow by a line each time a license is
+checked in and out.    If you want, you can zero the file with the
+command:
+.nf
+.ft CW
+% elmadmin -z
+.ft R
+.fi
+.pp
+Note that truncating the log file by other means would be ineffectual, since
+\fIelmd\fR keeps the log file open at all times.  The next \fIelmd\fR
+log file write would simply use the old file pointer, filling the file to the
+original length.   The \fB-z\fR option must be used to truncate the
+file.
+.pp
+A suggested method to clean up the log file every evening is to run the
+following by your \fIcrontab\fR system.   You will need your system
+administrator to set this up.
+.nf
+.ft CW
+cp elm.log elm.log.old
+elmadmin -z
+.ft R
+.fi
+.sh 1 "Checking Out a License"
+.pp
+\fIWaves+\fR checks out a license each time it is started.  You do not
+have to do anything else.   In order to run any of the ESPS programs
+included with this package, one of two conditions must be met.  Either
+there is a \fIwaves+\fR running on this host, or \fIwcheckout\fR is
+running on this host.  So, for example, if you are running \fIwaves+\fR
+on your workstation, you can run any of the other ESPS programs included
+in this package on the same host as long as \fIwaves+\fR is also
+running.   If you need to run any of these programs and you cannot run
+\fIwaves+\fR (because you are not on a graphics terminal, for example)
+you need to run \fIwcheckout\fR to checkout a license for this host.
+See the manual pages for \fIwcheckout\fR and \fIwfree\fR for details.
+.pp
+For details see the document \fILiving with the ESPS Floating License Manager
+System\fR.
+.pp
+Note that \fIwaves+\fR is licensed on a per user basis, so the total
+number of \fIwaves+\fR that can be run at a time is limited by the
+number of available licenses.
+.pp
+You have to set the environment
+variable \fBELM_HOST\fR to identify the name of the host on which the
+license manager daemon is running.
+For example, if the license manager daemon is running on a CPU
+with hostname \fIfido\fR, you would do:
+.nf
+.ft CW
+% setenv ELM_HOST fido
+
+.ft CW
+% setenv ELM_HOST fido
+.ft R
+.fi
+.pp
+This environment variable tells ESPS/waves+ programs where the daemon is
+running.   To checkout a license you do:
+.nf
+.ft CW
+% echeckout
+.ft R
+.fi
+.pp
+\fIEcheckout\fR will checkout a license, if possible, and then wait in
+the background.   It will tell you if it has succeeded and return a
+process ID number.   To free the license use the command \fIefree\fR.
+\fIEfree\fR can only be used by the same user that ran \fIecheckout\fR
+to get the license.    Otherwise, the super-user can find the
+\fIecheckout\fR with \fIps\fR and kill it.
+.pp
+You can check on the status of your licenses by using the command:
+.ft CW
+.nf
+% elmadmin -l
+.ft R
+.fi
+.sh 1 "Checking it Out"
+.pp
+The command \fIwinfo\fR pops up a tool for viewing technotes and running
+demos. Run \fIwinfo\fR, and play around with the demos.  This will
+provide a pretty solid test of the installation, and give you can look
+at what \fIwaves+\fR can do.
+.pp
+We also suggest that you use \fIeman -k\fR (followed by a keyword to
+search for) to familiarize yourself with the system.  See the \fIeman\fR
+man page (type eman eman)
+.pp
+For Sun systems, there are two copies of \fIwaves+\fR, \fIlabel\fR, and
+\fIspectrum\fR.  The versions by these names are for the Suntools window
+system.  For the X window system, use \fIxwaves+\fR, \fIxlabel\fR, and
+\fIxspectrum\fR.   Non Sun systems only  have the X versions.
+.pp
+This version of xwaves+ is built under the xview toolkit (from Sun).   
+XView clients must be run under an ICCCM compliant window manager for 
+everything to work correctly.    In addition, the OpenLook fonts are
+required.
+.pp
+The directory \fI$ESPS_BASE/xview\fR contains a binary copy of the
+OpenLook window manager, the OpenLook fonts, and a simple script to add
+the fonts to your font path.   If you are running on a Sun system and
+already have the OpenLook (or OpenWindows) package from Sun installed,
+then you should be OK.  Otherwise, see the README file in
+\fI$ESPS_BASE/xview\fR and follow the instructions there.
+.sh 1 "Special Notes"
+.sh 2 "Switching between OLD and NEW versions"
+.ip
+Two things must happen to switch between old and new version of ESPS/waves+:
+.np
+Your Unix search path must be set to find the version you desire.
+.np
+You must stop the license manager of the release you are running and start the
+license manager of the version you want to switch to. 
+.ip
+This release of ESPS/waves+ requires new keys.  The keys are incompatible
+with previous releases.  In order to switch between previous releases of
+ESPS/waves+ and new releases you must run the license manager daemon (elmd)
+that shipped with that release.  Only one elmd may run on a network at one
+time, so that means that everyone must switch between old and new with you.
+.sh 2 "Installing as ROOT"
+.ip
+Typically you won't need to be ROOT to install ESPS and waves+.  That's
+one of the reasons we made this version position independent.
+If you do install as ROOT (perhaps you want to install to /usr or /usr/local),
+then ensure that you have appropriate permissions across NFS mounts.  This
+applies if you are installing the new version across NFS, or copying keys
+or other files from an old installation (which happens to sit across NFS).
+Typically NFS mounts do not permit ROOT user access (for security reasons).
+You must mount the NFS file system so the ROOT user has read/write permission.
+The actual procedure for doing this varies with each flavor of Unix, please
+refer to your Unix's NFS manual.
+.sh 2 "Name Conflict with OpenLook psps"
+.ip
+The ESPS program psps(1) has the same name as an
+OpenLook program.  Thus, if you plan to run ESPS demos, or older
+ESPS scripts, ESPS/waves+ will have to be before OpenLook programs
+on your Unix program search path.  ESPS program pseps(1) is another
+name for psps, which you can use in new scripts and avoid the naming
+conflict.
+.sh 2 "Position Independence"
+.ip
+ESPS/waves+ no longer need to reside in /usr/esps.  The
+ESPS/waves+  file  tree  can be put anywhere as long as
+the enviroment variable ESPS_BASE points to the top  of
+the  ESPS/waves+  file  tree,  and $ESPS_BASE/bin is on
+our path.
+.ip
+It is a very good idea to set ESPS_BASE in your  .cshrc
+or .profile.  An example would be:
+.sp 2
+.nf
+      %setenv ESPS_BASE /h4/esps4.1
+      %setenv PATH $ESPS_BASE/bin:$PATH
+      %rehash
+      %which testsd
+       /h4/esps4.1/bin/testsd
+.fi
+.sp 2
+.ip
+Note that if you have two installations of ESPS+/waves (the old
+version and this version) that you must have only one of them on the
+path at a time.
+.sh 2 "Shared XView Libraries (Sun/Sparc versions only)"
+.ip
+This release of ESPS/waves+ takes  advantage  of  Sun's
+shared  library  facility  for  OpenLook interface programs. 
+This trimmed the installation size by 15  megabytes.
+However  it  does  add a little complexity your life.
+.ip
+To run the programs that were linked with Sun's  shared
+libraries  you  need  to specify those libraries in the
+environment variable LD_LIBRARY_PATH.   LD_LIBRARY_PATH
+should  be  setup  in your .cshrc.  You should have the
+shared libraries on your system already, but  they  are
+provided in $ESPS_BASE/lib, if not.
+.ip
+A typical installation that already has  the  libraries
+might set the LD_LIBRARY_PATH to this in their .cshrc:
+.sp 1
+.nf
+        %setenv LD_LIBRARY_PATH /usr/openwin/lib:/usr/lib/X11:/usr/lib
+.fi
+.sp 1
+.ip
+This tells Sun's dynamic loader that  shared  libraries
+are  to be searched for in these directories.  It works
+just like the Unix which(1) command.
+.ip
+If your system did not have the XView shared  libraries
+already then you might set LD_LIBRARY_PATH to use the
+shared XView libraries that we ship in $ESPS_BASE/lib :
+.sp 1
+.nf
+
+       setenv LD_LIBRARY_PATH $ESPS_BASE/lib/:usr/lib/X11:/usr/lib
+.fi
+.sh 1 "In Case of Difficulty"
+.pp
+If you have questions about the installation process
+please call Entropic for help.
+.sp
+.TS
+box,center,tab(;);
+l | l.
+Entropic Research Laboratory, Inc.;Voice: 202 547-1420
+600 Pa. Ave. SE, Suite 202;FAX: 202 546-6648
+Washington, DC. 20003 USA;Email: esps@wrl.epi.com (uunet!epiwrl!esps)
+.TE

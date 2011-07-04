@@ -1,0 +1,6 @@
+# @(#)Paddfea	1.3 3/27/90 ESI
+string field_name =? "addfea_field": "Name of new field";
+string field_type =? "FLOAT" : "Data type of new field": {"DOUBLE", "FLOAT", "LONG", "SHORT", "BYTE", "DOUBLE_CPLX", "FLOAT_CPLX", "LONG_CPLX", "SHORT_CPLX", "BYTE_CPLX"};
+string FEA_subtype =? "NONE": "FEA subtype (leave as NONE unless the output has all required fields)": {"NONE", "FEA_SD", "FEA_ANA", "FEA_STAT", "FEA_VQ", "FEA_SPEC"};
+int field_size =? 1 : "Size of new field (integer)" : [1, 100000];
+string comment =? " " : "Enter comment describing origin of data" ;

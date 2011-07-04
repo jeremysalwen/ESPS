@@ -1,0 +1,8 @@
+# @(#)Pwindow	1.2	7/18/88	ESI
+# default parameter file for window
+int	start ?= 1: "First record from input file to process";
+int	nan ?= 0: "Number of records to process; 0 means till EOF";
+string	sd_field_name ?= "sd": "Input sampled data field name";
+string	wind_field_name ?= "wind_sd": "Output windowed sampled_data field name";
+int window_len ?= 0: "window_len (Size of window; 0 means size of sd_field_name)";
+string window_type ?= "RECT": "Window to apply to data (RECT, HAMMING, TRIANG)";

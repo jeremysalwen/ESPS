@@ -1,0 +1,13 @@
+# @(#)PWframe	1.1 6/29/93 ESI
+# default parameter file for file
+int frame_len ?= 100: "frame_len (Number of points per analysis frame; 0 means nan)";
+int step ?= 50: "step (points between start of successive frames; 0 means frame_len)";
+string window_type ?= "RECT": "Window to apply to data": {"RECT", "HAMMING", "TRIANG", "HANNING", "COS4"};
+
+
+
+
+
+
+
+

@@ -1,0 +1,17 @@
+# @(#)Pmelspec	1.1 7/12/98 ERL
+# default parameter file for melspec
+int	start ?= 1: "First record from input file to process";
+int	nan ?= 0: "Number of records to process; 0 means continue to EOF";
+int     num_freqs ?= 0:
+	"Number of channels; 0 means compute a default from channel_width";
+float   mel_low ?= 0: "Low limit of mel-scale range to cover";
+float   mel_high ?= 0:
+	"High limit of mel-scale range to cover; 0 means Nyquist equivalent";
+float   band_low ?= 0: "Low limit of frequency range (Hz) to cover";
+float   band_high ?= 0:
+	"High limit of frequency range (Hz) to cover; 0 means Nyquist";
+string  spec_type ?= "DB": "Output powers or log powers?": {"DB", "PWR"};
+float   add_const ?= 0.0: "Constant to add to output values";
+float   mult_const ?= 1.0: "Constant to multiply output values by";
+float	channel_width ?= 0:
+	"Channel width in mels; 0 means compute a default from num_freqs";

@@ -1,0 +1,9 @@
+# @(#)Pfft	1.4 6/21/91 ESI 
+# default parameter file for fft
+int start ?= 1: "First point to process";
+int nan ?= 1024: "Number of points; 0 means continue to EOF";
+int frame_len ?= 0: "Number of points per analysis frame; 0 means nan";
+int step ?= 0: "step (points between start of successive frames; 0 means frame_len)";
+string window_type ?= "RECT": "Window to apply to data": {"RECT", "HAMMING", "TRIANG", "HANNING", "COS4"};
+int order ?= 10: "Fourier transform length is 2 to this power" : [2,512];
+

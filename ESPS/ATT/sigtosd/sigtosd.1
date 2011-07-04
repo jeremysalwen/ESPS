@@ -1,0 +1,70 @@
+.\" Copyright 1989 Entropic Speech Inc., all rights reserved
+.\" @(#)sigtosd.1	1.3 12/14/89 ESI
+.TH SIGTOSD 1\-ESPS  12/14/89
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+sigtosd \- convert SIGnal format sampled data file to ESPS FEA_SD file
+.SH "SYNOPSIS"
+.B sigtosd
+[
+.BI \-x " debug_level"
+] [
+.B \-H
+]
+.I " input.sig output.esps"
+.SH "DESCRIPTION"
+.PP
+.I Sigtosd
+converts a SIGnal format sampled data file to an equivalent ESPS FEA_SD
+file.  The FEA_SD file is written with data type SHORT (which is the 
+data type of SIGnal sampled data files).   Unless the \fB-H\fP option 
+is used, the ASCII header from the input SIGnal file is inserted in 
+the comment section of the output ESPS header.  Any null characters 
+in the SIGnal header are stripped from the comment added to the ESPS
+header (thus, care must be taken if you intend later to take the 
+ESPS comment and turn it back into a SIGnal header).  
+.PP
+This program cannot be used on pipes.  
+.SH "OPTIONS"
+.PP
+.TP
+.BI \-x " debug_level"
+A positive value causes debugging output to be printed on the standard
+error output.  Larger values give more output.  The default is 0, for
+no output.
+.TP
+.B \-H
+Specifies that the SIGnal header from \fIinput.sig\fP is not to be
+inserted as a comment in the ESPS header of \fIoutput.esps\fP.  
+.SH ESPS PARAMETERS
+.PP
+The ESPS Parameter file is not processed. 
+.SH "ESPS COMMON"
+.PP
+The ESPS Common file is not processed.
+.SH ESPS HEADERS
+.PP
+A standard ESPS FEA_SD header is written for \fIoutput.esps\fP, with the 
+input SIGnal header added as a comment unless the \fB-H\fP is used.  
+.SH "FUTURE CHANGES"
+.PP
+.SH "SEE ALSO"
+.PP
+\fIfeatosd\fP (1\-\s-1ESPS\s+1), FEA_SD (5\-\s-1ESPS\s+1)
+.SH "BUGS"
+.PP
+\fISigtosd\fP doesn't notice if \fIinput.sig\fP is an ESPS SD file 
+instead of a SIGnal file.  In this case, \fIoutput.esps\fP is 
+an equivalent ESPS SD file; 
+\fIsigtosd\fP doen't work on FEA_SD (5\-\s-1ESPS\s+1) input files,
+however. 
+The following cryptic error messages occur:
+\fIwrite_data: SD file; Signal type not P_SHORT.
+Problems writing data in put_signal().\fP
+If the \fB-H\fP is not used, the 
+comment labeled as a SIGnal header is a SIGnal header synthesized
+from the ESPS header on \fIinput.sig\fP. 
+.SH "AUTHOR"
+.PP
+Manual page and program by John Shore. FEA_SD modifications by David Burton.
+

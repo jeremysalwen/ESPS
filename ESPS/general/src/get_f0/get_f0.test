@@ -1,0 +1,39 @@
+#!/bin/sh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1993  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)get_f0.test	1.4	2/26/95	ERL
+# 
+# Written by:  Derek Lin
+# Checked by:
+# Revised by:
+# 
+# Brief description:
+# 
+USE_ESPS_COMMON=off; export USE_ESPS_COMMON
+cat > ref << EOD
+128.005 1 0 0.8445 
+126.383 1 584.268 0.937415 
+124.775 1 489.075 0.956224 
+121.779 1 324.972 0.932353 
+121.3 1 201.034 0.680179 
+121.269 1 133.194 0.598284 
+121.18 1 189.206 0.308961 
+EOD
+echo getting test file
+get_f0 -s 0.2:0.3 $ESPS_BASE/demo/speech.sd foo
+
+pplain foo > test
+echo compare test file with an existing ref file
+echo    diff test ref
+diff test ref
+echo there should be no output or difference
+rm test ref foo

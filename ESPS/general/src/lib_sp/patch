@@ -1,0 +1,15 @@
+#! /bin/sh
+# this is used to patch a few .c files into the ESPS library
+#
+
+LIBNAME=`get_esps_base`/lib/libespsg.a
+
+for file
+ do
+  echo emake `basename $file '.c'`.o
+  emake `basename $file '.c'`.o
+  echo ar rv $LIBNAME `basename $file '.c'`.o
+  ar rv $LIBNAME `basename $file '.c'`.o
+ done
+echo ranlib $LIBNAME
+ranlib $LIBNAME

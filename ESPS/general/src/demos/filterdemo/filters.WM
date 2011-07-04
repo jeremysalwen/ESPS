@@ -1,0 +1,58 @@
+# View transfer functions
+
+"View 600 lowpass"	shell plotspec -y-60:5 -W"=200x200+480+10" files/600lp.filt.spec 2> /dev/null
+
+"View 1750 bandpass"   shell plotspec -y-60:5 -W"=200x200+690+10" files/1750bp.filt.spec 2> /dev/null
+
+"View 3000 highpass"	shell plotspec -y-60:5 -W"=200x200+480+225" files/3000hp.filt.spec  2> /dev/null
+
+"View 180 notch"	shell plotspec -y-60:5 -W"=200x200+690+450" files/notch.filt.spec  2> /dev/null
+
+"View Butterworth"	shell plotspec -y-60:5 -W"=200x200+690+225" files/butter.filt.spec  2> /dev/null
+
+"View Chebyshev"	shell plotspec -y-60:5 -W"=200x200+480+450" files/cheby.filt.spec  2> /dev/null
+
+#add filters
+
+"Add 600 lowpass"	add_espsf menu wave name "600 Hz. lowpass" out_ext 600lp command filter  -F files/600lp.filt
+
+"Add 1750 bandpass"    add_espsf  menu wave name "1750 Hz. Bandpass" out_ext 1750bp command filter -F files/1750bp.filt
+
+"Add 3000 highpass"     add_espsf  menu wave name "3000 Hz. Highpass" out_ext 3000hp command filter -F files/3000hp.filt
+
+"Add 180 notch"	        add_espsf menu wave name "180 Hz. notch" out_ext notch command filter -F files/notch.filt
+
+"Add Butterworth"	add_espsf menu wave name "Butterworth" out_ext butter command filter -F files/butter.filt
+
+"Add Chebyshev"	        add_espsf  menu wave name "Chebyshev" out_ext cheby command filter -F files/cheby.filt
+
+#Remove filter from menu
+
+"Zap 600 lowpass" 	delete_item name  "600 Hz. lowpass" 
+
+"Zap 1750 bandpass" 	delete_item  name "1750 Hz. Bandpass" 
+
+"Zap 3000 highpass" 	delete_item name "3000 Hz. Highpass"
+
+"Zap 180 notch"		delete_item name "180 Hz. notch"
+
+"Zap Butterworth" 	delete_item name "Butterworth" 
+
+"Zap Chebyshev"		delete_item name "Chebyshev" 
+
+
+#Start xpz to allow interactive modification of a filter
+
+"Interactive Pole/Zero Filter Design " shell call_xpz
+
+#Modify spectrogram display attributes
+
+"Image Display Control"  make_panel name images file imageglbl.WM columns 5 icon_title scontrol title "Image Display Controls"
+
+"Mouse Bindings"  make_panel name mouse file dmbind.WM columns 4 icon_title mouse title "Mouse Bindings"
+
+"Get Sampled Data" waves make name filters file speech.sd loc_y 675 loc_x 0
+
+# @(#)filters.WM	1.4 11/5/91 ERL
+
+

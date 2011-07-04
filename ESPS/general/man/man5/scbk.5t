@@ -1,0 +1,178 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)scbk.5t	1.6 25 Sep 1997 ESI
+.TH SCBK 5\-ESPS 25 Sep 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+ESPS SCBK Scalar Quantization Codebook\- (.scbk)
+.SH SYNOPSIS
+.B #include <esps/esps.h>
+.br
+.B #include <esps/scbk.h>
+.SH DESCRIPTION
+A SCBK file consists of a header that is followed by one data record.
+.PP
+The header has the following layout as defined by
+.I <esps/header.h>
+The header items common to all ESPS data files are described in
+\fIESPS\fR(5\-ESPS).   The type specific header structure for SCBK files
+is shown below.
+.PP
+.nf
+.br
+/* SCBK  Scalar Quantization Codebook specific header */
+.br
+.sp
+struct scbk_header {
+.TS
+l1 l1 l1 l.
+	long	num_items;	/\(** number of items processed \(**/
+	short	distortion;	/\(** distortion measure used \(**/
+	unsigned short	num_cdwds;	/\(** number of codewords \(**/
+	float	convergence;	/\(** convergence threshold \(**/
+	short	codebook_type;	/\(** type of codebook \(**/
+	short	element_num;	/\(** element number \(**/
+	short	spares[SCBK_SPARES];	/\(** spares \(**/
+.TE
+};
+.fi
+.sp
+.PP
+The following items are in the SCBK file specific header structure.
+.IP num_items
+The number of data items that were used in designing the codebook.
+.IP distortion
+The type of distortion measure that was used in clustering the data.
+Legal values are defined in <esps/header.h>.
+.IP num_cdwds
+The number of codewords in the codebook.
+.IP convergence
+The convergence threshold used in the design of the codebook.
+.IP codebook_type
+The name of the parameter that the codebook represents.
+Legal values are defined in <esps/header.h>.
+.IP element_num
+The codebook was designed for this element of the specified 
+.I codebook_type.
+0 means element zero, 1 means element one, and so on.
+Two negative values have special meaning:
+-1 means all elements of the specified 
+.I codebook_type
+are
+used, and -2 means that no record of element value is being kept. 
+.IP spares[SPARES]
+There are SCBK_SPARES spare shorts.
+.PP
+The one data record follows the header.
+The data structure is shown below in C syntax.
+.PP
+This data structure is defined in\fI<esps/scbk.h>\fR.
+A function is available to allocate memory for this data structure and
+to fill in the type fields in the common part of the header.
+.sp
+struct qtable_entry {
+.TS
+l1 l1 l1 l.
+ float	enc;	/\(** upper limit on encoding range \(**/
+ float	dec;	/\(** value to decode \(**/
+ unsigned short	code;	/\(** bit pattern \(**/
+};
+.TE
+.sp
+struct scbk_data {
+.TS
+l1 l1 l1 l.
+ float	final_dist;	/\(** final distortion \(**/
+ float	cdwd_dist[\fInum_cdwds\fR];	/\(** individual codeword distortions \(**/
+ long	final_pop[\fInum_cdwds\fR];	/\(** codeword populations \(**/
+ struct qtable_entry	qtable[\fInum_cdwds\fR];	/\(** codewords \(**/
+};
+    
+.TE
+.PP
+The
+.I SCBK
+data record starts with the
+.I final_dist
+value.
+This is
+the average distortion 
+that results from representing the training data by the final
+codebook.
+This data value is followed by an 
+.I num_cdwds 
+element
+array of
+.I final_pop
+values.
+Each element of 
+this array contains the number of data items that
+are associated with the corresponding codeword.
+For example, final_pop[0] contains the number of data items that were
+closest to the first codeword (codeword[0]), 
+final_pop[1] contains the number of items that
+were closest to the second, and so on.
+Next
+there is an 
+.I num_cdwds
+element array of
+.I cdwd_dist
+values.
+Each element of this array contains the average distortion associated with
+the corresponding codeword. That is,
+cdwd_dist[0] contains the average distortion that results from representing the
+final_pop[0] data items by codeword[0].
+Finally, 
+there are 
+.I num_cdwds
+structures
+.I qtable_entry.
+These structures are ordered from the smallest 
+.I qtable.enc
+value to the largest.
+.I qtable.enc
+is the largest value that gets decoded as 
+.I qtable.dec.
+The bit pattern stored in 
+.I qtable.code
+is the pattern used to represent 
+.I qtable.decode
+by Rosetta.
+.SH RECORD ELEMENT FILE STRUCTURE
+.PP
+The order of record elements is not the same on the file itself as it is
+in the structure defined above.    The mapping is given by the table
+below.  This information should not be used by programs that use the
+data record access functions.  This information is provided for use only
+with generic ESPS programs (see \fIstats\fR(1\-ESPS)).
+.sp
+.TS
+center,tab(;),box;
+c | c | c
+l | l | l.
+Record Item;Starting Element Number;Number of Elements
+_
+final_dist;1;1
+cdwd_dist;2;\fInum_cdwds\fR
+qtable->enc;\fInum_cdwds\fR+2;\fInum_cdwds\fR
+qtable->dec;(\fInum_cdwds\fR*2)+2;\fInum_cdwds\fR
+final_pop;(\fInum_cdwds\fR*3)+2;\fInum_cdwds\fR
+qtable->code;(\fInum_cdwds\fR*4)+2;\fInum_cdwds\fR
+.TE
+.SH FILES
+.nf
+/usr/include/esps/header.h
+/usr/include/esps/scbk.h
+.fi
+.SH SEE ALSO
+.IR allo_scbk_rec (3\-ESPSu),
+.IR get_scbk_rec (3\-ESPSu),
+.br
+.IR put_scbk_rec (3\-ESPSu),
+.IR read_header (3\-ESPS),
+.br
+.IR write_header (3\-ESPS),
+.IR ESPS (5\-ESPS)
+.SH AUTHOR
+David Burton
+
+

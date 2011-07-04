@@ -1,0 +1,28 @@
+/*========================================================================
+*
+* Name - Acks
+*
+* Version:	1.2
+*
+* ccsid:	@(#)Acks	1.2 - 7/26/91 12:18:46
+* from: 	ccs/s.Acks
+* date: 	7/26/91 13:22:25
+*
+* Description: Thanks to the people listed below for their help in this
+*              project
+*
+*========================================================================
+
+
+    David Lawrence for the memcpy() and memset() functions
+    
+    Alan Kent for help with 4-plane problems, encapsulated postscript
+    suggestions, and for testing the patch kit
+
+    Brian C. Smith for YIQ greyscale and Floyd-Steinberg algorithms
+
+    Johan Garpendal for the initial color-postscript work
+    
+    Bob Tatar for the colorimage Postscript word
+    
+    

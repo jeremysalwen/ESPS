@@ -1,0 +1,132 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)computerc.3t	1.2 06 May 1997 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  COMPUTE_RC 3\-ESPSsp 06 May 1997
+.SH NAME
+
+.nf
+compute_rc \- compute reflection coefficients by various methods
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+ 
+#include <stdio.h>
+#include <esps/esps.h>
+#include <esps/window.h>
+#include <esps/ana_methods.h>
+
+extern int debug_level;
+
+compute_rc(sdata, sdata_size, method, dcrem, win_type, order, 
+		  sincn, sc_iter, sc_conv, rc, r, gain)
+float  *sdata;
+int    sdata_size;
+int    method;
+int    dcrem;
+int    win_type;
+int    order;
+int    sincn;
+int    sc_iter;
+double sc_conv;
+float  *rc;
+double  *r;
+float  *gain;
+
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+\fIcompute_rc\fP is a "cover function" for various ESPS functions that
+compute reflection coefficients.  The method used is determined 
+by \fImethod\fP as follows:  
+.nf
+
+.TS
+center, box, tab(;);
+c | c | c
+l | l | l
+l | l | l.
+\fImethod\fP;Description;ESPSsp Functions Used
+=
+AM_AUTOC;Autocorrelation Method;\fIget_auto\fP(), \fIget_atal\fP()
+AM_COV;Covariance Method;\fIget_auto\fP(), \fIcovar\fP()
+AM_BURG;Burg Algorithm;\fIget_burg\fP(...'b')
+AM_MBURG;Modified Burg Algorithm;\fIget_burg\fP(...'m')
+AM_FBURG;Fast Modified Burg Algorithm;\fIget_fburg\fP()
+AM_VBURG;Vector Burg Algorithm;\fIget_vburg\fP()
+AM_STRCOV;Structured Covariance;\fIstrcov_auto\fP(...'f'...), \fIget_atal\fP()
+AM_STRCOV1;Structured Covariance alternate;\fIstrcov_auto\fP(...'w'...), \fIget_atal\fP()
+.TE
+
+.fi
+.PP
+Note that the symbolic constants in the first column can be used 
+in the call provided that <esps/ana_methods.h> is included in the 
+calling program.  
+.PP
+All of the methods process \fIsdata_size\fP points of input sampled
+data \fIsdata\fP and produce \fIorder\fP reflection coefficients
+\fIrc\fP[1] to \fIrc\fP[\fIorder\fP]. The space for \fIrc\fP must be
+allocated by the calling program (\fIorder\fP+1 floats).  The methods
+also compute the first normalized autocorrelation coefficient
+\fIr\fP[0] and the lpc filter gain *\fIgain\fP.  Some of the methods
+also compute \fIorder\fP normalized autocorrelation coefficients
+reflection coefficients \fIr\fP[1] to \fIr\fP[\fIorder\fP], in which
+case sufficient space (\fIorder\fP+1 floats) must be allocated by the
+calling program.
+.PP
+If \fIdcrem\fP != 0, the DC component of \fIsdata\fP will be removed
+before analysis (this is done on a copy, in case \fIsdata\fP is used
+again in the calling program).  The data (after after DC removal) will
+also be windowed using the window specified by \fIwin_type\fP.  The
+current available values are WT_NONE, WT_RECT, WT_HAMMING, WT_TRIANG,
+WT_HANNING, and WT_COS4.  These symbolic values can be used provided
+that <esps/window.h> is included (see \fIwindow\fP (3\-\s-1ESPS\s+1sp).  
+.PP
+The methods AM_AUTOC, AM_STRCOV, and AM_STRCOV1 operate by estimating
+the autocorrelation function and then transforming to reflection
+coefficients.  In these cases, if \fIsincn\fP != 0, \fIcompute_rc\fP
+will multiply the autocorrelation function by a
+\fIsin\fP(\fIx/sincn\fP) function prior to computing the reflection
+coefficients.  This has the effect of reducing the spectral resolution
+if the spectrum of these coefficients is plotted.
+.PP
+For the AM_STRCOV method (not including AM_STRCOV1), the estimator
+terminates after \fImax_iter\fP iterations, or after the relative
+change in autocorrelation values falls below the convergence threshold
+\fIconv_test\fR.
+.PP
+For details about the various functions, see the relevant man pages.  
+In some cases, some additional steps are taken by \fIcompute_rc\fP to 
+provide uniform interface (e.g., in computing \fIr\fP[0]).  
+.PP
+\fIcompute_rc\fP does the main computational work in the program 
+\fIrefcof\fP(1\-\s-1ESPS\s+1).
+.SH EXAMPLES
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+If the external \fIdebug_level\fP is non-zero, various debugging 
+messages are printed.  Higher values yield more verbose output.  
+.SH FUTURE CHANGES
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+\fIget_auto\fP (3\-\s-1ESPS\s+1), \fIget_atal\fP (3\-\s-1ESPS\s+1), 
+\fIcovar\fP (3\-\s-1ESPS\s+1), \fIget_burg\fP (3\-\s-1ESPS\s+1), 
+\fIget_fburg\fP (3\-\s-1ESPS\s+1), \fIget_vburg\fP (3\-\s-1ESPS\s+1),
+\fIstrcov_auto\fP (3\-\s-1ESPS\s+1), \fIstruct_cov\fP (3\-\s-1ESPS\s+1),
+\fIrefcof\fP (1\-\s-1ESPS\s+1), \fIme_spec\fP (1\-\s-1ESPS\s+1)
+.SH AUTHOR
+.PP
+Program and man page by John Shore
+
+
+
+

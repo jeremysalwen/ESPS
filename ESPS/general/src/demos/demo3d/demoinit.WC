@@ -1,0 +1,49 @@
+waves delete_all_items menu all
+# @(#)demoinit.WC	1.8 2/11/93 ERL
+# reconfigure menus
+add_waves builtin "zoom in" 
+add_waves builtin "zoom out" 
+add_waves builtin "bracket markers" 
+add_waves builtin "zoom full out" 
+add_waves builtin "window ahead" 
+add_waves builtin "window back"
+add_waves menu all builtin "kill window" 
+
+# invoke a misc control panel based on the one from waves/lib/commands
+# but put it up in a new place
+
+waves make_panel name misc columns 1 title "Image Controls" icon_title colors file dcolors.WM loc_x 205 loc_y 0
+
+sleep seconds .2
+# bring up the 3D plot
+
+shell plot3d -WP 0 145 -Wp 110 155 -B 450,300,200 -oR -w  files/sat.fspec &
+
+# allow time for the plot3d windows to come up 
+
+sleep seconds 4
+
+# now bring up the xwaves plot 
+
+make name saturn file files/sat.fspec loc_x 360 loc_y 0 height 300 width 300 
+
+saturn bracket start 9 end 60
+
+# finally, put up a README
+
+shell xtext -Wp 425 415 -F README -t "About the plot3d demo" &
+
+return
+
+# @(#)demoinit.WC	1.8 2/11/93 ERL
+
+
+
+
+
+
+
+
+
+
+

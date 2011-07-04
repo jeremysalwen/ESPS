@@ -1,0 +1,203 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)vqdst.1	1.4 4/7/97 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH VQDST 1\-ESPS 4/7/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.ds ]Y "\fBERL\fP
+.SH "NAME"
+vqdst - encode a field in a FEA file in a VQ codebook file.
+.SH "SYNOPSIS"
+.B vqdst 
+[
+.BI \-x " debug_level"
+] [
+.BI \-P " params_file"
+] [
+.BI \-d " distortion" 
+] [
+.BI \-f " field"
+] [
+.BI \-n " rep_number"
+] [
+.B \-s 
+] [
+.B \-t
+] [
+.B \-c
+] [
+.B \-q
+]
+.I " infile1.fea"
+.I " infile2.cbk"
+.I " outfile.dst"
+.SH "DESCRIPTION"
+.PP
+\fIVqdst\fR encodes the \fB\-f\fR specified field from every
+record
+of \fIinfile1.fea\fR in every codebook record of the FEA_VQ codebook 
+\fIinfile2.cbk\fR
+and writes the resulting distortion and identification information
+to \fIoutfile.dst\fR (a FEA_DST(5\-ESPS) file).
+If \fIoutfile.dst\fR already exists,
+\fIvqdst\fR appends one new record to it for each codebook record in
+\fIinfile2.cbk\fR; otherwise,
+\fIvqdst\fR creates \fIoutfile.dst\fR and writes one record to it
+for each codebook record in the input codebook file.
+The \fB\-d\fR option is used to specify the type of distortion 
+measure to use in the encoding, and
+the \fB\-c\fR, \fB\-s\fR, and \fB\-t\fR options allow
+the user to enforce certain consistencies between the two input
+files.
+.PP
+More specifically,
+the \fB\-s\fR option forces the \fIinput_source\fR field
+in the input FEA file header to be identical to the \fIsource_name\fR fields
+in the input \fIFEA_VQ\fP(5-ESPS) file's records. If they are different, 
+\fIvqdst\fR warns and exits.
+Similarly,
+the \fB\-t\fR option forces the \fIinput_signal\fR field in the input FEA
+file and the \fIsignal_name\fR field in the input FEA_VQ file to be
+identical.
+Finally,
+the \fB\-c\fR option forces the \fIfield\fR and \fIquant_field\fP
+(and if the input file
+is a \fIFEA_ANA\fP(5-ESPS) file, the \fIfield_rep\fR fields)
+in the two input files to be identical.
+.PP
+The field to encode in the codebooks must
+be of type FLOAT. Note that \fIfeafunc\fP(1\-\s-1ESPS\s+1) can be
+used
+to transform the data type of fields.
+.PP
+If 
+.I infile1.fea
+is set equal to "\-", 
+standard input is used for the input FEA file. 
+If
+.I outfile.dst
+is equal to "\-", 
+standard output is used.  
+.SH OPTIONS
+.TP
+.BI \-x " debug_level" " \fR[0]\fP"
+Values
+greater than 0 cause messages to print to \fIstderr\fR.
+.TP
+.BI \-P " params_file"
+The name of a parameter file may be specified here. The default name is
+\fIparams\fR.
+.TP
+.BI \-d " distortion" \fR[MSE]\fP
+At this time only one distortion method is supported: mean square
+error (MSE).
+.TP
+.BI \-f " field" 
+Specify the field in \fIinput.fea\fR 
+to encode.
+.TP
+.BI \-n " rep_number  \fR[\-1]\fP"
+Specify the repetition number for input files with identical
+values in the \fIinput_source\fR and \fIinput_signal\fR fields.
+.TP
+.B \-c
+If this option is set,
+a difference in the \fIfield\fR or \fIfield_rep\fR 
+fields in the two input files is a fatal error.
+.TP
+.B \-s
+If this option is set,
+a difference in the \fIsource_name\fR or \fIinput_source\fR field values
+in the two
+input files is a fatal error. 
+.TP
+.B \-t
+If this option is set,
+a difference in the \fIsignal_name\fR or \fIinput_signal\fR field values
+in the two input files is a fatal error.
+.TP
+.B \-q
+This option must be specified to append to an existing FEA_DST file.
+By using this option,
+the header information of the current input file is lost - 
+\fIvqdst\fR simply appends records to the existing file. No
+header information is copied over.
+.SH "ESPS PARAMETERS"
+.PP
+The strings values for \fIdistortion\fR and \fIfield\fR can be obtained from
+the parameter file. Remember that any command line value
+over rides the parameter file value.
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.SH ESPS COMMON
+.PP
+If only two files are specified on the command line,
+\fIvqdst\fR checks Common for a file name. If one exists,
+it uses it as the \fIinfile1.fea\fR.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is
+.espscom in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.SH ESPS HEADERS
+.PP
+Both \fIinfile1.fea\fR and \fIinfile2.cbk\fR 
+are added to the output header 
+as sources.
+.PP
+See FEA_DST(5\-ESPS) for a description
+of the standard header items.
+.SH FUTURE CHANGES
+.PP
+If \fIvqdst\fR output is to be used for speaker verification,
+the input FEA file needs to have the following
+two generic header items filled in: \fIinput_source\fR (character)
+and \fIinput_signal\fR (character). These values are copied by
+\fIvqdst\fR
+to the output FEA_DST(5\-ESPS) file, 
+and the values are used by \fIthresh\fP and
+\fIspkver\fP.
+These two programs are not part of the standard distribution, but may
+be made so at some time in the future.
+.PP
+Itakura Saito (IS), gain-normalized Itakura Saito (GNIS),
+and gain-optimized Itakura Saito (GOIS) will be added.
+The IS, GNIS, and GOIS distortion measures are valid
+only for fields that contain spectral parameters.
+See [1] for a description of the IS, GNIS, and GOIS distortion
+measures.
+.SH WARNINGS
+.PP
+\fIVqdst\fR warns and exits if the input file types are not
+correct, the named \fIfield\fR is not in \fIinput1.fea\fR,
+or the number of elements in the input \fIfield\fR does not
+equal the number of elements in
+\fIinfile2.cbk\fR codebook records.
+If a field containing spectral information does not
+contain a valid spectral type (see \fIspec_reps\fR table
+in \fIanafea.h\fR for valid types)
+and either IS, GNIS, or GOIS is specified as the distortion measure,
+\fIvqdst\fR warns and exits.
+.SH "SEE ALSO"
+.PP
+.nf
+refcof(1\-ESPS), FEA_DST(5\-ESPS), addclass(1\-ESPS), 
+vq(1\-ESPS), vqdes(1\-ESPS), FEA_VQ(5\-ESPS)
+.fi
+.SH "BUGS"
+.PP
+None known.
+.SH REFERENCES
+[1] R.  M. Gray \fIet al.\fR, "Distortion Measures for Speech Processing,"
+\fIIEEE Trans. Acoust., Speech, Signal Processing\fR, vol. ASSP-28, 
+pp.367-376, Aug, 1980
+.SH "AUTHOR"
+.PP
+Manual page and code by David Burton.
+

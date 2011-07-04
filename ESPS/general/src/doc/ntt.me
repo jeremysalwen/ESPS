@@ -1,0 +1,59 @@
+.lo
+.ce 2
+.b
+ESPS Binary and Source Kit Instructions (READ THIS FIRST)
+.sp 1
+Document Version: 1.2 6/16/89
+.sh 1 "Introduction"
+.pp
+This ESPS kit contains both a full ESPS source tape and an ESPS binary
+kit.   We have included the binary distribution to ensure that ESPS
+programs are available in the event that there is some problem building from
+source.  We do not anticipate such problems, but considering the
+distance involved a backup seemed worthwhile.
+.pp
+You can start using ESPS immediately from this binary distribution, or
+build a new one from the source tape.   If this binary is correctly
+configured, then you might not want to bother with the source tape right
+away.
+.sh 1 "Configuration of the Binary Distribution"
+.pp
+This binary distribution is for a Masscomp 6000 series machine with an
+EF-12 data acquisition board, and MC68881 floating point.   
+For graphics support, this distribution
+assumes Masscomp X Window graphics (X11). 
+.sh 1 "Using this Distribution"
+.pp
+If you choose to use this binary distribution, follow the enclosed
+instructions \fIInstallation Instructions for the ESPS Binary Release\fR.
+.sh 1 "Using Source Distribution"
+.pp
+If you choose, instead, to build ESPS from the binary distribution, then
+follow the enclosed instructions \fIInstallation Instructions for the
+ESPS Source Release\fR.
+.sh 1 "Loading Source after the Binary Distribution"
+.pp
+If you initially load the binary distribution, but later desire to load
+the source also, the correct way to do that is to change directory to
+\fI/usr/esps\fR and read the source tape in there.  This will create a
+directory \fI/usr/esps/general\fR which contains the complete source tree.
+.pp
+Alternately, you can read in the source tape to any directory and then
+put in a symbolic link from /usr/esps/general to that directory.  For
+example, if you read the source tape into /usr/parker/esps_src, you
+should make a link as follows:
+.ft CW
+.sp
+% ln -s /usr/parker/esps_src/general /usr/esps/general
+.ft R
+.sh 1 "Changing Data Acquisition Parameters"
+.pp
+If your data acquisition does not match what is compiled in to the
+binary distribution, you can fix just that by loading the source after
+the binary and then editing the install script as described in the
+source installation instructions to the set the parameters correctly for
+your system.  Then simply give the command:
+\fIinstall mcplay mcrecord\fR.
+.pp
+This will remake the play and record programs with the correct
+parameters.

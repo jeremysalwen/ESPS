@@ -1,0 +1,55 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)cbkedit.1	3.1 10/6/87 ESI
+.TH CBKEDIT 1\-ESPS 10/6/87
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+cbkedit \- codebook file editor
+.SH SYNOPSIS
+.B cbkedit
+[
+.BI \-x " debug_level"
+] 
+.I " file"
+.SH DESCRIPTION
+.PP
+.I Cbkedit
+converts an ESPS SCBK file into a form suitable for editing with a text
+editor, opens the editor of your choice on it and then converts the
+edited file back to a SCBK file.   The environment variable EDITOR is
+checked for the name of your editor.  If EDITOR is not in the
+environment, then \fIvi(1)\fR is used.
+.PP
+.I Cbkedit
+can be used to edit both the codebook file data record and the header.
+The header item \fInum_cdwds\fR is reset to the correct number of
+codewords in the edited file.  It cannot be edited directly.
+.PP
+When the editor is exited, \fIcbkedit\fR asks if it should go ahead and
+make the changes, or abort the session.   If the changes are accepted,
+then a copy of the old file is kept with \fI.bak\fR appended to the
+filename.   
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-x " debug level"
+Only debug level 1 is defined in this version; this causes several
+messages to be printed.  The default level is zero, which causes no
+debug output.  
+.SH ESPS HEADERS
+.PP
+All header items in the output file are the same as those from the input
+file, except that \fInum_cdwds\fR is updated if codewords were added or
+deleting during the edit.
+.SH ESPS PARAMETERS
+The ESPS parameter file is not referenced.
+.SH ESPS COMMON
+The ESPS Common file is not used by this program.
+.SH BUGS
+The conversion from ASCII back to the SCBK file is simple-minded.  When
+editing keep the format the same as the program produced.  Only delete
+lines from the data record portion of the file.  Do not delete any blank
+lines or comments.
+.SH AUTHOR
+.PP
+Alan Parker

@@ -1,0 +1,20 @@
+
+The analysis/display parameters for hcspect are all at your disposal.
+Here's how:
+
+Copy /usr/local/lib/signal/misc/.hcspect_pro to your home directory.
+Copy /usr/local/lib/signal/misc/nb_hcspect_params and
+     /usr/local/lib/signal/misc/wb_hcspect_params to somewhere handy in
+your directory structure.
+Edit ~/.hcspect_params so that the variables "wb_spect_params" and
+"nb_spect_params" are set to the pathnames of your personal copies of the
+corresponding parameter files. (Note that "wb" and "nb" refer to
+"narrowband" and "wideband" respectively.)  You might want to examine
+the other variable settings in .hcspect_pro also (e.g. wave_height).
+
+Edit your copies of the ...params files to suit your needs.  They are
+commented and should be self-explanatory.
+
+Note that some of the parameters in these files may be overridden
+when hcspect is invoked by specifying command-line arguments.  Further
+documentation is available by running hcspect with NO arguments.

@@ -1,0 +1,7 @@
+int start = 1;
+int nan = 13421;
+string method = "wb";
+string data_window = "HAMMING";
+int fft_order = 7;
+string filename = "f.sd";
+string prog = "filter";

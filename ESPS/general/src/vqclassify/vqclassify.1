@@ -1,0 +1,93 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)vqclassify.1	1.2 4/7/97 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH VQCLASSIFY 1\-ESPS 4/7/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.ds ]Y "\fBERL\fP
+.SH "NAME"
+vqclassify - classify based on VQ distortions (FEA_DST file)
+.SH "SYNOPSIS"
+.B vqclassify 
+[
+.BI \-x " debug_level"
+] [
+.B \-v
+] [
+.BI \-m " method"
+] 
+.I " infile.dst"
+.SH "DESCRIPTION"
+.PP
+\fIvqclassify\fP reads \fIinfile.dst\fR (a \fIFEA_DST\fP(5-ESPS) file),
+and for each different \fIcbk_signal\fP found in the input file, 
+\fIvqclassify\fP finds the record that contains the
+smallest \fIaverage_dst\fP and remembers the \fIcbk_source\fP
+value.
+If all records have the same \fIcbk_signal\fP value, then
+the \fIcbk_source\fP in the record that contains the
+smallest \fIaverage_dst\fP is printed to standard output.
+If several different \fIcbk_signal\fP values exist in the input file,
+a classification decision is made for each \fIcbk_signal\fP
+and the \fIcbk_source\fP that was selected the most times is output
+to standard output.
+If an ordered list
+of all possible \fIcbk_source\fPs (from best guess to worst guess)
+along with confidence factors
+is wanted, then the \fB\-v\fR
+option should be used.
+.PP
+If
+.I infile.dst
+is equal to "\-", 
+then standard input is used.
+.SH OPTIONS
+.PP
+.TP
+.BI \-x " debug_level" " \fR[0]\fP"
+Values
+greater than 0 cause messages to print to \fIstderr\fR.
+.TP
+.B \-v
+With this option,
+confidence factors 
+along with 
+average distotion information
+for all possible choices 
+are written to
+standard output. 
+.TP
+.BI \-m " method" 
+At this time only one option is supported: \fIvote\fR.
+This method makes a classification decision on each 
+\fIcbk_signal\fR parameter in the 
+input FEA_DST file and then counts the number of votes for
+each \fIcbk_source\fP. The \fIcbk_source\fP with a plurality
+of votes is the guess of the input`s identity.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file is not processed.
+.SH ESPS COMMON
+.PP
+Common is neither read nor written.
+.SH ESPS HEADERS
+.PP
+No ESPS file is written.
+.SH "FUTURE CHANGES"
+.PP
+More methods will be added.
+.SH WARNINGS
+.PP
+\fIVqclassify\fR warns and exits if the input file is not a \fIFEA_DST\fP(5\-ESPS) file. 
+.SH "SEE ALSO"
+.nf
+\fIFEA_DST\fP(5\-ESPS), \fIvqdst\fP(1\-ESPS), \fIaddclass\fP(1\-ESPS),
+\fIvqdes\fP(1\-ESPS)
+.fi
+.SH "BUGS"
+.PP
+.SH "AUTHOR"
+.PP
+Manual page by David Burton.
+Program by Alan Parker.
+

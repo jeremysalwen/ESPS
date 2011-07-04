@@ -1,0 +1,501 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     plot3d - interactive 3-d plots (perspective plots with  hid-
+     den lines removed) of data from FEA files.
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>plot3d</STRONG> [ <STRONG>-d</STRONG> <EM>depth</EM> ] [ <STRONG>-f</STRONG> <STRONG>"</STRONG><EM>field</EM><STRONG>[</STRONG><EM>range</EM><STRONG>]"</STRONG> ] [ <STRONG>-o</STRONG> <EM>orientation</EM> ]
+     [ <STRONG>-r</STRONG> <EM>range</EM> ] [ <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> ] [ <STRONG>-B</STRONG> <EM>length</EM><STRONG>,</STRONG><EM>width</EM><STRONG>,</STRONG><EM>height</EM> ] [
+      <STRONG>-</STRONG> <STRONG>I</STRONG>  {<STRONG>aAbBcCpP</STRONG>} . . .   ]  [   <STRONG>-</STRONG> <STRONG>P</STRONG>   <EM>param</EM>   ]   [     <STRONG>-</STRONG>  <STRONG>R</STRONG>
+     <EM>bearing</EM><STRONG>,</STRONG><EM>elevation</EM><STRONG>,</STRONG><EM>rotation</EM> ] [ <STRONG>-S</STRONG> <EM>h</EM>_<EM>skew</EM><STRONG>:</STRONG><EM>v</EM>_<EM>skew</EM> ] [ <STRONG>-w</STRONG> ] [ <STRONG>-</STRONG>
+     <STRONG>M</STRONG> ] <EM>file</EM>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     <EM>plot3d</EM> reads data from a specified field of an ESPS FEA file
+     and  constructs  a three-dimensional plot of the data versus
+     two  independent  variables.   A  plot  of  data  from   the
+     <EM>re</EM>_<EM>spec</EM>_<EM>val</EM>  field  of  a  FEA_SPEC file, for example, could
+     show time along one axis, frequency along another axis,  and
+     spectral  power  density  (or its log) along the third axis.
+     In general, the <EM>x</EM>-axis corresponds to the order  of  records
+     in the file, the <EM>y</EM>-axis corresponds to the order of elements
+     in the field, and the <EM>z</EM>-axis  represents  the  data  values.
+     The  three-dimensional  plot  is rendered in a window on the
+     screen as a perspective drawing.
+
+     The user has complete control over the scaling, orientation,
+     depth  of perspective, and angle of view of the plot.  These
+     plotting  parameters  are  set  initially  by   command-line
+     options or values in an ESPS parameter file, but they can be
+     adjusted interactively with mouse-operated sliders and other
+     controls  in a control-panel window, or with mouse movements
+     in the plot window.  Operating the controls causes  a  wire-
+     frame  drawing  of  the bounding box of the plot to move and
+     change size accordingly, and clicking on  a  button  in  the
+     control-panel  window causes the plot to be redrawn with the
+     new parameters.  The current set of parameters can be  saved
+     to  a  file  so that other plots may later be drawn with the
+     same viewpoint.  Saved parameter sets may be loaded  from  a
+     file at any time.
+
+     Data may be loaded from a file interactively; the file name,
+     range  of records to be read, field name, and range of items
+     in the field may all be respecified.
+
+     A moving cursor, controlled by the mouse, allows the coordi-
+     nates of points of the graph to be read off numerically.
+
+     In addition to the display on the user's  screen;  the  plot
+     image  may  be saved in a file, so that it can be printed or
+     imported into a word processing system.  The plot image  can
+     be  saved  as either PostScript or PCL.   It can be directly
+     sent to a printer, if there is no need  to  save  the  image
+     file.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following options are supported.  Values in brackets are
+     defaults.
+
+     <STRONG>-d</STRONG> <EM>depth</EM> [50]
+          Depth of perspective.  A value of 0 corresponds to pro-
+          jection   of   the   3-dimensional  plot  onto  the  2-
+          dimensional   plotting   surface   from   an   infinite
+          distancei.e.   parallel projection.  Positive values of
+          <EM>depth</EM> correspond to projection from  inversely  propor-
+          tional finite distances with the result that foreground
+          features are shown at  a  somewhat  larger  scale  than
+          features farther from the viewer.  The default value of
+          50 is reasonable for normal viewing  distances.   Large
+          values produce highly exaggerated perspective effects.
+
+     <STRONG>-f</STRONG> <STRONG>"</STRONG><EM>field</EM><STRONG>[</STRONG><EM>range</EM><STRONG>]"</STRONG> ["re_spec_val[0:&lt;<EM>last</EM>&gt;]"]
+
+     <STRONG>-f</STRONG> <EM>field</EM>
+          Name of a field in an ESPS FEA file and range  of  ele-
+          ments in field to be plotted.  (Numbering of field ele-
+          ments starts with 0.)  The quotes are  needed  only  to
+          suppress  the  shell's  usual special interpretation of
+          brackets.  The bracketed <EM>range</EM>, if  present,  may  have
+          any of the forms acceptable to <STRONG><A HREF="../man3.html/range_switch.3.html">range_switch(3-ESPSu)</A></STRONG>.
+
+          <EM>element</EM>
+               A single integer specifies a single field  element
+               (not at present useful with <EM>plot3d</EM>).
+
+          <EM>first</EM><STRONG>:</STRONG><EM>last</EM>
+               A pair of integers specifies an inclusive range of
+               elements.
+
+          <EM>first</EM><STRONG>:+</STRONG><EM>incr</EM>
+               The form with  the  plus  sign  is  equivalent  to
+               <EM>first</EM><STRONG>:</STRONG><EM>last</EM> with <EM>last</EM> = <EM>first</EM> + <EM>incr</EM>.
+
+          If the specified range contains elements not present in
+          the field, the range is reduced as necessary.
+
+     <STRONG>-o</STRONG> <EM>orientation</EM> [L]
+          Left-handed coordinate  system  ("L")  or  right-handed
+          ("R")?   When  the  axes  are  in their default initial
+          position, record number increases  with  distance  from
+          the  viewer,  element  number  increases  from  left to
+          right, and data values increase in  the  upward  direc-
+          tion.   For some possible positions, a mirror-reflected
+          orientation  may  seem  more  natural.   Specifying   <EM>R</EM>
+          instead  of <EM>L</EM> effectively reverses the direction of the
+          <EM>y</EM> (element number) axis.
+
+     <STRONG>-r</STRONG> <EM>range</EM> [1:&lt;<EM>end</EM> <EM>of</EM> <EM>file</EM>&gt;]
+          Range of records in the file to  be  read  and  plotted
+          (counting  the first as number 1.)  The allowable forms
+          for <EM>range</EM> are those for <STRONG><A HREF="../man3.html/range_switch.3.html">range_switch(3-ESPSu)</A></STRONG>; see  the
+          discussion  of   <STRONG>-</STRONG> <STRONG>f</STRONG>  above  or the <EM>range</EM>_<EM>switch</EM> manual
+          entry.
+
+     <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> [0]
+          Values greater than 0 cause various debugging  messages
+          to  be printed as the program runs.  Larger values call
+          out more messages.  The default level of  0  suppresses
+          all debugging messages.
+
+     <STRONG>-B</STRONG> <EM>length</EM><STRONG>,</STRONG><EM>width</EM><STRONG>,</STRONG><EM>height</EM> [400,250,150]
+          Dimensions, in pixels, of a rectangular box that bounds
+          the 3-d plot (except for axis labels and the like).
+
+     <STRONG>-I</STRONG> {<STRONG>aAbBcCpP</STRONG>} . . . [abcp]
+          Initial actions, taken when the plot  window  is  first
+          brought  up.   Draw  axes (a, A), draw bounding box (b,
+          B), bring up control panel (c, C), or plot data (p, P).
+          A  lower-case  letters (a, b, c, p) invokes the action,
+          and upper-case (A, B, C, P) suppresses it.
+
+     <STRONG>-P</STRONG> <EM>param</EM>_<EM>file</EM> [params]
+          Name of parameter file to be read initially.
+
+     <STRONG>-R</STRONG> <EM>bearing</EM><STRONG>,</STRONG><EM>elevation</EM><STRONG>,</STRONG><EM>rotation</EM> [45.00,35.26,0.00]
+          Three angles of rotation  (measured  in  degrees)  that
+          describe  the  relative  positions of the 3-dimensional
+          plot and the 2-dimensional plotting window.  The  <EM>bear-</EM>
+          <EM>ing</EM>  and <EM>elevation</EM> determine the direction, relative to
+          the 3-d coordinate system, of the line  normal  to  the
+          window  at  its  center.  Changing the bearing lets you
+          look at the plot from various sides, and increasing the
+          elevation  lets you look at it from the top.  The third
+          degree of freedom, ``<EM>rotation</EM>,'' corresponds to a rota-
+          tion  about the line normal to the window at its center
+          and for most purposes is probably best set equal to 0.
+
+     <STRONG>-S</STRONG> <EM>h</EM>_<EM>skew</EM><STRONG>:</STRONG><EM>v</EM>_<EM>skew</EM> [0,0]
+          Changing <EM>h</EM>_<EM>skew</EM> moves the front parts of the  plot  one
+          way  horizontally  and  the  back parts of the plot the
+          opposite way, in proportion to the distance forward  or
+          back with respect to the plane of the plot window.  The
+          effect is somewhat similar to adjusting  <EM>bearing</EM>  ( <STRONG>-</STRONG> <STRONG>R</STRONG>
+          above)  in  that  both  adjustments let you see more or
+          less of the left or right side of the  plot.   However,
+          adjusting  <EM>h</EM>_<EM>skew</EM>  does not produce a rotation:  planes
+          parallel to the plane of the  plot  window  remain  so.
+          Similarly, changing <EM>v</EM>_<EM>skew</EM> moves the front parts of the
+          plot one way vertically and the back part of  the  plot
+          the  opposite  way.   The effect is somewhat similar to
+          adjusting <EM>elevation</EM> in that both  adjustments  let  you
+          see  more  or  less  of  the top of the plot.  However,
+          adjusting <EM>v</EM>_<EM>skew</EM> does not produce a rotation of  planes
+          parallel to the plot window.
+
+     <STRONG>-w</STRONG>    This option causes <EM>plot3d</EM> to attempt to connect to  an
+          <STRONG><A HREF="../man1.html/xwaves%2B.1.html">xwaves+(1 - ESPS)</A></STRONG> running with its server mode enabled.
+          If this connection is made, then <EM>plot3d</EM> will send  cur-
+          sor  movement  commands  to  <EM>xwaves</EM>+ to maintain cursor
+          time alignment between the view in <EM>plot3d</EM> and the  view
+          in <EM>xwaves</EM>+.   Note that <EM>plot3d</EM> has no way of knowing if
+          the files  being  viewed  in  <EM>plot3d</EM>  and  <EM>xwaves</EM>+  are
+          related  and if the time alignment makes sense.  A side
+          effect of invoking this mode is to put  the  axis  into
+          time  and  frequency display mode.   If the information
+          in the displayed file cannot support this mode then the
+          <STRONG>-w</STRONG>  option  is ignored.   For example, if the displayed
+          file has no <EM>record</EM>_<EM>freq</EM> generic  then  then  it  cannot
+          send time cursor movements to <EM>xwaves</EM>+. If the displayed
+          file, is not a FEA_SPEC file, then it cannot send  fre-
+          quency cursor movements to <EM>xwaves</EM>+.
+
+          When this option  is  used,  the  environment  variable
+          <STRONG>WAVES_HOST</STRONG>  is  read  to determine the name of the host
+          that is running the <EM>xwaves</EM> server.   If  <STRONG>WAVES_HOST</STRONG>  is
+          undefined,  then  the  connection  is  attempted  to an
+          <EM>xwaves</EM>+ on the same host as <EM>plot3d</EM> is running on.   The
+          default socket port number of the attempt is determined
+          by a ESPS wide default which is compiled in.    If  the
+          environment  variable  <STRONG>WAVES_PORT</STRONG>  is defined, then its
+          value is used instead as the socket port. This  program
+          uses  the  facility  of  <STRONG><A HREF="../man3.html/send_xwaves.3.html">send_xwaves(3 -ESPS)</A></STRONG>.  See its
+          manual page for details.
+
+     <STRONG>-M</STRONG>    This option forces <EM>plot3d</EM> to paint everything in black
+          and  white (monochrome), useful if you're doing screen-
+          dumps.
+
+
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     The parameter file is not required to be present,  as  there
+     are  default values for all parameters.  If the file exists,
+     the parameters below may be read.  These provide an alterna-
+     tive  way  of  specifying quantities that can also be deter-
+     mined by command-line options.  The general rule is that  if
+     a  command-line option is specified, it takes precedence; if
+     the command-line option is not specified, then the parameter
+     file  is consulted; and if a quantity is not given either on
+     the command line or in the parameter file, then a default is
+     used.   Eventually  this program will support parameter-file
+     entries corresponding to all command-line options except <STRONG>-</STRONG> <STRONG>x</STRONG>
+     and <STRONG>-P</STRONG>.  These parameters may also be adjusted interactively
+     from the control panel.  Current values may be  saved  to  a
+     file,  and new values may be read from a file interactively.
+     (See the discussion of the <EM>load</EM> <EM>params</EM> and <EM>save</EM> <EM>params</EM> items
+     on  the  <EM>files</EM>  button  menu under "Control Panel and Menus"
+     below.
+
+     <EM>box</EM>_<EM>length</EM> - <EM>integer</EM>
+
+     <EM>box</EM>_<EM>width</EM> - <EM>integer</EM>
+
+     <EM>box</EM>_<EM>height</EM> - <EM>integer</EM>
+          These correspond to the arguments  <EM>length</EM>,  <EM>width</EM>,  and
+          <EM>height</EM> of the <STRONG>-B</STRONG> option.
+
+     <EM>depth</EM> - <EM>float</EM>
+          This corresponds to the argument of the <STRONG>-d</STRONG> option.
+
+     <EM>horizontal</EM>_<EM>skew</EM> - <EM>float</EM>
+
+     <EM>vertical</EM>_<EM>skew</EM> - <EM>float</EM>
+          These correspond to the arguments <EM>h</EM>_<EM>skew</EM> and <EM>v</EM>_<EM>skew</EM>  of
+          the <STRONG>-S</STRONG> option.
+
+     <EM>orientation</EM> - <EM>string</EM>
+          This corresponds to the argument of the <STRONG>-o</STRONG> option.
+
+     <EM>bearing</EM> - <EM>float</EM>
+
+     <EM>elevation</EM> - <EM>float</EM>
+
+     <EM>rotation</EM> - <EM>float</EM>
+          These correspond to the arguments of <STRONG>-R</STRONG>.
+
+
+</PRE>
+<H2>CONTROL PANEL AND MENUS</H2><PRE>
+     The <EM>length</EM>, <EM>width</EM>, and <EM>height</EM> sliders in  the  first  column
+     adjust  the dimensions of the bounding box of the plot.  The
+     <EM>scale</EM> slider allows all three dimensions to be increased  or
+     decreased  by  the  same  factor  simultaneously.  The <EM>depth</EM>
+     slider in the second column adjusts the  same  parameter  as
+     the  parameter-file  entry  <EM>depth</EM>  or  the   <STRONG>-d</STRONG> command-line
+     option.  Likewise the <EM>H</EM>. <EM>skew</EM> and <EM>V</EM>.  <EM>skew</EM>  sliders  in  the
+     second column, the <EM>orientation</EM> selector in the third column,
+     and the <EM>rotation</EM>, <EM>bearing</EM>, and <EM>skew</EM>  sliders  in  the  third
+     column  adjust  the  same  parameters as the similarly named
+     parameter-file  entries  or  command-line   arguments.    To
+     operate  a  slider, move the cursor to the slider bar, press
+     the left mouse button, and, while holding the  button  down,
+     move the cursor left or right.
+
+
+     There are buttons in the bottom row and the center top posi-
+     tion  that  perform various functions.  To invoke one of the
+     functions, move the cursor to the panel button and click the
+     left  mouse button.  In addition, the three buttons (<EM>files</EM> ,
+     <EM>axes</EM> and <EM>plot</EM>) marked with small triangles  have  associated
+     menus.  To bring up one of the menus, move the cursor to the
+     panel button and press the right mouse button.
+
+     The <EM>plot</EM> button redraws the plot.  The associated  menu  has
+     two items related to printing the graphic image of the plot.
+     The <EM>print</EM> <EM>setup</EM> item invokes a setup panel that  allows  the
+     user  to  configure  the  graphic  print  feature.    Select
+     PostScript or PCL, Portrait or Landscape, resolution of out-
+     put device, scaling factor, and output to a file or printer.
+     In most cases a scale factor of about 4 is correct to fill a
+     page  with  the  plot.    The  <EM>print</EM> <EM>graphic</EM> item causes the
+     image on the screen to be  rerendered  with  the  parameters
+     selected from the <EM>printer</EM> <EM>setup</EM> panel.
+
+     The <EM>axes</EM> button draws or removes graduated <EM>x</EM>-,  <EM>y</EM>-,  and  <EM>z</EM>-
+     axes  labeled  with the values at the two ends.  The associ-
+     ated menu has an <EM>on</EM>/<EM>off</EM> item that performs the same function
+     and two other items that control the scaling and labeling of
+     two of the axes.
+
+     Selecting the <EM>record</EM> <EM>labeling</EM> item brings up a submenu  with
+     various options for the <EM>x</EM>-axis.  The default is to scale the
+     axis in terms of record number  (counting  from  1  for  the
+     first  record  in the file).  The item <EM>time</EM> (<EM>from</EM> <EM>rec</EM> #) can
+     be selected when the header item "record_freq" is defined in
+     the  input  file  header.   It relabels the axis in units of
+     time, where the time associated with a record is  <EM>start</EM>_<EM>time</EM>
+     +   (<EM>record</EM>_<EM>number</EM> - 1)/<EM>record</EM>_<EM>freq</EM>.   If  the  header  item
+     "start_time" is not present, 0 is used for  <EM>start</EM>_<EM>time</EM>.  The
+     item  <EM>tag</EM> can be selected when the input file is tagged.  It
+     relabels the axis in terms of tags (<EM>i</EM>.<EM>e</EM>.  record  or  sample
+     numbers  in  the ``refer'' file of the input filesee <EM>ESPS</EM>(5-
+     ESPS) or <STRONG><A HREF="../man5.html/FEA.5.html">FEA(5-ESPS)</A></STRONG>).  The item  <EM>time</EM>  (<EM>from</EM>  <EM>tag</EM>)  can  be
+     selected  when  the input file is tagged and the header item
+     "src_sf" is defined in its  header.   (In  a  FEA_SPEC  file
+     without  "src_sf",  the  header item "sf" is accepted in its
+     place.)  This item relabels the axis in units of time, where
+     the time associated with a record is (<EM>tag</EM>-1)/<EM>src</EM>_<EM>sf</EM>.
+
+     Selecting the <EM>item</EM> <EM>labeling</EM> item of  the  <EM>axes</EM>  button  menu
+     brings  up  a  submenu  with  options  for  the <EM>y</EM>-axis.  The
+     default is to scale the axis  in  terms  of  element  number
+     (counting  from  0  for  the first element of a field).  The
+     item <EM>frequency</EM> can be selected when  the  input  file  is  a
+     FEA_SPEC  file whose "freq_format" (see <STRONG><A HREF="../man5.html/FEA_SPEC.5.html">FEA_SPEC(5-ESPS)</A></STRONG>) is
+     not SPFMT_ARB_VAR.  It relabels the axis in  units  of  fre-
+     quency,  where  the  frequency  of  each  field  element  is
+     determined by values in the  file  header  (see  <EM>FEA</EM>_<EM>SPEC</EM>(5-
+     ESPS)).
+
+     If a file has nonuniformly spaced tags, switching the <EM>x</EM>-axis
+     labeling between <EM>record</EM> or <EM>time</EM> (<EM>from</EM> <EM>rec</EM> #) and <EM>tag</EM> or <EM>time</EM>
+     (<EM>from</EM> <EM>tag</EM>) renders the plot incorrect.  It  is  not  redrawn
+     automatically,  so  you  should do it manually with the <EM>plot</EM>
+     button.  Similarly, if the input file  is  a  FEA_SPEC  file
+     whose  "freq_format" is SPFMT_ARB_FIXED, and the frequencies
+     defined in the header are nonuniformly  spaced,  you  should
+     redraw  the plot after switching the <EM>y</EM>-axis labeling between
+     <EM>item</EM> <EM>number</EM> and <EM>frequency</EM>.
+
+     Selecting the item <EM>enable</EM> <EM>waves</EM> <EM>cursors</EM> causes  the  program
+     to  attempt  to  connect to an <EM>xwaves</EM>+ in server mode.   See
+     the section about the <STRONG>-w</STRONG> option.
+
+     The item <EM>disable</EM> <EM>waves</EM> <EM>cursor</EM> turns off this mode.
+
+     The <EM>box</EM> button draws or removes  the  bounding  box  of  the
+     plot.
+
+     The <EM>clear</EM> button clears the plot window.
+
+     The <EM>points</EM> button plots individual data points without  con-
+     necting lines or hidden-line removal.
+
+     The <EM>help</EM> button brings up a  window  containing  the  <EM>plot3d</EM>
+     manual entry.
+
+     The <EM>quit</EM> button terminates the program.
+
+     The <EM>file</EM> button  has  an  associated  menu  with  items  for
+     interactively  reading  new data, reading new parameters, or
+     writing out the current parameters.  Clicking on this  panel
+     button  with  the left mouse button activates the first menu
+     item, <EM>load</EM> <EM>data</EM>. Clicking with the right mouse button brings
+     up the menu and lets any item be selected.
+
+     The <EM>load</EM> <EM>data</EM> menu item brings up a panel for  reading  data
+     from  a  new file or reading a different part of the data in
+     the same file.  The panel has various text fields  that  you
+     can  type  into and a <EM>load</EM> button for reading the data after
+     the text fields are filled in  to  your  satisfaction.   The
+     <EM>directory</EM>  field may be left blank.  If it contains a direc-
+     tory, the program supplies a terminating  "/"  and  prefixes
+     the result to the <EM>file</EM> field to get the pathname of the file
+     to be read.  The text field labeled <EM>field</EM> should  contain  a
+     FEA  file field name defined in the header of the file to be
+     read.  The pair of fields after -<EM>r</EM> determine  the  range  of
+     records  to  be  read.   Either  of the forms <EM>first</EM><STRONG>:</STRONG><EM>last</EM> and
+     <EM>first</EM><STRONG>:+</STRONG><EM>incr</EM> allowed with the <STRONG>-r</STRONG> command-line option  may  be
+     used.  Leaving the fields blank gets the defaults.  The same
+     holds for the pair of  fields  between  brackets  after  the
+     field  name,  which determine the range of field elements to
+     be read.
+
+     The <EM>load</EM> <EM>params</EM> menu item brings up a panel  for  redefining
+     parameter  values by reading a file.  To use it, fill in the
+     text fields to specify a file that has the format of an ESPS
+     parameter  file  (see  <EM>read</EM>_<EM>params</EM> (<EM>3</EM>-<EM>ESPSu</EM>)); then click on
+     the <EM>load</EM> button.
+
+     The <EM>save</EM> <EM>params</EM> menu item brings up a panel for  saving  the
+     current  parameter  values  to  a  specified  file  in  ESPS
+     parameter-file  format.   If  the  specified  file   already
+     exists, it is overwritten.
+
+     Moving the mouse cursor into the base rectangle of the  plot
+     box in the plot window brings up a set of cursors with which
+     you can use the mouse to select values  of  the  independent
+     variables  (<EM>e</EM>.<EM>g</EM>.   time  and frequency) and see these values
+     together  with  the  corresponding  data  value  in  digital
+     readouts  at  the  top of the plot window.  Moving the mouse
+     anywhere in the plot window with a  mouse  button  depressed
+     gives  you alternative ways of doing things you could accom-
+     plish with the controls in the control panel.  With the left
+     button down, horizontal and vertical mouse movements control
+     the horizontal skew  parameters.   With  the  middle  button
+     down,  horizontal and vertical mouse movements control bear-
+     ing and elevation.  Pressing the right mouse  button  brings
+     up a menu with items that duplicate some of the panel-button
+     functions:  <EM>plot</EM>, <EM>axes</EM>, <EM>box</EM>, <EM>print</EM> <EM>setup</EM>, <EM>print</EM> and <EM>clear</EM>.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     The ESPS common file is not accessed.
+
+
+</PRE>
+<H2>ESPS HEADERS</H2><PRE>
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man5.html/FEA_SPEC.5.html">FEA_SPEC(5-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA.5.html">FEA(5-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/ESPS.5.html">ESPS(5-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man3.html/read_params.3.html">read_params(3-ESPS)</A></STRONG>, <STRONG><A HREF="../man3.html/range_switch.3.html">range_switch(3-ESPS)</A></STRONG>, <STRONG><A HREF="../man3.html/plotspec.3.html">plotspec(3-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man3.html/image.3.html">image(3-ESPS)</A></STRONG>, <STRONG><A HREF="../man3.html/send_xwaves.3.html">send_xwaves(3-ESPS)</A></STRONG>
+
+
+</PRE>
+<H2>DIAGNOSTICS</H2><PRE>
+     Many error conditions  will  print  diagnostic  messages  to
+     <EM>stdout</EM>.  Some  errors  in  the  use  of  the <EM>load</EM> <EM>data</EM>, <EM>load</EM>
+     <EM>params</EM>, and <EM>save</EM> <EM>params</EM> panels cause error messages  in  red
+     to appear in the panels.
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     There are positions for the plot for  which  transformations
+     used  in the hidden-line-elimination algorithm become singu-
+     lar, with disastrous results for the appearance of the plot.
+     This  can  occur,  for example, if you are viewing planes of
+     the plot directly edge-on.  Usually, slightly perturbing the
+     position  of  the  box  or moving the <EM>depth</EM> control a little
+     away from 0 will clear up the problem.  If you view the plot
+     from  a  position such that some planes of the plot are seen
+     from the front and some from the  back,  you  may  notice  a
+     break  in  the  edge between the two parts of the plot.  The
+     axes and the box can  interfere:   a  line  segment  of  one
+     superposed  on  a segment of the other yields a segment of a
+     third color that may be invisible, or nearly so, against the
+     background.   The  cursors  in the base plane may get out of
+     coordination with the actual mouse position.   Toggling  the
+     axes on and off will get them back in step.
+
+
+</PRE>
+<H2>FUTURE CHANGES</H2><PRE>
+     Fix the bugs noted above.  Allow adding straight lines  con-
+     necting  the edges of the plot to the edges of the base rec-
+     tangle.  Show underside of the plot.  Allow plotting "longi-
+     tudinal" traces (connecting points in different records, but
+     with the same element number) instead of, or in addition  to
+     the  present "lateral" traces (connecting points in the same
+     record, but with different element numbers).  Allow  select-
+     ing slices with the mouse for plotting in a separate window.
+     Parameters and command-line options for controlling the axis
+     limits  (now  determined automatically from the data).  Con-
+     trol over box dimensions by mouse movements in the plot win-
+     dow.   Better  rendering  of  axes.  "Footprint" (color base
+     rectangle differently from background).  Decent-looking axis
+     titles.   Other  choices  for  axis labeling (e.g. specified
+     header item or scalar field).  Allow specifying input record
+     and element ranges in "engineering units."  Intuitive inter-
+     face for controlling all three rotational degrees of freedom
+     with  mouse  movements in the plane.  Control over the color
+     scheme.
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Rodney Johnson.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

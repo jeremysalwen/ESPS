@@ -1,0 +1,149 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc. 
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)feafunc.test	1.4	5/24/93	ESI/ERL
+# 
+# Written by:  John Shore
+# Checked by:
+# Revised by:  Rod Johnson
+# 
+# Test script for feafunc
+# 
+DEBUG=0
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+rm -f test.fea test.fea2 test.fea3
+echo "Generating 4-record FEA file with 3 fields (two real, one complex)."
+echo "-10 10 -20 20" | addfea -f f1 -t long -c" " - test.fea
+echo "2 4 6.75 8.99" | addfea -f f2 -t float -c" " - test.fea
+#generate complex field
+echo "1 0 0 2 -4 0 -3 -4" | testsd -c -a- - | mergefea - test.fea
+echo "Doing a type change on f2."
+feafunc -x$DEBUG -f f2 -t short -f f2_short test.fea test.fea2
+echo "Scaling f1."
+feafunc -x$DEBUG -f f1 -g2 -d3 test.fea2  test.fea3
+echo "Trying abs on f1."
+feafunc -x$DEBUG -f f1 -Fabs -g2 -d3 test.fea3 test.fea2
+echo "Trying log10 on f2."
+feafunc -x$DEBUG -f f2 -Flog10 -f f1_out test.fea2 test.fea3
+echo "Trying exp on f2."
+feafunc -x$DEBUG -f f2 -Fexp test.fea3 test.fea2
+echo "Trying log on f2."
+feafunc -x$DEBUG -f f2 -Flog test.fea2 test.fea3
+echo "Trying sqrt (on complex field)."
+feafunc -x$DEBUG -f samples -Fsqrt -t double_cplx test.fea3 test.fea2
+echo "Trying sqr (on derived complex field)."
+feafunc -x$DEBUG -f samples_sqrt -Fsqr -t float_cplx test.fea2 test.fea3
+echo "Trying exp10 (on result of log10)."
+feafunc -x$DEBUG -f f1_out -Fexp10 test.fea3 test.fea2
+echo "Running psps on final output file and comparing with desired output."
+echo " The following should show only minor differences:"
+
+cat > want.psps << ZAP
+File: test.fea2
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 4
+Data is not tagged.
+comment text:
+ feafunc -x0 -f f1_out -Fexp10 test.fea3 test.fea2 
+ function field f1_out_exp10 added by feafunc
+Source files: test.fea3
+There is no reference header.
+
+---Type Specific Part of Header (FEA)---
+fea_type: NONE, segment_labeled: NO, field_count: 12
+
+---Generic Part of Header---
+add_imag:  0 
+add_real:  0 
+function_type:  EXP10 
+gain_imag:  0 
+gain_real:  1 
+input_field:  f1_out
+max_value:  5 
+nan:  0 
+output_field[0]:  f1_out_exp10
+record_freq:  8000 
+start:  1 
+start_time:  0 
+test_type:  ASCII 
+
+Record 1: 
+f1:  -10 
+f2:  2 
+samples:  [1, 0] 
+f2_short:  2 
+f1_none:  -17 
+f1_abs:  23 
+f1_out:  0.30103001 
+f2_exp:  7.3890562 
+f2_log:  0.69314718 
+samples_sqrt:  [1, 0] 
+samples_sqrt_sqr:  [1, 0] 
+f1_out_exp10:  2 
+
+Record 2: 
+f1:  10 
+f2:  4 
+samples:  [0, 2] 
+f2_short:  4 
+f1_none:  23 
+f1_abs:  23 
+f1_out:  0.60206002 
+f2_exp:  54.598148 
+f2_log:  1.3862944 
+samples_sqrt:  [1, 1] 
+samples_sqrt_sqr:  [0, 2] 
+f1_out_exp10:  4 
+
+Record 3: 
+f1:  -20 
+f2:  6.75 
+samples:  [-4, 0] 
+f2_short:  7 
+f1_none:  -37 
+f1_abs:  43 
+f1_out:  0.8293038 
+f2_exp:  854.05878 
+f2_log:  1.9095426 
+samples_sqrt:  [0, 2] 
+samples_sqrt_sqr:  [-4, 0] 
+f1_out_exp10:  6.75
+
+Record 4: 
+f1:  20 
+f2:  8.9899998 
+samples:  [-3, -4] 
+f2_short:  9 
+f1_none:  43 
+f1_abs:  43 
+f1_out:  0.95375967 
+f2_exp:  8022.4551 
+f2_log:  2.1961129 
+samples_sqrt:  [1, -2] 
+samples_sqrt_sqr:  [-3, -4] 
+f1_out_exp10:  8.9899998 
+
+ZAP
+
+echo " %psps -l test.fea2 - \\
+    | egrep -v \\
+	'^File header date:|^Produced by:|^Hostname:path:|^Machine type:' \\
+    | diff - want.psps "
+
+psps -l test.fea2 - \
+    | egrep -v \
+	'^File header date:|^Produced by:|^Hostname:path:|^Machine type:' \
+    | diff - want.psps 

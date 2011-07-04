@@ -1,0 +1,25 @@
+#
+# testfile for btosps
+# @(#)testfile	3.5 3/14/90 ESI
+#
+#set -x
+echo "single channel test"
+rm -f params
+testsd -t short a.sd
+bhd a.sd > a
+btosps -f 8000 -c "single channel test" a b.sd
+echo "the following diffs should show only trivial differences:"
+pspsdiff -l a.sd b.sd
+echo " "
+echo "and the following diffs should show only trivial differences:"
+cat a | btosps -c "single channel test" -f 8000 - - | cat > b.sd
+pspsdiff -l a.sd b.sd
+echo " "
+echo "2-channel complex test"
+testsd -p100 -T sine -t double_cplx a.sd
+testsd -p100 -T uniform -t double_cplx b.sd
+mux a.sd b.sd c.sd
+bhd c.sd c.nhd
+btosps -c "dual channel complex test"  -t double_cplx -n 2 c.nhd c2.sd
+echo "the following diffs should show only trivial differences:"
+pspsdiff -l c.sd c2.sd

@@ -1,0 +1,12 @@
+# @(#)Pformsy	1.1 7/6/93 ERL
+string bandwidths ?= "0.0": "n.m: new bandwidth = n + (.m * formant freq)";
+float frame_rate_scale ?= 1.0: "scale for frame rate of both f0 and fb files";
+float formant_scale ?= 1.0: "formant frequency scale";
+float voice_prob ?= -1: "voicing probability";
+float min_bandwidth ?= 0.0: "minimum bandwith";
+int n_formants ?= -1: "first n formants to use";
+float synthesis_rate ?= 16000: "synthesis frequency";
+int n_high_pole_formants ?= 0: "number of constant higher-pole formants";
+float f0_scale ?= 1.0 : "fundamental frequency scale";
+string amp_correct ?= "NO" : "amplitude correction" : {"NO", "YES"};
+#string excite_file ?= "file.name" : "input excitation file name";

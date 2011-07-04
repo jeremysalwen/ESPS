@@ -1,0 +1,366 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)exvbbox.3	1.9 24 Sep 1997 ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH EXV_BBOX 3\-Exu 24 Sep 1997
+.SH NAME
+exv_bbox \- create panel with arbitrary screen buttons 
+.SH SYNOPSIS
+.nf
+.ft B
+#include <stdio.h>
+#include <esps/esps.h>
+#include <esps/exview.h>
+
+extern int debug_level;
+
+bbox_par 
+*exv_bbox(bbox_params, bbox_frame, bbox_panel)
+bbox_par *bbox_params;
+Frame *bbox_frame;
+Panel *bbox_panel;
+
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+\fIexv_bbox\fP is a general function for creating an XView panel
+containing screen buttons.  The button labels can be specified by a
+list of button titles, by an \fIolwm\fP(1) menu file, or by both.  The
+action to take on button selection is determined by an arbitrary data
+string associated with each button, and by a user-defined function
+that is called to operate on the string when the button is pressed.  A
+default function is available to \fIexec\fP the string (i.e., by
+default, it is assumed that the string is an executable \fIunix\fP
+command).  If button labels are specified by a list of button titles,
+a list of corresponding button data strings must also be provided.  
+For button labels specified by an \fIolwm\fP menu file, the button 
+data strings are also taken from the menu file (as further described
+below).  
+.PP
+Input parameters are specified to \fIexv_bbox\fP by means of a
+structure with the following definition:  
+.nf
+.ft B
+
+.ta .25i 2.3i
+typedef struct _bbox_par {
+	char **but_labels;	/* button labels */
+	char **but_data;	/* button data strings */
+	char *menu_file;	/* olwm menu file name */
+	void (*but_data_proc)();	/* execution function for button data strings */
+	int quit_button;	/* if true, include QUIT button on panel */
+	char *quit_label;	/* if non-NULL, name for QUIT button */
+	char *quit_data;	/* QUIT button data string */
+	void (*quit_data_proc)();	/* execution function for QUIT data data */
+	int n_per_row;	/* number of buttons per row */
+	int button_choice;	/* if true, show submenus as panel choice 
+		items instead of button menus */
+	int choice_horizontal;	/* if true, panel choice items are 
+		displayed horizontally */
+	Frame owner;	/* owner of button panel (may be NULL) */
+	char *title;	/* title for button panel window */
+	char *icon_title;	/* icon title for button panel window */
+	int show;	/* if true, set XV_SHOW for frame containing panel */
+	int x_pos;	/* if positive, sets x position of new frame */
+	int y_pos;	/* if positive, sets y position of new frame
+	*/
+} bbox_par;
+
+.ft
+.fi
+User programs need not (and should not) allocate space for variables
+of type \fIbbox_par\fP, because if \fIexv_bbox\fP is called with the
+parameter \fIbbox_params\fP == NULL, by convention it returns a
+pointer to an allocated \fIbbox_par\fP structure initialized with
+default values.  See the EXAMPLES section.  If \fIbbox_params\fP !=
+NULL, \fIexv_bbox\fP returns a pointer to this input parameter 
+structure.  
+.PP
+The button panel created by \fIexv_bbox\fP is returned via the
+parameter \fIbbox_panel\fP (i.e., *\fIbbox_panel\fP is set to the new
+panel).  Prior to the return, the panel is fit to its natural size 
+using the XView function \fIwindow_fit\fP.  If exv_bbox is 
+not successful in creating a button panel *\fIbbox_panel\fP is set 
+to NULL.
+.SH INPUT PARAMETERS AND DETAILED DESCRIPTION
+.PP
+As mentioned above, input parameters for \fIexv_bbox\fP are provided
+via the function parameter \fIbbox_params\fP.  If \fIbbox_params\fP ==
+NULL, \fIexv_bbox\fP returns a default parameter structure.  Here is a
+discussion of the various structure components:
+.TP
+.B but_labels
+This is a NULL-terminated string array (e.g., such as created via
+\fIatoarrays\fP (3u\-\s-1ESPS\s+1) or \fIaddstr\fP
+(3u\-\s-1ESPS\s+1)).  Each string \fIbut_labels[i]\fP is used as the
+label for one button, provided that \fIbut_data[i]\fP contains a
+corresponding data string.  If \fIbut_labels\fP is NULL or empty
+(\fIbut_labels\fP[0] == NULL), or if \fIbut_data\fP does not contain
+corresponding data strings, then buttons are generated only from
+\fImenu_file\fP.  If buttons cannot be generated either from
+\fIbut_labels\fP or from \fImenu_file\fP, *bbox_panel is set to NULL
+and \fIexv_bbox\fP returns the input parameter structure.  The default
+value for \fIbut_labels\fP is (char **) NULL.
+.TP
+.B but_data
+This is a NULL-terminated string array containing a data string
+\fIbut_data[i]\fP for each button whose label was specified by
+\fIbut_labels\fP.  When such a button \fIi\fP is pressed, a button
+execution function is invoked on the string \fIbut_data[i]\fP.
+If the caller of \fIexv_bbox\fP does not provide such an execution 
+function via the parameter structure component \fIbut_data_proc\fP, 
+a default procedure runs \fIexec_command\fP (3\-\s-1ESPS\s+1) on the 
+data string to \fIexec\fP it as a \fIunix\fP command.  The 
+default value for \fIbut_data\fP is (char **)NULL.  
+.TP
+.B menu_file
+This is the name of an ASCII file that is assumed to contain a menu
+specification in the format as menu files for the OPEN LOOK window
+manager \fIolwm\fP (same as \fIsunview\fP menu files).  If submenus
+are specified, how they are treated depends on \fIbutton_choice\fP.
+If \fIbutton_choice\fP == 0, the submenus result in menu buttons with
+pull-down menus (if a DEFAULT is specified, it becomes the default
+selection in the pull-down menu).  If \fIbutton_choice\fP == 1, each
+submenu results in a set exclusive panel choice buttons (if a DEFAULT
+is specified, the corresponding button comes up depressed); the
+buttons are displayed vertically or horizontally, depending
+respectively on whether \fIchoice_horizontal\fP is 0 or 1.  The
+default value for \fImenu_file\fP is (char *) NULL.  The default value
+for \fIbutton_choice\fP is 0 (menu buttons).  The default value for
+\fIchoice_horizontal\fP is 0 (vertical choice buttons).
+.IP
+The simplest case for \fImenu_file\fP is a file with two columns \-
+the button labels are taken from the first column and the
+corresponding button data strings (commands, in the default case) are
+taken from the second column.  If blanks are needed in the button
+labels, use quotes to surround the string in the first column.  Do not
+use quotes in the command string unless they are part of the command
+(you may have to escape them).  More complicated cases can be created
+using the full syntax of \fIolwm\fP(1) menu files.  The only
+restriction is that there can only be one level of submenus \- i.e.,
+each entry in the \fImenu_file\fP can itself specify a menu (either
+directly or by giving the full path to another menu file), but the
+specified submenu cannot have additional submenus.  Also, while the
+\fIolwm\fP command keyword DEFAULT is handled, others (PROPERTIES,
+REFRESH, FLIPDRAG, etc.)  are treated as ordinary strings by
+\fImbuttons\fP.  For details about the format of menu files, see
+\fIolwm\fP(1) \- the manual page is included in the ESPS distribution.
+Also, see \fImbuttons\fP(1\-\s-1ESPS\s+1) for example menu files.
+.TP
+.B button_choice
+If a \fImenu_file\fP is used, this parameter determines 
+whether submenus are displayed as menu buttons with pull-down menus 
+(\fIbutton_choice\fP == 0) or as a set of exclusive panel choice 
+buttons (\fIbutton_choice\fP == 1).  The default is 0.  
+.TP
+.B choice_horizontal
+If a \fImenu_file\fP is used and submenus are displayed as exclusive
+panel choice buttons (\fIbutton_choice\fP == 1), this determines
+whether the buttons are laid out vertically (\fIchoice_horizontal\fP
+== 0) or horizontally (\fIchoice_horizontal\fP == 1).  The default is
+0.
+.TP
+.B but_data_proc
+This is a function pointer to a button execution function that is to
+be called when any button is pressed or (when a button menu item is
+selected).  Any such button execution function must have the
+following synopsis:
+.nf
+.ft B
+
+  void
+  exec_data(data_string, button)
+  char *data_string;
+  Panel_item button;
+
+.ft
+.fi
+The argument data_string is the button data string from the button
+that was pressed.  The argument \fIbutton\fP is an XView handle for
+the button that was pressed.  If \fIbut_data_proc\fP == NULL, a 
+default function is called; it ignores the argument \fIbutton\fP and 
+invokes the function 
+\fIexec_command\fP(3\-\s-1ESPS\s+1) on \fIdata_string\fP.  
+User-supplied functions for \fIbut_data_proc\fP might use the 
+parameter \fIbutton\fP for such actions as greying out the button
+or busying out the window while certain operations take place.  Note
+that a handle to the panel containing the button can be obtained 
+via \fIxv_get(button, XV_OWNER)\fP, that a handle to the button's 
+label can be obtained via \fIxv_get(button, PANEL_LABEL_STRING)\fP,
+etc. 
+.IP
+By default, \fIbut_data_proc\fP points to the default function
+described above (i.e., this is the value in the default structure
+returned by \fIexv_bbox\fP when \fIbbox_params\fP == NULL).  
+However, the default function will also be invoked if the parameter 
+structure is passed with \fIbut_data_proc\fP == NULL. 
+.TP
+.B quit_button
+If non-zero, \fIquit_button\fP specifies that there be a "QUIT" button
+that precedes the buttons specified by \fIbut_labels\fP,
+\fIbut_data\fP, and \fImenu_file\fP.  The default value for
+\fIquit_button\fP is 0 (no quit button).  If the \fIunix\fP
+environment variable BBOX_QUIT_BUTTON is defined, this forces
+\fIexv_bbox\fP to add a "QUIT" button even if \fIquit_button\fP is 0.
+The main reasons for providing global control via BBOX_QUIT_BUTTON is
+to facilitate usage on systems with window managers that do not
+provide an independent means for killing windows.
+.TP
+.B quit_label
+If a quit button is specified (see above, \fIquit_label\fP is the
+label used for the button. The default is "QUIT".
+.TP
+.B quit_data
+If there's a QUIT button (see above), this string is associated 
+with it (and executed by \fIquit_data_proc\fP when the QUIT button
+is pressed).  
+.TP
+.B quit_data_proc
+This is a function pointer to an execution function that is to
+be called when the QUIT button is pressed (if the button is present). 
+Like the \fIbut_data_proc\fP, the \fIquit_data_proc\fP must 
+have the following synopsis:
+.nf
+.ft B
+
+  void
+  exec_data(data_string, button)
+  char *data_string;
+  Panel_item button;
+
+.ft
+.fi
+If called, it is called with \fIdata_string\fP given by
+\fIquit_data\fP (see above).  The argument \fIbutton\fP is an XView
+handle for the QUIT button that was pressed.  If \fIquit_data_proc\fP
+== NULL, a default function is called; it ignores the argument
+\fIbutton\fP and invokes the function \fIexec_command\fP(3\-\s-1ESPS\s+1) on
+\fIquit_data\fP.  Note that a handle to the panel containing the
+button can be obtained via \fIxv_get(button, XV_OWNER)\fP.
+.IP
+By default, \fIquit_data_proc\fP points to the default function
+described above (i.e., this is the value in the default structure
+returned by \fIexv_bbox\fP when \fIbbox_params\fP == NULL).  
+However, the default function will also be invoked if the parameter 
+structure is passed with \fIquit_data_proc\fP == NULL. 
+.TP
+.B n_per_row
+Specifies the number of buttons per row in the button panel, which
+provides control over the approximate geometry of the button panel.
+For example, if \fIn_per_row\fP == 1, the result is a single column of
+buttons.  The default setting is \fIn_per_row\fP == 10.  The optional
+quit button is excluded from this control over the geometry; if a quit
+button is included in the panel, it appears on a row by itself at the
+top of the panel.  Thus, a quit button may be added or removed (via
+user-level command line options or via the environment variable
+BBOX_QUIT_BUTTON) without affecting the layout of the other buttons
+(see \fIquit_button\fP).  
+.TP 
+.B owner
+If \fIowner\fP == NULL, \fIexv_bbox\fP creates a new Xview frame
+(complete with default ESPS icon, and with optional frame positioning
+via \fIx_pos\fP and \fIy_pos\fP) and then creates the button panel as
+a child of the new frame.  A handle to the new frame is returned via
+the \fIexv_bbox\fP parameter \fIbbox_frame\fP (i.e., *\fIbbox_frame\fP
+is set to the new frame).  If \fIowner\fP != NULL, the button panel is
+created as a child of \fIowner\fP; for consistency, *\fIbbox_frame\fP
+is set to \fIowner\fP.  In both cases, the new button panel is
+returned by \fIexv_bbox\fP via the parameter \fIbbox_panel\fP (i.e.,
+*\fIbbox_panel\fP is set to the new panel).  If the button panel was
+not created successfully by \fIexv_bbox\fP, *\fIbbox_panel\fP is set
+to NULL. 
+.TP
+.B title
+If \fIexv_bbox\fP creates a new frame (i.e., if \fIowner\fP == NULL), 
+the new frame's title is set to \fItitle\fP.  The default value for 
+\fItitle\fP is "ESPS Button Panel".  
+.TP
+.B icon_title
+If \fIexv_bbox\fP creates a new frame (i.e., if \fIowner\fP == NULL),
+the title for the frame's icon is set to \fIicon_title\fP.  The
+default value for \fItitle\fP is "buttons".
+.TP
+.B show
+If \fIexv_bbox\fP creates a new frame (i.e., if \fIowner\fP == NULL),
+then \fIxv_set(*bbox_frame, XV_SHOW, show, 0)\fP is executed before
+\fIexv_bbox\fP returns.  Thus, the new frame will be created as
+visible if \fIshow\fP is non-zero.
+.TP
+.B x_pos
+If \fIexv_bbox\fP creates a new frame (i.e., if \fIowner\fP == NULL),
+and if both \fIx_pos\fP and \fIy_pos\fP are non-negative, then 
+the x-position of the new frame is set to \fIx_pos\fP (relative to 
+the root window).  
+.B y_pos
+If \fIexv_bbox\fP creates a new frame (i.e., if \fIowner\fP == NULL),
+and if both \fIx_pos\fP and \fIy_pos\fP are non-negative, then 
+the y-position of the new frame is set to \fIy_pos\fP (relative to 
+the root window).  
+.SH EXAMPLES
+.PP
+As mentioned earlier, user programs need not (and should not) allocate
+space for variables of type \fIbbox_par\fP, because if \fIexv_bbox\fP
+is called with the parameter \fIbbox_params\fP == NULL, by convention
+it returns a pointer to an allocated \fIbbox_par\fP structure
+initialized with default values.
+.nf
+.ta .25i 2.7i
+
+	static void run_cmd_on_file();
+	bbox_par *bbox_params = NULL;
+	char **labels;
+	char **data_strings;
+	Frame frame;
+	Panel but_panel;	
+
+	. . .
+
+	/* get default parameter set for button box */
+
+	bbox_params = exv_bbox((bbox_par *)NULL, &frame, &but_panel);
+
+	/* change the relevant defaults */
+
+	bbox_params->n_per_row = 3;
+	bbox_params->but_labels = labels;
+	bbox_params->but_data = data_strings;
+	bbox_params->title = "Demo buttons";
+	bbox_params->quit_button = 0;	
+
+	/* create button box */
+
+	bbox_params = exv_bbox(bbox_params, &frame, &but_panel);
+
+
+.SH ERRORS AND DIAGNOSTICS
+.PP
+If the global \fIdebug_level\fP is non-zero, \fIexv_bbox\fP prints 
+a variety of messages useful for debugging; the larger the value of 
+\fIdebug_level\fP, the more verbose the messages.  If \fIexv_bbox\fP
+is unable to create a button panel from the supplied parameters, 
+it prints a message to stderr before returning.  
+.SH FUTURE CHANGES
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+.nf
+\fIaddstr\fP(3\-\s-1ESPS\s+1), \fIatoarrays\fP(3\-\s-1ESPS\s+1), 
+\fIexec_command\fP(3\-\s-1ESPS\s+1), \fIread_olwm_menu\fP(3\-\s-1ESPS\s+1), 
+\fIprint_olwm_menu\fP (3\-\s-1ESPS\s+1), \fImbuttons\fP(1\-\s-1ESPS\s+1), 
+\fIfbuttons\fP(1\-\s-1ESPS\s+1)
+.fi
+.SH AUTHOR
+.PP
+program and man page by John Shore
+
+
+
+
+
+
+

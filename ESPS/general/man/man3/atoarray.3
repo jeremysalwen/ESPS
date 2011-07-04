@@ -1,0 +1,184 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)atoarray.3	1.6 09 May 1997 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH ATOARRAY 3\-ESPSu 09 May 1997
+.SH NAME
+.nf
+atoarrayf \- convert ASCII file to data array of floats
+atoarray \- convert ASCII file to data array of specified numeric type
+atoarrays \- convert ASCII file to data array of strings
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+
+float *
+atoarrayf(strm, nvalues, max)
+FILE *strm;
+long *nvalues;
+float *max;
+
+char *
+atoarray(strm, type, nvalues, max)
+FILE *strm;
+int type;
+long *nvalues;
+double *max;
+
+char **
+atoarrays(strm, nvalues, max)
+FILE    *strm;	
+long    *nvalues;
+int      *max;	
+
+.ft
+.fi
+.SH DESCRIPTION
+.I atoarrayf
+and
+.I atoarray
+read the Ascii file stream
+.I strm,
+which is assumed to contain a series of numerical values
+separated by white space or new lines;
+they convert the values to the required type
+and return a pointer to the converted data.
+.PP
+The required data type is FLOAT for
+.I atoarrayf.
+For
+.I atoarray
+it is indicated by the value of
+.I type,
+which must be one of the integer constants
+DOUBLE, FLOAT, LONG, SHORT, BYTE,
+DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX, SHORT_CPLX, and BYTE_CPLX
+defined in
+.I esps/esps.h.
+See the table in the
+.RI FEA (5-ESPS)
+man page; non-numeric types are not allowed.
+If the type is complex, the input values are taken in pairs;
+the first value in a pair gives the real part of a complex number,
+and the second value gives the imaginary part.
+An input value is written as an optionally signed string of decimal digits,
+which, for types DOUBLE, FLOAT, DOUBLE_CPLX, and FLOAT_CPLX,
+may contain a decimal point and may be followed by an
+.I E
+or
+.I e
+and an optionally signed integer.
+.PP
+\fIatoarrays\fP reads the Ascii file stream \fIstrm\fP and returns an
+array of strings, one string per line in file stream.  Trailing line
+feeds are dropped before each line is added to the string array.  
+.PP
+For all three functions, the number of values read is returned through
+the parameter
+.I nvalues.
+(For complex types, that is the number of complex values,
+not the number of real values.)
+.PP
+The maximum absolute value or maximum string length (in the case of 
+\fIatoarrays\fP) encountered is returned through
+.I max
+if
+.I max
+is non-NULL.
+A NULL value for
+.I max
+is treated as an error by
+.I atoarrayf.
+A value of NULL for
+.I max
+is a signal to
+.I atoarray
+and
+.I atoarrays
+that the maximum absolute value or maximum string length is not wanted.
+.PP
+The returned values from 
+.I atoarrayf
+and 
+.I atoarray
+is a pointer to the first byte of the storage area for the results.
+The storage is allocated by
+.IR malloc (3c)
+and may be freed by
+.IR free (3c).
+Before being used, the pointer returned by
+.I atoarray
+must be cast to a pointer type depending on
+.I type
+.RI ( "e.g."
+(double *) for DOUBLE, (byte_cplx *) for BYTE_CPLX).
+The value returned by
+.I atoarrayf
+does not require a cast.
+.PP
+.I atoarrayf,
+.I atoarray
+and
+.I atoarrays
+can be used on standard input.  
+.SH EXAMPLE
+.nf
+    float   *sdata;	 
+    float   maxvalf;
+    double  maxvald;
+    long    points;
+    FILE    *instrm;
+     .
+     .
+     .
+    sdata = atoarrayf(instrm, &points, &maxvalf);
+    	/* or */
+    sdata = (float *) atoarray(instrm, FLOAT, &points, &maxvald);
+    /*
+     * process data in sdata
+     */
+.fi
+.SH DIAGNOSTICS
+The functions will an assertion failure and a diagnostic message if any of
+the following are true:
+.PP
+The function is unable to allocate sufficient memory.
+.PP
+A NULL pointer is passed for  
+.I strm
+or
+.I nvalues.
+.PP
+A NULL pointer is passed to
+.I atoarrayf
+for
+.I max.
+.PP
+An illegal value is passed to
+.I atoarray
+for
+.I type.
+.PP
+The function encounters an illegal format in the input.
+.PP
+.I atoarray
+finds an odd number of real input values while reading complex data.
+.SH BUGS
+None known.
+.SH "FUTURE CHANGES"
+Version of
+.I atoarray
+that will read into a user-supplied data area
+and will stop reading after a specified maximum number of elements.
+.SH SEE ALSO
+\fIaddstr\fP (3\-\s-1ESPS\s+1), malloc(3c), free(3c).
+.SH AUTHOR
+.I atoarrayf
+and
+.I atoarrays
+by John Shore.
+.I atoarray
+by Rodney Johnson, based on
+.I atoarrayf.

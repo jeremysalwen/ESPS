@@ -1,0 +1,32 @@
+"Help"  shell xtext -t "Help for Optional Audio Extensions" -F `get_esps_base`/lib/waves/record.help
+
+"Time Scale Modification (ETSM Play)" MENU
+  "Add TSM playback to waveform menus" @tsm_menu.WC
+  "Add TSM toolbar creator to waveform menus" @tsm_toolbar.WC
+"Time Scale Modification (ETSM Play)" END
+
+"Play (3rd Party Programs)" MENU
+   "Ariel DSP32C 16 bit"	set play_prog s32cplay
+   "LSI C30 16 bit"		set play_prog c30play
+   "Townshend DAT-Link"  	set play_prog naplay -f ESPS
+"Play (3rd Party Programs)" END
+
+"Record (3rd Party Programs)" MENU
+
+   "Ariel DSP32C 16 bit 16KHz"	shell nvurecord.sh USR1 "Ariel DSP32C 16 bit Record 16KHz" s32crecord
+   "Ariel DSP32C 16 bit 8KHz Stereo"	shell nvurecord.sh USR1 "Ariel DSP32C 16 bit Record 8KHz Stereo" s32crecord -f8000 -c2
+   "Ariel DSP32C 16 bit 16KHz Stereo"	shell nvurecord.sh USR1 "Ariel DSP32C 16 bit Record 16KHz Stereo" s32crecord -c2
+
+   "LSI C30 16 bit 8KHz"	shell nvurecord.sh USR1 "LSI C30 16 bit Record 8KHz" c30record -f8000
+   "LSI C30 16 bit 16KHz"	shell nvurecord.sh USR1 "LSI C30 16 bit Record 16KHz" c30record
+   "LSI C30 16 bit 8KHz Stereo"	shell nvurecord.sh USR1 "LSI C30 16 bit Record 8KHz Stereo" c30record -f8000 -c2
+   "LSI C30 16 bit 16KHz Stereo"	shell nvurecord.sh USR1 "LSI C30 16 bit Record 16KHz Stereo" c30record -c2
+
+   "Townshend DAT-Link"  @xw_init_datlink.WC
+"Record (3rd Party Programs)" END
+
+# @(#)audio.WM	1.10 9/4/98
+
+
+
+

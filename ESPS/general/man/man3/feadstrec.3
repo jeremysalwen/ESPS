@@ -1,0 +1,140 @@
+.\" Copyright (c) 1992 Entropic Research Lab.; All rights reserved
+.\" @(#)feadstrec.3	1.2 06 May 1997 ERL
+.TH FEADST_REC 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Research Lab., Inc.
+.SH NAME
+.nf
+allo_feadst_rec \- allocate memory for an ESPS FEA_DST file record.
+get_feadst_rec \- get the next data record from an ESPS FEA_DST file.
+init_feadst_hd \- initialize a FEA file header for subtype FEA_DST.
+put_feadst_rec \- write the next data record of an ESPS FEA_DST file.
+.SH SYNOPSIS
+.ft B
+.nf
+#include <esps/esps.h>
+#include <esps/fea.h>
+#include <esps/feadst.h>
+#include <esps/vq.h>
+
+struct feadst *
+allo_feadst_rec(hd)
+struct header *hd;
+
+int
+get_feadst_rec(data, hd, file)
+struct feadst *data;
+struct header *hd;
+FILE *file;
+
+int
+init_feadst_hd(hd, max_num_sects)
+struct header *hd;
+long max_num_sects;
+
+void
+put_feadst_rec( data, hd, file )
+struct feadst *data;
+struct header *hd;
+FILE *file;
+.fi
+.ft
+.SH DESCRIPTION
+\fIAllo_feadst_rec\fR allocates memory for a FEA_DST file record and
+returns a pointer to it. The memory allocations assume that the header 
+was initialized by a call to \fIinit_feadst_hd\fR. Because
+the size of the allocated record depends on values in the data file header,
+it is important to ensure that a FEA_DST record is consistent with the
+header of the file it is being used with [see \fIinit_feadst_hd\fR].
+Internally, \fIallo_feadst_rec\fR calls \fIallo_fea_rec\fR (3\-ESPS), and
+then hooks the FEA record up to a \fIfeadst\fR structure.
+.PP
+\fIGet_feadst_rec\fR reads the next FEA_DST record from stream \fIfile\fR
+into the data structure pointed to by \fIdata\fR, which must have been
+allocated by means of a call to \fIallo_feadst_rec\fR. The parameter 
+\fIhd\fR points to the ESPS header in which the various FEA_DST fields have been
+defined. When the header was originally created, it must have been initialized
+by means of \fIinit_feadst_hd\fR. An EOF is returned upon end of file.
+A positive, non-zero value is returned otherwise.
+.PP
+\fIInit_feadst_hd\fR accepts a pointer \fIhd\fR to an ESPS FEA file header. It
+sets \fIhd.hd.fea\->fea_type\fR to FEA_DST and initializes the record-field
+definitions to describe the fields that make up a file of subtype FEA_DST. It
+does this by means of calls to \fIadd_fea_fld\fR (3\-ESPS). For a description
+of the various FEA_DST record fields, see \fIfea_dst\fR (5\-ESPS).
+\fIInit_feadst_hd\fR also defines the generic header items described in
+\fIfea_dst\fR (5\-ESPS). The values of these generic header items are set equal to 
+the values of the corresponding parameters in the call to \fIinit_feadst_hd\fR.
+\fIInit_feadst_hd\fR returns 1 if any of the internal calls to \fIadd_fea_fld\fR
+(3\-ESPS) return an error code; otherwise, it returns 0. \fIInit_feadst_hd\fR
+should be called after \fInew_header\fP(3\-ESPS) only when creating a 
+new FEA_DST file.
+.PP
+\fIPut_feadst_rec\fR writes a FEA_DST data record pointed to by \fIdata\fR
+onto the stream \fIfile\fR, which should be an open ESPS FEA_DST file. The
+header must be written out to the FEA_DST file before calling this function.   
+When the header was originally created, it must have been initialized by means
+of \fIinit_feadst_hd\fR.
+.SH EXAMPLES
+.if n .ta 33
+.if t .ta 3i
+.nf
+\fB\s-1Reading an existing file:\s+1\fR
+
+FILE *ifp;
+struct feadst *feadst_rec;
+struct header *ih;
+
+ih = read_header(ifp);
+feadst_rec = allo_feadst_rec(ih);
+if ( get_feadst_rec(feadst_rec, ih, ifp) == EOF ) . . .
+
+c = *feadst_rec\->count;
+
+\fB\s-1Creating a new file:\s+1\fR
+
+FILE *ofp;
+struct feadst_rec;
+struct header *oh;
+
+oh = new_header(FT_FEA);
+if ( init_feadst_hd(oh, max_num_sects) )
+    ERROR_EXIT("error filling FEA_DST header");
+ . . .
+write_header(oh, ofp);
+feadst_rec = allo_feadst_rec(oh); 
+ . . .
+*feadst_rec\->cbk_rec = c;
+put_feadst_rec(feadst_rec, oh, ofp);
+
+.fi
+.SH DIAGNOSTICS
+If \fIhd\fR does not point to a FEA header of subtype FEA_DST, the
+program terminates with an assertion failure. In \fIget_feadst_rec\fR,
+if an incomplete record is read, a message is written to \fIstderr\fR.
+In \fIput_feadst_rec\fR, if an I/O error occurs during the write,
+a message is written to \fIstderr\fR and the program exits with status 1.  
+.SH BUGS
+None known.
+.SH SEE ALSO
+allo_fea_rec(3\-ESPS), fea_dst(5\-ESPS).
+.SH AUTHOR
+Programs and manual page by Alan Parker
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

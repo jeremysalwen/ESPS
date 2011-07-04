@@ -1,0 +1,3 @@
+call commandname save_pro.WC
+quit
+# @(#)save_quit.WC	1.1 6/23/93

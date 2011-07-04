@@ -1,0 +1,51 @@
+.\" @(#)echeck.1	3.1 8/18/87 ESI
+.TH "ECHECK" 1\-ESPS 8/18/87
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+echeck \- look up entry in ESPS general and local lint libraries
+.SH "SYNOPSIS"
+.B echeck
+.I function1
+[
+.I function2 ...
+]
+.SH "DESCRIPTION"
+.PP
+.I Echeck
+looks up its arguments in the ESPS general and local lint library
+source files and prints the entries found.  Entries found in the
+local library are marked as such.  A message is printed if the 
+function is not found in either library.  
+.PP
+This program is useful to provide a quick check of the calling
+sequence for an ESPS function without looking up the manual page.  It
+is also useful to confirm that an entry is in the lint library
+correctly.
+.PP
+An emacs mock-lisp file echeck.ml is provided with the ESPS
+distribution to facilitate calling \fIecheck\fP from within emacs.  
+.SH "SPS PARAMETERS"
+.PP
+This program does not access the parameter file.
+.SH OPTIONS
+.PP
+No options are supported.
+.SH "EXAMPLE(S)"
+.PP
+echeck get_fea_ptr f_mat_alloc
+.sp
+will print the lint library entries for get_fea_ptr and f_mat_alloc.
+.SH "BUGS"
+.PP
+.I Echeck
+uses a relatively simple-minded pattern match algorithm that will 
+work almost always but may fail under some circumstances.  
+.SH "FILES"
+.PP
+The library locations may differ on different systems.  The 
+defaults for the general and local lint library source files are
+/usr/esps/lib/llib-lespsg.c and /usr/esps/lib/llib-lespsl.c.
+.SH "AUTHOR"
+Alan Parker; revised by John Shore
+
+

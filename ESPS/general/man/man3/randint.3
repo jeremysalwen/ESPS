@@ -1,0 +1,101 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)randint.3	1.4 22 Oct 1987 ESI
+.TH RAND_INT 3\-ESPSsp 22 Oct 1987
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+rand_int \- compute uniformly distributed integers
+rand_intnr \- sample without replacement from uniformly distributed integers
+.SH SYNOPSIS
+.ft B
+long
+.br
+rand_int(max_int)
+.br
+long max_int;
+.sp
+.long
+.br
+rand_intnr(max_int, reset)
+.br
+long max_int;
+.br
+int reset;
+.ft
+.SH DESCRIPTION
+Each call to 
+.I rand_int
+returns a random integer uniformly distributed between zero and 
+.I max_int.
+.PP
+.I rand_intnr
+provides random sampling without replacement for integers 
+uniformly distributed between zero and
+.I max_int.  
+If 
+.I reset
+is not equal to zero, 
+.I rand_intnr
+resets itself so that all integers between zero and
+.I max_int
+are available and sampling without replacement begins with that 
+call.  
+.I rand_intnr 
+also resets itself automatically on the very first call as well as 
+after having been called 
+.I max_int
+times following the very first call or a call with 
+.I reset
+= 1.  (That is, 
+.I rand_intnr
+resets itself when all of the integers in the specified range have been
+sampled.)
+.PP
+.I rand_int 
+and
+.I rand_intnr
+use
+.IR random (3).    
+.I rand_int
+and
+.I rand_intnr
+do not set the random seed.  Calling programs should set the seed
+using 
+.IR srandom (3).  
+.SH EXAMPLE
+.if n .ta 33
+.if t .ta 3i
+#define MAXVAL 1000
+.br
+long seed = 1234567;
+.br
+long *rand_intdata;
+.br
+ . . .
+.br
+(void) srandom(seed);
+.br
+for (i = 0; i < points; i++) rand_intdata[i] = rand_int(MAXVAL);
+.sp
+.br
+#define MAXVAL 1000
+.br
+long seed = 1234567;
+.br
+long *ranvals;
+.br
+ . . .
+.br
+(void) rand_intnr(MAXVAL, 1);
+.br
+(void) srandom(seed);
+.br
+for (i = 0; i <= MAXVAL; i++) ranvals[i] = rand_intnr(MAXVAL, 0);
+.SH DIAGNOSTICS
+None.
+.SH BUGS
+None known.
+.SH SEE ALSO
+random(3), srandom(3), gauss(3\-ESPSsp)
+.SH AUTHOR
+manual page by John Shore; program by John Shore

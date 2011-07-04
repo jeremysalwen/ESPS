@@ -1,0 +1,219 @@
+#! /bin/sh
+# @(#)ereverse.test	3.1 10/13/87 ESI
+# test script for ereverse program
+ESPSCOM=./espscom
+export ESPSCOM
+echo " "
+echo generate sampled data file containing 1 2 3 4 5 6 7
+echo " "
+testsd -a- test.sd - << ZAP
+1 2 3 4 5 6 7
+ZAP
+echo here are the samples:
+echo "   %psps -H test.sd"
+psps -H test.sd
+echo " "
+echo reverse the whole file
+echo "   %ereverse test.sd out.sd"
+ereverse test.sd out.sd
+echo "   %psps out.sd"
+psps out.sd
+echo " "
+echo reverse 3 4 5
+echo "   %ereverse -r3:5 test.sd - | psps -H -"
+ereverse -r3:5 test.sd - | psps -H -
+echo " "
+echo generate 5-record FEA file
+atosps - test.fana << ZAP
+{
+01 d
+02 6a1a
+03 Fri Oct  9 13:10:25 1987 
+04 1.50
+05 copysps
+06 3.2
+07 9/29/87
+53 shore
+08 5
+09 1
+0b e
+0c 2
+0d 1
+10 rc.fana
+12 copysps -r1:5 rc.fana test.fana  Converted from test.fana by spstoa.
+13 <stdin>
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@nan LONG 1 8000 
+@src_sf FLOAT 1 8000 
+@order SHORT 1 10 
+@method CODED 1 [ NONE AUTOC BURG COV MBURG STRCOV VBURG ] AUTOC 
+@frmlen LONG 1 200 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 0 
+@maxraw LONG 1 1 
+@start LONG 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@order_unvcd LONG 1 10 
+@DC_removed CODED 1 [ NO YES ] YES 
+@maxpulses LONG 1 1 
+
+{
+01 d
+02 6a1a
+03 Fri Oct  9 13:09:39 1987 
+04 1.50
+05 refcof
+06 1.2
+07 10/8/87
+53 shore
+08 28
+09 1
+0b e
+0c 2
+0d 1
+10 <stdin>
+12 testsd -Tgauss -i - refcof -p1:8000 -d -l200 - rc.fana  Converted from rc.fana by spstoa.
+13 <stdin>
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@nan LONG 1 8000 
+@order SHORT 1 10 
+@src_sf FLOAT 1 8000 
+@method CODED 1 [ NONE AUTOC BURG COV MBURG STRCOV VBURG ] AUTOC 
+@frmlen LONG 1 200 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 0 
+@maxraw LONG 1 1 
+@start LONG 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@order_unvcd LONG 1 10 
+@DC_removed CODED 1 [ NO YES ] YES 
+@maxpulses LONG 1 1 
+
+{
+01 9
+02 6a1a
+03 Wed Sep  9 12:33:09 1987 
+04 1.50
+05 testsd
+06 3.4
+07 8/31/87
+53 shore
+08 ffffffff
+0d 1
+12 testsd -Tgauss -i - 
+42 0
+43 2374.96
+44 8000
+20 0
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+}
+}
+}
+
+#Tag 1
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	274676 
+#lpc_power	259578 
+#p_pulse_len	0 
+#spec_param	-0.00476037 -0.053669 -0.114144 -0.072686 -0.0368939 -0.134668 -0.104615 -0.0644129 
+	-0.0193629 -0.003574 
+
+#Tag 201
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	236387 
+#lpc_power	220475 
+#p_pulse_len	0 
+#spec_param	-0.137261 0.000886645 -0.0682462 -0.141844 -0.0437858 -0.101936 -0.0388654 -0.0720962 
+	0.00110666 0.081006 
+
+#Tag 401
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	260744 
+#lpc_power	257628 
+#p_pulse_len	0 
+#spec_param	0.0454781 0.0286804 -0.0167188 0.00788868 0.0241189 0.000924848 -0.00858801 0.0381447 
+	0.015676 0.080047 
+
+#Tag 601
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	207743 
+#lpc_power	188632 
+#p_pulse_len	0 
+#spec_param	-0.139569 -0.0447109 0.137166 -0.181777 -0.0638225 0.107306 0.0203789 -0.0193141 
+	-0.0234588 -0.0722782 
+
+#Tag 801
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	247944 
+#lpc_power	241748 
+#p_pulse_len	0 
+#spec_param	0.00115596 -0.0111754 0.0198073 0.0422325 0.0475159 0.0684025 0.0656002 -0.000993612 
+	0.106593 0.0176628 
+ZAP
+echo " "
+echo print reflection coefficients from records 2-4:
+echo "   %psps -H -fspec_param -r2:4 test.fana"
+psps -H -fspec_param -r2:4 test.fana
+echo " "
+echo print them in reverse order:
+echo "   %ereverse -r2:4 test.fana - | psps -H -fspec_param -"
+ereverse -r2:4 test.fana - | psps -H -fspec_param -

@@ -1,0 +1,5 @@
+shell xtext -Wp 100 200 -F help/colors.doc -t "Colors Help" -i colorhelp &
+
+waves make_panel name color title "Color Support" icon_title Colors file colors.WM loc_x 100 loc_y 100
+
+#@(#)do_colors.WC	1.2 11/7/91 ERL

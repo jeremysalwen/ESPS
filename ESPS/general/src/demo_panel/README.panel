@@ -1,0 +1,34 @@
+@(#)README.panel	1.3 6/21/91 ERL - README for demo control panel 
+
+
+DEMOS runs mbuttons and sets up some demos and examples. Required sub-
+directories are as follows: init_files (waves+ startup profiles), param_files 
+(ESPS parameter files), commands (waves+ command files), scripts (simple 
+scripts for demos), files (ESPS files for the demos), colormaps (ascii 
+colormaps),  filters (ESPS designed filters for the demos), menus (ESPS 
+and waves+ menu files for the demo), and timitdemo (stuff for TINIT demo).
+
+Here is a breif description of the buttons and what they show.
+
+1. DEMOS => script that puts up buttons. runs mbuttons on menu-file demo_menu
+
+2. Signal Generator => ESPS program with prompting
+
+3. Plot3d Example => socket communication between application program and xwaves
+
+4. DTW Spectral => example of dynamic time warping program 
+
+5. Cepstrum Example => cepstrum analysis example
+
+6. Data Previewer => fbuttons example
+
+7. waves+ Filters => tying ESPS and xwaves together with xwaves screen buttons
+
+8. waves+ Extensions => show xwaves+ extensibility
+
+9. Interactive Filter Design => show interactive filter design program
+
+10. TIMIT => shows fbuttons and waves+ on SPHERE data files
+
+
+(end of README)

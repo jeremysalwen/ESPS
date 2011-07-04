@@ -1,0 +1,252 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)iir_filt.1	1.13 27 Sep 1997 ESI/ERL
+.TH IIR_FILT 1\-ESPS 27 Sep 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+iir_filt \- design recursive filter.
+.SH SYNOPSIS
+.B iir_filt
+[
+.BI \-P " param_file"
+]
+[
+.BI \-x " debug_level"
+]
+.I filt_file
+.SH DESCRIPTION
+.PP
+.I Iir_filt
+designs a recursive filter (often called an infinite impulse response 
+filter)
+and puts the coefficients, poles, and zeros in the
+.IR FEA_FILT (5\-ESPS)
+file
+.I filt_file.  
+It supports filter reponse types of lowpass, highpass,
+bandpass, and bandstop filters.  The design methods supported are
+Butterworth, Chebyshev1, Chebyshev2, and elliptical methods.  Other input
+parameters are passband and stopband frequency edges, and the frequency 
+versus loss characteristics.
+.PP
+All the design information must be supplied in the parameter
+file. By using \fIeparam\fR(1-ESPS), however,
+the user will be prompted for all the design information. 
+.PP
+If
+.I filt_file
+is "\-", the output goes to standard output.
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-P " param_file"
+The file 
+.I param_file
+is used for the parameter file instead of the default, which is
+.I params.
+.br
+.TP
+.BI \-x " debug_level"
+A value of 0 (the default value) will cause
+.I iir_filt
+to work silently, unless there is an error.
+A nonzero value will cause various parameters to be printed out
+during the filter design. A value greater than 9 will cause all the
+debug messages to be printed.
+.br
+.SH ESPS PARAMETERS
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.PP
+.IP
+.I "samp_freq \- float"
+.IP
+The value of the sampling frequency.
+.IP
+.I "gain \- float"
+.IP
+The gain of the filter in the pass band.
+.IP
+.I "filt_method \- string"
+.IP
+The type of the polynomial used in the filter design.
+The options are BUTTERWORTH, CHEBYSHEV1, CHEBYSHEV2, and ELLIPTICAL.
+.IP
+.I "filt_type \- string"
+.IP
+The type of filter response to design. Allowable types are the following:
+low pass (LP), high pass (HP), band pass (BP), and band 
+stop (BS).
+.IP
+.I "pass_band_loss \- float"
+.IP
+Specifies the maximum dB deviation from 1 for the filter amplitude response
+within the pass band.  
+.IP
+.I "stop_band_loss \- float"
+.IP
+Specifies the minimum dB loss for the filter amplitude response in the 
+stop band from the pass band.
+.IP
+.I "p_freq1 \- float"
+.IP
+Also referred to as "passband frequency 1".  For lowpass and highpass filters, 
+this is the passband frequency. For bandpass
+and bandstop filters, this is the first passband frequency.  See \fBEXAMPLES\fR below.
+.IP
+.I "s_freq1 \- float"
+.IP
+Also referred to as "stopband frequency 1".  Stop band frequency for low 
+pass and high pass filters.  Or the first
+stop band frequency for band pass and band stop filters.  See \fBEXAMPLES\fR below.
+.IP
+.I "p_freq2 \- float"
+Also referred to as "passband frequency 2".  The second pass band 
+frequency for band pass and band stop filters.  This is
+ignore for lowpass and highpass filters.  See \fBEXAMPLES\fR below.
+.IP
+.I "s_freq2 \- float"
+Also referred to as "stopband frequency 2".  The second stop band 
+frequency for band pass and band stop filters.  This is
+ignore for lowpass and highpass filters.  See \fBEXAMPLES\fR below.
+.IP
+.I "filt_order \- int"
+.IP
+This is an optional parameter.  Only use this parameter if the optimal 
+filter order computed by the program to meet the filter specification is
+not desired.  If \fIfilt_order\fR is present, \fIiir_filt\fR uses this
+parameter for its filter order.  A warning message is printed, values
+for the optimal filter order and \fIfilt_order\fR are printed.
+.PP
+.SH ESPS COMMON
+Esps Common is not processed.
+.sp .5
+.SH ESPS HEADER
+A new FEA_FILT header is created for the output file.
+The program fills in appropriate values in the common part of the header
+as well as the following generic header items associated with the 
+FEA_FILT type 
+.IP
+.I max_num
+.IP
+It is set equal to \fIfilt_order\fR.
+.IP
+.I max_denom
+.IP
+It is set equal to \fIfilt_order\fR.
+.IP
+.I func_spec
+.IP
+It is set equal to IIR.
+.IP
+.I type
+.IP
+It is set equal to the specified \fIfilt_type\fR value.
+.IP
+.I method
+.IP
+It is set equal to the specified \fIfilt_method\fR value.
+.IP
+.I define_pz
+.IP
+It is  set to YES.
+.IP
+.I pass_band_loss
+.IP
+It is set equal to \fIpass_band_loss\fR.
+.IP
+.I stop_band_loss
+.IP
+It is set equal to \fIstop_band_loss\fR.
+.IP
+.I filt_order
+.IP
+It is the filter order.
+.PP
+.SH WARNING
+The stopband loss of the Elliptical filter may not meet
+the desired specification in some cases.  This is due to the 
+approximation procedure 
+involved in the Elliptical filter design method that maximizes
+the stopband attenuation, but gives the desired passband attenuation, 
+passband frequencies, and stopband frequencies.  In these cases,
+raise the stopband loss, \fIstop_band_loss\fR.
+.PP
+The filter response can be plotted and viewed using \fIfiltspec(1-ESPS)\fR and
+\fIplotspec(1-ESPS)\fR, for example,
+.PP
+\fIfiltspec filt_file - | plotspec - \fR
+.PP
+.SH FUTURE CHANGES
+A generic header item \fIdelay_samples\fP, which has the
+"filter delay" in samples, will be added. This will enable programs
+to automatically compensate for the delay caused by the filter and allow
+plotting programs to automatically time align waveforms. 
+.PP
+For now, \fIimpulse_resp\fP(1\-\s-1ESPS\s+1) and \fIplotsd\fP(1\-\s-1ESPS\s+1) 
+can be used to compute and plot the impulse response, which can be visually
+inspected to locate the peak of the response. The offset of the peak from
+the beginning of the response is often useful as an estimate of the delay.
+\fIaddgen\fP(1\-\s-1ESPS\s+1) can then be used to add the \fIdelay_samples\fP
+generic header item.
+.PP
+.SH EXAMPLES
+The parameters \fIp_freq1, s_freq1, p_freq2\fR, and \fIs_freq2\fR are 
+used in the following manner for each filter response type.  Suppose the
+Nyquist rate is denoted as \fInf\fR.  
+.PP
+.nf
+              passband (Hz)      stopband (Hz)
+ Lowpass      0 to p_freq1      s_freq1 to nf   
+ Hihgpass     0 to s_freq1      p_freq1 to nf   
+
+              stopband1          passband              stopband2
+ Bandpass     0 to s_freq1      p_freq1 to p_freq2     s_freq2 to nf
+
+              passband1          stopband              passband2
+ Bandstop     0 to p_freq1      s_freq1 to s_freq2     p_freq2 to nf   
+
+.ni
+.PP
+The easiest way to use this program is by \fIeparam(1-ESPS)\fR.  Depending
+on the filter reponse type (e.g. lowpass) selected, \fIeparam(1-ESPS)\fR
+prompts for appropriate pass/stopband frequency edges (e.g. p_freq1) 
+from left to right.  Simply enter frequencies in an ascending order as 
+they are prompted.  For examples, suppose a bandpass filter,
+.nf
+
+   %eparam iir_filt bandpass.filt
+   Desired filter type: [ELLIPTICAL]  (Choices are: BUTTERWORTH CHEBYSHEV1 
+   CHEBYSHEV2 ELLIPTICAL):
+   Desired filter reponse [LP]  (Choices are: LP HP BP BS):BP
+   Desired sampling frequency. [8000] :
+   Stopband frequency 1 [1100] :1000
+   Passband frequency 1 [1000] :1100
+   Passband frequency 2 [2100] :2000
+   Stopband frequency 2 [2000] :2100
+   Desired maximum pass band loss (dB). [1] :
+   Desired minimum stop band attenuation (dB). [20] :
+
+.fi.
+This creates a bandpass filter with passband over 1100 to 2000 Hz, and
+stopband over 0 to 1000 Hz and 2100 to 4000 Hz.
+.PP
+.SH SEE ALSO
+.nf
+\fIESPS\fP(5\-ESPS), \fIFEA\fP(5\-ESPS), \fIFEA_FILT\fP(5\-ESPS), \fIfilter2\fP(1\-ESPS), 
+\fIwmse_filt\fP(1\-ESPS), \fInotch_filt\fP(1\-ESPS), \fIxpz\fP(1\-ESPS)
+.fi
+.SH REFERENCES
+.PP
+Parks, T. W. and Burrus, C. S.,
+\fIDigital Filter Design\fR, 
+John Wiley and Sons, 1987, New York
+.PP
+Sublett, B. and Burton, D.,
+\fIESPS APPLICATIONS NOTE: Filtering Sampled Data\fR,
+ESPS USER'S MANUAL
+.SH AUTHOR
+Derek Lin
+

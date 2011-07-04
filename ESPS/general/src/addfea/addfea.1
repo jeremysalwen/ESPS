@@ -1,0 +1,250 @@
+.\" Copyright (c) 1987, 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)addfea.1	1.11 1.11 ESI
+.TH ADDFEA 1\-ESPS 4/2/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+addfea - adds a new FEA file field based on ASCII data 
+.SH "SYNOPSIS"
+.B addfea
+[
+.BI \-P
+.I params
+] [
+.BI \-f
+.I field_name
+] [
+.BI \-t
+.I field_type
+] [
+.BI \-s
+.I field_size
+] [
+.BI \-T
+.I FEA_subtype
+] [
+.BI \-x " debug_level"
+] [
+.BI \-c " comment"
+] [
+.BI \-C " comment_file"
+]
+.I "ascfile feafile"
+[
+.I "feafile.out"
+]
+.SH "DESCRIPTION"
+.PP
+\fIAddfea\fR creates a new FEA file field
+and fills it with data taken from the ASCII file 
+.I ascfile.  
+If \fIfeafile.out\fP is not supplied, then the new field 
+is added to each record of \fIfeafile\fP; if 
+\fIfeafile\fP does not exist, a new file is created with one field per
+record.  If \fIfeafile.out\fP is supplied, then the records from 
+\fIfeafile\fP are copied to \fIfeafile.out\fP with the new field 
+being added to each record.  In this case, \fIfeafile\fP must exist.  
+.PP
+If \fIascfile\fP is "\-", standard input is used for the input ASCII file.  If
+\fIfeafile\fP is "\-", standard input is used for the input FEA file.  (It
+is an error for both \fIascfile\fP and \fIfeafile\fP to be "\-".)  If
+\fIfeafile.out\fP is "\-", standard output is used.  If \fIfeafile\fP
+exists and is not an ESPS FEA file, \fIaddfea\fP prints an error message
+and exits.
+.PP
+\fIAscfile\fP is an ASCII file containing values separated by white
+space or new lines.  \fIAddfea\fP takes \fIfield_size\fP values at a
+time from \fIascfile\fP, converts them to type \fIfield_type\fP, and
+stores them in a field named \fIfield_name\fP within sequential
+records of \fIfeafile\fP.  For complex types, each complex value is
+represented by a two ASCII inputs \- real part followed by imaginary
+part.  \fIAddfea\fP keeps processing the input until it is exhausted
+or until all records in \fIfeafile\fP (if it exists) have been
+updated.  If the input is exhausted before all records have been
+updated, the \fIfea_field\fP in remaining records is set to zero and a
+warning is issued.  If additional input remains after all records have
+been updated, the additional input is discarded and a warning is
+issued.  If \fIascfile\fP is empty, then the new FEA field is created
+and set uniformly to zero.
+.PP
+If the field name given for the \fB-f\fR option is \fITag\fR, the built
+in tag value of the record is modified, rather than a feature field
+named \fITag\fR.   This is a special case, to allow setting the built in
+tag value on each feature record.   See \fIfea(5\-ESPS)\fR for details
+on the tag field.   
+In this case, the other field related options are ignored (size and
+type).
+.PP
+If the new field is complex data type, then two values from the ASCII
+file are used for each data item.  The real value is given first, and
+then the imaginary value.  So a complex field of size 2 would
+require 4 values.  If an odd number of ASCII values is given, then the
+imaginary part is filled with zero.
+.PP
+For record-keeping purposes,
+.I addfea
+stores an ASCII comment in the header of of the output file.  The comment
+should describe the origins of the ASCII data in \fIascfile\fP.  If a
+comment is not supplied in the parameter file or by means of the \fB\-c\fR
+or \fB\-C\fR options, the user is prompted for one.  If \fIaddfea\fP
+is called on a pipe with \fIascfile\fP or \fIfeafile\fP as 
+standard input, the comment must be supplied directly as the user
+cannot be prompted.  
+.PP
+Note that \fIpplain\fP (1\-\s-1ESPS\s+1) and \fIselect\fP (1\-\s-1ESPS\s+1) 
+(in EVAL mode) can be used to create ASCII inputs for \fIaddfea\fP.  
+.PP
+Note that the difference between CHAR and BYTE is that CHAR is for
+character data (either a single character or a character string) and
+BYTE is for byte signed integer data.
+Also,
+CHAR data is handled a bit awkwardly. A new-line is considered a deliminator
+for a string of characters,
+but it also is retained in the string. So, for example, if you
+have four lines of ASCII data
+.sp
+.nf
+This
+is
+a
+test
+
+.fi
+and you want to have each output record contain a single word,
+you must specify a size of 5 or larger.
+That is, you must allow space for the new-line character.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-P " param" " \fR[params]\fP"
+Specifies the name of the parameter file.
+.TP
+.BI \-f " field_name" " "
+Specifies the name of the new FEA field.  If a field with this name
+already exists in \fIfeafile\fP, \fIaddfea\fR exits with an error message.
+If this option is used, it overides the parameter file value.
+The field name \fITag\fR is handled as a special case as described above.
+.TP
+.BI \-t " field_type" " \fR[FLOAT]\fP"
+Specifies the type of the new field.  Allowable types are the
+following: DOUBLE, FLOAT, LONG, SHORT, CHAR, BYTE, DOUBLE_CPLX,
+FLOAT_CPLX, LONG_CPLX, SHORT_CPLX, CHAR_CPLX, and BYTE_CPLX (case
+doesn't matter).  If this option is used, it overides the parameter
+file value.
+.TP
+.BI \-s " field_size" " \fR[1]\fP"
+Specifies the size of the new field.  If this option is used, it overides
+the parameter file value.
+.TP
+.BI \-T " FEA_subtype " 
+If this option is given, the feature file sub-type code is filled in
+with the given code.  The symbolic name of the sub-type code must be
+given, for example FEA_ANA or FEA_SD.  For a complete list of defined
+sub-type codes, see FEA(5\-ESPS).  Use of this option doesn't ensure
+that the is of the correct format for the defined subtype.  The user
+should use this option only in cases where he or she knows that a file
+with the correct fields is being produced.  See the section 5 man
+pages for the defined feature file types.
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If 
+.I debug_level
+is positive,
+.I testsd
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the  
+.I debug_level
+increases.  If
+.I debug_level
+is 0, no messages are printed.  Only levels 0 and 1 are supported.   
+.TP
+.BI \-c " comment"
+Specifies that the ASCII string 
+.I comment
+be added as a comment in the header of the output file.  If this option is
+used, it overides the parameter file value.
+.TP
+.BI \-C " comment_file"
+Specifies that the contents of the file
+.I comment_file
+be added as a comment in the header of the output file.  If this option is
+used, it overides the parameter file value.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file does not have to be present if all of the parameters are
+specified by means of command-line options.  The following parameters are
+read, if present, from the parameter file:
+.IP
+.I "field_name \- string"
+.IP
+This is the name of the field to add to \fIfeafile\fP.
+.IP
+.I "field_type \- string"
+.IP
+This is the type of the field to add to \fIfeafile\fP.  Allowable
+values are DOUBLE, FLOAT, LONG, SHORT, CHAR, BYTE, DOUBLE_CPLX,
+FLOAT_CPLX, LONG_CPLX, SHORT_CPLX, CHAR_CPLX, and BYTE_CPLX (case
+doesn't matter).
+.IP
+.I "field_size \- integer"
+.IP
+This specifies the size of \fIfield_name\fP \- i.e., the size of the
+field added to \fIfeafile\fP.
+.IP
+.I "comment \- string"
+.IP
+This provides an ASCII comment that is added to the comment field in the
+output file.  The comment should describe the origins of the data in
+\fIascfile\fP.  If this parameter is not present in the parameter file and
+is not specified by the \fB\-c\fP or \fB\-C\fP options, then the user is
+prompted for a comment provided that \fIaddfea\fP is not called on a pipe
+with \fIascfile\fP or \fIfeafile\fP as standard input.
+.PP
+Remember that command line option values override 
+parameter file values.
+.SH "ESPS COMMON"
+.PP
+ESPS Common is not read or written by \fIaddfea\fP.  
+.SH ESPS HEADERS
+.PP
+All the old header values are copied to the new header and the input FEA
+file becomes a source file within the recursive header.
+\fIaddgen\fP (1\-\s-1ESPS\s+1) can be used to add the \fIstart_time\fP
+and \fIrecord_freq\fP generics used by \fIwaves+\fP,
+if they don't already exist.
+.SH "FUTURE CHANGES"
+.PP
+Add CODED type to the list of possible field types.
+.PP
+Improve the handling of CHAR data. 
+Make each line correspond to a data record.
+Allow use of either \fIfield_size\fP characters or the new-line character
+as the end-of-data deliminator for each line of input.
+If more than \fIfield_size\fP characters exist on a line,
+a warning is issued and only \fIfield_size\fP characters are used.
+If less than \fIfield_size\fP characters occur before a new-line character,
+the string is null padded.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIaddgen\fP (1\-\s-1ESPS\s+1), \fIcomment\fP(1\-\s-1ESPS\s+1), \fIpsps\fP(1\-\s-1ESPS\s+1), 
+\fIpplain\fP (1\-\s-1ESPS\s+1), \fIselect\fP(1\-\s-1ESPS\s+1), \fIfea_deriv\fP (1\-\s-1ESPS\s+1)
+.fi
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+\fIAddfea\fP will exit with an error message if \fIfeafile\fP exists and
+already contains a field named \fPfield_name\fP.  
+.PP
+\fIAddfea\fP will exit with an error message if both \fIascfile\fP 
+and \fIfeafile\fP are "\-".  
+.PP
+\fIAddfea\fP will exit with an error message if, when \fIaddfea\fP is
+called on a pipe with \fIascfile\fP as standard input, a comment is not
+supplied in the parameter file or via \fB\-c\fP or \fB\-C\fP.  
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Manual page by John Shore.  
+

@@ -1,0 +1,64 @@
+#! /bin/sh
+#
+# Install the section 5 manual pages
+#
+
+if test x$MANDIR = x
+ then
+  echo MANDIR macro not defined, check install scripts or seek help
+  exit 1
+fi
+
+if test ! -d $MANDIR
+ then
+  echo $MANDIR does not exist, check install scripts or seek help
+  exit 1
+fi
+
+if test ! -d $MANDIR/man5
+ then
+  echo $MANDIR/man5 does not exist, check install scripts or seek help
+  exit 1
+fi
+
+if test x$MANMOD = x
+ then
+  MANMOD=0640
+fi
+
+echo Comparing dates of .5 files here and in $MANDIR/man5
+echo This might take a while....
+
+for name in *.5*
+ do
+  if $BINDIR/newer $name $MANDIR/man5/$name
+   then
+    echo Updating $name...
+    set -x
+    rm -f $MANDIR/man5/$name
+    sed "s;\\\$MANDIR\\\$;$MANDIR;" $name >$MANDIR/man5/$name
+    chmod $MANMOD $MANDIR/man5/$name
+    set +x
+  fi
+done
+
+cd $MANDIR/man5
+echo "Making duplicates..."
+echo "First removing files with .so in them"
+LINK='ln -s'
+files=`grep -l  '^.so' *`
+if test "x$files" != x
+then
+  echo "zapping these files..."
+  echo $files
+  rm $files
+fi
+
+echo "Now removing existing files that are links..."
+find . -type l -exec rm {} \;
+
+echo "Making links..."
+set -x
+$LINK fea.5t FEA.5t
+$LINK feasd.5t FEASD.5t
+exit 0

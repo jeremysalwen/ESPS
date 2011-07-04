@@ -1,0 +1,6 @@
+# Make color.fspec display
+# @(#)do_color.fspec	1.1 7/29/91 ERL
+
+set ref_start 0
+kill name color 
+make name color file ./files/color.fspec loc_x 15 loc_y 565

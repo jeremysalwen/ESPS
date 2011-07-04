@@ -1,0 +1,12 @@
+# @(#)PWfft	1.1 6/5/91
+# default xwaves parameter file for fft
+#
+# this leaves start and nan to be determined by -r, and it sets 
+# frame_len and step explicitely to force a single frame given by the 
+# -r boundaries
+
+int frame_len = 0: "Number of points per analysis frame; 0 means nan";
+int step = 0: "step (points between start of successive frames; 0 means frame_len)";
+string window_type ?= "RECT": "Window to apply to data": {"RECT", "HAMMING", "TRIANG", "HANNING", "COS4"};
+int order ?= 10: "Fourier transform length is 2 to this power" : [2,512];
+

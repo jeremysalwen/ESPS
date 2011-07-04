@@ -1,0 +1,11 @@
+#! /bin/sh
+#  test script for xprompt @(#)xprompt.test	1.3 6/6/91 ESI
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+echo "Running xprompt on the sgram library parameter file; fill in some"
+echo "values after the window comes up, then click on DONE."
+xprompt -h sgram -PPsgramx sgram.params
+echo ""
+echo "Now check the output file sgram.params."
+xtext -F sgram.params
+

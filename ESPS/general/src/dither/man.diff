@@ -1,0 +1,162 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc. All rights reserved.
+.\" @(#)dither.1	1.4	4/2/97	ESI
+.TH DITHER 1\-ESPS 4/2/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+dither \- add half-tone bit-map version of spectrogram to FEA_SPEC or other FEA file.
+.SH "SYNOPSIS"
+.B dither
+[
+.BI \-x " debug_level"
+] [
+.BI \-P " params"
+]
+.I "input.fea output.fea"
+.SH "DESCRIPTION"
+.PP
+.I Dither
+accepts a FEA file
+.I input.fea
+containing a vector field of power-spectrum values in each record.
+It produces a FEA file
+.I output.fea
+with records that are copies of the input records plus an additional
+field containing 1s and 0s intended for display as a simulated
+gray-scale spectrogram on a black-and-white monitor.
+The default name for the spectral-value field in
+.I input.fea
+is
+.I re_spec_val,
+and the default name for the new field in
+.I output.fea
+is
+.I dith_spec_val.
+Both defaults can be changed by means of entries in a parameter file.
+If
+.I input.fea
+is "\-", standard input is used for the input file.
+If
+.I output.fea
+is "\-", standard input is used for the output file.
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP
+.BI \-P " param" " \fR[params]\fP"
+Specifies the name of the parameter file.
+.TP
+.BI \-x " debug_level"
+Positive values of
+.I debug_level
+cause debugging information to be printed;
+higher values produce more messages.
+The default value is 0, which suppresses the messages.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file does not have to be present,
+since all the parameters have default values.
+The following parameters are read, if present, from the parameter file:
+.TP
+.I "spec_field_name \- string"
+.IP
+This is the name of the spectral-value data field in
+.I input.fea.
+The default is "re_spec_val".
+.TP
+.I "dspec_field_name \- string"
+.IP
+This is the name of the half-tone (``dithered'') field in
+.I output.fea.
+The default is "dith_spec_val".
+.TP
+.I "start \- integer"
+.IP
+This is the first record of \fIinput\fP to process.
+The default is 1.
+.TP
+.I "nan \- integer"
+.IP
+This is the number of records to process.
+A value of zero means all subsequent records in the file;
+this is the default.
+.SH "ESPS COMMON"
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+ESPS Common is not processed by 
+.I dither
+if \fIinput\fP is 
+standard input.  Otherwise, provided that the Common file is newer 
+than the parameter file, and provided that the \fIfilename\fP entry in 
+Common matches \fIinput\fP, the Common values for \fIstart\fP and 
+\fInan\fP override those that may be present in the parameter file. 
+.PP
+The following items are written into the ESPS Common file 
+provided that \fIoutput\fP is not <stdout>.  
+.IP
+.I "start \- integer"
+.IP
+The starting point from the input file.
+.sp
+.I "nan \- integer"
+.IP
+The number of points in the selected range.
+.sp
+.I "prog \- string"
+.IP
+This is the name of the program 
+.RI ( dither
+in this case).
+.sp
+.I "filename \- string"
+.IP
+The name of the input file
+.I input.fea.
+.SH ESPS HEADERS
+The output header is a new FEA file header, with appropriate items
+being copied from the input header, including all generic header items.
+As usual, the command line is added as a comment and the header of
+.I input.fea
+is added as a source file to
+.I output.
+Another comment gives the name of the field added by
+.I dither.
+.SH "FUTURE CHANGES"
+.PP
+Command-line options for setting the parameters
+.I start,
+.I nan,
+.I spec_field_name,
+and
+.I dspec_field_name.
+Explicit controls over thresholds used by the dithering algorithm.
+.SH "SEE ALSO"
+\fIimage\fR (1-ESPS), FEA (5-ESPS), FEA_SPEC (5-ESPS)
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+.I Dither
+will exit with an error message
+if the output field name conflicts
+with the name of a field in the input file,
+if the spectral-value field does not exist in the input file,
+if the values of
+.I start
+and
+.I nan
+are inconsistent,
+or if the program had problems in allocating memory,
+creating the output field, or writing to common.
+Also, the input field must be of type BYTE or FLOAT.
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Manual page and program by Rodney Johnson. 

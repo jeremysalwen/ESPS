@@ -1,0 +1,23 @@
+delete_all_items menu spect
+
+add_waves menu spect builtin "bracket markers"
+
+add_waves menu spect name "zoom in" builtin "zoom in"
+
+add_waves menu spect name "zoom out" builtin "zoom out"
+
+add_waves menu spect name "zoom full out" builtin "zoom full out"
+
+add_waves menu spect name "  >>  " builtin "window ahead"
+
+add_waves menu spect name "  <<  " builtin "window back"
+
+add_op menu spect name "create D/A toolbar" command make_toolbar.sh datoolbar _name _file _loc_x _loc_y "D/A toolbar" "play between marks" "play window contents" "play entire file" "play to end of file" 
+
+add_op menu spect name "create zoom/scroll toolbar" command make_toolbar2.sh ztoolbar _name _file _loc_x _loc_y "Zoom toolbar"  In "zoom in" Out "zoom out" "Full Out" "zoom full out" Bracket "bracket markers" \<\<\< "window back" \>\>\> "window ahead" 
+
+add_espst menu spect name "show segment data" command epsps -H
+return
+
+# @(#)imagmen1.WC	1.9 10/26/93
+

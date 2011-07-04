@@ -1,0 +1,11 @@
+# adapted for testsignal demo from standard panel 
+
+"Menu Changes" make_panel name mstyle file menus.WM icon_title menus title "Menu Styles"
+
+"Image Painting" make_panel name scont file imageglbl.WM columns 4 icon_title scontrol title "Image Display Controls"
+
+"Colors" make_panel name color title "Color Support" icon_title Colors file colors.WM 
+
+# @(#)dcontrols.WM	1.4 11/5/91 ERL
+
+

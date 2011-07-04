@@ -1,0 +1,47 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)fmatfree.3	1.4 06 May 1997 ESI
+.TH F_MAT_FREE 3\-ESPSu 7/11/86
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+f_mat_free \- frees a pointer to a matrix of floats
+.SH "SYNOPSIS"
+.B #include <stdio.h>
+.br
+.B f_mat_free (mat, nb_row)
+.br
+.B float **mat;
+.br
+.B int nb_row;
+.SH "DESCRIPTION"
+.PP
+.I f_mat_free
+frees a pointer to a matrix of floats pointed to by
+.I mat.
+Such a matrix can be allocated by means of 
+.I f_mat_alloc
+(3\-ESPSu).  
+.SH "EXAMPLE"
+.PP
+int	row_size;	/* number of rows to free */
+.br
+float	**matrix;	/* two-dimensional array to free */
+.br
+
+(void) f_mat_free (matrix, row_size);
+.br
+.SH DIAGNOSTICS
+.PP
+None.
+.SH "BUGS"
+.PP
+None Known.
+.SH SEE ALSO
+.PP
+.nf
+f_mat_alloc(3\-ESPSu), d_mat_alloc(3\-ESPSu), 
+d_mat_free(3\-ESPSu)
+.fi
+.SH "AUTHOR"
+.PP
+John Shore
+

@@ -1,0 +1,47 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)getauto.3	1.4 06 May 1997 ESI
+.TH GET_AUTO 3\-ESPSsp 06 May 1997
+.ds ]W "Entropic Speech, Inc.
+.SH NAME
+get_auto \- Compute auto-correlation coefficients of a data segment.
+.SH SYNOPSIS
+.ft B
+get_auto (data, lnt, r, order)
+.br
+float   data[];
+.br
+double r[];
+.br
+int     order, lnt;
+
+.SH DESCRIPTION
+This routine computes the energy,
+.B
+r[0],
+and 
+.B
+order
+normalized auto-correlation coefficients
+.B
+r[1]
+to
+.B
+r[order]
+of a given data array,
+.B
+data,
+of size
+.B
+lnt.
+.SH BUGS
+None
+.SH COMMENTS
+Routine 
+.I
+get_atal
+can be used to obtain reflection coefficients from the computed
+auto-correlation coefficients.
+.SH SEE ALSO
+get_atal(3-ESPSsp), compute_rc(3-ESPSsp)
+.SH AUTHOR
+Shankar Narayan

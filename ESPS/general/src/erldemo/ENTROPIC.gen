@@ -1,0 +1,20 @@
+#! /bin/sh
+# ENTROPIC @(#)ENTROPIC.gen	1.1 6/6/90 - starting point of whole demo
+# this version is for generic X; XView fonts are installed
+
+# environment setup 
+
+PATH=.:esps/bin:/xview:/usr/bin/X11:$PATH; export PATH
+
+rm -f /tmp/erldemo.lock
+rm -f /tmp/erldemo.stop
+rm -f /tmp/erlplay.lock
+
+xset fp+ `pwd`/fonts/75dpi
+xset fp+ `pwd`/fonts/misc
+xset fp rehash
+
+erldemo -S erldemo.single -C erldemo.cont -W erldemo.wtry -I edemo.info -A edemo.about -t "Entropic Demo" &
+
+
+

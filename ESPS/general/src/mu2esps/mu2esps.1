@@ -1,0 +1,70 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc.  All rights reserved.
+.\" @(#)mu2esps.1	1.4 03 Apr 1997 ESI
+.TH MU2ESPS 1\-ESPS 03 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+mu2esps \- convert a headerless mu-encoded file to an ESPS file
+.SH SYNOPSIS
+.B mu2esps
+[
+.I \-s
+] [
+.BI \-x " debug_level"
+]
+.I infile 
+.I outfile
+.SH DESCRIPTION
+.PP
+.I Mu2esps
+converts a headerless, mu-encoded file into
+an ESPS sampled data file.
+The sampling frequency is assumed to be 8000 samples/second.
+The program \fIaddgen\fP (1\-\s-1ESPS\s+1) can be used to
+change the ESPS header value (\fIrecord_freq\fP) if the
+data has a different sampling frequency.
+.PP
+If \fIinfile\fR is replaced by  "\-",
+.I mu2esps
+will read from standard input,
+and if \fIoutfile\fP is replaced by "\-",
+standard output is written.
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-s
+This option is only available on SUN platforms.  It indicates \fIinfile\fR 
+has a SUNOS 4.1 audio file header.
+This causes \fImu2esps\fR to skip the header before reading and converting
+the data.
+.TP
+.BI \-x " debug_level"
+If \fIdebug_level\fP is positive, \fImu2esps\fP prints 
+diagnostic messages.  The default level is zero,
+which causes no debug output.
+.SH ESPS HEADER
+.PP
+A FEA_SD (5\-\s-1ESPS\s+1) header is written.
+.SH ESPS PARAMETERS
+.PP
+This program does not access the parameter file.
+.SH ESPS COMMON
+.PP
+This program does not access common.
+.SH DIAGNOSTICS
+.PP
+None.
+.SH WARNINGS
+\fImu2esps\fP (1\-\s-1ESPS\s+1) maps the mu-encoded values
+into the range -8059 to 8059. If the original linear data
+had a full 16 bit dynamic range, the output data can be scaled
+up by using \fIcopysd\fP (1\-\s-1ESPS\s+1).
+.SH SEE ALSO
+\fImu_to_linear\fP (3\-\s-1ESPS\s+1), \fIlinear_to_mu\fP (3\-\s-1ESPS\s+1), 
+.br
+\fIplay\fP (1\-\s-1ESPS\s+1), \fIesps2mu\fP (1\-\s-1ESPS\s+1)
+.SH BUGS
+.PP
+None known.
+.SH AUTHOR
+.PP
+Manual page and code by David Burton.

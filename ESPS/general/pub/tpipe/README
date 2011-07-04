@@ -1,0 +1,46 @@
+-------------------------------------------------------------
+tpipe --  replicate standard output to an additional pipeline
+              version 1.02    6 Mar. 1990
+-------------------------------------------------------------
+
+tpipe is a simple utility program that can be used to split a unix
+pipeline into two pipelines. That is, the output of one pipeline can
+be replicated and supplied as the input to two other pipelines
+executing simultaneously.
+
+Like tee(1), tpipe transcribes its standard input to its standard
+output. But where tee(1) writes an additional copy of its input to a
+file, tpipe writes the additional copy to the input of another
+pipeline, which is specified as the argument to tpipe. In a typical
+use, this pipeline will eventually write to a file. The standard
+output of tpipe is typically piped into another pipeline, whose output
+(if any) may go to the user's terminal or anywhere at all.
+
+I wrote tpipe because I was processing image files (using pbmplus),
+and I wanted to apply more than one pipeline to the same input file,
+but the early parts of the pipeline were the same. I did not want to
+have to execute the early parts multiple times. I did not have enough
+disk space to write what would have been a huge intermediate file.
+Frankly, I did not know about teeing to named pipes, but anyway it's
+nice not to have to bother with them or worry about name conflicts,
+especially if you have more than one job wanting to do this at the
+same time...
+
+See the manual page for tpipe(1) for information about its use,
+including an artificial example. 
+
+This distribution contains four files:
+  Readme (this is it)
+  Makefile (it is trivial)
+  tpipe.1  (the manual page)
+  tpipe.c  (the code!)
+
+To read the manual page, just `nroff -man tpipe.1'.
+
+To compile tpipe, just `make'. Put tpipe.1 in the man1/ directory in
+your MANPATH or the system man path.
+
+--
+David B Rosen, Cognitive & Neural Systems                  rosen@bucasb.bu.edu
+Center for Adaptive Systems                 rosen%bucasb@{buacca,bu-it}.bu.edu
+Boston University              {mit-eddie,harvard,uunet}!bu.edu!thalamus!rosen

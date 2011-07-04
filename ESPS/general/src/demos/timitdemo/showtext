@@ -1,0 +1,3 @@
+#! /bin/sh 
+# @(#)showtext	1.2 10/11/91 ERL
+xtext -t "Text for waveform $1.wav" -i text -F files/$1.txt

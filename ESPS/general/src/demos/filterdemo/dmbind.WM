@@ -1,0 +1,26 @@
+"Waveform Button Left" MENU
+  "up/down move"  set left_op up/down move
+  "move closest"  set left_op move closest
+  "repeat previous" set left_op repeat previous
+"Waveform Button Left" END
+"Waveform Button Middle" MENU
+  "blow up time"       set middle_op blow up time
+  "up/down move"       set middle_op up/down move
+  "play between marks" set middle_op play between marks
+  "repeat previous"    set middle_op repeat previous
+"Waveform Button Middle" END
+"Image Button Left" MENU
+  "up/down move"  set spec_left_op up/down move
+  "move closest"  set spec_left_op move closest
+  "repeat previous" set spec_left_op repeat previous
+"Image Button Left" END
+"Image Button Middle" MENU
+  "up/down move"       set spec_middle_op up/down move
+  "move contour"       set spec_middle_op move contour
+  "modify intensity"   set spec_middle_op modify intensity
+  "play between marks" set spec_middle_op play between marks
+  "repeat previous"    set spec_middle_op repeat previous
+"Image Button Middle" END
+
+# @(#)dmbind.WM	1.1 8/12/91 ERL
+

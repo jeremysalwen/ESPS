@@ -1,0 +1,70 @@
+Record 1: 
+data_sect_mthd:  SM_ONE 
+data_sect_num:  1 
+cbk_sect_mthd:  SM_ONE 
+cbk_sect_num:  1 
+quant_field:  
+  0: spec_param 
+quant_field_rep:  
+  0: RC 
+cbk_struct:  FULL_SEARCH 
+cbk_type:  MISC 
+cbk_train_dst:  0.0015372024 
+dsgn_dst:  MSE 
+encde_dst:  MSE 
+cbk_sect_size:  16 
+cbk_name:  
+  0: class.cbk 
+cbk_rec:  1 
+data_name:  
+  0: test.data 
+cbk_source:  
+  0: NOISE 
+source_type:  
+  0: none 
+cbk_signal:  
+  0: channel_1 
+input_source:  
+  0:  
+input_signal:  
+  0:  
+in_rep_number:  -1 
+data_sect_dst:  0.0025382813 
+data_sect_size:  4 
+average_dst:  0.0025382813 
+
+Record 2: 
+data_sect_mthd:  SM_ONE 
+data_sect_num:  1 
+cbk_sect_mthd:  SM_ONE 
+cbk_sect_num:  1 
+quant_field:  
+  0: spec_param 
+quant_field_rep:  
+  0: RC 
+cbk_struct:  FULL_SEARCH 
+cbk_type:  MISC 
+cbk_train_dst:  0.0085633565 
+dsgn_dst:  MSE 
+encde_dst:  MSE 
+cbk_sect_size:  16 
+cbk_name:  
+  0: class.cbk 
+cbk_rec:  2 
+data_name:  
+  0: test.data 
+cbk_source:  
+  0: SPEECH 
+source_type:  
+  0: none 
+cbk_signal:  
+  0: channel_1 
+input_source:  
+  0:  
+input_signal:  
+  0:  
+in_rep_number:  -1 
+data_sect_dst:  0.039073329 
+data_sect_size:  4 
+average_dst:  0.039073329 
+

@@ -1,0 +1,66 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)execcomman.3	1.2 06 May 1997 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  EXEC_COMMAND 3\-Eu 06 May 1997
+.SH NAME
+
+.nf
+exec_command \- fork a shell to run a unix command
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+
+#include <stdio.h>
+
+void
+exec_command(cmd)
+char *cmd;
+
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+\fIexec_command\fP executes a command \fIcmd\fP by handing it to /bin/sh.  
+The shell is forked using \fIexecvp\fP(3). The string \fIcmd\fP 
+should be a valid unix command given user's environment.  
+.SH EXAMPLES
+.PP
+.nf
+
+	char *command[200];
+	char *file;
+	 . . .
+
+	/* simple command */
+
+	sprintf(command, "plot3d %s", file);	
+	exec_command(command);
+
+	 . . .
+
+	/* a command with a pipe */
+
+	sprintf(command "fft %s - | plotspec -");
+	exec_command(command);
+
+.SH ERRORS AND DIAGNOSTICS
+.PP
+.SH FUTURE CHANGES
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.SH AUTHOR
+.PP
+program and man page by John Shore; this was based on the \fIolwm\fP 
+function \fIexecCommand\fP.  
+
+
+
+
+
+

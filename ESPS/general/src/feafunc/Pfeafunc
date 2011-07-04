@@ -1,0 +1,12 @@
+# @(#)Pfeafunc	1.3 8/13/91 ERL
+# default parameter file for feafunc
+int	start ?= 1: "First record from input file to process";
+int	nan ?= 0: "Number of records to process; 0 means till EOF";
+float   gain_real ?= 1;
+float   gain_imag ?= 0;
+float   add_real ?= 0;
+float   add_imag ?= 0;
+string	input_field ?= "samples": "Input field name";
+string  output_field ?= "input_name_[function]": "Output field name; - (hyphen) means same as input";
+string  output_type ?= "input type": "Output field type": {"DOUBLE", "FLOAT", "LONG", "SHORT", "BYTE", "DOUBLE_CPLX", "FLOAT_CPLX", "LONG_CPLX", "SHORT_CPLX", "BYTE_CPLX"};
+string  function_type ?= "NONE": "function to apply": {"NONE", "ABS", "ARG", "ATAN", "CONJ", "COS", "EXP", "IM", "LOG", "LOG10", "RE", "RECIP", "SGN", "SIN", "SQR", "SQRT", "TAN"};

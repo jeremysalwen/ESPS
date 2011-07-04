@@ -1,0 +1,43 @@
+#wavestry.com  @(#)wtry.WC	1.2 11/5/91 ERL	
+#command file for starting up waves+ on some test files
+#first line must start with waves
+waves set colormap TImap
+set show_vals 1 
+set scrollbar_height 15
+make name signal file files/signal.sd loc_x 10 loc_y 180 height 220 width 550 start .35 duration .35 
+
+make name signal file files/signal.fft.spgm loc_x 570 loc_y 225  start .35 duration .35 width 450 
+
+signal bracket file files/signal.fft.spgm start .35 end .7
+
+signal marker time .4 do_left 1
+
+signal marker time .6 do_left 0
+
+set ref_size 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

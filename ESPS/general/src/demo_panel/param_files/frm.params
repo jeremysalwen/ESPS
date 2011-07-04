@@ -1,0 +1,4 @@
+# @(#)frm.params	1.1 6/19/91 ERL - needed for ratios script
+int frame_len = 60;
+int step = 60;
+string window_type = "RECT";

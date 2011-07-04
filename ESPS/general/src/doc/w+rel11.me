@@ -1,0 +1,56 @@
+.lo
+.ce 3
+\fBRelease Notes for \fIwaves\fP+ Version 1.1\fR
+
+Document version 1.3, 2/17/89
+.sp 3
+.lp
+This document describes the changes from \fIwaves\fP+ Version 1.0 to 
+Version 1.1, as well as known problems with 1.1.
+.uh "Bug Fixes"
+.np
+Manual editing by "modify formants" now works for general ESPS FEA files,
+as well as SIGnal .fb files, overlaid on spectrograms.
+.np
+The fixed-allocation limit on the total length of identifiers in a SIGnal
+header has been removed.  Previously, reading a FEA file with too many
+components would cause a core dump.
+.np
+The spacing and numbering of tick marks in spectrogram reticles are now
+intelligently chosen.  A couple of bugs have been corrected that could
+cause up to 2 pixels inaccuracy in placement of ticks along the vertical
+axis.
+.np
+Insert_file in ESPS files now keeps the proper history in the headers.
+.np
+A bug has been fixed that caused bad headers to be written on ESPS
+spectrograms done with the AT&T DSP32 board.  This bug prevented doing
+certain cut and paste operations on such files, or using the spectrum
+program to display slices from them.
+.np
+There no longer occurs a certain spurious error message that used to occur
+when ESPS FEA_SPEC files were written.
+.np
+A bug has been fixed that prevented the use of the "activate" mechanism from
+selecting the tracks to be displayed from FEA files overlaid on spectrograms.
+.np
+A bug has been fixed that could cause core dumps during reading of
+multidimensional SIGnal files of types other than CHAR (bug fix from
+AT&T).
+.uh "Other Changes"
+.np
+Dithered spectrograms are now painted while the dithering is being
+done (relevant for monochrome monitors).  
+.np
+A more complete history of delete_segment operations on ESPS files is now
+kept in the header comments and the start_time and end_time header items.
+.np
+The COS4 and HANNING window types are now supported for waves+ spectrograms
+computed with the external \fIsgram\fP (1\-\s-1ESPS\s+1) program.
+.uh "Known Problems"
+.np
+\fIWaves\fP+ and its attachments sometimes look for files in ESPS/lib
+instead of ESPS/lib/waves.  This is always harmless.  In specific
+cases, you might want to put a copy of the relevant file into
+ESPS/lib.  
+

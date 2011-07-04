@@ -1,0 +1,177 @@
+#!/bin/sh
+# 9/7/93 @(#)cb_filt.tes	1.1
+
+USE_ESPS_COMMON=off;export USE_ESPS_COMMON
+ESPS_VERBOSE=0;export ESPS_VERBOSE
+
+donefile='/tmp/done'
+outfile='/tmp/out'
+echo "The following filters designed have:"
+echo "	 sampling rate 8000"
+echo "Designing Lows pass filter, visually inspect if it is:"
+echo "   passband ends at 1600, stopband start at 2000"
+echo "   maximally flat on the passband"
+
+cat > $donefile << END
+int filt_length_L = 31;
+int filt_length_S = 21;
+float samp_freq = 8000.000000;
+int nspec = 5;
+string model = "cosine";
+string push_direction = "neither";
+string spec1_type = "limit";
+string spec1_sense = "+";
+float spec1_edge1 = 0.000000;
+float spec1_edge2 = 1600.000000;
+float spec1_bound1 = 1.000000;
+float spec1_bound2 = 1.000000;
+string spec1_hug = "hugged";
+string spec1_interp = "arithmetic";
+string spec2_type = "limit";
+string spec2_sense = "-";
+float spec2_edge1 = 0.000000;
+float spec2_edge2 = 1600.000000;
+float spec2_bound1 = 0.900000;
+float spec2_bound2 = 0.900000;
+string spec2_hug = "not hugged";
+string spec2_interp = "arithmetic";
+string spec3_type = "limit";
+string spec3_sense = "+";
+float spec3_edge1 = 2000.000000;
+float spec3_edge2 = 4000.000000;
+float spec3_bound1 = 0.100000;
+float spec3_bound2 = 0.100000;
+string spec3_hug = "not hugged";
+string spec3_interp = "arithmetic";
+string spec4_type = "limit";
+string spec4_sense = "-";
+float spec4_edge1 = 2000.000000;
+float spec4_edge2 = 4000.000000;
+float spec4_bound1 = -0.100000;
+float spec4_bound2 = -0.100000;
+string spec4_hug = "not hugged";
+string spec4_interp = "arithmetic";
+string spec5_type = "concave";
+string spec5_sense = "-";
+float spec5_edge1 = 0.000000;
+float spec5_edge2 = 1600.000000;
+END
+cb_filt -P$donefile  $outfile
+filtspec -ml $outfile - |plotspec -
+
+echo "Designing highpass filter, check visually"
+echo "   stopband ends at 1600, passband ends at 2000"
+echo "   maximally flat on stopband"
+#--------CONSTRAINT_BASED HIGHPASS --------------------
+cat > $donefile << END
+int filt_length_L = 31;
+int filt_length_S = 21;
+float samp_freq = 8000.000000;
+int nspec = 5;
+string model = "cosine";
+string push_direction = "neither";
+string spec1_type = "limit";
+string spec1_sense = "+";
+float spec1_edge1 = 0.000000;
+float spec1_edge2 = 1600.000000;
+float spec1_bound1 = 0.100000;
+float spec1_bound2 = 0.100000;
+string spec1_hug = "hugged";
+string spec1_interp = "arithmetic";
+string spec2_type = "limit";
+string spec2_sense = "-";
+float spec2_edge1 = 0.000000;
+float spec2_edge2 = 1600.000000;
+float spec2_bound1 = -0.100000;
+float spec2_bound2 = -0.100000;
+string spec2_hug = "not hugged";
+string spec2_interp = "arithmetic";
+string spec3_type = "limit";
+string spec3_sense = "+";
+float spec3_edge1 = 2000.000000;
+float spec3_edge2 = 4000.000000;
+float spec3_bound1 = 1.000000;
+float spec3_bound2 = 1.000000;
+string spec3_hug = "not hugged";
+string spec3_interp = "arithmetic";
+string spec4_type = "limit";
+string spec4_sense = "-";
+float spec4_edge1 = 2000.000000;
+float spec4_edge2 = 4000.000000;
+float spec4_bound1 = 0.900000;
+float spec4_bound2 = 0.900000;
+string spec4_hug = "not hugged";
+string spec4_interp = "arithmetic";
+string spec5_type = "concave";
+string spec5_sense = "-";
+float spec5_edge1 = 2000.000000;
+float spec5_edge2 = 4000.000000;
+END
+cb_filt -P$donefile  $outfile
+filtspec -ml $outfile - |plotspec -
+
+#--------------DIFFERENTIATOR---------------------------
+echo "Designing a differentiator, visually inspect the response"
+echo "   passband with a slope 1 goes from 0 to 2000"
+echo "   stopband starts at 3200"
+cat > $donefile << END
+#
+float samp_freq = 8000;
+string model = "sine";
+string push_direction = "left";
+int filt_length_L = 16;
+int filt_length_S = 16;
+ 
+string spec1_type = "limit";
+string spec1_sense = "+";
+string spec2_type = "limit";
+string spec2_sense = "-";
+float spec1_edge1 = 0;
+float spec2_edge1 = 0;
+float spec1_edge2 = 2000;
+float spec2_edge2 = 2000;
+float spec1_bound1 = .01;
+float spec1_bound2 = 0.26000;
+float spec2_bound1 = 0;
+float spec2_bound2 = 0.25000;
+string spec1_hug ="not hugged";
+string spec1_interp ="arithmetic";
+string spec2_hug ="hugged";
+string spec2_interp ="arithmetic";
+ 
+string spec3_type = "limit";
+string spec3_sense = "+";
+string spec4_type = "limit";
+string spec4_sense = "-";
+float spec3_edge1 = 3200;
+float spec3_edge2 = 4000;
+float spec4_edge1 = 3200;
+float spec4_edge2 = 4000;
+float spec3_bound1 = 0.01;
+float spec3_bound2 = 0.01;
+float spec4_bound1 = -0.01;
+float spec4_bound2 = -0.01;
+string spec3_hug ="not hugged";
+string spec3_interp ="arithmetic";
+string spec4_hug ="not hugged";
+string spec4_interp ="arithmetic";
+ 
+int nspec =4;
+int nspec_pushed = 2;
+int spec1_pushed = 4;
+int spec2_pushed = 3;
+END
+cb_filt -P$donefile  $outfile
+filtspec -ml $outfile - |plotspec -
+rm $donefile
+rm $outfile
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,17 @@
+"Release Notes" MENU
+	"waves+ Release Notes"	`get_esps_base`/doc/waves.rel 
+	"Machine Specific Release Notes"  `get_esps_base`/doc/machine_specific.doc
+"Release Notes" END
+"ESPS Tech Notes" MENU
+	"Introduction to ESPS"	`get_esps_base`/doc/intro.doc
+	"Living with the Entropic License Manager" `get_esps_base`/doc/keys.doc
+	"File Conversions"	`get_esps_base`/doc/convert.doc
+	"Parameter Files"	`get_esps_base`/doc/param.doc
+	"ESPS Data Files"	`get_esps_base`/doc/files.doc
+	"ESPS/waves+ Programming Guidelines"	`get_esps_base`/doc/guide.doc
+"ESPS Tech Notes" END
+"Other Documents" MENU
+	"Default Waves+ profile (.wave_pro)" `get_esps_base`/lib/waves/.wave_pro
+	"Using XView: Fonts and Window Manager Hints"  `get_esps_base`/xview/README
+"Other Documents" END
+

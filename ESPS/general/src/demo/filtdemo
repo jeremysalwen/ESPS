@@ -1,0 +1,391 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of
+# Entropic Research Laboratory, Inc. Any reproduction, distribution,
+# or publication of this work must be authorized in writing by Entropic
+# Research Laboratory, Inc., and must bear the notice:
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc.
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc.
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended
+# publication of this source code.
+#
+# @(#)filtdemo	3.15   6/18/94     ESI/ERL
+#
+# Written by:
+# Checked by:
+# Revised by: Derek Lin
+#
+# Brief description:  Illustrates basic filter design and filtering
+#
+
+USE_ESPS_COMMON=off
+ESPS_VERBOSE=0
+export USE_ESPS_COMMON
+export ESPS_VERBOSE
+if test `mach_type` = CONVEX -o `mach_type` = SONY_RISC -o `mach_type` = SONY_68
+ then
+  echo This script will fail if you do not have write permission on this directory.
+ else
+  if test ! -w . 
+    then
+	echo "You do not have write permission in this directory."
+	exit 1
+  fi
+fi
+param=./paramdemo
+echo " "
+echo IIR and FIR filters with various design methods are created in this 
+echo demo.  Their frequency responses are generated and plotted.  Then a
+echo test signal is generated and filtered using the designed filters.
+echo All filters are sampled at 8000 Hz.
+echo " "
+echo PRESS THE "QUIT" BUTTON ON PLOTS TO CONTINUE
+echo " "
+############################NOTCH_FILT###########################
+echo Now design a notch filter with 200 Hz wide notch at 2000 Hz.
+echo " "
+echo "   %notch_filt -b200 -n2000 -s8000  notch.filt"
+notch_filt -b200 -n2000 -s8000  notch.filt
+echo " "
+echo 'Compute the spectral response of the notch filter (by using filtspec(1-ESPS))'
+echo 'and plot it by using plotspec(1-ESPS) (save the response in notch.spec).'
+echo " "
+echo "   %filtspec -s8000 -n513 notch.filt - | tee notch.spec | plotspec -"
+filtspec -s8000 -n513 notch.filt - | tee notch.spec | plotspec -t "Notch Response by notch_filt(1-ESPS)" -W "=450x400+0+0" - 
+echo " "
+#############################PKMC_FILT############################
+cat > $param << EOF
+int filt_length = 21;
+float band1_edge2 = 2000.000000;
+float band2_edge1 = 3200.000000;
+float band1_des = 1.000000;
+float band1_wt = 1.000000;
+float band2_wt = 1.000000;
+string filt_type = "DIFFERENTIATOR";
+float samp_freq = 8000.000000;
+int nbands = 2;
+float band1_edge1 = 0.000000;
+float band2_edge2 = 4000.000000;
+float band2_des = 0.000000;
+EOF
+echo Now design a FIR differentiator by the Parks-McClellan algorithm
+echo with 21 taps, 0 to 2000 Hz as passband and 3200 to 4000 Hz stopband
+echo " "
+echo "   %pkmc_filt -P$param pkmc.filt"
+pkmc_filt -P$param pkmc.filt
+echo " "
+echo where $param is an ASCII parameter file.  The $param file 
+echo is generated on the fly, and will contain appropriate design
+echo parameters for all the following design examples.
+echo " "
+echo Compute the spectral response of the equiripple filter, and plot
+echo "in linear scale. (save the response in pkmc.spec)."
+echo " "
+echo "   %filtspec -s 8000 -n513 -ml pkmc.filt - | tee pkmc.spec | plotspec -"
+filtspec -s 8000 -n513 -ml pkmc.filt - | tee pkmc.spec | plotspec -t "FIR Equiripple Differentiator by pkmc_filt(1-ESPS)" -W  "=450x400+0+0" -  
+rm $param
+echo " "
+##############################CB_FILT################################
+cat > $param << EOF
+int filt_length_L = 31;
+int filt_length_S = 21;
+float samp_freq = 8000.000000;
+int nspec = 5;
+string model = "cosine";
+string push_direction = "neither";
+string spec1_type = "limit";
+string spec1_sense = "+";
+float spec1_edge1 = 0.000000;
+float spec1_edge2 = 1500.000000;
+float spec1_bound1 = 1.000000;
+float spec1_bound2 = 1.000000;
+string spec1_hug = "hugged";
+string spec1_interp = "arithmetic";
+string spec2_type = "limit";
+string spec2_sense = "-";
+float spec2_edge1 = 0.000000;
+float spec2_edge2 = 1500.000000;
+float spec2_bound1 = 0.800000;
+float spec2_bound2 = 0.800000;
+string spec2_hug = "not hugged";
+string spec2_interp = "arithmetic";
+string spec3_type = "limit";
+string spec3_sense = "+";
+float spec3_edge1 = 1800.000000;
+float spec3_edge2 = 4000.000000;
+float spec3_bound1 = 0.100000;
+float spec3_bound2 = 0.100000;
+string spec3_hug = "not hugged";
+string spec3_interp = "arithmetic";
+string spec4_type = "limit";
+string spec4_sense = "-";
+float spec4_edge1 = 1800.000000;
+float spec4_edge2 = 4000.000000;
+float spec4_bound1 = -0.100000;
+float spec4_bound2 = -0.100000;
+string spec4_hug = "not hugged";
+string spec4_interp = "arithmetic";
+string spec5_type = "concave";
+string spec5_sense = "-";
+float spec5_edge1 = 0.000000;
+float spec5_edge2 = 1500.000000;
+EOF
+echo Now design a lowpass FIR filter with maximally flat passband by the
+echo constraint-based technique, 0 to 1500 Hz as passband, 1800 to 4000 Hz 
+echo as stopband.
+echo " "
+echo "   %cb_filt -P$param cb.filt"
+cb_filt -P$param cb.filt
+echo Compute the spectral response of the maximally-flat passband filter, 
+echo "and plot it.  (save the response in cb.spec)"
+echo " "
+echo "   %filtspec -s 8000 -n513 cb.filt - | tee cb.spec | plotspec -"  
+filtspec -s 8000 -n513 cb.filt - | tee cb.spec | plotspec -y-40: -t "FIR Maximally Flat Passband by cb_filt(1-ESPS)" -W "=450x400+0+0" - 2> /dev/null
+rm $param
+echo " "
+###################################WMSE_FILT####################
+cat > $param << EOF
+float samp_freq = 8000.000000;
+int filt_length = 201;
+int nbands = 2;
+float band_edge1 = 0.000000;
+float band_edge2 = 1800.000000;
+float band_edge3 = 4000.000000;
+float band1_des = 0.000000;
+float band2_des = 1.000000;
+float band1_wt = 1.000000;
+float band2_wt = 1.000000;
+EOF
+echo Now design a highpass FIR filter by the minimum-mean square error criteria
+echo with 201 taps, 0 to 1800 Hz as stopband and 1500 to 4000 Hz as passband
+echo " "
+echo "   %wmse_filt -P$param wmse.filt"
+wmse_filt -P$param wmse.filt
+echo " "
+echo Compute the spectral response of the highpass filter, and plot it
+echo "(save the response in wmse.spec)"
+echo " "
+echo "   %filtspec -s 8000 -n513 wmse.filt - | tee wmse.spec | plotspec -"
+filtspec -s 8000 -n513 wmse.filt - | tee wmse.spec | plotspec -y-50: -t "FIR Lowpass with Weighted Mean Square Error Criteria by wmse_filt(1-ESPS)" -W "=450x400+0+0" -  2> /dev/null
+rm $param
+echo " "
+##################################WIN_FILT#####################
+cat >$param <<EOF
+float band1_des = 0.000000;
+float band2_des = 1.000000;
+float band3_des = 0.000000;
+float band4_des = 1.000000;
+float band_edge1 = 0.000000;
+float band_edge2 = 1100.000000;
+float band_edge3 = 1600.000000;
+float band_edge4 = 2600.000000;
+float band_edge5 = 4000.000000;
+float rej_db = 20.000000;
+float trans_band = 100.000000;
+float samp_freq = 8000.000000;
+int nbands = 4;
+EOF
+echo Now design a multiband FIR filter by the Kaiser-Windowing method
+echo with passband 1100 to 1600 Hz and 2600 to 4000 Hz.
+echo " "
+echo "   %win_filt -P$param win.filt"
+win_filt -P$param win.filt
+echo " "
+echo Compute the spectral response of the multiband filter, and plot it
+echo "(save the response in win.spec)"
+echo " "
+echo "   %filtspec -s 8000 -n513 win.filt - | tee win.spec | plotspec -"
+filtspec -s 8000 -n513 win.filt - | tee win.spec | plotspec -y-60: -t "FIR multiband by Kaiser-Windowing method by win_filt(1-ESPS)" -W "=450x400+0+0" -  2> /dev/null
+rm $param
+echo " "
+###################################BUTTERWORTH##################
+cat >$param <<EOF
+string filt_method = "BUTTERWORTH": "Desired filter type:":{"BUTTERWORTH", "CHEBYSHEV1", "CHEBYSHEV2", "ELLIPTICAL"};
+float samp_freq = 8000: "Desired sampling frequency.";
+float gain = 1: "Desired pass band gain.";
+string filt_type = "LP": "Desired filter reponse":{"LP", "HP","BP","BS"};
+float pass_band_loss = 1: "Desired maximum pass band loss (dB).";
+float stop_band_loss = 20.: "Desired minimum stop band attenuation (dB).";
+float p_freq1 = 500: "Passband frequency 1";
+float s_freq1 = 1500: "Stopband frequency 1";
+EOF
+echo Now design a lowpass IIR filter by the Butterworth method
+echo with 0 to 500 Hz as passband, 1500 to 4000 Hz 20dB down stopband.
+echo " "
+echo "   %iir_filt -P$param butt.filt"
+iir_filt -P$param butt.filt
+echo " "
+echo Compute the spectral response of the lowpass filter, and plot it
+echo "(save the response in butt.spec)"
+echo " "
+echo "   %filtspec -s 8000 -n513 butt.filt - | tee butt.spec | plotspec -"  
+filtspec -s 8000 -n513 butt.filt - | tee butt.spec | plotspec -y-50: -t "IIR Butterworth Lowpass by iir_filt(1-ESPS)" -W "=450x400+0+0" -  2> /dev/null
+rm $param
+echo " "
+####################################CHEBYSHEV1###################
+cat >$param <<EOF
+string filt_method = "CHEBYSHEV1": "Desired filter type:":{"BUTTERWORTH", "CHEBYSHEV1", "CHEBYSHEV2", "ELLIPTICAL"};
+float samp_freq = 8000: "Desired sampling frequency.";
+float gain = 1: "Desired pass band gain.";
+string filt_type = "HP": "Desired filter reponse":{"LP", "HP","BP","BS"};
+float pass_band_loss = 1: "Desired maximum pass band loss (dB).";
+float stop_band_loss = 20.: "Desired minimum stop band attenuation (dB).";
+float s_freq1 = 1500: "Stopband frequency 1";
+float p_freq1 = 1800:  "Passband frequency 1";
+EOF
+echo Now design a highpass IIR filter by Chebyshev I method
+echo with 0 to 1500 Hz as 20 dB down stopband and 1800 to 4000 Hz as passband.
+echo " "
+echo "   %iir_filt -P$param chev1.filt"
+iir_filt -P$param chev1.filt
+echo " "
+echo Compute the spectral response of the highpass filter, and plot it
+echo "(save the response in chev1.spec)"
+echo " "
+echo "   %filtspec -s 8000 -n513 chev1.filt - | tee chev1.spec | plotspec -" 
+filtspec -s 8000 -n513 chev1.filt - | tee chev1.spec | plotspec -y-50: -t "IIR Chebyshev I Highpass by iir_filt(1-ESPS)" -W "=450x400+0+0" -  2> /dev/null
+rm $param
+echo " "
+###################################CHEBYSHEV II##################
+cat >$param <<EOF
+string filt_method = "CHEBYSHEV2": "Desired filter type:":{"BUTTERWORTH", "CHEBYSHEV1", "CHEBYSHEV2", "ELLIPTICAL"};
+float samp_freq = 8000: "Desired sampling frequency.";
+float gain = 1: "Desired pass band gain.";
+string filt_type = "BP": "Desired filter reponse":{"LP", "HP","BP","BS"};
+float pass_band_loss = 1: "Desired maximum pass band loss (dB).";
+float stop_band_loss = 20.: "Desired minimum stop band attenuation (dB).";
+float p_freq1 = 1500: "Passband frequency 1";
+float p_freq2 = 2200: "Passband frequency 2";
+float s_freq1 = 1300: "Stopband frequency 1";
+float s_freq2 = 2400: "Stopband frequency 2";
+EOF
+echo Now design a bandpass IIR filter by Chebyshev II method
+echo with passband 1500 to 2200 Hz, and 20 dB down on stopbands of 0 to 1500 Hz
+echo and 2400 to 4000 Hz.
+echo " "
+echo "   %iir_filt -P$param chev2.filt"
+iir_filt -P$param chev2.filt
+echo " "
+echo Compute the spectral response of the bandpass filter, and plot it
+echo "(save the response in chev2.spec)"
+echo " "
+echo "   %filtspec -s 8000 -n513 chev2.filt - | tee chev2.spec | plotspec -"
+filtspec -s 8000 -n513 chev2.filt - | tee chev2.spec | plotspec -y-50: -t "IIR Chebyshev II Bandpass by iir_filt(1-ESPS)" -W "=450x400+0+0" -  2> /dev/null
+rm $param
+echo " "
+###################################ELLIPTICAL##################
+cat >$param <<EOF
+string filt_method = "ELLIPTICAL": "Desired filter type:":{"BUTTERWORTH", "CHEBYSHEV1", "CHEBYSHEV2", "ELLIPTICAL"};
+float samp_freq = 8000: "Desired sampling frequency.";
+float gain = 1: "Desired pass band gain.";
+string filt_type = "BS": "Desired filter reponse":{"LP", "HP","BP","BS"};
+float pass_band_loss = 1: "Desired maximum pass band loss (dB).";
+float stop_band_loss = 65: "Desired minimum stop band attenuation (dB).";
+float p_freq1 = 1300: "Passband frequency 1";
+float p_freq2 = 2400: "Passband frequency 2";
+float s_freq1 = 1500: "Stopband frequency 1";
+float s_freq2 = 2200: "Stopband frequency 2";
+EOF
+echo Now design an bandstop IIR filter by Elliptical polynomial approximation 
+echo technique with 40 dB down on stopband 1500 to 2200 Hz.
+echo " "
+echo "   %iir_filt -P$param elli.filt"
+iir_filt -P$param elli.filt
+echo " "
+echo Compute the spectral response of the bandstop filter, and plot it
+echo "(save the response in elli.spec)"
+echo " "
+echo "   %filtspec -s 8000 -n513 elli.filt - | tee elli.spec | plotspec -"
+filtspec -s 8000 -n513 elli.filt - | tee elli.spec | plotspec -y-60: -t "IIR Elliptical Bandstop by iir_filt(1-ESPS)" -W "=450x400+0+0" -  2> /dev/null
+rm $param
+echo " "
+############FILTERING############FILTERING############FILTERING###########
+echo Now sampled data files can be filtered using any of the above designed
+echo "filters by filter(1-ESPS), spectrum for pre-filtered and post-filtered "
+echo "sampled data can be computed and viewed by refcof(1-ESPS) and me_spec(1-ESPS)"
+echo " "
+echo Generate 2500 points of three summed sine waves \(1000Hz, 2000 Hz, and 3000 Hz.\)
+echo " "
+echo "   %testsd -p2600 -Tsine -f1000 sine1.sd"
+testsd -p2600 -Tsine -f1000 sine1.sd
+echo "   %testsd -p2600 -Tsine -f3000 - | addsd - sine1.sd sines2.sd"
+testsd -p2600 -Tsine -f3000 - | addsd - sine1.sd sines2.sd
+echo "   %testsd -p2600 -Tsine -f2000 - | addsd - sines2.sd  sines3.sd"
+testsd -p2600 -Tsine -f2000 - | addsd - sines2.sd  sines3.sd
+echo "Now filter the three sine waves with the notch filter, and then compute"
+echo "the pre- and post-filter spectrum based on 25th order maximum entropy"
+echo " "
+echo "First filter the data."
+echo "   %filter -Fnotch.filt sines3.sd nfiltered.sd"
+filter -Fnotch.filt sines3.sd nfiltered.sd
+echo " "
+#note that the first 100 points (transient) are skipped
+echo "Now compute reflection coefficients and pipe them to me_spec(1-ESPS)"
+echo "to compute a maximum entropy spectrum estimate of the pre-filtered signal."
+echo "   %refcof -o25 -p100:+2500 -l0 sines3.sd -\ "
+echo "     | me_spec - sines3.spec"
+echo " "
+echo "Finally, compute the spectrum estimate for the post-filtered signal."
+refcof -o25 -p100:+2500 -l0 sines3.sd - | me_spec   - sines3.spec
+echo "   %refcof -o25 -p100:+2500 -l0 nfiltered.sd -\ "
+echo "     | me_spec  - nfiltered.spec"
+refcof -o25 -p100:+2500 -l0 nfiltered.sd - | me_spec   - nfiltered.spec
+echo " "
+echo Now filter the three sine waves with the IIR bandstop filter, and then
+echo compute the post-filter spectrum based on 25th order maximum entropy
+echo " "
+echo "   %filter -Felli.filt sines3.sd sfiltered.sd"
+filter -Felli.filt sines3.sd sfiltered.sd
+echo "   %refcof -o25 -p100:+2500 -l0 sfiltered.sd -\ "
+echo "     | me_spec - sfiltered.spec"
+refcof -o25 -p100:+2500 -l0 sfiltered.sd - | me_spec - sfiltered.spec
+echo " "
+sleep 3
+echo After the demo script finishes, compare the notch filter 
+echo spectral response with the pre- and post-filter sine wave spectrum
+echo by typing the following commands manually:
+echo " "
+echo "  %plotspec sines3.spec"
+echo "  %plotspec nfiltered.spec"
+echo " "
+echo Then look at the spectral response of the band-stop filter and the
+echo spectrum after band-stop filtering by manually running the following command:
+echo " "
+echo "  %plotspec sfiltered.spec"
+echo " "
+echo Here is a list of filters and their spectrum file names created in this demo
+echo " "
+echo "	filter file	spectral response file"
+echo "	===========	======================"
+echo "	notch.filt	notch.spec"
+echo "	pkmc.filt	pkmc.spec"
+echo "	wmse.filt	wmse.spec"
+echo "	cb.filt		cb.spec"
+echo "	win.filt	win.spec"
+echo "	butt.filt	butt.spec"
+echo "	chev1.filt	chev1.spec"
+echo "	chev2.filt	chev2.spec"
+echo "	elli.filt	elli.spec"
+echo " "
+echo " "
+echo "Finally, all filter design programs can be invoked by xeparam(1-ESPS)"
+echo "and eparam(1-ESPS).  For example,"
+echo " "
+echo "   %xeparam iir_filt my.filt"
+echo " "
+echo "for X-windows based interface for parameter input, and"
+echo " "
+echo "   %eparam iir_filt my.filt"
+echo " "
+echo "for command-line prompt style parameter input."
+echo " "
+echo "It is also possible to build customized signal processing tool interface"
+echo "with ESPS using exprompt(1-ESPS), expromptrun(1-ESPS), get_param(1-ESPS),"
+echo "...etc.  See the cover shell script xfir_filt(1-ESPS) as an example to"
+echo "build X-windows based FIR filter design system."
+echo " "
+echo " "
+
+

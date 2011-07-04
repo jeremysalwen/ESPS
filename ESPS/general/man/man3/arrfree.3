@@ -1,0 +1,158 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.  All rights reserved.
+.\" @(#)arrfree.3	1.5  30 Apr 1997  ESI
+.TH ARR_FREE 3\-ESPSu 30 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+arr_free \- free storage allocated by arr_alloc or marg_index
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+
+void
+arr_free(arr, rk, typ, lvl)
+char    *arr;
+int     rk, typ, lvl;
+.fi
+.ft
+.SH DESCRIPTION
+.PP
+.I arr_free
+uses
+.IR free (3C)
+to free storage allocated by
+.IR arr_alloc (3\-ESPSu)
+or
+.IR marg_index (3\-ESPSu).
+.PP
+If
+.I arr
+is the result of an invocation of
+.IR arr_alloc (3\-ESPSu),
+say
+.IP
+arr = arr_alloc(rk, dim, typ, lvl);
+.PP
+then calling
+.IP
+arr_free(arr, rk, typ, lvl);
+.PP
+with the same values of
+.I rk,
+.I typ,
+and
+.I lvl
+will free the storage.
+Both the storage for array elements and the pointer structure that
+supports indexing are freed.
+.PP
+Usually the result of
+.I arr_alloc
+will have been converted to a type other than (char *) before being
+used.
+For example, with
+.IR rk " = 3,"
+.IR typ " = FLOAT,"
+and
+.IR lvl " = 1,"
+the appropriate type would be (float ****), and instead of the above,
+.I arr
+would be defined by
+.IP
+arr = (float ****) arr_alloc(3, dim, FLOAT, 1);
+.PP
+This must then be converted back to (char *) in the invocation of
+.I arr_free,
+as in
+.IP
+arr_free((char *) arr, 3, FLOAT, 1);
+.sp 0.3
+.PP
+If
+.I arr
+is the result of an invocation of
+.IR marg_index (3\-ESPSu)
+of the form
+.IP
+arr = marg_index(p, rk, dim, typ, lvl);
+.PP
+then calling
+.IP
+arr_free(arr, rk, typ, lvl);
+.PP
+will free the storage for the pointer structure created by
+.I marg_index
+and will also attempt to free the storage that
+.I p
+points to.
+This will work only if
+.I p
+is a pointer returned by
+.IR malloc (3C)
+or
+.IR calloc (3C);
+the result will be disaster otherwise.
+.PP
+If
+.I p
+does not point to a block allocated by
+.I malloc
+or
+.I calloc,
+it is still possible to free the pointer structure created by
+.I marg_index,
+but leave the storage that
+.I p
+points to alone.
+To do this, replace
+.I rk
+by
+.IR rk " \- 1"
+and
+.I lvl
+by
+.IR lvl " + 1"
+in the invocation of
+.I arr_free.
+.PP
+.I marg_index,
+like
+.I arr_alloc,
+returns a pointer that is likely to be converted to another type for
+use and require conversion back to (char *) when
+.I arr_free
+is called.
+For example, after
+.IP
+arr = (float ****) marg_index(p, 3, dim, FLOAT, 1);
+.PP
+the statement
+.IP
+arr_free((char *) arr, 3, FLOAT, 1);
+.PP
+will free the storage allocated by
+.I marg_index
+and will execute
+.I free(p);
+as well.
+The statement
+.IP
+arr_free((char *) arr, 2, FLOAT, 2);
+.PP
+will free only the storage allocated by
+.I marg_index.
+.SH "SEE ALSO"
+.PP
+\fIarr_alloc\fR(3\-ESPSu), \fImarg_index\fR(3\-ESPSu), free(3C)
+.SH DIAGNOSTICS
+.PP
+.nf
+arr_free: rank < 0
+arr_free: level < 0
+arr_free: unrecognized type
+.fi
+.SH BUGS
+.PP
+None known.
+.SH AUTHOR
+Rodney Johnson

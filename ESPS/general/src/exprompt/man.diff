@@ -1,0 +1,268 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)exprompt.1	1.16 01 Apr 1997 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH EXPROMPT 1\-ESPS 01 Apr 1997
+.SH "NAME"
+exprompt \- interactive ESPS parameter entry in a pop-up window
+.SH "SYNOPSIS"
+.B exprompt
+[
+.BI \-P
+.I param_file
+] [
+.B \-n
+] [
+.BI \-c
+.I checkfile
+] [
+.BI\-h
+.I help_name
+] [
+.B \-z
+] [ 
+.BI \-X " x_pos"
+] [ 
+.BI \-Y " y_pos"
+] [
+.BI \-x
+.I debug_level
+]
+param_out
+.SH "DESCRIPTION"
+.PP
+\fIExprompt\fP is an X Windows program that displays an interactive
+form for entering ESPS parameters and produces a new parameter file
+(for use in subsequent processing) based on the user's entries.  
+\fIexpromptrun\fP(1\-\s-1ESPS\s+1) runs an ESPS program (after prompting 
+for parameters).
+.PP
+\fIExprompt\fR processes the ESPS parameter file \fIparam_file \fP and
+(optionally) ESPS Common.  It then pops up a window containing an
+entry for each of the indefinite paramaters in \fIparam_file\fP
+(parameters with values assigned using the "?=" operator).  Each such
+entry has the name of the parameter and a space for filling in the
+desired value.  Default values from the parameter file are filled in
+initially.  If a prompt string was included in the parameter file, the
+string is displayed above the corresponding parameter entry.
+.PP
+If the parameter definition in the parameter file includes the
+optional set of discrete choices, the window entry for the parameter
+contains a set of screen buttons, one for each choice \- the user
+selects the parameter value by clicking with the mouse on the desired
+choice.  If discrete choices were not provided in the parameter file,
+the window entry for the parameter contains space in which the user
+can type the desired value.
+.PP
+Before displaying the interactive window, \fIexprompt\fP creates the
+output parameter file \fIparam_out\fP, and fills it with definitions
+for all of the parameters in \fIparam_file\fP and ESPS Common 
+(if Common is processed).  The initial values in \fIparam_out\fP are
+the default values from \fIparam_file\fP, perhaps modified by Common
+processing.  
+.PP
+Whenever the user enters a valid new value for a parameter in the
+\fIexprompt\fP window (by typing a value and then RETURN, or by
+pushing a selection button), the output file \fIparam_file\fP is
+updated.  Input parameters are checked for data type format.  If
+limits are provided for numeric parameters in the parameter file, the
+limits are checked.  In some applications, it is convenient to leave
+the \fIexprompt\fP window up while some other program makes 
+use of the updated parameter file  (e.g., the user might type 
+a command in a shell window).  Note that, while the \fIexprompt\fP
+window remains up, \fIparam_file\fP will not be updated with a
+typed-in value unless a RETURN is typed.  
+.PP
+Two or three screen buttons are provided in a panel at the top of the
+\fIexprompt\fP window.  The button DEFAULTS reverts all parameter
+values to the defaults that were in the parameter file (as updated by
+Common).  The button DONE causes \fIexprompt\fP to write all the
+parameter values (even if a RETURN hasn't been typed in an entry
+field) and exit.  Use this when you have finished entering values.
+The state of the output parameter file will correspond to the state of
+the window when DONE is selected.
+.PP
+If the \fB\-h\fP option was used, a HELP button is also provided.
+Selecting it causes a help file to be displayed in a text window.  
+If the \fIhelp_name\fP specified with \fB\-h\fP has a leading "." or
+"/", it is interpreted as the path to a pure ASCII file containing
+help information.  If there is no leading "." or "/", \fIhelp_name\fP
+is interpreted as the name of an ESPS program for which the parameters
+are intended.  In this case, HELP presents a copy of the corresponding
+ESPS manual page in a text window.  (To obtain it, \fIeman\fP is run
+and the output is stripped of format control strings.)  In both cases,
+the text window includes a FIND button to facilitate string searching.
+.PP
+If the user does not exit via the "DONE" button (e.g., a window-manager
+quit operation is used, an explicit kill signal is sent to the process, 
+etc.), \fIexprompt\fP deletes \fIparam_out\fP before exiting.  An error 
+message is output in this case provided that \-\fBz\fP is not used.  
+.PP
+\fIexprompt\fP exits with status 0 if the parameter file was read
+successfully, the user exited via the "DONE" button, and all
+parameters were written successfully.  If there was trouble processing
+the input parameter file, \fIexprompt\fP exits with status 1.  If the
+user exits via the "DONE" button but the parameters were not written
+successfully, \fIexprompt\fP exits with status 2.  If \fIexprompt\fP
+exits for other reasons, the exit status is 3; the most common reasons
+are inability to create a window in the first place, a window-manager
+quit operation, or an explicit kill signal.  
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-P " param_file" " \fR[params]\fP"
+Specifies the name of the ESPS parameter file to process.  If you want
+to force the parameter to come only from ESPS common, use "\fB\-P\fP
+/dev/null".  
+.TP
+.BI \-n 
+Do not process ESPS Common (i.e., always get the parameter value from
+the file specified by the \fB\-P\fP option).  (Within \fIexprompt\fP, the
+effect of \fB\-n\fP is to have \fIread_params\fP (3\-\s-1ESPS\s+1)
+called with the SC_NOCOMMON flag.)  Note also that Common processing 
+can also be disabled by setting the unix environment variable
+USE_ESPS_COMMON to "off".  It is an error to specify both \fB\-n\fP and
+\fB\-c\fP.  
+.TP
+.BI \-c " checkfile"
+If the ESPS Common file exists, this option specifies that the Common
+file should be processed only if the \fIcheckfile\fP matches the value
+of the \fIfilename\fP in the Common file.  This option will have no
+effect if the unix environment variable USE_ESPS_COMMON is "off".  It
+is an error to specify both \fB\-n\fP and \fB\-c\fP.
+.TP
+.BI \-h " help_name"
+Causes a HELP button to be provided in the \fIexprompt\fP window.
+Selecting this button brings up a help file in a text window.  If
+\fIhelp_name\fP has a leading "." or "/", it is interpreted as the
+path to a pure ASCII file containing help information.  If there is no
+leading "." or "/", \fIhelp_name\fP is interpreted as the name of an
+ESPS program for which the parameters are intended.  In this case,
+HELP presents a copy of the corresponding ESPS manual page in a text
+window.  (To obtain it, \fIeman\fP is run and the output is stripped
+of format control strings.)  In both cases, the text window includes a
+FIND button to facilitate string searching.
+.TP
+.B \-z
+Specifies that \fIexprompt\fP operate silently; conditions such as "no
+parameters", "no indefinite paramters", "exit without DONE", etc. are
+not reported.
+.TP 
+.BI \-X " x_pos"
+Specifies the x-position (in the root window) of the frame displayed
+by \fIexprompt\fP.  Both \fIx_pos\fP and \fIy_pos\fP must be specified
+and be non-negative; otherwise, the positioning will be left up to the
+window manager.  The standard XView \fB-Wp\fP and standard X11
+\fB-geometry\fP options can also be used to position the window.  
+.TP 
+.BI \-Y " y_pos"
+Specifies the y-position (in the root window) of the frame displayed
+by \fIexprompt\fP.  Both \fIx_pos\fP and \fIy_pos\fP must be specified
+and be non-negative; otherwise, the positioning will be left up to the
+window manager.  The standard XView \fB-Wp\fP and standard X11
+\fB-geometry\fP options can also be used to position the window.  
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If \fIdebug_level\fP is positive,
+.I exprompt
+outputs debugging messages. The messages proliferate as 
+.I debug_level 
+increases.  For level 0, there is no output.
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file specified by the \fB\-P\fP option is processed
+only to obtain parameter specifications.  In this respect,
+\fIexprompt\fP is quite different from most other ESPS programs, which
+use the parameter file to pass parameter values that control the
+operation of the program.
+.SH ESPS HEADERS
+.PP
+No ESPS files are processed by \fIexprompt\fP.
+.SH ESPS COMMON
+.PP
+Parameter processing by \fIexprompt\fP follows standard ESPS
+conventions: Unless the parameter value is overridden by the value in
+ESPS Common, the default value displayed by \fIexprompt\fP is the value
+from the parameter file \fIparam_file\fP.  This default value will be
+overridden by the value in Common (if the Common file exists and
+contains a value for the parameter), provided that ESPS Common
+processing is enabled and that the Common file is younger than the
+parameter file.  If a \fIcheckfile\fP is specfied by means of the
+\fB\-c\fP option, the parameter file value for \fIparam_name\fP will be
+overridden by the value in Common only if \fIcheckfile\fP is identical
+to the \fIfilename\fP entry in the Common file.
+.PP
+ESPS Common processing is enabled unless the unix environment variable
+USE_ESPS_COMMON is "off" or the \fB\-n\fP is specified.  The default
+ESPS Common file is .espscom in the user's home directory.  This may
+be overridden by setting the environment variable ESPSCOM to the
+desired path.  User feedback from parameter and Common file processing
+(by the library \fIread_params\fP and \fIgetsym\fP functions) is
+determined by the environment variable ESPS_VERBOSE, with 0 causing no
+feedback and increasing levels causing increasingly detailed feedback.
+If ESPS_VERBOSE is not defined, a default value of 3 is assumed.
+.PP
+It is an error to give both \fB\-n\fP and \fB\-c\fP.
+.SH EXAMPLES
+.PP
+\fIExprompt\fP is used to create parameter files interactively, with
+the output file intended as the parameter file for some ESPS
+processing program.  This is particularly useful in writing shell
+scripts.  For example, the sequence 
+.nf
+
+	exprompt \-h fft \-P/usr/esps3/lib/Pfft fft.params
+	fft \-P fft.params input.sd \- | plotspec \- 
+
+.fi
+will display a window in which the user fills in FFT parameters; after
+the user clicks on DONE, the fft is performed and the results plotted.
+Suppose the following script is called "xparam":
+.nf
+
+	#! /bin/sh
+	exprompt \-h $1 \-P/usr/esps3/lib/P$1 temp.param
+	$1 \-P temp.param $2 $3
+
+Then 
+
+        xparam fft input.sd output.fspec
+
+.fi
+will result in the interactive execution of
+\fIfft\fP(1\-\s-1ESPS\s+1).  
+Thus, \fIxparam\fP is the X Windows equivalent of
+\fIeparam\fP(1\-\s-1ESPS\s+1).  For an alternative, see
+\fIexpromptrun\fP (1\-\s-1ESPS\s+1).  
+.SH "FUTURE CHANGES"
+.PP
+\fIxprompt\fP will be modified to test whether or not it is being run
+under X Windows; if not, the indefinite parameters will be determined 
+by means of prompts using stdin and stdout.  
+.SH "SEE ALSO"
+.PP
+\fIgetparam\fP (1\-\s-1ESPS\s+1), \fIespsenv\fP (1\-\s-1ESPS\s+1),
+\fIread_params\fP (3\-\s-1ESPS\s+1),
+\fIexpromptrun\fP(1\-\s-1ESPS\s+1), 
+\fIexv_prompt_params\fP(3\-\s-1ESPSxu\s+1) 
+.SH "REFERENCE"
+.PP
+"Parameter and Common Files in ESPS",  ETM-S-86-12
+.SH "BUGS"
+.PP
+Array parameters (float and int arrays) are not supported yet.  
+.PP
+Vertical and horizontal scrollbars are provided (their use may be
+necessary in the case of large parameter files).  Owing to bugs in the
+current version of the xview library, however, their behavior is not 
+reliable.  For example, joining a split vertical scrollbar can cause 
+a core dump.  
+.PP
+If Common is processed and is newer than \fIparam_file\fP, the 
+output \fIparam_file\fP will include all parameters defined in Common,
+even if they were not also defined in \fIparam_file\fP. 
+.SH "AUTHOR"
+.PP
+Manual page and code by John Shore.  
+

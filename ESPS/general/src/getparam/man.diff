@@ -1,0 +1,163 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc.; All rights reserved
+.\" @(#)getparam.1	1.2 1.2 ESI
+.TH GETPARAM 1\-ESPS 4/1/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+getparam \- prints value of ESPS parameter from parameter file or ESPS Common
+.SH "SYNOPSIS"
+.B getparam
+[
+.BI \-p
+.I param_name
+] [
+.BI \-P
+.I param_file
+] [
+.B \-n
+] [
+.BI \-c
+.I checkfile
+] [
+.BI \-x
+.I debug_level
+] [
+.BI \-z
+]
+.SH "DESCRIPTION"
+.PP
+\fIGetparam\fR processes the ESPS parameter file \fIparam_file \fP and
+ESPS Common.  It then obtains the value of the parameter
+\fIparam_name\fP and prints its value in ASCII to standard output.
+.PP
+The main purpose of \fIgetparam\fP is to facilitate the writing of
+ESPS shell scripts.  With \fIgetparam\fP, you can process a script
+command line parameter file (\fB-P\fP) option in such a way to make
+the script conform to the standard behavior of ESPS programs that
+accept \fB-P\fP.  For example, if the parameter file passed to
+\fIgetparam\fP specifies run-time prompts for parameter values ("?="
+instead of "=" in the parameter file), \fIgetparam\fP will prompt for
+the values.  This has no particular value when running \fIgetparam\fP
+interactively, but it does the right thing when called from within a
+script (i.e., the caller of the script is prompted).
+.PP
+\fIGetparam\fP is also useful if you want to find out the parameter
+values that will be used by any ESPS program that is passed a given
+parameter file, including the effects of ESPS Common (recall that 
+the purpose of ESPS Common is to allow programs to set parameter
+values for use by programs that are run subsequently).  
+.PP
+Parameter processing by \fIgetparam\fP follows standard ESPS
+conventions: Unless the parameter value is overridden by the value in
+ESPS Common, the value printed by \fIgetparam\fP is the value from the
+parameter file \fIparam_file\fP.  This value will be overridden by the
+value in Common (if the Common file exists and contains a value for
+\fIparam_name\fP) provided that ESPS Common processing is enabled and
+that the Common file is younger than the parameter file.  If a
+\fIcheckfile\fP is specfied, the parameter file value for
+\fIparam_name\fP will be overridden by the value in Common only if
+\fIcheckfile\fP is identical to the \fIfilename\fP entry in the Common
+file.
+.PP
+ESPS Common processing is enabled unless the unix environment variable
+USE_ESPS_COMMON is "off".  The default ESPS Common file is .espscom in
+the user's home directory.  This may be overridden by setting the
+environment variable ESPSCOM to the desired path.  User feedback from
+parameter and Common file processing (by the library \fIread_params\fP
+and \fIgetsym\fP functions) is determined by the environment variable
+ESPS_VERBOSE, with 0 causing no feedback and increasing levels causing
+increasingly detailed feedback.  If ESPS_VERBOSE is not defined, a
+default value of 3 is assumed.
+.PP
+The \fB-p\fP "option" giving the parameter name must be given.  Other
+command line options trully are optional.  It is an error to give both
+\fB-n\fP and \fB-c\fP.  If \fIparam_name\fP corresponds to an integer
+or float array, a warning is issued if there is an inconsistency
+between the \fIsym_size\fP(3\-\s-1ESPS\s+1) returned
+value and
+\fIgetsym_ia\fP(3\-\s-1ESPS\s+1) or \fIgetsym_fa\fP(3\-\s-1ESPS\s+1)
+(this should never happen).
+.PP
+\fIGetparam\fP returns values to the calling shell as follows:
+If a parameter was obtained successfully, the value returned is 0.  
+If a user-interface error occurred, the value returned is 1. 
+If the parameter exists but is an array size inconsistency was found, 
+the value returned is 2.  If the parameter does not exist or if 
+\fIread_params\fP (3\-\s-1ESPS\s+1) returns with an 
+error status, the value returned is 3. 
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-p " param_name"
+Specifies the name of the parameter whose value is desired.
+\fIGetparam\fP exits with an error message if this option is not given.  
+.TP
+.BI \-P " param_file" " \fR[params]\fP"
+Specifies the name of the ESPS parameter file to process.  If you want
+to force the parameter to come only from ESPS common, use "\fB-P\fP
+/dev/null".  
+.TP
+.BI \-n 
+Do not process ESPS Common (i.e., always get the parameter value from
+the file specified by the \fB-P\fP option).  (Within \fIgetparam\fP, the
+effect of the \fB-n\fP is to have \fIread_params\fP (3\-\s-1ESPS\s+1)
+called with the SC_NOCOMMON flag.)  Note also that Common processing 
+can be disabled by setting the unix environment variable
+USE_ESPS_COMMON to "off".  
+.TP
+.BI \-c " checkfile"
+If the ESPS Common file exists, this option specifies that the Common
+file should be processed only if the \fIcheckfile\fP matches the value
+of the \fIfilename\fP in the Common file.  This option cannot be given
+if the \fB-n\fP is given.  This option will have no effect if the unix
+environment variable USE_ESPS_COMMON is "off".  
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If \fIdebug_level\fP is positive,
+.I getparam
+outputs debugging messages. The messages proliferate as 
+.I debug_level 
+increases.  For level 0, there is no output.
+.TP
+.BI \-z
+Specifies "silent" mode.  In this mode, warnings are not printed
+(parameter not found, parameter array size inconsistency).  This mode
+is most useful inside of shell scripts.  For complete silence, note
+that the environment variable ESPS_VERBOSE should be set to 0;
+otherwise, various feedback messages will be issued by
+\fIread_params\fP (3\-\s-1ESPS\s+1) and \fIgetsym\fP
+(3\-\s-1ESPS\s+1).
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file specified by the \fB-P\fP option is 
+processed only to obtain the value of the parameter named by the 
+\fB-p\fP option.  In this respect, \fIgetparam\fP is quite different 
+from other ESPS programs, which use the parameter file to pass 
+parameter values that control the operation of the program. 
+.SH ESPS HEADERS
+.PP
+No ESPS files are processed by \fIgetparam\fP.
+.SH ESPS COMMON
+.PP
+ESPS Common is read provided that Common processing is enabled (no
+\fB-n\fP option and environment variable USE_ESPS_COMMON not set to
+"off") and that the Common file is younger than the ESPS parameter
+file.  In this case, parameters present in Common override values from
+the parameter file.  If the \fB-c\fP is given, the Common values
+override the parameter file values only if the \fIcheckfile\fP matches
+the value of the \fIfilename\fP in the Common file.
+.SH "SEE ALSO"
+.PP
+\fIespsenv\fP (1\-\s-1ESPS\s+1), \fIread_params\fP (3\-\s-1ESPS\s+1),
+\fIgetsym\fP (3\-\s-1ESPS\s+1), \fIsymtype\fP (3\-\s-1ESPS\s+1),
+\fIsymsize\fP (3\-\s-1ESPS\s+1) 
+.SH "REFERENCE"
+.PP
+"Parameter and Common Files in ESPS",  ETM-S-86-12
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Manual page and code by John Shore.  
+

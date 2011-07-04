@@ -1,0 +1,11 @@
+#! /bin/sh
+# @(#)fft.test	1.1 9/7/87 ESI
+# test script for fft
+echo "test inversion (SD -> fft -> fftinv)"
+echo  "%testsd -Tsine test.sd"
+testsd -Tsine test.sd
+echo "%fft -o4 -p1:16 -c test.sd - | fftinv - test2.sd"
+fft -o4 -p1:16 -c test.sd - | fftinv - test2.sd
+set -x
+psps -H -r1:16 test.sd
+psps -H -r1:16 test2.sd

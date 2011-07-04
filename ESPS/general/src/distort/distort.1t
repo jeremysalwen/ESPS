@@ -1,0 +1,552 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1990-1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)distort.1t	3.11 20 Sep 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH DISTORT 1\-ESPS 20 Sep 1997
+.SH "NAME"
+distort \- compute distortion measures between two ESPS files
+.SH "SYNOPSIS"
+.B distort
+[
+.BI \-x " debug_level"
+] [
+.BI \-f " record_range"
+] [
+.BI \-e " element_range"
+] [
+.B \-E
+] [
+.BI \-r
+] [
+.BI \-s
+] [
+.BI \-n
+]
+.I "file1 file2"
+.SH "DESCRIPTION"
+.PP
+.I Distort
+takes two input ESPS files, 
+.I file1
+and
+.I file2,
+and computes various distortion measures of 
+.I file1
+relative to 
+.I file2.
+Some distortion measures are computed for all ESPS file types, while
+others are file\-type specific (see below).  The command line followed by
+summary statistics is produced on standard output.
+.PP
+If 
+.I file1
+and
+.I file2
+are not the same ESPS file type,
+contain complex data, or have 
+incompatible record structures
+(e.g., same number of elements per record, same sampling
+frequency, etc.),
+.I distort
+prints an error message and exits.
+If the range of records specified on the command line (with or without
+the \fB\-f\fP option) is not
+included in both
+.I file1
+and
+.I file2,
+.I distort
+prints an error message and exits.
+.PP
+For all ESPS file types other than FEA_ANA, and FEA_SPEC,
+.I distort 
+treats files as "generic" ESPS files containing records with some fixed
+number of numerical elements per record.  By default, all elements in
+the record are considered, but the range of elements within the records
+can be restricted by the 
+.B \-e
+option (Note: the first element starts at element 1, element 0 refers
+to the tag).  For each element in the element range, 
+.I distort
+computes the following measures between corresponding 
+elements of corresponding records in the two files:
+.IP
+difference;
+.IP
+difference magnitude;
+.IP
+square of the difference magnitude.
+.LP
+The averages of these quantities over all selected records, along with
+their maximum values, are then output for each element position.  If the
+.B \-E
+option is invoked, a distortion value for each element in each record is
+also printed.  If the
+.B \-r 
+option is invoked, then the average of these values over the element range
+in each record is also computed and printed, both for the individual
+records and for the entire file.  (If 
+.B \-r
+is specified without 
+.B \-E
+, then only the record averages and file averages are printed.)
+.PP
+For example, a typical output for an ESPS FEA file given the following
+command would look like:
+.sp
+.ne 7
+.rs
+.sp
+.ce
+distort \-f 2:5 \-E \-r file1.fea file2.fea
+.sp
+.TS
+center;
+c c c c c
+c c c c c
+c c c c c
+c c c c c.
+			Diff	Diff
+Record	Element	Diff	Mag	Squared
+------	-------	----	----	-------
+2      	element1	\-27.00	27.00	729.00
+       	element2	\-20.00	20.00	400.00
+3      	element1	\-19.00	19.00	361.00
+       	element2	\-20.00	20.00	400.00
+4      	element1	\-21.00	21.00	441.00
+       	element2	\-22.00	22.00	484.00
+5      	element1	\-24.00	24.00	576.00
+       	element2	\-24.00	24.00	576.00
+.TE
+.ne 7
+.rs
+.sp
+.ce 
+ELEMENT AVERAGE
+.sp
+.TS
+center;
+c c c c c c
+c c c c c c
+c c c c c c
+c c c c c c.
+	AVG 	AVG	  AVG	MAX	MAX
+Element	Diff	Mag	Squared	Mag	Squared
+-------	----	---	-------	---	-------
+element1	\-22.75	22.75	526.8	27.00	729.0
+element2	\-21.50	21.50	465.0	24.00	576.0
+.TE
+.ne 7
+.rs
+.sp
+.ce
+RECORD AVERAGE
+.sp
+.TS
+center;
+c c c c c
+c c c c c
+c c c c c.
+Record	Element	AVG Diff	AVG Mag	AVG Squared
+------	-------	--------	-------	-----------
+2	*	\-23.500	23.500	564.500
+3	*	\-19.500	19.500	380.500
+4	*	\-21.500	21.500	462.500
+5	*	\-24.000	24.000	576.000
+.TE
+.ne 7
+.rs
+.sp
+.ce 
+TOTAL FILE AVERAGE
+.sp
+.TS
+center;
+c c c
+c c c
+c c c.
+MEAN	MEAN	MEAN
+Diff	Diff Mag	Diff Squared
+--------	-------	-----------
+\-22.125	22.125	495.875
+.TE
+.sp
+.LP
+The first table shows the difference, difference magnitude, and difference
+magnitude squared for each element in the records specified.  The 
+ELEMENT AVERAGE
+table shows the average of each individual elements across all records,
+whereas the
+RECORD AVERAGE
+table shows the average of all elements in each record (note the asterisk
+represents that the average is across all elements and
+that elements
+included in the average can be restricted by the
+.B \-e
+option).
+Finally, the
+TOTAL FILE AVERAGE
+table shows the average of all elements in each record for all the records
+specified.
+.PP	
+If 
+.I file1
+and
+.I file2
+are both ESPS FEA_ANA files and the 
+.B \-e
+option is used, then 
+.I distort
+treats the files as "generic" ESPS files and processes them as 
+above.  If, however, the \fB\-e\fP option is not used, then 
+.I distort
+treats the pulse lengths, raw pulse powers, LPC error powers, and
+reflection coefficients separately, as though each set of these 
+quantities were in a separate record.  The
+.B \-E
+and
+.B \-r
+options apply as before.  For example, if 
+.B \-r
+is specified (without \fB\-e\fP), the user gets average statistics for
+individual records and for the entire file for
+pulse lengths, raw pulse powers, LPC powers, and reflection coefficients.
+.PP
+For the reflection coefficients and LPC powers,
+.I distort
+also computes the following distortion measures (see the 
+.B \-s
+option):
+.IP
+Itakura\-Saito (IS);
+.IP
+gain\-optimized Itakura\-Saito (GOIS);
+.IP
+gain\-normalized Itakura\-Saito (GNIS);
+.LP
+The file averages in the case of FEA_ANA files are computed for
+the whole file (restricted by
+.B \-f
+option), 
+as described above, as well as separately for voiced and unvoiced 
+records.  (NOTE:
+.I distort
+prints an asterisk if the LPC power in a given record is zero).
+.PP
+For example, a typical output for an FEA_ANA file given the following
+command would look like:
+.ne 7
+.rs
+.sp
+.ce 
+distort \-f 42:43 \-E \-r /u/wrl/tst3.fana /u/wrl/tst4.fana 
+.sp
+.TS
+center;
+c c c c c
+c c c c c
+c c c c c
+l c c c c.
+			Diff	Diff
+Record	Element	Diff	Mag	Squared
+\-\-\-\-\-\-	\-\-\-\-\-\-\-	\-\-\-\-	\-\-\-\-	\-\-\-\-\-\-\-
+42 (Unvoiced)	ref_coeff[0]	\-0.022741	0.022741	0.000517
+       	ref_coeff[1]	 0.045983	0.045983	0.002114
+       	ref_coeff[2]	\-0.010369	0.010369	0.000108
+	.	.	.	.
+	.	.	.	.
+	.	.	.	.
+       	ref_coeff[9]	\-0.169554	0.169554	0.028748
+
+       	raw_power[0]	 24.354967	24.354967	593.164429
+
+       	lpc_power[0]	 7.304450	7.304450	53.354984
+
+43 ( Voiced )	ref_coeff[0]	 0.006073	0.006073	0.000037
+       	ref_coeff[1]	\-0.030668	0.030668	0.000941
+       	ref_coeff[2]	\-0.019798	0.019798	0.000392
+	.	.	.	.
+	.	.	.	.
+	.	.	.	.
+       	ref_coeff[9]	\-0.039427	0.039427	0.001554
+
+       	p_pulse_len[0]	0.000000	0.000000	0.000000
+       	p_pulse_len[1]	0.000000	0.000000	0.000000
+       	p_pulse_len[2]	0.000000	0.000000	0.000000
+       	p_pulse_len[3]	0.000000	0.000000	0.000000
+
+       	raw_power[0]	 112.112762	112.112762	12569.271484
+       	raw_power[1]	\-303.590942	303.590942	92167.460938
+       	raw_power[2]	\-554.038818	554.038818	306959.000000
+       	raw_power[3]	\-683.969238	683.969238	467813.906250
+
+       	lpc_power[0]	\-34.695694	34.695694	1203.791138
+
+.TE
+.ne 7
+.rs
+.sp
+.ce 
+ELEMENT AVERAGE
+.sp
+.TS
+center;
+c c c c c c
+c c c c c c
+c c c c c c
+c c c c c c.
+	AVG 	AVG	  AVG	MAX	MAX
+Element	Diff	Mag	Squared	Mag	Squared
+-------	----	---	-------	---	-------
+ref_coeff[0]	\-8.3e\-03	1.4e\-02	2.7e\-04	2.2e\-02	5.1e\-04
+ref_coeff[1]	 7.6e\-03	3.8e\-02	1.5e\-03	4.5e\-02	2.1e\-03
+ref_coeff[2]	\-1.5e\-02	1.5e\-02	2.5e\-04	1.9e\-02	3.9e\-04
+.	.	.	.	.	.
+.	.	.	.	.	.
+.	.	.	.	.	.
+ref_coeff[9]	\-1.0e\-01	1.0e\-01	1.5e\-02	1.7e\-01	2.9e\-02
+
+p_pulse_len[0]	0.0e+00 	0.0e+00	0.0e+00	0.0e+00	0.0e+00
+p_pulse_len[1]	0.0e+00 	0.0e+00	0.0e+00	0.0e+00	0.0e+00
+p_pulse_len[2]	0.0e+00 	0.0e+00	0.0e+00	0.0e+00	0.0e+00
+p_pulse_len[3]	0.0e+00 	0.0e+00	0.0e+00	0.0e+00	0.0e+00
+
+raw_power[0]	 6.8e+01	6.8e+01	6.5e+03	1.1e+02	1.2e+04
+raw_power[1]	\-3.0e+02	3.0e+02	9.2e+04	3.0e+02	9.2e+04
+raw_power[2]	\-5.5e+02	5.5e+02	3.0e+05	5.5e+02	3.0e+05
+raw_power[3]	\-6.8e+02	6.8e+02	4.6e+05	6.8e+02	4.6e+05
+
+lpc_power[0]	\-1.3e+01	2.1e+01	6.3e+02	3.5e+01	1.2e+03
+.TE
+.ne 7
+.rs
+.sp
+.ce
+RECORD AVERAGE
+.sp
+.TS
+center;
+c c c c c
+c c c c c 
+l c c c c.
+Record	Element	Avg Diff	Avg Mag	Avg Squared
+------	-------	--------	-------	-----------
+42 (Unvoiced)	ref_coeff	\-0.084935	0.103815	0.022624
+       	raw_power	24.354967	24.354967	593.164429
+       	lpc_power	7.304450	7.304450	53.354984
+
+43 ( Voiced )	ref_coeff	\-0.014936	0.018925	0.000470
+       	p_pulse_len	0.000000	0.000000	0.000000
+       	raw_power	\-357.371552	413.427948	219877.406250
+       	lpc_power	\-34.695694	34.695694	1203.791138
+.TE
+.ne 7
+.rs
+.sp
+.ce
+TOTAL FILE AVERAGE
+.sp
+.TS
+center;
+c c c
+c c c
+c c c.
+MEAN	MEAN	MEAN
+Diff	Diff Mag	Diff Squared
+--------	-------	-----------
+\-46.242622	 55.525623	 28430.974609
+.TE
+.ne 7
+.rs
+.sp
+.ce
+SPECTRAL DISTORTIONS
+.sp
+.TS
+center;
+c c c c
+c c c c
+l c c c.
+Record	IS	GNIS	GOIS
+------	--	----	----
+42 (Unvoiced)	6.01	0.21	0.23
+43 ( Voiced )	0.07	0.00	0.00
+.TE
+.ne 7
+.rs
+.sp
+.ce
+TOTAL
+.sp
+.TS
+center;
+c c c c
+c c c c
+c c c c.
+Frame	IS	GNIS	GOIS
+-----	--	----	----
+Unvoiced	6.01	0.21	0.23
+Voiced	0.07	0.00	0.00
+ALL	3.04	0.10	0.12
+.TE
+.PP
+If 
+.I file1
+and
+.I file2
+are both FEA_SPEC files, 
+.I distort
+computes statistics in the same way as for generic ESPS files (described 
+above), including the effects of the 
+.B \-e
+option.  However, the statistics computed do not include discrete
+approximations to the IS and GNIS spectral distortion measures that are
+computed in the case of FEA_ANA files.
+.sp
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read by 
+.I distort.  
+.SH ESPS HEADERS
+.PP
+.I Distort 
+reads the following values from all ESPS file headers:
+.RS 5
+\fI
+.nf
+common.type
+common.ndrec
+common.tag
+\fP
+.RE
+For "generic" files, \fIdistort\fP also reads
+.RS 5
+\fI
+.nf
+common.ndouble
+common.nfloat
+common.nlong
+common.nshort
+common.nchar
+\fP
+.RE
+For FEA_ANA files, \fIdistort\fP reads the following generic header items
+.RS 5
+\fI
+order_vcd
+order_unvcd
+maxpulses
+maxraw
+maxlpc
+\fP
+.RE
+For SPEC files, \fIdistort\fP reads
+.RS  5
+\fI
+hd.spec\->voicing
+hd.spec\->spec_type
+hd.spec\->freq_format
+hd.spec\->contin
+hd.spec\->num_freqs
+.fi
+\fP
+.RE
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-x " debug_level"
+If 
+.I debug_level
+is positive,
+.I distort
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the  
+.I debug_level
+increases.  If
+.I debug_level
+is 0, no messages are printed.  The default is 0.
+.TP
+.BI \-f " range"
+Selects a subrange of records on which to compute distortions, specified
+in frames of the first input file 
+.I file1.
+The range is specified using the format 
+.I start\-end
+or
+.IR start:end .
+Either 
+.I start
+or 
+.I end
+may be omitted, in which case the omitted parameter defaults respectively
+to the start or end of 
+.I file1.  
+The first record in 
+.I file1
+is considered to be frame 1, regardless of its position relative to any
+original source file.  The default range is the entire input file
+.I file1.  
+.TP
+.BI \-e " range"
+Selects a subrange of elements within each record on which to 
+compute distortions.  The range is specified using the format
+.I start\-end
+or
+.IR start:end .
+Either 
+.I start
+or 
+.I end
+may be omitted, in which case the omitted parameter defaults
+respectively to the first or last element in each record.
+Element 0 refers to the tag, however, distortion measure for
+tags is not implemented.
+.TP
+.BI \-E
+Causes the distortion contribution of every element to be output. 
+.TP
+.BI \-r
+Causes the distortion contribution of individual records to be output.
+If the input files are both FEA_ANA or both SPEC, the record outputs are 
+marked as either voiced or unvoiced.  
+.TP
+.BI \-s
+Causes symmetric versions of the various Itakura\-Saito related
+distortions to be computed.  Thus, for example,
+instead of IS(\fIfile1,file2\fP), 
+.I distort
+computes [IS(\fIfile1,file2\fP) + IS(\fIfile2,file1\fP)]/2.
+.TP
+.BI \-n
+Suppress output of Element Averages for ESPS SPEC file type.
+.SH "FUTURE CHANGES"
+.PP
+Energy\-weighted version of the three Itakura\-Saito distortions and
+the frequency variant spectral distance will be implemented.
+.SH "SEE ALSO"
+.PP
+.nf
+is_dist_td(3\-ESPSsp), gois_dist_td(3\-ESPSsp), 
+gnis_dist_td(3\-ESPSsp), featospec (1\-ESPS), 
+refl_to_auto(3\-ESPSsp), FEA_ANA(5\-ESPS), FEA(5\-ESPS), 
+SD(5\-ESPS), SPEC(5\-ESPS), ESPS(5\-ESPS), FEA_SPEC(5\-ESPS)
+.fi
+.SH "WARNINGS"
+.PP
+The Itakura\-Saito distortion measures may or may not be correct.  The
+results have not been compared with a known example.
+.I Distort
+does not yet support files that contain complex data. 
+.SH "BUGS"
+.PP
+None known.
+.SH "REFERENCES"
+.PP
+[1] R. M. Gray, A. Buzo, A. H. Gray, and Y. Matsuyama, "Distortion Measures
+for Speech Processing," IEEE Transactions on Acoustics, Speech, and Signal
+Processing, Vol. ASSP\-28, No. 4, August 1980, pp. 367\-376.
+.SH "AUTHOR"
+.PP
+Coded by Ajaipal S. Virdy.  Man page by John Shore, Dave Burton, and
+Ajaipal S. Virdy.

@@ -1,0 +1,803 @@
+#! /bin/sh
+#@(#)vqdst.test	1.2 8/6/91 ERL
+
+#make test signals
+echo " "
+echo "Making test signals for vqdst test script"
+echo " "
+atosps - test.data << EOD
+{
+01 d
+02 6a1a
+03 Tue Aug  6 17:01:58 1991 
+04 1.85
+05 copysps
+06 3.14
+07 3/28/90
+53 burton
+08 4
+09 1
+0b e
+0c 2
+0d 1
+10 test.fana
+12 copysps -r1:4 test.fana test.data spstoa test.data test.data.asc 
+13 <stdin>
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@window_type CODED 1 [ WT_NONE WT_RECT WT_HAMMING WT_TRIANG WT_HANNING WT_COS4 WT_ARB ] WT_RECT 
+@nan LONG 1 8000 
+@src_sf FLOAT 1 8000 
+@order SHORT 1 10 
+@method CODED 1 [ NONE AUTOC BURG COV MBURG FBURG VBURG STRCOV STRCOV1 ] AUTOC 
+@frmlen LONG 1 200 
+@step LONG 1 200 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 0 
+@maxraw LONG 1 1 
+@start LONG 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@record_freq DOUBLE 1 40 
+@order_unvcd LONG 1 10 
+@DC_removed CODED 1 [ NO YES ] NO 
+@start_time DOUBLE 1 0.0125 
+@maxpulses LONG 1 1 
+
+{
+01 d
+02 6a1a
+03 Tue Aug  6 14:51:42 1991 
+04 1.85
+05 refcof
+06 3.22
+07 6/19/91
+53 burton
+08 28
+09 1
+0b e
+0c 2
+0d 1
+10 <stdin>
+12 refcof -Prefparams - test.fana 
+13 <stdin>
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@window_type CODED 1 [ WT_NONE WT_RECT WT_HAMMING WT_TRIANG WT_HANNING WT_COS4 WT_ARB ] WT_RECT 
+@nan LONG 1 8000 
+@order SHORT 1 10 
+@src_sf FLOAT 1 8000 
+@method CODED 1 [ NONE AUTOC BURG COV MBURG FBURG VBURG STRCOV STRCOV1 ] AUTOC 
+@step LONG 1 200 
+@frmlen LONG 1 200 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 0 
+@maxraw LONG 1 1 
+@start LONG 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@record_freq DOUBLE 1 40 
+@order_unvcd LONG 1 10 
+@start_time DOUBLE 1 0.0125 
+@DC_removed CODED 1 [ NO YES ] NO 
+@maxpulses LONG 1 1 
+
+{
+01 d
+02 6a1a
+03 Tue Aug  6 14:51:41 1991 
+04 1.85
+05 testsd
+06 3.20
+07 6/19/91
+53 burton
+08 ffffffff
+0b 1
+12 testsd -S1234567 -Tuniform - 
+52
+0 8 0
+samples FLOAT 1 1 
+
+@seed LONG 1 1234567 
+@level FLOAT 1 500 
+@max_value DOUBLE 1 500 
+@record_freq DOUBLE 1 8000 
+@start_time DOUBLE 1 0 
+@test_type CODED 1 [ SINE GAUSS PULSES ASCII CONSTANT SQUARE SAWTOOTH TRIANGLE UNIFORM ] UNIFORM 
+
+}
+}
+}
+
+#Tag 1
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	94049.8 
+#lpc_power	92470.6 
+#p_pulse_len	0 
+#spec_param	-0.0152185 -0.007413 0.085666 -0.0143122 -0.0344023 -0.0590091 0.0610892 -0.0073257 
+	0.0198572 0.0147339 
+
+#Tag 201
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	87303.9 
+#lpc_power	86724.3 
+#p_pulse_len	0 
+#spec_param	0.0241586 -0.0113485 0.0413144 -0.0398122 0.0439959 -0.0200431 -0.00167453 -0.0078844 
+	0.0154437 -0.00325479 
+
+#Tag 401
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	79544 
+#lpc_power	78485 
+#p_pulse_len	0 
+#spec_param	0.0160512 -0.0331171 -0.00269157 -0.00780209 -0.0726788 0.0477328 0.0413439 -0.0330634 
+	-0.0174373 -0.0359575 
+
+#Tag 601
+#frame_len	200 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	76663.8 
+#lpc_power	73371 
+#p_pulse_len	0 
+#spec_param	0.0203604 0.0876498 -0.0405948 0.0772441 -0.0231131 -0.0330682 .120845 0.0373839 
+	0.0607112 -0.0817712 
+EOD
+
+atosps - class.cbk << EOD
+{
+01 d
+02 6a1a
+03 Tue Aug  6 14:43:56 1991 
+04 1.85
+05 addclass
+06 %V%
+07 5/1/91
+53 burton
+08 2
+0a 2
+0b b0
+0c 16
+0d 3
+0e 60
+10 speech.cbk
+10 class.cbk
+12 addclass -r5 -s SPEECH -n channel_1 -f spec_rep -p RC speech.cbk class.cbk spstoa class.cbk class.cbk.asc 
+52
+0 1 0
+conv_ratio DOUBLE 1 0 
+final_dist DOUBLE 1 0 
+train_length LONG 1 0 
+design_size LONG 1 0 
+current_size LONG 1 0 
+dimen LONG 1 0 
+num_iter LONG 1 0 
+num_empty LONG 1 0 
+cbk_struct CODED 1 0 
+ NONE
+ FULL_SEARCH
+ BINARY_TREE
+dist_type CODED 1 0 
+ NONE
+ MSE
+ MSE_LAR
+ IS
+ GOIS
+ GNIS
+cbk_type CODED 1 0 
+ MISC
+ RC_VQCBK
+ RC_VCD_VQCBK
+ RC_UNVCD_VQCBK
+ LSF_VQCBK
+ LSF_VCD_VQCBK
+ LSF_UNVCD_VQCBK
+ LM_VQCBK
+ LM_VCD_VQCBK
+ LM_UNVCD_VQCBK
+ LAR_VQCBK
+ LAR_VCD_VQCBK
+ LAR_UNVCD_VQCBK
+ CEP_VQCBK
+ CEP_VCD_VQCBK
+ CEP_UNVCD_VQCBK
+ VOICED_VQCBK
+ UNVOICED_VQCBK
+codebook FLOAT 160 2 16 10 
+clustersize LONG 16 1 
+clusterdist FLOAT 16 1 
+field_rep CHAR 16 1 
+field CHAR 16 1 
+source_name CHAR 32 1 
+signal_name CHAR 16 1 
+source_type CHAR 16 1 
+
+@fea_field CHAR 11 spec_param 
+@design_size LONG 1 16 
+@codeword_dimen LONG 1 10 
+
+{
+01 d
+02 6a1a
+03 Tue Aug  6 14:43:50 1991 
+04 1.85
+05 vqdes
+06 3.7
+07 7/16/91
+53 burton
+08 5
+0a 2
+0b b0
+0c 16
+0d 3
+0e 60
+10 speech.fana
+12 vqdes -Pvqparams speech.fana speech.cbk 
+52
+0 1 0
+conv_ratio DOUBLE 1 0 
+final_dist DOUBLE 1 0 
+train_length LONG 1 0 
+design_size LONG 1 0 
+current_size LONG 1 0 
+dimen LONG 1 0 
+num_iter LONG 1 0 
+num_empty LONG 1 0 
+cbk_struct CODED 1 0 
+ NONE
+ FULL_SEARCH
+ BINARY_TREE
+dist_type CODED 1 0 
+ NONE
+ MSE
+ MSE_LAR
+ IS
+ GOIS
+ GNIS
+cbk_type CODED 1 0 
+ MISC
+ RC_VQCBK
+ RC_VCD_VQCBK
+ RC_UNVCD_VQCBK
+ LSF_VQCBK
+ LSF_VCD_VQCBK
+ LSF_UNVCD_VQCBK
+ LM_VQCBK
+ LM_VCD_VQCBK
+ LM_UNVCD_VQCBK
+ LAR_VQCBK
+ LAR_VCD_VQCBK
+ LAR_UNVCD_VQCBK
+ CEP_VQCBK
+ CEP_VCD_VQCBK
+ CEP_UNVCD_VQCBK
+ VOICED_VQCBK
+ UNVOICED_VQCBK
+codebook FLOAT 160 2 16 10 
+clustersize LONG 16 1 
+clusterdist FLOAT 16 1 
+field_rep CHAR 16 1 
+field CHAR 16 1 
+source_name CHAR 32 1 
+signal_name CHAR 16 1 
+source_type CHAR 16 1 
+
+@fea_field CHAR 11 spec_param 
+@design_size LONG 1 16 
+@codeword_dimen LONG 1 10 
+
+{
+01 d
+02 6a1a
+03 Tue Aug  6 14:43:47 1991 
+04 1.85
+05 refcof
+06 3.22
+07 6/19/91
+53 burton
+08 28
+09 1
+0b e
+0c 2
+0d 1
+10 speech.sd
+12 refcof -Prefparams speech.sd speech.fana 
+13 speech.sd
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@window_type CODED 1 [ WT_NONE WT_RECT WT_HAMMING WT_TRIANG WT_HANNING WT_COS4 WT_ARB ] WT_RECT 
+@nan LONG 1 8000 
+@src_sf FLOAT 1 8000 
+@order SHORT 1 10 
+@method CODED 1 [ NONE AUTOC BURG COV MBURG FBURG VBURG STRCOV STRCOV1 ] AUTOC 
+@frmlen LONG 1 200 
+@step LONG 1 200 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 0 
+@maxraw LONG 1 1 
+@start LONG 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@record_freq DOUBLE 1 40 
+@order_unvcd LONG 1 10 
+@DC_removed CODED 1 [ NO YES ] NO 
+@start_time DOUBLE 1 0.0125 
+@maxpulses LONG 1 1 
+
+{
+01 d
+02 6a1a
+03 Fri Mar 29 09:45:40 1991 
+04 1.85
+05 testsd
+06 3.19
+07 9/18/90
+53 burton
+08 346d
+0b 1
+12 testsd -a speech.asc speech.sd 
+52
+0 8 0
+samples FLOAT 1 1 
+
+@max_value DOUBLE 1 12731 
+@record_freq DOUBLE 1 8000 
+@start_time DOUBLE 1 0 
+@test_type CODED 1 [ SINE GAUSS PULSES ASCII CONSTANT SQUARE SAWTOOTH TRIANGLE UNIFORM ] ASCII 
+
+}
+}
+}
+{
+01 d
+02 6a1a
+03 Tue Aug  6 14:43:55 1991 
+04 1.85
+05 addclass
+06 %V%
+07 5/1/91
+53 burton
+08 1
+0a 2
+0b b0
+0c 16
+0d 3
+0e 60
+10 rc.cbk
+12 addclass -r5 -s NOISE -n channel_1 -f spec_rep -p RC rc.cbk class.cbk 
+52
+0 1 0
+conv_ratio DOUBLE 1 0 
+final_dist DOUBLE 1 0 
+train_length LONG 1 0 
+design_size LONG 1 0 
+current_size LONG 1 0 
+dimen LONG 1 0 
+num_iter LONG 1 0 
+num_empty LONG 1 0 
+cbk_struct CODED 1 0 
+ NONE
+ FULL_SEARCH
+ BINARY_TREE
+dist_type CODED 1 0 
+ NONE
+ MSE
+ MSE_LAR
+ IS
+ GOIS
+ GNIS
+cbk_type CODED 1 0 
+ MISC
+ RC_VQCBK
+ RC_VCD_VQCBK
+ RC_UNVCD_VQCBK
+ LSF_VQCBK
+ LSF_VCD_VQCBK
+ LSF_UNVCD_VQCBK
+ LM_VQCBK
+ LM_VCD_VQCBK
+ LM_UNVCD_VQCBK
+ LAR_VQCBK
+ LAR_VCD_VQCBK
+ LAR_UNVCD_VQCBK
+ CEP_VQCBK
+ CEP_VCD_VQCBK
+ CEP_UNVCD_VQCBK
+ VOICED_VQCBK
+ UNVOICED_VQCBK
+codebook FLOAT 160 2 16 10 
+clustersize LONG 16 1 
+clusterdist FLOAT 16 1 
+field_rep CHAR 16 1 
+field CHAR 16 1 
+source_name CHAR 32 1 
+signal_name CHAR 16 1 
+source_type CHAR 16 1 
+
+@fea_field CHAR 11 spec_param 
+@design_size LONG 1 16 
+@codeword_dimen LONG 1 10 
+
+{
+01 d
+02 6a1a
+03 Tue Aug  6 14:43:37 1991 
+04 1.85
+05 vqdes
+06 3.7
+07 7/16/91
+53 burton
+08 5
+0a 2
+0b b0
+0c 16
+0d 3
+0e 60
+10 rc.fana
+12 vqdes -Pvqparams -x2 rc.fana rc.cbk 
+52
+0 1 0
+conv_ratio DOUBLE 1 0 
+final_dist DOUBLE 1 0 
+train_length LONG 1 0 
+design_size LONG 1 0 
+current_size LONG 1 0 
+dimen LONG 1 0 
+num_iter LONG 1 0 
+num_empty LONG 1 0 
+cbk_struct CODED 1 0 
+ NONE
+ FULL_SEARCH
+ BINARY_TREE
+dist_type CODED 1 0 
+ NONE
+ MSE
+ MSE_LAR
+ IS
+ GOIS
+ GNIS
+cbk_type CODED 1 0 
+ MISC
+ RC_VQCBK
+ RC_VCD_VQCBK
+ RC_UNVCD_VQCBK
+ LSF_VQCBK
+ LSF_VCD_VQCBK
+ LSF_UNVCD_VQCBK
+ LM_VQCBK
+ LM_VCD_VQCBK
+ LM_UNVCD_VQCBK
+ LAR_VQCBK
+ LAR_VCD_VQCBK
+ LAR_UNVCD_VQCBK
+ CEP_VQCBK
+ CEP_VCD_VQCBK
+ CEP_UNVCD_VQCBK
+ VOICED_VQCBK
+ UNVOICED_VQCBK
+codebook FLOAT 160 2 16 10 
+clustersize LONG 16 1 
+clusterdist FLOAT 16 1 
+field_rep CHAR 16 1 
+field CHAR 16 1 
+source_name CHAR 32 1 
+signal_name CHAR 16 1 
+source_type CHAR 16 1 
+
+@fea_field CHAR 11 spec_param 
+@design_size LONG 1 16 
+@codeword_dimen LONG 1 10 
+
+{
+01 d
+02 6a1a
+03 Tue Aug  6 14:43:27 1991 
+04 1.85
+05 refcof
+06 3.22
+07 6/19/91
+53 burton
+08 28
+09 1
+0b e
+0c 2
+0d 1
+10 <stdin>
+12 refcof -Prefparams - rc.fana 
+13 <stdin>
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@window_type CODED 1 [ WT_NONE WT_RECT WT_HAMMING WT_TRIANG WT_HANNING WT_COS4 WT_ARB ] WT_RECT 
+@nan LONG 1 8000 
+@order SHORT 1 10 
+@src_sf FLOAT 1 8000 
+@method CODED 1 [ NONE AUTOC BURG COV MBURG FBURG VBURG STRCOV STRCOV1 ] AUTOC 
+@step LONG 1 200 
+@frmlen LONG 1 200 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 0 
+@maxraw LONG 1 1 
+@start LONG 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@record_freq DOUBLE 1 40 
+@order_unvcd LONG 1 10 
+@start_time DOUBLE 1 0.0125 
+@DC_removed CODED 1 [ NO YES ] NO 
+@maxpulses LONG 1 1 
+
+{
+01 d
+02 6a1a
+03 Tue Aug  6 14:43:26 1991 
+04 1.85
+05 testsd
+06 3.20
+07 6/19/91
+53 burton
+08 ffffffff
+0b 1
+12 testsd -Tgauss - 
+52
+0 8 0
+samples FLOAT 1 1 
+
+@seed LONG 1 1234567 
+@level FLOAT 1 500 
+@max_value DOUBLE 1 0 
+@record_freq DOUBLE 1 8000 
+@start_time DOUBLE 1 0 
+@test_type CODED 1 [ SINE GAUSS PULSES ASCII CONSTANT SQUARE SAWTOOTH TRIANGLE UNIFORM ] GAUSS 
+
+}
+}
+}
+}
+}
+
+#conv_ratio	.1 
+#final_dist	0.0015372 
+#train_length	40 
+#design_size	16 
+#current_size	16 
+#dimen	10 
+#num_iter	12 
+#num_empty	0 
+#cbk_struct	FULL_SEARCH 
+#dist_type	MSE 
+#cbk_type	MISC 
+#codebook	0.00922898 0.016978 0.01411 -0.0266043 -0.0649146 -.175187 -0.0953212 -0.064538 
+	-0.0462101 -0.0117994 0.0361361 0.021349 0.0671929 -0.0186266 -0.00888084 -.224059 
+	0.0209807 0.0417068 -0.0915223 -0.0274171 .13919 -0.0595721 0.0632402 0.00209675 
+	0.0684762 -0.0905319 0.0191373 -0.0511931 0.0427755 .10472 0.0252942 -0.090663 
+	0.0293523 0.0434863 0.0522747 -0.0529394 -0.00227375 -0.0648741 -0.0177987 0.0449412 
+	-0.000482212 0.0668581 -.129256 -0.0315771 0.00423692 -0.0104798 0.0732289 -0.0702677 
+	0.000369744 -0.0159097 0.0684554 -0.0177506 -0.0713502 0.0139606 0.00550997 -0.0171615 
+	0.0104218 0.00646014 0.0171036 -0.0468555 -0.0162483 0.041782 0.038398 -0.0241193 
+	0.0752024 0.00447926 0.0393274 0.0383159 0.0280799 -0.0637162 -0.0499432 0.0297968 
+	0.0153995 -0.0858592 0.0863571 0.0345235 0.0341872 -0.0281812 0.0189234 -.118135 
+	-0.022081 0.0156122 0.0582269 0.0427754 -.129781 0.00627274 -0.0772447 -0.042478 
+	-0.029517 -0.0506257 -0.0614925 -0.0509852 0.0019656 0.0764855 -0.0268695 0.0189351 
+	-0.0356751 0.00814299 -0.0118008 0.0070852 -0.0374016 0.0144986 -0.0861677 0.00728802 
+	-0.0976552 0.0146019 -0.0632406 -0.0929287 0.0903252 0.0285004 -.160623 -0.0168893 
+	0.0178904 -0.000463604 -0.0277661 0.0829042 0.00282202 -0.0215819 0.0181639 0.091751 
+	0.0324143 0.0448829 0.0322715 0.0014542 -0.0565808 0.0260666 -0.0949301 0.0709244 
+	-0.0719479 0.0459433 0.0640118 0.0587735 0.0110611 -0.0367972 -0.0297412 0.00738634 
+	-0.0313706 0.00781902 0.0166545 .147379 0.0561802 -0.00795005 0.0766893 0.00655918 
+	-0.0254881 .124913 0.0360382 0.00442044 -0.0753701 0.0417197 0.0144251 -0.0595579 
+	-0.00193423 -0.0133137 0.0735914 0.0530836 -0.0303767 0.0064189 -0.0647029 0.0206204 
+	
+#clustersize	2 1 2 3 3 2 4 1 
+	3 2 2 3 3 2 3 4 
+	
+#clusterdist	0.00125816 0 0.00128744 0.00187961 0.00196799 0.00173368 0.00194499 0.00380341 
+	0.00231097 0.000364846 0.000515599 0.00189273 0.0012674 0.00140916 0.000853096 0.00156289 
+	
+#field_rep	RC
+#field	spec_rep
+#source_name	NOISE
+#signal_name	channel_1
+#source_type	none
+
+#conv_ratio	.1 
+#final_dist	0.00856336 
+#train_length	40 
+#design_size	16 
+#current_size	16 
+#dimen	10 
+#num_iter	19 
+#num_empty	2 
+#cbk_struct	FULL_SEARCH 
+#dist_type	MSE 
+#cbk_type	MISC 
+#codebook	.311809 -.360679 .215597 -.184784 .185497 -.110591 .14432 -0.0840361 
+	.101529 -0.0787852 .868777 -.110309 .220472 -.502141 -.142369 -.622652 
+	0.0305034 -.198904 .324816 0.0875675 .790407 -0.00864819 .355353 -.414009 
+	-.271998 -.481294 -0.0457385 -.265127 .457385 -0.0234072 .951499 -.66535 
+	-.25083 -.127448 -0.0331735 -.145024 -.227412 -.186348 -0.0246934 -0.0475245 
+	.880816 -.428511 -.324093 -.193329 .206355 -.126057 -.524125 -.146541 
+	.134463 -0.0508205 .907618 -.569733 -0.00251277 -.440917 .273103 -.391109 
+	-.330871 .267294 .220258 -0.00752414 .424801 .346905 .729651 -.459817 
+	-.336187 -.575904 -.10013 -0.0053746 0.0559811 0.00326959 .694961 .191721 
+	.376038 -.582522 -.335759 -.526631 -.213534 .28532 .130492 -0.0683806 
+	.8871 .233714 0.0491412 -.541604 -.172515 -.173545 -0.0594175 -.241125 
+	.147877 -0.0698195 .871164 -.110057 .207554 -.698144 -.359404 -.199717 
+	-0.0945503 .133198 .220121 -.165988 -.597575 -.720577 .238989 .505921 
+	.535773 -.482717 -.132949 -.383763 -.156254 -.113136 -.376909 -.867692 
+	-0.0499222 .277506 .568397 -0.0182461 0.0834406 -.326914 -0.0996431 -.100072 
+	-.593305 -.819885 -.325867 .204522 .459245 .161608 0.0292236 -.262892 
+	0.0627795 -.22698 -.493398 0.0874986 .686355 .33913 -0.0789303 -.574036 
+	-.197657 -.156848 -.140553 0.00542934 0.0440869 0.0705202 .663053 0.0393428 
+	0.0362752 -.286252 -0.00426043 -.168478 -0.0943125 -.134151 0.00976072 -.514531 
+	.46974 .281869 .328665 -.10134 .201517 -.619772 -0.0976299 0.0235034 
+	
+#clustersize	1 2 3 5 4 3 2 5 
+	2 6 2 1 1 1 1 1 
+	
+#clusterdist	0 0.0108414 0.0111557 0.0112994 0.0141765 0.00848428 0.00957789 0.00876884 
+	0.00915082 0.0102882 0.00284901 0 0 0 0 0 
+	
+#field_rep	RC
+#field	spec_rep
+#source_name	SPEECH
+#signal_name	channel_1
+#source_type	none
+EOD
+
+
+#make answer
+cat > vqdst.result << EOD
+Record 1: 
+data_sect_mthd:  SM_ONE 
+data_sect_num:  1 
+cbk_sect_mthd:  SM_ONE 
+cbk_sect_num:  1 
+quant_field:  
+  0: spec_param 
+quant_field_rep:  
+  0: RC 
+cbk_struct:  FULL_SEARCH 
+cbk_type:  MISC 
+cbk_train_dst:  0.0015372024 
+dsgn_dst:  MSE 
+encde_dst:  MSE 
+cbk_sect_size:  16 
+cbk_name:  
+  0: class.cbk 
+cbk_rec:  1 
+data_name:  
+  0: test.data 
+cbk_source:  
+  0: NOISE 
+source_type:  
+  0: none 
+cbk_signal:  
+  0: channel_1 
+input_source:  
+  0:  
+input_signal:  
+  0:  
+in_rep_number:  -1 
+data_sect_dst:  0.0025382813 
+data_sect_size:  4 
+average_dst:  0.0025382813 
+
+Record 2: 
+data_sect_mthd:  SM_ONE 
+data_sect_num:  1 
+cbk_sect_mthd:  SM_ONE 
+cbk_sect_num:  1 
+quant_field:  
+  0: spec_param 
+quant_field_rep:  
+  0: RC 
+cbk_struct:  FULL_SEARCH 
+cbk_type:  MISC 
+cbk_train_dst:  0.0085633565 
+dsgn_dst:  MSE 
+encde_dst:  MSE 
+cbk_sect_size:  16 
+cbk_name:  
+  0: class.cbk 
+cbk_rec:  2 
+data_name:  
+  0: test.data 
+cbk_source:  
+  0: SPEECH 
+source_type:  
+  0: none 
+cbk_signal:  
+  0: channel_1 
+input_source:  
+  0:  
+input_signal:  
+  0:  
+in_rep_number:  -1 
+data_sect_dst:  0.039073329 
+data_sect_size:  4 
+average_dst:  0.039073329 
+
+EOD
+
+
+# test vqdst
+echo "Begin vqdst test"
+echo " "
+echo "vqdst -f spec_param test.data class.cbk - | psps -H - | diff vqdst.result -"
+echo " "
+echo "There should be no numerical difference to 6 decimal places."
+
+vqdst -f spec_param test.data class.cbk - | psps -H - | diff vqdst.result -
+
+echo " "
+echo "End of vqdst test"

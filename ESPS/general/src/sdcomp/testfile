@@ -1,0 +1,14 @@
+#
+# @(#)testfile	3.1 10/22/87 ESI
+# testfile for sdcomp
+#
+set -x
+testsd -p40000 foo.sd
+sdcomp foo.sd <<X
+
+r
+b
+c
+q
+X
+rm foo.sd

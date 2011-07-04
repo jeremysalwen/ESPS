@@ -1,0 +1,21 @@
+"rundemo   (startup script)" xtext -F rundemo
+
+"demoinit.WC   (initial xwaves+ command file)" xtext -F wcommands/demoinit.WC
+
+"tsignal.BM   (control panel menu file)"	xtext -F menus/tsignal.BM
+
+"newsignal   (signal generation script)" xtext -F bin/newsignal
+
+"wave_pro   (xwaves+ startup profile)" xtext -F files/wave_pro
+
+"demoquit.WC  (forces xwaves+ to quit)" xtext -F wcommands/demoquit.WC
+
+"demofiles.BM   (menu file for this panel)"	xtext -F menus/demofiles.BM
+
+# @(#)tfiles.BM	1.1 7/25/91 ERL
+
+
+
+
+
+

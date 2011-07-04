@@ -1,0 +1,48 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc.; All rights reserved
+.\" @(#)typesiz.3	1.1 27 Sep 1989 ESI
+.TH TYPESIZ 3\-ESPSu 27 Sep 1989
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.if t .ds - \(em\h'-0.2m'\(em
+.if n .ds - ---
+.SH NAME
+typesiz \- return the size of an element of a given ESPS data type
+.SH SYNOPSIS
+.ft B
+.nf
+#include <esps/esps.h>
+
+int
+typesiz(type)
+int type;
+.ft
+.SH DESCRIPTION
+.PP
+The argument should be one of the integer type codes
+DOUBLE, FLOAT, LONG, SHORT, CHAR, DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX,
+SHORT_CPLX, BYTE_CPLX, CODED, BYTE, EFILE, and AFILE
+defined in the ESPS include file
+.I esps.h.
+The result
+is the size, in bytes, of a single element of the given type,
+as stored in memory\*-\c
+for example,
+.IR sizetyp ( DOUBLE ") =="
+.IR sizeof ( double ).
+BYTE has the same size as CHAR,
+and
+CODED has the same size as SHORT.
+EFILE and AFILE have the same size as CHAR,
+since they are represented as character arrays.
+.SH DIAGNOSTICS
+.PP
+If
+.I type
+is not a valid type code,
+.I typesiz
+prints an error message, and the program exits.
+.SH BUGS
+.PP
+None known.
+.SH AUTHOR
+.PP
+Alan Parker

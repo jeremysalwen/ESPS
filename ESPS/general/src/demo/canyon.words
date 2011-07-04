@@ -1,0 +1,16 @@
+signal canyon.sd
+type 0
+comment created using xlabel Thu Apr 18 12:53:13 1996
+color 115
+font -*-times-medium-r-*-*-17-*-*-*-*-*-*-*
+separator ;
+nfields 1
+#
+    0.072143  115 the
+    0.400792  115 girl
+    0.793568  115 admired
+    0.843667  115 the
+    1.130233  115 canyon
+    1.342653  115 from
+    1.388744  115 a
+    1.937829  115 distance

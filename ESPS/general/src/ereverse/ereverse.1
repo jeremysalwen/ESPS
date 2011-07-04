@@ -1,0 +1,123 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1990-1996 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)ereverse.1	3.6 9/21/98 ESI/ERL
+.ds ]W (c) 1996 Entropic Research Laboratory, Inc.
+.TH EREVERSE 1\-ESPS 9/21/98
+.SH NAME
+ereverse \- write records from an ESPS file in reverse order
+.SH SYNOPSIS
+.B ereverse
+[
+.BI \-x " debug_level"
+] [
+.BI \-r " range"
+]
+.I " infile"
+.I " outfile"
+.SH DESCRIPTION
+.PP
+.I Ereverse
+copies the records from an ESPS file, or a portion thereof, to another file
+and writes them in reverse order.  For a sampled data file, the samples are
+written in reverse order.  For a feature file or other type of ESPS file,
+the records are written in reverse order but the order of the data in each
+record is the same as in the input file.
+.PP
+If "\-" is supplied in place of 
+.I outfile,
+standard output is used.  Standard input may not be used for 
+.I infile.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-x " debug level"
+Only debug level 1 is defined; this causes several not-terribly-useful
+messages to be printed.  The default level is zero, which causes no debug
+output.
+.TP
+.BI \-r " range"
+Selects a subrange of points from 
+.I infile
+using the format 
+.I start\-end,
+.IR start:end,
+or
+.IR start:+delta .
+Either 
+.I start
+or 
+.I end
+may be omitted, in which case the omitted parameter defaults respectively
+to the start or end of 
+.I infile
+The first record in 
+.I infile
+is considered to be point 1, regardless of its position relative to any
+original source file.  The form 
+.I start:+delta
+is equivalent to 
+.I start:(start+delta).  
+If the \fB\-r\fP option is not used the
+range is determined from the ESPS Common file if the appropriate
+parameters are present (see ESPS COMMON).  Otherwise the default
+range is the entire input file
+.I infile. 
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file is not read.  
+.SH "ESPS COMMON"
+.PP
+It the \fB\-r\fP option is not used, the parameters 
+.I start
+(starting point) and 
+.I nan
+(number of points) are read from ESPS Common if they exist and 
+if the Common parameter
+.I filename 
+matches
+.I infile. 
+If 
+.I outfile
+is not standard output, the Common parameters 
+.I "filename, prog, start,"
+and
+.I nan
+are written to correspond to the entire output file.  
+.PP
+ESPS Common processing is enabled if the environment variable
+USE_ESPS_COMMON is defined (any value).  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overridden by setting
+the environment variable ESPSCOM to the desired path.  User feedback
+of Common processing is determined by the environment variable 
+ESPS_VERBOSE, with 0 causing no feedback and increasing levels
+causing increasingly detailed feedback.  If ESPS_VERBOSE is not 
+defined, a default value of 2 is assumed.  
+.SH DIAGNOSTICS
+.PP
+.I Ereverse
+complains and dies if the input file does not exist, if 
+the input file is "\-", if the input file is not an ESPS file,
+if the output file cannot be created, or if the range specified extends
+beyond the end of the file.
+.SH BUGS
+.PP
+The output file will have the same EDR status (either NATIVE or EDR) as
+the input file; regardless of the setting of the \fBESPS_EDR\fR
+environment variable.
+The program dows not work correctly unless the input and output files are
+both in field order or both in type order.  For example, if
+the input file is in type order (the default) and the environment
+variable \fBFIELD_ORDER\fP is set to "on" before running \fIereverse\fP, the
+output file will be garbage.
+The program does not handle files in all NIST Sphere formats
+or in Esignal format or in PC WAVE format;
+it will issue a warning or exit with an error message
+if given such a file as input.
+If reversing is required, convert the file to an ESPS file by using 
+copysps(1-ESPS).
+.SH SEE ALSO
+psps(1\-ESPS)
+.SH AUTHOR
+.PP
+Joseph Buck; revised by John Shore

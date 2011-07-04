@@ -1,0 +1,511 @@
+.\" Copyright (c) 1987-1990 AT&T, Inc.
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1990-1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)xmarks.1	1.8 10/5/97 ATT/ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH XMARKS 1\-ESPS 10/5/97
+.if t .ds - \(em\h'-0.5m'\(em
+.if n .ds - ---
+.if n .ds lq \&"\"
+.if t .ds lq \&``
+.if n .ds rq \&"\"
+.if t .ds rq \&''
+.de qI
+.ie '\\$2'' \&\\*(lq\fI\\$1\fP\\*(rq
+.el \&\\*(lq\fI\\$1\fP \\$2\\*(rq
+..
+.ds wD \fIwaves+ Manual\fP
+.ds wR \fIwaves+ Reference\fP
+.ds wT \fIIntroducing waves+\fP
+.ad l
+.SH "NAME"
+xmarks \- assign times to previously labeled events (attachment for xwaves)
+.SH SYNOPSIS
+.B xmarks
+[
+.BI \-c " host_X_registry"
+] [
+.BI \-n " host_name"
+] [
+.BI \-w " wave_pro"
+]
+.SH DESCRIPTION
+.PP
+.I xmarks
+is an
+.I attachment
+for the program
+.IR xwaves (1\-ESPS):
+a program that runs in close cooperation with
+.I xwaves
+and provides additional capabilities.
+.I xmarks
+facilitates aligning pre-defined label sequences
+with waveforms displayed in
+.I xwaves
+windows.
+This manual entry briefly describes
+.I xmarks
+but is not intended to be a complete
+.I xmarks
+manual.
+For full details, see the chapter
+.qI xmarks
+in \*(wD
+and the chapters
+.qI xmarks "reference"
+and
+.qI xmarks "quick reference"
+in \*(wR.
+Also see \*(wD and \*(wR for information about
+.I xwaves.
+.SS "Introduction"
+An attachment is a program that extends the capabilities of
+.I xwaves
+while running as a separate UNIX process.
+Attachments exchange information with
+.I xwaves
+by communicating through the X server, using a communication protocol
+that is compatible with Tcl/Tk.
+.PP
+.I xmarks,
+an
+.I xwaves
+attachment, is specialized for assigning times in waveforms
+to pre-defined label sequences.
+It is specifically designed for labeling speech
+in that it supports labeling of sentence-like structures.
+Labels are supplied in a specific format
+in a file created before running the attachment.
+.I xmarks
+allows you to place labels quickly
+by clicking the middle mouse button in the signal window.
+.I xmarks
+automatically selects the next label to be placed.
+.PP
+If the sequence of labels to be applied is not known in advance,
+the attachment
+.IR xlabel (1\-ESPS)
+is a better choice.
+.PP
+.I xmarks
+creates two windows in addition to those that
+.I xwaves
+creates:
+a control window and a label display window.
+These are described below.
+.SS "Starting xmarks"
+.PP
+Most attachments are activated by selecting their names
+in the
+.I xwaves
+control panel item
+.B "Attach:"
+or by using the
+.I xwaves
+command
+.I attach.
+This can be done with
+.I xmarks
+as well, but it is not recommended.
+.I xmarks
+is best used by running a shell script
+like the one below.
+.PP
+If you use
+.B "Attach:"
+to start
+.I xmarks,
+keep in mind that
+.I xmarks
+is sensitive to the order in which input files are specified,
+and files must be specified by using the
+.B COMMAND:
+item in the
+.I xwaves
+control panel or through a series of
+.I send_xwaves
+commands.
+First
+.I xmarks
+must be attached to
+.I xwaves,
+then the
+input waveform displayed, then the object name must be transmitted to
+the
+.I xmarks
+attachment, and finally the input ASCII
+label-sequence file must be transmitted to
+.I xmarks.
+When finished marking, you must tell
+.I xmarks
+to write the output file.
+Failure to do these steps in the proper order results in
+unpredictable results, and this is the reason that
+.I xmarks
+should
+be run by using a shell script.
+.PP
+The script below is the
+.I xmarks.sh
+script.
+It can be found in
+.I "$ESPS_BASE/lib/waves/files".
+It starts
+.I xwaves,
+attaches
+.I xmarks,
+and displays the data file.
+To run this script, copy it
+to a directory in which you have write permission, name it
+.I xmarks.sh,
+make sure it is executable
+.RI ( "chmod u+x xmarks.sh" ),
+and type its name followed by an input waveform filename and an input
+ASCII label-sequence file to be marked.
+.LP
+.RS
+.nf
+.if t .ft I
+#!/bin/sh
+WAVEFORM=$1
+LABELSEQ=$2
+#
+xwaves &
+send_xwaves attach function xmarks
+send_xwaves set middle_op "blow up; function"
+send_xwaves make name $WAVEFORM file $WAVEFORM \\
+				loc_y 350 height 200 loc_x 0
+send_xwaves send make name $WAVEFORM
+send_xwaves send read file $LABELSEQ
+send_xwaves pause
+send_xwaves send write file $LABELSEQ.mark
+send_xwaves quit
+#
+.if t .ft P
+.fi
+.RE
+.PP
+In the chapter
+.qI xmarks
+of \*(wD is another shell script,
+which uses
+.I xmarks
+for a real speech database segmenting task.
+The command sequence is similar to the one above,
+but a spectrogram is also displayed time-aligned with the waveform.
+The script will process several files in sequence.
+.PP
+These scripts demonstrate some of the ways that
+.I xwaves
+and
+.I xmarks
+can be controlled from UNIX shell scripts.
+.SS The label file
+.PP
+.I xmarks
+reads an ASCII input file containing event labels and
+optional times.
+It writes an ASCII file containing the input event
+labels with times added or adjusted by user interaction.
+Here is an example of an input file:
+.LP
+.RS
+.nf
+.ta 2n 8n
+.if t .ft I
+** This was easy for us.
+This	"Dis
+	D_release
+	s_start
+	s_end
+was	"w^z
+	z_start
+	z_end
+easy	"EzE
+	z_start
+	z_end
+for	"f>r
+	f_start
+	f_end
+	r_F3_min
+us.	"^s
+	s_start
+	s_end
+.if t .ft P
+.DT
+.fi
+.RE
+.PP
+There are three levels of description:
+.IP (1)
+A \*(lqsentence level\*(rq description of the event sequence.
+In this case it corresponds to a sequence of English words.
+It is indicated by the line beginning with \*(lq**\*(rq.
+.IP (2)
+The \*(lqword level\*(rq description, indicated by a line
+beginning with anything other than \*(lq**\*(rq or white space.
+.IP (3)
+The \*(lqsegment level\*(rq,
+or the level at which the actual boundary positioning is to occur.
+Any number of these segments, or sub-events,
+indicated by leading white-space, can comprise a \*(lqword\*(rq.
+In this example, only selected events within the word are being labeled.
+The operator's task was to mark the time location of these selected events.
+The phonetic symbols
+.RI ( w^z,
+.I EzE,
+etc.)
+to the right of the words in this example are optional;
+they may be in the file,
+but they play no active part in the labeling process.
+.PP
+The output of
+.I xmarks,
+after marking the events, looks like the following:
+.LP
+.RS
+.nf
+.ta 8n 12nR 30nR
+.if t .ft I
+** This was easy for us.
+This	"Dis
+		D_release	0.35825
+		s_start	0.431
+		s_end	0.56925
+was	"w^z
+		z_start	0.644875
+		z_end	0.716125
+easy	"EzE
+		z_start	0.843375
+		z_end	0.931625
+for	"f>r
+		f_start	0.999
+		f_end	1.115
+		r_F3_min	1.1965
+us.	"^s
+		s_start	1.35125
+		s_end	1.5945
+.if t .ft P
+.DT
+.fi
+.RE
+.PP
+The output file resembles the input file
+with the time (in seconds) added to each event
+that was processed by the operator.
+An \*(lqoutput\*(rq file, like the one above,
+could also serve as an input file for
+.I xmarks,
+should it be necessary to adjust time boundaries,
+rather than create them. 
+Assuming the script
+.I xmarks.sh
+(described above) was used, the name of the output file is the
+input file name with a \*(lq.mark\*(rq extension added to it.
+.PP
+When things are set up right,
+.I xmarks
+requires only one mouse-button-press per event;
+a skilled user can achieve average rates of 10\-20 events per minute,
+making it possible to segment fairly large data bases in moderate time.
+.PP
+.SS "The control window"
+.PP
+The
+.I xmarks
+control window shows the current \*(lqsentence\*(rq,
+the current \*(lqword\*(rq, and the names of the segment marks for that word.
+It can be moved to any convenient location on the screen.
+The current mark is shown in boldface print.
+.PP
+The control window has a number of buttons
+that give the user additional control over the marking operation.
+Most are self-explanatory.
+.TP
+.B "Quit"
+Terminates execution (without writing an output file).
+.TP
+.B "NextWord"
+Makes the next word the current word.
+.TP
+.B "LastWord"
+Makes the previous word the current word.
+.TP
+.B "NextMark"
+Makes the next mark the current mark.
+.TP
+.B "LastMark"
+Makes the previous mark the current mark.
+.TP
+.B "ChangeMark"
+Lets you edit the string that is the current mark.
+.TP
+.B "Where?"
+Selects whether a mark added with the button
+.B AddMark
+will be added before or after the current mark.
+.TP
+.B "AddMark"
+Splices a new mark into the list, either
+.I before
+or
+.I after
+the current mark, as indicated by the
+.B "Where?"
+item.
+.TP
+.B UnSet
+Removes the time assignment from the current mark.
+.TP
+.B "Delete"
+Excises the current mark from the list.
+.PP
+Setting a time twice on one label simply replaces any previous time.
+.SS "The label display window"
+.PP
+The
+.I xmarks
+label window is time-aligned with the newest
+.I xwaves
+window.
+Marks are displayed in it as vertical bars, and the names,
+corresponding to the segment labels from the input file,
+are printed just to the left of the bars.
+If the
+.I xwaves
+window is moved or zoomed, this window adjusts itself accordingly.
+A mark is only visible if it has been assigned a time.
+The current mark has a different color from the others.
+.SS "Placing marks"
+.PP
+Event marks can be set in two ways: by selecting the
+.I xmarks
+menu item in the
+.I xwaves
+main menu, or by using the middle button option
+.B "blow up; function"
+on a waveform type of display.
+(This middle-button operation magnifies
+the region in time while the button is depressed.
+This allows more accurate placement of the cursor.
+The mark is actually placed when the middle mouse button is released.)
+In either case, the current mark is assigned the indicated time,
+and the next mark becomes current.
+.PP
+After marking all the data using the
+.I xmarks.sh
+script, left mouse-click on the
+.B "CONTINUE"
+button in the
+.I xwaves
+panel.
+This closes the marker display file, writes the ASCII output file,
+and exits
+.I xwaves.
+The marked output file has the same name as the
+ASCII input file, but with a \*(lq.mark\*(rq extension added.
+Note that the
+.I xwaves
+command
+.I detach
+will also cause the output file to be
+written before
+.I xmarks
+exits.
+.SS xmarks symbols
+.I xmarks
+has no specific symbols.
+.SS xmarks commands
+.I xmarks
+has a limited command set.
+The specific commands are described in the chapter
+.qI xmarks "reference"
+of \*(wR.
+.SH OPTIONS
+.PP
+.I xmarks
+is usually started as a subordinate program by
+.I xwaves.
+In this case, you need not be concerned with the
+command-line options presented below, and you may skip this section.
+You need to know about the options only when you want to run
+.I xmarks
+directly from the command line.
+We don't recommend that you do this, however.
+.TP
+.BI \-c " host_X_registry"
+This is the name that the host program is registered under
+for X server-based communications.
+This option is intended to be supplied by
+.I xwaves
+when it runs
+.I xmarks.
+.TP
+.BI \-n " host_name"
+This is the name of the program object with which
+.I xmarks
+will be communicating.
+When the host program is
+.I xwaves,
+this name is always the default value, \*(lqwaves\*(rq.
+.TP
+.BI \-w " wave_pro"
+Specifies the startup profile to read.
+This option is always used
+when
+.I xmarks
+is invoked by
+.I xwaves,
+in which case the specified profile
+is a temporary file written by
+.I xwaves
+and containing the current state of the
+.I xwaves
+globals.
+If
+.B \-w
+is not used (only possible if
+.I xmarks
+is run from the shell),
+.I xmarks
+attempts to read the file
+.I .wave_pro.
+In both cases the search path
+.I $HOME:$ESPS_BASE/lib/waves
+is used.
+The search path used can be overridden
+by setting the UNIX environment variable WAVES_PROFILE_PATH before starting
+.I xwaves.
+.SH BUGS
+.I xmarks
+is not robust to extreme string lengths, bad file
+formats, etc.
+If used carefully, it works very well, but it dumps core
+if not treated with respect.
+.SH SEE ALSO
+\*(wD,
+.br
+\*(wR,
+.br
+\*(wT,
+.br
+.IR formant (1\-ESPS),
+.IR select (1\-ESPS),
+.IR xcmap (1\-ESPS),
+.br
+.IR xlabel (1\-ESPS),
+.IR xspectrum (1\-ESPS),
+.IR xwaves (1\-ESPS)
+.SH AUTHOR
+Original program by Mark Liberman and Mark Beutnagel
+at AT&T Bell Laboratories.
+Later revisions by
+David Burton, Rod Johnson, Alan Parker, David Talkin, 
+and others at Entropic. 
+Cover script by David Burton.
+This manual page largely extracted by Rod Johnson
+from \*(wD, based on Mark Liberman's documentation,
+with edits and additions by
+David Burton, Joop Jansen, David Talkin,
+and others at Entropic.

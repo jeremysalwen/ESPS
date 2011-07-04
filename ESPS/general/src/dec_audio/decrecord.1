@@ -1,0 +1,118 @@
+.\" Copyright (c) 1996 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)decrecord.1	1.3 11/20/96 
+.TH DECRECORD 1\-ESPS 11/20/96
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Research Lab., Inc.
+.SH NAME
+decrecord - mono or stereo record to disk
+.PP
+.SH SYNOPSIS
+.B decrecord
+[
+.BI \-s " duration_to_record"
+] [
+.BI \-f " sample_rate"
+] [
+.BI \-c " number_of_channels"
+] [
+.BI \-S
+] [
+.BI \-P
+] 
+.I filename
+.PP
+.SH DESCRIPTION
+.PP
+.PP
+\fIdecrecord\fP provides mono or stereo sampling at selected rates up
+to 
+48kHz when
+recording to local disk.  Direct recording onto network disks is often
+feasible as well.  Output files have ESPS FEA_SD headers.
+\fIDecrecord\fP has special adaptations that permit display of the
+recorded
+file in \fIxwaves\fP (see \-S option below).
+.PP
+This program is for the DEC Alpha with multimedia extensions. To be
+more precise, the DEC utility audiorecord must exist, because
+\fIdecrecord\fP(1-ESPS) is simply a wrapper around it. The DEC
+supplied audio capabilities are typically in /usr/bin/mme.
+.PP
+Use the DEC tool "audiocontrol" in the DEC multimedia extensions kit
+to set the input and output controls (level, balance, port).  
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-s " duration" " [5]"
+Specifies the maximum duration of the recording session in
+seconds. Note that the record duration is specified as an integer, and
+truncation of the value takes place if specified as a non-integer.
+(That is, \fI\-s 1.9\fP gets interpreted as record for 1 second.)
+.TP
+.BI \-f " frequency" " [8000]"
+Specifies the sampling frequency.  Only a limited set of sample rates
+are available:
+8000, 11025, 16000, 22050, 32000, 33075, 44100, and 48000.
+Specifying a value other than one of these is an error.
+.TP
+.BI \-c " channel" " [1]"
+By default \fIdecrecord\fP(1-ESPS) samples and stores single-channel data
+from the left channel. Dual-channel (stereo) recording is selected by 
+setting \fIchannel\fP
+to 2.
+When stereo recording
+is selected channels 0 and 1 alternate in the file, with
+channel 0 being first.  
+.TP
+.BI \-S
+This option enable the \fIxwaves\fP (1-ESPS) "make" command via 
+\fIsend_xwaves\fP (1-ESPS) after the
+requested recording time has elapsed.
+This permits immediate examination of the recorded passage using
+\fIxwaves\fP (1-ESPS).
+.TP
+.BI \-P
+This option enable shell prompting for the start of recording.
+.PP
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.PP
+.SH ESPS COMMON
+.PP
+ESPS Common is not read or written.
+.PP
+.SH WARNINGS
+.PP
+decrecord does not work if another process has control of the audio
+device, such as DECsound (decsound) or the VU meter of Audio Control.
+You will get the following errors
+.nf
+    
+    audiorecord: <error> Error opening Wave device
+    audiorecord: <error> Unsupported wave format
+.fi
+.PP
+The maximum rate over the network is unpredictable in general, but we
+routinely achieve 16kHz stereo at Entropic Research Laboratory.  Of
+course rate limitations due to network speed will be less severe for
+single-channel recording.
+.PP
+.SH FILES
+.PP
+.SH BUGS
+.PP
+.PP
+.SH SEE ALSO
+.PP
+\fIcopysd\fP(1\-\s-1ESPS\s+1), \fIdecplay\fP (1\-\s-1ESPS\s+1), \fIsfconvert\fP (1\-\s-1ESPS\s+1)
+.PP
+.SH AUTHOR
+.PP
+David Burton
+
+
+
+
+
+

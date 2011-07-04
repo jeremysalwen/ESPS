@@ -1,0 +1,835 @@
+.\" Copyright (c) 1987-1990 AT&T, Inc.
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1990-1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)xspectrum.1	1.12 10/3/97 ATT/ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH XSPECTRUM 1\-ESPS 10/3/97
+.if t .ds - \(em\h'-0.5m'\(em
+.if n .ds - ---
+.if n .ds lq \&"\"
+.if t .ds lq \&``
+.if n .ds rq \&"\"
+.if t .ds rq \&''
+.de qI
+.ie '\\$2'' \&\\*(lq\fI\\$1\fP\\*(rq
+.el \&\\*(lq\fI\\$1\fP \\$2\\*(rq
+..
+.ds wD \fIwaves+ Manual\fP
+.ds wR \fIwaves+ Reference\fP
+.ds wT \fIIntroducing waves+\fP
+.ad l
+.SH "NAME"
+xspectrum \- spectrum estimation attachment for xwaves
+.SH SYNOPSIS
+.B "xspectrum"
+[
+.BI \-c " host_X_registry"
+] [
+.BI \-n " host_name"
+] [
+.BI \-w " wave_pro"
+]
+.SH DESCRIPTION
+.PP
+.I xspectrum
+is an
+.I attachment
+for the program
+.IR xwaves (1\-ESPS):
+a program that runs in close cooperation with
+.I xwaves
+and provides additional capabilities.
+.I xspectrum
+facilitates interactive power-spectrum analysis of data displayed by
+.I xwaves.
+This manual entry briefly describes
+.I xspectrum
+but is not intended to be a complete
+.I xspectrum
+manual.
+For full details, see the chapter
+.qI xspectrum
+in \*(wD
+and the chapters
+.qI xspectrum "reference"
+and
+.qI xspectrum "quick reference"
+in \*(wR.
+Also see \*(wD and \*(wR for information about
+.I xwaves.
+In \*(wT, a hands-on tutorial introduction to
+.I xwaves,
+there is a demonstration of the use of
+.IR xspectrum :
+see the section \*(lqSpectrum estimation: \fIxspectrum\fP\*(rq
+in the chapter \*(lqSpectrum estimation, adding labels\*(rq.
+.SS Introduction
+.PP
+An attachment is a program that extends the capabilities of
+.I xwaves
+while running as a separate UNIX process.
+Attachments exchange information with
+.I xwaves
+by communicating through the X server, using a communication protocol
+that is compatible with Tcl/Tk.
+.PP
+.I xspectrum,
+an
+.I xwaves
+attachment, is a general-purpose frequency-spectrum estimation program.
+.PP
+.I xspectrum
+will compute and display power-spectrum estimates from segments of
+sampled data in
+.I xwaves
+waveform display windows.
+Individual spectra displayed by
+.I xspectrum
+can be compared by overlaying them on a common plot.
+The spectrum analysis method and parameters can be varied
+by entering values in the
+.I xspectrum
+control panel.
+If a linear-prediction (maximum-entropy) spectrum-analysis method
+is used,
+.I xspectrum
+also supports inverse filtering of the selected data
+and formant/bandwidth estimation.
+.I xspectrum
+will also display
+\*(lqspectral slices\*(rq\*-single-frame power spectra\*-from data in
+.I xwaves
+spectrogram windows.
+.SS "Starting xspectrum"
+.PP
+You can start
+.I xspectrum
+in various ways.
+The commonest way is to click the
+.B xspectrum
+button in the
+.B Attach:
+item of the main control panel.
+Another way is to issue the
+.I xwaves
+command
+.I attach.
+The names that appear in the
+.B Attach:
+item are determined by the global variable
+.I attachments,
+which can be specified in the
+.I .wave_pro
+file.
+If
+.I xspectrum
+has several distinct names (e.g. via symbolic links),
+each one can be bound to a separate
+.B Attach:
+button and invoked as a separate attachment.
+Thus multiple simultaneous invocations of
+.I xspectrum
+are possible.
+.SS "Creating spectra"
+.PP
+When
+.I xspectrum
+is attached to
+.I xwaves,
+the menu item
+.B "xspectrum"
+is added to the
+.I xwaves
+waveform and spectrogram menus.
+Spectral analysis is performed by selecting the menu item.
+This operation will only succeed if performed
+either in a waveform window displaying a one-dimensional signal
+or in a spectrogram window.
+If the operation is performed in a waveform window,
+the spectrum is computed
+either on the data in the currently marked segment
+or on the data in an analysis window
+centered at the current cursor position\*-which of these occurs
+depends on settings in the
+.I xspectrum
+control panel (see below).
+After the spectrum is computed and displayed,
+the left and right
+.I xwaves
+markers show the analysis window limits.
+The computed values can be written to an ASCII output file.
+.PP
+When one of the analysis parameters is changed in the
+.I xspectrum
+control panel, the active spectra are recomputed using the new
+parameters.
+.PP
+When
+.B xspectrum
+is selected from a spectrogram window menu, no computation is done;
+the analysis frame under the cursor is displayed in the
+.I xspectrum
+window.
+Thus the parameters in the control panel have no effect on the image.
+.SS Spectrum display window
+.PP
+Spectral slices and spectra computed by
+.I xspectrum
+are displayed
+in a window popped up by
+.I xspectrum.
+This display window has a
+frequency/amplitude cursor or cross-hair, which can be moved with the mouse,
+and an optional reticle.
+Moving the frequency cursor causes the frequency cursors in
+.I xwaves
+spectrogram windows to move in coordination.
+Numeric display of frequency and
+amplitude are available in the upper-center part of the window.
+The time corresponding to the center of the analysis window is printed in
+the display's frame.
+The cursor can be left at a particular frequency
+by removing the mouse pointer from the window with the middle button
+depressed.
+.PP
+The
+.I xspectrum
+display can be zoomed in frequency and amplitude to a marked region.
+Vertical markers are moved using the \*(lqup/down move\*(rq paradigm
+(press, drag, release) with the left mouse button.
+Horizontal markers are moved in the same way with the shift key depressed.
+By default, if a non-null region is delimited with the
+horizontal or vertical markers,
+zooming takes place immediately to that region.
+If the left and right
+(top and bottom) markers are coincident, the full frequency
+(amplitude) range will be redisplayed.
+The right-button menu permits enabling/disabling this feature.
+.PP
+The right mouse button brings up a menu with options for
+saving the current spectrum as a reference,
+clearing saved (or all) spectra,
+enabling/disabling the zooming feature,
+invoking inverse filtering,
+and sending
+.I xspectrum
+plots to a printer or a plot file.
+Up to four spectra can be saved as references.
+The reference spectra and the current new spectrum
+are all displayed in different colors,
+with separate cursors and digital readouts.
+.SS Control panel
+.PP
+Some panel items allow you to select among wired-in alternatives.
+Other items permit you to enter a numerical value from the keyboard.
+Mousing menu selection items with the right mouse
+will display the available alternatives.
+Menu selection items are indicated with the
+standard down-pointer symbol; the current selection is always
+displayed.
+For numerical inputs, just mouse the item and enter the
+value from the keyboard, followed by a
+.I RETURN.
+.TP
+.B "Analysis Type:"
+This item selects the spectrum-analysis method.
+The available methods are two Fourier-transform methods,
+a cepstrally smoothed FFT method, and six maximum-entropy methods.
+The two Fourier methods are log magnitude
+spectrum using a radix-2 FFT
+.RB ( DFT )
+and a
+.if n O(n^2)
+.if t .IR O ( n \v'-0.4'\s-3\&2\s+3\v'+0.4')
+discrete Fourier transform
+.RB ( DFTR )
+where the transform size is exactly the analysis window size.
+The cepstrally smoothed method
+.RB ( CEPST )
+expands on a suggestion originally provided by the MIT-LCS group;
+high-pass and low-pass liftering are provided,
+with control over the liftering transition region.
+(See
+.BR "Cep. cut (sec):" ,
+.BR "Cep. trans:" ,
+and
+.B "Liftering:"
+below.)
+The maximum-entropy methods
+are all based on the LPC-style analysis methods supported by the functions
+.IR compute_rc (3\-ESPS)
+and
+.IR refcof (1\-ESPS),
+namely autocorrelation method
+.RB ( AUTOC ),
+covariance method
+.RB ( COV ),
+Burg method
+.RB ( BURG ),
+modified Burg method
+.RB ( MBURG ),
+fast modified Burg method
+.RB ( FBURG ),
+structured covariance
+.RB ( STRCOV
+and
+.BR STRCOV1 ),
+and vector Burg
+.RB ( VBURG ),
+a fast approximation to structured covariance.
+Of the two structured covariance methods, the first
+.RB ( STRCOV )
+is considerably faster and better behaved.
+In each of these LPC cases,
+a log-magnitude (maximum-entropy) spectrum is created
+via a DFT of the filter coefficients.
+For more information on the methods, see
+.IR refcof (1\-ESPS),
+.IR compute_rc (3\-ESPS),
+and the man pages for functions that are mentioned there.
+.IP
+All computations are performed using floating point arithmetic.
+The minimum size FFT used is 512 points, zero-padded as necessary.
+For the
+.B "DFT"
+function, the maximum size FFT is essentially unlimited,
+though there is a soft limit of 2097152
+which can be changed by resetting the variable
+.I xspectrum_max_fft_size
+using the
+.I xwaves
+command
+.I send.
+The maximum DFT size for the
+.B "DFTR"
+function is 1025 points.
+The latter limit is imposed
+to prevent accidental computation of DFTs
+that would take impractically long to compute.
+.TP
+.B "order:"
+This sets the order for LPC analysis
+underlying the maximum-entropy methods
+(if specified by
+.BR "Analysis type" ).
+The maximum order available is 200
+(but may be less depending on the startup profile).
+.TP
+.B "Window type:"
+This selects the time weighting function to be applied before analysis.
+The four supported types are
+.BR rectangular ,
+.BR Hamming ,
+.BR Cos^4 ,
+and
+.BR Hanning .
+The default
+weighting type is specific to the analysis method.
+In particular,
+.B "Hanning"
+is the default for
+.BR DFT ,
+.BR DFTR ,
+.BR AUTOC ,
+and
+.BR COV ,
+while
+.B "rectangular"
+is the default for all of the other (maximum-entropy) methods.
+Whenever the existing default window method is changed via this item,
+the new method is retained by
+.I xspectrum
+as a new default for the current analysis method
+(i.e., for the
+.B "Analysis Type:"
+in effect when
+.B "Window type"
+is changed).
+.TP
+.B "size (sec):"
+This is the duration of the analysis window
+for input when the
+.B "Window limits from:"
+item (see below)
+is set to
+.BR "Cursor +\- size/2" .
+.TP
+.B "Window limits from:"
+This determines how the size and location
+of the analysis window are determined.
+When
+.B "Cursor +\- size/2"
+is selected, the window is centered at the cursor,
+and its total duration is given by the
+.B "size (sec):"
+item.
+When
+.B "Markers"
+is selected, the window limits
+are determined by the left and right marker positions
+in the \fIxwaves\fP windows when the
+.B "xspectrum"
+item is selected from an
+.I xwaves
+menu.
+The size of the FFT used to perform the computations
+is expanded (in powers of 2) as necessary (up to
+.IR max_fft_size )
+to accommodate the data.
+.I max_fft_size
+defaults to 2097152, but can be increased arbitrarily in the
+.I .wave_pro
+file or via the
+.I xwaves
+command
+.I send.
+.TP
+.B "Preemphasis coeff:"
+The coefficient
+.I a
+of the filter
+.if n \{\
+.ne 2
+H(z) = 1\ -\ az\x'-1'\v'-1'-1\v'+1'.
+\}
+.if t \{\
+.IR H ( z )
+=
+.RI "1\ \-\ " az \v'-0.4'\s-3\-1\s+3\v'+0.4'.
+\}
+This 1st-order prefilter is applied to all signals
+before spectrum computation.
+When this preemphasis is applied, one
+extra sample is used from the input sequence to initialize the filter
+memory and maintain the requested window size.
+.TP
+.BR "Inverse Filter Intvl. (sec):" "\ \ \ \-\ \ \ " "Integration Coeff:"
+These affect inverse filtering.
+When any of the LPC (maximum-entropy) analysis methods have been used,
+the linear-prediction coefficients
+can be used to inverse-filter the original signal,
+yielding a residual signal.
+This operation can be initiated by selecting the
+.B "inverse filter"
+option from the menu brought up by pressing the right mouse button
+in the spectrum window.
+The amount of the original signal (centered on the analysis window)
+to be inverse filtered is determined by the
+.B "Inverse Filter Intvl. (sec):"
+item.
+The inverse filtered signal is integrated
+(e.g., to convert pressure to volume velocity)
+using a leaky integrator with the coefficient determined by the
+.B "Integration Coeff:"
+item; 0.0 implies no integration.
+The resultant signal is then stored in a file,
+and a message is sent to cause
+.I xwaves
+to display it in a regular waveform window.
+The file name is derived from that of the original signal
+by appending a distinguishing number.
+If the
+.I xwaves
+global
+.I output_dir
+(read by
+.I xspectrum
+on startup) is defined,
+that location is used for the inverse filtered signals.
+Otherwise the file is stored
+in the same directory as the original signal. 
+.TP
+.B "xspectrum manual"
+Clicking on this button
+brings up a formatted version of this manual entry
+in a browsable xtext window.
+.TP
+.B "QUIT"
+Clicking on this button detaches
+.I xspectrum
+from
+.I xwaves
+and terminates execution.
+.TP
+.B "Horizontal cursor:"
+When
+.BR ON ,
+display the level (magnitude) cursor that rides on the spectrum
+and corresponds to the level at the particular frequency
+selected by the X location of the cursor.
+.TP
+.B "Reticle:"
+When
+.BR ON ,
+display a reticle.
+The horizontal axis is frequency; the vertical axis
+is determined by the
+.B "Plot scale:"
+setting.
+.TP
+.B "Formants:"
+When this formant/bandwidth estimate switch is
+.BR ON ,
+print estimates of the formant frequencies
+(i.e. complex poles of the all-pole LPC model)
+and their bandwidths to standard output if the current
+.B "Analysis type"
+is any of the LPC-based (maximum-entropy) types.
+The formant frequencies are selected from candidates
+proposed by solving for the roots of the linear predictor polynomial.
+This frequency and bandwidth output is only available
+if the order is less than 30.
+.TP
+.B "Harmonic cursors:"
+When
+.BR ON ,
+display a harmonic series of cursors.
+When the harmonic cursors are turned on,
+the mouse pointer, if moved in the spectrum display,
+controls the frequency of a harmonic
+in the vicinity of the right edge of the display.
+As the pointer moves right
+it eventually jumps back to the next lower harmonic.
+Similarly if the pointer is moved left,
+it eventually jumps to the next higher harmonic
+(up to the twentieth harmonic).
+Thus, fine-grained control of the
+first harmonic, and thus the harmonic spacing is always maintained.
+If the pointer is moved out of the window vertically,
+then back in at about the same place,
+control of the same harmonic will be resumed.
+If the middle button is pressed,
+the pointer can be moved out of the window in any direction
+without disturbing the cursor adjustment.
+The frequency and amplitude readouts at the top of the plot
+continue to refer to the fundamental frequency.
+.TP
+.B "Plot scale:"
+This switches among three different choices
+for the scale of the vertical axis:
+.B "log pwr (dB)"
+(the default),
+.BR "magnitude" ,
+and
+.BR "power (square of magnitude)" .
+.TP
+.BR "Cep. cut (sec):" "\ \ \ \-\ \ \ " "Cep. trans:" "\ \ \ \-\ \ \ " "Liftering:"
+These affect spectrum estimation when cepstral smoothing
+.RB ( CEPST )
+is specified by
+.BR "Analysis type:" .
+.B "Liftering:"
+selects high-pass liftering, low-pass liftering, or none.
+.B "Cep. cut (sec):"
+gives the nominal cutoff quefrency.
+.B "Cep. trans:"
+gives the duration of a quefrency transition region
+between zero and full power, which reduces the ripple artifact
+that would result from zero transition time (rectangular liftering).
+The transition shape is a raised half cycle of a cosine.
+The transition region is divided evenly between the stop band
+and the passband.
+.SS "xspectrum colors"
+.PP
+The current
+.I xwaves
+colormap is passed to
+.I xspectrum
+as part of the temporary
+.I .wave_pro
+read via the
+.B \-w
+option.
+.PP
+The format of
+.I xwaves
+colormap files is 128 lines with three integers per line,
+separated by spaces or tabs.
+The integers,
+which must be in the range 0\-255,
+specify the intensities of red, green, and blue respectively.
+The line ordering is from low to high map entries.
+The first 115 entries are used by
+.I xwaves
+for representing spectral power density in spectrograms.
+The remaining 13 entries
+specify the colors of cursors, reticles, backgrounds, etc.
+.I xspectrum
+uses some of these last
+13 entries for similar purposes, as shown in the following table.
+The first column is the entry number, the second is the notation
+used to refer to these by
+.I xwaves,
+and the third column
+describes the use within
+.I xspectrum.
+.nf
+.ta .2i .75i 2i 
+.sp 0.5
+	116	WAVE2
+	117	YA1	2nd ref. spectrum and digital readouts
+	118	YA2	3rd ref. spectrum and digital readouts
+	119	YA3	4th ref. spectrum and digital readouts
+	120	YA4
+	121	YA5
+	122	MARKER	vertical (frequency) cursor(s)
+	123	CURSOR	1st ref. spectrum and digital readouts
+	124	WAVEFORM
+	125	TEXT	current spectrum and digital readouts
+	126	RETICLE	current spectrum horizontal cursor
+	127	BACKGRND
+	128	FOREGROUND
+.sp 0.5
+.fi
+.DT
+.SS "Graphics export"
+.PP
+Like
+.I xwaves
+and the other attachments,
+.I xspectrum
+has the capability to export graphics
+in either PostScript or PCL (HP LaserJet code).
+This can be used to print displays directly on the printer
+or to generate graphics to be imported into a document
+with a suitable text editing program.
+Graphics output is invoked by selecting the
+.B print graphic
+item on the
+.I xspectrum
+menu or by a
+.I print
+command sent to the display object in
+.I xspectrum
+from
+.I xwaves.
+.PP
+There is an
+.I xwaves
+command,
+.I "print_setup",
+that invokes a setup window
+with which you can choose output to a file or printer,
+select PostScript or PCL, set output resolution and scaling,
+and control other aspects of the graphics-export environment.
+See the chapter \*(lqPrinting graphics\*(rq in \*(wD for details.
+.PP
+.I xspectrum
+supports the
+.I xwaves
+command
+.I print_ensemble;
+it can cooperate with
+.I xwaves
+to allow the contents of
+.I xspectrum
+windows to be included in
+.I xwaves
+multi-window graphics output.
+See \*(lqPrinting graphics\*(rq in \*(wD for details.
+.SS "xspectrum symbols"
+.PP
+.I xspectrum
+has its own set of symbols.
+A full list of these symbols and their uses
+can be found in the chapter
+.qI xspectrum "reference"
+in \*(wR.
+.PP
+You can specify these variables in your profile file.
+When
+.I xspectrum
+is started from
+.I xwaves,
+it is automatically passed a temporary file written by
+.I xwaves
+that contains the values of all the
+.I xwaves
+globals in standard
+.I xwaves
+profile format.
+The file  is passed with the option
+.BR \-w .
+.PP
+Most of these
+.I xspectrum
+variables can also be set after starting by a
+.I set
+command sent to
+.I xspectrum
+by the
+.I xwaves
+command
+.I send.
+E.g.:
+.LP
+.RS
+.nf
+.if t .ft I
+send function xspectrum op xspectrum set <var> <val>
+.if t .ft P
+.fi
+.RE
+.PP
+.SS "xspectrum commands"
+.PP
+.I xspectrum
+recognizes a limited set of commands
+that are listed and described in the chapter
+.qI xspectrum "reference"
+in \*(wR.
+.PP
+.I xspectrum
+can be controlled by an
+.I xwaves
+command file or by commands from the program
+.IR send_xwaves (1\-ESPS)
+or the
+.IR SendXwaves (3\-ESPS)
+functions.
+Commands from these sources can be passed through to
+.I xspectrum
+via the
+.I xwaves
+command
+.I send.
+The syntax of the
+.I received
+commands is:
+.LP
+.RS
+.nf
+.if t .ft I
+object command keyword value keyword value ...
+.if t .ft P
+.fi
+.RE
+.LP
+(the same as for
+.I xwaves
+commands).
+The first item,
+.I object,
+is either the attachment name \*(lqxspectrum\*(rq
+or the name of a display object.
+The second item,
+.I command,
+is the actual command name.
+There may be any number, including 0, of keyword\-value pairs.
+.SH OPTIONS
+.PP
+.I xspectrum
+is usually started as a subordinate program by
+.I xwaves.
+In this case, you need not be concerned with the
+command-line options presented below, and you may skip this section.
+However, it is also possible to run
+.I xspectrum
+(and the other attachments) as sibling UNIX processes,
+in which case it may be necessary
+to specify one or more of the following options.
+.TP
+.BI \-c " host_X_registry"
+This is the name that the host program is registered under
+for X server-based communications.
+This option is intended to be supplied by
+.I xwaves
+when it runs
+.I xspectrum.
+.TP
+.BI \-n " host_name"
+This is the name of the program object with which
+.I xspectrum
+will be communicating.
+When the host program is
+.I xwaves,
+this name is always the default value, \*(lqwaves\*(rq.
+.TP
+.BI \-w " wave_pro"
+Specifies the startup profile to read.
+This option is always used
+when
+.I xspectrum
+is invoked by
+.I xwaves,
+in which case the specified profile
+is a temporary file written by
+.I xwaves
+and containing the current state of the
+.I xwaves
+globals.
+If
+.B \-w
+is not used (only possible if
+.I xspectrum
+is run from the shell),
+.I xspectrum
+attempts to read the file
+.I .wave_pro.
+In both cases the search path
+.I $HOME:$ESPS_BASE/lib/waves
+is used.
+The search path used can be overriden
+by setting the UNIX environment variable WAVES_PROFILE_PATH before starting
+.I xwaves.
+.SH SEE ALSO
+\*(wD,
+.br
+\*(wR,
+.br
+\*(wT,
+.br
+.IR fft (1\-ESPS),
+.IR formant (1\-ESPS),
+.IR me_spec (1\-ESPS),
+.br
+.IR refcof (1\-ESPS),
+.IR send_xwaves (1\-ESPS),
+.IR transpec (1\-ESPS),
+.br
+.IR xchart (1\-ESPS),
+.IR xfft (1\-ESPS),
+.IR xlabel (1\-ESPS),
+.br
+.IR xrefcof (1\-ESPS),
+.IR xwaves (1\-ESPS),
+.IR compute_rc (3\-ESPSsp)
+.SH BUGS
+.PP
+Depending on the analysis method and the waveform being analyzed, the
+maximum-entropy methods can get into computational trouble at large
+orders, in some cases leading to abrupt terminations.
+Pure (noise-free) sinusoids can cause trouble with several of the
+maximum-entropy methods at any analysis order.
+This is because the estimated correlation
+matrix is singular for line spectrum.
+See
+.I Digital Signal Processing,
+Roberts and Mullis, Addison Wesley, 1987, page 533.
+.PP
+.I xspectrum
+requires that the data to be analyzed
+(or displayed) exist in a UNIX file.
+Thus,
+.IR xwaves -internal
+signals (such as spectrograms generated by some
+of the DSP boards, or hand-edited signals not written to disk)
+must be explicitly saved to disk if they are to be analyzed
+by issuing a
+.I "send make ..."
+command.
+If the spectrum analysis is initiated from the
+.I xwaves
+.B xspectrum
+menu item, such signals are saved automatically.
+.SH AUTHOR
+Program by David Talkin, AT&T Bell Laboratories.
+Later enhancements by
+David Burton, Rod Johnson, Alan Parker, John Shore, David Talkin,
+and others at Entropic.
+This manual page largely extracted by Rod Johnson
+from \*(wD and earlier manual pages
+derived from Talkin's original documentation
+with revisions and additions by
+David Burton, Joop Jansen, Rod Johnson, John Shore, David Talkin,
+and others at Entropic.

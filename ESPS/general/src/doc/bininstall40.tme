@@ -1,0 +1,437 @@
+.lo
+.ce 2
+.b
+Installation Instructions for the ESPS Binary Release
+.sp
+Document version: 1.21 4/8/91
+.sh 1 "Introduction"
+.pp
+This document describes how to install the Entropic Signal Processing
+System (ESPS) binary distribution.   If you ordered the \fIwaves+\fR
+product at the same time as this product, then it will already be
+installed into this distribution.
+.sh 1 "Floating License System"
+.pp
+ESPS uses floating license technology, which allows you to install the
+actual files at any location on your network you choose.   A license
+manager daemon must be run on a particular host on your network, but
+ESPS and \fIwaves+\fR can be run on any machine (of the correct
+architecture type) on your network, as long as it can connect to the
+host with the daemon.
+.pp
+After you have read in the tape contents and set up the links as
+described below, you will run a program on the host where
+the license daemon will be run; the program will
+return a unique server code.   Call
+Entropic with this code and your sales order number (our number assigned to
+your order) to request your license key.    For customers outside of
+North America, it might be better to request the key via FAX.
+Details for getting your key are given below.
+.sh 1 "Tape Contents"
+.pp
+The enclosed tape is a Unix \fItar\fR tape with one or more tar files
+containing an entire ESPS binary directory tree.
+The following table shows the directory names of the various
+products as they might appear on the tape.
+.TS
+box, center, tab(;);
+c c c c
+l l l d.
+Machine;Directory on Tape;Size (MB)
+_
+Mac II;esps.mac;26
+Sun 3 (OS 4.X);esps.sun3;40
+Sun 3 (OS 3.X);esps.sun3_OS3;40
+Sun 4 (Any Sparc);esps.sun4;43
+Sun 386i;esps.sun386;30
+Masscomp (RTU 5.X);esps.mc;42
+Masscomp (RTU 4.X);esps.mc_RT4;31
+Convex;esps.cx;48
+DEC DS3100;esps.ds3100;60
+HP300;esps.hp300;46
+HP800;esps.hp800;57
+Apollo (68K);esps.apollo;47
+Stardent (1500/3000);esps.stardent;68
+.TE
+.pp
+If you also ordered the DSP32 support kit, then the tape will
+contain one or more directories called
+\fIdsp32.sun3_OS3\fR, \fIdsp32.sun3_OS4\fR, \fIdsp32.sun3x\fR, 
+or \fIdsp32.sun4\fR 
+.sh 1 "Installation"
+.pp
+To install the
+product, simply read the tar tape into your system.   In order to
+operate correctly, ESPS must be rooted at \fI/usr/esps\fR.  This can be
+done by either reading the tape directly into \fI/usr\fR,  and changing
+the name of the appropriate ESPS directory to \fIesps\fR, or by reading
+the tape in somewhere else and putting a symbolic link from
+\fI/usr/esps\fR to the correct directory from the tape.   
+.pp
+\fBSun 386i Users NOTE\fR: ESPS and \fIwaves+\fR is rooted at
+\fI/files/esps\fR, instead of \fI/usr/esps\fR on Sun 386i systems.  In
+the following descriptions, keep this in mind.
+.sh 2 "Our Suggested Method"
+.pp
+Read the tape into a reasonable location, say \fI/home/esps\fR.  Then in
+there you will have the binary directories, 
+and perhaps the DSP driver.
+For example:  (replace XXX with your tape name, e.g. rst8)
+.nf
+.ft CW
+cd /home
+mkdir esps
+cd esps
+tar xvpf /dev/XXX 
+ln -s /home/esps/esps.sun4 /usr/esps
+.ft R
+.fi
+.pp
+You might have to go super-user in order to put the link
+onto \fI/usr\fR.  Note the \fB-p\fR option on \fItar\fR.  This is needed
+to preserve the modes of some directories.   
+However, on some systems we have seen this cause problems (files could
+not be created).  If this happens to you, redo the \fItar\fR without the
+\fB-p\fR option, and after the tape has been read, do:
+.nf
+.ft CW
+chmod 0777 esps.*/man/cat*
+.ft R
+.fi
+.pp
+This will set the mode of the manual page directories correctly.
+.sh 1 "Search Paths"
+.pp
+In order to execute ESPS programs users must place the ESPS binary
+directory on their default search path.   If ESPS is installed as
+described above, that path would be \fI/usr/esps/bin\fR.    
+Make sure that all potential users have this on their path.
+.pp
+Your search path is usually determined by a statement in your
+\fI.cshrc\fR
+or \fI.profile\fR.   But your case might be different,
+depending on the shell that you use.   In any event, you must ensure
+that all ESPS and \fIwaves+\fR users have the ESPS \fIbin\fR directory
+on their path.
+.pp
+You can determine that the ESPS installation is correct up to this
+point, by running \fIeman\fR to view an ESPS manual page.
+After you have changed your path try:
+.nf
+.ft CW
+% eman fft
+.ft R
+.fi
+.pp
+This should display the manual page for the fft program.  If this works,
+then all your paths are set up correctly  and you are ready to get a
+key.  If \fIeman\fR was not found, then check your path.
+If \fIeman\fR was found, but it failed to find the
+\fIfft\fR manual page, then check that the link to \fI/usr/esps\fR is
+correct.
+.sh 1 "Getting Your Key"
+.pp
+In order to get a license key you must run \fIelmadmin -c\fR to generate a
+server code and to store your key.   Run \fIelmadmin\fR on the host that
+you will be running the license manager daemon on.   The key will only
+work if the daemon is run on the same host that the key was generated
+for.   Two pieces of information are required for us to assign you your
+key(s): (1) your server code from \fIelmadmin -c\fR and (2) the
+sales order number (from a sticker on the media).
+.pp
+You can get your keys either by voice telehone or by FAX.   Keep the
+fact that we are located in the Eastern US time zone in mind when trying
+to call.   For customers outside of North America it might be best to
+FAX your request for your key (keys) to us at 202 546-6648.  We'll FAX
+the keys right back along with instructions for installing the key.   
+To avoid errors in the server code, it would be
+best to send the actual output of the \fIelmadmin -c\fR command if
+possible (see the Unix \fIscript\fR command).
+.pp
+If you want to get your keys via voice telephone
+it would be best if you can call us while you are at a terminal.  That
+way we can give you the keys, wait while you enter them and be sure that
+everything is working correctly.   If that is not possible then you will
+have to carefully write down the server code that \fIelmadmin -c\fR
+produces.  
+.pp
+If you can call when sitting at a terminal, 
+then do so when you are ready.   Call
+Entropic at  202 547-1420, and tell the person that answers that you are
+calling for a "license key".   If possible, you will be given to
+someone who can help you.  If that person is not available, then your
+number will be taken and we will call you back.
+.pp
+If you cannot call from a terminal, run the following command, write
+down the server code and then kill the command when it asks for the key.
+When you copy the server code, watch out for the letter l vs the digit
+1, etc.  Run the following command:
+.nf
+.ft CW
+% elmadmin -c
+Your server code is:   XXX   <- record this code
+Please enter your key: <control>C    <- kill the program now
+.ft R
+.fi
+.pp
+Call Entropic at the above number and request a license key.  
+We will need that server code and your sales order number to give you a key.
+.pp
+After you get your keys
+you will use \fIelmadmin\fR to store them.  The command is:
+.nf
+.ft CW
+% elmadmin -c
+Your server code is:   XXX   <- this should be the same as earlier
+Please enter your key: XXX   <- enter the first key given to you
+\fI<some information will be printed about the key>
+.ft CW
+% elmadmin -c
+Your server code is:   XXX   <- this should be the same as earlier
+Please enter your key: XXX   <- enter the second key given to you
+\fI<some information will be printed about the key>
+.ft R
+.fi
+.sh 1 "Starting the License Manager"
+.pp
+Before you can run \fIwaves+\fR or any of the ESPS programs,
+you must start the license manager daemon and allow it time to
+initialize.    To start the daemon, simply type the command:
+.nf
+.ft CW
+% elmd
+.ft R
+.fi
+.pp
+This will spawn a background process and exit.   If you prefer, you can
+put this command into your
+\fI/etc/rc.local\fR, so that it will be executed 
+each time your machine boots.  (If you do this, you will have to give the
+full path as \fI/usr/esps/bin/elmd\fR).  
+.pp
+After you start the license manager daemon, you have to wait about four
+minutes before it will respond to a request for a license.   
+.pp
+The license manager daemon makes entries in the file
+\fI/usr/esps/lib/elm.log\fR.    If you have trouble getting our programs
+to work correctly, we may ask you to look in this file and tell us what
+is in there.   This file will grow by a line each time a license is
+checked in and out.    If you want, you can zero the file with the
+command:
+.nf
+.ft CW
+% elmadmin -z
+.ft R
+.fi
+.pp
+Note that truncating the log file by other means would be ineffectual, since
+\fIelmd\fR keeps the log file open at all times.  The next \fIelmd\fR
+log file write would simply use the old file pointer, filling the file to the
+original length.   The \fB-z\fR option must be used to truncate the
+file.
+.pp
+A suggested method to clean up the log file every evening is to run the
+following by your \fIcrontab\fR system.   You will need your system
+administrator to set this up.
+.nf
+.ft CW
+cp elm.log elm.log.old
+elmadmin -z
+.ft R
+.fi
+.sh 1 "Checking Out a License"
+.pp
+Before running any ESPS programs you must checkout an ESPS license.
+This allows any user on the machine with a checked out license to run
+ESPS programs.   An ESPS license must be checked out for each host that
+you want to run ESPS programs on.  Only one license is required to be
+checked out for each host (not related to the number of different user's
+on that host).    
+.pp
+If you have as many ESPS licenses as you have
+computers that you want to run ESPS programs on, then you can just
+checkout a license for each of these computers and never free it.  You
+will only need to checkout the license again, if the computer is
+rebooted.  If you need to share ESPS licenses among some computers (that
+is, you have more computers then you have licenses) then you need to use
+\fIefree\fR to free the license on a particular machine when it is not
+in use.
+.pp
+For details see the document \fILiving with the ESPS Floating License Manager
+System\fR.
+.pp
+Note that \fIwaves+\fR is licensed on a per user basis, so the total
+number of \fIwaves+\fR that can be run at a time is limited by the
+number of available licenses.
+.pp
+If you are running ESPS or \fIwaves+\fR on a different CPU than the
+license manager daemon is running on, you have to set the environment
+variable \fBELM_HOST\fR to identify the name of the host on which the 
+license manager daemon is running.  
+For example, if the license manager daemon is running on a CPU
+with hostname \fIfido\fR, you would do:
+.nf
+.ft CW
+% setenv ELM_HOST fido
+.ft R
+.fi
+.pp
+This environment variable tells ESPS programs where the daemon is
+running.   If you are running the ESPS program or \fIwaves+\fR on the
+same host as the daemon, then it is not necessary to set
+\fBELM_HOST\fR.  To checkout a license you do:
+.nf
+.ft CW
+% echeckout
+.ft R
+.fi
+.pp
+\fIEcheckout\fR will checkout a license, if possible, and then wait in
+the background.   It will tell you if it has succeeded and return a
+process ID number.   To free the license use the command \fIefree\fR.
+\fIEfree\fR can only be used by the same user that ran \fIecheckout\fR
+to get the license.    Otherwise, the super-user can find the
+\fIecheckout\fR with \fIps\fR and kill it.
+.pp
+You can check on the status of your licenses by using the command:
+.ft CW
+.nf
+% elmadmin -l
+.ft R
+.fi
+.sh 1 "Getting Ready to use Waves+"
+.pp
+The following section only applies if you also have \fIwaves+\fR.
+.pp
+Everyone that is going to use \fIwaves+\fR
+should copy the following three files from \fI/usr/esps/lib/waves\fR: \fI.wave_pro\fR, 
+\fInb_params\fR, and \fIwb_params\fR to their home directory.
+These are parameter files for \fIwaves+\fR.   See the \fIwaves+\fR
+manual page for details.
+.pp
+Users should also edit their path assignment in their \fI.cshrc\fR (or
+whatever they use) to include \fI/usr/esps/bin\fR on their search path.
+.pp
+Copy the files in \fI/usr/esps/demo\fR to your working directory before
+looking at them with \fIwaves+\fR.  
+This version of \fIwaves+\fR will try to write
+some temporary files to the dirctory that the input file comes from
+(\fI/usr/esps/demo\fR in this case) and you might not have write
+permission on this directory.   We consider this a bug, and this will be
+changed in the next version.
+.pp
+Also note that all of the manual pages are stored online and can be
+accessed by the command \fIeman\fR.
+.pp
+After you are satisfied that all is well, up to this point, you should
+install the device driver, if you ordered it.   
+Proceed to the instructions for installing the device driver.
+You can delay this,
+however, if you want to, since \fIwaves+\fR will operate without the
+board.  
+.sh 1 "Checking it Out"
+.pp
+The best way to check out the installation of
+the product is to change into the directory \fI/usr/esps/demo\fR and run
+the demo scripts in there.
+There is a README file in that directory.  We strongly
+suggest that you take the time to try these examples.  Not only do they
+provide an introduction to some ESPS commands, but they serve as a check
+on the installation.   Note that you must have write permission on this
+directory to run the demos.  The assumption is that these will be run by
+the ESPS installer/maintainer.  This is one reason why we prefer not to install
+ESPS as root, but as a regular user.
+.pp
+If you do not have write permission on the \fIdemo\fR directory, simply
+copy the contents to a directory that you can write into.
+.pp
+We also suggest that you use \fIeman -k\fR (followed by a keyword to
+search for) to familiarize yourself with the system.  See the \fIeman\fR
+manual page for details.  
+.sh 1 "Using the X Window Version of Waves+"
+.pp
+For Sun systems, there are two copies of \fIwaves+\fR, \fIlabel\fR, and
+\fIspectrum\fR.  The versions by these names are for the Suntools window
+system.  For the X window system, use \fIxwaves+\fR, \fIxlabel\fR, and
+\fIxspectrum\fR.   Non Sun systems only  have the X versions.
+.pp
+This version of xwaves+ is built under the xview toolkit (from Sun).   
+XView clients must be run under an ICCCM compliant window manager for 
+everything to work correctly.    In addition, the OpenLook fonts are
+required.
+.pp
+The directory \fI/usr/esps/xview\fR contains a binary copy of the
+OpenLook window manager, the OpenLook fonts, and a simple script to add
+the fonts to your font path.   If you are running on a Sun system and
+already have the OpenLook (or OpenWindows) package from Sun installed,
+then you should be OK.  Otherwise, see the README file in
+\fI/usr/esps/xview\fR and follow the instructions there.
+.sh 1 "ESPS Compilation Environment"
+.pp
+The ESPS install script creates several programs to aid users who write
+their own programs using the ESPS library.   \fIecc\fR invokes the C
+compiler with the correct options to cause the ESPS include files and
+library to be searched.  It can be used in cases where you would
+normally use the \fIcc\fR command.  Additional \fIcc\fR options can be
+specified with \fIecc\fR.   The program \fIemake\fR calls make with the
+correct environment defined.  For more information on this, see
+reference [1] and the \fIemake\fR manual page.  A prototype makefile
+suitable for use with \fIemake\fR is in the ESPS \fIlib\fR directory.
+.sh 1 "Hardcopy Plotting"
+.pp
+As distributed, the ESPS plot programs (except for \fIimage\fR and
+\fIplotsgram\fR) assume a Tektronix compatible printer when the
+\fB-Thardcopy\fR option is used.    Imagen laser printers are an example
+of Tektronix compatible printers.    To use the ESPS plot commands with
+any other type of printer or plotter, you must provide a program that
+translates Tektronix codes into what your printer needs.   We provide
+such a program for Postscript.  The program is public domain, and is in
+the directory \fI/usr/esps/pub/tek2ps\fR.
+.pp
+To configure ESPS for another plot device edit the file
+\fI/usr/esps/bin/esps_plot\fR.  This script is called by the plot
+programs and passed the Tektronix plot commands on standard input.  You
+must add commands here to take these and produce the correct plot
+commands for your printer.
+.pp
+For a Postscript printer, do the following.  First compile and install
+\fItek2ps\fR.   You must have write permission on the ESPS binary
+directory to do the following.
+.nf
+.ft CW
+% cd /usr/esps/pub/tek2ps
+% emake install
+.fi
+.ft R
+.pp
+This should compile and install \fItek2ps\fR.   Now you need to edit
+\fI/usr/esps/bin/esps_plot\fR.   We cannot tell you the exact command to
+put in there, since it depends on exactly what command you give on your
+system to queue postscript output to your printer.  But the line in the
+file with \fItek2ps\fR on it, is probably close.   
+The line you want in there is one that will pass the standard input
+through \fItek2ps\fR and then queue the result to your Postscript
+printer.    
+Be sure to delete or
+comment out the existing command for Imagen printers.  (Ignore the
+warning about not editing this file.  This is a holdover from a previous
+version of the system.)
+.pp
+Note that \fIimage\fR (and \fIplotsgram\fR, since it just calls \fIimage\fR)
+can internally produce Postcript.  
+However, you may have to edit the shell script \fIplotsgram\fR in
+\fI/usr/esps/bin\fR to change the name of the spool program to what is
+correct for your system.  Change the line that begins with
+\fBPS_SPOOL_CMD\fR.   See the manual page for details.
+.sh 1 "In Case of Difficulty"
+.pp
+If you have questions about the installation process
+please call Entropic for help.
+.sp
+.TS
+box,center,tab(;);
+l | l.
+Entropic Research Laboratory, Inc.;Voice: 202 547-1420
+600 Pa. Ave. SE, Suite 202;FAX: 202 546-6648
+Washington, DC. 20003 USA;Email: esps@wrl.epi.com (uunet!epiwrl!esps)
+.TE

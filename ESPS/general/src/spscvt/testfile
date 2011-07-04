@@ -1,0 +1,28 @@
+#! /bin/sh
+# @(#)testfile	1.3 3/23/89 ESI
+: ${PAGER='more'}
+USE_ESPS_COMMON=off
+ESPS_VERBOSE=0
+export USE_ESPS_COMMON ESPS_VERBOSE
+clear
+echo "This shell scripts checks the integrity of two the conversion"
+echo "programs, spstoa(1-ESPS) and atosps(1-ESPS)"
+echo; echo
+trap 'echo removing temp files; /bin/rm -f $original $converted; exit' 2
+sa=spstoa
+as=atosps
+original=/tmp/init$$
+converted=/tmp/conv$$
+testsd test.sd
+	cp test.sd $original
+	echo
+	echo "$sa $original - | $as - $converted"
+	$sa $original - | $as - $converted 
+	echo
+	echo "Now comparing psps(1-ESPS) outputs of" $original "and" $converted
+	pspsdiff -a -v $original $converted | $PAGER
+echo
+echo "removing temporary files"
+/bin/rm -f $original $converted test.sd
+echo "good bye"
+exit 0

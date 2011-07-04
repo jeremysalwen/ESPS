@@ -1,0 +1,198 @@
+
+
+
+LPCSYNT(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     lpcsynt - perform pitch-synchronous synthesis  from  FEA_ANA
+     files
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     llllppppccccssssyyyynnnntttt [ ----xxxx ] [ ----PPPP _p_a_r_a_m__f_i_l_e ] [ ----rrrr _r_a_n_g_e ] [ ----pppp  _r_a_n_g_e  ]
+     _i_n_p_u_t__f_e_a _o_u_t_p_u_t__s_d
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     This program must be used with files with a format  such  as
+     that  created  by _l_p_c_a_n_a(1-ESPS).  Consider use of _l_p__s_y_n(1-
+     ESPS). While still supported, _l_p_c_a_n_a(1-ESPS) and _l_p_c_s_y_n_t(1 -
+     ESPS) should be considered obsolescent.
+
+     _L_p_c_s_y_n_t  takes  as  input  an  ESPS  FEA_ANA(5 - ESPS)  file
+     (_i_n_p_u_t__f_e_a)   containing   analysis   information,  performs
+     pitch-synchronous synthesis,  and  outputs  the  synthesized
+     speech  to an ESPS FEA_SD(5-ESPS) file _o_u_t_p_u_t__s_d. The output
+     file is written in short format.
+
+     If "-" is specified as the input file name,  standard  input
+     is  used; if "-" is specified as the output file name, stan-
+     dard output is used.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following options are supported:
+
+     ----xxxx    This option is specified for printing  debugging  mes-
+          sage in the standard error.
+
+     ----PPPP _p_a_r_a_m__f_i_l_e
+          uses the parameter  file  _p_a_r_a_m__f_i_l_e  rather  than  the
+          default which is _p_a_r_a_m_s.
+
+     ----pppp _r_a_n_g_e
+          Selects a subrange of points to be  synthesized,  where
+          the  start  and  end points are defined with respect to
+          the original SD file that is the source  of  the  input
+          FEA_ANA  file.  The range is specified using the format
+          _s_t_a_r_t-_e_n_d or _s_t_a_r_t:_e_n_d or _s_t_a_r_t:+_n_a_n.  Either _s_t_a_r_t  or
+          _e_n_d may be omitted, in which case the omitted parameter
+          defaults respectively to the start or end of the  input
+          FEA_ANA file.
+
+     ----rrrr _r_a_n_g_e
+          rrrr is a synonym for pppp.
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     The values of parameters obtained from  the  parameter  file
+     are printed if the environment variable ESPS_VERBOSE is 3 or
+     greater.  The default value is 3.
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+LPCSYNT(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+     The following parameters are read from the params file:
+
+     _p_o_s_t__f_i_l_t__n_u_m - _f_l_o_a_t
+
+          A three element vector specifying the  numerator  of  a
+          pole-zero  post  processing  filter.   If no values are
+          specified in the parameter file, the vector  [1.,  -1.,
+          0] is used.
+
+
+     _p_o_s_t__f_i_l_t__d_e_n - _f_l_o_a_t
+
+          A three element vector specifying the denominator of  a
+          pole-zero  post  processing  filter.   If no values are
+          specified in the parameter file, the vector [1., -.875,
+          0.] is used.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     ESPS Common is not processed.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+     The following parameters are read from  the  header  of  the
+     input  FEA_ANA  file:  _s_t_a_r_t,  _n_a_n,  _n_o_m_i_n_a_l__f_r_a_m_e__s_i_z_e, _a_n_d
+     _s_r_c__s_f.
+
+     _S_y_n_t writes the following header items in the output  FEA_SD
+     file:   _s_y_n_t__o_r_d_e_r  (int),  _s_y_n_t__m_e_t_h_o_d (coded), _s_y_n_t__i_n_t_e_r_p
+     (coded),  _s_y_n_t__p_w_r  (coded),  _v__e_x_c_i_t__m_e_t_h_o_d  (coded),   and
+     _u_v__e_x_c_i_t__m_e_t_h_o_d (coded).
+
+     Also, _s_r_c__s_f is copied from the input  header  and  used  as
+     _r_e_c_o_r_d__f_r_e_q in the output FEA_SD file.
+
+     In addition, the generic header item _s_t_a_r_t__t_i_m_e  (type  DOU-
+     BLE)  is  written  in  the output file. The value written is
+     computed by taking the _s_t_a_r_t__t_i_m_e value from the  header  of
+     the  input  file  (or  zero,  if  such a header item doesn't
+     exist) and adding to it the offset time (from the  beginning
+     of  the original sampled data file) of the first point writ-
+     ten by _l_p_c_s_y_n_t (1-ESPS).
+
+CCCCOOOOMMMMMMMMEEEENNNNTTTTSSSS
+     The synthesizer implementation is  very  simple.   A  single
+     impulse  is  used  as the excitation function for each pitch
+     pulse in the case of voiced speech.  A gaussian white  noise
+     sequence  is  used as the excitation function when the frame
+     is unvoiced.  Linear interpolation is  performed  (for  each
+     pulse) on the reflection coefficients, prior to synthesis.
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     lpcana (1-ESPS), ESPS(5-ESPS), FEA_ANA(5-ESPS),
+     FEA_SD(5-ESPS).
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+
+
+
+
+LPCSYNT(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+BBBBUUUUGGGGSSSS
+     None known.
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     S. Shankar Narayan. Slight mods  by  John  Shore.  ESPS  3.0
+     modification by David Burton
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+
+

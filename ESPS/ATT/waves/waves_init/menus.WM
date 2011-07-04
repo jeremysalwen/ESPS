@@ -1,0 +1,167 @@
+"Select Waveform Menu" MENU
+	"default menu" DEFAULT @defwavmen.WC
+	"style 1" @wavmen1.WC
+	"style 2" @wavmen2.WC
+	"clear menu" delete_all_items menu wave
+"Select Waveform Menu" END
+
+"Select Image Menu" MENU
+	"default menu" DEFAULT @defimgmen.WC
+	"style 1" @imagmen1.WC
+	"style 2" @imagmen2.WC
+	"clear menu" delete_all_items menu spect
+"Select Image Menu" END
+
+"Add Built in Waveform Op" MENU
+   "play between marks" add_waves menu wave builtin "play between marks" 
+   "play window contents" add_waves menu wave builtin "play window contents" 
+   "play entire file" add_waves menu wave builtin "play entire file" 
+   "page ahead" add_waves menu wave builtin "page ahead" 
+   "page back" add_waves menu wave builtin "page back"
+   "window ahead" add_waves menu wave builtin "window ahead" 
+   "window back" add_waves menu wave builtin "window back"
+   "align & rescale" add_waves menu wave builtin "align & rescale" 
+   "bracket markers" add_waves menu wave builtin "bracket markers" 
+   "zoom in" add_waves menu wave builtin "zoom in" 
+   "zoom out" add_waves menu wave builtin "zoom out" 
+   "zoom full out" add_waves menu wave builtin "zoom full out" 
+   "spectrogram (W.B.)" add_waves menu wave builtin "spectrogram (W.B.)" 
+   "spectrogram (N.B.)" add_waves menu wave builtin "spectrogram (N.B.)" 
+   "save segment in file" add_waves menu wave builtin "save segment in file" 
+   "delete segment" add_waves menu wave builtin "delete segment" 
+   "insert file" add_waves menu wave builtin "insert file" 
+   "print graphic" add_waves menu wave builtin "print graphic" 
+   "kill window" add_waves menu wave builtin "kill window" 
+   "Button modes (submenu)" add_waves menu wave submenu buttons
+"Add Built in Waveform Op" END
+
+"Add Built in Image Op" MENU
+   "play between marks" add_waves menu spect builtin "play between marks" 
+   "play window contents" add_waves menu spect builtin "play window contents" 
+   "play entire file" add_waves menu spect builtin "play entire file" 
+   "page ahead" add_waves menu spect builtin "page ahead" 
+   "page back" add_waves menu spect builtin "page back"
+   "window ahead" add_waves menu spect builtin "window ahead" 
+   "window back" add_waves menu spect builtin "window back"
+   "align & rescale" add_waves menu spect builtin "align & rescale" 
+   "bracket markers" add_waves menu spect builtin "bracket markers" 
+   "zoom in" add_waves menu spect builtin "zoom in" 
+   "zoom out" add_waves menu spect builtin "zoom out" 
+   "zoom full out" add_waves menu spect builtin "zoom full out" 
+   "spectrogram (W.B.)" add_waves menu spect builtin "spectrogram (W.B.)" 
+   "spectrogram (N.B.)" add_waves menu spect builtin "spectrogram (N.B.)" 
+   "save segment in file" add_waves menu spect builtin "save segment in file" 
+   "delete segment" add_waves menu spect builtin "delete segment" 
+   "insert file" add_waves menu spect builtin "insert file" 
+   "print graphic" add_waves menu spect builtin "print graphic" 
+   "kill window" add_waves menu spect builtin "kill window" 
+   "Button modes (submenu)" add_waves menu spect submenu buttons
+"Add Built in Image Op" END
+
+"Add Extended Waveform Op" MENU
+
+   "bracket horiz. markers" add_op menu wave name "bracket horiz. markers" \
+	command #_name set file _file plot_max _t_marker_yval \
+	plot_min _b_marker_yval 
+
+   "show full amplitude" add_op menu wave name "show full amplitude" command \
+	#_name set file _file plot_max 0.0 plot_min 0.0
+
+   "bracket box (both markers)" add_op menu wave name \
+	"bracket box (both markers)" \
+	command zoomboxin.sh _name _file _t_marker_yval _b_marker_yval \
+	_plot_max _plot_min _view_start_time _view_end_time \
+	_l_marker_time _r_marker_time
+
+   "undo bracket box" add_op menu wave name "undo bracket box" \
+	command zoomboxout.sh _name _file
+
+   "custom spectrogram (sgram)" add_espsf menu wave name \
+	"custom spectrogram (sgram)" \
+	command expromptrun -h sgram -P PWsgram sgram 
+
+   "custom spectrogram (fft)" add_espsf menu wave name \
+	"custom FFT spectrogram" command expromptrun -h fft -P PWfftc fft
+
+   "MAXENT (LPC) spectrogram (W.B.)" add_espsf menu wave name \
+	"MAXENT (LPC) spectrogram (W.B.)" command me_sgram -P/dev/null -m wb 
+
+   "MAXENT (LPC) spectrogram (N.B.)" add_espsf menu wave name \
+	"MAXENT (LPC) spectrogram (N.B.)" command me_sgram -P/dev/null -m nb 
+
+   "custom MAXENT (LPC) spectrogram" add_espsf menu wave name \
+	"custom MAXENT (LPC) spectrogram" command \
+	expromptrun -h me_sgram -P PWme_sgram me_sgram
+
+    "complex FFT pwr spectrum" add_op menu wave name \
+	"complex FFT pwr spectrum" command xfft -c _range_samp _file
+
+   "MAXENT (LPC) pwr spectrum" add_espsn menu wave name \
+	"MAXENT (LPC) pwr spectrum" command xrefcof
+
+    "power" add_op menu wave name "power" command \
+	xframerun.sh pwr raw_power _range_samp _file _out.g.out
+
+    "zero crossings" add_op menu wave name "zero crossings" command \
+	xframerun.sh zcross zero_cross_rate _range_samp _file _out.g.out
+
+    "F0 analysis" add_op menu wave name "F0 analysis" command copysps \
+	_range_samp _file  /usr/tmp/junk$$; get_f0 /usr/tmp/junk$$  \
+	_out.g.; rm -f /usr/tmp/junk$$
+
+   "segment statistics" add_espst menu wave name "segment statistics" \
+	command fea_stats
+
+   "show segment data" add_espst menu wave name "show segment data" \
+	command epsps -H
+
+   "show header (brief) and segment" add_espst menu wave name \
+	"show header (brief) and segment" command epsps -l 
+
+   "show header (full) and segment" add_espst menu wave name \
+	"show header (full) and segment" command epsps -a
+
+"Add Extended Waveform Op" END
+
+
+"Add Extended Image Op" MENU
+
+   "bracket frequency markers (uses external file)" add_op menu spect name \
+	"bracket freq. markers (extern. file)" command spec_subr -b \
+	_range_yval _range_samp _file _out.g.
+
+   "FFT frequency zoom" add_op name "FFT frequency zoom" menu spect \
+	command fftzoom _t_marker_yval _b_marker_yval _l_marker_time \
+	_r_marker_time _file _out.g.
+
+   "formants (w/overlay)" add_op menu spect name "formants (w/overlay)" \
+	command form_overlay.sh _objectname _l_marker_time _r_marker_time _file
+
+   "3D Plot" @plot3d.WC
+
+   "ESPS image plot" add_espsn menu spect name "ESPS image plot" command plotsgram
+
+   "spectral block average" add_espsf menu spect \
+	name "spectral block average" command xspecav
+
+   "segment statistics" add_espst menu spect name "segment statistics" \
+	command fea_stats
+
+   "show segment data" add_espst menu spect name "show segment data" \
+	command epsps -H
+
+   "show header (brief) and segment" add_espst menu spect \
+	name "show header (brief) and segment" command epsps -l 
+
+   "show header (full) and segment" add_espst menu spect \
+	name "show header (full) and segment" command epsps -a
+
+"Add Extended Image Op" END
+
+"Help" MENU
+ "show help file..." DEFAULT shell xtext -F `get_esps_base`/lib/waves/menus.help
+ "show menu file for this panel..." shell xtext -F `get_esps_base`/lib/waves/menus/menus.WM
+"Help" END
+
+# @(#)menus.WM	1.21 9/9/93
+

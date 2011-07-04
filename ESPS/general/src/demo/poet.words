@@ -1,0 +1,14 @@
+signal poet.sd
+type 0
+comment created using xlabel Thu Apr 18 12:50:40 1996
+comment created using xlabel Thu Apr 18 12:17:17 1996
+color 115
+font -*-times-medium-r-*-*-17-*-*-*-*-*-*-*
+separator ;
+nfields 1
+#
+    0.083046  115 the
+    0.356112  115 poet
+    0.699555  115 admired
+    0.769933  115 the
+    1.164049  115 canyon

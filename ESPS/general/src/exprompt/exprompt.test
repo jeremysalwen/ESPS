@@ -1,0 +1,13 @@
+#! /bin/sh
+#  test script for xprompt @(#)exprompt.test	1.4 02 Jul 1991 ESI
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+echo "Running exprompt on the sgram library parameter file; fill in some"
+echo "values after the window comes up, then click on DONE."
+exprompt -x2 -X 300 -Y 200 -h sgram -PPsgramx sgram.params
+#exprompt -x2 -Wp 100 100 -h sgram -PPsgramx sgram.params
+#exprompt -geometry +500+4 -x2 -h sgram -PPsgramx sgram.params
+echo ""
+echo "Now check the output file sgram.params."
+xtext -F sgram.params
+

@@ -1,0 +1,604 @@
+#! /bin/sh
+#
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc. 
+#    "Copyright (c) 1990-1993  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)check	1.7	1/22/97	ESI/ERL
+# 
+# Written by:  
+# Checked by:
+# Revised by:
+# 
+# Brief description:
+# test script for fea_stats(1-ESPS)
+#
+# Define temporary files:
+ASCII_FILE=test.asc
+FEA_FILE=test.fea
+ANSWER=test.ans.asc
+TEST_FILE=test.file.fea
+ASCII_TEST=test.a_t.asc
+RESULT=test.res.asc
+ASCII_RESULT=test.a_r.asc
+TEST_STAT=test.file.stat
+I_RESULT=test.ires.asc
+I_ASCII=test.iasc.asc
+F_RESULT=test.fres.asc
+ASCII_MULT=test.mult.asc
+TEST_MULT=test.mult.fea
+RESULT_B=test.rb.stat
+RESULT_S=test.rs.stat
+RESULT_L=test.rl.stat
+RESULT_F=test.rf.stat
+RESULT_D=test.rd.stat
+RESULT_ASC=test.ras.asc
+# Input the following ascii file for conversion to an ESPS file:
+#
+echo reading in ascii file to convert . . . 
+cat >$ASCII_FILE <<END_ATOSPS
+{
+01 d
+02 6a1a
+03 Fri Sep  4 16:41:50 1987 
+04 1.50
+05 vqdesasc
+06 1.8
+07 6/11/87
+53 virdy
+08 1
+0a 2
+0b c0
+0c 26
+0d 3
+10 init.sp
+12 This is a checkpoint file.vqdesasc -i -kcheckfile -c TEST -hhisfile vq.dat vq.sp TEST Converted from vq.sp by spstoa. Converted from vq.fea by spstoa.
+52
+0 1 0
+conv_ratio DOUBLE 1 0 
+final_dist DOUBLE 1 0 
+train_length LONG 1 0 
+design_size LONG 1 0 
+current_size LONG 1 0 
+dimen LONG 1 0 
+num_iter LONG 1 0 
+num_empty LONG 1 0 
+cbk_struct CODED 1 0 
+ NONE
+ FULL_SEARCH
+ BINARY_TREE
+dist_type CODED 1 0 
+ NONE
+ MSE
+ MSE_LAR
+ I-S
+cbk_type CODED 1 0 
+ MISC
+ RC_VQCBK
+ RC_VCD_VQCBK
+ RC_UNVCD_VQCBK
+ LSF_VQCBK
+ LSF_VCD_VQCBK
+ LSF_UNVCD_VQCBK
+codebook FLOAT 160 2 32 5 
+clustersize LONG 32 1 
+clusterdist FLOAT 32 1 
+
+@design_size LONG 1 32 
+@codeword_dimen LONG 1 5 
+
+{
+01 d
+02 6a1a
+03 Thu Aug 13 21:20:01 1987 
+04 1.50
+53 shankar
+08 1
+0a 2
+0b c0
+0c 26
+0d 3
+12 This is a checkpoint file.
+52
+0 1 0
+conv_ratio DOUBLE 1 0 
+final_dist DOUBLE 1 0 
+train_length LONG 1 0 
+design_size LONG 1 0 
+current_size LONG 1 0 
+dimen LONG 1 0 
+num_iter LONG 1 0 
+num_empty LONG 1 0 
+cbk_struct CODED 1 0 
+ NONE
+ FULL_SEARCH
+ BINARY_TREE
+dist_type CODED 1 0 
+ NONE
+ MSE
+ MSE_LAR
+ I-S
+cbk_type CODED 1 0 
+ MISC
+ RC_VQCBK
+ RC_VCD_VQCBK
+ RC_UNVCD_VQCBK
+ LSF_VQCBK
+ LSF_VCD_VQCBK
+ LSF_UNVCD_VQCBK
+codebook FLOAT 160 2 32 5 
+clustersize LONG 32 1 
+clusterdist FLOAT 32 1 
+
+@design_size LONG 1 32 
+@codeword_dimen LONG 1 5 
+
+}
+}
+
+#conv_ratio	1e-05 
+#final_dist	83190.1 
+#train_length	100000 
+#design_size	32 
+#current_size	32 
+#dimen	5 
+#num_iter	53 
+#num_empty	0 
+#cbk_struct	FULL_SEARCH 
+#dist_type	MSE 
+#cbk_type	MISC 
+#codebook	-44.3217 -267.801 -632.783 -41.8378 636.835 -818.505 -264.716 -165.993 
+	73.2563 -286.926 223.3 -240.802 226.36 680.288 495.866 329.156 
+	-391.49 251.014 -290.818 662.428 -290.991 420.18 -219.323 323.628 
+	-713.195 -667.02 386.709 447.516 -294.129 -230.745 -215.513 192.283 
+	-232.652 -713.305 -498.305 -536.889 488.109 -530.394 -166.176 159.852 
+	621.603 116.257 -155.281 -117.701 -693.568 371.189 492.797 -654.598 
+	279.078 -60.5087 -409.727 -142.029 503.967 645.1 -189.4 127.183 
+	-431.327 -219.042 572.548 -541.58 -65.7012 -242.283 -814.626 -98.0047 
+	-334.7 692.799 -403.869 -389.579 248.982 131.119 457.65 116.936 
+	-458.025 -629.304 195.159 254.844 -685.473 -113.84 -495.806 -291.208 
+	209.271 502.673 -134.585 193.4 740.216 -159.979 416.247 184.773 
+	-593.127 546.267 -405.372 700.812 147.751 481.709 135.213 -301.387 
+	-12.8808 -486.534 734.728 179.665 435.575 372.256 285.454 622.231 
+	-285.167 882.873 244.794 199.007 -61.108 233.986 100.266 333.083 
+	865.714 72.0454 191.615 -604.75 -93.5961 219.538 155.41 631.656 
+	491.833 -543.697 580.258 173.547 -183.396 -111.403 -182.415 403.593 
+	-50.0407 -822.133 5.11511 14.1568 13.8834 -4.90009 -11.3558 -245.214 
+	-870.656 -82.9746 209.382 101.648 348.49 59.2581 525.141 -671.317 
+	-191.206 197.843 848.547 82.5863 -247.376 -192.707 -483.167 -383.271 
+	-200.576 -652.629 234.789 -337.181 -468.147 668.672 -303.733 65.0999 
+	
+#clustersize	2928 3183 3101 3219 2924 2910 2931 3219 
+	2961 3042 2948 2993 3173 3049 3126 3202 
+	2958 3007 2784 3095 3085 2740 3115 3283 
+	2947 3181 5709 3103 2992 3164 2965 2963 
+	
+#clusterdist	85355.4 84046.2 84037.6 85494.4 86730.9 86482.2 85460.4 85985.3 
+	86563.8 85879 85286.2 81745.3 83406 86103.2 85713.2 86049.3 
+	88153.6 85176.7 83859.2 86279 84580.7 85283.8 89013.9 84621.7 
+	87652.3 88386.9 43670.1 85590.2 85047 84667.1 87282.8 83140.3 
+	
+END_ATOSPS
+#
+# Now convert the ascii file into an ESPS FEA file using atosps(1-ESPS):
+#
+echo converting ascii file to an ESPS FEA file . . .
+atosps $ASCII_FILE $FEA_FILE
+#
+# Run fea_stats on this feature file and compare output to known results:
+# First input known results:
+#
+echo reading in known true result . . .
+cat >$ANSWER <<END_ANSWER
+Field Name   Elemt    Min      at        Max      at       Mean       Std. Dev
+----------   -----  --------   --      --------   --     --------     --------
+conv_ratio   0           0.00   1           0.00   1          0.00         0.00
+final_dist   0       83190.10   1       83190.10   1      83190.10         0.00
+clusterdist  0       43670.10   1       89013.90   1      84273.24      7569.39
+train_length 0         100000   1         100000   1        100000         0.00
+design_size  0             32   1             32   1            32         0.00
+current_size 0             32   1             32   1            32         0.00
+dimen        0              5   1              5   1             5         0.00
+num_iter     0             53   1             53   1            53         0.00
+num_empty    0              0   1              0   1             0         0.00
+clustersize  0           2740   1           5709   1          3125       488.53
+END_ANSWER
+#
+# Now let's compare with new our fea_stats(1-ESPS) program that we're checking:
+#
+echo computing results from new fea_stats program and checking results . . .
+echo "fea_stats $FEA_FILE | diff - $ANSWER"
+fea_stats $FEA_FILE | diff - $ANSWER
+echo " "
+echo There should be no difference
+#
+# The previous command shouldn't have produced any output.
+#
+echo Reading in ascii fea_ana file for testing MICE options . . . 
+echo " " 
+cat >$ASCII_TEST <<END
+{
+01 d
+02 6a1a
+03 Thu Oct  1 14:50:36 1987 
+04 1.50
+05 fea_edit
+06 1.6
+07 7/16/87
+53 burton
+08 4
+09 1
+0b 1e
+0c 2
+0d 1
+10 4.fana
+12 fea_edit -g 4.fana hdshrink t.fana t2.fana Embedded headers dropped by hdshrink Converted from t2.fana by spstoa.
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 9 1 
+lpc_power FLOAT 9 1 
+p_pulse_len FLOAT 9 1 
+spec_param FLOAT 2 1 
+
+@nan LONG 1 134887 
+@dcrem FLOAT 1 0 
+@a_method SHORT 1 6 
+@sinc_flg SHORT 1 1 
+@src_sf FLOAT 1 8000 
+@frmlen SHORT 1 180 
+@maxlpc LONG 1 9 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] LSF 
+@order_vcd LONG 1 2 
+@p_offset SHORT 1 13 
+@maxraw LONG 1 9 
+@start LONG 1 15 
+@psynch SHORT 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@rcq_method SHORT 1 0 
+@pre_siz SHORT 2 3 3 
+@matsiz SHORT 1 11 
+@piq_method SHORT 1 0 
+@pre_poles FLOAT 3 1 0 0 
+@lpq_method SHORT 1 0 
+@win_type SHORT 1 0 
+@order_unvcd LONG 1 2 
+@pwq_method SHORT 1 0 
+@pre_zeros FLOAT 3 1 -0.875 0 
+@rms_fullscale DOUBLE 1 0 
+@maxpulses LONG 1 9 
+
+}
+
+#Tag 15
+#frame_len	90 
+#num_pulses	1
+#frame_type	VOICED 
+#voiced_fraction	0 
+#raw_power	116.642 -1 0 0 0 0 0 0 
+	0 
+#lpc_power	80.3488 -1 0 0 0 0 0 0 
+	0 
+#p_pulse_len	30 0 0 0 0 0 0 0 
+	0 
+#spec_param	334.108 537.694 
+
+#Tag 105
+#frame_len	90 
+#num_pulses	0 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	108.01 -1 0 0 0 0 0 0 
+	0 
+#lpc_power	72.7474 -1 0 0 0 0 0 0 
+	0 
+#p_pulse_len	0 0 0 0 0 0 0 0 
+	0 
+#spec_param	264.209 559.896 
+
+#Tag 195
+#frame_len	90 
+#num_pulses	0 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	127.188 -1 0 0 0 0 0 0 
+	0 
+#lpc_power	94.8108 -1 0 0 0 0 0 0 
+	0 
+#p_pulse_len	0 0 0 0 0 0 0 0 
+	0 
+#spec_param	321.138 567.859 
+
+#Tag 285
+#frame_len	90 
+#num_pulses	0 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	153.627 -1 0 0 0 0 0 0 
+	0 
+#lpc_power	94.7586 -1 0 0 0 0 0 0 
+	0 
+#p_pulse_len	0 0 0 0 0 0 0 0 
+	0 
+#spec_param	322.014 547.445 
+END
+echo Convert $ASCII_TEST to input test file
+echo "atosps $ASCII_TEST $TEST_FILE"
+atosps $ASCII_TEST $TEST_FILE
+echo " "
+echo "Check the mean, covariance, and inverse covariance computation"
+echo "fea_stats -I -nLSF -fspec_param $TEST_FILE - | tee $TEST_STAT | psps -H - > $RESULT"
+echo  " "
+fea_stats -I -nLSF -fspec_param $TEST_FILE - | tee $TEST_STAT | psps -H - > $RESULT
+echo " " 
+# make ascii file for comapring fea_stats output
+cat >$ASCII_RESULT <<END.RESULT
+Record 1: 
+class:  LSF 
+nsamp:  4 
+mean:  
+  0:     310.36725     553.22351 
+covar:  
+  0:     981.95398    -195.44623    -195.44623      177.7592 
+invcovar:  
+  0:  0.0013036776  0.0014333935  0.0014333933  0.0072016041 
+
+END.RESULT
+echo diff $RESULT with correct output
+echo " " 
+diff $RESULT $ASCII_RESULT
+echo  " "
+echo If there was no significant diff output, then everything is OK so far
+echo " "
+echo "Now let's check -i , -f, and -r options"
+echo "First the -i option"
+echo " "
+echo "fea_stats -i0,1,4 -fraw_power $TEST_FILE > $I_RESULT"
+fea_stats -i0,1,4 -fraw_power $TEST_FILE > $I_RESULT
+echo  " "
+#Make the ascii file to compare with $I_RESULT
+cat >$I_ASCII <<END.I_OPTION
+Field Name   Elemt    Min      at        Max      at       Mean       Std. Dev
+----------   -----  --------   --      --------   --     --------     --------
+raw_power    0         108.01   2         153.63   4        126.37        19.79
+raw_power    1          -1.00   1          -1.00   1         -1.00         0.00
+raw_power    4           0.00   1           0.00   1          0.00         0.00
+END.I_OPTION
+echo "diff $I_RESULT $I_ASCII"
+diff $I_RESULT $I_ASCII
+echo  " "
+echo There should be no diff output
+echo " "
+echo Now check the -f option
+echo ""
+echo "fea_stats -R -f\"raw_power[0,1,4]\" $TEST_FILE > $F_RESULT"
+fea_stats -R -f"raw_power[0,1,4]" $TEST_FILE > $F_RESULT
+echo "diff $F_RESULT $I_ASCII"
+diff $F_RESULT $I_ASCII
+echo  " "
+echo There should be no diff output
+echo ""
+echo Now check the -r option
+echo " " 
+echo "fea_stats -r2:4 -R -fp_pulse_len $TEST_FILE"
+fea_stats -r2:4 -R -fp_pulse_len $TEST_FILE
+echo " " 
+echo The MIN, MAX, MEAN, and STD. DEV should all = 0.0
+echo for all 9 elements in the field.
+echo " " 
+echo "Check adding records to existing STAT(5-ESPS) file"
+echo  " "
+echo "fea_stats -I -fspec_param -nLSF  $TEST_FILE $TEST_STAT"
+fea_stats -I -fspec_param -nLSF  $TEST_FILE $TEST_STAT
+echo " "
+echo "check fea_stats output; it should contain two identical records"
+psps -H $TEST_STAT
+#
+# Check with various input data types.
+#
+echo Checking consistent treatment of data types.
+echo Making Ascii input file with same data in fields of 5 types.
+echo " "
+cat >$ASCII_MULT <<aArDvArK1
+{
+01 d
+02 6a1a
+03 Thu Oct  1 14:50:36 1987 
+04 1.50
+05 fea_edit
+06 1.6
+07 7/16/87
+53 burton
+08 4
+09 1
+0b 1e
+0c 2
+0d 1
+10 4.fana
+12 fea_edit -g 4.fana hdshrink t.fana t2.fana Embedded headers dropped by hdshrink Converted from t2.fana by spstoa.
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 9 1 
+lpc_power FLOAT 9 1 
+p_pulse_len FLOAT 9 1 
+spec_param_b FLOAT 2 1 
+spec_param_s FLOAT 2 1 
+spec_param_l FLOAT 2 1 
+spec_param_f FLOAT 2 1 
+spec_param_d FLOAT 2 1 
+
+@nan LONG 1 134887 
+@src_sf FLOAT 1 8000 
+@frmlen SHORT 1 180 
+@maxlpc LONG 1 9 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] LSF 
+@order_vcd LONG 1 2 
+@maxraw LONG 1 9 
+@start LONG 1 15 
+@filters CODED 1 [ NO YES ] NO 
+@pre_siz SHORT 2 3 3 
+@matsiz SHORT 1 11 
+@pre_poles FLOAT 3 1 0 0 
+@win_type SHORT 1 0 
+@order_unvcd LONG 1 2 
+@pre_zeros FLOAT 3 1 -0.875 0 
+@rms_fullscale DOUBLE 1 0 
+@maxpulses LONG 1 9 
+
+}
+
+#Tag 15
+#frame_len	90 
+#num_pulses	1
+#frame_type	VOICED 
+#voiced_fraction	0 
+#raw_power	116.642 -1 0 0 0 0 0 0 
+	0 
+#lpc_power	80.3488 -1 0 0 0 0 0 0 
+	0 
+#p_pulse_len	30 0 0 0 0 0 0 0 
+	0 
+#spec_param_b	334 537 
+#spec_param_s	334 537 
+#spec_param_l	334 537 
+#spec_param_f	334 537 
+#spec_param_d	334 537 
+
+#Tag 105
+#frame_len	90 
+#num_pulses	0 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	108.01 -1 0 0 0 0 0 0 
+	0 
+#lpc_power	72.7474 -1 0 0 0 0 0 0 
+	0 
+#p_pulse_len	0 0 0 0 0 0 0 0 
+	0 
+#spec_param_b	264 559 
+#spec_param_s	264 559 
+#spec_param_l	264 559 
+#spec_param_f	264 559 
+#spec_param_d	264 559 
+
+#Tag 195
+#frame_len	90 
+#num_pulses	0 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	127.188 -1 0 0 0 0 0 0 
+	0 
+#lpc_power	94.8108 -1 0 0 0 0 0 0 
+	0 
+#p_pulse_len	0 0 0 0 0 0 0 0 
+	0 
+#spec_param_b	321 567 
+#spec_param_s	321 567 
+#spec_param_l	321 567 
+#spec_param_f	321 567 
+#spec_param_d	321 567 
+
+#Tag 285
+#frame_len	90 
+#num_pulses	0 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	153.627 -1 0 0 0 0 0 0 
+	0 
+#lpc_power	94.7586 -1 0 0 0 0 0 0 
+	0 
+#p_pulse_len	0 0 0 0 0 0 0 0 
+	0 
+#spec_param_b	322 547 
+#spec_param_s	322 547 
+#spec_param_l	322 547 
+#spec_param_f	322 547 
+#spec_param_d	322 547 
+aArDvArK1
+echo Convert $ASCII_MULT to input test file $TEST_MULT
+echo "atosps $ASCII_MULT $TEST_MULT"
+atosps $ASCII_MULT $TEST_MULT
+echo " "
+echo Running fea_stats to make 5 output files.
+echo "fea_stats -I -nLSF -fspec_param_b $TEST_MULT - > $RESULT_B"
+fea_stats -I -nLSF -fspec_param_b $TEST_MULT - > $RESULT_B
+echo "fea_stats -I -nLSF -fspec_param_s $TEST_MULT - > $RESULT_S"
+fea_stats -I -nLSF -fspec_param_s $TEST_MULT - > $RESULT_S
+echo "fea_stats -I -nLSF -fspec_param_l $TEST_MULT - > $RESULT_L"
+fea_stats -I -nLSF -fspec_param_l $TEST_MULT - > $RESULT_L
+echo "fea_stats -I -nLSF -fspec_param_f $TEST_MULT - > $RESULT_F"
+fea_stats -I -nLSF -fspec_param_f $TEST_MULT - > $RESULT_F
+echo "fea_stats -I -nLSF -fspec_param_d $TEST_MULT - > $RESULT_D"
+fea_stats -I -nLSF -fspec_param_d $TEST_MULT - > $RESULT_D
+echo " " 
+# Make ascii file for comparing with fea_stats output.
+echo Making Ascii file $RESULT_ASC for comparing with fea_stats output.
+cat >$RESULT_ASC <<aArDvArK2
+Record 1: 
+class:  LSF 
+nsamp:  4 
+mean:  
+  0:        310.25         552.5 
+covar:  
+  0:     985.58331    -192.50002    -192.50002     174.33333 
+invcovar:  
+  0:  0.0012936217  0.0014284257  0.0014284257  0.0073134149 
+
+aArDvArK2
+# Compare ascii file with fea_stats output.
+echo "Comparing output from byte input with correct result."
+echo "psps -H $RESULT_B | diff $RESULT_ASC -"
+psps -H $RESULT_B | diff $RESULT_ASC -
+echo "Comparing output from short input with correct result."
+echo "psps -H $RESULT_S | diff $RESULT_ASC -"
+psps -H $RESULT_S | diff $RESULT_ASC -
+echo "Comparing output from long input with correct result."
+echo "psps -H $RESULT_L | diff $RESULT_ASC -"
+psps -H $RESULT_L | diff $RESULT_ASC -
+echo "Comparing output from float input with correct result."
+echo "psps -H $RESULT_F | diff $RESULT_ASC -"
+psps -H $RESULT_F | diff $RESULT_ASC -
+echo "Comparing output from double input with correct result."
+echo "psps -H $RESULT_D | diff $RESULT_ASC -"
+psps -H $RESULT_D | diff $RESULT_ASC -
+echo ""
+echo "Now try non-stat-file output for 5 input data types."
+echo "Running fea_stats on the same file."
+echo "The results for all 5 fields should be identical."
+echo ""
+fea_stats -nLSF -fspec_param_b -fspec_param_s -fspec_param_l -fspec_param_f -fspec_param_d $TEST_MULT
+echo ""
+#
+# Clean up!
+#
+rm -f $ASCII_FILE $ANSWER $FEA_FILE $TEST_FILE $RESULT $ASCII_TEST $TEST_STAT
+rm -f $I_ASCII $I_RESULT $F_RESULT $ASCII_RESULT $ASCII_MULT
+rm -f $TEST_MULT $RESULT_B $RESULT_S $RESULT_L $RESULT_F $RESULT_D $RESULT_ASC
+echo TEST SCRIPT IS DONE

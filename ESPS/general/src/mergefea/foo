@@ -1,0 +1,238 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     mergefea - merge two FEA files so that output  records  con-
+     tain fields from both
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>mergefea</STRONG> [ <STRONG>-f</STRONG> <EM>field</EM>_<EM>name</EM> ] . . . [ <STRONG>-t</STRONG> ] [ <STRONG>-u</STRONG> ] [ <STRONG>-a</STRONG> ] [  <STRONG>-</STRONG> <STRONG>x</STRONG>
+     <EM>debug</EM>_<EM>level</EM> ] [ <STRONG>-z</STRONG> ] [ <STRONG>-T</STRONG> <EM>FEA</EM>_<EM>subtype</EM> ] <EM>fea1</EM> <EM>fea2</EM> [ <EM>fea3</EM> ]
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     If <EM>fea1</EM> and <EM>fea2</EM> both exist, <EM>mergefea</EM> merges  their  records
+     in  the sense that the fields in each output record comprise
+     the union of fields in two input records.   The  results  of
+     the  merge  can be written to a third file <EM>fea3</EM>, or <EM>fea2</EM> can
+     be rewritten to contain the merged results (think of this as
+     merging  <EM>fea1</EM> into <EM>fea2</EM>).  The <STRONG>-f</STRONG> option can be used to res-
+     trict which fields are taken from the <EM>fea1</EM> records. If  <EM>fea2</EM>
+     doesn't  exist, it is created and contains only the selected
+     fields from <EM>fea1</EM> (thus,  <EM>mergefea</EM>  can  be  used  to  filter
+     fields out of FEA files).
+
+     If both input files exist, then each record  of  the  output
+     contains  all  of  the  fields  from  the corresponding <EM>fea2</EM>
+     record and the selected fields from the  corresponding  <EM>fea1</EM>
+     record  (all of them unless the <STRONG>-f</STRONG> option is used).  None of
+     the selected fields from <EM>fea1</EM> may have the same  name  as  a
+     field  in   <EM>fea2</EM>.  The size of the output file is determined
+     by the size of <EM>fea2</EM> - they have the same number of  records.
+     If  <EM>fea1</EM>  has  more  records  than <EM>fea2</EM>, then the additional
+     records are ignored.  If <EM>fea1</EM> has fewer records  than  <EM>fea2</EM>,
+     then  the field values in the last record of <EM>fea1</EM> are dupli-
+     cated for merging with the additional <EM>fea2</EM> records.  If <EM>fea3</EM>
+     is  supplied,  then  the  output is written to <EM>fea3</EM>, and the
+     original contents of <EM>fea2</EM> are left unchanged.   If  <EM>fea3</EM>  is
+     not  supplied,  then the contents of the output file replace
+     the previous contents of <EM>fea2</EM>.  That is,  <EM>mergefea</EM>  rewrites
+     <EM>fea2</EM> with additional fields in each record.
+
+     If <EM>fea2</EM>  does not exist, it is created as  an  output  file,
+     and <EM>fea3</EM> must not be supplied.
+
+     Generic header items are copied from input  to  output.   If
+     <EM>fea1</EM>  and  <EM>fea2</EM> contain header items with the same name, the
+     value in <EM>fea2</EM> prevails.  This behavior  can  be  changed  by
+     using  the <STRONG>-u</STRONG> option, which causes all generics from <EM>fea1</EM> to
+     be copied; unique new names are generated if generics by the
+     same name already exist in <EM>fea2</EM>).
+
+     If <EM>fea1</EM> is "-", standard input is used.  If <EM>fea3</EM> is not sup-
+     plied  and  <EM>fea2</EM>  is  " -", standard output is used (in this
+     case, <EM>mergefea</EM> is just a field filter).  If <EM>fea3</EM> is supplied
+     and  <EM>fea2</EM>  is "-", standard input is used, but <EM>fea1</EM> and <EM>fea2</EM>
+     may not both be standard input.  If <EM>fea3</EM> is " - ",  standard
+     output is used.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following options are supported:
+
+     <STRONG>-f</STRONG> <EM>field</EM>_<EM>name</EM>
+          Specifies a field name to be taken from <EM>fea1</EM>.  If no <STRONG>-f</STRONG>
+          option is given, all fields are taken.  This option may
+          be given more than once.
+
+     <STRONG>-t</STRONG>    This option makes the output file a  tagged  file  and
+          causes  record <EM>tag</EM> values to be copied from <EM>fea1</EM> to the
+          output file, along with the specified  feature  fields.
+          If the option is not specified, then the output file is
+          tagged if and only if <EM>fea2</EM> exists and  is  tagged,  and
+          the <EM>tag</EM> values, if any, are copied from <EM>fea2</EM>.
+
+     <STRONG>-u</STRONG>    If generic header items in <EM>fea1</EM> have names that  exist
+          already  as  generics in <EM>fea2</EM>, this option causes those
+          items in <EM>fea1</EM> to be copied with unique new  names  gen-
+          erated by the use of <STRONG><A HREF="../man3.html/copy_genhd_uniq.3.html">copy_genhd_uniq (3-ESPS)</A></STRONG>.  Numeri-
+          cal digits are appended  to  the  generic  header  item
+          names in order to render them unique (see <EM>uniq</EM>_<EM>name</EM> (3-
+          ESPS)).
+
+     <STRONG>-a</STRONG>    If the selected fields in <EM>fea1</EM> and all fields in  <EM>fea2</EM>
+          have  non-conflicting  names, and if both <EM>fea1</EM> and <EM>fea2</EM>
+          have  the  generic   header   items   <EM>record</EM>_<EM>freq</EM>   and
+          <EM>start</EM>_<EM>time</EM>  defined,  then  this  option can be used to
+          merge the files in a time-aligned manner.   The  output
+          file  <EM>fea3</EM> has the same record frequency <EM>record</EM>_<EM>freq</EM> as
+          <EM>fea2</EM>, and it consists of records that correspond to the
+          time intersection of the two input files.  In case that
+          input record frequencies differ, a  zero-th  order  (or
+          nearest-neighbor)  interpolation scheme is performed on
+          records of <EM>fea1</EM>.
+
+     <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> [0]
+          If <EM>debug</EM>_<EM>level</EM> is positive, <EM>mergefea</EM> outputs  debugging
+          messages.   The  messages  proliferate  as  <EM>debug</EM>_<EM>level</EM>
+          increases.  For level 0, there is no output.
+
+     <STRONG>-z</STRONG>    Suppress the  warning  that  is  normally  printed  if
+          <EM>record</EM>_<EM>freq</EM> is defined with different values in the two
+          input files.
+
+     <STRONG>-T</STRONG> <EM>FEA</EM>_<EM>subtype</EM> [(same as <EM>fea2</EM>)]
+          If this option is given, the feature file subtype  code
+          in  the  output  file is filled in with the given code.
+          The symbolic name of the subtype code  must  be  given,
+          for  example  FEA_ANA  or FEA_SD (or NONE).  For a com-
+          plete list of defined subtype codes, see <STRONG><A HREF="../man5.html/FEA.5.html">FEA(5 - ESPS)</A></STRONG>.
+          Use of this option doesn't ensure that the file has the
+          correct format for the specified subtype.   You  should
+          use  this  option  only when you knows that a file with
+          the correct fields and generic  header  items  will  be
+          produced.   See  the  section  5  manual  pages for the
+          defined feature file types.
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     No parameter file is used by <EM>mergefea</EM>.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     ESPS Common is not read or written by <EM>mergefea</EM>.
+
+
+</PRE>
+<H2>ESPS HEADERS</H2><PRE>
+     The generic header items from both input files are added  as
+     generic  header items to the output file.  If generic header
+     items with the same name exist  in  both  input  files,  the
+     value from <EM>fea2</EM> is used (but see the <STRONG>-u</STRONG> option).
+
+     The input files <EM>fea1</EM> and <EM>fea2</EM>, if both exist, are  added  as
+     source  files  in  the output header; otherwise only <EM>fea1</EM> is
+     added.  The generic header items <EM>start</EM>_<EM>time</EM> and  <EM>record</EM>_<EM>freq</EM>
+     are handled like any others.  In addition, if <EM>record</EM>_<EM>freq</EM> is
+     defined with different values in the two  input  files,  the
+     program  prints a warning.  The  <STRONG>-z</STRONG> option will suppress the
+     warning.
+
+     If <EM>fea2</EM> exists, its FEA subtype code  is  preserved  in  the
+     output  unless  a  different choice is specified with the <STRONG>-T</STRONG>
+     option.
+
+
+</PRE>
+<H2>FUTURE CHANGES</H2><PRE>
+     Add range processing options.
+
+     Add parameter file processing.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man3.html/uniq_name.3.html">uniq_name (3-ESPS)</A></STRONG>, <STRONG><A HREF="../man3.html/copy_genhd.3.html">copy_genhd (3-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man3.html/copy_genhd_uniq.3.html">copy_genhd_uniq (3-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/copysps.1.html">copysps (1-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man1.html/fea_deriv.1.html">fea_deriv (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/addfea.1.html">addfea (1-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man1.html/addgen.1.html">addgen (1-ESPS)</A></STRONG> <STRONG><A HREF="../man1.html/addfeahd.1.html">addfeahd (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/select.1.html">select (1-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man1.html/feafunc.1.html">feafunc (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/fea_edit.1.html">fea_edit (1-ESPS)</A></STRONG>
+
+
+</PRE>
+<H2>WARNINGS AND DIAGNOSTICS</H2><PRE>
+     <EM>Mergefea</EM> will exit with an error message if <EM>fea1</EM>,  and  <EM>fea2</EM>
+     if  it  exists,  are not ESPS FEA files; if "-" is given for
+     both <EM>fea1</EM> and <EM>fea2</EM> and <EM>fea3</EM>  is  given;  if  <EM>record</EM>_<EM>freq</EM>  is
+     defined  with  different  values  in the two input files; if
+     fields named by a <STRONG>-f</STRONG> option do not  exist  in  <EM>fea1</EM>;  or  if
+     fields  to  be  merged  in  from <EM>fea1</EM> already exist in <EM>fea2</EM>.
+     Note that field names can be changed by using  <EM>feafunc</EM>  (1 -
+     ESPS)  or by running <STRONG><A HREF="../man1.html/fea_edit.1.html">fea_edit (1-ESPS)</A></STRONG> and editing the self-
+     description.
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     None known.
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Manual page by John Shore.  Program  by  Alan  Parker,  with
+     revisions by John Shore.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,150 @@
+.\" @(#)manname.1	3.1 10/20/87 ESI
+.TH MAN_NAME 1\-ESPS 10/20/87
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+man_name \- normalize names of ESPS manual-page files for use with
+.I eman
+.SH SYNOPSIS
+.B man_name
+[
+.B \-r
+] [
+.BR filename " . . . ]"
+.SH DESCRIPTION
+.PP
+The arguments
+.IR filename " . . . ,"
+if given, should each be of the form
+.IB name . ext,
+where
+.I name
+is a manual-page name and
+.I ext
+consists of a digit, possibly followed by a letter.
+.I Man_name
+normalizes each filename by removing any underscores from
+.I name
+and truncating the result so that
+.IB name . ext
+has a maximum of 12 characters.
+This normalized form is that preferred for use with
+.IR eman (1\-EPSP)
+to cope with filename length
+restrictions on some versions of Unix and to squeeze more significant
+characters into limited space.
+.PP
+Ordinarily, the modified filenames are written to the standard output,
+one to a line.
+But if the
+.B \-r
+option is given,
+.I man_name
+assumes that the filenames name files in the current directory
+and attempts to rename each such file with the normalized form of its name.
+.PP
+If no filename arguments are given on the command line,
+.I man_name
+reads filenames from the standard input,
+separated by whitespace or newlines,
+and either writes the normalized names to standard output, one to a line,
+or attempts to rename the named files.
+.SH EXAMPLES
+.PP
+The name of the man page for the function
+that allocates filter-file records is
+.I allo_filt_rec,
+and its section number is 3
+(not followed by
+.I t,
+since the page contains no tables).
+The result of
+.IP
+man_name allo_filt_rec.3
+.PP
+is
+.IP
+allofiltre.3
+.PP
+on the standard output.
+That is the name
+that the source file for this man page should have in the ESPS
+.I man
+directory tree.
+The user can access the information by giving
+.IR eman (1\-SPS)
+an argument of
+.I allo_filt_rec
+or
+.I allofiltrec
+or even
+.I allofiltre.
+.PP
+Executing
+.IP
+ls dir | man_name > tmpfile
+.PP
+will put a list of the normalized names of all the files in the directory
+.I dir
+into the file 
+.IR tmpfile .
+Then
+.IP
+ls dir | diff \- tmpfile
+.PP
+will show whether there are any files in the directory that ought to be
+renamed.
+.PP
+The command
+.IP
+man_name -r *
+.PP
+will rename all the files in the current directory; but use caution,
+and read the Bugs section below before trying this one.
+.SH "ESPS PARAMETERS"
+.PP
+This program does not access an ESPS parameter file or the ESPS
+common file.
+.SH "ESPS HEADERS"
+.PP
+This program is not concerned with ESPS file headers.
+.SH OPTIONS
+.PP
+The following option is supported.
+.TP
+.B \-r
+Rename files, rather than writing out normalized filenames.
+.SH DIAGNOSTICS
+.PP
+The message
+.IP
+man_name: Can't rename
+.I name
+to
+.I name.
+.PP
+is given when some normalized name differs from the original name and
+.IR rename (2)
+fails.  The program then exits immediately.
+.PP
+The message
+.IP
+man_name: Badly formed input:
+.I name.
+.PP
+means that a filename does not end with a period
+followed with a one- or two-character extension.
+The program exits immediately if
+.B \-r
+is in force but continues if merely writing out normalized names.
+.SH "SEE ALSO"
+.PP
+eman(1\-ESPS), rename(2)
+.SH BUGS
+.PP
+When renaming, the program does not check whether the normalized from
+of a filename is the name of another file or whether two filenames
+have the same normalized form.  In either case, you lose a file.
+.PP
+Checking for well-formed names could be stricter than it is.
+.SH AUTHOR
+Rodney W. Johnson

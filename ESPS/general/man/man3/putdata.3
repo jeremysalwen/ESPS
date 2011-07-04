@@ -1,0 +1,69 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)putdata.3	1.5 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH PUT_DATA 3\-ESPSu 18 Apr 1997
+.SH NAME
+.nf
+put_ddata \- convert and write double precision data to a binary file
+put_fdata \- convert and write float data to a binary file
+.SH SYNOPSIS
+.ft B
+put_ddata(stream,dtype,data,npoints)
+.br
+FILE *stream;
+.br
+char dtype;
+.br
+float data[];
+.br
+int npoints;
+.sp
+.br
+put_fdata(stream,dtype,data,npoints)
+.br
+FILE *stream;
+.br
+char dtype;
+.br
+float data[];
+.br
+int npoints;
+.ft
+.SH DESCRIPTION
+.PP
+.I Put_data
+writes data to a binary file. The data to be written is an array of
+double precision floating values. The data in the file is will consist
+of bytes, short integers, long integers, floating values, or double precision
+floating values. The
+.I dtype
+argument indicates the type of data to be written to the file; it may be 'b' 
+(byte), 'w' (word \- short integer), 'l' (long integer), 'f' (float),
+or 'd' (double).
+.I Npoints
+values from the
+.I data
+array are converted from double by
+.I put_ddata,
+from float by
+.I put_fdata,
+to the desired type (with rounding) and written to the file.
+If the absolute value of a value in
+.I data
+is too large to be represented in the output type, it is clipped \-
+replaced by the largest positive or negative value of the output type.
+.SH DIAGNOSTICS
+If a write error occurs,
+.I put_ddata
+prints an error message on the error output and exits.
+.SH BUGS
+Ideally, an error status should be returned on error and the program should
+be allowed to determine whether to exit.
+.SH SEE ALSO
+.nf
+\fIget_ddata\fP(3-ESPSu), \fIget_fdata\fP(3-ESPSu)
+.fi
+.SH EXPECTED CHANGES
+Fix the flaw described in "BUGS".
+.SH AUTHOR

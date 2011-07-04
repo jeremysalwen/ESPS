@@ -1,0 +1,279 @@
+#!/bin/csh -f
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1993  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# %W%	%G%	ERL
+# 
+# Written by:  Derek Lin
+# Checked by:  Alan Parker
+# Revised by:
+# 
+# Brief description: Example script for ESPS analysis/synthesis programs
+#		using XIG and Xwaves.
+
+#Input data file to be analyzed and synthesized
+
+set USE_ESPS_COMMON = off
+set ESPS_VERBOSE = 0
+
+set in = $1
+
+#Directory to where intermediate results are written, change this if desired
+set DIR = /usr/tmp
+
+xwaves -s &
+
+echo " "
+if ($#argv < 1) then
+	echo "No input files found, for DEMO purpose we will use"
+	echo "	$ESPS_BASE/demos/speech.sd"
+	echo " "
+	echo "Or you may want to use your own file:"
+	echo "Usage: ProgName <infile>"
+	echo "  infile is a FEA_SD/TIMIT data file"
+	echo " "
+	set in = $DIR/speech.sd
+	rm -f $in
+	cp $ESPS_BASE/demo/speech.sd $in
+endif
+
+#Waves object name, and intermediate file name prefix
+set s = `basename $in`
+set obj = $s:r
+
+#file to contain log error/warning/debug messages
+set tmpfile = /usr/tmp/log$$
+
+set noglob
+
+set play = `send_xwaves get aname play_prog`
+alias sx send_xwaves
+alias pau 'echo; echo Hit "CONTINUE" to proceed. ; echo " " ; sx pause;'
+
+echo "This is an example script for ESPS speech analysis/synthesis tools."
+echo "We'll will see how to construct a flexible, versatile, and interactive"
+echo "speech processing environment from ESPS analysis/synthesis programs,"
+echo "Xwaves+ signal visualization tool, and XIG interface."
+pau
+echo "We'll analyze and resynthesize the signal shown on the screen."
+sx make name $obj file $in loc_x 0 loc_y 160 width 1000 height 150
+
+pau
+
+echo "A high pass filter to remove low-frequency background noise and breath"
+echo "  noise is designed by win_filt(1-ESPS) and applied to the signal by"
+echo "  filter2(1-ESPS).  This filtered signal will be used to do"
+echo "  subsequent analysis."
+echo " "
+
+set sf = `hditem -i record_freq $in`
+set sf2 = `echo $sf 2 / p q |dc`
+set ord = `echo $sf 1000 / 2 + p q |dc`
+cat > $DIR/param$$ <<EOD
+int nbands = 2: "Number of bands:";
+float band_edge1 = 0;
+float band_edge2 = 20;
+float band1_des = 0: "desired value for band1:";
+float band2_des = 1: "desired value for band2:";
+float rej_db = 20: "rejection in dB from one band to another:";
+float trans_band = 50: "transition bandwidth:";
+EOD
+set str = "float band_edge3 = $sf2;"
+echo $str >> $DIR/param$$
+set str = "float samp_freq = $sf;"
+echo $str >> $DIR/param$$
+win_filt -P $DIR/param$$ $DIR/h20.filt >& $tmpfile
+filter2 -F $DIR/h20.filt $in $DIR/$obj.hpf >& $tmpfile
+rm -f $DIR/param$$
+
+echo "Done with highpass filtering.  Now ready to compute F0, voicing"
+echo "  and RMS estimates using get_f0(1-ESPS) on a fixed frame basis."
+echo "  Here we use XIG interface to change the default settings of"
+echo "  get_f0(1-ESPS), if desired; otherwise, click on 'Done' to proceed."
+xeparam get_f0 $DIR/$obj.hpf $DIR/$obj.f0 >& $tmpfile
+
+echo "Done with F0, voicing, RMS estimation, ready to plot"
+pau
+
+sx make name $obj file $DIR/$obj.f0 loc_x 0 loc_y 310 width 1000 heigth 150
+
+pau
+sx kill name $obj file $DIR/$obj.f0
+
+echo "Fixed-frame analysis, such as the one we just did for F0, usually"
+echo "  renders good F0 and voicing state estimation; however, it doesn't"
+echo "  give good LPC estimation"
+echo " "
+echo "We next proceed to estimate LPCs on a pitch-synchronous manner."
+echo " "
+echo "First let's find the pitch epochs, which can be estimated from"
+echo "  speech residual -- one that approximates the derivative of the "
+echo "  glottal flow."
+echo "We'll inverse-filter the speech signal with its running fixed-frame"
+echo "  LPCs to obtain the speech residual."
+echo " "
+echo "Fixed frame LPC coefficients can be obtained by refcof(1-ESPS)"
+echo "  Here we use a default setting of order 18, frame length 0.02 sec,"
+echo "  step size 0.01 sec for LPC estimation.  Change such default"
+echo "  settings via XIG interface, if desired; otherwise, click on 'Done'."
+
+set nsamp = `hditem -i ndrec $DIR/$obj.hpf`
+cat > $DIR/param$$ <<EOD
+string window_type ?= "HANNING": "Window to apply to data": {"RECT", "HAMMING", "TRIANG", "HANNING", "COS4"};
+string method ?= "AUTOC": "Analysis method":{"AUTOC", "COV", "BURG", "MBURG", "FBURG", "VBURG", "STRCOV", "STRCOV1"};
+float strcov_test ?= 1e-5: "convergence test value for STRCOV";
+int strcov_maxiter ?= 20: "maximum number of iterations for STRCOV";
+EOD
+set ord = `echo $sf 1000 / 2 + p q |dc`
+set str = "int order ?= $ord : "'"Number of reflection coefficients to compute per frame)";'
+echo $str >> $DIR/param$$
+set len = `echo "$sf 100 / 2 * p q" |dc`
+set str = "int frame_len ?= $len : "'"Number of points per analysis frame; 0 means nan";'
+echo $str >> $DIR/param$$
+set st = `echo "$sf 100 / p q" |dc`
+set str = "int step ?= $st : "'"Number or points between start of successive frames; 0 means frame_len";'
+echo $str >> $DIR/param$$
+
+expromptrun -P$DIR/param$$ refcof -p1:$nsamp $DIR/$obj.hpf $DIR/$obj.cof >& $tmpfile
+
+echo " "
+echo "Now we are ready to do inverse-filtering by get_resid(1-ESPS)."
+get_resid -a1 -i0.97 $DIR/$obj.hpf $DIR/$obj.cof $DIR/$obj.if >& $tmpfile
+
+echo "Done with inverse_filtering(1-ESPS).  Now ready to plot the estimated"
+echo "  glottal flow derivative."
+pau
+sx make name $obj file $DIR/$obj.if loc_x 0 loc_y 310 width 1000 height 150
+
+echo "Now we'll attempt to find the picth-epoch location by epoch(1-ESPS)."
+echo "  We use XIG interface to change default parameter settings, if"
+echo "  change is desired."
+echo "  This will take a while..."
+xeparam epochs $DIR/$obj.if $DIR/$obj.pe >& $tmpfile
+
+echo "Ready to plot the pitch-epochs"
+pau
+sx make name $obj file $DIR/$obj.pe loc_x 0 loc_y 460 width 1000 height 150
+
+echo "Epochs(1-ESPS) acurately finds pitch eopchs of voiced region, but"
+echo "  frequently mislabels in unvoiced regions which should have no"
+echo "  pitch epochs."
+echo "We can mask out the mislabelled picth epochs in unvoiced regions by"
+echo "  using mask(1-ESPS) according to the voicing estimates previously"
+echo "  computed from the F0 estimator - get_f0(1-ESPS)"
+
+mask $DIR/$obj.f0 $DIR/$obj.pe $DIR/$obj.out
+
+echo "Ready to plot the new pitch epochs with unvioced regions masked out."
+pau
+sx kill name $obj file $DIR/$obj.pe
+sx make name $obj file $DIR/$obj.out loc_x 0 loc_y 460 width 1000 height 150
+
+echo "Let's take a closer look at estimated pitch epoch locations against"
+echo "   the approximated glottal waveflow."
+pau
+sx $obj bracket file $DIR/$obj.if start 1.05 end 1.15
+sx $obj bracket file $DIR/$obj.out start 1.05 end 1.15
+
+echo "Finally, with the speech signal and the estimated pitch epochs, we can"
+echo "  do pitch-synchronous LPC estimation by ps_ana(1-ESPS)."
+echo " "
+echo "Ps_ana(1-ESPS) optionally computes F0, voicing state, RMS "
+echo "  pitch-synchronously.  Final results of ps_ana(1-ESPS) are"
+echo "  uniformly resampled."
+echo "Again we use XIG interface to change the default parameter settings."
+echo "  Click on 'Done' if no change is desired."
+xeparam ps_ana -f $DIR/$obj.f0p $DIR/$obj.hpf $DIR/$obj.out $DIR/$obj.rc >& $tmpfile
+
+echo "Done with ps_ana(1-ESPS)"
+pau
+
+sx kill name $obj file $DIR/$obj.if
+sx kill name $obj file $DIR/$obj.out
+
+echo "Now we are ready to resynthsize our speech waveform"
+echo " "
+echo "From past experience, F0 and voicing state estimation from"
+echo "  fixed-frame analysis such as get_f0(1-ESPS) are better than those "
+echo "  from pitch-synchronous analysis like ps_ana(1-ESPS)."
+echo "  Let's merge F0 and voicing state estimates from get_f0(1-ESPS) and"
+echo "  RMS estimate from ps_ana(1-ESPS) in a file and use it as a "
+echo "  parameteric source for our synthesizer.  Merging can be done by"
+echo "  mergefea(1-ESPS)."
+echo " "
+rm -f $DIR/$obj.f0pp
+mergefea -f rms $DIR/$obj.f0p $DIR/$obj.f0pp
+mergefea -a -fprob_voice -fF0 $DIR/$obj.f0 $DIR/$obj.f0pp
+
+echo "Done with merging, now ready to synthesize using lp_syn(1-ESPS),"
+echo "  from the pitch-synchronously derived LPC estimates and "
+echo "  RMS values, and fixed-frame analysis results of F0 and"
+echo "  voicing state estimates."
+echo " "
+echo "Again we use XIG to change parameter settings if desired."
+pau
+xeparam lp_syn $DIR/$obj.rc $DIR/$obj.f0pp $DIR/$obj.syn >& $tmpfile
+
+echo "Done with synthesis, ready to plot"
+pau
+sx make name $obj file $DIR/$obj.syn loc_x 0 loc_y 310 width 1000 height 150
+
+echo "Now let's listen to the orignal and synthesized signals."
+echo "Here is the orignal"
+pau
+
+$play $in
+echo " "
+echo "Here is the synthesized version"
+pau
+$play $DIR/$obj.syn
+
+echo "So far we have showed ESPS LP synthesizer program in action"
+echo "We'll now see ESPS cascaded n-formant synthesizer"
+pau
+
+sx kill name $obj file $DIR/$obj.syn
+
+echo "Computing F0 and formants by formant(1-ESPS)..."
+formant -i0.005 -O $DIR $in
+
+echo "Done with formant computation, ready to resynthesize by formsy(1-ESPS);"
+echo "   formsy(1-ESPS) allows you to change F0 and formant characteristics "
+echo "   globally by its XIG interface.  It is also possible to"
+echo "   interactively modify F0 and formant tracks by mouse in xwaves."
+echo "   Formsy(1-ESPS) can then resynthesize from these new F0 and formant"
+echo "   tracks."
+
+xeparam formsy $DIR/$obj.f0 $DIR/$obj.fb $DIR/$obj.fsyn >& $tmpfile
+
+echo "Here is the resynthsized signal"
+pau
+
+sx make name $obj file $DIR/$obj.fsyn loc_x 0 loc_y 310 width 1000 height 150
+$play $DIR/$obj.fsyn
+
+echo "This concludes our speech analysis/synthesis example"
+pau
+sx kill
+sx quit
+
+rm -f $tmpfile
+rm -f $DIR/h20.filt $DIR/param$$ $DIR/$obj.cof $DIR/$obj.ds $DIR/$obj.f0
+rm -f $DIR/$obj.f0p $DIR/$obj.f0pp $DIR/$obj.fb $DIR/$obj.fb.sig $DIR/$obj.fsyn
+rm -f $DIR/$obj.f0p $DIR/$obj.hp $DIR/$obj.hpf $DIR/$obj.if $DIR/$obj.out
+rm -f $DIR/$obj.pe $DIR/$obj.pole $DIR/$obj.rc $DIR/$obj.syn $DIR/$obj.out
+rm -f $DIR/log$$
+
+if ($#argv < 2) then
+	rm -f $in 
+endif
+
+

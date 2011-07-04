@@ -1,0 +1,11 @@
+"waves+ INTRO"   MENU
+"DO DEMO"	 DEFAULT	do_demo	@DEMO_TEMP@ wintro
+"waves+ INTRO is ...." 	xtext -F wintro/help/README &
+"waves+ INTRO"  END
+
+# @(#)demo_menu.waves	1.3 2/5/93 ERL
+
+
+
+
+

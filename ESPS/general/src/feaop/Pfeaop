@@ -1,0 +1,11 @@
+# @(#)Pfeaop	1.1 7/1/93 ERL
+# default parameter file for feaop
+int	start ?= {1, 1}: "First record from each input file to process";
+int	nan ?= 0: "Number of records to process; 0 means till EOF";
+float   gain_real ?= 1;
+float   gain_imag ?= 0;
+string	in_field1 ?= "samples": "First input field name";
+string	in_field2 ?= "samples": "Second input field name";
+string  out_field ?= "input1_[op]_input2": "Output field name; - (hyphen) means same as second input";
+string  output_type ?= "default": "Output field type": {"DOUBLE", "FLOAT", "LONG", "SHORT", "BYTE", "DOUBLE_CPLX", "FLOAT_CPLX", "LONG_CPLX", "SHORT_CPLX", "BYTE_CPLX"};
+string  operation ?= "ADD": "operation to apply": {"ADD", "SUB", "MUL", "DIV", "PWR", "CPLX"};

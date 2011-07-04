@@ -1,0 +1,87 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)genelemen.1t	3.2 11/3/87 ESI
+.TH GEN_ELEMENT 1\-ESPS 11/3/87
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+gen_element \- give information about elements in a record of an ESPS file
+.SH "SYNOPSIS"
+.B gen_element
+[
+.B \-c
+] [
+.B \-f
+.I field_name
+[
+.B \-i
+.I item
+] [
+.I ESPS file
+]
+.SH DESCRIPTION
+.PP
+.I Gen_element
+gives information about elements in a record of an ESPS file.
+The record item name, its data type, starting element number, and
+size is printed on stdout in a tabular form.
+.PP
+The \fB\-c\fP, \fB\-f\fP, and the \fB\-i\fP options are only applicable if
+the input \fIESPS file\fP is a feature file.  See \fIfea_element\fP(1\-ESPS)
+for the meaning of these options.
+.SH EXAMPLES
+.PP
+% gen_element \fI/u/virdy/sps/test/sandyqb.ana\fP
+.TS
+tab(;);
+l l l l.
+Record Item;Type;Start Element;Size
+=
+Tag;LONG;0;1
+p_pulse_len;FLOAT;1;1
+raw_power;FLOAT;2;1
+lpc_power;FLOAT;3;1
+ref_coeff;FLOAT;4;10
+frame_len;SHORT;14;1
+.TE
+.PP
+% gen_element \fIpp.scbk\fP
+.TS
+tab(;);
+l l l l.
+Record Item;Type;Start Element;Size
+=
+final_dist;FLOAT;1;1
+cdwd_dist;FLOAT;2;64
+qtable->enc;FLOAT;66;64
+qtable->dec;FLOAT;130;64
+final_pop;FLOAT;194;64
+qtable->code;FLOAT;258;64
+.TE
+.PP
+% gen_element \fIfile.fea\fP
+.TS
+tab(;);
+l l l l.
+Name;Type;Size;Element
+=
+Tag;LONG;1;0
+alpha;DOUBLE;10;1
+beta;FLOAT;10;11
+foo;LONG;5;21
+zeta;SHORT;1;26
+.TE
+.PP
+% gen_element \fB\-c \-f\fP \fIfoo\fP \fB\-i\fP \fI3 file.fea\fP
+.br
+23
+.PP
+The following will cause \fIstats\fR(1\-ESPS) to operate on the third 
+item in the field alpha.
+.br
+.sp
+% stats \fB\-e\fP `gen_element \fB\-c \-f\fP \fIalpha\fP \fB\-i\fP \fI3 file.fea\fP` \fIfile.fea\fP
+.SH "SEE ALSO"
+fea_element(1\-ESPS), FEA(5\-ESPS),   FEA_ANA(5\-ESPS),
+FEA_VQ(5\-ESPS), FILT(5\-ESPS), SCBK(5\-ESPS),
+SD(5\-ESPS), SPEC(5\-ESPS), ESPS(5\-ESPS) 
+.SH "AUTHOR"
+Ajaipal S. Virdy

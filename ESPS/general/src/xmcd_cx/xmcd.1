@@ -1,0 +1,198 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)xmcd.1	1.1 2/6/89 ESI 
+.TH MCD 1\-ESPS 3/16/88
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+xmcd \- X filter for plot data in Unix GPS format and interactive plot/play program when used with plotsd
+.SH "SYNOPSIS"
+.B xmcd
+[
+.BI \-r " region"
+] [
+.B \-u
+] [
+.BI \-x " level"
+] [
+.BI \-R
+] [ 
+.BI \-P
+] [
+.BI \-p " play options"
+] [
+.I file.gps
+]
+.SH "DESCRIPTION"
+.PP
+.I Xmcd
+reads plot data in Unix Graphic Primitive String (GPS) format and displays
+the plot in an X window display.  The program emulates a subset of the functions
+of the Masscomp program of the same name.
+.I Xmcd
+is intended to be invoked in a
+.IR xterm (1)
+window and creates a new window for the plot.
+.PP
+.I Xmcd
+includes the function of the ESPS Masscomp \fIrange\fR program.   
+This feature supports the selection of a
+range from the plot, zooming in, zooming out, and calling the ESPS play
+program on sections of the plot.  See the \fB\-R\fR and the \fB\-P\fR
+options below.
+Normally
+these features are only used by the ESPS script that implements 
+\fIplotsd(1\-ESPS)\fR.
+.PP
+.I Xmcd
+uses the X window system calls, and remains active after drawing
+the plot.  This is so that the plot can be resized, refreshed, or moved.
+If you want to regain control of the shell window without removing the plot
+window, then be sure to run \fIxmcd\fR as a subprocess by putting a
+\fB&\fR after the command.
+.PP
+Output from the programs
+.IR mlplot (1\-ESPS)
+and
+.IR genplot (1\-ESPS)
+can be displayed with
+.I xmcd;
+files written by the Masscomp
+.IR plot (1G)
+program and the graphics editor
+.IR ged (1G)
+are also acceptable input.
+The ESPS programs
+.IR plotsd (1\-ESPS),
+.IR plotspec (1\-ESPS),
+.IR mlplot (1\-ESPS),
+and
+.IR genplot (1\-ESPS)
+use
+.I xmcd
+internally to implement their
+.B \-Tmcd
+option.
+.PP
+If
+.I file.gps
+is `\-' or is omitted, standard input is used.
+.SH OPTIONS
+.TP
+.BI \-r " region"
+Scale the plot so that graphing region number
+.I region
+just fits in the window.
+Valid values are 1\-25.
+.TP
+.B \-u
+Scale the plot so that the entire graphing universe
+just fits in the window.
+.PP
+The
+.B \-r
+and
+.B \-u
+options are mutually exclusive.
+The default behavior, in case neither is selected,
+is to scale the plot so that the actual plot just fits in the window.
+.TP
+.BI \-R
+Cause \fIxmcd\fR to go into \fIselect/range\fR mode, after drawing the plot.  
+This mode is used with some plot programs (\fIplotsd\fR(1\-ESPS)) and is
+called directly by the ESPS plot program.  
+When used this way, \fIxmcd\fR
+allows the user to select a range from a sampled data plot that is currently 
+displayed and to enter that range into the
+ESPS Common file.  
+It can also be used with \fIplotsd\fR and \fIplay\fR as an interactive
+plot/play program.
+.TP
+.BI \-P
+If the \fB\-P\fR option is used, then \fIxmcd\fR will call the
+\fIplay\fR program, instead of just saving the selected range
+when the middle button is pressed in \fIrange mode\fR.  This causes the
+selected range to by played (assuming of course, that your system has
+playback capability and the ESPS \fIplay\fR program has been correctly
+configured).  When \fIplay\fR returns, if the mouse has not been moved,
+pressing the middle button again will save the range into Common.
+If the mouse has moved, then the program simply remains in
+\fIrange mode\fR.
+.PP
+The ESPS Common file is updated whenever the plot is redrawn (zoom
+in or out), or when a segment is played.   This could be useful when
+running \fIplotsd/xmcd\fR in one window and another ESPS program that
+uses Common in another window.
+The top line of the display always tells what the mouse buttons will do
+in each mode.
+To exit at anytime, use the \fIquit\fR menu button.
+.TP
+.BI \-p " play options"
+This character string is passed to the \fIplay\fR program on its command
+line, each time \fIplay\fR is called.   Enclose the etire argument in
+quotes.
+.TP
+.BI \-x " level"
+Print debugging messages to standard error\-more messages at higher levels.
+The default is 0 (no messages).
+.PP 
+In most cases, these options are used by other ESPS programs and not
+used directly by user's.   See the \fIplotsd\fR(1\-ESPS) script for an
+example of the usage of this program.
+.SH "ESPS PARAMETERS"
+No ESPS parameter file is read.
+.SH ESPS COMMON
+The following items are read from the ESPS Common file:
+.IP
+.I "beginplot - integer"
+.IP
+This is the x-coordinate position at the origin of the graph.
+.sp
+.I "endplot - integer"
+.IP
+This is the x-coordinate position at the end point of the graph.
+.PP
+The following items are written into the ESPS Common file:
+.IP
+.I "start - integer"
+.IP
+The left point in the range selected.
+.sp
+.I "nan - integer"
+.IP
+The number of points in the selected range.
+.PP
+The ESPS Common file is updated everytime \fIplay\fR or \fIplotsd\fR is
+called by \fIrange\fR.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off" (though it would be pointless to do so when using
+this program).  The default ESPS Common file is
+.espscom in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.SH "ESPS HEADERS"
+.PP
+No ESPS file headers are read or written.
+.SH "ESPS PARAMETERS"
+.PP
+No parameter file is read.
+.SH "SEE ALSO"
+.PP
+plotsd(1\-ESPS), plotspec(1\-ESPS), mlplot(1\-ESPS), plotspec(1\-ESPS)
+.SH "FUTURE CHANGES"
+.PP
+Implement more of the GPS primitives and expand to a more general
+GPStool.
+.SH "DIAGNOSTICS"
+.PP
+.nf
+usage: xmcd [\-r region][\-u][-R][-P][-p][\-x level] [file.gps]
+xmcd: unexpected end of file.
+xmcd: can't open \fIfilename\fP: \fIreason\fP
+.SH "BUGS"
+.PP
+Only a minimal set of the GPS primitives is implemented.
+.SH "AUTHOR"
+Ajaipal S. Virdy

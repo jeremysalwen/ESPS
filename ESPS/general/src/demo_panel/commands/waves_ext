@@ -1,0 +1,2 @@
+# @(#)waves_ext	1.2 6/18/91 ERL - waves command script for waves extensibility demo
+waves make_panel name misc title "Miscellaneous buttons" icon_title Misc file wext.bmenu loc_x 270 loc_y 110

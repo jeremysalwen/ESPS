@@ -1,0 +1,5 @@
+"Display globals"  @displglob.WC
+
+"Write $HOME/.wave_pro.new"  get attributes global output $HOME/.wave_pro.new
+
+# @(#)globals.WM	1.4 1/6/93

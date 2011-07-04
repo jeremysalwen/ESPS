@@ -1,0 +1,36 @@
+%T Data Files in the Entropic Processing System
+%J 
+%I ETM-S-86-13
+
+%A John Shore
+%A Alan Parker
+%T Introduction to the Entropic Signal Processing System
+%J 
+%K ESPS introduction
+
+%T Entropic Signal Processing System Version 3.0 User's Manual
+%K user manual
+
+%T Entropic Signal Processing System Programming Guidelines
+%J 
+%I ETM-S-86-14 
+%K ESPS programming guide
+
+%T ESPS APPLICATIONS NOTE: File Headers and Record Keeping in ESPS
+%J
+%K ESPS record keeping
+
+%T ESPS APPLICATIONS NOTE: Filtering Sampled Data
+%J 
+%K ESPS filtering
+
+%T Guidelines for Implementing ESPS Feature File Subtypes
+%J
+%I ETM-S-86-25
+%K FEA files
+
+%T Parameter and Common Files in ESPS
+%J 
+%I ETM-S-86-12:jtb 1.2 11/12/86
+%K ESPS parameters
+

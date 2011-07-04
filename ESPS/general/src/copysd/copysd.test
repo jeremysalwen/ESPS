@@ -1,0 +1,46 @@
+#! /bin/sh
+# @(#)copysd.test	3.5 1/18/97 ESI
+# this is a test script for copysd(1-ESPS)
+# normal output for debug=3 is in file test.out
+#debug values can be up to 3
+debug=3
+echo "MAKE A FEW SD FILES"
+echo "testsd -p9000 t1.sd"
+testsd -p9000 t1.sd
+echo "testsd -p128 t2.sd"
+testsd -p128 t2.sd
+echo "testsd -p3200 t3.sd"
+testsd -p3200 t3.sd
+echo "DO SOME COPIES"
+echo "copysd -x$debug -p100:+1500 t1.sd t4.sd"
+copysd -x$debug -p100:+1500 t1.sd t4.sd
+echo "cat t4.sd | copysd -x$debug t1.sd - t2.sd t3.sd - > t5.sd"
+cat t4.sd | copysd -x$debug t1.sd - t2.sd t3.sd - > t5.sd
+echo "AFTER SCRIPT COMPLETES, RUN psps -a ON t5.sd AND SEE IF IT MAKES SENSE"
+echo "TOTAL NUMBER OF RECORDS SHOULD BE 13829"
+echo "NOW TEST WITH INPUT OUT OF RANGE"
+echo "copysd -x$debug -p1:50 t1.sd t4.sd"
+copysd -x$debug -p1:50 t1.sd t4.sd
+#this one should give a warning both on the range and on trying to read
+echo "copysd -x$debug -p100:+8192 t1.sd t4.sd t6.sd"
+copysd -x$debug -p100:+8192 t1.sd t4.sd t6.sd
+#this one should give a warning just on the read (since stdin is a pipe)
+echo "cat t4.sd | copysd -x$debug -p100:+8192 t1.sd - t6.sd"
+cat t4.sd | copysd -x$debug -p100:+8192 t1.sd - t6.sd
+#this one also gives both warnings since stdin is not a pipe 
+echo "copysd -x$debug -p100:+8192 t1.sd - t6.sd < t4.sd"
+copysd -x$debug -p100:+8192 t1.sd - t6.sd < t4.sd
+echo "TEST TYPE CONVERSION, SCALING, AND CLIPPING"
+echo "echo '1 2 40000 -55000 2 1' | testsd -a- - | copysd -x$debug -s2 -dshort -p2:5 - t7.sd"
+echo "1 2 40000 -55000 2 1" | testsd -a- - | copysd -x$debug -s2 -dshort -p2:5 - t7.sd
+echo "DO A COPY BASED ON ESPS COMMON"
+USE_ESPS_COMMON=on; export USE_ESPS_COMMON
+echo "stats -r100:109 t1.sd"
+stats -r100:109 t1.sd
+echo "copysd t8.sd"
+copysd t8.sd
+echo "TEST SCALE AND ADD"
+echo "  should produce -2, 0, 2, 4"
+echo "0 1 2 3" | testsd -a- - | copysd -s2 -a-2 - -| psps -H -
+echo " "
+echo "DON'T FORGET TO CLEAN UP SD FILES"

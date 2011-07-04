@@ -1,0 +1,8 @@
+#!/bin/sh  
+# @(#)backplay	1.1 7/25/91 ERL
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+files=files/audio
+
+ereverse $files/$1.sd - | play -q -
+

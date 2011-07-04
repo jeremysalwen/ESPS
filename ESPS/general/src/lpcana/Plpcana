@@ -1,0 +1,9 @@
+#@(#)Plpcana	3.4 1/3/93 ESI
+#Default params file for lpcana
+int lpc_filter_order ?= 10: "analysis filter order";
+int lpc_frame_size ?= 160: "nominal frame size";
+int minimum_pulse_length ?= 20: "smallest pulse duration";
+int start ?= 1: "starting point";
+int nan ?= 480: "number of points";
+string method ?= "mburg": "analysis method";
+

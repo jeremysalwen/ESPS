@@ -1,0 +1,25 @@
+waves make_panel name misc columns 4 title "waves+ INTRO Demo" icon_title introdemo file controls.WM loc_x 45 loc_y 430
+
+#strip off features that require files to be written
+delete_item menu wave name "spectrogram (W.B.)"
+delete_item menu wave name "spectrogram (N.B.)"
+delete_item  name "save segment in file"
+delete_item  name "delete segment"
+delete_item  name "insert file"
+delete_item  name "Button Modes"
+
+# Strip off play commands
+delete_item name "play between marks"
+delete_item name "play window contents"
+delete_item name "play entire file"
+delete_item name "play to end of file"
+
+#strip miscellaneous stuff
+delete_item name "page ahead"
+delete_item name "page back"
+
+add_espst menu wave name "Show segment data" command epsps -H
+add_espst menu spect name "Show segment data" command epsps -H
+return
+
+# @(#)xw_init.WC	1.5 3/16/92 ERL

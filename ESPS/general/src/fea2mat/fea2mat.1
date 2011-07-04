@@ -1,0 +1,55 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)fea2mat.1	1.1 7/12/91 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH FEA2MAT 1\-ESPS 7/10/91
+.sh NAME
+.nf
+fea2mat \- convert field in FEA file to MATLAB .mat file
+.SH SYNOPSIS
+.B fea2mat
+[
+.BI \-r " range"
+] [
+.BI \-x " debug_level"
+] 
+.BI \-f " field_name"
+.I infile.fea outfile.mat
+.SH DESCRIPTION
+This program reads data from the numeric field \fIfield_name\fP in the FEA file
+\fIinfile.fea\fP and writes it to the file \fIoutfile.mat\fP in a format which
+Matlab can read. 
+.PP
+The field \fIfield_name\fP can be 
+either scalar, vector, or matrix (rank = 0, 1, or 2). If it is a scalar or vector,
+data is read from records specified through \fIrange\fP. The Matlab variable 
+is then a matrix in which row \fIi\fP contains the values of \fIfield_name\fP from 
+record \fIi\fP in \fIinfile.fea\fP.
+If \fIfield_name\fP is a matrix, a single record must be specified from which the data
+is to be read.  
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-x " debug_level" "\fR [0]\fP"
+Increasing values provide more detailed commentary on program's progress.
+.TP
+.BI \-r " range" 
+Select a range of records to process. The default is to process all 
+the records in the file.
+.TP
+.BI \-f " field_name" 
+Name of field in the input file from which data is read - this field
+must be provided.
+.SH ESPS PARAMETERS
+.PP
+No parameter file is read.
+.SH ESPS COMMON
+.PP
+No common processing is performed.
+.SH ESPS HEADERS
+Output file is not an ESPS file.
+.SH "SEE ALSO"
+mat2fea(1\-ESPS), FEA(5\-ESPS)
+.SH AUTHOR
+Program and man page by Bill Byrne.
+

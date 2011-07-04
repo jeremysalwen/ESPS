@@ -1,0 +1,471 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)sgram.1	1.14 3/28/97 ESI
+.TH SGRAM 1\-ESPS 3/28/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+sgram \- compute sequence of FFTs suitable for display as a spectrogram
+.SH "SYNOPSIS"
+.B sgram 
+[
+.BI \-d " data_window"
+] [
+.BI \-m " method"
+] [
+.BI \-o " fft_order"
+] [
+.BI \-p " range"
+] [
+.BI \-s " range"
+] [
+.BI \-w " window_len"
+] [
+.BI \-x " debug_level"
+] [
+.BI \-E " pre_emphasis"
+] [
+.BI \-P " param_file"
+] [
+.BI \-S " step_size"
+] [
+.BI \-T " desired_frames"
+] [
+.B \-z
+] 
+.I " input.sd output.fspec"
+.SH "DESCRIPTION"
+.PP
+.I Sgram
+reads an ESPS sampled data file, preemphasizes it, and produces an
+FFT-based ESPS FEA_SPEC file that is suitable for displaying as a
+spectrogram.  (See \fIplotsgram\fP(1\-\s-1ESPS\s+1).)
+.PP
+By default (specifying no options) or by specifying
+\fIwb\fR for the \fB\-m\fR option, \fIsgram\fR produces a FEA_SPEC
+file that simulates the analysis done to produce a wide-band speech
+spectrogram.  Alternatively, by specifying \fInb\fR for the \fB\-m\fR
+option, a FEA_SPEC file that simulates the analysis for a narrow-band
+spectrogram is computed.  The \fB\-m\fP option defines different
+defaults for the other options.  By specifying any of the other
+options, in addition to \fB\-m\fP, the default values are overridden
+by the specified option values.  This allows the user to alter the
+basic display to highlight facets of the spectrogram that are of
+particular interest.
+.PP
+The output FEA_SPEC file has freq_format SPFMT_SYM_EDGE, spec_type
+SPTYP_DB, and frame_meth SPFRM_FIXED.  To compress space, the output 
+data type for re_spec_val is BYTE (see FEA_SPEC(5\-\s-1ESPS\s+1)).  
+.PP
+The number of output frames is the minimum sufficient to cover a
+specified range of points (see \fB-p\fP and \fB-s\fP options), given
+\fIwindow_len\fP and \fIstep_size\fP.  In the \fB-T\fP option is used,
+\fIsgram\fP chooses \fIstep_size\fP so that the number of output
+frames is close to \fIdesired_frames\fP, which provides a convenient
+means of varying the time-domain resolution in terms that relate to
+the physical size of a resulting display via \fIxwaves\fP+ (see the
+description under \fB-T\fP below).  Whether or not \fB-T\fP is used,
+the last frame analyzed may overrun the range, in which case a warning
+is printed if the \fB-x\fP option is used.  If a frame overruns the
+end of a file, it is filled out with zeros. Neither complex nor
+multichannel sampled data files are supported yet.
+.PP
+If "\-" is specified for the input file, standard input is used.  If
+"\-" is specified for the output file, standard output is used.
+.SH OPTIONS
+.PP
+.TP
+.BI \-d " data_window" "\fR [(see \fB\-m\fR)]"
+The data window applied to the data before the computation of the
+power spectrogram.  If the option is omitted, the parameter file is
+consulted, and if no value is found there, the default implied by
+.I method
+(see
+.BR \-m )
+is used.  Possible window types include RECT (rectangular), HAMMING,
+HANNING, COS4, and TRIANG (triangular).  See
+.IR window (3-ESPSsp)
+for a complete list of supported data windows.
+.TP
+.BI \-m " method \fR[wb]\fP"
+The basic method for spectrogram computation.
+There are two possible values:
+.I wb
+for wide band and
+.I nb
+for narrow band.
+By specifying
+.I wb,
+the following default values are set:
+preemphasis = .94, fft_order = 8, window_len = 8 ms, step_size = 2 ms,
+and data_window = HANNING.
+By specifying
+.I nb,
+the following default values are set: preemphasis = .94, fft_order =
+9, window_len = 40 ms, step_size = 2 ms, and data_window = HANNING.
+If the option is omitted, the parameter file is consulted, and if no
+value is found there, the default
+.I wb
+is used.  If the parameter file contains a value for \fImethod\fP, 
+corresponding default values are determined for the other parameters
+\- in this case, these defaults can be overriden by command line
+options but not by other parameter file values (there is one exception
+\- see the discussion under ESPS PARAMETERS).  
+.TP
+.BI \-o " fft_order" "\fR [(see \fB\-m\fR)]"
+The FFT length used in computing the power spectrum is 2 to the power
+.I fft_order.
+If the number of data points in each frame
+.RI ( window_len )
+is less than the transform length, the frame is padded with zeros, and
+a warning is given if the \fB-x\fP option is used.  If the number of
+data points per frame exceeds the transform length, each frame is
+effectively truncated to the transform length, and a warning is given
+if the \fB-x\fP is used.  The number of frequencies in the output
+spectral records is 1 more than half the transform length.  If this
+option is not specified, the parameter file is consulted, and if no
+value is found there, the default implied by
+.I method
+(see
+.BR \-m )
+is used.
+.TP
+.BI \-p " first" : last "\fR [1:(last in file)]"
+.TP
+.BI \-p " first" :+ incr
+The range of points in the input file over which the spectrogram
+values are to be computed.  In the first form, a pair of unsigned
+integers gives the first and last points of the range, counting from 1
+for the first point in the file.  If
+.I first
+is omitted, 1 is used.  If 
+.I last 
+is omitted, the range extends to the end of the file.  The second form
+is equivalent to the first with
+.I "last = first + incr".
+This option should not be specified if
+.B \-s
+is specified.  If neither option is specified, the range is determined
+by the parameters
+.I start
+and
+.I nan
+as read from the parameter file.
+If either parameter is missing from the parameter file, it is determined
+by default.
+.TP
+.BI \-s " start_time" : end_time "\fR [0.0:(end of file)]
+.TP
+.BI \-s " start_time" :+ duration
+Determines the range in seconds in the input file over which the
+spectrogram values are to be computed.  In the first form, a pair of
+real numbers gives the starting and ending times of the range.  The
+correspondence between samples and times is determined by two
+quantities: the starting time of the file and the interval between
+samples.  The former is given by the generic header item
+.I start_time
+in the input file, or 0.0 if the header item is not present.  The
+latter is the reciprocal of the sample frequency
+.I sf
+in the type-dependent part of the SD header.
+If
+.I start_time
+is omitted, the starting time of the file is used.  If 
+.I end_time 
+is omitted, the range extends through the end of the file.
+The second form of the option is equivalent to the first with 
+.I "end = start + duration".
+This option should not be specified if
+.B \-p
+is specified.
+If neither option is specified,
+the range is determined by the parameters
+.I start
+and
+.I nan,
+as discussed above for
+.B \-p.
+.TP
+.BI \-w " window_len" "\fR [(see \fB\-m\fR)]"
+The duration of data in milliseconds over which the the power spectrum
+is computed for each column of the spectrogram. The analysis bandwidth
+is inversely proportional to this value.  If this option is not
+specified, the parameter file is consulted, and if no value is found
+there, the default implied by
+.I method
+(see
+.BR \-m )
+is used.
+.TP
+.BI \-x " debug_level"
+A positive value
+causes debugging output to be printed on the standard error output.
+Larger values give more output.
+The default is 0, for no output.
+.TP
+.BI \-E " pre_emphasis" "\fR [(see \fB\-m\fR)]"
+The coefficient
+.I A
+in the preemphasis filter
+.RI "1 \- " A/z.
+This filter is applied to the sampled data before computing the power
+spectrum.  A value of 1.0 provides a 6 dB/octave boost to the high
+frequencies; a value of 0.0 provides no boost.  If this option is not
+specified, the parameter
+.I pre_emphasis
+is read from the parameter file, and if no value is found there,
+the default value implied by
+.I method
+(see
+.BR \-m)
+is used.
+.TP
+.BI \-P " param_file"
+Use the parameter file
+.I param_file
+rather than the default, which is
+.I params.
+.TP
+.BI \-S " step_size" "\fR [(see \fB\-m\fR and \fB-T\fP)]"
+The time step in milliseconds between columns in the spectrogram.  The
+time resolution and horizontal magnification are affected by this
+parameter.  If this option is not specified, the parameter file file
+is consulted, and if no value is found there, the default value
+implied by
+.I method
+(see
+.BR \-m)
+is used.
+.TP
+.BI \-T " desired_frames"
+Specifies that the number of output records (number of frames
+computed) be close to \fIdesired_frames\fP.  If this option is used,
+\fIsgram\fP tries to choose a value for \fIstep_size\fP that will
+yield \fIdesired_frames\fP of output when \fIrange\fP points are
+anaylzed.  (Since the number of data points shifted for each frame is
+an integer, exactly \fIdesired_frames\fP of output will happen only in
+special cases.)  Use of this option overrides any specification for
+\fIstep_size\fP resulting from defaults, from \fB-m\fP, or from
+\fB-S\fP.  The \fB-T\fP option yields a useful alternative to zooming-in 
+or bracketing the markers in an \fIxwaves\fP+ spectrogram display.  
+For example, suppose an existing spectrogram display is about 400 
+pixels wide, and suppose that a new item is added to waveform menus by 
+means of the command:
+.nf
+
+   add_espsf name "400-Frame Spectrogram (W.B.)" command sgram -m wb -T 400
+
+.fi
+If a small range is marked on an existing spectrogram, the "bracket
+markers" operation can be used to zoom in on the marked region
+(assuming that horizontal rescaling is enabled).  This results in the
+existing spectrogram being re-displayed with the data stretched out
+(with or without linear interpolation).  Alternatively, if the
+"400-Frame Spectrogram (W.B.)" item is invoked from the corresponding
+waveform window, a new spectrogram will be computed and displayed.
+This spectrogram will be about 400 pixels wide, with each pixel-column
+corresponding to one frame (one FFT).  In effect, this is a "bracket
+markers" operation in which the data is recomputed to have finer
+resolution in the time domain.
+.TP
+.B \-z
+Specifies that \fIsgram\fP should issue warning messages regarding
+partially filled buffers, zero power in spectra, etc.  Without the
+\fB-z\fP option, it operate silently and does not issue warnings.
+
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file is not required to be present, as there are 
+default parameter values that apply.  If the parameter file 
+does exist, the following parameters are read:
+.TP
+.I "method \- string"
+The spectrogram method to use.  This parameter is not read if the
+\fB-m\fP option is used.  If the parameter is present and is read, it
+determines the values for all other parameters as discussed under the
+\fB-m\fP option.  The other parameters are not read subsequently
+(i.e., their values are fully determined by \fImethod\fP) unless
+\fImethod\fP is "other".  In this special case, defaults for the other
+parameters are those of the "wb" method, but they can be superceded by
+the values of other parameters in the file.  The purpose of this
+exception is to provide the following behavior when \fIsgram\fP is
+called with the system default parameter file by means of
+\fIeparam\fP(1\-\s-1ESPS\s+1): The user is prompted for \fImethod\fP.
+If either 
+"wb" or "nb" is specified, processing proceeds with the named method.  If 
+"other" is specified, the user is prompted for all of the needed
+parameters.  
+.TP
+.I "data_window \- string"
+The data window to apply to the data.  This parameter is not read if
+the \fB-d\fP option is specified or if \fImethod\fP is in the 
+parameter file and does not have the value "other". 
+Acceptable values include "RECT" for a rectangular window,
+"HAMMING" for Hamming, "HANNING" for Hanning, and "TRIANG", for triangular;
+see the
+.IR window (3-ESPSsp)
+manual page for the complete list.
+.TP
+.I "fft_order \- integer"
+.IP
+The order of the FFT \- the transform length is 2 to the power
+.I fft_order.
+This parameter is not read if the \fB-o\fP is specified of if
+\fImethod\fP is in the file and does not have the value "other".
+.TP
+.I "start \- integer"
+.IP
+The first point in the input sampled data file that is processed.
+A value of 1 denotes the first sample in the file.
+This parameter is not read if the
+.B \-p
+or
+.B \-s
+option is specified.
+If it is not in the parameter file, and neither option is specified,
+a default value of 1 is used.
+.TP
+.I "nan \- integer"
+.IP
+The total number of data points to process.
+If
+.I nan
+is 0, processing continues through the end of the file.
+This parameter is not read if the
+.B \-p
+or
+.B \-s
+option is specified.
+If it is not in the parameter file, and neither option is specified,
+a default value of 0 is used.
+.TP
+.I "window_len \- float"
+.IP
+The duration in milliseconds of each frame.  
+This parameter not read if the \fB-w\fP option is specified of if
+\fImethod\fP is in the file and does not have the value "other".
+.TP
+.I "pre_emphasis \- float"
+The coefficient in the preemphasis filter (see
+.B \-E
+in the Options section).  
+This parameter not read if the \fB-E\fP option is specified of if
+\fImethod\fP is in the file and does not have the value "other".
+.TP
+.I "desired_frames \- int"
+The desired number of output frames (see the description of the
+\fB-T\fP option).  A value of 0 means that the step size is to be
+determined from other considerations (e.g., via \fImethod\fP and 
+\fIstep_size\fP).  This parameter is not read if the \fB-T\fP 
+option is specified.  
+.TP
+.I "step_size \- float"
+Initial points of consecutive frames differ by this number of
+milliseconds.  This parameter not read if the \fB-S\fP or \fB-T\fP
+options are specified, if \fImethod\fP is in the parameter file and
+does not have the value "other", or if desired_frames is in the
+parameter file and has a non-zero value.
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.SH ESPS COMMON
+.PP
+ESPS Common is read provided that Common processing is enabled and 
+that the 
+.I filename
+entry in Common matches 
+.I input.sd.
+In that case
+parameters present in Common override values from the parameter file
+and may in turn be overridden by command line options.
+That is, in the sections on ESPS Parameters and Options,
+parameters described as being found in the parameter file
+may instead be found in the Common file if Common processing is enabled.
+.PP
+If Common processing is enabled and if
+.I output.fspec
+is not standard output, the Common parameters 
+.I filename, prog, start,
+and
+.I nan
+are written to Common, where 
+.I filename
+is set equal to
+.I input.sd.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overridden by setting
+the environment variable ESPSCOM to the desired path.  User feedback from
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.SH ESPS HEADERS
+.PP
+.I Sgram
+reads the value of 
+.I common.type
+and the generic header item
+.I start_time
+from the input file.
+.PP
+Relevant fields in the type-dependent portion of the 
+output file header are filled appropriately.
+The standard generic header items required for FEA_SPEC files
+are filled in (see FEA_SPEC(5-ESPS) for details).
+The generic header item \fIfft_order\fP is set to the 
+order of the FFT, the item 
+.I "fft_length"
+is set to the length of the FFT,
+the item
+.I "step"
+is set to the step size
+(but measured in samples rather than milliseconds (see \fB\-S\fP), 
+and the item \fIsgram_method\fP is set to the spectrogram method.  
+The value "other" is used for \fIsgram_method\fP if there are any
+changes from the two standard methods "wb" and "nb".  
+The CODED generic header item
+.I window_type
+is set according to to the window type.
+.PP
+The generic header item \fIstart_time\fP (type DOUBLE) is written in
+the output file.  The value written is computed by taking the
+\fIstart_time\fP value from the header of the input file (or zero, if
+such a header item doesn't exist) and adding to it the offset time
+(from the beginning of the input file) of the first point processed
+plus one half of \fIframe_len\fP (thus, \fIstart_time\fP is middle of
+the first frame, which is appropriate since the output data represent
+the entire frame; without this adjustment for \fIframe_len\fP,
+\fIwaves\fP+ displays would not line up properly.  
+.PP
+If the \fB-T\fP option is used (or if a non-zero \fIdesired_frames\fP 
+value is obtained from the parameter file), the generic header item
+\fIdesired_frames\fP is written to the output file.  
+.PP
+The generic header item \fIrecord_freq\fP (type DOUBLE) is written in
+the output file.  The value is the number of output records per second
+of input data.
+.PP
+The preemphasis filter coefficient is recorded in a header item
+.I pre_emphasis.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIplotsgram\fP(1\-\s-1ESPS\s+1), \fIfft\fP(1\-\s-1ESPS\s+1), \fIme_sgram\fP(1\-\s-1ESPS\s+1),
+\fIimage\fP(1\-\s-1ESPS\s+1), \fIdither\fP(1\-\s-1ESPS\s+1), \fIrefcof\fP(1\-\s-1ESPS\s+1),
+\fIme_spec\fP(1\-\s-1ESPS\s+1), \fIfilter\fP(1\-\s-1ESPS\s+1), \fIwindow\fP(3\-\s-1ESPS\s+1),
+FEA_SPEC(5\-\s-1ESPS\s+1), FEA_SD(5\-\s-1ESPS\s+1)
+.fi
+.SH "BUGS"
+.PP
+Like other ESPS programs, \fIsgram\fP stops processing when the
+analysis window of a particular frame extends past the upper limit of
+the range (see the discussion about number of frames in
+"DESCRIPTION").  As a result, spectrograms computed from \fIwaves\fP+
+may end noticeably before the end of the marked segment for cases in
+which the analysis window is long (e.g., narrow-band spectrograms).
+The workaround is to mark a larger segment before calling for the
+spectrogram.  This will be fixed in a later release.  
+.SH "AUTHOR"
+.PP
+David Burton, Rod Johnson, John Shore. 

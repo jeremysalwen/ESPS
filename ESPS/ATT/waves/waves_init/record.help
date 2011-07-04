@@ -1,0 +1,60 @@
+You will only need to use these menus if you have purchased ETSM (an
+optional waves+ add-on product for time scale modified playback) or if
+you are using a third party DSP board (Ariel DSP 32C, LSI C30, or
+Townshend DATLink) for playback and/or recording.  If you are using
+native hardware for playback and recording, you will not need to use
+these menus.  
+
+Playback on native hardware should work automatically without your
+having to make any changes to the xwaves configuration.  The internal
+play code in xwaves works automatically on all architectures except
+for DEC Alpha, and on DEC Alpha we have set the .wave_pro file up
+properly to use the external play program decplay.  See Chapter "Using
+audio" of the waves+ Manual for more details on controlling playback.
+
+To record files using native hardware, use EnSig's Record tool, or the
+ESPS recording program for your architecture.  In general we recommend
+that you record files using EnSig's Record tool, a graphical user
+interface that allows you to record files on all architectures.  The
+Record tool uses the native workstation hardware.
+
+
+TIME SCALE MODIFICATION (ETSM PLAY)
+===================================
+Allows you to add TSM playback to the waveform menus and to add the
+TSM toolbar creator to waveform menus.  When right moused, a drop down
+menu is displayed from which you can make your selection.  Note that
+you must have a license key for ETSM installed to use time scale
+modification. 
+
+PLAY (3rd PARTY PROGRAMS)
+=========================
+Allows you to set the third party DSP board to use for playback: Ariel
+DSP 32C, LSI C30, or Townshend DATLink.  Note that Entropic no longer 
+supports external DSP boards;  you must contact the vendor for drivers
+or updated play programs for these boards.  Note also that these play
+programs will only work on the files they supported in the past, and
+will not work on certain new file types that ESPS/waves+ now supports,
+such as Esignal and PC-WAV files.  
+
+When right moused a drop down menu is displayed from which you may
+select your play program. Effectively the xwaves symbol play_prog is
+set. Subsequent calls to play functions will use this program.
+
+RECORD (3rd PARTY PROGRAMS)
+===========================
+Allows you to set the third party DSP board to use for recording:
+Ariel DSP 32C, LSI C30, or Townshend DATLink.   Note that Entropic no
+longer supports external DSP boards;  you must contact the vendor for
+drivers or updated recording programs for these boards.
+
+When right moused, a drop down menu is displayed from which you can
+select your record program.  Selections are provided for both 
+mono- and stereo-recording on the different boards and with various 
+sample rates.  After you select a recording program from the xwaves
+Record panel, a button panel pops up. This panel contains two buttons:
+one to start recording and one to stop recording.  After you have
+stopped recording, the recorded signal is displayed in xwaves. 
+
+# @(#)record.help	1.4 9/4/98 ERL
+

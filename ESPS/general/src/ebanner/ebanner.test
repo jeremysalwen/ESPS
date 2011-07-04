@@ -1,0 +1,21 @@
+#! /bin/sh 
+# test script for ebanner
+# @(#)ebanner.test	1.1 6/5/93 ERL
+
+echo "hello world" > ebanner.hw
+echo "  ebanner  " > ebanner.eb
+
+ebanner -r 16000 -l .6 -f fixedwidthfonts/cour.r.24 ebanner.eb eb.sd
+
+EBANNER_FONTS=./fixedwidthfonts
+export EBANNER_FONTS
+
+ebanner -r 16000 -l .1 -h .5 ebanner.hw hw.sd
+
+addsd hw.sd eb.sd ebanner.sd
+
+sgram ebanner.sd ebanner.fspec
+
+xwaves ebanner.sd ebanner.fspec 
+rm ebanner.hw ebanner.eb eb.sd hw.sd ebanner.sd ebanner.fspec
+

@@ -1,0 +1,53 @@
+Toolbars are view-specific panels with buttons that invoke operations
+on the data view.  It is common (but not necessary) for the buttons to
+provide convenient aliases for existing menu operations; they may also
+invoke operations for which there are no corresponding menu items.  
+
+Since toolbars are view-specific, they are usually created by invoking
+a toolbar-creation menu operation from the view.  This toolbar panel
+(the one from which this help file was invoked) provides one means for
+adding "toolbar creators" to menus.  When these creators are invoked 
+(from a view menu), a toolbar of the desired type is created for the
+view corresponding to the menu.  
+
+For example, if you select "Zoom and scroll" from the "Add toolbar
+creator to menus", a toolbar itself will NOT appear.  Instead, a new
+item "Create zoom/scroll toolbar" will appear on all view
+menus; if you then invoke this item from any such menu, a toolbar will
+then appear with six buttons that invoke operations on the
+corresponding view (the file name is shown in the window title bar).
+
+Toolbars are implemented by exploiting waves+ extension mechanisms for
+adding operators (add_op) and button panels (make_panel); that is,
+toolbars are not built in to waves+.
+
+The toolbar creators implemented from this panel are intended to
+provide useful toolbars as well as examples that can be modified for
+your own use.  To see the menu file used to create this panel (a
+starting point to study the examples), select "Display menu file for
+this panel..." from the "Help" menu.  For example, you can see from
+this file that all of the work to create the zoom/scroll toolbar is
+done by the script $ESPS_BASE/bin/make_toolbar2.sh.  After some
+standard arguments (panel name, object name, etc.), this script takes
+a set of argument pairs giving the label for the toolbar button and
+the corresponding waves+ view operation.
+
+The next three examples also yield toolbars with buttons that are just
+aliases for various menu entries; in these cases, however, the button
+label is the same as the operation name.  The work in these cases is
+done by the script $ESPS_BASE/bin/make_toolbar.sh -- this is like
+make_toolbar2.sh except that no names are given for the button labels
+(the operation name is used).
+
+The next example ("Edit (copy/cut/paste)") doesn't use a general (and
+reusable) script -- $ESPS_BASE/bin/edit_bar.sh is an example in which
+the tool bar is "hand crafted".  Please note that, like other file
+editing operations, this tool bar does not work with
+partially-buffered signals
+
+The final example ("Output segment stats") is one in which the toolbar
+button doesn't correspond to to an existing menu operation.  In
+$ESPS_BASE/bin/edit_bar.sh we define an add_op (out_stats) that
+doesn't appear on any menu, and we bind it to the toolbar button.
+
+# @(#)toolbars.help	1.3 7/6/93

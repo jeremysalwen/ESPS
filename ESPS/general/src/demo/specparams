@@ -1,0 +1,7 @@
+# @(#)specparams	1.1 6/12/91 ERL - params file for me_spec in specdemo
+string spec_param_field = "spec_param": "Field containing spectral parameters";
+string spec_rep = "RC": "Spectral parameter type";
+string power_field = "raw_power": "Field containing total spectral power";
+string samp_freq_name = "src_sf": "Field containing sampling frequency";
+
+

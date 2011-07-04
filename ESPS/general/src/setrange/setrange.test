@@ -1,0 +1,19 @@
+#! /bin/sh
+# @(#)setrange.test	1.3 3/3/89 ESI
+# test script for setrange
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+ESPSCOM=./common.test
+export ESPSCOM
+
+testsd -r2533 -s2 test.sd
+echo "should show range start = 1, nan = 5066"
+setrange -s0: test.sd
+echo "should show range start = 1267, nan = 2534"
+setrange -s.5:+1.0 test.sd
+echo "should show range from start = 1267, nan = 1268"
+setrange -s.5:1.0 test.sd
+echo "should show range from start = 1267, nan = 1001"
+setrange -p1267:+1000 test.sd
+echo "check the contents of common:"
+cat common.test

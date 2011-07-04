@@ -1,0 +1,146 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)win_filt.1	1.6 9/1/98 ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH  WIN_FILT 1\-ESPS 9/1/98
+.SH NAME
+
+.nf
+win_filt \- Designs a FIR filter using Kaiser Windowing
+.fi
+.SH SYNOPSIS
+.B
+win_filt
+.BI \-P " param_file"
+[
+.BI \-x " debug_level"
+]
+file.filter
+.SH DESCRIPTION
+The program \fIwin_filt\fR designs a linear-phase finite-impulse response
+(FIR) filter with its specifications defined in the parameter file 
+\fIparam_file\fR.  The filter coefficients are saved in the output file
+\fIfile.filter\fR.  If \fIfile.filter\fR is replaced by "-", the 
+standard output is written.
+.PP
+The design method is based on the Kaiser Window -- a \fIsinc\fR function
+representing the ideal response is multiplied by a Kaiser window to obtain a
+finite length filter.  Type I (symmetric and odd) and type II (symmetric
+and even) multiband filter design are supported.
+.PP
+Also see the shell script \fIxfir_filt(1-ESPS)\fR that is a cover
+script for this and other FIR filter design program.  
+.PP
+Use \fIfiltspec(1-ESPS)\fR to compute the actual filter response; use
+\fIplotspec(1-ESPS)\fR to view the response.  For example, 
+.PP
+\fIfiltspec file.filter - | plotspec -\fR
+.PP
+The number of output filter taps is determined automatically by 
+\fIwin_filt\fR in order to meet the design specification.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-P " param_file \fR[params]\fP"
+uses the parameter file 
+.I param_file
+rather than the default, which is \fIparams\fP. 
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If 
+.I debug_level
+is positive,
+.I win_filt
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the  
+.I debug_level
+increases.  If \fIdebug_level\fP is 0 (the default), no messages are
+printed.  
+.SH ESPS PARAMETERS
+The following parameters are read from the \fIparam_file\fR.
+.TP
+.I samp_freq - float
+Specifies the sampling frequency of the filter.  This number is used
+for scaling the values of \fIband_edge[i]\fR parameters.
+.TP
+.I nbands - int
+Specifies the number of bands.  For example, for a bandpass filter, 
+\fInbands\fR is \fI3\fR.
+.TP
+.I band_edge[i] - float
+Specifies the \fIi\fRth cutoff frequency in Hz.  There are \fInbands+1\fR
+\fIband_edge[i]\fR parameters.  The first \fIband_edge1\fR must
+start with 0, and the last frequency must end with the Nyquist rate.
+The cutoff frequency is in the center of the region specified by
+\fItrans_band\fR.
+For example, for a 8KHz bandpass filter with stopband of 0 to 800 Hz
+and 2200 to 4000 Hz, and passband of 1200 to 1800 Hz, 
+the parameter \fIBand_edge1\fR is 0, \fIband_edge2\fR is 1000,
+\fIband_edge3\fR is 2000, \fIband_edge4\fR is 4000, and
+\fItrans_band\fR is 400.  Typically, the filter is 6 dB down at the
+band edge of transition.
+.TP
+.I band[i]_des - float
+Specifies desired value for the \fIi\fRth band.  For example, for
+a 3-band bandpass filter, \fIband1_des\fR is 0, \fIband2_des\fR is 1,
+and \fIband3_des\fR is 0;
+.TP
+.I rej_db - float
+Specifies both the rejection ratio in dB from one passband to
+stopband, and the peak error in the passband.
+.TP
+.I trans_band - float
+Specifies the transition bandwidth in Hz from one band to another.
+.TP
+.I evenflag - int
+This is an optional parameter.  If not specified, by default \fIwin_filt\fR
+designs a filter with odd filter length; otherwise, a value of 1 forces
+even length, and a value of 0 forces odd length.
+.PP
+.SH ESPS COMMON
+No ESPS common parameter processing is used.
+.PP
+.SH ESPS HEADERS
+A new \fIFEA_FILT\fP(5\-ESPS) header is created for the  output  file.   The
+program  fills  in  appropriate values in the common part of
+the FEA_FILT header as well as the  following  generic  header  items.
+.PP
+The \fIsamp_freq\fR generic header item contains value of the \fIsamp_freq\fR
+parameter.
+.PP
+The \fItrans_band\fR generic header item contains value of the \fItrans_band\fR
+parameter.
+.PP
+The \fIrej_db\fR generic header item contains value of the \fIrej_db\fR
+parameter.
+.PP
+In addition, the generic header item \fIdelay_samples\fR  (type  DOUBLE) is
+added  to the header. \fIDelay_samples\fR  is  equal  to  
+(filter length  -  1)/2.   
+This represents  the  delay  to  the  center  of  the peak of the
+impulse response.
+
+.PP
+.SH FUTURE CHANGES
+.PP
+.SH EXAMPLES
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+Oppenheim & Schafer, \fIDiscrete-Time Signal Processing\fR,
+Prentice Hall, 1989
+.PP
+.SH "SEE ALSO"
+.nf
+\fIxfir_filt\fP(1\-ESPS), \fInotch_filt\fP(1\-ESPS), \fIFEA_FILT\fP(5\-ESPS),
+\fIatofilt\fP(1\-ESPS), \fIwmse_filt\fP(1\-ESPS), \fIiir_filt\fP(1\-ESPS), 
+\fIsfconvert\fP(1\-ESPS), \fIpkmc_filt\fP(1\-ESPS), 
+.nf
+.PP
+.SH AUTHOR
+Derek Lin
+.PP

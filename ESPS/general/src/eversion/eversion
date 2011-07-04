@@ -1,0 +1,57 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of
+# Entropic Research Laboratory, Inc. Any reproduction, distribution,
+# or publication of this work must be authorized in writing by Entropic
+# Research Laboratory, Inc., and must bear the notice:
+#
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc.
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended
+# publication of this source code.
+#
+# @(#)eversion	1.6   10/13/97     ERL
+#
+# Written by: Alan Parker
+# Checked by:
+# Revised by: Ken Nelson
+#
+# Brief description: Tels what version of ESPS you are running.
+#
+
+if test "x$PAGER" = x
+then 
+  PAGER=more
+fi
+
+cflag=no
+
+prevarg=
+for i
+do
+ case $prevarg in
+ "")
+   case $i in
+   -c)
+	cflag=yes
+	prevarg= ;;
+   -x)
+	set -x
+	prevarg= ;;
+   esac;;
+esac
+done
+
+
+  cat $ESPS_BASE/version
+  echo 
+  if test $cflag = yes
+   then
+    echo ESPS
+    $ESPS_BASE/bin/showkey 01 | grep Cust
+    echo
+    echo Waves
+    $ESPS_BASE/bin/showkey 02 | grep Cust
+  fi
+  exit
+

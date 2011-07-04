@@ -1,0 +1,92 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)lartorc.3	1.6 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH LAR_TO_RC 3\-ESPSsp 18 Apr 1997
+.SH NAME
+.nf
+lar_to_rc \- convert log area ratio to reflection coefficient
+rc_to_lar \- convert reflection coefficient to log area ratio
+.SH SYNOPSIS
+.ft B
+float
+.br
+lar_to_rc(lar)
+.br
+double lar;
+.sp
+.br
+int 
+.br
+rc_to_lar(rc, lar)
+.br
+double rc;
+float *lar;
+.ft
+.SH DESCRIPTION
+.I lar_to_rc
+converts the log area ratio
+.I lar
+to a reflection coefficient
+.I rc
+according to the formula:
+.nf
+
+	\fIrc\fR = [(\fIA\fR - 1)/(\fIA\fR + 1)]
+
+.fi
+where 
+.I A
+is the antilog (base 10) of 
+.I lar.
+.PP
+.I rc_to_lar
+converts the reflection coefficient 
+.I rc
+to a log area ratio 
+.I lar
+according to the formula
+.nf
+
+	\fIlar = \fRlog [(1 + \fIrc\fR)/(1 - \fIrc\fR)]
+
+.fi
+where the logarithm is to base 10.  If -1 < \fIrc\fR < +1, 
+the value returned in 
+.I lar
+is computed according to the formula above and 
+.I rc_to_lar 
+returns the value 0.  
+.PP
+.IR rc " >= 1,"
+the value returned in 
+.I lar
+is the system's maximum floating point value.  If 
+.IR rc " <= -1,"
+the value returned in 
+.I lar
+is the system's maximum negative floating point value.  
+In both of these cases, 
+.I rc_to_lar
+returns the value 1.  
+.SH EXAMPLE
+float refco, logratio;
+.br
+refco = lar_to_rc(logratio);
+.sp
+float refco, logratio;
+.br
+if (rc_to_lar(refco, &logratio) != 0) 
+.br
+     fprintf(stderr, "WARNING - reflection coefficient out of range.\\n");
+.SH DIAGNOSTICS
+None, other than the function return value.  
+.SH BUGS
+None known.
+.SH "SEE ALSO"
+.nf
+\fIlarcbk2rc\fP(1\-ESPS)
+.fi
+.SH AUTHOR
+Manual page by John Shore
+

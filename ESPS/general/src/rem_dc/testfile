@@ -1,0 +1,25 @@
+# @(#)testfile	3.1 10/26/87 ESI
+ESPSCOM=./espscom
+export ESPSCOM
+echo TEST of REM_DC
+echo " "
+echo Make test sampled data file with DC = 1
+testsd -a- test.sd <<XX
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+XX
+echo " "
+echo Remove DC component and test stdout
+echo There should only be three values: 0, -1, 1
+echo "rem_dc test.sd - | psps -"
+echo " "
+rem_dc test.sd - | psps -
+sleep 5
+echo " "
+echo Now check -a option and Common processing
+echo " "
+echo There should be only three values: 10, 9, 11
+echo "rem_dc -a10 - | psps -"
+rem_dc -a10 - | psps - 
+rm -f test.sd espscom

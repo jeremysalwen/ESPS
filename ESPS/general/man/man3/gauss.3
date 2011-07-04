@@ -1,0 +1,45 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)gauss.3	1.4 20 Oct 1987 ESI
+.TH GAUSS 3\-ESPSsp 20 Oct 1987
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+gauss \- compute zero-mean, unit standard-deviation Gaussian random number
+.SH SYNOPSIS
+.ft B
+float
+.br
+gauss()
+.ft
+.SH DESCRIPTION
+.I gauss
+returns zero-mean, unit standard-deviation (RMS amplitude) gaussian 
+distributed floats.  It uses 
+.IR random (3)
+to generate uniformly-distributed values and transforms these to 
+Gaussian-distributed values.  
+.I gauss
+does not set the random seed so that calling programs can do so.  Calling
+programs should set the seed using 
+.IR srandom (3).  
+.SH EXAMPLE
+.if n .ta 33
+.if t .ta 3i
+long seed = 1234567;
+.br
+float *gaussdata;
+.br
+int n;
+.br
+ . . .
+.br
+(void) srandom(seed);
+.br
+for (i = 0; i < points; i++) gaussdata[i] = gauss();
+.SH DIAGNOSTICS
+None.
+.SH BUGS
+None known.
+.SH SEE ALSO
+random(3), srandom(3), testsd(1\-ESPS)
+.SH AUTHOR
+John Shore (modified a routine by Shankar Narayan)

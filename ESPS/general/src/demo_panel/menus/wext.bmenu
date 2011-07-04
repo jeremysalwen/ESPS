@@ -1,0 +1,17 @@
+# @(#)wext.bmenu	1.1 6/18/91 ERL - waves extensions button panel
+"Get Waveform"	make file speech.sd
+"Get Spect"	make file speech.sgram
+"Color Scale"	make file color.fspec loc_x 800 loc_y 600
+"Make Panel"	make_panel name color title "C o l o r s" icon_title Colors file color.bmenu loc_x 500 loc_y 400
+"Color Maps" MENU
+grey		set colormap greymap
+Color	DEFAULT	set colormap Colormap
+color		set colormap colormap
+COLOR		set colormap COLORMAP
+COLOR_		set colormap COLOR_MAP
+TImap		set colormap TImap
+"Color Maps" END
+"Reconfigure Menu" @reconfigure
+"Restore Menu"     @restore
+"Funky Buttons"	make_panel name funky title "Funky Buttons" icon_title funky file funky.menu
+

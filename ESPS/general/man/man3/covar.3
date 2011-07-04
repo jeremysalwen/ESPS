@@ -1,0 +1,57 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)covar.3	1.7 30 Apr 1997 ESI
+.TH COVAR 3\-ESPSsp 30 Apr 1997
+.ds ]W "Entropic Speech, Inc.
+.SH NAME
+covar \- compute reflection coefficients using covariance method.
+.SH SYNOPSIS
+.ft B
+covar (x, lnt, c, order, rc, pgain, window_flag)
+.br
+float   x[], c[], rc[], *pgain;
+.br
+int     order, lnt, window_flag;
+
+.SH DESCRIPTION
+.PP
+This routine computes the generalized reflection coefficients and the lpc
+filter coefficients for the given data using covariance method.
+.PP
+The covar function takes data of size
+.B lnt
+in array
+.B x[]
+as input and computes
+.B order
+generalized reflection coefficients,
+.B rc[1]
+to
+.B rc[order],
+.B
+order
+lpc filter coefficients,
+.B c[1]
+to 
+.B c[order],
+and lpc filter gain,
+.B *pgain.
+.PP
+If the parameter \fBwindow_flag\fP is 0, a rectangular window is
+applied to sample data vectors in the computation of the sample covariance
+matrix.  If 
+.B
+window_flag is non-zero, a triangular window is applied.
+.PP
+For a more general approach (which also serves as a cover function
+for \fIcovar\fP), see \fIcompute_rc\fP (3\-\s-1ESPS\s+1).  
+.SH BUGS
+None
+.SH SEE ALSO
+\fIcompute_rc\fP (3\-\s-1ESPS\s+1)
+.SH REFERENCES
+[1] L. R. Rabiner and R. W. Shaffer,
+.I
+Digital Processing of speech signals,
+Prentice-Hall, NJ, 1978.
+.SH AUTHOR
+Shankar Narayan

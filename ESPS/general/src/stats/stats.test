@@ -1,0 +1,239 @@
+#! /bin/sh
+# @(#)stats.test	3.4 8/24/87 ESI
+ESPSCOM=espscom
+export ESPSCOM
+rm -f espscom
+cat >t.1 <<ZAP
+stats: filename: a.fea, start: 1, end: 3
+Element   Minimum    at     Maximum    at      Mean      Std. Dev     
+    1           1     1           1     1           1           0
+    2       28224     2       62001     1     46355.3     17025.1
+    3          -1     1       39204     2       25613     22196.2
+    4          -1     1       28561     3     9519.67     16490.3
+    5         324     2        4225     1     1836.67     2092.74
+    6          -1     1         729     3     389.667     367.697
+    7          -1     1         576     3     191.333     333.131
+    8          67     3          74     2     70.6667     3.51188
+    9           0     1          67     2     44.6667     38.6825
+   10           0     1          69     3          23     39.8372
+   11    0.928528     1    0.963867     3     0.95166   0.0200431
+   12   -0.488464     3  -0.0236816     1   -0.277751    0.235405
+   13   -0.133423     1  -0.0149536     3  -0.0590617   0.0647703
+   14    -0.83197     2   -0.429077     1   -0.671326    0.213483
+   15   -0.478271     2   -0.131897     3   -0.332011    0.179357
+   16   -0.299805     1    0.195923     2  -0.0344849    0.249701
+   17   -0.282349     1    0.405518     2    0.007487    0.356469
+   18   -0.190247     2  -0.0687256     1   -0.124858   0.0612873
+   19 0.000915527     2    0.308655     1    0.202962     0.17504
+   20   -0.184937     1  -0.0204468     3   -0.115438   0.0851566
+ZAP
+echo making test file
+atosps - a.fea <<ZAP
+{
+01 d
+02 6a1a
+03 Fri Aug 21 12:16:36 1987 
+04 1.41
+05 fea_edit
+06 1.6
+07 7/16/87
+53 parker
+08 3
+09 1
+0b 14
+10 a.fea
+12 ana2fea test.ana test.fea fea_edit a.fea fea_edit a.fea fea_edit a.fea  Converted from /u/parker/a/a.fea by spstoa.
+52
+1 2 0
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 3 1 
+lpc_power FLOAT 3 1 
+p_pulse_len FLOAT 3 1 
+spec_param FLOAT 10 1 
+
+@src_sf FLOAT 1 8000 
+@maxlpc LONG 1 12 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO ] RC 
+@order_vcd LONG 1 10 
+@maxraw LONG 1 12 
+@filters CODED 1 [ NO YES ] NO 
+@order_unvcd LONG 1 10 
+@maxpulses LONG 1 12 
+
+{
+01 d
+02 6a1a
+03 Fri Aug 21 11:54:17 1987 
+04 1.41
+05 fea_edit
+06 1.6
+07 7/16/87
+53 parker
+08 3
+09 1
+0b 2f
+0c 2
+0d 1
+10 a.fea
+12 ana2fea test.ana test.fea fea_edit a.fea fea_edit a.fea 
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 12 1 
+lpc_power FLOAT 12 1 
+p_pulse_len FLOAT 12 1 
+spec_param FLOAT 10 1 
+
+@src_sf FLOAT 1 8000 
+@maxlpc LONG 1 12 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO ] RC 
+@order_vcd LONG 1 10 
+@maxraw LONG 1 12 
+@filters CODED 1 [ NO YES ] NO 
+@order_unvcd LONG 1 10 
+@maxpulses LONG 1 12 
+
+{
+01 d
+02 6a1a
+03 Fri Aug 21 11:52:06 1987 
+04 1.41
+05 fea_edit
+06 1.6
+07 7/16/87
+53 parker
+08 9
+09 1
+0b 2f
+0c 2
+0d 1
+10 a.fea
+12 ana2fea test.ana test.fea fea_edit a.fea 
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 12 1 
+lpc_power FLOAT 12 1 
+p_pulse_len FLOAT 12 1 
+spec_param FLOAT 10 1 
+
+@src_sf FLOAT 1 8000 
+@maxlpc LONG 1 12 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO ] RC 
+@order_vcd LONG 1 10 
+@maxraw LONG 1 12 
+@filters CODED 1 [ NO YES ] NO 
+@order_unvcd LONG 1 10 
+@maxpulses LONG 1 12 
+
+{
+01 d
+02 6a1a
+03 Wed Jan 21 13:50:20 1987 
+04 1.41
+05 ana2fea
+06 1.1
+07 1/14/87
+53 burton
+08 9
+09 1
+0b 2f
+0c 2
+0d 1
+10 test.ana
+12 ana2fea test.ana test.fea 
+13 /usr/speech_data/pure_speech/dsc/male/arbitrary/berny3dec.sd
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 12 1 
+lpc_power FLOAT 12 1 
+p_pulse_len FLOAT 12 1 
+spec_param FLOAT 10 1 
+
+@src_sf FLOAT 1 8000 
+@maxlpc LONG 1 12 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO ] RC 
+@order_vcd LONG 1 10 
+@maxraw LONG 1 12 
+@filters CODED 1 [ NO YES ] NO 
+@order_unvcd LONG 1 10 
+@maxpulses LONG 1 12 
+
+{}
+}
+}
+}
+}
+
+#Tag 6131
+#voiced_fraction	1 
+#raw_power	62001 -1 -1 
+#lpc_power	4225 -1 -1 
+#p_pulse_len	71 0 0 
+#spec_param	0.928528 -0.0236816 -0.133423 -0.429077 -0.385864 -0.299805 -0.282349 -0.0687256 
+	0.308655 -0.184937 
+
+#Tag 4389
+#voiced_fraction	1 
+#raw_power	28224 39204 -1 
+#lpc_power	324 441 -1 
+#p_pulse_len	74 67 0 
+#spec_param	0.962585 -0.321106 -0.0288086 -0.83197 -0.478271 0.195923 0.405518 -0.190247 
+	0.000915527 -0.14093 
+
+#Tag 4530
+#voiced_fraction	1 
+#raw_power	48841 37636 28561 
+#lpc_power	961 729 576 
+#p_pulse_len	67 67 69 
+#spec_param	0.963867 -0.488464 -0.0149536 -0.75293 -0.131897 0.000427246 -0.100708 -0.115601 
+	0.299316 -0.0204468 
+ZAP
+echo testing stats
+echo this is a call with no arguments, should get the error message
+stats
+stats a.fea >t.out
+echo this diff should find no differences
+echo diff t.out t.1
+diff t.out t.1
+echo this is a stats with the element option out of range
+echo stats -e1000
+stats -e1000
+
+cat a.fea | stats - >t.out
+echo difference here should be just filename \(input from pipe\)
+diff t.out t.1
+
+echo should fail with message about -m and pipes
+cat a.fea | stats  -m -
+
+rm t.1  a.fea t.out espscom
+

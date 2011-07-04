@@ -1,0 +1,4 @@
+"How to use winfo... "   xtext -F `get_esps_base`/doc/README.winfo 
+"How to get help..."    xtext -F `get_esps_base`/doc/gettinghelp.doc
+"Run waves+ intro... "   cd $ESPS_BASE/newdemos/wintro; ./rundemo
+"Entropic Root Window" `get_esps_base`/bin/elogo

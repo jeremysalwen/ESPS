@@ -1,0 +1,151 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)exvgethelp.3	1.1 05 May 1991 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  EXV_GET_HELP 3\-ESPSxu 05 May 1991
+.SH NAME
+
+.nf
+exv_get_help \- creates XView frame containing text of man page or help file
+
+exv_helpfile \- return file name containing cleaned man page or plain text
+
+exv_make_text_window \- create XVIEW frame containing text of ASCII file
+
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+#include <stdio.h>
+#include <esps/esps.h>
+#include <esps/exview.h>
+
+extern int debug_level;
+extern int do_color; 
+
+int
+exv_get_help(item, event)
+Panel_item	item;
+Event           *event;  
+
+char *
+exv_helpfile(progfile)
+char *progfile;
+
+Frame
+exv_make_text_window(owner, window_title, icon_title, textfile, find, indep)
+     Frame owner;		/* owning frame (may be NULL)*/
+     char *window_title;	/* text window title */
+     char *icon_title;		/* icon title (for independent windows)*/
+     char *textfile;		/* text file */
+     int  find;			/* whether or not to have find button */
+     int indep;			/* if true, FRAME, else FRAME_CMD */
+
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+\fIexv_get_help\fP is a utility PANEL_NOTIFY_PROC suitable as a "Help"
+button callback procedure, i.e., for creating help windows in ESPS XView
+programs.  The function creates and displays a help window containing
+the contents of an ASCII help file or unix-style man page.  The
+resulting XView FRAME is returned by the function.  The owner of the 
+returned frame is the frame containing the button that invokes 
+\fIexv_get_help\fP.  
+.PP
+\fIexv_get_help\fP assumes that an ASCII string is passed via the key
+EXVK_HELP_NAME; this item should be set set by the calling program to
+contain either the name of an ESPS program (for which the man page is
+desired) or the name of a pure-ASCII help-file.  If the string
+contains a path specification (i.e., if it contains "/"),
+\fIexv_get_help\fP assumes that the string contains a help file rather
+than the name of an ESPS program.  In the former case,
+\fIexv_get_help\fP just pops up a help window (complete with "Search
+Forward", "Search Backward", and "Quit" buttons) and returns its
+handle.  In the latter case, \fIexv_get_help\fP 
+runs \fIeman\fP (1\-\s-1ESPS\s+1) on the name, cleans the output with an
+\fIsed\fP() script, and pops up a help window containing the cleaned
+text (again, complete with "Search Forward", "Search Backward", and
+"Quit" buttons).  In this case, the temporary file containing the 
+cleaned man page entry will be deleted after the help-window is 
+destroyed.  
+.PP 
+\fIexv_get_help\fP also assumes that a window title is passed via 
+the key EXV_HELP_TITLE and uses this in creating the help frame.  
+If no such title is passed, a default of "ESPS Help Window" is used. 
+In both cases, the window is given a standard ESPS icon with 
+icon title set to "help".  
+.PP
+The function \fIexv_helpfile\fP is used by \fIexv_get_help\fP to 
+clean the man page.  If \fIprogfile\fP contains a path specification
+(i.e., if it contains "/"), a copy of the string \fIprogfile\fP is 
+returned by \fIexv_helpfile\fP.  Otherwise, \fIexv_helpfile\fP 
+assumes that \fIprogfile\fP is the name of an ESPS program.  It 
+runs \fIeman\fP on \fIprogfile\fP, cleans the output with a suitable
+\fIsed\fP script, and returns the name of a temporary file containing 
+the cleaned text.  
+.PP
+Much of the work needed for \fIexv_get_help\fP() is performed by
+\fIexv_make_text_window\fP, which is generally useful for displaying
+the contents of an ASCII file and allowing the user to browse through
+it.  In particular, \fIexv_make_text_window\fP creates a window
+containing the contents of \fItextfile\fP, displays it, and returns
+it's handle to the calling program.  The frame's owner is set to
+\fIowner\fP, with the window and icon titles set respectively to
+\fIwindow_title\fP and \fIicon_title\fP.  The icon used is a standard
+ESPS icon, as created by \fIexv_attach_icon\fP (3\-\s-1ESPS\s+1xu).
+If \fIindep\fP is set to USE_FRAME_INDEP, the new frame has no owner.
+Otherwise (USE_FRAME_CMD), the new frame is created as a command frame
+with a push-pin (FRAME_CMD) and the owner is set to \fIowner\fP.
+.PP
+IF \fIfind\fP == WITH_FIND_BUTTON, the help frame created by
+\fIexv_make_text_window\fP will have a button panel containing "Quit",
+"Search Forward", and "Search Backward" buttons.  Otherwise
+(WITHOUT_FIND_BUTTON), the frame will just contain \fItextfile\fP.
+.SH EXAMPLES
+.PP
+.nf
+
+
+  Panel_item button;		
+  Frame help_win, prog_frame; 
+  char *title, *helpfile, *help_title, *helpname
+
+  if (helpname != NULL) {
+    button = xv_create(con_panel, PANEL_BUTTON,
+		       XV_KEY_DATA, EXVK_HELP_TITLE,  help_title,
+		       XV_KEY_DATA, EXVK_HELP_NAME, helpname,
+		       PANEL_LABEL_STRING,  "Help",
+		       PANEL_NOTIFY_PROC,   exv_get_help,
+		       NULL);
+   }
+
+   . . . 
+
+   help_win = exv_make_text_window(prog_frame, title, "help", helpfile, 
+				WITH_FIND_BUTTON, USE_FRAME_CMD);
+
+.fi
+
+.SH ERRORS AND DIAGNOSTICS
+.PP
+.SH FUTURE CHANGES
+.PP
+.SH BUGS
+.PP
+The algorithm for cleaning man pages doesn't work on HP300 and
+Masscomp systems.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+\fIe_temp_name\fP (3\-\s-1ESPS\s+1u), \fIexv_attach_icon\fP
+(3\-\s-1ESPS\s+1xu)
+.SH AUTHOR
+.PP
+Program and man page by John Shore.  Program improvements by Alan
+Parker
+
+
+
+
+

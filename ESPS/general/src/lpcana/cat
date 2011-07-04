@@ -1,0 +1,330 @@
+
+
+
+LPCANA(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     lpcana  -  Performs  LPC  analysis  using  a  crude   pitch-
+     synchronous method
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     llllppppccccaaaannnnaaaa [ ----PPPP _p_a_r_a_m__f_i_l_e ] [ ----rrrr _r_a_n_g_e ] [ ----pppp  rrrraaaannnnggggeeee ]  [   ---- mmmm
+     _a_n_a_l__m_e_t_h_o_d ] [ ----FFFF ] [ ----xxxx _d_e_b_u_g__l_e_v_e_l ] _i_n_p_u_t__s_d _o_u_t_p_u_t__f_e_a
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     Use of this program is not recommended.  For pitch  synchro-
+     nous  analysis,  see  _e_p_o_c_h_s  (1 -ESPS) and _p_s__a_n_a (1-ESPS).
+     _l_p_c_a_n_a takes as input an ESPS sampled data FEA_SD (5 - ESPS)
+     file and it computes LPC filter coefficients and the excita-
+     tion parameters using a crude pitch-synchronous method.  The
+     results  are stored in the FEA_ANA (5-ESPS) file _o_u_t_p_u_t__f_e_a.
+     For each analysis frame of data, _l_p_c_a_n_a generates reflection
+     coefficients,  power,  and  voicing  information.  An output
+     FEA_ANA record is generated for each pulse  (several  pulses
+     per  analysis  frame),  with  enough  information  to enable
+     _l_p_c_s_y_n_t (1-ESPS) to re-synthesize speech.  The nominal frame
+     size  is  set  by the parameter _l_p_c__f_r_a_m_e__s_i_z_e but is deter-
+     mined adaptively by the program.  If the ----FFFF  option  is  not
+     used,  _r_e_f_c_o_f  performs  an  additional spectral analysis on
+     each pulse within the analysis frame and  puts  out  a  dif-
+     ferent  set of reflection coefficients for each pulse (if ----FFFF
+     is used, all pulses from the same analysis  frame  have  the
+     same reflection coefficients).
+
+     If "-" is used in place of _i_n_p_u_t__s_d, standard input is used.
+     If  " - " is used in place of _o_u_t_p_u_t__f_e_a, standard output is
+     used.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following options are supported:
+
+     ----PPPP _p_a_r_a_m__f_i_l_e
+          uses the parameter  file  _p_a_r_a_m__f_i_l_e  rather  than  the
+          default file _p_a_r_a_m_s.
+
+     ----pppp _r_a_n_g_e
+          Selects a subrange of points to be analyzed. The  start
+          and end points are defined with respect to the original
+          SD file that is the source of the input  FEA_ANA  file.
+          The  range  is  specified using the format _s_t_a_r_t-_e_n_d or
+          _s_t_a_r_t:_e_n_d or _s_t_a_r_t:+_n_a_n.  Either _s_t_a_r_t or  _e_n_d  may  be
+          omitted,  in  which case the omitted parameter defaults
+          respectively to the start or end of the input SD file.
+
+     ----rrrr _r_a_n_g_e
+          rrrr is a synonym for pppp.
+
+     ----mmmm _a_n_a_l__m_e_t_h_o_d[mburg]
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+LPCANA(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+          Specifies the spectrum analysis method.  The default is
+          the modified Burg method.  Also available are the auto-
+          correlation method ("autoc"), ovariance method ("cov"),
+          Burg   method   ("burg"),  fast  modified  Burg  method
+          ("fburg"),   stuctured   covariance    ("strcov"    and
+          "strcov1"),  and  vector Burg ("vburg", fast approxima-
+          tion to structured covariance.  Of the  two  structured
+          covariance methods, the first ("strcov" is considerably
+          faster and  better  behaved;  "strcov1"  is  older  but
+          included  as  it  may prove useful on occasion.  The ----mmmm
+          option overrides the value that may be in the parameter
+          file.  The default applies only if there is no value in
+          the parameter file.
+
+     ----FFFF    Specifies use of the framing method  of  the  previous
+          version of _r_e_f_c_o_f, in which the reflection coefficients
+          for each pulse in an analysis frame are determined by a
+          spectral  analysis  of  the entire frame.  If ----FFFF is not
+          used, an additional spectrum analysis is performed  for
+          each pulse.
+
+     ----xxxx _d_e_b_u_g__l_e_v_e_l [0]
+          option specifies that various information or  debugging
+          messages be printed on standard error.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRR
+     The generic header item _s_t_a_r_t__t_i_m_e (type DOUBLE) is  written
+     in the output file.  The value written is computed by taking
+     the _s_t_a_r_t__t_i_m_e value from the header of the input  file  (or
+     zero,  if such a header item doesn't exist) and adding to it
+     the offset time (from the beginning of the  input  file)  of
+     the first point or record processed.  Unlike many other ESPS
+     programs, _l_p_c_a_n_a does _n_o_t  write  the  generic  header  item
+     _r_e_c_o_r_d__f_r_e_q  (used by _w_a_v_e_s+ for time synchronization); this
+     is because the output records  from  _l_p_c_a_n_a  result  from  a
+     variable frame length analysis.
+
+     The following generic header items are added (in addition to
+     the standard ones (FEA_ANA-5):
+
+          _p__o_f_f_s_e_t - _i_n_t_e_g_e_r
+
+          How many points before the beginning of the  pulse  the
+          spectrum analysis window is started.
+
+
+          _d_c_r_e_m - _s_t_r_i_n_g
+
+          Yes means that the DC component was removed before  the
+          data was analyzed.
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+
+
+
+
+LPCANA(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+          _p_s_y_n_c_h - _s_t_r_i_n_g
+
+          Yes means that the spectrum analysis is done pitch syn-
+          chronously.
+
+
+          _m_a_t_s_i_z - _i_n_t_e_g_e_r
+
+          The size of the autocorrelation matrix that was used in
+          the spectrum analysis.
+
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     The values of parameters obtained from  the  parameter  file
+     are printed if the environment variable ESPS_VERBOSE is 3 or
+     greater.  The default value is 3.  The following  parameters
+     are read from the parameter file:
+
+          _s_t_a_r_t - _i_n_t_e_g_e_r
+
+          This is the starting point  in  the  input  file.   Its
+          value is superseded by a ----pppp value. The default value is
+          1.
+
+
+          _n_a_n - _i_n_t_e_g_e_r
+
+          This is the number of points to analyze. Its  value  is
+          superseded by a ----pppp value.
+
+
+          _l_p_c__f_i_l_t_e_r__o_r_d_e_r - _i_n_t_e_g_e_r
+
+          This is the order of the linear prediction filter  that
+          represents the vocal tract.  The maximum allowable size
+          is 20.  The default value is 10.
+
+          _l_p_c__f_r_a_m_e__s_i_z_e - _i_n_t_e_g_e_r
+
+          This is the nominal frame size for performing  spectral
+          analysis. The default value is 160.
+
+          _m_i_n_i_m_u_m__p_u_l_s_e__l_e_n_g_t_h - _i_n_t_e_g_e_r
+
+          This specifies the minimum pitch period. The  algorithm
+          has  been well tested for the pitch range of 50-400 Hz.
+          Thus a typical value of this variable is 20, assuming a
+          sampling rate of 8000 Hz.  The default value is 20.
+
+          _m_e_t_h_o_d - _s_t_r_i_n_g
+
+          The spectrum analysis method  to  use.   The  available
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+
+
+
+
+
+LPCANA(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+          methods   are   autocorrelation  ("autoc"),  covariance
+          ("covar"), Burg ("burg"), modified Burg ("mburg"), fast
+          modified  Burg  method  ("fburg"), stuctured covariance
+          ("strcov" and "strcov1"), and vector Burg  ("vburg",  a
+          fast  approximation  to  structured  covariance.  If no
+          value is given in the file, the modified Burg method is
+          used  by  default.   The  _m_e_t_h_o_d  is  not read from the
+          parameter file if the command line option ----mmmm is used.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     If the input is standard input, COMMON is not read. If  COM-
+     MON  is  read and the command line input filename does match
+     the filename listed in COMMON then, the following items  are
+     read.  If  the  two  filenames do not match, then no further
+     parameters are read from COMMON.
+
+          _s_t_a_r_t - _i_n_t_e_g_e_r
+
+          This is the starting point in the input file.  Any  ---- pppp
+          option value supersedes the COMMON specified value.
+
+          _n_a_n - _i_n_t_e_g_e_r
+
+          This is the number of points to analyze. A ----pppp specified
+          value supersedes the COMMON specified value.
+
+     ESPS Common  processing  may  be  disabled  by  setting  the
+     environment  variable USE_ESPS_COMMON to "off".  The default
+     ESPS Common file is .espscom in the user's  home  directory.
+     This  may  be  overidden by setting the environment variable
+     ESPSCOM to the desired path.  User feedback of  Common  pro-
+     cessing   is   determined   by   the   environment  variable
+     ESPS_VERBOSE, with 0 causing no feedback and increasing lev-
+     els causing increasingly detailed feedback.  If ESPS_VERBOSE
+     is not defined, a default value of 3 is assumed.
+
+CCCCOOOOMMMMMMMMEEEENNNNTTTTSSSS
+     The algorithm has been developed for speech sampled at  8000
+     Hz.  It  works  best  when the data is recorded using a good
+     microphone. Its quality is degraded, when working with tele-
+     phone speech (especially if carbon microphone is used).
+
+     The speech data is not pre-emphasized prior to LPC analysis,
+     and  the  modified Burg method is used for computing the LPC
+     parameters.
+
+FFFFUUUUTTTTUUUURRRREEEE CCCCHHHHAAAANNNNGGGGEEEESSSS
+     NONE.
+
+BBBBUUUUGGGGSSSS
+     If the input data consists of a long string  of  zeros,  the
+     program bombs.
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 4G4        4
+
+
+
+
+
+
+LPCANA(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     _r_e_f_c_o_f (1-ESPS), _l_p_c_s_y_n_t (1-ESPS), FEA_ANA (5-ESPS),
+     _F_E_A__S_D (5-ESPS), _c_o_m_p_u_t_e__r_c (3-ESPSsp)
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     S. Shankar Narayan.  ESPS 3.0 modification by David  Burton.
+     Modified for _c_o_m_p_u_t_e__r_c (3-ESPSsp) and for single-pulse out-
+     put by John Shore.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 5G5        5
+
+
+

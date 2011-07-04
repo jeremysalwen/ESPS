@@ -1,0 +1,273 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" %W% %G% ESI
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.TH CPLAY 1\-ESPS %G%
+.SH NAME
+cplay - send portions of an ESPS file to the \s-1CONVEX\s+1 digital to analog converter.
+play - send portions of an ESPS file to the digital to analog converter.
+.SH SYNOPSIS
+.B cplay
+[
+.BI \-x " debug-level"
+] [
+.BI \-{psf} " range"
+] [
+.BI \-g " gain"
+] [
+.BI \-w " width"
+] [
+.BI \-r " nrepeat"
+] [
+.BI \-c " channel"
+] [
+.BI \-k " clock"
+] [ 
+.BI \-i 
+] [
+.BI \-h " hist-file"
+] [
+.BI \-b " shift-value"
+] [
+.BI \-C " clock device"
+] [
+.BI \-D " D/A device"
+] [
+.BI \-q 
+]
+.I file
+[
+.I more-files
+]
+.SH DESCRIPTION
+.PP
+.I Mcplay
+sends a portion of one or more ESPS sampled data files
+to a \s-1CONVEX\s+1 digital-to-analog converter.
+A subrange of data within the files may be chosen; this subrange may be specified in
+seconds, frames, or points. Furthermore, a repeat count, a scaling factor
+(gain), shift factor, and an alternate channel number may be
+specified.
+.PP
+If "-" is given for a filename, then the input is taken from standard
+input.
+.PP
+The following options are supported:
+.TP
+.BI \-x " debug"
+Only debug level 1 is defined in this version.   This causes several
+messages to be printed as internal processing proceeds.   The default
+is level 0, which causes no debug output.
+.TP
+.BI \-p " range"
+Select a subrange of points to be played, using the format
+.I start\-end
+or
+.IR start:end .
+Either the start or the end may be omitted; the beginning or the end of the
+file are used if no alternate is specified. 
+.IP
+If multiple files were specified, the same range from each file is played.
+.TP
+.BI \-s " range"
+Select a subrange of speech, specified in seconds. For compatibility with
+DSC LISTEN, the beginning of the file is 0.
+.TP
+.BI \-f " range"
+Select a subrange of speech, specified in frames. By default, a frame is
+100 points, but this may be changed.
+.TP
+.BI \-w " width"
+This switch defines the frame width. The width is ignored unless the
+.B \-f
+switch is also specified.
+.TP
+.BI \-r " count"
+Repeat count. The selected speech is played
+.I count
+times. If multiple files were specified, the files are played in order, and
+the order is repeated
+.I count
+times.
+.TP
+.BI \-c " channel"
+Specifies an alternate channel number (default zero).
+.TP
+.BI \-k " clock"
+Specifies an alternate clock number (default zero).
+.TP
+.BI \-g " gain"
+Speech samples are multiplied by
+.I gain
+before playback.  Gain is a floating point value.
+This overrides the automatic gain control described below.
+.TP
+.BI \-i 
+If this flag is given and ESPS SD file header item \fImax_value\fR is zero, 
+then any samples with a value greater than
+the maximum of the D/A converter will be clipped.   If clipping
+occurs, then an entry is made in a history file for each
+sampled clipped.  This entry gives the sample number and the  value before
+clipping.   At the end of the file a scale factor is given that will
+prevent clipping. 
+Use of this option, slows things down noticeably.
+.TP
+.BI \-h " hist-file"
+Specifies an alternate history file.  The default is \fIplay.his\fR.
+.TP
+.BI \-b " shift-value"
+If this option is given and \fIshift-value\fR is positive, then each
+sample (after it is converted to integer format) is shifted to the right
+by \fIshift-value\fR bits.   \fIShift-value\fR being negative causes a
+left shift.   This option is useful to rescale data that has a higher
+resolution than the D/A converter being used here.   For example, files
+recorded by or synthesized from data recorded by a 16 bit A/D can be
+shifted 4 bits to the right for correct output on a 12 bit D/A.    This
+is preferred to using the \fB-g\fR option with a gain of .0625 because
+the shift is faster than a floating multiply.   This difference is most
+noticeable on large files.
+.TP
+.BI \-q
+This option (q for quiet) suppresses all terminal output (except for
+fatal error messages) from the program.  It is useful when play is being
+called by another program.
+.PP
+The default clock device is /dev/dacp0/efclk0, and the default D/A
+device is /dev/dacp0/daf0.   These defaults, might be different at your
+site, however, since they can be changed by the ESPS installation
+program.   The compiled in defaults can be replaced on the command line
+with the \fB\-C\fR and the \fB\-D\fR options.
+.PP
+If the ESPS SD file header item \fImax_value\fR is greater than
+the maximum value that the D/A converter can convert
+(\s-1MAXDA\s+1), then each sample
+is multiplied by \s-1MAXDA\s+1/\fImax_value\fR.
+The effect is to scale the data so that the sample with the maximum
+value is scaled to \s-1MAXDA\s+1.
+.PP
+Playback may be aborted by 
+sending the terminal's interrupt character (normally control-C)
+after playback has started. 
+.PP
+If any of the command line range options are given, they
+override the \fIstart\fR and \fInan\fR common file values described
+below.
+.PP
+This program is installed under the name \fIcplay\fR and \fIplay\fR.
+Since this program is specific to \s-1CONVEX\s+1 systems, a different play program
+is used on non-\s-1CONVEX\s+1 systems.   These system dependent play programs
+all have a common user interface and are installed under their system
+dependent name (eg. \fIcplay\fR, \fInetplay\fR, \fIsunplay\fR, etc) and
+the name \fIplay\fR.
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.SH ESPS COMMON
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is
+.espscom in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+If Common file processing is enabled 
+the following are read from the Common file if 
+only one input file or no input file is given on the command line and
+provided that standard input isn't used.  
+.IP
+.I "filename - string"
+.IP
+This is the name of the input file.  If no input file is 
+specified on the command line, \fIfilename\fP is taken to be the
+input file.  If an input file is specified on the command line, 
+that input file name must match \fIfilename\fP or the other 
+items (below) are not read from Common. 
+.IP
+.I "start - integer"
+.IP
+This is the starting point in the input file to begin output.  It 
+is not read if the \fB\-p, -f,\fP or \fB-s\fR option is used.  
+.sp
+.I "nan - integer"
+.IP
+This is the number of points to output from the input file.  It is not
+read if the \fB\-p, -f\fP or \fB-s\fR option is used.  A value of zero means the last
+point in the file.
+.sp
+.I "gain - float"
+.IP
+This value is the same as the argument to the -g option described above.
+This value is not read from Common if the \fB-g\fR or \fB-b\fR option is
+used.
+.sp
+.I "shift - integer"
+.IP
+This value is the same as the argument to the -b option described above.
+A gain value and a shift value cannot both be used.  If both are present
+in the common file, then only the shift value is used.  
+This value is not read from Common if the \fB-g\fR or \fB-b\fR option is
+used.
+.sp
+.PP
+Again, the values of \fIstart\fR and \fInan\fR are only used if the
+input file on the command line is the same as \fIfilename\fP in the
+common file, or if no input file was given on the command line.  If
+\fIstart\fR and/or \fInan\fR are not given in the common file, or if
+the common file can't be opened for reading, then \fIstart\fR
+defaults to the beginning of the file and \fInan\fR defaults to the
+number of points in the file.
+.PP
+The following items are written into the ESPS Common file:
+.IP
+.I "start - integer"
+.IP
+The starting point from the input file.
+.sp
+.I "nan - integer"
+.IP
+The number of points in the selected range.
+.sp
+.I "prog - string"
+.IP
+This is the name of the program (\fIplay\fP in this case).
+.sp
+.I "filename - string"
+.IP
+The name of the input file.  If multiple input files are processed, this
+is the name of the first file.   
+.sp
+.I "gain - float"
+.IP
+This value is written if the \fB-g\fR option is used, or if \fIgain\fR was
+read from Common.  
+.sp
+.I "shift - integer"
+.IP
+This value is written if the \fB-b\fR option is used, or if \fIshift\fR
+was read from Common.
+.PP
+These items are not written to ESPS COMMON if the input file is <stdin>
+or if there are more than one input files.
+.SH DIAGNOSTICS
+.PP
+.I Mcplay
+informs the user if the input file does not exist, or is not an ESPS sampled
+data file, or if inconsistent options are used.
+.PP
+The program will timeout if the incorrect clock is connected.
+.PP
+If the starting point requested is greater than the last point in the
+file, then a message is printed and the program exits with status 1.  If
+the ending point requested is greater than the last point in the file,
+it is reset to the last point, a warning is printed and processing
+continues.
+.SH FILES
+.SH BUGS
+.SH EXPECTED CHANGES
+.PP
+.SH AUTHOR
+.PP
+Alan Parker, based on the network play program by Joe Buck.
+CONVEX version by Dale Lancaster

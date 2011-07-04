@@ -1,0 +1,48 @@
+Program : einfo(1)
+Purpose : view ESPS/waves+ technical bulletins and release notes.
+
+The top panel contains simple action buttons that are invoked by 
+a left mouse click: 
+
+ How to use einfo...  - displays this file
+
+ Run Entropic Demos   - brings up a new panel from which various
+                        demos can be run.  You need to have an ESPS 
+                        license checked out for the demos to run properly.  
+
+ Entropic Root Window - sets the background to the Entropic background.
+			see elogo(1) for more info.
+
+The middle panel contains a simple action button and a selection button: 
+
+ QUIT      - quit einfo.
+
+ Program   - toggle between viewing and printing documents that 
+             can be selected from the bottom panel
+
+The bottom panel contains action menu buttons for different classes of
+documents.  Use the right mouse button to pull down the menu.
+Releasing the mouse over a selected item causes the (view or print)
+action selected in the middle panel to be invoked on the named
+document.
+
+NOTE:  if printing doesn't work...
+
+The "Print File" button uses elpr(1) to print.  If you print and nothing
+comes out check out the elpr(1) man page and setup environment variable
+ELPR as your system needs it.
+
+------
+
+einfo is a simple example of the X Interface Generation (XIG) capabilities
+of ESPS and xwaves+.  If you look in $ESPS_BASE/bin/einfo, you'll see 
+that the meat of it is essentially the shell command
+
+ fbuttons -F einfofil.BM -S einfocom.BM -M einfo.BM &
+
+where the options specify a simple ASCII file for each of three panels. 
+You can find the files in $ESPS_BASE/lib/menus.  
+
+Document: einfo/winfo help file 
+Date    : @(#)README	1.7 10/1/91
+

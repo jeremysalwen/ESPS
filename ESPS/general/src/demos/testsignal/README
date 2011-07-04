@@ -1,0 +1,21 @@
+This demo facilitates the generation and analysis of a noise-corrupted 
+test signal.  
+
+The demo tries to set up the default D/A output according to what
+hardware is available.  You can change this default by right-mousing
+the "Setup Output" button.
+
+When the button "Generate New Test Signal" is pressed, you will 
+be prompted for parameters that specify the test signal and additive 
+noise.  The signal plus noise will then be displayed in xwaves+, 
+together with corresponding spectrum analyzer and spectrogram displays.  
+
+Besides xwaves+, the following ESPS programs are used behind the
+scenes: mbuttons (for the "Test Signal Control" panel), xtext (for
+displaying text output like this), xprompt (for the parameter
+prompting), testsd (for generating the test signal and noise), addsd
+(for creating the signal + noise), and send_xwaves (for sending
+display commands to xwaves+).
+
+@(#)README	1.3 1/18/93 ERL
+

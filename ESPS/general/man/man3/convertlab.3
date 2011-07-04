@@ -1,0 +1,89 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)convertlab.3	1.3 30 Apr 1997 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  CONVERTLAB 3\-ESPSsp 30 Apr 1997
+.SH NAME
+convertlab \- convert NIST/SPHERE (e.g., TIMIT) label file to waves+
+label file 
+.SH SYNOPSIS
+.nf
+.ft B
+
+#include <stdio.h>
+#include <esps/unix.h>
+#include <esps/esps.h>
+
+int
+convertlab(file_in, file_out, sf, mode, lab_color, unl_color)
+char *file_in;
+char *file_out;
+int  lab_color;	
+int  unl_color;	
+double sf;
+int mode;			
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+\fIconvertlab\fP reads the time-marked labels in a SPHERE (TIMIT)
+label file \fIfile_in\fP, and writes an equivalent \fIwaves\fP+ 
+label file \fIfile_out\fP.  The input file contains one label 
+per line with three fields: (1) the starting sample number; (2) 
+the ending sample number; and (3) the label text (which may include 
+blanks).  
+.PP
+The parameter \fIsf\fP is the sampling rate to be assumed
+by \fIconvertlab\fP when interpreting sample numbers.  
+.PP
+The output file \fIfile_out\fP contains one label per line (after 
+an initial line with "#"), with three fields: (1) the time (in
+seconds) of the label; (2) the color of the label (RGB); (3) the 
+label text.  Note that labels do not have a start and end time.  By 
+convention, the time of a waves+ label is the ending time.  
+.PP
+If \fImode\fP == 1, \fIconvertlab\fP produces one \fIwaves\fP+ label 
+per input label, with the time corresponding to the ending sample 
+number of the input label.  If the first input label does not begin with 
+sample 0, \fIconverlab\fP issues a warning and generates a special 
+label (with text "UNL", for "unlabelled") to mark the actual starting 
+point of the first label.  If the ending time of one label is not the 
+same as the starting point of the next label (a relatively rare case
+in the NIST databases), \fIconvertlab\fP issues a warning.  If the 
+ending time of one label exceeds the starting time of the next 
+label, \fIconvertlab\fP issues a warning and also inserts a special 
+label (again, with text "UNL") to mark the starting time of the 
+that next label.  
+.PP
+If \fImode\fP == 2, \fIconvertlab\fP produces two \fIwaves\fP+ labels
+per input label \- one each for the starting point and the ending
+point.  The text for the former is the input label text with "_S" appended, 
+and the text for the latter is the input label text with "_E"
+appended.  
+.PP
+If \fImode\fP == 1, the default color of the \fIwaves\fP+ labels is 
+set to \fIlab_color\fP, with the color of the special "UNL" labels 
+set to \fIunl_color\fP.  If \fImode\fP == 2, the \fIwaves\fP+ endpoint
+labels have color \fIlab_color\fP, and the starting point labels have
+the color \fIunl_color\fP.   If \fIlab_color\fP or \fIunl_color\fP is 
+negative, an internal default is used.  
+.SH EXAMPLES
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+.SH FUTURE CHANGES
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+\fI \fIxlabel\fP (1\-\s-1ESPS\s+1)
+.SH AUTHOR
+.PP
+John Shore (with help from David Talkin)
+
+
+
+

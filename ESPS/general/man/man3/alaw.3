@@ -1,0 +1,192 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)alaw.3	1.5 24 Jul 1991 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH ALAW 3\-ESPSsp 24 Jul 1991
+.SH "NAME"
+
+.nf
+linear_to_a \- A-law compression of linear PCM data 
+a_to_linear \- re-expansion of A-law compressed data
+linear_to_a_2 \- A-law compression (with bit inversions) of linear PCM data 
+a_to_linear_2 \- re-expansion of A-law compressed data (with bit inversions)
+.fi
+.SH "SYNOPSIS"
+.nf
+.ft B
+int
+linear_to_a(inbuf, outbuf, bufsize)
+short	*inbuf;
+char	*outbuf;
+long	bufsize;
+
+int
+a_to_linear(inbuf, outbuf, bufsize)
+char	*inbuf;
+short	*outbuf;
+long	bufsize;
+
+int
+linear_to_a_2(inbuf, outbuf, bufsize)
+short	*inbuf;
+char	*outbuf;
+long	bufsize;
+
+int
+a_to_linear_2(inbuf, outbuf, bufsize)
+char	*inbuf;
+short	*outbuf;
+long	bufsize;
+.ft
+.fi
+.SH "DESCRIPTION"
+.PP
+These functions do quasi-logarithmic companding (compression and expansion)
+of 2-byte integer data by using the
+.IR A -law
+with a value of
+.I A
+= 87.56.
+This is the European PCM standard [1].
+This compression law is linear for small amplitudes
+and logarithmic for large amplitudes.
+The function takes input data to be converted from
+.I inbuf
+and outputs the converted data to
+.I outbuf;
+the argument
+.I bufsize
+is the number of elements in the input array.
+.PP
+.I linear_to_a
+converts integer data with 13 significant bits (including sign) to 8 bits
+by using a 13-segment, piecewise linear approximation to the
+.IR A -law
+compression characteristic [1].
+An input value greater than 4095 or less than \-4096
+gives the same output code as 4095 or \-4096.
+.PP
+.I a_to_linear
+converts 8-bit, logarithmically compressed data to 13-bit linear data
+according to the piecewise-linear
+.IR A -law
+approximation.
+A table lookup procedure is used to decode the the compressed values.
+.PP
+.I linear_to_a_2
+and
+.I a_to_linear_2
+are versions of
+.I linear_to_a
+and
+.I a_to_linear
+that take into account
+the CCITT recommended practice of inverting certain bits of the
+.IR A -law
+encoded data before transmission [2].
+(This is done to even out the density of
+.IR 1 s
+and
+.IR 0s
+in the output bit stream for low-level inputs.)
+It is easy to transform the output of
+.I linear_to_a
+to that of
+.I linear_to_a_2,
+or vice versa:  modify each output byte by taking the exclusive
+.I or
+with the constant
+.I 0xd5
+(binary 11010101).
+Likewise,
+.I a_to_linear_2
+gives the same output that 
+.I a_to_linear
+would give if each input byte were modified in the same way.
+Companding by applying
+.I a_to_linear
+to the output of
+.I linear_to_a
+gives exactly the same result as using
+.I a_to_linear_2
+and
+.I linear_to_a_2
+instead.
+The latter two functions are intended for use
+when the coded form must be compatible with existing telecommunications data.
+If a tractable numerical relation between the input and output data
+is more important, then
+.I a_to_linear
+and
+.I linear_to_a
+are the better choice.
+.SH EXAMPLES
+.PP
+Running
+.RS
+.nf
+
+int i;
+static short original[13] =
+	{\-4096, \-5, \-4, \-3, \-2, \-1, 0, 1, 2, 3, 4, 5, 4095};
+char encoded[13];
+short decoded[13];
+
+linear_to_a(original, encoded, (long) 13);
+a_to_linear(encoded, decoded, (long) 13);
+
+for (i = 0; i < 13; i++) printf("%5d", original[i]);
+printf("\\n");
+for (i = 0; i < 13; i++) printf("%5x", encoded[i]&0xff);
+printf("\\n");
+for (i = 0; i < 13; i++) printf("%5d", decoded[i]);
+printf("\\n");
+
+.fi
+.RE
+prints the output
+.nf
+.if n .ta .5iR +5nR +5nR +5nR +5nR +5nR +5nR +5nR +5nR +5nR +5nR +5nR +5nR +5nR
+.if t .ta .5iR +6nR +6nR +6nR +6nR +6nR +6nR +6nR +6nR +6nR +6nR +6nR +6nR +6nR
+
+	\-4096	\-5	\-4	\-3	\-2	\-1	0	1	2	3	4	5	4095	
+	ff	82	81	81	80	80	0	0	1	1	2	2	7f	
+	\-4032	\-5	\-3	\-3	\-1	\-1	1	1	3	3	5	5	4032	
+
+.fi
+.DT
+Running the same code with the function names changed to
+.I linear_to_a_2
+and
+.I a_to_linear_2
+prints the output
+.if n .ta .5iR +5nR +5nR +5nR +5nR +5nR +5nR +5nR +5nR +5nR +5nR +5nR +5nR +5nR
+.if t .ta .5iR +6nR +6nR +6nR +6nR +6nR +6nR +6nR +6nR +6nR +6nR +6nR +6nR +6nR
+.nf
+
+	\-4096	\-5	\-4	\-3	\-2	\-1	0	1	2	3	4	5	4095	
+	2a	57	54	54	55	55	d5	d5	d4	d4	d7	d7	aa	
+	\-4032	\-5	\-3	\-3	\-1	\-1	1	1	3	3	5	5	4032	
+
+.fi
+.DT
+.SH "BUGS"
+.PP
+None Known.
+.SH REFERENCES
+.PP
+[1] John C. Bellamy,
+.I Digital Telephony,
+(New York: Wiley, 1982), Appendix B.
+.PP
+[2] International Telegraph and Telephone Consultative Committee (CCITT)
+.I Orange Book
+v. III-2 (1976), Recommendation G.711.
+.SH "SEE ALSO"
+.PP
+\fIlinear_to_mu\fP (3\-\s-1ESPS\s+1), 
+\fImu_to_linear\fP (3\-\s-1ESPS\s+1)
+.SH "AUTHOR"
+.PP
+Manual page and programs by David Burton.
+Modified by Rodney Johnson.

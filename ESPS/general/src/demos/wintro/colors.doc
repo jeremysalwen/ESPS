@@ -1,0 +1,28 @@
+			Color Support Control Panel
+			---------------------------
+
+SET COLOR MAP
+------------
+The "Color Support" control panel provides access to several
+colormaps for use with waves+. These colormaps are available
+via a pull-down menu on the screen button "Set Color Map" (hold 
+right mouse down while over button).
+
+SHOW COLOR SCALE
+----------------
+The "Color Scale" button pops up a display that shows the relationship
+between the colors and their dB values. To change the threshold (lowest
+level in the colormap) and the range (number of dB above threshold
+to use in the display), place the mouse cursor in the lower left of
+an image display, hold the middle mouse button down, and move up 
+toward the right corner. This can be done in all image-style displays.
+
+
+
+
+(@(#)colors.doc	1.2 7/29/91 ERL)
+
+
+
+
+

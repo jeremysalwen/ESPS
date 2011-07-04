@@ -1,0 +1,43 @@
+#! /bin/sh
+# @(#)testsd.test	3.3 10/10/89 ESI
+# this is a test script for testsd (1-ESPS)
+ESPSCOM=./espscom
+export ESPSCOM
+echo "1 2 3 4 3 2 1 -1" > asc
+echo " %testsd -a asc t1.sd"
+testsd -a asc t1.sd
+echo "The following listing should show sampled data of 1 2 3 4 3 2 1 -1:"
+echo " %psps t1.sd"
+psps t1.sd
+echo " "
+echo "check the contents of ESPS Common"
+echo " %cat espscom"
+cat espscom
+echo " "
+echo "Now do the same thing with standard input and make sure results are same"
+echo " %cat asc | testsd -a- t2.sd"
+cat asc | testsd -a- t2.sd
+echo " %pspsdiff t1.sd t2.sd"
+pspsdiff t1.sd t2.sd
+echo " "
+echo "Now generate 2 seconds of Gaussian data at 20,000 samples/sec"
+echo "stats should show approx 0 mean, 100 std.dev"
+echo " %testsd -Tgauss -s2 -r20000 -l100 - | stats -"
+testsd -Tgauss -s2 -r20000 -l100 - | stats -
+echo " "
+echo "Now produce one cycle of sine wave"
+echo " %testsd -Tsine -f1 -r50 -p51 -l100 - | psps -H -"
+testsd -Tsine -f1 -r50 -p51 -l100 - | psps -H -
+echo " "
+echo "Generate complex exponential; look at the following one cycle:"
+echo "testsd -Tsine -f1 -r50 -p51 -l100 -tdouble_cplx - | psps -H -"
+testsd -Tsine -f1 -r50 -p51 -l100 -tdouble_cplx - | psps -H -
+echo " "
+echo "Now generate pulses of size 20 spaced every fourth sample"
+echo " %testsd -Tpulses -f2000 -p21 -l20 - | psps -H -"
+testsd -Tpulses -f2000 -p21 -l20 - | psps -H -
+echo " "
+echo "Generate a decaying, swept pulse train; look at t2.sd"
+echo "testsd -Tpulses -C3000 -p6000 -d.1 t2.sd"
+testsd -Tpulses -C3000 -p6000 -d.1 t2.sd
+

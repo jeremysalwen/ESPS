@@ -1,0 +1,31 @@
+delete_all_items menu wave
+
+add_waves menu wave name "zoom in" builtin "zoom in"
+
+add_waves menu wave builtin "align & rescale" menu wave
+	
+add_espst menu wave name "show segment data" command epsps -H
+
+add_espst menu wave name "segment statistics" command fea_stats
+
+add_waves menu wave builtin "spectrogram (W.B.)"
+
+add_waves menu wave builtin "spectrogram (N.B.)"
+
+add_espsf menu wave name "custom spectrogram (sgram)" command expromptrun -h sgram -P PWsgram sgram 
+
+add_espsf menu wave name "MAXENT (LPC) spectrogram (W.B.)" command me_sgram -P/dev/null -m wb 
+
+add_espsf menu wave name "MAXENT (LPC) spectrogram (N.B.)" command me_sgram -P/dev/null -m nb 
+
+add_espsf menu wave name "custom MAXENT (LPC) spectrogram" command expromptrun -h me_sgram -P PWme_sgram me_sgram
+
+add_op menu wave name "F0 analysis" command copysps _range_samp _file  /usr/tmp/junk$$; get_f0 /usr/tmp/junk$$ _out.g.; rm -f /usr/tmp/junk$$
+
+add_op menu wave name "create D/A toolbar" command make_toolbar.sh datoolbar _name _file _loc_x _loc_y "D/A toolbar" "play between marks" "play window contents" "play entire file" "play to end of file" 
+
+add_op menu wave name "create zoom/scroll toolbar" command make_toolbar2.sh ztoolbar _name _file _loc_x _loc_y "Zoom toolbar"  In "zoom in" Out "zoom out" "Full Out" "zoom full out" Bracket "bracket markers" \<\<\< "window back" \>\>\> "window ahead" 
+
+return
+
+# @(#)wavmen2.WC	1.10 9/9/93

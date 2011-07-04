@@ -1,0 +1,125 @@
+.\" Copyright (c) 1987,1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)make_sd.1	1.4 3/20/90 ESI
+.TH MAKE_SD 1\-ESPS 3/20/90
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+make_sd \- convert FEA fields to FEA_SD sampled data file
+.SH SYNOPSIS
+.B make_sd
+.BI \-f " field"
+[
+.BI \-r " range"
+] [
+.BI \-S " sampling_rate"
+] [
+.BI \-x " debug_level"
+]
+.I file.fea
+.I file.feasd
+.SH DESCRIPTION
+.PP
+.I Make_sd
+makes a FEA_SD sampled data file \fI(file.feasd)\fR of the data in the
+named \fIfield\fR in the input file
+.I file.fea.  
+The data type of the FEA_SD file is that of the field \fIfield\fP (but
+complex data are not handled).  If
+.I file.fea
+is "\-", the standard input is read, and if \fIfile.feasd\fR is "\-",
+the standard output is written.
+.PP
+By default, all elements of the specified field in the first record
+are used in making the sampled data file.  If the \fB\-r\fR option is
+used, the field elements in all the specified records are catenated
+together into one sampled data file.  If only one element from each 
+field is to form the sampled data stream, use \fItofeasd\fP
+(1\-\s-1ESPS\s+1) instead.  
+.PP
+The fieldname must be given with the
+.B \-f
+flag.  This is not optional and there is no default.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-r " record"
+.TP
+.BI \-r " first:last"
+.TP
+.BI \-r " first:+incr
+Determines the records from which values from
+the named \fIfield\fP are extracted. In
+the first form, a single integer identifies one record from which 
+values of 
+.I field 
+are extracted.
+In the second form, a pair of unsigned integers gives the first and last
+points of the range.  If
+.I first
+is omitted, 1 is used.  If 
+.I last 
+is omitted, the last record in 
+.I file.fea
+is assumed.  The third form is equivalent to the first with
+.I "last = first + incr."
+When more than one record is processed, the element values are catenated
+together before being put in the sampled data file.
+.TP
+.BI \-S " sampling_rate \fR[1\fP]"
+Specifies the sampling rate of the data \- this value will be stored
+in the \fIrecord_freq\fP generic of the output file.  
+.TP
+.BI \-x " debug_level"
+If
+.I debug_level
+is nonzero, debugging information is written to the standard error output.
+Default is 0 (no debugging output).
+.SH EXAMPLES
+.PP
+\fImake_sd\fR \fB\-f\fR spec_param \fB\-r5\fR speech.fana spec_param.sd
+.PP
+puts the \fIspec_param\fR field from record 5 of speech.fana 
+into the sampled data file \fIspec_param.sd\fR.
+.PP
+An example of how \fImake_sd\fR
+is useful is in computing the cross spectrum from the output
+of \fIcross_cor\fR.
+To compute 
+the cross spectrum corresponding to record 5,
+the following command will work.
+.PP
+\fImake_sd\fR \fB\-f\fR cross_cor \fB\-r5\fR speech.fana \- \fB|\fR fft -o10 \- spec_param.spec
+.SH "ESPS PARAMETERS"
+No ESPS parameter file is read.
+.SH "ESPS COMMON"
+ESPS Common processing is disabled.  
+.SH DIAGNOSTICS
+.PP
+.I Make_sd
+complains and exits if 
+.I file.fea
+does not exist or is not a FEA file.
+.SH "IMPLEMENTATION NOTE"
+.PP
+The current version of \fImake_sd\fP is implemented as a shell script
+that pipes the output of \fIpplain\fP (1\-\s-1ESPS\s+1) through
+\fItestsd\fP (1\-\s-1ESPS\s+1). This is an example of how ESPS
+programs can be combined with the "Unix tools approach" \- see the
+simplified example on the \fIpplain\fP (1\-\s-1ESPS\s+1) man page.
+.SH BUGS
+.PP
+None known. 
+.SH EXPECTED CHANGES
+.PP
+.PP
+A later version will integrate \fItofeasd\fP (1\-\s-1ESPS\s+1) and 
+\fImake_sd\fP.  
+.SH SEE ALSO
+\fItofeasd\fP (1\-\s-1ESPS\s+1), fea_element(1\-ESPS),
+pplain(1\-ESPS), testsd(1\-ESPS), auto(1\-ESPS), cross_cor(1\-ESPS)
+.SH AUTHOR
+.PP
+.nf
+Manual page by David Burton
+Program by Alan Parker
+

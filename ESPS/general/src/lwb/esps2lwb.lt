@@ -1,0 +1,13 @@
+
+esps2lwb.c
+==============
+(19)  static variable sccs_id unused
+warning: possible pointer alignment problem
+    (207)  	    (212)  	
+
+
+==============
+name defined but never used
+    sccs_id   	esps2lwb.c(19)
+value type declared inconsistently
+    exit   	llib-lc(49) :: esps2lwb.c(310)

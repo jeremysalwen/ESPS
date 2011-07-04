@@ -1,0 +1,385 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)crosscor.1	1.8 4/2/97 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH CROSS_COR 1\-ESPS 4/2/97
+.SH "NAME"
+
+.nf
+cross_cor \- Cross-Correlation of Sampled Data
+.fi
+.SH "SYNOPSIS"
+.B cross_cor
+[
+.BI \-l " frame_len"
+] [
+.BI \-o " range"
+] [
+.BR \- { pr } "\fI range\fP"
+] [
+.BI \-w " window_type"
+] 
+.br
+[
+.BI \-x " debug_level"
+] [
+.BI \-P " param"
+] [
+.BI \-S " step"
+] [
+.BI \-N
+]
+.I input1.sd
+.I input2.sd
+.I output.fea
+.SH "DESCRIPTION"
+.PP
+.I cross_cor
+takes as input
+a pair of single-channel, real ESPS sampled-data (SD or FEA_SD) files
+and produces an ESPS feature (FEA) file as output.
+The program reads a set of fixed-length frames from the first input file.
+For each such frame,
+it reads a corresponding frame from the second input file (see \-N option),
+computes the cross correlation between the two frames
+at a fixed set of lags,
+and writes an output record containing the cross-correlation values.
+.PP
+All input frames have the same length
+.I frame_len
+(see
+.B \-l
+option).
+The initial point of the first frame from
+.I input1.sd
+is a specified point in the file (see
+.B \-p
+option).
+Initial points of any subsequent frames follow at equal intervals
+.I step
+(see
+.B \-S
+option).
+Thus the 3 cases
+.IR step " < " frame_len,
+.IR step " = " frame_len,
+and
+.IR step " > " frame_len,
+correspond to overlapping frames, exactly abutted frames,
+and frames separated by gaps.
+The initial point of the first frame from
+.I input2.sd
+is a specified point in that file (see
+.B \-p
+option), and subsequent frames follow at the same spacing as in
+.I input1.sd.
+The number of frames
+is the minimum sufficient to cover a specified range of
+.I nan
+points (see
+.B \-p
+option).
+The last frame in each file may overrun the range,
+in which case a warning is printed.
+If a frame overruns the end of a file, it is filled out with zeros.
+.PP
+The output file is not of any special feature-file subtype.
+It is not tagged, but has two ordinary
+.I long
+scalar fields named "tag1" and "tag2",
+which give the starting sample numbers
+of the frames from the two input files.
+The cross-correlation values are stored in a
+.I float
+vector field named "cross_cor" of length
+.IR maxlag "\|-\|" minlag "\|+\|1"
+where
+.I minlag
+and
+.I maxlag
+are the least and greatest lags for which the cross correlation is computed.
+Values are stored for lags
+.I minlag,
+\&. . . , 0, . . . ,
+.I maxlag
+in that order.
+.PP
+The input files must be different.
+One of the input file names may be replaced by `\-',
+indicating standard input.
+Likewise the output file name may be replaced by `\-',
+indicating standard output.
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP
+.BI \-l " frame_len" "\fR [0]"
+Specifies the length of each frame.
+If the option is omitted, the parameter file is consulted.
+A value of 0 (from either the option or the parameter file)
+indicates that a single frame of length
+.I nan
+(see
+.BR \-p )
+is processed;
+this is also the default value in case
+.I frame_len
+is not specified either with the
+.B \-l
+option or in the parameter file.
+.TP
+.BI \-o " minlag" : "maxlag" "\fR [\-10:10]"
+.TP
+.BI \-o " minlag" :+ "incr"
+The range of lags for which the cross correlation is computed.
+In the first form of the option,
+a pair of integers specifies the first and last lags of the range.
+If
+.IR maxlag " = " minlag " + " incr,
+the second form (with the plus sign) specifies the same range as the first.
+If the option is omitted, the parameter file is consulted,
+and if no value is found there, the default range of \-10 to 10 is used.
+.TP
+.BI \-p " first" : "last" "\fR [1:(last in file)]"
+.TP
+.BI \-p " first" :+ "incr"
+Specifies the range of sampled data to analyze in each file.
+This option may be specified at most twice.
+If it is omitted, the ranges are determined by the parameters
+.I start1,
+.I start2,
+and
+.I nan
+if they are present in the parameter file,
+and by default values for the parameters if they are not present.
+If the option is specified once, it applies to both input files.
+If it is specified twice, the first instance applies to
+.I input1.sd
+and the second to
+.I input2.sd.
+If the option is specified twice,
+and the two range specifications imply different values of
+.I nan,
+the smaller is used.
+In the first form of the option,
+a pair of unsigned integers
+specifies the first and last samples of the range to be analyzed.
+If 
+.IR last " = " first " + " incr,
+the second form (with the plus sign) specifies the same range as the first.
+If
+.I first
+is omitted, the default value of 1 is used.
+If
+.I last
+is omitted, the default is the last sample in the file.
+.TP
+.BI \-r " first" : "last"
+.TP
+.BI \-r " first" :+ "incr"
+The
+.B \-r
+option is synonymous with
+.BR \-p .
+.TP
+.BI \-w " window_type" "\fR[RECT]"
+The name of the data window to apply to the data.
+If the option is omitted, the parameter file is consulted,
+and if no value is found there,
+the default used is a rectangular window with amplitude one.
+Possible window types include rectangular ("RECT"), Hamming ("HAMMING"),
+Hanning ("HANNING"), cosine to the fourth power ("COS4"),
+and triangular ("TRIANG");
+see the manual page for window(3-ESPSsp) for the complete list.
+.TP
+.BI \-x " debug_level" "\fR [0]"
+A positive value specifies
+that debugging output be printed on the standard error output.
+Larger values result in more output.
+The default is 0, for no output.
+.TP
+.BI \-P " param" "\fR [params]"
+The name of the parameter file.
+The default name is "param".
+The parameter file is optional (see ESPS Parameter).
+.TP
+.BI \-S " step" "\fR [" frame_len "\fR]"
+Initial points of consecutive frames differ by this number of samples.
+If the option is omitted, the parameter file is consulted,
+and if no value is found there, a default equal to
+.I frame_len
+is used (resulting in exactly abutted frames).
+.TP
+.BI \-N
+If this option is used a single frame is read from 
+.I input2.sd.
+Frames are read from 
+.I input1.sd 
+as described above and for each of them a single correlation (of lag 0) with 
+the fixed frame of 
+.I input2.sd
+is computed.
+The default value of 
+.I frame_len
+is the length of 
+.I input2.sd
+and the default value of 
+.I step 
+is then 
+.I frame_len.
+Note that there must be at least as many records in
+.I input1.sd
+as in 
+.I input2.sd.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file is not required to be present, as there are default
+values for all parameters.
+If the file exists, the following parameters may be read
+if they are not determined by command-line options.
+.TP
+.I "frame_len \- integer"
+The number of points in each frame.
+This parameter is not read if the
+.B \-l
+option is specified.
+A value of 0 indicates that a single frame of length
+.I nan
+(see below)
+is processed;
+this is also the default value in case
+.I frame_len
+is specified neither with the
+.B \-l
+option nor in the parameter file.
+.TP
+.I "nan \- integer"
+The total number of points to process.
+This parameter is not read if the
+.B \-p
+option is specified.
+If the option is not specified and the parameter is not present,
+the default used is the length of a range extending either from
+.I start1
+to the end of
+.I input1.sd
+or from
+.I start2
+to the end of
+.I input2.sd,
+whichever is shorter.
+.TP
+.I "minlag \- integer"
+The first lag
+for which the cross correlation is computed.
+This value is not read if the command-line option
+.B \-o
+is specified.
+If the option is omitted and no value is found in the parameter file,
+a default of \-10 is used.
+.TP
+.I "maxlag \- integer"
+The last lag
+for which the cross correlation is computed.
+This value is not read if the command-line option
+.B \-o
+is specified.
+If the option is omitted and no value is found in the parameter file,
+a default of 10 is used.
+.TP
+.I "start1 \- integer"
+The first point from the input file
+.I input1.sd
+that is processed.
+A value of 1 denotes the first sample in the file.
+This parameter is not read if the
+.B \-p
+option is specified.
+A default value of 1 is used
+if the option is not specified and the parameter is not present.
+.TP
+.I "start2 \- integer"
+The first point from the input file
+.I input2.sd
+that is processed.
+A value of 1 denotes the first sample in the file.
+This parameter is not read if the
+.B \-p
+option is specified.
+A default value of 1 is used
+if the option is not specified and the parameter is not present.
+.TP
+.I "step \- integer"
+Initial points of consecutive frames differ by this number of samples.
+This parameter is not read if the
+.B \-S
+option is specified.
+If the option is omitted and no value is found in the parameter file,
+a default equal to
+.I frame_len
+is used (resulting in exactly abutted frames).
+.TP
+.I "window_type \- string"
+The data window to apply to the data.
+This parameter is not read if the command-line option
+.B \-w
+is specified.
+If the option is omitted and if no value is found in the parameter file,
+the default used is "RECT", for a rectangular window with amplitude one.
+Other acceptable values include
+"HAMMING", for Hamming, and "TRIANG", for triangular;
+see the window(3-ESPSsp) manual page for the complete list.
+.SH "ESPS COMMON"
+.PP
+The ESPS common file is neither read nor written.
+.SH "ESPS HEADERS"
+.PP
+.I Cross_cor
+reads the value of
+.I common.type
+from the input sampled_data files
+.I input1.sd
+and
+\fIinput2.sd\fP for type checking.
+.PP
+The two input files are given as source files in the output file header,
+but neither is given as the reference file.
+The output header contains field definitions for
+.I tag1,
+.I tag2,
+and
+.I cross_cor,
+and generic header items that record the values of the parameters listed in
+the ESPS Parameters section.
+The parameter
+.I window_type
+is recorded in an item of type CODED;
+the other parameters are recorded in items of type LONG.
+.PP
+In addition,
+The generic header item \fIstart_time\fP (type DOUBLE) is written in
+the output file.  The value written is computed by taking the
+\fIstart_time\fP value from the header of the first input file (or zero, if
+such a header item doesn't exist) and adding to it the offset time
+(from the beginning of the first input file) of the first point processed
+plus one half of \fIframe_len\fP.  (Thus, \fIstart_time\fP is in the 
+middle of
+the first frame, which is appropriate since the output data represent
+the entire frame; without this adjustment for \fIframe_len\fP,
+\fIwaves\fP+ displays would not line up properly.) 
+Also,
+the generic header item \fIrecord_freq\fP (type DOUBLE)
+is written in the output
+file.  The value is the number of output records per second of input
+data from the first input file.
+.SH "SEE ALSO"
+.PP
+auto(1-ESPS), window(3-ESPSsp), FEA_SD(5-ESPS), SD(5-ESPS), FEA(5-ESPS)
+.SH "BUGS"
+.PP
+None known.
+.SH "FUTURE CHANGES"
+.PP
+Accommodate multichannel and complex data.
+.SH "AUTHOR"
+Manual page by Rodney Johnson.

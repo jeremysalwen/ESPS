@@ -1,0 +1,41 @@
+formant [-nn -on -pn -fn -in -wn -Wn -tn -ln -hn -Ps] <speech_file>
+
+If the sampling frequency of the speech file is greater than 10kHz (or
+nHz if the -f option is specified), "formant" downsamples the file to
+10kHz (or nHz) and saves the results in a .ds file.  The signal is
+then highpassed to remove DC and rumble and the result is saved in a
+.hp file.  LPC poles are computed and saved in a .pole file.  The
+fundamental frequency, VUV and rms energy are estimated and saved in a
+.f0 file.  Finally, a dynamic programming algorithm estimates the best
+global mapping of LPC poles to four formants and places the results in
+a .fb file.  All of the files produced by "formant" have a SIG speech
+header and all, except the .pole files, may be viewed as waveforms using the
+"waves" program.  The .fb and .pole files may be overlaid on spectrograms
+using waves.
+
+Other options are:
+
+  -on	n specifies the LPC order to use in the analysis [12]
+  -nn	n specifies the number of formants to attempt tracking [4]
+  -pn   n specifies the preemphasis constant (0.0 to 1.0) [0.7]
+  -in	n specifies the frame interval in seconds [0.01]
+  -wn	n specifies the window duration in sec. [0.049]
+  -Wn   n specifies weighting type: 0=>rectangular; 1=>Hamming; 2->cos**4 [2]
+  -tn   n = 0 implies autocorrelation LPC
+	n = 1 means use Atal's stabilized covariance LPC (-w and -p ignored)
+		(w forced to 0.025; p to exp(-1800 * pi * T))
+	n = 2 means use standard covariance LPC [0]
+	 (no weighting is applied if n > 0)
+  -F	only compute F0; no .pole or .fb files are produced.
+  -l	n specifies the low frequency limit for F0 tracking [50Hz]
+  -h	n specifies the high frequency limit for F0 tracking [500Hz]
+  -P	s is a F0 analysis param. file (see /usr/local/lib/formant/misc/param)
+
+A SIG header may be added to the input speech file with
+
+	addhead [-fn] <input_file>
+
+  where n is the actual sampling frequency in Hz.  If not specified, n
+        is assumed to be 10kHz.  <input_file>.d is the output file
+	with the header prepended.
+

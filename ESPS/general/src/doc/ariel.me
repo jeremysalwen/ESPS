@@ -1,0 +1,25 @@
+.lo
+.ce 2
+.b
+README FIRST
+1.1 5/25/90
+.pp
+The device driver kit for the Ariel AT board is provided in two forms.
+The first is the standard distribution, uncompiled, on a 3.5 inch
+diskette.  The other form, is the compiled version which is in the ESPS
+directory on the tape.  Use the compiled one in the ESPS directory.  The
+original version is supplied just in case you have difficulty getting
+things going.
+.pp
+Read in the ESPS/waves+ tape as described in the enclosed instructions.
+If you have the Ariel DSP32 board, then it should be installed into the
+computer by now.    If the board is installed, then you should try
+loading the device driver.   Just go into \fI/files/esps/driver\fR and
+run \fBmake load\fR as super-user.   If the board is installed
+correctly, then the driver should load.   There is a diagnostic program
+in this directory, called \fIdrivetest\fR that you should look at.  It
+is described in the enclosed driver manual.
+.pp
+After you determine that everything is OK, you should put the load
+statement into your startup file, so that the driver gets loaded each
+time you boot your machine.

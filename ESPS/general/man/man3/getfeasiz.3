@@ -1,0 +1,61 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getfeasiz.3	1.8 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GET_FEA_SIZ 3\-ESPSu 18 Apr 1997
+.SH NAME
+get_fea_siz \- get the size information for a ESPS FEA file field
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/fea.h>
+
+long
+get_fea_siz(name, hd, rank, dimen)
+char *name;
+struct header *hd;
+short *rank;
+long **dimen;
+.fi
+.SH DESCRIPTION
+.I get_fea_siz
+returns the size of the Feature file field \fIname\fR in the header
+pointed to by \fIhd\fR.  The size is the number of elements of the
+particular data type, not the size in units like bytes or chars.  The
+function also returns through the pointers \fIrank\fR and \fIdimen\fR
+the information associated with this field from the header items
+\fIhd.fea->ranks\fR and \fIhd.fea->dimens\fR.  \fIrank\fR indicates
+the number of dimensions the field has (0 for scaler, 1 for vector, 2
+for matrix, etc.).  \fIdimen\fR is the address of an array of longs
+that is set to the dimensions of the field.  The size of the array is the
+equal to the value of \fI*rank\fR.  (see \fIFEA\fR(5\-ESPS).
+.PP
+If \fIname\fR is not a defined field name in the Feature file (or is
+NULL) the function returns 0.    The function can be called with NULL
+for \fIrank\fR or \fIdimen\fR if that value is not desired.   
+.SH EXAMPLE
+.nf
+short size, rank;
+long *dimen;
+
+size = get_fea_siz("zeta",hd,&rank,&dimen);
+
+size = get_fea_siz("zeta",hd,(short *)NULL,(long **)NULL);  \fI/* return only size */\fR
+.fi
+.SH DIAGNOSTICS
+.PP
+If \fIhd\fR does not point to a ESPS Feature file 
+a message is printed and the program terminates with an exit 1.
+.SH BUGS
+None known.
+.SH "SEE ALSO"
+.nf
+\fIget_fea_type\fP(3\-\s-1ESPSu\s+1), \fIallo_fea_rec\fP(3\-\s-1ESPSu\s+1),
+\fIadd_fea_fld\fP(3\-\s-1ESPSu\s+1), \fIget_fea_ptr\fP(3\-\s-1ESPSu\s+1),
+\fIget_fea_rec\fP(3\-\s-1ESPSu\s+1), \fIput_fea_rec\fP(3\-\s-1ESPSu\s+1),
+\fIget_fea_deriv\fP(3\-\s-1ESPSu\s+1), \fIset_fea_deriv\fP(3\-\s-1ESPSu\s+1)
+FEA(5\-ESPS)
+.fi
+.SH AUTHOR
+Alan Parker

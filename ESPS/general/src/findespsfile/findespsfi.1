@@ -1,0 +1,69 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)findespsfi.1	1.4 01 Apr 1997
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH FIND_ESPS_FILE 1\-ESPS 01 Apr 1997
+.SH NAME
+find_esps_file \- finds full path to an ESPS or waves+ file.
+.SH SYNOPSIS
+find_esps_file filename defpath [environment_variable_name]
+.SH DESCRIPTION
+.PP
+Looks along a path for \fBfilename\fR. If the file is found and is
+readable then place the the full Unix path to the file on the standard
+output with exit status 0.  If the file is not found then exit with status
+1.
+.PP
+The parameter \fBfilename\fR should the basename of the file to be
+discovered. If \fBfilename\fR already specifies a full path (begins
+with / or ./), then that path is returned.
+.PP
+Parameter \fBdefpath\fR specifies the default search path .  The
+syntax of the search path (just like Unix) is given below.
+.PP
+The default search path can be overridden by the environment variable
+specified in \fBenv_var_name\fR.  If the environment variable specified
+by \fBenv_var_name\fR is not set, or cannot be parsed then
+the default file path (as specified by \fBdefpath\fR) is used.
+.PP
+The syntax of the search path is a colon separated list of
+directories; just like the normal Unix path. An example path is:
+.PP
+.nf
+
+   $ESPS_BASE/bin:/usr/local/bin/$ARCH:/usr/esps/demo:$HOME/esps/bin
+
+.fi
+Environment variables may be used in the path by prefixing them
+with a $ sign.  The value of environment variable \fBESPS_BASE\fR is
+retrieved by calling \fBget_esps_base\fR(3\-\s-1ESPSu\s+1). If the
+environment variable is not set then it is replaced in the path
+with nothing.
+.SH EXAMPLES
+.nf
+# Find waves along the path specified in ESPS_BASE, note that an empty
+# default path was given. The environment variable is an optional
+# parameter.
+#
+
+pathtowaves=`find_esps_file xwaves "" ESPS_BASE`
+
+.fi
+.SH ERRORS AND DIAGNOSTICS
+.PP
+Exit status of 0 means it found something, exit status of 1 means
+the requested file was not found.
+.SH FUTURE CHANGES
+None known.
+.SH BUGS
+None known.
+.SH REFERENCES
+.PP
+None.
+.SH "SEE ALSO"
+.nf
+\fIget_esps_base\fP(3\-\s-1ESPSu\s+1), \fIfind_esps_file\fP(3\-\s-1ESPSu\s+1), 
+get_esps_base(1\-\s-1ESPS\s+1), 
+.fi
+.SH AUTHOR
+Ken Nelson wrote the routine and the man page.
+.PP

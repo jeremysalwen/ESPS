@@ -1,0 +1,632 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)select.1t	3.14 19 Sep 1997 ESI/ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH SELECT 1\-ESPS 19 Sep 1997
+.SH "NAME"
+.nf
+select - applies arbitrary queries to select records from FEA files
+.sp
+eselect - applies arbitrary queries to select records from FEA files
+.fi
+.SH "SYNOPSIS"
+.B select
+[
+.B \-n
+] [
+.BI \-c 
+] [
+.BI \-q " query"
+] [
+.BI \-e " expression"
+] [
+.BI \-f " format string"
+] [
+.BI \-l " log"
+] [
+.BI \-o " output"
+] [
+.I "input1 input2 ..."
+] 
+.SH "DESCRIPTION"
+.PP
+This program is stored under the name \fIselect\fR and \fIeselect\fR in
+order to avoid a name conflict with the \fIksh\fR builtin command \fIselect\fR.
+.PP
+.I Select
+applies selection criteria to FEA files.  The selected records
+may be printed and may appended to an internal record buffer, which
+in turn may be output to another FEA file.  The selection criteria
+are specified as a set of queries, with each query being a condition
+on the fields in the FEA record.
+.PP
+.I Select
+operates in two modes:  non-interactive and interactive.  The
+non-interactive mode applies when the \fB\-q\fP and \fB\-o\fP options
+are used.  In this case, the specified query is applied to all of the
+.I input 
+files and the selected records are written
+to
+.I output.  
+.PP
+In interactive mode (no \fB\-q\fP option), 
+.I select
+prompts the user for commands (see below).  Alternatively, a file of
+selection commands can be used as standard input (e.g., \fIselect <
+command_file)\fP.  Command files can also be invoked interactively.
+.PP
+The following options are interpreted by \fIselect\fP:
+.TP
+.BI \-n
+No source files or comments about queries are added to the headers
+of output files.  Normally, the headers of output files are expanded
+to include the the input files as sources and the selection queries as 
+comments in the \fIvariable.comment\fP field.  The \fB\-n\fP option 
+disables this and results in faster operation, especially when 
+the output file already exists and is large.  
+.TP
+.BI \-c 
+By default, comparisons involving feature fields of type coded are case
+insensitive.   When the \fB\-c\fR option is used, these comparisons are
+case sensitive.
+.TP
+.BI \-q " query"
+Apply the 
+.I query
+to the
+.I input
+files and write the selected records to 
+.I output
+(see \fB\-o\fP).  
+.TP
+.BI \-e " expression"
+Execute the \fIeval\fR command on the input file and print the result to
+standard output.   For details, see the \fIeval\fR command below.
+.TP
+.BI \-f " printf format string"
+This option allows the specification of a \fIprintf\fR format string to
+be used to output the values resulting from use of the \fB-e\fR option.
+The string can be any valid \fIprintf\fR format string, except that only
+the following character escapes are handled: \\n, \\t, \\b, \\r, \\f, \\\\ 
+(to enter a slash), and \\' (to enter a single quote).    (Note in
+particular, that \\ddd is not handled.)  Keep in mind that the value
+being displayed is typed \fIdouble\fR inside of the program.  So use of
+an incompatible output specification will result in garbage dispplay.
+For example the following option might be used: \fB-f 'Value:\\t%e\\n'\fR or
+\fB-f Any string: %f units\\n'\fR.   The specification string should
+contain at most one output format control appropriate for double values
+(%e, %f, %g). 
+.TP
+.BI \-o " output"
+Specifies an output file.  This option must be used if the 
+.B \-q
+option is used, and it cannot be used unless one or more input 
+files are specified on the command line.  
+.TP
+.BI \-l " log"
+All user commands, together with all terminal output from
+.IR select ,
+will be recorded on a file named
+.IR log .
+.PP
+Each command to \fIselect\fP consists of one or two keywords
+followed by arguments.  The keywords may be abbreviated.  Your unix
+interrupt character (\fIe.g.\fR ^C) will always terminate the current command.
+Required portions of the keywords are shown in capital letters in the
+description below;
+.I select
+is not sensitive to case.  An EOF is equivalent to a 
+.B Write
+followed by a
+.B Quit.
+.PP
+Tagged and segment labelled input files involve some special handling in
+order to make it possible to associate output records with the sampled data
+files to which the input records refer.  If the output file does not exist,
+and if there is only one tagged input file, then the output file is also
+tagged, with the tags being pointers into the same refer file as specified
+in the input file.  If the output file does not exist, and if there are two
+or more tagged input files, the output file is segment labelled, and all
+tagged records written to the output file are converted to segment
+labelled.  For the case of an existing output file, see the note under
+BUGS below.
+For more information
+about taggged and segment labelled FEA files, see FEA (5\-\s-1ESPS\s+1).  
+.TP
+.BI "@" "comfile "
+.br
+This command causes
+.I select
+to read commands from the file
+.I comfile ,
+rather than from the standard input. When end-of-file is reached,
+.I select
+resumes reading from the standard input.  Command files may be
+nested; the maximum nesting depth is three.  Command files are
+aborted (all remaining commands are skipped) if an error or user
+interrupt occurs while the command file is being read.
+.TP
+.BI "!" command
+Shell escape.
+A shell is forked off to execute
+.IR command .
+The command output does not appear in the log file.  The exclamation point
+must be in the first column.  A "#" character is not considered a comment in
+.IR command ,
+since the command may require that character.
+.TP
+.B CLEar
+If the record buffer has been changed since the last write, a 
+warning is printed and the user is asked to confirm.   If the user
+answers the confirmation request with "yes", the the record buffer is
+cleared.
+.TP
+.B CLOse
+Closes the log file, if any.
+.TP
+.BI EVal " QUERY"
+Prints the value of the \fIQUERY\fR expression (see
+SYNTAX DETAILS) for each record in the
+input set.  The record number relative to the input file and relative to
+the set of input files (if there is more than one input file) is also
+printed. 
+.TP
+.BI From " input1, input2, ..."
+Closes an existing input files, if any are open, and opens the new
+ones.  All input files must be FEA files.  Note that an initial set
+of input files can be specified on the command line.
+.TP
+.BI HEAder " flags"
+Prints the headers of the current set of input files, using \fIpsps\fR(1\-ESPS)
+with the \fB\-x\fR flag.  The \fIpsps\fP flags \fB\-frhv\fP may also be
+specified.  The outputs are run through the
+.I more
+program (unless PAGER is set to a different program name; see ENVIRONMENT).
+The output is not written to the log file.
+.TP
+.B HELp
+Prints a summary of the commands accepted by
+.I select.
+The help file is run through the
+.I more
+program (unless PAGER is set to a different program name; see ENVIRONMENT).
+.TP
+.BI Log " logfile"
+Specifies that the dialog with the user will be saved on
+.I logfile
+(equivalent to the
+.B \-l
+command line option).  If a log file is already open, the old log file is
+closed and a new file is started.  If the argument is omitted, the command is
+equivalent to Show Log.
+.TP
+.BI Select " QUERY"
+Processes the input files one at a time, selects all records that
+satisfy the \fIQUERY\fP, and appends them to the
+record buffer. 
+During queries that scan more than 1000 records, a dot will be printed
+for each 1000 records scanned.
+The number of records selected from each file and 
+the total number selected are printed when the select is complete or
+interrupted.
+.TP
+.B "SHow Buffer"
+Prints the records in the record buffer.  
+The output is run through the
+.I more
+program (unless PAGER is set to a different program name; see ENVIRONMENT).
+.TP
+.B "SHow FIelds"
+Prints the field definitions of 
+.I input.
+.TP
+.BI "SHow FRom" " flags"
+Runs \fIpsps\fP on the current set of input files.  Any of the
+\fIpsps\fP flags may be specified.  The output is run through the
+.I more
+program (unless PAGER is set to a different program name; see ENVIRONMENT).
+.TP 
+.B "SHow LOg"
+This command tells whether a log file is open, and gives its name if
+there is an open file.
+.TP
+.B "SHow LAst"
+Prints the last record in the select buffer.  
+.TP 
+.BI "SHow Select" " QUERY"
+Processes the input files one at a time, selects all records that
+satisfy the \fIQUERY\fP, and
+prints them. 
+The number of records selected from each file and the total number
+selected are printed.  The output is run through the
+.I more
+program (unless PAGER is set to a different program name; see ENVIRONMENT).
+If this command is interrupted with one interrupt character, then
+printing of the records is suspended, but the selection continues.  The
+total records that match the \fIQUERY\fR will be printed as usual.   If
+the command is interrupted for a second time the command will quit
+without checking additional records.
+.TP
+.BI "SHow To" " flags"
+Runs \fIpsps\fP on \fIoutput\fP.  Any of the \fIpsps\fP flags may 
+be specified.  
+The output is run through the
+.I more
+program (unless PAGER is set to a different program name; see
+ENVIRONMENT).
+.TP
+.B "SIze"
+Prints the number of records in the record buffer. 
+.TP
+.BI To " output \fR[ \fBWith\fI fieldname1, fieldname2, ...\fR]"
+.TP
+.BI To " output \fR[ \fBWithout\fI fieldname1, fieldname2, ...\fR]"
+Specifies an output file.  If an output file has already been
+specified, \fIselect\fP closes it and opens the new one provided that
+the record buffer has not changed since the last write.  If the
+record buffer has been changed since the last write, a warning is
+printed and no action is taken.  If the TO command is then repeated
+as the next command, the existing output file is closed and the new
+one is opened.  Note that an output file can be specified on the
+command line.  An output file cannot be specified until an input file
+has been specified.  Furthermore, the output file, if it exists, must
+have a compatible header with that of the first input file (same
+field definitions).  If the 
+output file does not exist, the \fBWith\fP clause can be used to 
+specify which fields from input records will be written to the output 
+file, or the \fBWithout\fP clause can be used to specify which 
+fields to omit.   
+.TP
+.B Quit
+If the record buffer has not changed since the last write,
+\fIselect\fP exits.  If the record buffer has been changed since the
+last write, a warning is printed and the user is asked to confirm the
+command.   If the user responds to the confirmation request with "yes",
+then the program is terminated without writing the output file.
+.TP
+.B Undo
+This command removes the records from the record buffer resulting from
+the last Select command.   This command can only be given between a
+Select and a Write.  Undo cannot be undone.   
+.TP
+.B Version
+Prints out the version number and the date of the last edit (actually, the
+date of the last modification of the SCCS database where
+.I select
+is maintained).
+.TP
+.B Write
+If \fIoutput\fP does not exist (see the TO 
+command), it is created and the contents of the record buffer are written 
+to it.  If \fIoutput\fP exists, the contents of the record buffer 
+are appended.  The record buffer is then cleared.  
+.SH SYNTAX DETAILS
+.PP
+A \fIQUERY\fR consists of an expression, which has the following form:
+.nf
+
+<expr> ::= <value>
+	| <field_name>{[<index>]}
+	| <character_string>
+	| $<external_function>
+	| <function> (<field_name>)
+	| <function> (<expr>)
+	| ( <expr> )
+	| <expr> <arith_op> <expr>
+	| <expr> <rel_op> <expr>
+	| \- <expr>
+	| <expr>
+
+.fi
+
+Here, <field_name> is a FEA record field name, <index> is an integer
+value indicating an offset from the beginning of the field (used if
+the field is not a scaler), 
+<value> is a numerical value, 
+<character_string> is a character string in quotes ("),
+<function> is the name of a built in function (see FUNCTIONS),
+<rel_op> is a relational operator, and <arith_op> is a
+arithmetic operator (defined below).
+<external_function> is the name of an external program that is called to
+implement some function on each record.  This is described in detail
+below.
+The "{}" brackets indicate
+that the inclusion of field index is optional. 
+If <field_name> is not a scaler field, <field_name> is equivalent to
+<field_name>[0] when used in an expression.   
+An <external_function> is always preceded by a dollar sign ($).
+.PP
+If a <field_name> is used in an expression which is not defined in the
+current input file, then a warning is printed (once for each file) and
+zero is used as its value.   This is not a fatal error, because
+there might be several input files open that do not have all of the same
+fields.
+.bp
+.PP
+The permitted relational are:
+.sp
+.TS
+center,box,tab(;);
+c s
+l l.
+<rel_op>
+=
+==;equals
+\&=;equals
+!=;not equals
+>;greater than
+>=;greater than or equal to
+<;less than
+<=;less than or equal to
+&&;and
+&;and
+||;or	    
+|;or
+.TE
+.PP
+The && has precedence over the || ; & and | are
+treated as synonyms for && and ||.   There are no bitwise logical
+operations.
+.PP
+The permitted arithmetic operators are:
+.sp
+.TS
+center,box,tab(;);
+c s
+l l.
+<arith_op>
+=
++;addition
+\-;subtraction
+*;multiplication
+/;division
+^;exponentiation
+.TE
+.PP
+The ^ operator has the highest precedence and is right associative.  The
+/ and * operators have the next highest precedence and are left
+associative.  The + and \- operators have the lowest precedence and are
+also left associative.
+.PP
+If <value> is a numerical value (appropriate if the type of the field
+is a numerical type), it should be given in a corresponding format
+for C constants.  If the field type is coded, then <value> should be
+a quoted string (upper or lower case) that is one of the legal values.
+.PP
+In the case of coded field types, the default behavior is for the comparison
+to be case insensitive.  Comparisons can be made case sensitive by using
+the \fB-c\fR option on the command line.
+.SH FUNCTIONS
+.PP
+There are three types of functions supported by \fIselect\fR.
+One type of function takes as its domain a numerical value, which can be
+given as any expression that \fIselect\fR can process.   Another type of
+function operates on a <field_name>.  The third type of function is the
+<external_function>.  This form of function results in an external
+program being called to perform some function on each record.
+This provides a very general capability, but since the external program
+will be called for each record processed it is much slower than built in
+functions.
+.PP
+The available built in function are:
+.sp
+.TS
+center,box,tab(;);
+c s
+l l.
+Functions on Expressions
+=
+abs;absolute value
+atan;arc tangent
+cos;cosine
+exp;exponent
+int;integer
+log;natural log
+log10;log base 10
+sin;sine
+sqrt;square root
+tan;tangent
+.TE
+.sp
+.TS
+center,box, tab(;);
+c s
+l l.
+Functions on Fields
+=
+max;maximum of elements in field
+mean;mean of elements in field
+min;minimum of elements in field
+prod;product of elements in field
+size;number of elements in field
+sum;sum elements in field
+.TE
+.PP
+The only legal argument for functions on fields is a single
+<field_name> without an index.  In this case, the <field_name> refers to
+the entire field.
+.PP
+If <external_function> is found in an expression
+.I select
+searches the users current PATH for a program with the specified
+name.  This program is assumed to accept a single-record ESPS FEA file
+as its only argument and to output a value (ASCII) on standard output.  
+.I Select
+creates a single-record ESPS file from each record in the input files 
+and calls <external_function> with this file; the
+output of <external_function> is then used within the query.  
+An example of the source code for an external function can be found
+in the \fIselect\fR source directory, or in /usr/sps/lib on a non-source
+system.
+.PP
+There are several built in field names that have special meaning.  The
+are:
+.sp
+.TS
+center,box, tab(;);
+c s
+l l.
+Built in Field Names
+=
+tag;built in tag field of the record
+REC;record number (from 1)
+FILE;file name of the input file within the set of input files
+.TE
+The field name "tag" always refers to the built in tag field of the
+record.  (See the discussion of tags and segment labelling under
+DESCRIPTION.)
+The name "REC" refers to the record number (from 1) of the
+record in the set of input files and
+the name "FILE" refers to the filename of the input file in the
+set of input files.
+.SH "EXPRESSION ERRORS"
+.PP
+There are three types of expression errors.  
+.PP
+The first type are syntax
+errors caught by the parser.   These result result in a "syntax error"
+message followed by the offending character.   In the current release,
+the query is usually executed anyway.   If the selected records are not
+wanted, they can be removed from the buffer with the \fBUNDO\fR command.
+If the select is long (because the input file is large) then the select
+can be interrupted and then undone.   This will be improved in a future
+release.
+.PP
+The other type of expression errors relate to the execution of the
+expression itself.  These include use of undefined fields, undefined
+functions, field indexes out of bounds, arithmetic overflow and
+underflow, and divide by zero.   Errors that cannot change from one
+record or one input file to the next are considered fatal and terminate
+the \fBSELECT\fR (or \fBEVAL\fR or \fBSHOW SELECT\fR).  This type of
+error is caused by trying to call an undefined built in function or
+trouble running an external function.
+.PP
+The other errors described above cause the termination of the
+expression for the current record.  In most cases the expression
+evaluates to zero.  In the case of undefined field and index out of
+bounds, zero is returned and the expression continues.   In the case of
+arithmetic problems, the expression is terminated and zero is returned
+for the expression.  The reason that these errors are not fatal is that
+several input files might be open and they do not have to all have the
+same fields.   A field might not be defined for one file of the input
+set, but might be defined for others.  Therefore, the query should be
+allowed to process.   A message is printed, once for each file, in the
+case of these errors.   The query can be interrupted if the desired
+results will not be achieved.
+.PP
+In all cases a message is printed stating what action is being taken
+when errors are found.
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read by 
+.I select.  
+.SH "ESPS COMMON"
+.PP
+ESPS Common file is not read or written by 
+.I select.
+.SH ESPS HEADERS
+.PP
+.I Select
+reads the 
+.I common.type
+field from the header of 
+.I input
+(to make sure that it is of type FEA), and it reads the
+field-defining information as well.  
+If output files do not exist, their headers are created with 
+.I copy_header
+(3\-ESPS).  
+Unless the \fB\-n\fP option is used, the headers of output files are expanded
+to include the the input files as sources and the selection queries as 
+comments in the \fIvariable.comment\fP field.  
+.SH ENVIRONMENT
+.PP
+The
+.B PAGER
+environment variable determines what paging program is used to break up
+large displays of text. By default, the
+.I more
+program is used (however, this may be changed by the installer).
+To use a different pager (or if your system doesn't have
+.IR more ),
+set this environment variable to some other value.  A full pathname is not
+required.  If you don't like paging, try setting
+.B PAGER
+to
+.IR cat .
+.SH EXAMPLES
+.PP
+.nf
+\fIThis command gathers all voiced from the input files into allvoiced.fea\fR
+select -q 'frame_type == "VOICED"' -o allvoiced.fea *.fana
+
+\fIThis command applies a command file of queries on file1 with output to file2\fR
+select -o file2 file1 < commands
+
+Examples of queries:
+	
+select pulse_len = 90 & frame_type = "VOICED"
+  \fIframe_type is a CODED type\fR
+	
+select (a = 3 & FILE = "f1") | (b = 4 & FILE = "f2")
+  \fIthis means to select records with a = 3 from input file
+  f1 and b = 4 from input file f2; assuming that there
+  are at least two input files\fR
+
+select sqrt(gamma)/4 > alpha[3]
+  \fIIf gamma is a field of size one, then its value is used by the sqrt
+  function.   If gamma is a field of greater than size one, then the
+  element is used (same as saying gamma[0]).\fR
+
+select sum(gamma) > mean(beta)
+  \fIThese functions operate on entire fields, so the fieldname here 
+  without the index does not refer to only the first element; it refers
+  to the entire field.\fR
+
+select sum(gamma) > mean(beta) && ($func1 > 45.6)
+  \fIsum and mean are functions of fields.  $func1 is a user supplied
+  external program which is called for each record.
+.fi
+.SH "SEE ALSO"
+.PP
+ESPS(5-ESPS), FEA(5\-ESPS)
+.SH "FUTURE CHANGES"
+.PP
+Provide a method to link in user-defined functions to provide higher
+performance than external functions.
+.SH "WARNINGS"
+.PP
+A number of warning and error message are printed in the event of
+various expression errors.  Some errors terminate the query.
+.SH "BUGS"
+.PP
+The following paragraph describes the way \fIselect\fR will handle
+existing output files and input files with tags:
+.PP
+If the output file exists and is segment labelled, and if there
+is one or more tagged input file, all tagged records written to the output
+file are converted to segment labelled.  If the output file exists and is
+tagged, and if there is one or more tagged input file, the output file is
+converted from tagged to segment labelled, and all tagged records written
+to the output file are converted to segment labelled.  
+.PP
+This is not done in this version.   The pre-existing output file is not
+changed, and the tag values copied into it may be meaningless (because
+the \fIrefer\fR file might be different.
+.PP
+A syntax error in a query will terminate the parse of the query and
+it will then run.   After it runs you will get a syntax error message.
+If the select, selected records that you don't want, use the "undo"
+command to undo the effect of the most recent select operation.  Undo
+can only be used once after each select.  You can't undo an undo
+(except to select again).
+.PP
+If referenced fieldname is a complex feature field, then the real part
+of that is used in the expression.   Better support for complex types
+will be added in the next version.
+.SH "AUTHOR"
+.PP
+Manual page by John Shore and Alan Parker
+.br
+Program by Alan Parker
+

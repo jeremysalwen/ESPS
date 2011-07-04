@@ -1,0 +1,288 @@
+.\" Copyright (c) 1987, 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)addsd.1	3.12 02 Apr 1997 ESI
+.TH ADDSD 1\-ESPS 02 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+addsd - add ESPS sampled data files with optional scaling
+.br
+multsd - multiply ESPS sampled data files with optional scaling
+.SH "SYNOPSIS"
+.B addsd
+[
+.BI \-x " debug_level"
+] [
+.BI \-r " range"
+] [
+.BI \-p " range"
+] [
+.BI \-g " scale"
+] [
+.BI \-z
+] [
+.BI \-t
+] 
+.I "file1 file2 file3"
+.br
+.B multsd
+[
+.BI \-x " debug_level"
+] [
+.BI \-r " range"
+] [
+.BI \-p " range"
+] [
+.BI \-g " scale"
+] [
+.BI \-z
+] [
+.BI \-t
+] 
+.I "file1 file2 file3"
+.SH "DESCRIPTION"
+.PP
+\fIaddsd\fP (1\-\s-1ESPS\s+1) and \fImultsd\fP (1\-\s-1ESPS\s+1) are the
+same binary file. The function the program does (either adding or multiplying)
+depends on the name that is used to call it. The options and syntax 
+are the same for both adding and multiplying. Because the calling name is used
+in the program logic, both \fIaddsd\fP (1\-\s-1ESPS\s+1) and 
+\fImultsd\fP (1\-\s-1ESPS\s+1) cannot be linked or copied to new names.
+Below only \fIaddsd\fP (1\-\s-1ESPS\s+1) is described, but the description
+of \fImultsd\fP (1\-\s-1ESPS\s+1) is completely analogous.
+.PP
+.I Addsd
+takes sampled data from 
+.I file1,
+adds it sample-by-sample to the sampled data in 
+.I file2,
+possibly scaling the data in 
+.I file2 
+first, and outputs the results as an ESPS FEA_SD file
+.I file3.
+If there are not enough records in 
+.I file2, 
+and if the
+.B \-t
+option is not used, 
+.I addsd
+reuses 
+.I file2,
+starting with its first record.  
+.PP
+Both
+.I file1
+and
+.I file2
+must be ESPS FEA_SD files, and they must have the same sampling 
+frequency (record_freq); otherwise
+.I addsd
+exits with an error message.  
+The output file data type is selected to "cover" the two input data
+types. That is, all values of the input types can be stored in the output
+type. For example, if one file is type SHORT_CPLX and the other is 
+type FLOAT, the output type is FLOAT_CPLX.
+If "\-" is supplied in place of 
+.I file1,
+then standard input is used.  If "\-" is supplied in place of 
+.I file3,
+standard output is used.  
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-x " debug_level"
+If 
+.I debug_level
+is positive,
+.I addsd
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the  
+.I debug_level
+increases.  If
+.I debug_level
+is 0, no messages are printed.  The default is 0.  Levels up through 2
+are supported currently.  
+.TP
+.BI \-p " range"
+Selects a subrange of records from 
+.I file1
+using the format 
+.I start\-end
+or
+.IR start:end .
+Either 
+.I start
+or 
+.I end
+may be omitted, in which case the omitted parameter defaults respectively
+to the start or end of 
+.I file1.  
+The first record in 
+.I file1
+is considered to be frame 1, regardless of its position relative to any
+original source file.  The default range is the entire input file
+.I file1.  
+The selected subrange from 
+.I file1
+is then added to the (possibly scaled) data from the 
+.I file2,
+starting with the first record of 
+.I file2.
+If the subrange does not exist in
+.I "file1, addsd"
+exits with an error message.  
+.TP
+.BI \-r " range"
+\fB-r\fP is a synonym for \fB-p\fP.
+.TP
+.BI \-g " scale"
+Causes 
+.I addsd
+to multiply the data in 
+.I file2
+by 
+.I scale
+before adding it to the data in 
+.I file1.  
+The format for 
+.I scale 
+is either integer or floating point.  
+.TP
+.BI \-z
+Supresses warning messages that normally are generated if the 
+contents of 
+.I file2
+are used more than once.  
+.TP
+.BI \-t
+Truncates the processing if there are not enough records in 
+.I file2.
+In this case, 
+.I file3
+will contain as many records as there are in 
+.I file2
+or, if the 
+.B \-p
+option is used, as many records as in the intersection of 
+.I range
+and the full range of 
+.I file2.  
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read by 
+.I addsd.  
+.SH ESPS COMMON
+.PP
+If Common processing is enabled, the following items are read from the ESPS
+Common File provided that \fIfile1\fP is not standard input, and provided
+that the Common item \fIfilename\fP matches the input file name
+\fIfile1\fP:
+.IP
+.I "start - integer"
+.IP
+This is the starting point in \fIfile1\fP.
+.sp
+.I "nan - integer"
+.IP
+This is the number of points to add from \fIfile1\fP.  
+.sp
+If \fIstart\fR and/or \fInan\fR are not given in the common file, or if the
+common file can't be opened for reading, then \fIstart\fR defaults to the
+beginning of the file and \fInan\fR defaults to the number of points in the
+file.  In all cases, values of \fIstart\fP and \fInan\fP are ignored
+if the \fB\-p\fP is used.  
+.PP
+If Common processing is enabled, the following items are written into the
+ESPS Common file provided that the output file is not <stdout>:
+.IP
+.I "start - integer"
+.IP
+The starting point (1) in the output file 
+.I file3.
+.sp
+.I "nan - integer"
+.IP
+The number of points in the output file 
+.I file3
+.sp
+.I "prog - string"
+.IP
+This is the name of the program (\fIaddsd\fP in this case).
+.sp
+.I "filename - string"
+.IP
+The name of the output file
+.I file3. 
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to \fBoff\fR.  The default ESPS Common file is \fI.espscom\fR 
+in 
+the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.SH ESPS HEADERS
+.PP
+The following items are copied from the header of 
+.I file1
+to the header of 
+.I file3:
+.RS 5
+\fI
+.nf
+variable.comment
+variable.refer
+record_freq
+.fi
+\fP
+.RE
+.PP
+If the 
+.B \-g
+option is used, a generic header item \fIscale\fP
+is added to the output file header that contains the \fB\-g\fP
+specified value.
+.I Max_value 
+in 
+.I file3
+is not set.
+.PP
+The generic header item \fIstart_time\fP is written in the output file.  
+The value written is computed by taking the \fIstart_time\fP value from 
+the header of the first input file (or zero, if such a header item doesn't
+exist) and adding to it the relative time from the first record
+in the file to the first record processed. 
+.SH "SEE ALSO"
+.PP
+.nf
+ESPS (5\-ESPS), FEA_SD (5\-ESPS), record (1\-ESPS), copysd (1\-ESPS)
+.fi
+.SH "WARNINGS"
+.PP
+If there are not enough records in 
+.I file2
+\- i.e., if 
+.I addsd
+has to start over at the beginning of 
+.I file2,
+\- a warning message is printed.  This warning is inhibited 
+by the
+.B \-z
+option, and does not apply if
+.B \-t
+is used.  
+.SH "BUGS"
+.PP
+None known.
+.SH "AUTHOR"
+.PP
+Ajaipal S. Virdy.
+.br
+Modified for ESPS 3.0 by David Burton and John Shore.
+.br
+Modified for FEA_SD by David Burton.
+.br
+Modified to support multiplication by David Burton.
+
+

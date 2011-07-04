@@ -1,0 +1,31 @@
+"rundemo.sh   (startup script)" xtext -F rundemo.sh
+
+"demoinit.WC   (initial xwaves+ command file)" xtext -F wcommands/demoinit.WC
+
+"wave_pro   (xwaves+ startup profile)" xtext -F files/wave_pro
+
+"dcontrols.WM (menu file for xwaves+ controls" xtext -F menus/dcontrols.WM
+
+"dmbind.WM (menu file for xwaves+ mouse controls" xtext -F menus/dmbind.WM
+
+"setup.BM   (upper panel menu file)"	xtext -F menus/setup.BM
+
+"sounds.BM   (middle panel menu file)"	xtext -F menus/sounds.BM
+
+"files.BM  (bottom panel file list)"  xtext -F menus/files.BM
+
+"play_sound  (script for playing the file)" xtext -F bin/play_sound
+
+"backplay  (script for playing the file backwards)" xtext -F bin/backplay
+
+"dosound   (script for generating displays)" xtext -F bin/dosound
+
+"demoquit.WC  (xwaves+ termination command file)" xtext -F wcommands/demoquit.WC
+
+"demofiles.BM   (menu file for this panel)"	xtext -F menus/demofiles.BM
+
+# @(#)demofiles.BM	1.4 11/5/91 ERL
+
+
+
+

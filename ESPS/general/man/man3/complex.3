@@ -1,0 +1,141 @@
+.\" Copyright (c) 1987, 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)complex.3	1.5 19 Mar 1990 ESI
+.TH COMPLEX 3\-ESPSsp 19 Mar 1990
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+cadd \- returns the complex sum of two complex numbers
+csub \- returns the complex difference of two complex numbers
+cmult \- returns the complex product of two complex numbers
+cdiv \- returns the complex division of two complex numbers
+conj \- returns the complex conjugate of its argument
+realmult \- returns the complex product of a real and a complex number
+realadd \- returns the complex result of adding a real and a complex
+cmultacc \- returns the product of two complex numbers added to a third
+modul \- returns the absolute value of a complex number
+csqrt \- returns the square root (positive real if possible) of a complex number
+.SH SYNOPSIS
+.ft B
+typedef struct  {
+.br
+	double real;
+.br
+	double imag;
+.br
+} double_cplx;
+.sp
+.PP
+.ft B
+# include <esps/esps.h>
+.sp
+.PP
+.ft B
+double_cplx cadd (x, y)
+.br
+double_cplx x, y;
+.PP
+.ft B
+double_cplx csub (x, y)
+.br
+double_cplx x, y;
+.PP
+.ft B
+double_cplx cmult (x, y)
+.br
+double_cplx x, y;
+.PP
+.ft B
+double_cplx cdiv (x, y)
+.br
+double_cplx x, y;
+.PP
+.ft B
+double_cplx conj (x)
+.br
+double_cplx x;
+.PP
+.ft B
+double_cplx realmult (x, r)
+.br
+double r;
+.br
+double_cplx x;
+.PP
+.ft B
+double_cplx realadd (x, r)
+.br
+double r;
+.br
+double_cplx x;
+.PP
+.ft B
+double_cplx cmultacc (x, y, z)
+.br
+double_cplx x, y, z;
+.PP
+.ft B
+double modul (x)
+.br
+double_cplx x;
+.PP
+.ft B
+double_cplx csqrt(x)
+.br
+double_cplx x;
+.SH DESCRIPTION
+.PP
+Each function operates on one or more complex numbers. The typedef
+double_cplx is defined by the inclusion of \fI<esps/esps.h>\fR,
+and it is shown above for reference.  The typedef COMPLEX was used in 
+previous versions of ESPS, and is defined and for convenience is now 
+defined as a synonym for double_cplx.  
+.sp
+.PP
+.I cadd 
+adds two complex numbers and returns their sum.
+.sp
+.PP
+.I csub
+subtracts \fIy\fR from \fIx\fR and returns the difference.
+.sp
+.PP
+.I cmult
+multiplies \fIx\fR by \fIy\fR and returns the product.
+.sp
+.PP
+.I cdiv
+divides \fIx\fR by \fIy\fR and returns the quotient.
+.sp
+.PP
+.I conj
+returns the complex conjugate of \fIx\fR.
+.sp
+.PP
+.I realmult
+multiplies the complex number \fIx\fR by the real number \fIy\fR
+and returns the product.
+.sp
+.PP
+.I realadd
+addes the complex number \fIx\fP to the real number \fIr\fP
+and returns the sum.
+.sp
+.PP
+.I cmultacc
+multiplies \fIx\fR by \fIy\fR, adds it to \fIz\fR, and returns
+the sum.
+.sp
+.PP
+.I modul
+returns the absolute value, or modulus, of \fIx\fR.
+.sp
+.PP
+.I csqrt
+returns the square root of \fIx\fR.
+.SH DIAGNOSTICS
+.PP
+.I cdiv
+warns and exits if the divisor is zero.
+.SH AUTHOR
+Code by B. F. Frankel; ESPS modification, sqrt, and realadd by D. Burton;
+manual page by D. Burton.

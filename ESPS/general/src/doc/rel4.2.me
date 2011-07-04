@@ -1,0 +1,444 @@
+.lo
+.de SM          \"macro to shrink left margin
+.br
+.nr $i \\n($i+\\$1i
+..
+.de RM          \"macro to restore original left margin
+.br
+.nr $i 0
+..
+.he 'ESPS Version 4.2 Release Notes''page %'
+.ce 3
+.b
+ESPS Version 4.2 Release Notes
+.sp
+Document version: 1.4 2/1/93
+.sh 1 "INTRODUCTION"
+.lp
+This document provides notes for release 4.2 of ESPS.  These release
+notes document changes to ESPS since the revision 4.1.  This document
+can be viewed conveniently using \fIeinfo\fP (1\-\s-1ESPS\s+1) or
+\fIeversion\fP (1\-\s-1ESPS\s+1).
+.lp
+Note that when shipped as an update (i.e. not to new customers) new
+hardcopy manuals are not provided.   The online documentation is up to
+date.  Please refer to the online manual pages for all programs and
+library functions mentioned below.
+.sh 1 "SUMMARY OF MAJOR CHANGES"
+.lp
+This release is primarily a maintenance release and most of the changes
+were bug fixes to programs and error corrections to the documentation.
+Major highlights include:
+.ip \ \ \ \(bu
+major improvements to the filter design and filtering programs
+.ip \ \ \ \(bu
+license manager startup delay reduced from 3 minutes to 1 minute
+.ip \ \ \ \(bu
+automatic checkout of ESPS license when required
+.ip \ \ \ \(bu
+\fIe2sphere\fR a license\-free program added to convert ESPS files to Sphere header files
+.ip \ \ \ \(bu
+updated documentation
+.sh 1 "CHANGES TO USER-LEVEL ESPS PROGRAMS"
+.sh 2 "CHANGES TO FILTER PROGRAMS"
+.lp
+In the ESPS 4.2 release, the numerical stability of many filter
+programs is improved.  The new \fIfilter2\fR program implements an IIR filter
+in cascade form of second order sections, rather than in direct form
+implementation as in the old \fIfilter\fR program. 
+The \fIfilt_spec\fR and \fIimpulse_rs\fR programs have been
+re-written for numerical stability for high order IIR filters.
+.lp
+The library functions \fIblock_filter2(3-ESPS)\fR and \fIinit_fdata(3-ESPS)\fR, 
+the core functions of \fIfilter2\fR, 
+replace the old \fIblock_filter(3-ESPS)\fR in the library.  The function 
+\fIfil_spectrum(3-ESPS)\fR
+is added to the library for computing filter spectral characteristics.
+.lp
+Chebyshev2 and elliptical IIR filter design methods are added in the
+\fIiir_filt\fR program.  The user-interface of \fIiir_filt\fR is 
+made easier than the
+previous release by requiring only the input parameters of passband
+and stopband frequencies and loss characteristics.
+.lp
+A binary \fIsfconvert\fR program has been written to replace the old 
+\fIsfconvert\fR
+shell script for sampling frequency conversion.  The new program
+allows user to have complete control over trade-off between
+computation efficiency vesus accuracy.
+.lp
+\fIwmse_filt\fR now stores correct number of bandedges in the \fIbandedges\fR
+generic header item.
+.sh 3 "SPECIFIC CHANGES TO FILTER PROGRAMS"
+.np
+\fIiir_filt\fR - Major IIR filter improvements:
+.sp
+Elliptical and  Chebyshev II are now supported.
+.sp
+Only need to specify stop/passband frequencies and stop/passband loss
+for filter design.  No need to estimate the order, no need to know
+what 3dB frequency (for Butterworth), or critical frequency (for
+Cheveyshev1)
+is, if the user is not familiar with filter design.  The new \fIiir_filt\fR
+allows a precise control on filter characteristics.
+.sp
+The program computes the optimal filter order.  But the user
+has an option of over-riding the filter order by means of supplying
+his own filter order in the parameter file.
+.sp
+No array parameter input.  This means you can run \fIiir_filt\fR with
+\fIxwaves\fR by the use of \fIxeparam\fR to design a filter and 
+process the data on the fly.
+.sp
+Maximum passband gain is normalized to 0dB.  The old \fIiir_filt\fR
+has its maximum passband amplitude different from 0dB if the filter
+order is odd.
+.np
+\fIwmse_filt\fR - this program now checks for a license checkout before
+the user enters the parameters.   The header item \fInbands\fR has been
+fixed to store the correct number of bandedges.
+.np
+\fIfilter2\fR - a new numerically-stable filtering program intended to
+replace the existing program \fIfilter\fR.  
+.np
+\fIsfconvert\fR - this is an all new program (the old script by the same
+name is gone).   It has a number of new options and is much faster than
+the previous shell script version.   See the man page for details.
+This program is also linked to the name \fIesfconvert\fR to avoid a name
+clash on SGI machines by an SGI supplied program named \fIsfconvert\fR.
+.np
+\fIxsfconvert\fR - XIG version of the new \fIsfconvert\fR.
+.np
+\fIimpulse_rs\fR - improved the numerical stability.
+.np
+\fIfiltspec\fR - improved the numerical stability.
+.np
+\fIplotspec\fR - improved the numerical stability.
+.sh 2 "CHANGES TO OTHER PROGRAMS"
+.np
+\fIvqasc\fR - this program has a new option \fB-l\fR to specify the
+maximum length of input lines (removing a hard-coded limit).
+.np
+\fIvq\fR - no longer limits the maximum codeword dimension to 1000.
+Allocations are done dynamically as needed.
+.np
+\fIlpcana\fR - now uses \fIanal_method\fR correctly from the parameter
+file.
+.np
+\fIexprompt\fR - the output parameter file is now deleted if exit was
+not the result of clicking on DONE.
+.np
+\fIme_spec\fR - the parameters \fIstartrec\fR and \fInrecs\fR have been
+changed to \fIstart\fR and \fInan\fR to be consistent with other ESPS programs.
+.np
+\fIfea_stats\fR - the standard output has been made more readable for
+non-stat files (changed output format from %f to %e).  
+An error message has been added to indicate if the
+covariance matrix is singular.
+.np
+\fIrefcof\fR - the \fB-S0\fR option has been fixed.
+.np
+\fIpsps\fR - now prints the correct bandedges header items for FIR
+FT_FILT files.  This program is linked to the name \fIepsps\fR to avoid a
+name clash with a Sun supplied \fIpsps\fR (part of Open Windows).
+.np
+\fItestsd\fR - fixed sine drift problem.
+.np
+\fIacf\fR - this program now correctly computes the start time of the
+output file in cases where input files have negative start times.  
+.np
+\fIfftcep\fR - this program now correctly outputs both real and
+imaginary parts of the complex cepstrum.
+.np
+\fIfea_stats\fR - this program computes an inverse covariance matrix
+using \fImatrix_inv\fR(3\-ESPS).   The old \fImatrix_inv(3\-ESPS)\fR 
+had a broken
+singular matrix check, so a bad inverse covariance matrix was generated
+silently in the \fIfea_stats\fR output.
+.np
+The following programs now place temporary files in the directory
+specified by the environment variable \fBESPS_TEMP_PATH\fR: acf, addfea,
+auto cross_cor, dither, frame, lpcana, mergefea, refcof, select, setmax,
+addgen, copysps, rem_dc, fea_stats, fea_edit, addclass, and comment.
+.np
+\fIgpstohp\fR - this is the GPS to HP Laserjet filter.   This has been
+improved so that it produces smaller output files for a given plot.  In
+many cases the data sent to the printer has been cut in half.   This
+filter is called by the plot programs when the \fB-Thp\fR option is
+used.
+.np
+\fIplotsd\fR - this program used to subsample (plot by simply skipping
+points) if the number of points to plot exceeds the available number of
+pixels.  Now the program plots the min and the max of a segment.  This
+produces plots that look just like \fIxwaves\fR.
+.np
+\fIplotsd\fR - fixed to work with ESPS common processing turned off and
+removed the (now useless) \fB-P\fR option.
+.np
+\fIplaytest\fR - fixed man page to mention that script lines are run
+twice.  Also the (nonfunctional) \fB-n\fR option has been removed.
+.np
+\fIplot3d\fR - after \fIplot3d\fR started up (on Suns), the initial graph was
+offset and
+scaled differently than the space the cursor was moving in.
+This was fixed by having the plot frame size established BEFORE the
+enclosed canvas was created.
+.np
+\fIaddfea\fR - this program failed on SGI machines when the \fB-f\fR option
+was not used.   It has been fixed.
+.np
+\fItofspec\fR - The \fB-s\fR option was added to allow specification of the
+generic header
+item \fIsf\fR in the output file.  This is a generally useful change as it
+permits control over the frequency scale when the output is displayed
+via \fIxwaves\fR.
+This change (when coupled with an \fIxspecav\fR script change) fixes the
+fairly serious \fIxwaves\fR display bug that shows incorrect frequency scale
+for spectral averages.
+Note that there's a corresponding parameter as well (\fIsf\fR).  If it is
+not present or has zero value (also the default of \fB-s\fR), then the old
+behavior is used.
+.np
+\fIsend_xwaves\fR - Implemented and documented blocking in \fIsend_xwaves\fR.
+This permits any
+\fIxwaves\fR command to be issued reliably from \fIsend_xwaves\fR 
+without concern
+about completion of a previous command.
+This new version of \fIsend_xwaves\fR must be used with the new version of
+\fIxwaves\fR (3.1).  However, the old \fIsend_xwaves\fR will work ok with the
+new \fIxwaves\fR.
+.np
+\fIfft\fR and \fIfftinv\fR -
+.sp
+Now both \fB-S0\fR on the command line and \fIstep\fR = 0 in the parameter
+file imply a step equal to the default; the frame length.  
+.sp
+Omitting the end of the range in the fft \fB-r\fR option is now equal to
+setting \fInan\fR = 0 in the parameter file and implies processing from the
+starting point through the end of the file.
+.sp
+The manual page has been fixed to document nan adequately.
+.sp
+Previous version would not run on a pipe with \fInan\fR = 0. The main problem
+with \fInan\fR = 0 on a pipe is that the default frame
+length was the implied value of \fInan\fR: in this case the length of
+the range from the starting sample to the end of the file.  That
+made it impossible to allocate storage for a frame of data without
+first reading the entire file.  We changed the default frame length
+to be equal to the transform length (2 to the power \fIorder\fR), since
+that seemed like a more reasonable default in any case.  Now \fIfft\fR
+will run on pipes with \fInan\fR = 0.
+.sp
+\fIfftinv\fR \fIstart_time\fR calculation has been fixed.
+.sp
+\fIfft\fR scaling was wrong when frames overlap.
+The scaling of spectral values has been revised to be consistent
+with the total-power computation.  (The problem was not so much with
+overlapping frames as with a frame length different from the transform length.)
+.sp
+\fIfftinv\fR needed compensating change when \fIfft\fR scaling fixed.
+\fIfftinv\fR was changed to compensate for the scaling change in \fIfft\fR
+.sp
+\fIfftinv\fR needlessly requires \fIfft_length\fR generic.
+Now \fIfftinv\fR determines the fft length from the \fInum_freqs\fR header item,
+which is standard in FEA_SPEC files, rather than from the \fIfft_length\fR
+item, which is not.  If the \fIfft_length\fR item is present, the program
+checks for the condition (\fIfft_length\fR == \fInum_freqs\fR - 1) and prints
+a warning in case of inconsistency.
+.sp
+There is now a \fB-t\fR command-line option that controls the data type
+of the output FEA_SD file and overrides the data type implied by
+the input_data header item.  Any numeric type is now possible, not
+just FLOAT and FLOAT_CPLX.
+.sp
+Under some conditions, \fIfft\fR was writing a bad value for \fInan\fR in the
+common file.  It now writes a more appropriate value.
+.sp
+In the output of \fIfft\fR, the \fIframe_meth\fR header item is now VARIABLE
+instead of FIXED, since a partial last frame is possible, and since
+the scaling changes made it more important for
+\fIframe_len\fR to indicate the actual data length, exclusive of zero padding.
+When input is not a pipe, it would be possible to check whether the
+last frame has the same length as the rest and to indicate \fIframe_meth\fR
+FIXED in that case; this is not done at present, however.  The \fIfftinv\fR
+program now handles \fIframe_meth\fR VARIABLE as well as \fIframe_meth\fR FIXED.
+.np
+\fIexprompt\fR - fixed a floating point conversion error that resulted
+in errors when entering floating values to prompts (for example,
+entering 204.8, resulted in 204.800003 being stored).
+.np
+\fIvqdes\fR and \fIvqdesasc\fR - output files were incorrect in the case
+of output going to stdout.  This has been fixed.
+.np
+\fIselect\fR - added -f option to allow specification of a printf option
+to use with the -e option.   Previously, %g was used.  This program is
+also linked under the name \fIeselect\fR to avoid a name clash with the
+\fIksh\fR built in function called \fIselect\fR.
+.np
+\fIgetparam\fR - a bug was fixed that caused the program to exit without
+taking any action if an ESPS common file does not exist.
+.np
+\fImergefea\fR - 
+.sp
+The \fB-u\fR option did not work.  We changed the behavior of the \fB-u\fR
+option to be consistent with the man
+page and changed the man page to be consistent with what the program does
+when \fB-u\fR is not specified.
+.sp
+Mergefea did not check for consistent \fIrecord_freq\fR values.
+The program now writes a warning to stderr if two input files exist,
+both define values for \fIrecord_freq\fR, and the values are different.  The
+message can be suppressed by specifying \fB-z\fR on the command line.
+.sp
+The \fImergefea\fR program now preserves the FEA file subtype code, if any,
+in its second input file, and there is a new \fB-T\fR option for forcing an
+arbitrary subtype code in the output.  
+.sp
+The program issues a warning
+if it is given two input files in which different values of the
+\fIrecord_freq\fR header item are defined; there is a command-line 
+option to suppress the warning.
+.sp
+Under some conditions, the \fB-f\fR option
+could cause other fields as well as those specified to be copied from
+the first input file.  This is fixed.
+.sp
+The \fB-u\fR option would rename generic header items
+from the second input file rather than the first.  This is fixed.
+.sp
+The \fB-t\fR option was
+inconsistent with regard to which input file was used as the source for
+tag values. This is fixed.
+.sh 1 "NEW PROGRAMS"
+.np
+\fIe2sphere\fR - new program that converts ESPS sampled data files to 
+Sphere (NIST formatted) files;
+this program is license-free (i.e., can run on any CPU)
+.np
+\fIsrecord\fR - new program for recording data from the SparcStation 8
+bit codecs.  This program also works with the new Sun audio, but
+currently is limited to a single channel.
+.np
+\fIsplay\fR - this is an all new version of the play program for the
+SparcStation 8 bit codec.   This program currently is only single
+channel and was written for the single channel codec on the older SparcStations.
+But it will work on the new higher quality audio such as the
+SparcStation 10, but it is limited to only 8000Hz and single channel.
+.sp
+A version of \fIsrecord\fR and \fIsplay\fR will be available soon for
+the new Sun audio hardware.
+.sp
+SGI users note:  This release also includes \fIsgplay\fR and
+\fIsgrecord\fR.  These are full featured record and play programs using
+the SGI Indigo built-in audio.  These programs can handle both channels
+at up to 48Khz.
+.np
+\fIzero_pad\fR - new program for adding records to feature files.  It is
+intended to be used with the filter program in computing regressions.
+.np
+\fIv32play\fR - new dual Surf board/FAB2 play program.  This program
+does direct from disk playback with the AT&T VME FAB2 board, and the
+AT&T or Heurikon Surf board.   In the case of the Surf board, the
+program can play two channels.  This program replaces \fIsurf_play\fR
+and \fIwplay\fR.
+.np
+\fIv32record\fR - record program for AT&T or Heurikon VME Surf board.  This
+program does not support the FAB2 board.
+.sh 1 "CHANGES TO LIBRARY FUNCTIONS"
+.lp
+.np
+\fImatinv\fR - fixed some numerical problems resulting from use of
+floats vs. doubles.
+.np
+\fIblock_filter2\fR - new function for filtering.  See online manual
+page.
+.np
+\fIinit_fdata\fR - new function for filtering.  See online manual page.
+.np
+\fIfil_spectrum\fR - a new function to find magnitude/phase response
+from filter specifications.
+.np
+\fIinit_anafea_hd\fR - did not add the generic header item
+\fIfilt_dsiz\fR and \fIfilt_nsiz\fR when \fIfilters\fR == YES.  Now it
+does.
+.np
+\fIstrcov_auto\fR - uninitialized variable fixed, which caused some
+programs (such as \fIrefcof\fR to fail under certain circumstances).
+.np
+\fIget_vqfea_rec, put_vqfea_rec\fR - these no longer copy the codebook
+entries, since marg_index(3\-ESPS) is used in allo_vqfea_rec(3\-ESPS) to setup the
+pointers.
+.sh 1 "NEW LIBRARY FUNCTIONS"
+.lp
+.np
+\fIsd_to_sphere\fR - converts ESPS sampled data headers to Sphere
+headers and converts ESPS sampled data files to Sphere files.  This
+function can be used in non-ESPS programs (i.e. it does not require an
+ESPS license to run).
+.np
+\fIeopen2\fR - semantically the same as \fIeopen\fR(3-ESPS) except that, 
+unlike \fIeopen\fR, it does not exit if the file is of the wrong type 
+(not an ESPS
+file or wrong ESPS subytype); instead, \fIeopen2\fR outputs an error
+message, and returns.  We had intended to change the semantics
+of \fIeopen\fR to work this way, but it turns out that many existing
+programs depend on the old behavior.
+.sh 2 "LICENSE MANAGER CHANGES"
+.lp
+Changes have been made to the way the Entropic license manager system
+works.  They are:
+.np
+\fIwcheckout\fR has been removed
+.np
+\fIwfree has been removed
+.np
+If an ESPS license is needed and one is not checked out, an auto checkout 
+will be attempted for you.
+.np
+ESPS programs do not talk to the central license server, but instead
+talk to a local daemon.  This reduces network traffic and prevents
+network delays from affecting programs.
+.np
+\fIfreewaves\fR added to release a stuck \fIxwaves\fR license
+.lp
+Normally, \fIecheckout\fR is run to checkout an ESPS license for a particular
+host.    If an ESPS program is run, but a license is not checked out on
+that host, then the program will try and checkout a license for you.
+You will see a message if this is done - and you should be able to tell
+if it fails for some reason.
+.lp
+ESPS programs do not talk to the central license server, but instead
+talk to a local daemon.  This reduces network traffic and prevents
+network delays from affecting programs.
+.sh 1 "THE PUB DIRECTORY" 
+.lp
+The directory $ESPS_BASE/pub contains full-source copies of 
+certain relevant and useful public domain programs. You are 
+free to use them and pass them on in any manner consistent with 
+restrictions stated by their authors.  This release 
+contains these programs:
+.ip \fItpipe\fP
+This is a utility that splits a \fIunix\fP pipeline into two
+pipelines.  Stated differently, the output of one pipe can provide the
+intput to two others.  \fItpipe\fP was written by David B. Rosen of
+Boston University.
+.ip \fIxgrabsc\fP
+A utility that allows you to grab arbitrary portions of the 
+screen and output them in Postscript or many other formats.
+\fIxgrabsc\fP was written by Bruce Schuchardt.  
+.ip \fItek2ps\fR
+Written by Michael Fischbein, this program converts tektronix graphics
+codes into Postscript.  This is used by some of our plotting programs.
+.ip \fIshellforms\fP
+This is a utility to build and edit forms.  It was written by
+Paul Lew.
+.sh 1 "KNOWN PROBLEMS"
+.np
+\fIexprompt\fR - a bug causes all params in a Common file to be included
+in the output parameter file, even if not defined in parameter file 
+(but only if Common newer than param_file)
+.np
+Due to new features develped for filtering, an IIR filter file version less
+than 1.87 should be re-designed with the new \fIiir_filt\fR program, which
+allows better control in filter characteristics.   These old filter files 
+(pre FEA_FILT) files will not work - and will cause some programs to fail.

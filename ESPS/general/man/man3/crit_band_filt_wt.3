@@ -1,0 +1,172 @@
+.\" Copyright (c) 1998 Entropic, Inc. All rights reserved.
+.\" @(#)crit_band_filt_wt.3	1.1 9/4/98 ESI/ERL
+.ds ]W (c) 1998 Entropic, Inc.
+.TH CRIT_BAND_FILT_WT 3\-ESPSsp 9/4/98
+.SH NAME
+crit_band_filt_wt \- Compute the critical band filter weight for a bark value
+.SH SYNOPSIS
+.ft B
+double
+.br
+crit_band_filt_wt (barkValue)
+.br
+double   barkValue;
+.SH DESCRIPTION
+.PP
+This function evaluates the critical-band filter-weight function at a point
+and returns the filter weight corresponding to that bark value 
+([1, 2] with a small alteration).
+The input \fIbarkValue\fP specifies the distance from
+the filter peak. Note that the critical
+band filter function is not symmetric around the peak, so 
+both positive and negative values need evaluation.
+.LP
+The critical band filtering function
+.I F
+is determined by the following equation:
+.IP
+.if n \{\
+10 log\x'1'\d\d10\u\u F(b)  =  7 \- 7.5 (b \- 0.210)
+.br
+			\- 17.5 [0.196 + (b \- 0.210)\x'-1'\u\u2\d\d] \x'-1'\u\u1/2\d\d
+\}
+.if t \{\
+.EQ
+.\" 10~log sub 10~F(b)~=~7~-~7.5^(b~-~0.210)
+.\" ~-~17.5^ {[0.196~+~(b~-~0.210) sup 2 ]} sup 1/2
+.nr 99 \n(.s
+.nr 98 \n(.f
+.ps 10
+.ft 2
+.ds 11 "\f11\fP\f10\fP
+.ds 12 "\ 
+.as 11 "\*(12
+.ds 12 "\f1log\fP
+.ds 13 "\f11\fP\f10\fP
+.as 12 \v'0.3m'\s-3\*(13\s+3\v'-0.3m'
+.as 11 "\*(12
+.ds 12 "\ 
+.as 11 "\*(12
+.ds 12 "F\|\f1(\fPb\|\f1)\fP
+.as 11 "\*(12
+.ds 12 "\ 
+.as 11 "\*(12
+.ds 12 "\(eq
+.as 11 "\*(12
+.ds 12 "\ 
+.as 11 "\*(12
+.ds 12 "\f17\fP
+.as 11 "\*(12
+.ds 12 "\ 
+.as 11 "\*(12
+.ds 12 "\(mi
+.as 11 "\*(12
+.ds 12 "\ 
+.as 11 "\*(12
+.ds 12 "\f17\fP\f1.\fP\f15\fP
+.as 11 "\*(12
+.ds 12 "\|
+.as 11 "\*(12
+.ds 12 "\f1(\fPb
+.as 11 "\*(12
+.ds 12 "\ 
+.as 11 "\|\*(12
+.ds 12 "\(mi
+.as 11 "\*(12
+.ds 12 "\ 
+.as 11 "\*(12
+.ds 12 "\f10\fP\f1.\fP\f12\fP\f11\fP\f10\fP\f1)\fP
+.as 11 "\*(12
+.ds 12 "\ 
+.as 11 "\*(12
+.ds 12 "\(mi
+.as 11 "\*(12
+.ds 12 "\ 
+.as 11 "\*(12
+.ds 12 "\f11\fP\f17\fP\f1.\fP\f15\fP
+.as 11 "\*(12
+.ds 12 "\|
+.as 11 "\*(12
+.ds 12 "\f1[\fP\f10\fP\f1.\fP\f11\fP\f19\fP\f16\fP
+.ds 13 "\ 
+.as 12 "\*(13
+.ds 13 "\(pl
+.as 12 "\*(13
+.ds 13 "\ 
+.as 12 "\*(13
+.ds 13 "\f1(\fPb
+.as 12 "\*(13
+.ds 13 "\ 
+.as 12 "\|\*(13
+.ds 13 "\(mi
+.as 12 "\*(13
+.ds 13 "\ 
+.as 12 "\*(13
+.ds 13 "\f10\fP\f1.\fP\f12\fP\f11\fP\f10\fP\f1)\fP
+.ds 14 "\f12\fP
+.as 13 \v'-0.65m'\s-3\*(14\s+3\v'0.65m'
+.as 12 "\*(13
+.ds 13 "\f1]\fP
+.as 12 "\*(13
+.ds 13 "\f11\fP\(sl\f12\fP
+.as 12 \v'-0.7m'\s-3\*(13\s+3\v'0.7m'
+.as 11 "\*(12
+.ds 11 \x'0'\f2\s10\*(11\s\n(99\f\n(98
+.nr 11 \w'\*(11'
+.nr MK 0
+.if 132>\n(.v .ne 132u
+.rn 11 10
+\*(10
+.ps \n(99
+.ft \n(98
+.EN
+\}
+.LP
+where \fIb\fP is the bark value.
+.PP
+The function was designed so that
+the following three properties hold to good approximation [2]:
+(1) The 3 dB bandwith is 1 bark.
+(2) The asymptotic slopes are +10 dB/bark below the center frequency
+and \-25 dB/bark above.
+(3) The peak value is 0 dB and occurs when
+.IR b " = 0 bark."
+Both instances of the constant 0.210 above
+were shown as 0.215 in the original references.
+That value and the constant 0.196 were the result
+of a numerical search with limited precision [2].
+The value 0.210 used here results from an exact calculation,
+given the other coefficients.
+The \-3 dB points for
+.I F
+are
+.IR b " = \-0.59 bark"
+and
+.IR b " = 0.41 bark";
+the \-60 dB points for
+.I F
+are 
+.IR b " = \-6.465 bark"
+and
+.IR b " = 2.865 bark."
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+\fIhz_to_bark\fP(3\-ESPS), \fIbark_to_hz\fP(3\-ESPS), \fIbarkspec\fP(1\-ESPS)
+.fi
+.SH REFERENCES
+.HP
+[1] S. Wang, A. Sekey, and A. Gersho,
+``An objective measure for predicting subjective quality of speech coders,''
+.I "IEEE Journal on Selected Areas in Communications,"
+.BR SAC-10
+(5), 819\-829 (June 1992)
+.HP
+[2] A. Sekey and B. A. Hanson,
+``Improved 1-Bark bandwidth auditory filter,''
+.I "Journal of the Acoustical Society of America"
+.B 75
+(6), 1902\-1904 (June 1984)
+.SH AUTHOR
+Code extracted from \fIbarkspec\fP(1\-ESPS) by David Burton; manual page by David Burton.

@@ -1,0 +1,55 @@
+#! /bin/sh
+#
+# demoetut: ESPS tutorial demo script.  @(#)demoetut	1.5 12/1/92 ERL
+#
+#
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+#
+echo \
+"demoetut:  demonstate some simple ESPS programs.  @(#)demoetut	1.5 12/1/92 ERL
+"
+#
+# make noexist program
+rm -f noexist 
+echo "#! /bin/sh" 					>  noexist
+echo "IFS=:" 	  					>> noexist
+echo "for i in $PATH"					>> noexist
+echo "	do"						>> noexist
+echo "		if test -r \$i/\$1 -a ! -d \$i/\$1" 	>> noexist
+echo "			then"				>> noexist
+echo "			exit 1"				>> noexist
+echo "		fi"					>> noexist
+echo "	done"						>> noexist
+echo "exit 0"						>> noexist
+#
+# make executable
+chmod a+x noexist
+
+# Check if ESPS programs are on the PATH
+if noexist eman
+then
+	{
+	echo "ERROR: the executable program \"eman\" doesn't seem to"
+	echo "exist in $ESPS/bin.  Please consult your system manager."
+	echo "ESPS demonstration aborted."
+	exit
+	}
+fi
+
+# Create an empty params file
+touch params
+
+
+# Run ESPS teaser
+
+	echo "testsd -f 0.1 -p 1000 -C 15 -d 1 -r 500 slinky.sd"
+	testsd -f 0.1 -p 1000 -C 15 -d 1 -r 500 slinky.sd
+	echo "plotsd slinky.sd"
+	plotsd slinky.sd 
+
+
+#
+echo " "
+echo " "
+echo "ESPS demo complete."

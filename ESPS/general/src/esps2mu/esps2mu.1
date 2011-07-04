@@ -1,0 +1,69 @@
+.\" @(#)esps2mu.1	1.2 2/22/90	ESI
+.TH ESPS2MU 1\-ESPS 2/22/90
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+esps2mu \- convert an ESPS sampled data file to a headerless mu-encoded file
+.SH SYNOPSIS
+.B esps2mu
+[
+.BI \-x " debug_level"
+] [
+.BI \-s " shift"
+]
+.I infile 
+.I outfile
+.SH DESCRIPTION
+.PP
+.I Esps2mu
+converts an ESPS sampled data file to a headerless
+binary file containing mu-encoded data. The format of the data
+is appropriate for use with the SPARCstation 1 codec chip.
+Note that the SPARCstation expects data that was sampled
+at 8000 samples/second data.
+If \fIinfile\fR is replaced by  "\-",
+.I esps2mu
+will read from standard input,
+and if \fIoutfile\fP is replaced by "\-",
+standard output is written.
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-x " debug_level"
+If \fIdebug_level\fP is positive, \fIesps2mu\fP prints 
+diagnostic messages.  The default level is zero,
+which causes no debug output.
+.TP
+.BI \-s " shift"
+\fIShift\fP is the number of bits to shift the data
+before mu encoding it. Positive numbers
+shift to the right (make data values smaller) and negative numbers
+shift to the left.
+.SH ESPS HEADER
+.PP
+None is written.
+.SH ESPS PARAMETERS
+.PP
+This program does not access the parameter file.
+.SH ESPS COMMON
+.PP
+This program does not access common.
+.SH DIAGNOSTICS
+.PP
+.I Esps2mu
+informs the user and quits if the input file does not exist or is not an ESPS
+sampled data
+file.
+.SH WARNINGS
+.PP
+\fIesps2mu\fP (1\-\s-1ESPS\s+1) expects 14 bit data values
+that have a magnitude <= 8159. Use the \fIshift\fP option
+to scale the data before converting. Input values greater than
+8159 in magnitude are treated as being equal to 8159.
+.SH SE ALSO
+\fIlinear_to_mu\fP (3\-\s-1ESPS\s+1), \fIsplay\fP (1\-\s-1ESPS\s+1)
+.SH BUGS
+.PP
+None known.
+.SH AUTHOR
+.PP
+Manual page and code by David Burton.

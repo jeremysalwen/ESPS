@@ -1,0 +1,467 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)genplot.1	3.14	25 Sep 1997	ESI
+.TH GENPLOT 1\-ESPS 25 Sep 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+genplot \- plot data from ESPS files in multiline format
+.SH "SYNOPSIS"
+.B genplot
+[
+.BI \-e " range"
+] . . . [
+.BI \-f " function"
+] [
+.BI \-i " item range"
+] . . . [
+.BI \-l " int"
+] [
+.BR \-m { cpv }
+]
+.br
+[
+.BI \-n
+] [
+.BI \-o " outdir"
+] [
+.BI \-r " range"
+] [
+.BI \-s " int"
+] [
+.BI \-t " text"
+] [
+.BI \-x " debug level"
+]
+.br
+[
+.BI \-y " range"
+] [
+.B \-z
+] [
+.B \-E
+] [
+.BI \-T " device"
+] [
+.BI \-V " text"
+] [
+.BI \-X " scale"
+] [
+.BI \-W " generic window system options"
+]
+.I file
+.SH "DESCRIPTION"
+.PP
+.I Genplot
+treats files as "generic" ESPS files containing records with some fixed
+number of numerical elements per record.  In some ESPS files, each record
+has a numerical tag giving a location in some source file (this source
+file is usually a sampled-data file, so that the tag corresponds to a
+time coordinate).  
+.PP
+.I Genplot
+reads an input file
+.I file
+and produces
+.IR xy- plots
+of arbitrary record elements
+.I vs.
+record number (the default), record tag. or position within the record.
+If the file name is ``\-'', the standard input is read.
+By default,
+the output is in Unix GPS (``Graphics Primitive String'') format
+and is displayed on the \s-1MASSCOMP\s+1 or Sun display, but with the
+.B \-T
+option, this may be sent to the standard output,
+obtained in Tektronix format rather than GPS,
+or plotted on a hardcopy device.
+.PP
+The abscissas are scaled so that the spacing between plotted points
+is an exact integer number of device resolution units in the
+horizontal direction.  Each selected record element is plotted on
+separate axes; the axes for the second selected element are lined up
+below those of the first, etc.  If the required number of points for
+each specified record element will not fit in the available width of
+the page, the plots are continued on additional ``lines'':  sets of
+axes lined up below the first set.  If more continuation lines are
+needed than will fit on one page, the plot is continued on additional
+pages. 
+.PP
+If the graph is to be displayed on a \s-1MASSCOMP\s+1 or Sun display,
+then a page corresponds to a \fIregion\fP in \s-1MASSCOMP\s+1 GPS universe
+coordinates,
+and up to 25 regions can be displayed simultaneously on the screen.
+If the \fB\-o\fP option is specified, then a directory is created
+with the name given by \fIoutdir,\fP and a file is created for each
+page (region) generated.  Note, the \fB\-o\fP option only applies if
+the device name specified is``gps'' or ``mcd'' (the default), and the output is
+\fIalso\fP sent to standard output or displayed on the screen unless
+the \fB\-n\fP option is chosen.   The program \fImcd\fR is supplied by
+\s-1MASSCOMP\s+1 on their systems, and by \s-1ESI\s+1 on others.
+.PP
+On \s-1MASSCOMP\s+1 workstations the color and line style of output 
+to ``gps'' or ``mcd'' depend on the
+environment variable BUNDLE.  The default is GPS bundle number 20, which
+gives solid lines on monochrome displays.
+.PP
+On a Sun workstation (not running X windows), 
+this program must be run from within the
+\fISuntools\fR window system.  The plot will appear in a new window,
+which can be moved, resized, closed (reduced to an icon), and removed by
+using the functions on the \fISuntools\fR menu.   To get this menu, move
+the mouse cursor to the title bar of the plot window and press the right
+mouse button.
+.SH "ESPS PARAMETERS"
+.PP
+This program does not access the parameter file.
+.SH "ESPS COMMON"
+.PP
+This program does not access the ESPS common file.
+.SH "ESPS HEADERS"
+The following items of the input sampled-data file header are accessed:
+common.type, common.ndrec, common.ndouble, common.nfloat, common.nlong,
+common.nshort, common.nchar, and common.tag. 
+.SH "OPTIONS"
+The following options are supported.  Values in brackets are defaults. 
+.TP
+.BI \-e " grange" "\fR [1]"
+.LP
+\fB\-e "\fIfield-name\fB\^[\^\fIgrange\fB\^]\^"\fR
+.TP
+.BI "\-e " field-name
+This option specifies a set of elements within each record;
+each element separately is plotted against the record number or, if
+.B \-E
+is specified, against the tag.
+.IP
+The argument may be a general range specification acceptable to
+.IR grange_switch (3\-ESPSu).
+This specifies a set of integers that indicate the positions of the
+elements within a record.
+The tag, if present is counted as element zero.
+The other elements are counted starting with one,
+whether tags are present or not.
+To find the element number of an element in an ESPS file, use
+.IR fea_element (1\-ESPS).
+The following are allowable forms for
+.I grange.
+.RS
+.TP
+.I element
+A single integer specifies a single record element.
+.TP
+.IB first : last
+A pair of elements specifies an inclusive range of elements.
+.TP
+.IB first :+ incr
+The form with the plus sign is equivalent to
+.IB first : last
+with
+.IR last " = " first " + " incr.
+.TP
+.IB range , " . . . " , " range"
+A comma-separated list of range specifications of the first three
+forms allows for noncontiguous sets of elements.
+The ranges should be given in increasing order and without overlaps.
+.RE
+.IP
+If the specified range contains points not in the file, the
+range is reduced as necessary.
+.IP
+If the input file is an ESPS feature (FEA) file, a field within a
+record may be specified by name.
+In that case, the bracketed
+.I grange
+refers to positions within the field, counting the first as position
+zero.
+A field name without a bracketed
+.I grange
+refers to the entire field.
+In that case the double quotes can be omitted as well,
+as their only purpose is to prevent the shell
+from giving the usual special interpretation to the brackets.
+.IP
+The command line may contain several
+.B \-e
+options with field names.
+The
+.B \-e
+option without a field name may be used at most once
+and may not be used in the same command with the form containing a
+field name.
+.TP
+.BI \-f " function" "\fR [(none)]"
+Apply the function \fIfunction\fP to the y-axis in order to compress its
+amplitude range. Only two functions are recognized in this version: "sqrt"
+(for the square root) and "log" (for the natural logarithm).
+.TP
+.BI \-i " grange" "\fR [1]"
+.LP
+\fB\-i "\fIfield-name\fB\^[\^\fIgrange\fB\^]\^"\fR
+.TP
+.BI "\-i " field-name
+This option, like the
+.B \-e
+option, specifies a set of elements within each record;
+however, the elements within a record
+are plotted together in the order specified,
+and this is done separately for each record.
+The arguments have the same form as those for the
+.B \-e
+option, and the same restrictions apply:
+the form without a field name may be used with any file type,
+may be used only once,
+and may not be used together with the form containing a field name;
+the latter may be used only with FEA files and may be repeated.
+The
+.B \-e
+and
+.B \-i
+options may not be used together.
+.TP
+.BI \-l " int"
+Number of element values per labeled tic mark on the
+.IR x- axis.
+If elements are plotted 
+.I vs.
+record number, the default for 
+.I int
+is 10.  If elements are plotted vs tag value, the default for
+.I int 
+is 100. 
+.TP
+.BR \-m { pvc "} [c]"
+``Mode.''  Selects one of 3 styles.
+.RS
+.TP
+.B c
+Connected.  Successive data points are connected by straight lines.
+.TP
+.B p
+Point.  Individual data points are plotted without connecting lines.
+.TP
+.B v
+Vertical line.  Each point is connected to the 
+.IR x- "axis (" y "=0)"
+by a vertical line.
+.RE
+.TP
+.BI \-n
+Suppress output to screen or stdout when writing into a directory with the
+\fB\-o\fP option.
+.TP
+.BI \-o " outdir" "\fR [(none)]"
+Create a directory named \fIoutdir\fP and  write output pages
+(regions) into files named \fIpage1, page2, page3,\fP etc.  This
+option is only valid if the output device is gps or mcd. 
+.TP
+.BI \-r " first" : "last" "\fR [(first in file):(last in file)]"
+.TP
+.BI \-r " first" :+ "incr"
+In the first form, a pair of unsigned integers specifies the range of
+records from which element values are to be plotted.  Either 
+.I first
+or
+.I last
+may be omitted; then the default value is used.  If 
+.IR last " = " first " + " incr,
+the second form (with the plus sign) specifies the same range as the
+first.  If the specified range contains points not in the file, the
+range is reduced as necessary. 
+.TP
+.BI \-s " int" "\fR [1]"
+Samples are numbered starting with the given integer, rather than 1,
+for the first sample in the file.
+.TP
+.BI \-t " text" "\fR [(none)]"
+Title to be printed at the bottom of each page.
+.TP
+.BI \-x " debug level" "\fR [0]"
+Print diagnostic messages as program runs (for debugging purposes
+only).
+.TP
+.BI \-y " upper" ":" "lower"
+.TP
+.BI \-y " limit"
+Ordinate range.
+Specifies values for the upper and lower
+.IR y- axis
+limits.
+The second form is equivalent to
+.BI \-y " \-limit" ":" "limit."
+If the option is omitted, or if both limits are omitted,
+.RB ( \-y: )
+then a range is computed from the data
+by finding the maximum and minimum value for each element
+(or, if the
+.B \-i
+option is in effect, for each record).
+If one limit is omitted, a default limit is computed from the data.
+.TP
+.B \-z
+Do not draw the
+.IR x- "axis (" y "=0)."
+.TP
+.B \-E
+Specifies that elements are to be plotted 
+.I vs.
+tags (rather than record numbers). 
+.TP
+.BI \-T " device" "\fR [mcd]"
+.I Device
+may be
+.BR gps ,
+.BR mcd ,
+.BR tek ,
+.BR suntools ,
+.BR hp ,
+or
+.BR hardcopy .
+The default is
+.BR \-Tmcd,
+which displays the output on the graphics screen by piping it through
+\fIxmcd (1\-ESPS)\fR.  
+Specifying
+.B \-Tgps
+sends output to the standard output in \s-1MASSCOMP\s+1 Unix GPS format.
+Specifying
+.B \-Ttek
+causes output to be sent to the standard output in Tektronix 4000-series
+format, and
+If
+.B \-Tsuntools
+is used, then the display will be forced to use \fIsuntools\fR window
+system (on Suns and Solbournes only), even if ESPS has been configured
+to use the X window system.   If ESPS is built for X, then it uses X for
+plotting by default.
+If
+.B \-Tmcd
+is used on a Masscomp and ESPS has been configured to use X windows,
+then the old SP-40 \fImcd\fR is used instead of X windows.
+Specifying
+.B \-Thardcopy
+plots it on a hardcopy device, if one was set up in the installation
+script.  Note that the word \fIimagen\fR was used for this option in
+previous versions.   It is still accepted, but \fIhardcopy\fR is meant
+to be more general.
+.B \-Thp
+produces output for an HP LaserJet printer.   Note that the output is
+produced on standard out and it is not spooled to the printer by this
+command.   Use of this option will result in about 750K bytes of output
+per page.   If the link to your LaserJet is slow, it might take
+several minutes to send it to the printer.    
+In a later version, this will be merged with the
+\fIhardcopy\fR option above for direct spooling.
+.TP
+.BI \-V " text" "\fR [(none)]"
+Title to be printed along the left edge of each page (running upward).
+.TP
+.BI \-X " scale" "\fR [4]"
+Number of resolution units along the
+.IR x- axis
+between plotted samples.  Must be an integer.
+.TP
+.BI \-W
+This option is followed by a character
+string consisting of the generic window system options.   These options are
+passed onto \fImcd\fR or \fIxmcd\fR.   
+This option is used to pass along generic X window
+arguments to \fIxmcd\fR or Suntool arguments to \fImcd\fR on Suns.  This
+option might not have an effect on all systems.   For example, on a
+system running X windows, to cause the plot to appear at a particular
+screen location the following command could be used: 
+.br
+\fIgenplot -W "=300x250+50+200" file\fR.
+.br
+See \fIxmcd(1\-ESPS)\fR for details.
+.PP
+For Sun systems, this program will plot under either X windows, or
+Suntools.   By default, if the \fB-T\fR option is not used, it will 
+expect X windows.   To plot under Suntools you can use the \fB-Tsuntools\fR
+option.    If you always use Suntools, you can avoid using the \fB-T\fR
+option by defining the environment variable \fBEPLOTDEV\fR to be
+\fIsuntools\fR.  This will make the Suntools window system the default.
+This variable is ignored if the machine type is not Sun4, SUN3, or
+SUN386i.
+.SH "EXAMPLE"
+.PP
+.nf
+% \fBgenplot \-T \fRhardcopy \fB\-e \fR1:2 file.ana
+# Send output to be printed on a laser printer.
+
+% \fBgenplot \-e\fR3:5 \fB\-o\fR TEST \fB\-n \fP file.ana
+# create a directory called TEST to which to send the output, and
+# suppress output to stdout (\-n option).  The files generated will
+# correspond to pages generated by the first example above.  To view
+# the second page on a \s-1MASSCOMP\s+1 Graphics Terminal, type the following:
+
+.BR mcd " TEST/page2"
+# or
+.BR ged " TEST/page2"
+
+# The latter command allows you to zoom into various parts of the
+graph; see the DATA PRESENTATION APPLICATION PROGRAMMING MANUAL for
+more information concerning \fIged\fP.
+.fi
+.SH "FILES"
+.PP
+None.
+.SH "SEE ALSO"
+.PP
+.nf
+\fImlplot\fP(1\-ESPS), \fIplotsd\fP(1\-ESPS), \fIigenplot\fP(1\-ESPS),
+\fIscatplot\fP(1\-ESPS), \fIxmcd\fP(1\-ESPS)
+.fi
+.SH "DIAGNOSTICS"
+.PP
+.nf
+genplot: unknown option \-\fIletter\fP
+Usage: genplot [\-e range]...[\-f function][\-i item range]...[\-l int]
+	[\-m{cpv}][\-n][\-o outdir][\-r range][\-s int][\-t text]
+	[\-x debug level][\-y range][\-z][\-E][\-T device][\-V text]
+	[\-X scale] file
+genplot: unknown function type \fIfunction\fP
+genplot: conflicting options, \-i and \-e cannot be used together.
+genplot: element range should not be less than zero.
+genplot: can't open \fIfilename\fP: \fIreason\fP
+genplot: \fIfilename\fP is not an ESPS file
+genplot: empty amplitude range specified.
+genplot: invalid element range
+genplot: tags specified but not available
+genplot: only \fInelements\fP elements in a record, truncating specified range.
+genplot: sorry, plotting tags has not been implemented, yet.
+genplot: empty amplitude range specified.
+genplot: calloc: could not allocate memory for \fIvariable\fP.
+genplot: only \fInrecords\fP records read.
+genplot: fatal error: argument out of range for sqrt. \fI element no.\fP
+genplot: fatal error: argument out of range for log. \fI element no.\fP
+genplot: fatal error: TRYING TO DIVIDE BY ZERO
+	 problem with element number \fIelement no.\fP
+	 you are trying to plot a CONSTANT element without \-y option
+	 either explicitly give an amplitude range or don't plot this range.
+genplot: Warning, only 25 regions can be displayed on Masscomp Terminal.
+	 stopping output to stdout.
+.SH "FUTURE CHANGES"
+Options to allow more control over format.  More intelligent choice of
+axis subdivisions.  Option to suppress Imagen document-control header
+and allow output to actual Tektronix-4014 terminal.
+Selection of default \fIy\fP-axis limits
+according to header information. Multiple input files.  Simultaneous
+plotting of "markers", just as 
+.I mlplot
+(1-ESPS) plots tags. 
+.SH "BUGS"
+.PP
+This version of the program does not handle complex feature fields with
+the \fB-e\fR or \fB-i\fR option with a field name.    You must use fea_element to
+get element numbers for the desired fields and then use those numbers
+with the \fB-e\fR or \fB-i\fR options.  This will be improved.
+.PP
+Default for the
+.B \-l
+option should depend on the 
+.IR x- scale
+.RB ( \-X " option)."
+.SH "AUTHOR"
+Ajaipal S. Virdy, man page by John Shore.
+
+
+

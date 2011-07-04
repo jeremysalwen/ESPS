@@ -1,0 +1,11 @@
+This is all the files you need to produce the
+ESPS filtering applications note.  Please give
+the following command to print it out on the
+Imagen:
+
+refer -n -p filt.bib -e filter.rgeme | eqn |
+    gpstt | iroff -me -D'prerasterization on'
+
+Let me know if there are any questions.
+
+				Brian

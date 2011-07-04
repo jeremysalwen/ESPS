@@ -1,0 +1,56 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getdct.3	1.3 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GET_DCT 3\-ESPSsp 18 Apr 1997
+.SH NAME
+get_dct \- Compute the forward or inverse discrete cosine transform of a
+data sequence.
+.SH SYNOPSIS
+.ft B
+get_dct ( data_in, data_out, size )
+.br
+float	data_in[], data_out[];
+.br
+int	size;
+.SH DESCRIPTION
+This routine computes the forward or inverse discrete cosine transform of a
+sequence of data, using matrix multiplication. The input data are supplied
+through the array
+.B data_in.
+The transform size is specified by
+.B size.
+Positive and negative values are used to indicate the forward and inverse
+operations, respectively.
+The output data are returned in the array
+.B data_out.
+
+The maximum transform size is 256. If the size is 0, or is greater than 256,
+no operations are performed and the routine aborts with an assertion failure.
+If the size is 1,
+.B data_in[0]
+is copied to
+.B data_out[0].
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+\fIget_fft\fP(3-ESPSsp).
+.fi
+.SH COMMENTS
+This routine is intended for use with transform sizes which are not powers
+of 2. In cases where the transform size is a power of 2, the well known
+approach based on the double-size discrete Fourier transform is far more
+efficient.
+
+Because matrix multiplication is used, the computational time may be quite
+significant for large transforms.
+.SH FUTURE CHANGES
+None anticipated.
+.SH REFERENCES
+[1] Elliott, D. F., and Rao, K. R.,
+.I
+FAST TRANSFORMS: Algorithms, Analyses, Applications,
+Academic Press, Inc., Orlando, FL, 1982, p. 387.
+.SH AUTHOR
+Jim Elliott

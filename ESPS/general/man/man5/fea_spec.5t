@@ -1,0 +1,435 @@
+.\" Copyright (c) 1988 Entropic Speech, Inc. All rights reserved.
+.\" @(#)fea_spec.5t	1.3 02 Jul 1993 ESI
+.TH FEA_SPEC 5\-ESPS 02 Jul 1993
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+ESPS Spectrum Feature File Subtype \- (.fspec)
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/fea.h>
+#include <esps/feaspec.h>
+.fi
+.SH DESCRIPTION
+.PP
+The FEA_SPEC file is a subtype of the FEA file.
+If \fIhd\fR is a pointer to the header of such a file,
+then \fIhd\->hd.fea\->fea_type\fR == FEA_SPEC.
+FEA_SPEC files are used for storing spectral information,
+such as power spectra.
+Each record contains
+a vector of spectral values (powers or power densities in the case of
+power spectra),
+together with certain optional fields \-
+total power, an imaginary-part vector,
+number of frequencies, and a vector of frequencies \-
+that are present or absent according to the values of certain header items.
+.PP
+A FEA_SPEC file is created by calling 
+.IR init_feaspec_hd (3-ESPSu)
+after 
+.IR new_header (3-ESPSu).  
+.PP
+The header for a FEA_SPEC file
+may contain the following generic header items,
+which
+.I init_feastat_head
+creates as required by using functions of the
+.IR add_genhd_* (3-ESPSu)
+family.
+.PP
+.TS
+center, box, tab(;);
+c | c | c | c
+l | l | l | l
+l | l | l | l.
+Name;Size;Type;Enums
+=
+freq_format;1;coded;\fIspfmt_names\fP
+spec_type;1;coded;\fIsptyp_names\fP
+contin;1;coded;NO,YES
+num_freqs;1;long;NULL
+frame_meth;1;coded;\fIspfrm_names\fP
+_
+freqs;num_freqs;float;NULL
+sf;1;float;NULL
+frmlen;1;long;NULL
+.TE
+.PP
+The first five items are always present.
+The rest may be present or not, under conditions
+stated in the descriptions of the individual items.
+The items have the following meanings.
+.IP freq_format
+How the set of frequencies is defined.
+The value is given by one of the constants defined in
+.I esps/feaspec.h
+with the prefix ``SPFMT_''.
+These include SPFMT_SYM_CTR, SPFMT_SYM_EDGE, SPFMT_ASYM_CTR, SPFMT_ASYM_EDGE,
+SPFMT_ARB_VAR, and SPFMT_ARB_FIXED.
+Corresponding strings (the names of these constants, minus the prefix)
+are defined in the
+string array
+.I spfmt_names[]
+in
+.I feaspecsupp.c
+in the ESPS library.
+.IP
+If the value is SPFMT_SYM_CTR, the spectrum is symmetric,
+and only the positive-frequency part is given.
+The frequencies are the centers of
+.I num_freqs
+equal bins that span the band from 0 to
+.I "sf/2."
+Thus the frequencies run from
+.I "sf/(4*num_freqs)"
+to
+.I "sf/2 \- sf/(4*num_freqs)"
+in steps of
+.I "sf/(2*num_freqs)."
+.IP
+If the value is SPFMT_SYM_EDGE,
+the spectrum is symmetric, and only the positive-frequency part is given.
+The frequencies are the edges of
+.I "num_freqs \- 1"
+equal bins that span the band from 0 to
+.I "sf/2."
+Thus the frequencies run from
+.I 0
+to
+.I "sf/2"
+in steps of
+.I "sf/(2*(num_freqs\-1))."
+.IP
+If the value is SPFMT_ASYM_CTR,
+the spectrum is not (necessarily) symmetric,
+and both positive-frequency and negative-frequency parts are given.
+The frequencies are the centers of
+.I num_freqs
+equal bins that span the band from
+.I "\-sf/2"
+to
+.I "sf/2."
+Thus the frequencies run from
+.I "\- sf/2 + sf/(2*num_freqs)"
+to
+.I "sf/2 \- sf/(2*num_freqs)"
+in steps of
+.I "sf/num_freqs."
+.IP
+If the value is SPFMT_ASYM_EDGE,
+the spectrum is not (necessarily) symmetric,
+and both positive-frequency and negative-frequency parts are given.
+The frequencies are the edges of
+.I "num_freqs \- 1"
+equal bins that span the band from
+.I "\-sf/2"
+to
+.I "sf/2."
+Thus the frequencies run from
+.I "\-sf/2"
+to
+.I "sf/2"
+in steps of
+.I "sf/(num_freqs\-1)."
+.IP
+If the value is SPFMT_ARB_VAR,
+both positive-frequency and negative-frequency parts must be given.
+The frequencies need not be equispaced and are listed explicitly in
+.I frqs
+in each record.
+.IP
+If the value is SPFMT_ARB_FIXED,
+both positive-frequency and negative-frequency parts must be given.
+The frequencies need not be equispaced and are listed explicitly in
+.I freqs
+in the header.
+.IP spec_type
+Are the data power, log power, complex, etc.?
+The value is given by one of the constants defined in
+.I esps/feaspec.h
+with the prefix ``SPTYP_''.
+These include SPTYP_PWR, SPTYP_DB, SPTYP_REAL, SPTYP_CPLX.
+Corresponding strings are defined in the string array
+.I sptyp_names[]
+in
+.I feaspecsupp.c
+in the ESPS library.
+.IP
+If the value is SPTYP_PWR,
+actual values of spectral powers or power densities
+(necessarily positive) are stored in the records.
+If the value is SPTYP_DB,
+logarithmically scaled powers or power densities (in decibels)
+are stored in the records.
+If the value is SPTYP_REAL,
+the records contain real values other than the above \-
+.I e.g.
+values of a weighting function.
+If the value is SPTYP_CPLX,
+complex spectral values are stored in the records.
+.IP contin
+Is the spectrum a continuous density or a discrete distribution?
+The value is either NO (0) or YES (1).
+If the value is YES,
+the data represent samples of a continuous density function.
+For example, if
+.IR spec_type ==SPTYP_PWR,
+the data give the amount of power per unit frequency
+in the neighborhood of each given frequency.
+If the value is NO,
+the data represent a discrete distribution.
+For example, if
+.IR spec_type ==SPTYP_PWR,
+the data give the amount of power concentrated at each given frequency.
+.IP num_freqs
+The number of frequencies for which spectral values are given.
+If
+.IR freq_format ==SPFMT_ARB_VAR,
+this is a maximum number, the number for which space is allocated,
+and the actual number is in
+.I n_frqs
+in each record.
+.IP frame_meth
+How the length of the analysis frame is indicated.
+The value is given by one of the constants defined in
+.I esps/feaspec.h
+with the prefix ``SPFRM''.
+These include SPFRM_NONE, SPFRM_FIXED, and SPFRM_VARIABLE.
+Corresponding strings are defined in the string array
+.I spfrm_names[]
+in
+.I feaspecsupp.c
+in the ESPS library.
+.IP
+If the value is SPFRM_NONE, frame length is not defined.
+If the value is SPFRM_FIXED,
+the frame length is given by the generic header item
+.I frmlen.
+If the value is SPFRM_VARIABLE, the
+.I frame_len
+field is present in each record and gives the frame length.
+.IP freqs
+Frequencies to which the spectral values in each record correspond.
+This item must be present when
+.IR freq_format ==SPFMT_ARB_FIXED.
+.IP sf
+Sampling frequency.
+For certain values of
+.I freq_format,
+this item must be present and is used in determining band limits.
+These values are
+SPFMT_SYM_CTR, SPFMT_SYM_EDGE, SPFMT_ASYM_CTR, and SPFMT_ASYM_EDGE.
+.IP frmlen
+Analysis window length, the number of sampled-data points used for analysis,
+if the same for all records.
+This item must be present if the value of the item
+.I frame_meth
+is SPFRM_FIXED.
+.PP
+The header of a FEA_SPEC file also contains definitions for one or 
+more of the record fields given by the following table:
+.PP
+.TS
+center, box, tab(;);
+c | c | c | c | c | c 
+l | l | l | l | l | l.
+Name;Size;Rank;Dimen;Type;Enums
+=
+tot_power;1;0;NULL;float;NULL
+re_spec_val;num_freqs;1;NULL;float or byte;NULL
+im_spec_val;num_freqs;1;NULL;float;NULL
+n_frqs;1;0;NULL;long;NULL
+frqs;num_freqs;1;NULL;float;NULL
+frame_len;1;0;NULL;long;NULL
+.TE
+.PP
+The field
+.I re_spec_val
+is always present in a FEA_SPEC file.
+If the type of the spectral file is other than log power
+(\fIspec_type\fR != SPTYP_DB), then the type of the record field
+\fIre_spec_val\fR is FLOAT.   If \fIspec_type\fR == SPTYP_DB, then
+the type of \fIre_spec_val\fR (as written to the physical file) can be either
+FLOAT or BYTE.   This depends on the type of the field when it is
+created (usually by \fIinit_feaspec_hd\fR).
+When the type is BYTE, spectral values
+are represented as integers in a limited range and with an offset of 64 dB:
+values from \-64.0 dB to 63.0 dB
+are represented by bytes ranging from 0 to 127.
+.PP
+The other fields may be present or not,
+according to the values of certain header items.
+The fields can be created by calling
+.IR init_feaspec_hd (3-ESPSu).
+.PP
+Most programs that deal with FEA_SPEC files will use the support
+routines in the ESPS library and will not directly
+use of the information in the tables above.
+The library routine
+.IR init_feaspec_hd (3-ESPSu)
+creates the record fields and the generic header items.
+.PP
+Programs that deal with FEA_SPEC files do so in terms of structures of
+type (struct feaspec) \- pointers to structures of this type are returned by 
+.I allo_feaspec_rec (3-ESPSu),
+and the FEA_SPEC read and write routines
+.RI ( get_feaspec_rec
+and
+.IR put_feaspec_rec )
+have parameters of type (struct feaspec).  Here is 
+the definition of the feaspec struct (given in
+.IR <esps/feaspec.h> ):
+.nf
+.ta .5i 1i 1.75i
+
+    struct feaspec  {
+	long		*tag;
+	float		*tot_power;
+	float		*re_spec_val;
+	char		*re_spec_val_b;
+	float		*im_spec_val;
+	long		*n_frqs;
+	float		*frqs;
+	long		*frame_len;
+	struct fea_data	*fea_rec;
+    };
+.fi
+.PP
+The record fields have the following meanings:
+.IP tag
+Position tag in reference file \fIvariable.refer\fP,
+valid only if
+.IR common.tag ==YES.
+The pointer is NULL if the file is not tagged.
+This field is not represented in the table above,
+since it arises from general support of ESPS files (see ESPS(5-ESPS)).  
+.IP tot_power
+Total power.
+This optional field may be included
+to indicate a more accurate value of the total spectral power
+than could be obtained by numerical integration of the spectral values.
+The pointer is NULL if the field is not present.
+.IP re_spec_val
+Real parts of spectral values in floating point format.  This pointer
+will be NULL if \fIre_spec_val_b\fR is non NULL.
+.IP re_spec_val_b
+Real parts of spectral values in BYTE format.     This pointer
+will be NULL if \fIre_spec_val\fR is non NULL or if the header item
+\fIspec_type\fR != SPTYP_DB.   
+.IP im_spec_val
+Imaginary parts of spectral values.
+This field is required when the generic header item
+.I spec_type
+has the value SPTYP_CPLX;
+for other values of the item, the field should not be present in the file.
+When
+.IR spec_type !=SPTYP_CPLX,
+the field in the structure points to the beginning of an array of zeros
+that is created by
+.I allo_feaspec_rec,
+not altered by
+.I get_feaspec_rec,
+and not written out by
+.I put_feaspec_rec.
+.IP "n_frqs, frqs"
+Number of frequencies, vector of frequencies.
+These fields are required in the file when the generic header item
+.I freq_format
+has the value SPFMT_ARB_VAR;
+for other values of the item, they are not be present in the file.
+When these fields are defined,
+.I n_frqs
+frequencies in
+.I frqs
+and the first
+.I n_frqs
+spectral values are valid
+(though space for
+.I num_freqs
+frequencies and
+.I num_freqs
+spectral values is allocated).
+When
+.IR freq_format !=SPFMT_ARB_VAR,
+these fields in the structure point to storage
+that is allocated and filled in by
+.I allo_feaspec_rec,
+not altered by
+.I get_feaspec_rec,
+and not written out by
+.I put_feaspec_rec.
+Thus programs have
+direct access to the number of frequencies and the frequency values
+even when those items are not stored in the records in the file.
+.IP frame_len
+Analysis window length, the number of sampled-data points used for analysis.
+This field is required when the generic header item
+.I frame_meth
+has the value SPFRM_VARIABLE;
+for other values of the item, it is not present in the file.
+When
+.IR frame_meth ==SPFRM_FIXED,
+this structure item points to storage that is allocated and filled in by
+.I allo_feaspec_rec,
+not altered by
+.I get_feaspec_rec,
+and not written out by
+.I put_feaspec_rec.
+When
+.IR frame_meth ==SPFRM_NONE,
+the pointer is NULL.
+.IP fea_rec
+This is a pointer to the FEA file record in which all the FEA_SPEC
+information is stored.  Programs should not use this value directly.
+.SH SEE ALSO
+.PP
+init_feaspec_hd(3-ESPSu), allo_feaspec_rec(3-ESPSu),
+get_feaspec_rec(3-ESPSu), put_feaspec_rec(3-ESPSu),
+get_genhd(3-ESPSu), ESPS(5-ESPS), FEA(5-ESPS), SPEC(5-ESPS)
+.SH RECORD ELEMENT FILE STRUCTURE
+.PP
+In order to use this (or any other) FEA file type with a generic ESPS
+program (one that operates on any file type) it is necessary to know how
+record elements are positioned in the file.   For a FEA file
+that information is obtained by running the program
+\fIfea_element\fR(1-ESPS) on the file in question.
+.SH FILES
+.PP
+.nf
+/usr/include/esps/fea.h
+/usr/include/esps/feaspec.h
+.SH FUTURE CHANGES
+.PP
+This FEA file subtype will eventually replace the separate SPEC file type.
+As long as FEA_SPEC and SPEC are both supported, the constants
+SPFMT_SYM_CTR, SPFMT_SYM_EDGE, SPFMT_ASYM_CTR, SPFMT_ASYM_EDGE,
+SPFMT_ARB_VAR, and SPFMT_ARB_FIXED
+defined in
+.I esps/feaspec.h
+will be synonymous with the constants
+SYM_CTR, SYM_EDGE, ASYM_CEN, ASYM_EDGE,
+ARB_VAR, and ARB_FIXED,
+respectively, defined in
+.I esps/header.h;
+the constants
+SPTYP_PWR, SPTYP_DB, SPTYP_REAL, and SPTYP_CPLX
+in
+.I esps/feaspec.h
+will be synonymous with
+ST_PWR, ST_DB, ST_REAL, and ST_CPLX,
+respectively, in
+.I esps/header.h;
+and the constants
+SPFRM_NONE, SPFRM_FIXED, and SPFRM_VARIABLE
+in
+.I esps/feaspec.h
+will be synonymous with
+FM_NONE, FM_FIXED, and FM_VARIABLE,
+respectively, in
+.I esps/header.h.
+New programs should use the constants prefixed with
+``SPFMT_'', ``SPTYP_'', and ``SPFRM_''.
+.SH AUTHOR
+Manual page by Rodney Johnson.

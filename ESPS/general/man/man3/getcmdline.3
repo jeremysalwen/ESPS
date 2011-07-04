@@ -1,0 +1,25 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\"@(#)getcmdline.3	1.4 20 Oct 1987 ESI
+.TH GET_CMD_LINE 3\-ESPSu 20 Oct 1987
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+get_cmd_line \- return a pointer to the command line
+.SH SYNOPSIS
+.ft B
+char *
+.br
+get_cmd_line (argc, argv)
+.br
+int  argc;
+.br
+char **argv;
+.ft
+.SH DESCRIPTION
+.PP
+.I get_cmd_line
+collects all the command line arguments together into a single string.
+The pointer to the string is returned.
+.SH DIAGNOSTICS
+None.
+.SH AUTHOR
+Alan Parker, man page by Ajaipal S. Virdy.

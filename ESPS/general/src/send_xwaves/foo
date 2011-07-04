@@ -1,0 +1,264 @@
+
+
+
+SEND_XWAVES(1-ESPS)Misc. Reference Manual PageSEND_XWAVES(1-ESPS)
+
+
+
+NAME
+     send_xwaves - open a connection to  an  xwaves+  via  the  X
+     server
+
+
+SYNOPSIS
+     send_xwaves [ -h display name ] [ -d reply delay  ]  [   - D
+     startup  delay  ]  [  -n destination application name ] [ -x
+     debug_level ] [ xwaves command ]
+
+
+DESCRIPTION
+     send_xwaves uses communications through the X server to com-
+     municate  with xwaves(1-ESPS).  This program connects to the
+     default X server (like any other X program) to  establish  a
+     communications  link  with an xwaves running on that server.
+     An alternate display server name can be specified  by  using
+     the  -h option.  This is given in the usual X convention, of
+     hostname:display:screen, and  is  most  often  simply  host-
+     name:0.0.    The  host  running send_xwaves must have access
+     permission to the X server that xwaves is displaying  on  in
+     order for the communications link to be established.  If the
+     -h option is not given, then the value  of  the  environment
+     variable  DISPLAY is used, as is the case in all X programs.
+     By default, send_xwaves will look for  an  application  that
+     has registered by the name of xwaves with the X server.   To
+     specify an alternate name, use the -n option.  The name that
+     an  xwaves  registers  under  is  given on its control panel
+     title bar.
+
+     Send_xwaves will continue trying to establish connection for
+     the  delay interval specified using the -D option [10 sec by
+     default].
+
+     A single xwaves command can be given on  the  command  line,
+     following any option flags and arguments.  In this mode, the
+     connection is opened, the command is sent, and  the  connec-
+     tion  is closed.  When using this mode, you must be aware of
+     how the shell you are using handles  special  characters  on
+     the command line and how to escape them.  Unless blocking is
+     disabled with the -B option,  send_xwaves  will  wait  until
+     xwaves signals that the command has been processed for up to
+     the number of seconds specified  by  the  - d  option  (2000
+     seconds,  by  default).  In this mode, any value returned by
+     the remote procedure call processed on the host  (e.g.  from
+     xwaves "get" commands) will be sent to send_xwaves' standard
+     output.
+
+     If no command is given on  the  command  line,  send_xwaves,
+     attempts  to  open a connection to an xwaves, waiting for up
+     to startup delay seconds, and then reads an arbitrary number
+     of  commands from standard input and sends them, waiting for
+
+
+
+(c) 1995 Entropic ReseaLastLchange:r10/3/95                     1
+
+
+
+
+
+
+SEND_XWAVES(1-ESPS)Misc. Reference Manual PageSEND_XWAVES(1-ESPS)
+
+
+
+     a response from the server between each request, unless  the
+     - B  flag is set.  When send_xwaves reads EOF, it closes the
+     connection  and  exits  immediately.   This  way  of   using
+     send_xwaves  is  convenient  if you wish to have a window in
+     which you can just type xwaves commands, or when  a  routine
+     set  of  commands  is  to  be  executed from a file or other
+     source.
+
+     If the -B flag is set, send_xwaves processes all commands in
+     the  input stream with no interlock between requests.  Thus,
+     when a batch of commands are sent with  - B  enabled,  these
+     commands should not be interdependent (i.e. the success of a
+     command in the batch should not depend upon  the  completion
+     of a previous command).
+
+     Given a file of xwaves commands, one could send them all  to
+     xwaves  by  cat-ing  the file to the send_xwaves stdin.  One
+     could also cause xwaves to invoke the command file  directly
+     by  using send_xwaves to send an "@filename", where filename
+     is the name of a file containing the  commands  to  be  exe-
+     cuted.
+
+     The options described below override both the  default,  and
+     the environment variables.
+
+
+OPTIONS
+     The following options are supported:
+
+     -h display name
+          The X server name that the target xwaves is  displaying
+          on.  This  is  given in the usual X server name conven-
+          tion; host:display.screen.  If the option is not given,
+          then  the  value of the environment variable DISPLAY is
+          used.
+
+     -n destination application name
+          The name of the xwaves application to connect to.   The
+          default name is xwaves.  The name might be different if
+          more than one xwaves is displaying on the  display,  or
+          if  a  non-standard  name was specified upon startup of
+          xwaves.
+
+     -D startup delay [10 seconds]
+          Send_xwaves will keep trying for up  to  startup  delay
+          seconds  before  concluding  that  IxwavesR  can not be
+          reached.  If the timeout period is reached  before  the
+          connection  is  established,  send_xwaves exits with an
+          error message and error status.
+
+     -d reply delay [2000 seconds]
+          When  operating  in  the  single   command-line   mode,
+
+
+
+(c) 1995 Entropic ReseaLastLchange:r10/3/95                     2
+
+
+
+
+
+
+SEND_XWAVES(1-ESPS)Misc. Reference Manual PageSEND_XWAVES(1-ESPS)
+
+
+
+          send_xwaves  will  wait  up  to reply delay seconds for
+          xwaves to process the request and return a value.  If a
+          response  is not received within this time, send_xwaves
+          exits with an error message and error status.
+
+     -B [blocking enabled]
+          This option disables the  blocking  behavior  described
+          above.   When -B is specified, send_xwaves observes the
+          startup delay, but does not wait for  any  acknowledge-
+          ment from xwaves after a command is sent.
+
+     -x debug_level [0]
+          A positive value specifies  that  debugging  output  be
+          printed  on  the  standard error output.  Larger values
+          result in more output.  The default is 0, for  no  out-
+          put.
+
+EXAMPLES
+     Suppose you had xwaves displaying on host yorba.  You  could
+     cause it to exit with:
+
+          send_xwaves -h "yorba:0.0" quit
+
+     If xwaves was displaying on the same X  server  as  was  the
+     default for the process running the send_xwaves, then the -h
+     option would not have been necessary.
+
+     If xwaves was displaying file foo.sd in  ensemble  foo,  you
+     could  cause the time interval from 1.5 to 2.5 seconds to be
+     displayed with:
+
+          send_xwaves foo bracket file foo.sd start 1.5 end 2.5
+
+     The xwaves test script located in  $ESPS_BASE/bin/test_waves
+     contains many examples of the use of send_xwaves.
+
+ESPS PARAMETERS
+     The ESPS parameter file has no effect on this program.
+
+ESPS COMMON
+     This program has no interaction with ESPS common.
+
+ESPS HEADER
+     This program does not directly handle ESPS files, so it  has
+     no effect on ESPS file headers.
+
+SEE ALSO
+     OpenXwaves  (3u - ESPS),   SendWavesNoReply   (3u  -  ESPS),
+     SendWavesNoReply (3u-ESPS), CloseXwaves (3u-ESPS),
+
+
+
+
+
+
+(c) 1995 Entropic ReseaLastLchange:r10/3/95                     3
+
+
+
+
+
+
+SEND_XWAVES(1-ESPS)Misc. Reference Manual PageSEND_XWAVES(1-ESPS)
+
+
+
+BUGS
+     None known.
+
+
+AUTHORS
+     David Talkin and Alan Parker
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(c) 1995 Entropic ReseaLastLchange:r10/3/95                     4
+
+
+

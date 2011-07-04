@@ -1,0 +1,40 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)symerrexit.3	1.5 02 May 1997 ESI
+.TH SYMERR_EXIT 3\-ESPSu 02 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+symerr_exit - terminate program if any errors occurred while reading a value of a symbol
+.SH "SYNOPSIS"
+.B void
+.br
+.B symerr_exit();
+.SH "DESCRIPTION"
+.PP
+.I symerr_exit
+terminates a program if any errors occurred a value is read from a symbol
+table.
+.SH EXAMPLE
+.nf
+/* create symbol table of the parameter file */
+read_param("params");
+
+/* now read in the values of the parameters from the symbol table */
+start = getsym_i ("start");
+nan = getsym_i ("nan");
+decrem = getsym_s ("decrem");
+harmonic_mult = getsym_d ("harmonic_mult");
+
+symerr_exit();      /* exit if any errors occurred */
+
+.fi
+.SH DIAGNOSTICS
+None.
+.SH BUGS
+None.
+.SH "SEE ALSO"
+.PP
+read_params(3\-ESPSu), getsym(3\-ESPSu), putsym(3\-ESPSu)
+.SH "REFERENCES"
+[1] ETM-S-86-12:jtb, Parameter Files in the Speech Processing System
+.SH "AUTHOR"
+Joe Buck, Man page by Ajaipal S. Virdy

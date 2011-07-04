@@ -1,0 +1,12 @@
+# @(#)600lpfilt.params	1.1 11/18/96
+float samp_freq = 8000: "Sampling frequency:";
+int filt_length = 65: "filter length - odd:";
+int nbands = 2: "Number of bands:";
+float band_edge1 = 0;
+float band_edge2 = 600;
+float band_edge3 = 4000;
+float band1_des = 1: "desired value for band1:";
+float band2_des = 0: "desired value for band2:";
+float band1_wt = 1: "weighting value for band1:";
+float band2_wt = 1: "weighting value for band2:";
+

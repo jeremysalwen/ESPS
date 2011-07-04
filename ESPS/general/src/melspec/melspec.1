@@ -1,0 +1,729 @@
+.\" Copyright (c) 1998 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)melspec.1	1.1 7/12/98 ERL
+.ds ]W (c) 1998 Entropic Research Laboratory, Inc.
+.if n .ds - ---
+.if t .ds - \-\h'-0.2m'\-
+.if n .ds F F
+.if t .ds F \fIF\fP
+.if n .ds m m
+.if t .ds m \fIm\fP
+.if n .ds W W
+.if t .ds W \fIW\fP
+.TH MELSPEC 1\-ESPS 7/12/98
+.SH NAME
+
+melspec \- mel scale spectrum
+
+.SH SYNOPSIS
+.B
+melspec
+[
+.BI \-a " add_const"
+] [
+.BI \-m " mult_const"
+] [
+.BI \-n " num_freqs"
+] [
+.BI \-r " range"
+] [
+.BI \-x " debug_level"
+] [
+.BI \-H " freq_range"
+] [
+.BI \-M " mel_range"
+] [
+.BI \-P " param_file"
+] [
+.BI \-S " spec_type"
+] [
+.BI \-W " channel_width"
+] [
+.BI \-X
+]
+.I input.spec
+.I output.spec
+.SH DESCRIPTION
+.PP
+This program reads an ESPS spectrum (FEA_SPEC) file containing
+power spectra on a linear frequency scale.
+To each input spectrum it applies a bank of triangular filters
+with uniform spacing on a mel scale.
+It writes the resulting mel spectra to an output FEA_SPEC file.
+.PP
+If
+.I input.spec
+is ``\-'', standard input is read.
+If
+.I output.spec
+is ``\-'', results are written to standard output.
+The input and output should not be the same file;
+however, it is okay to run the program as a filter by specifying
+``\-'' for both input and output.
+.PP
+For the input file,
+.I freq_format
+must be SYM_EDGE (see
+.IR FEA_SPEC (5\-ESPS)).
+This is the normal output format used by
+.IR fft (1\-ESPS)
+(for real spectra) and by
+.IR me_spec (1\-ESPS).
+The output file is in ARB_FIXED format,
+meaning that the header contains an explicit list of the frequencies
+corresponding to the spectral values in the records.
+The output values may be written
+either in units of power or log power (dB)\*-see
+.B \-S
+under Options.
+(That is, the output
+.I spec_type
+may be either PWR or DB\*-see
+.IR FEA_SPEC (5\-ESPS).)
+In either case a further arbitrary linear scaling of the output values
+may be specified\*-see options
+.B \-a
+and
+.BR \-m .
+.PP
+The computation of the mel spectrum uses the correspondence
+between mel-scale values
+.I m
+and frequencies
+.I f
+in hertz given by:
+.IP
+.if n \{\
+m = 1127.01 log (1 + f/700)
+\}
+.if t \{\
+.IR m " = 1127.01 log (1 + " f "/700)"
+\}
+.LP
+where the constant shown as 1127.01 is actually 1000/log(1700/700),
+a value chosen so that 1000 mel corresponds to 1000 Hz.
+(There is no single universally accepted definition of the mel scale.
+The one used in
+.I melspec
+is consistent with the one used in HTK [1].)
+A triangular filter function
+.I F
+with width
+.I W
+is defined by:
+.IP
+\*F(\*m) = 1 \- |2\*m/\*W|,\h'5m'\kx(|\*m| < \*W/2)
+.IP
+\*F(\*m) = 0,\h`|\nxu`(otherwise).
+.LP
+The filter bank that is used consists of a specified number
+.I num_freqs
+of uniform translates of
+.I F,
+equally spaced in the mel domain and with equal width
+.IR W " = " channel_width.
+The number of filters, their width,
+and the range of mel values that they cover
+may be specified by various command-line options
+or parameter-file entries\*-see
+.BR \-n ,
+.BR \-W ,
+.BR \-M ,
+and
+.BR \-H .
+When transformed from the mel domain to the linear-frequency domain,
+the filters provide a set of weighting functions
+that are used in forming weighted sums of the input spectral values.
+These weighted sums become the output mel-spectral values.
+.PP
+The output field
+.I tot_power
+(see
+.IR FEA_SPEC (5\-ESPS))
+is filled in with a copy of the input
+.I tot_power.
+A special generic header item
+.I mel_freqs
+is included in the output file header
+to record the selected set of uniformly spaced mel values
+.I m.
+The equivalent linear frequencies (nonuniformly spaced)
+are recorded in the generic header item
+.I freqs.
+.SH OPTIONS
+.PP
+The following options are supported.
+Default values are shown in brackets.
+.TP
+.BI \-a " add_const" "\fR [0.0]\fP"
+.TP
+.BI \-m " mult_const" "\fR [1.0]\fP"
+Before being written out, each computed power
+.I S
+(or log power\*-see option
+.BR \-S )
+may be transformed into a scaled value
+.IR add_const " + " mult_const " * " S .
+The default values 0 and 1 for
+.I add_const
+and
+.I mult_const
+result in no change in the output values.
+Option
+.B \-a
+overrides any value specified for
+.I add_const
+in the parameter file.
+Option
+.B \-m
+overrides any value specified for
+.I mult_const
+in the parameter file.
+.TP
+.BI \-n " num_freqs" "\fR [(see text)]"
+The number of equally spaced mel values
+at which mel-spectral values will be computed.
+If the channel bandwidth in mels is specified explicitly (option
+.BR \-W ,
+parameter
+.IR channel_width )
+then the default
+.I num_freqs
+is a number of bands that attempts to cover the specified range (see
+.BR \-M )
+with a center-to-center spacing of half the given width.
+When this can be done exactly, the number is given by
+.RI 2( mel_high " \- " mel_low )\c
+.RI / channel_width " \- 1;"
+the default value in any case is the value of this expression
+rounded to the nearest integer.
+Specifying an argument of 0 implies this default value.
+If the channel bandwidth is not specified
+then the number of bands must be given explicitly,
+either with this option or by the parameter
+.I num_freqs
+in the parameter file.
+This option overrides the parameter-file value.
+.TP
+.BI \-r " start" : "last" "\fR [1:(last in file)]"
+.TP
+.BI \-r " start" :+ "incr"
+.TP
+.BI \-r " start"
+The range of input records to be processed.
+In the first form, a pair of unsigned integers gives the numbers
+of the first and last records of the range.
+(Counting starts with 1 for the first record in the file.)
+Either
+.I start
+or
+.I last
+may be omitted; then the default value is used:
+1 for
+.I start
+and the last record in the  file for
+.I last.
+If
+.IR last " = " start " + " incr,
+the second form (with the plus sign) specifies the same range as the first.
+The third form (omitting the colon) specifies a single record.
+This option overrides any values of
+.I start
+and
+.I nan
+in the parameter file.
+The implied value of
+.I nan
+is 1 +
+.IR last " \- " start
+(first form), 1 +
+.I incr
+(second form), or 1 (third form).
+.TP
+.BI \-x " debug_level" "\fR [0]\fP"
+A positive value of
+.I debug_level
+calls for debugging output,
+which is printed on the standard error output.
+Larger values result in more output.
+For the default value of 0, no messages are printed.
+.IP
+Output at level 2 includes the same frequency table that option
+.B \-X
+generates.
+.TP
+.BI \-H " band_low" : "band_high" "\fR [0:(Nyquist)]\fP"
+.TP
+.BI \-H " band_low" :+ "width"
+The range of frequencies (in hertz) to be covered.
+The first form specifies the range by giving the upper and lower limits
+as a pair of real numbers.
+The second form (with the plus sign)
+specifies the range by its lower limit and width.
+Thus, if
+.IR band_high " = " band_low " + " width,
+the two forms specify the same range.
+The default is to attempt to cover
+the entire range of frequencies in the input file.
+A specified value of 0 for
+.I band_high
+implies use of the default value\*-the Nyquist rate.
+This option overrides any value of
+.I band_low,
+.I mel_low,
+.I band_high,
+or
+.I mel_high
+specified in the parameter file.
+The specified range is transformed into a range on the mel scale,
+and the uniform interval between mel values
+is computed as described for option
+.B \-M
+below.  See
+.B \-M
+for more information.
+This option should not be used if
+.B \-M
+is specified.
+.TP
+.BI \-M " mel_low" : "mel_high" "\fR [0:(Nyquist equivalent)]\fP"
+.TP
+.BI \-M " mel_low" :+ "width"
+The mel-scale range to be covered.
+The first form specifies the range by giving the upper and lower limits
+as a pair of real numbers.
+The second form (with the plus sign)
+specifies the range by its lower limit and width.
+Thus, if
+.IR mel_high " = " mel_low " + " width,
+the two forms specify the same range.
+The uniformly spaced mel values
+(at which mel-spectral values will be computed)
+are chosen so that the corresponding intervals
+span the specified range.
+The default is to attempt to cover the range of mel values
+corresponding to the entire range of frequencies in the input file.
+A specified value of 0 for
+.I mel_high
+implies use of the default value\*-the mel-scale value corresponding
+to the Nyquist rate.
+The uniform interval between mel values is equal to
+.RI ( mel_high " \- " mel_low " \- " channel_width\c
+.RI )/( num_freqs " \- 1),"
+where
+.I num_freqs
+is the number of such values (see option
+.BR \-n )
+and
+.I channel_width
+is the total width of each filter (see option
+.BR \-W ).
+The first such value is
+.IR mel_low " + " channel_width /2.
+The uniform interval is required to be positive if
+.IR num_freqs " > 1,"
+and in any case
+.IR mel_high " \- " mel_low
+must not be less than
+.I channel_width.
+When the width is not explicitly specified,
+it is chosen so that the interval equals half the width\*-i.e.
+so that the points at which each filter goes to 0
+coincide with the peaks of its neighbors.
+In that case the interval is equal to
+.RI ( mel_high " \- " mel_low\c
+.RI )/( num_freqs " + 1)."
+This option overrides any value of
+.I band_low,
+.I mel_low,
+.I band_high,
+or
+.I mel_high
+specified in the parameter file.
+It should not be used if
+.B \-H
+is specified.
+.TP
+.BI \-P " param_file" "\fR [params]\fP"
+The name of the ESPS parameter file.
+.TP
+.BI \-S " spec_type" "\fR [DB]\fP"
+Allowed values for the argument are DB and PWR (case-insensitive).
+These result in an output file with a
+.I spec_type
+(see
+.IR FEA_SPEC (5\-ESPS))
+of DB or PWR, respectively.
+If DB, the default, is selected, each computed mel-spectral power
+.I S
+is replaced with a logarithmic value
+.I "10 * log10(S)"
+before being written out.
+This transformation takes place before any additive or multiplicative
+transformation implied by options
+.B \-a
+and
+.B \-m
+or the corresponding parameter-file entries.
+This option overrides any value for
+.I spec_type
+specified in the parameter file.
+.TP
+.BI \-W " channel_width" "\fR [(see text)]\fP"
+The total bandwidth in mel of each triangular filter\*-i.e.
+the width of the base of the triangle.
+If the number of filters is specified explicitly (option
+.BR \-n ,
+parameter
+.IR num_freqs )
+then the default width is chosen so that the given number of bands
+will cover the specified range (see
+.BR \-M )
+with 50% overlap between adjacent bands.
+In that case the width is
+.RI 2( mel_high " \- " mel_low\c
+.RI )/( num_freqs " + 1)."
+A specified value of 0 for
+.I channel_width
+implies use of this default value.
+If the number of filters is not specified
+then the channel bandwidth must be given explicitly,
+either with this option or by the parameter
+.I channel_width
+in the parameter file.
+This option overrides the parameter-file value.
+.TP
+.B \-X
+This option causes the program to write a frequency table
+on the standard error output.
+The table lists
+the filter peak frequencies and band edges in mels and in hertz.
+This output is also included in the debug output produced by option
+.B \-x
+with a
+.I debug_level
+of 2 or higher.
+.SH ESPS PARAMETERS
+.PP
+The following parameters may be read, if present, from the parameter file.
+.TP
+.I "add_const \- float"
+.IP
+Constant to be added to mel-spectral powers
+before they are written out.
+See option
+.BR \-a .
+(See also option
+.B \-m
+and parameter
+.IR mult_const. )
+This parameter is not read if
+.B \-a
+is specified.
+.TP
+.I "band_high \- float"
+.IP
+High limit of the range of frequencies (in hertz) to be covered.
+See option
+.BR \-H .
+(See also option
+.B \-M
+and parameters
+.IR band_low,
+.IR mel_high,
+and
+.IR mel_low. )
+This parameter is not read if option
+.B \-M
+or
+.B \-H
+is specified or if parameter
+.I mel_high
+is also specified.
+A value of 0 implies use of the default value\*-see
+.BR \-H .
+.TP
+.I "band_low \- float"
+.IP
+Low limit of the range of frequencies (in hertz) to be covered.
+See option
+.BR \-H .
+(See also option
+.B \-M
+and parameters
+.IR band_high,
+.IR mel_high,
+and
+.IR mel_low. )
+This parameter is not read if option
+.B \-M
+or
+.B \-H
+is specified or if parameter
+.I mel_low
+is also specified.
+.TP
+.I "mel_high \- float"
+.IP
+High limit of the range of mel-scale values to be covered.
+See option
+.BR \-M .
+(See also option
+.B \-H
+and parameters
+.IR mel_low,
+.IR band_high,
+and
+.IR band_low. )
+This parameter is not read if
+.B \-M
+or
+.B \-H
+is specified.
+It takes precedence if parameter
+.I band_high
+is also specified.
+A value of 0 implies use of the default value\*-see
+.BR \-M .
+.TP
+.I "mel_low \- float"
+.IP
+Low limit of the range of mel-scale values to be covered.
+See option
+.BR \-M .
+(See also option
+.B \-H
+and parameters
+.IR mel_high,
+.IR band_low,
+and
+.IR band_high. )
+This parameter is not read if option
+.B \-M
+or
+.B \-H
+is specified.
+It takes precedence if parameter
+.I band_low
+is also specified.
+.TP
+.I "mult_const \- float"
+.IP
+Constant by which mel-spectral powers are to be multiplied
+before being written out.
+See option
+.BR \-m .
+(See also option
+.BR \-a
+and parameter
+.IR add_const. )
+This parameter is not read if
+.B \-m
+is specified.
+.TP
+.I "nan \- int"
+.IP
+The number of records to process.
+See option
+.BR \-r .
+(See also parameter
+.IR start. )
+A value of 0 implies processing all records from
+.I start
+to the end of the file; this is the default.
+This parameter is not read if
+.B \-r
+is specified.
+.TP
+.I "num_freqs \- int"
+.IP
+The number of mel values at which spectral values will be computed.
+See option
+.BR \-n .
+A value of 0 implies use of the default value (see
+.BR \-n ).
+This parameter is not read if the option is specified.
+.TP
+.I "spec_type \- string"
+.IP
+Allowed values are "DB" and "PWR" (case-insensitive).
+These indicate whether to output mel-spectral powers
+directly ("PWR") or convert them to dB ("DB").
+See option
+.BR \-S .
+This parameter is not read if the option is specified.
+.TP
+.I "start \- int"
+.IP
+The number of the first input record to process.
+See option
+.BR \-r .
+(See also parameter
+.IR nan. )
+This parameter is not read if
+.B \-r
+is specified.
+.TP
+.I "channel_width \- float"
+.IP
+The total bandwidth in mel of each triangular filter.
+See option
+.BR \-W .
+This parameter is not read if the option is specified.
+A value of 0 implies use of the default value (see
+.BR \-W ).
+.SH ESPS COMMON
+.PP
+The ESPS common file is not accessed.
+.SH ESPS HEADERS
+.PP
+The output file header is an ESPS FEA_SPEC header (see
+.IR FEA_SPEC (5\-ESPS),
+.IR init_feaspec_hd (3\-ESPS)).
+A copy of the input header is included in the output file
+as a source header.
+The output file is tagged if and only if the input file is tagged.
+If the files are tagged, the
+.I refer
+file name in the output header is copied from the input header,
+and the generic header item
+.I src_sf
+is copied from the input header if present;
+otherwise the value of
+.I sf
+is used.
+Output generic header items
+.I start_time
+and
+.I record_freq
+are determined by the corresponding input header items, if present,
+and by the
+.I start
+record number.
+.PP
+Generic header items
+.I add_const,
+.I band_high,
+.I band_low,
+.I channel_width,
+.I mel_high,
+.I mel_low,
+.I mult_const,
+.I nan,
+and
+.I start
+are added to the output file header to record the values
+specified with the corresponding parameters and options.
+The data types of the header items are DOUBLE for
+.I float
+parameters and LONG for
+.I int
+parameters.
+The usual FEA_SPEC generic header item
+.I spec_type
+(see
+.IR FEA_SPEC (5\-ESPS))
+takes the CODED value SPTYP_DB or SPTYP_PWR,
+as determined by the parameter
+.I spec_type
+or the argument of
+.BR \-S ,
+and the usual FEA_SPEC generic header item
+.I num_freqs
+takes the value of
+.I num_freqs.
+.PP
+A special generic header item
+.I mel_freqs
+of type FLOAT
+is added to record the selected set of uniformly spaced mel values
+.I m
+for which mel-spectral values are computed.
+The equivalent linear frequencies (nonuniformly spaced)
+are recorded in the usual FEA_SPEC generic header item
+.I freqs
+(see
+.IR FEA_SPEC (5\-ESPS)).
+.SH FUTURE CHANGES
+.PP
+None contemplated.
+.SH EXAMPLES
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+The program prints a synopsis of command-line usage and exits
+if an unknown option is specified
+or if the number of file names is wrong.
+It exits with an error message
+if
+.I input.spec
+and
+.I output.spec
+are the same (but not ``\-'');
+if
+.I input.spec
+does not exist or is not an ESPS FEA_SPEC file;
+if
+.I freq_format
+in the input file is not SYM_EDGE;
+if the range of record numbers (see
+.BR \-r )
+is empty or starts before the beginning of the file;
+if the mel-scale range to be covered (see
+.B \-H
+and
+.BR \-M )
+is less than
+.I channel_width
+(see
+.BR \-W );
+if
+.B \-H
+and
+.B \-M
+are both specified;
+if neither
+.I channel_width
+nor
+.I num_freqs
+(see
+.BR \-n )
+is specified;
+if
+.I channel_width
+is 0 or negative;
+if
+.I num_freqs
+(see
+.BR \-n )
+is less than 1;
+if
+.I num_freqs
+is 2 or more, but the uniform interval between mel values
+(see
+.BR \-M )
+is 0 or less;
+if any of these mel values corresponds to a frequency
+less than 0 or greater than the Nyquist frequency;
+or if an unsupported
+.I spec_type
+(see
+.BR \-S )
+is specified.
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+[1] Steve Young, Julian Odell, Dave Ollason, Valtcho Valtchev,
+and Phil Woodland,
+.I "The HTK Book,"
+Entropic, 1997.
+.SH "SEE ALSO"
+.IR barkspec (1\-ESPS),
+.IR fft (1\-ESPS),
+.IR me_spec (1\-ESPS),
+.br
+.IR init_feaspec_hd (3\-ESPS),
+.IR FEA_SPEC (5\-ESPS)
+.SH AUTHOR
+Rodney Johnson

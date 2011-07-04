@@ -1,0 +1,10 @@
+# @(#)Pfftcep	@(#)Pfftcep	1.1 5/26/91 ERL
+# default parameter file for fftcep
+int start ?= 1: "First point to process";
+int nan ?= 0: "Number of points; 0 means continue to EOF";
+int frame_len ?= 0: "Number of points per analysis frame; 0 means nan";
+int step ?= 0: "step (points between start of successive frames; 0 means frame_len)";
+string window_type ?= "RECT": "Window to apply to data": {"RECT", "HAMMING", "TRIANG", "HANNING", "COS4"};
+string data_type ?= "FLOAT": "Output data type": {"FLOAT","FLOAT_CPLX"};
+string method ?= "CEPSTRUM": "Cepstral method": {"CEPSTRUM", "CPLX_CEPSTRUM"};
+int order ?= 10: "Compute 2^order point cepstrum";

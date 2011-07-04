@@ -1,0 +1,49 @@
+# @(#)params.t2	1.1 8/11/91 ERL
+# parameter file for testing acf.c
+# read by ESPS programs in acf.t2
+
+# general 
+
+int start = 1; 
+int nan = 1024; 
+int frame_len = 512;
+int step = 128;
+int step_size = 128;
+
+# for frame 
+
+string	window_type 	=       "HAMMING";
+
+# for zcross and pwr
+
+string sd_field_name = "sd";
+string power_field_name = "power1";
+string zcross_field_name = "zero_crossing";
+
+#for auto(1-ESPS)
+
+string	window 	=       "HAMMING";
+string  power   =       "windowed";
+
+
+# for auto(1-ESPS) and refcof
+
+int     order = 20;
+
+# for refcof (1-ESPS)
+
+string method = "autoc";
+float strcov_test = 1e-5;
+int strcov_maxiter = 20;
+
+# for transpec 
+
+string input_field = "refcof";
+string source_rep = "RC";
+#should also check LSF, CEP, LAR
+string target_rep = "LSF";
+string samp_freq_name = "record_freq";
+int grid_width = 9; 
+
+
+

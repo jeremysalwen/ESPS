@@ -1,0 +1,193 @@
+.\" Copyright (c) 1987, 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)mcrecord.1t	3.9 3/25/90 ESI
+.TH MCRECORD  1\-ESPS 3/25/90
+.ds ]W "Entropic Speech, Inc.
+.SH NAME
+mcrecord  - digitize data using the \s-1MASSCOMP\s+1 analog-to-digital (A/D) converter.
+.PP
+record  - digitize data using an analog-to-digital (A/D) converter.
+.SH SYNOPSIS
+.B mcrecord
+[
+.BI \-x " debug level"
+] [
+.BI \-{psf} " range"
+] [
+.BI \-r " sampling rate"
+] [
+.BI \-g " gain"
+] [
+.BI \-w " width"
+] [
+.BI \-c " A/D channel"
+] [
+.BI \-k " clock#"
+]
+.BI \-t " comment text"
+]
+.BI \-d " A/D device type"
+]
+.BI \-C " clock device"
+]
+.BI \-D " A/D device"
+]
+.I file
+.SH DESCRIPTION
+.PP
+.I Record
+digitizes the input at the specified sampling rate and stores the data 
+as SHORTs in 
+.I file
+(an ESPS sampled data feature (FEA_SD) file).
+A range of data may be specified in one of three ways:
+the number of samples, seconds of data, or number of frames at the specified width.
+Furthermore, a gain factor
+, an alternate A/D channel, and an alternate clock may be specified.
+.PP
+The following options are supported:
+.TP
+.BI \-x " debug level"
+Only debug level 1 is defined in this version;
+this causes several messages to be printed.
+The default level is zero, which causes no debug output.
+.TP
+.BI \-p " range"
+Select the recording length, in number of points.
+.TP
+.BI \-s " range"
+Select the recording length, in seconds.
+.TP
+.BI \-f " range"
+Select the recording length, in frames. By default, a frame is
+100 points, but this may be changed. See 
+.I width
+below.
+.TP
+.BI \-r " sampling rate"
+Select the sampling rate (default is 8000 samples/second).
+.TP
+.BI \-w " width"
+This switch defines the frame width. The width is ignored unless the
+.B \-f
+switch is also specified. (The default is 100 points.)
+.TP
+.BI \-c " A/D channel"
+Specifies the channel of the A/D to use.  The default channel number is
+zero.  The range of legal values, depends on the particular A/D
+being used.
+.TP
+.BI \-k " clock#"
+Specifies the clock used to drive the analog to digital conversion. 
+The default is clock 1.   The range of legal values, depends on the
+particular A/D being used.
+.TP
+.BI \-g " gain factor"
+Some types of \s-1MASSCOMP\s+1 A/D converters can apply a gain factor
+the analog signal before it is digitized.  If this option is used, this
+number if passed directly to the A/D.   How it is interpreted depends on
+the A/D type being used.   For currently known \s-1MASSCOMP\s+1
+converters, this table applies:
+.TS
+center, allbox, tab(;);
+c | c s s s
+c | c | c | c | c.
+Factor;Gain
+;AD12F;AD12FA;AD12FA\(dg;EF12M
+0;x1;x1;x1;x1
+1;x4;x2;x4;x2
+2;x16;x4;x16;x4
+3;x64;x8;x64;x8
+.TE
+.IP
+.ps -2
+.vs -2
+\(dgAlternate setting of AD12FA gain jumper.  See AD12FA Hardware
+Manual.  (This table from MASSCOMP Data Acquisition Application
+Programming Manual.)
+.ps +2
+.vs +2
+.TP
+.BI \-t " comment text"
+The argument following this option is added to the comment field of the
+output ESPS SD file.  If the text is more than one word, it must be
+enclosed in quotes.
+.TP
+.BI \-d "A/D device type"
+This overrides the A/D device type compiled into the program.  Normally
+the device type is compiled into the program as specified by the ESPS
+install script.   This device type does not affect processing; it is
+only used to save the device type in the \fIequip\fR of the ESPS data
+file header.
+.IP
+The default clock device is /dev/dacp0/efclk0, and the default A/D
+device is /dev/dacp0/adf0.   These defaults, might be different at your
+site, however, since they can be changed by the ESPS installation
+program.   The compiled in defaults can be replaced on the command line
+with the \fB\-C\fR and the \fB\-D\fR options.  The clock device is
+specified without the trailing device number, \fIe.g.\fR
+/dev/dacp0/clk.   The A/D device is specified by its complete special
+filename, \fIe.g.\fR /dev/dacp0/adf0.
+.TP
+.I \ file
+The file to store the sampled speech data into.  
+.PP
+.I Record
+tells the user when all the setups are finished and the A/D conversion process is ready to begin.
+The data conversion starts when the user hits a carriage return.
+.PP
+On a 68020 \s-1MASSCOMP\s+1 system with 8 Megabytes of read memory, about
+1,000,000 points (125 seconds at 8000 samples/second) may be collected at once.
+.SH ESPS HEADER
+.SH ESPS PARAMETERS
+The ESPS parameter file is not referenced.
+.SH ESPS COMMON
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+The following items are written into the ESPS Common file if it is
+enabled:
+.IP
+.I "start - integer"
+.IP
+This is always 1.
+.sp
+.I "nan - integer"
+.IP
+The number of points in the output file.
+.sp
+.I "prog - string"
+.IP
+This is the name of the program (\fIrecord\fP in this case).
+.sp
+.I "filename - string"
+.IP
+The name of the output file.
+.SH "ESPS HEADERS"
+.PP
+Items in the FEA_SD header of output file are set as follows:
+.IP
+.nf
+.IR record_freq " = sampling frequency"
+.IR equip " = default A/D type or -d argument if given"
+.IR max_value " = absolute value of the maximum data point value"
+.SH DIAGNOSTICS
+.PP
+.I Record
+prints "Event Wait Timeout" if the the program quits before all the data is captured.
+This can happen if the designated clock is not physically connected to the A/D converter, or if the
+system load is too heavy to support the conversion.
+.SH BUGS
+.SH EXPECTED CHANGES
+This version of the program only operates the A/D converter in
+differential, bipolar mode.   The next version will have options to
+change these modes.
+.SH AUTHOR
+.PP
+David Burton, Alan Parker, Jay Virdy

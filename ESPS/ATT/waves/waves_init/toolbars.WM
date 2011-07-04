@@ -1,0 +1,54 @@
+"Help" MENU
+
+ "Show help file..." DEFAULT shell xtext -F `get_esps_base`/lib/waves/toolbars.help
+ "Show menu file for this panel..." shell xtext -F `get_esps_base`/lib/waves/menus/toolbars.WM
+
+ "Show make_toolbar.sh..." shell xtext -F `get_esps_base`/bin/make_toolbar.sh
+ "Show make_toolbar2.sh..." shell xtext -F `get_esps_base`/bin/make_toolbar2.sh
+ "Show edit_bar.sh..." shell xtext -F `get_esps_base`/bin/edit_bar.sh
+ "Show stats_bar.sh..." shell xtext -F `get_esps_base`/bin/stats_bar.sh
+"Help" END
+
+"Add toolbar creator to menus" MENU
+
+   "Zoom and scroll" add_op name "Create zoom/scroll toolbar" \
+	command make_toolbar2.sh ztoolbar _name _file _loc_x _loc_y \
+		"Zoom toolbar"  \
+		In "zoom in" \
+		Out "zoom out" \
+		"Full Out" "zoom full out" \
+		Bracket "bracket markers" \
+		\<\<\< "window back" \
+		\>\>\> "window ahead" 
+
+   "D/A conversion" add_op name "Create D/A toolbar" \
+	command make_toolbar.sh datoolbar _name _file _loc_x _loc_y \
+		"D/A toolbar" \
+		"play between marks" \
+		"play window contents" \
+		"play entire file" \
+		"play to end of file" 
+
+   "Print graphic" add_op name "Create print graphic toolbar" \
+	command make_toolbar.sh gtoolbar _name _file _loc_x _loc_y \
+	""  "print graphic"
+
+   "All menu functions" add_op name "Create full menu toolbar" \
+	command make_toolbar.sh mtoolbar _name _file _loc_x _loc_y \
+		"Full menu toolbar"  _operators
+
+   "Edit (copy/cut/paste)" add_op name "Create edit toolbar" \
+	command edit_bar.sh _name _file _loc_x _loc_y
+
+   "Output segment stats" add_op name "Create output stats toolbar" \
+	command stats_bar.sh _name _file _loc_x _loc_y
+
+"Add toolbar creator to menus" END
+
+# @(#)toolbars.WM	1.6 9/9/93
+
+
+
+
+
+

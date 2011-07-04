@@ -1,0 +1,38 @@
+.lo
+.ce 2
+.b
+Hardcopy Output with ESPS Plot Programs
+%G% %I%
+.sh 1 "Hardcopy from Vector Plot Programs"
+.pp
+The ESPS plot programs have a -T option for specifying the type of
+the output device.   The option "-T hardcopy" is used to to get the
+default (for a site) hardcopy.   The default for the plotting programs
+is postscript send to the spooler program "lpr".   If this is
+correct for your installation, then you do not have to do anything else.
+.pp
+The vector plot programs, aplot, genplot, mlplot, plotfield, plotsd,
+plotspec, and scatplot can plot to a hardcopy devices that are compatible with 
+Tektronix plot codes, Postscript, or HP Laser Jet printers.    If the option 
+"-T hardcopy" is used with these programs, Tektronix compatible plot codes
+are sent to a program called esps_plot (in our bin directory).  This program takes 
+Tektronix codes and sends them to a plotter.   By default, this script is set up to
+convert the plot to Postscript and spool it to lpr.  So if you have a Postscript
+printer setup so that you spool to it with lpr, then "-T hardcopy" should work right
+off for you.  
+.pp
+If you have an HP Laser Jet compatible printer, then use the "-T hp" option with 
+these programs.  This option does not spool to the printer, so you must pipe the
+output to your spooler.  For example: plotsd -Thp file.sd | print_hp (if print_hp
+is your HP printer spooler program).
+.pp
+If you have some other type of device, and you know how to make it plot Tektronix 
+compatible codes, then you can edit $ESPS_BASE/bin/esps_plot to make it handle 
+your device.
+.sh 1 "Hardcopy from Raster Plot Programs"
+.pp
+The program for printing spectrograms, plotsgram has a "-T hardcopy" option.  By
+default this sends Postscript to the spooler lpr.   To change this default, edit
+the file $ESPS_BASE/bin/plotsgram.  You can make the default one of Postscript, 
+hp laser jet, or Imagen.    You can also specify the name of the spooler program.
+It is currently set to lpr.   Search for SPOOL_CMD in the file.

@@ -1,0 +1,191 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1996 Entropic Research Laboratory, Inc.  All rights reserved.
+.\" @(#)setrange.1	1.9 3/31/97 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH SETRANGE 1\-ESPS 3/31/97
+.SH NAME
+setrange - put range in records or seconds in Common; allow conversion from seconds
+.SH SYNOPSIS
+.B setrange
+[
+.BI \-x " debug_level"
+] [
+.BI \-P " param_file"
+] [
+.BI \-{prs} " range"
+] [
+.B \-z
+] 
+.I " esps_file"
+.SH DESCRIPTION
+.PP
+.I Setrange
+takes a range of time (specified in seconds), converts it to a range
+of records in the ESPS FEA file \fIesps_file\fP, and leaves
+the sample range in ESPS Common.  Note that \fIsetrange\fP
+takes into consideration the value of the
+\fIstart_time\fP generic, if it exists.  (That is, the times 
+specified by \fB-s\fP are treated as absolute times, not as 
+times relative to the start of the file.)   \fISetrange\fP also 
+takes a range specified in records, converts it to a range in 
+seconds, and leaves the time range in ESPS Common.  Actually, 
+regardless of whether a time or record range is given, \fIsetrange\fP
+writes Common with range values in both measurement units.  
+.PP
+In computing the range in records, \fIsetrange\fP uses the generic
+\fIrecord_freq\fP (number of records per seconds).  This is the
+sampling rate for FEA_SD files.  If \fIrecord_freq\fP does not exist
+or is less than or equal to 0, \fIsetrange\fP exits with an error
+message.
+.PP
+Unless the \fB-z\fP option is used, \fIsetrange\fP prints a message
+giving the range in points that is stored in ESPS Common.
+.PP
+\fISetrange\fP will work properly with old-style sampled data (SD)
+files.  
+.PP
+\fISetrange\fP is useful when run before other ESPS programs that
+process FEA files but that do not permit a range specification in time
+units.  It is also useful in scripts when one needs to convert in
+either direction between range specs in records or time.  Future
+versions of ESPS will provide a uniform means of specifying ranges as
+time or samples.  \fISetrange\fP is provided as interim support.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-x " debug"
+Only debug level 1 is defined in this version.   This causes several
+messages to be printed as internal processing proceeds.   The default
+is level 0, which causes no debug output.
+.TP	 
+.BI \-P " param_file"
+uses the parameter file 
+.I param_file
+rather than the default, which is
+.I params.
+.TP
+.BI \-s " first" : "last"
+.TP
+.BI \-s " first" :+ "incr"
+Specifies in units of time (seconds) the range of sampled data in
+\fIesps_file\fP.  In the first form, a pair of unsigned integers
+specifies the range.  If
+.IR last " = " first " + " incr,
+the second form (with the plus sign) specifies the same range as the
+first two forms.  If 
+.I first
+is omitted, the default value of 0 is used.  If 
+.I last
+is omitted, then the end of the file is assumed. 
+The beginning of \fIesps_file\fP is treated as 0 seconds.  
+.TP
+.BI \-{p} " first" : last "\fR [1:(last in file)]"
+.TP
+.BI \-{p} " first" :+ incr
+.TP
+.BI \-{r} " first" : last "\fR [1:(last in file)]"
+.TP
+.BI \-{r} " first" :+ incr
+Specifies in units of points the range of sampled data in the
+\fIesps_file\fP.  In the first form, a pair of unsigned integers gives
+the first and last points of the range, counting from 1 for the first
+point in the file.  If
+.I first
+is omitted, 1 is used.  If 
+.I last 
+is omitted, the range extends to the end of the file.  The second form
+is equivalent to the first with
+.I "last = first + incr".
+This option should not be specified if
+.B \-s
+is specified.  If neither option is specified, the range is determined
+by the parameters
+.I start_s
+and
+.I nan_s
+as read from the parameter file.  If either parameter is missing from
+the parameter file, it is determined by default.  Note that \fB-p\fP
+and \fB-r\fP are synonyms. 
+.TP
+.B \-z
+Suppress output message giving range of sampled data points.  
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not required to be present, as there are 
+default parameter values that apply.  If the parameter file 
+does exist, the following parameters are read:
+.TP
+.I "start_s - float"
+.IP
+The starting point to be processes (in seconds).  A value of 0 denotes
+the start of the file.  This parameter is read only if the no range
+option is used.  If it is not in the parameter file, the default value
+of 0 is used.
+.TP
+.I "nan_s - float"
+.IP
+The total number of seconds in the range.  If 
+.I nan_s
+is 0, the whole file is processed.  This parameter is read only if the no range
+option is used.  If it is not in the parameter file, the default value
+of 0 is used.
+.SH ESPS COMMON
+.PP
+ESPS Common is not read.  
+.PP
+The following items are written into the ESPS Common file:
+.IP
+.I "start - integer"
+.IP
+The starting sample number in \fIesps_file\fP.
+.IP
+.I "nan - integer"
+.IP
+The number of samples in the selected range.
+.IP
+.I "start_s - float"
+.IP
+The starting time (seconds) in \fIesps_file\fP.
+.IP
+.I "end_s - float"
+.IP
+The ending time (seconds) in the selected range.
+.IP
+.I "nan_s - float"
+.IP
+The totoal time (seconds) in the selected range.
+.IP
+.I "prog - string"
+.IP
+This is the name of the program (\fIsetrange\fP in this case).
+.I "filename - string"
+.IP
+The name of \fIesps_file\fP. 
+.SH ESPS HEADERS
+.PP
+For FEA files, \fIsetrange\fP makes use of the the generic header
+items start_time and record_freq.  If the input file is an old
+style SD, the header is converted automatically to a FEA_SD header 
+before proceeding (i.e., the generics don't need to be there in the 
+SD header).  
+.SH DIAGNOSTICS
+.PP
+.I Setrange
+informs the user and exits if \fIesps_file\fP does not exist, or is not an
+ESPS sampled data file.
+.PP
+If the starting point requested is greater than the last point in
+\fIesps_file\fP, then a message is printed and the program exits.  If
+the ending point requested is greater than the last point in
+\fIesps_file\fP, it is reset to the last point and a warning is
+printed.  continues.
+.SH FILES
+.SH BUGS
+.SH EXPECTED CHANGES
+.PP
+.SH AUTHOR
+.PP
+Manual page and program by John Shore.  
+
+

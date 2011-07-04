@@ -1,0 +1,38 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getsdrecsi.3	1.5 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GET_SD_RECSIZE 3\-ESPSu 18 Apr 1997
+.SH NAME
+get_sd_recsize \- returns the size of an ESPS SD sampled-data file record
+.SH SYNOPSIS
+.ft B
+#include <esps/sps.h>
+.br
+int
+.br
+get_sd_recsize(hd)
+.br
+struct header *hd;
+.ft
+.SH DESCRIPTION
+.PP
+.I get_sd_recsize
+returns the size, in C \fBsizeof\fR units, of the sampled data file
+records.   The pointer \fIhd\fR must point to a valid SD
+file header.
+.PP
+This function is obsolete.  Instead, use
+.IR size_rec (3-ESPSu),
+which works for all file types.
+.SH DIAGNOSTICS
+If \fIhd\fR does not point to a sampled data file header, then an
+error message is printed and the program is terminated with exit 1.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+ESPS(5\-ESPS), SD(5\-ESPS), \fIsize_rec\fP(3\-ESPSu)
+.fi
+.SH AUTHOR
+Alan Parker

@@ -1,0 +1,11 @@
+# @(#)Pbs_dist	1.2 8/4/98 ERL
+# default parameter file for bs_dist
+int	start ?= {1, 1}: "First record from each input file to process";
+int	nan ?= 0: "Number of records to process; 0 means till EOF";
+float	threshold ?= 0: "Frame power threshold";
+string	distortion_type ?=
+		"BSD": "distortion measure to compute": {"BSD"};
+float	perceptual_weights ?= {
+	    1.00051224, 1.00148221, 1.00308900, 1.00554334, 1.00918270,
+	    1.01454247, 1.02248820, 1.03447494, 1.05309536, 1.08335560,
+	    1.13603451, 1.23807577, 1.47220992, 2.15881055, 3.68948410};

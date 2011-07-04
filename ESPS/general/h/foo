@@ -1,0 +1,8 @@
+alaw.h ana_methods.h anafea.h array.h audio.h complex.h constants.h epaths.h
+erlicon_b.h erlicon_nb.h esps.h exv_bbox.h exv_colors.h exv_func.h exv_icon.h
+exv_keys.h exv_olwm.h exview.h fea.h feadst.h feafilt.h feasd.h feaspec.h
+feastat.h fftcepstrum.h filt.h ftypes.h func.h get_fft.h header.h histicon.h
+imagicon.h limits.h linalg.h locks.h lpsyn.h mach_codes.h mem.h menu.h
+mulaw.h olwm.h op.h p3dicon.h param.h rand.h range_switch.h scbk.h sd.h
+sinicon.h spec.h specicon.h spsassert.h ss.h strlist.h types.h ultrix_cpt.h
+unix.h vq.h window.h xecolors.h xwaves_ipc.h

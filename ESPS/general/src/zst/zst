@@ -1,0 +1,103 @@
+#!/bin/csh 
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1993  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)zst	1.1	6/22/93	ERL
+# 
+# Written by:  Bill Byrne
+# Checked by:
+# Revised by:
+# 
+# Brief description: zst sets start time to zero in FEA files and  
+# adjusts labels 
+
+if ( $#argv == 0 ) then
+   USAGE:   
+   echo "Usage: zst [options] data_extension label_extension filename[s]"
+   echo "Options: -l label_dir   label file directory (default: same as data)"
+   echo "         -g ext         label file extension (default: .lab)"
+   echo "         -d ext         data file extension  (default: .wav)"
+   echo "         -x debug_level                      (default: 0)"
+   exit 0
+endif
+
+# break -lopt into -l opt in command line string
+set cmdln = `echo $argv | sed s:-.:\&" ":g`
+
+set ldir = ""
+set lx = ".lab"
+set dx = ".wav"
+set dbl = 0
+set i = 1
+while ($i <= $#cmdln)
+  switch ($cmdln[$i])
+     case "-l":
+        @ i++
+        set ldir = $cmdln[$i]
+        breaksw
+     case "-d":
+        @ i++
+        set dx = $cmdln[$i]
+        breaksw
+     case "-g":
+        @ i++
+        set lx = $cmdln[$i]
+        breaksw
+     case "-x":
+        @ i++
+        set dbl = $cmdln[$i]
+        breaksw
+     case "-?":
+	goto USAGE
+        breaksw
+     default
+        break
+  endsw
+  @ i++
+end
+
+if ( $i > $#cmdln ) then
+   echo "zst: No data files specified."
+   exit 1
+endif
+
+while ( $i <= $#cmdln )
+# set data file name
+   set fn = $cmdln[$i]
+   if ( ! -e $fn ) then
+      echo "zst: cannot find data file $fn"
+      exit 1
+   endif
+# set label file name
+   if ($ldir == "") set ldir = `dirname $fn`
+   set ln = $ldir/`basename $fn $dx`$lx
+   if ( ! -e $ln ) then
+      echo "zst: cannot find label file $ln"
+      exit 1
+   endif
+# zero start time in data file
+   if ($dbl>0) echo "zst: Zeroing start time in $fn ..."
+   set zt=""
+   set zt=`hditem -i start_time $fn`
+   if (zt == "") then
+       if (debug_level>0) echo "start_time not defined in $fn."
+       continue
+   endif 
+   addgen -t double -v 0.0 -g start_time -F $fn
+# zero start time in label file
+   if ($dbl>0) echo " ... and $ln."
+   cp $ln ${ln}BAK 
+   awk 'BEGIN{s=0} \
+        {if (s) {printf "% f ", $1-'$zt'} else {printf "%s ", $1}} \
+        {for (i=2;i<=NF;i++) printf "%s ", $i; printf "\n"} \
+        {if ($1 == "#") s = 1}' ${ln}BAK > $ln
+   @ i++
+end

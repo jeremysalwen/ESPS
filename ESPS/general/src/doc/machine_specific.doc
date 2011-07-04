@@ -1,0 +1,66 @@
+
+
+
+
+
+
+
+                       ESPS/Waves 5.0 Machine Specific Notes
+
+                           Document version: 1.9 12/23/93
+
+       1 .  INTRODUCTION
+
+       This document  provides  information  specific  to  each  architecture
+       implementation  of  ESPS and waves+.   This information is in addition
+       to that found in the release notes.  The ESPS and waves+ release notes
+       should be read before reading this document.
+
+       2 .  Sun/Sparc Release for Sun OS4.x
+
+       Except for s16play and s16record, the Sparc version was compiled under
+       Sun OS 4.1.1 using the production Sun C Compiler 1.1.    It was linked
+       under OpenWindows 3.0. The programs s16play and  s16record  were  com-
+       piled and linked under Sun OS 4.1.3.
+
+       3 .  Sun/Sparc Release for Solaris 2.x (Sun OS5.x)
+
+       The Solaris version  of  ESPS/waves  was  compiled  and  linked  under
+       Solaris 2.1 on a Sparc/LX.
+
+       4 .  SGI Indigo (IRIS) Release
+
+       The Indigo Iris release was compiled on an SGI Personal  IRIS  running
+       IRIX version 4.0.5F. For X window related details, please refer to the
+       README file in directory $ESPS_BASE/xview.
+
+       5 .  HP 700 Release
+
+       The HP 700 version of ESPS/waves was compiled and  linked  under  HPUX
+       9.01A.
+
+       6 .  DS3100/5000 Ultrix Release
+
+       The DecStation Ultrix release was compiled  and  linked  under  Ultrix
+       V4.2 (UWS V4.2, Rev 272) on a DecStation 3100.
+
+       7 .  DEC Alpha Release
+
+       The DEC Alpha release was compiled and linked under OSF/1 1.2, and was
+       tested under both 1.2 and 1.3 on both an Alpha PC and a Alpha Worksta-
+       tion.  The GNU C compiler (gcc) was used for the compilation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

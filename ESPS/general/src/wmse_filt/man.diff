@@ -1,0 +1,351 @@
+.\" @(#)wmse_filt.1e	3.9	5/24/91 ESI
+.TH WMSE_FILT 1\-ESPS 5/24/91
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Processing, Inc.
+.SH NAME
+wmse_filt \- design an FIR filter using the weighted mean square error criterion.
+.sp
+.SH SYNOPSIS
+.B wmse_filt
+[
+.BI \-x " debug_level"
+]
+[
+.BI \-c " comment"
+]
+[
+.BI \-n " nsiz"
+]
+[
+.BI \-d " d_file"
+]
+[
+.BI \-w " w_file"
+]
+.I feafilt_file
+.sp
+.SH DESCRIPTION
+.PP
+The program
+.I wmse_filt
+designs a linear phase finite impulse response (FIR) 
+filter and prints the coefficients to the FEAFILT file
+.I feafilt_file.
+The user specifies the number of coefficients, the desired
+filter frequency response, and a weighting function.  The program then finds the
+set of filter coefficients that minimizes the mean square error between
+the desired response and the actual response, when weighted by the weighting
+function.  In other words, for desired response 
+.I D(f), 
+and weighting function 
+.I W(f),
+the program finds the filter 
+.I H(f)
+which minimizes:
+.nf
+.ce
+.if t \{
+.EQ
+.nr 99 \n(.s
+.nr 98 \n(.f
+.ps 10
+.ft 2
+.ds 11 \s10\v'.1m'\s+4\(is\s-4\v'-.1m'\s10
+.ds 12 "\(miFS\|\(sl\f12\fP
+.ds 13 "FS\|\(sl\f12\fP
+.nr 11 \w'\s10\*(11'
+.nr 14 \n(11
+.nr 12 \w'\s7\*(12'
+.if \n(12>\n(14 .nr 14 \n(12
+.nr 13 \w'\s7\*(13'
+.if \n(13>\n(14 .nr 14 \n(13
+.ds 14 \v'60u'\h'\n(14u-\n(12u/2u'\s7\*(12\s10\h'-\n(14u-\n(12u/2u'\v'-60u'\
+\h'\n(14u-\n(11u/2u'\*(11\h'\n(14u-\n(11u/2u'\
+\v'-78u'\h'-\n(14u-\n(13u/2u'\s7\*(13\s10\h'\n(14u-\n(13u/2u'\v'78u'\
+
+.ds 11 "\|
+.as 14 "\*(11
+.ds 11 "\|
+.ds 12 "D\|\f1(\fP\^f\|\|\f1)\fP
+.as 11 "\*(12
+.ds 12 "\(mi
+.as 11 "\*(12
+.ds 12 "H\|\f1(\fP\^f\|\|\f1)\fP
+.as 11 "\*(12
+.ds 11 \|\v'-6u'\b'\(bv\(bv'\v'6u'\*(11\|\v'-6u'\b'\(bv\(bv'\v'6u'
+.ds 12 "\f12\fP
+.as 11 \v'-24u'\s-3\*(12\s+3\v'24u'
+.ds 12 "\ 
+.as 11 "\*(12
+.ds 12 "W\|\f1(\fP\^f\|\|\f1)\fP
+.as 11 "\*(12
+.as 14 "\*(11
+.ds 11 "\ 
+.as 14 "\*(11
+.ds 11 "d\^f\|
+.as 14 "\*(11
+.ds 14 \x'0'\x'0-48u'\f2\s10\*(14\|\s\n(99\f\n(98\x'48u'
+.nr 14 \w'\*(14'
+.nr MK 0
+.if 180>\n(.v .ne 180u
+.rn 14 10
+\*(10
+.ps \n(99
+.ft \n(98
+.EN
+\}
+.if n \{
+integral (from -FS/2 to FS/2) of |D(f)-H(f)|(squared) * W(f) df
+\}
+.fi
+.PP
+The user may specify the desired frequency response and the 
+weighting function in one of two
+modes: \fIprompt\fR and \fIpointwise\fR.
+.PP
+In "prompt mode" the program assumes that the desired frequency response and
+the weighting function are constant throughout a number of frequency bands.
+The user is then prompted for the sampling frequency in Hertz (\fIFS\fR), 
+the number of 
+frequency bands in the range
+from zero to half the sampling frequency, the edge of each band in Hertz, 
+the relative
+gain in each band, and the weighting value of each band. 
+All lists of numbers are separated by white space.
+See the \fIFiltering Sampled Data\fP Applications note for several
+design examples.
+.PP
+The relative gain
+values specify the magnitude response of the filter. 
+Thus, a bandpass gain
+specification of { .5  1  .5 } results in a pass band with 0 dB gain
+and two stop bands with 6 dB of loss. Specifying 0 gain in a band
+results in the maximum possible loss in that band that is consistent
+with the rest of the filter specification.
+(A negative number for the band gain may be specified
+in order to achieve negative (sign reversing) gain, 
+but the relative magnitudes of
+the bands are maintained independent of the sign of the gains.)
+The weighting function allows the user to reduce the approximation
+error in designated high-weight bands relative to the lesser weighted bands.
+If the desired filter design-approximation-error is to be spread uniformly
+across all the bands, then identical, non-zero weights
+should be specified.
+The weighting function values, however, must not be negative.
+The user is prompted for all the design information
+on the standard output.  
+The first band always starts at zero Hz. and the last band always ends at
+half the sampling frequency (\fIFS\fP/2).
+Since the bands are assumed contiguous, the user will only enter 
+.I "nbands+1"
+edges for
+.I nbands
+bands.
+.PP
+In "pointwise mode" the program allows the desired frequency response 
+and the weighting function to be arbitrarily shaped and specified at
+a number of uniformly spaced points from zero to half the sampling frequency.
+The number of points must be one plus a power of two.  The point values of
+the desired response and the weighting function
+are specified in the ascii files 
+.I d_file
+and
+.I w_file
+respectively.  
+The first number in each of these files
+should be an integer which tells how many point values are
+in the file.  The point values follow.
+Data in both files may be separated by any combination
+of spaces or newlines.  The desired response and the weighting function may
+be in the same file, in which case the desired response comes
+first and the same file must be specified as both the
+.I d_file
+and the
+.I w_file
+above.
+.PP
+The prompt mode is more accurate than the point mode if the desired 
+frequency response
+and the weighting function are of the constant region form 
+described above.
+.PP
+The program prompts the user for comments to be added to the comment field of
+.I feafilt_file
+unless the 
+.B \-c 
+option is used.
+The user should type in his comments and terminate
+them with a ^D on a line by itself.  
+The user added comment is limited to 2047
+characters.
+.PP
+If
+.I feafilt_file
+is "\-", the output is to the standard output.
+.sp
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-x " debug_level"
+A value of 0 (the default value) will cause
+.I wmse_filt
+to do its work silently, unless there is an error.
+A nonzero value will cause various parameters to be printed out
+during program initialization.
+.br
+.TP
+.BI \-c " comment"
+The character string
+.I comment
+is added to the comment field of the output file header.  If this option is not used,
+the program prompts the user for a comment string.
+When prompted by the program,
+the user should terminate the comment string  with
+a ^D.
+.br
+.TP
+.BI \-n " nsiz"
+The number of coefficients in the filter.  If this option is not used 
+.I wmse_filt
+will prompt for the number regardless of whether the user is in prompt
+mode or pointwise mode.
+The number of coefficients must be odd.
+.br
+.TP
+.BI \-d " d_file"
+The ascii file specifying the pointwise desired filter magnitude response.  The first
+number in this file should be an integer, telling how many points
+are in the file, which should be a power of two plus one.  Using this option
+will place the user in pointwise mode, and the user must also specify a 
+weighting function file using the
+.B \-w 
+option or he will be prompted for it.  
+Points on the desired response may be negative in order to achieve
+negative gain.  For best results, 
+.I d_file
+should contain a minimum of 513 or
+.I nsiz
+(whichever is larger) points.
+.br
+.TP
+.BI \-w " w_file"
+The ascii file containing the pointwise weighting function.  If the user is in 
+the pointwise mode and does not specify 
+.I w_file
+he will be prompted for it.  If he specifies "\-" for 
+.I w_file,
+uniform weighting (i.e. everywhere equal to 1.0) will be used.
+Weighting function point values may not be negative.
+The first number in this file should be an integer telling how many
+point values are in the file, which should be equal to the number of
+desired response point values.
+For best results, this file should contain
+a minimum of 513 or
+.I nsiz
+(whichever is larger) points.
+.sp
+.SH ESPS PARAMETERS
+The parameter file is not read.
+.sp
+.SH ESPS COMMON
+The common file is neither read nor written.
+.SH ESPS HEADER
+A new FEAFILT header is created for the output file.
+The program fills in appropriate values in the common part of the header
+as well as the following generic header items associated with the FEAFILT 
+file type.
+.sp
+.IP
+.I max_num
+.IP
+Set to
+.I nsiz.
+.sp
+.IP
+.I max_denom
+.IP
+This value is always set to 0.
+.sp
+.IP
+.I define_pz, complex_filter
+.IP
+These values are set to NO.
+.sp
+.IP
+.I func_spec
+.IP
+This value is set to BAND when in the prompt mode and POINT when in
+the pointwise mode.
+.sp
+.IP
+.I nbands
+.IP
+This value is filled in appropriately when the prompt mode is used.
+.sp
+.IP
+.I npoints
+.IP
+This value is filled in appropriately when the pointwise mode is used.
+.sp
+.IP
+.I type
+.IP
+This value is set to FILT_ARB.
+.sp
+.IP
+.I method
+.IP
+This value is always set to WMSE.
+.sp
+.IP
+.I bandedges
+.IP
+This array is filled in appropriately for the prompt mode.
+.sp
+.IP
+.I points
+.IP
+This array is filled in appropriately for the pointwise mode.
+.sp
+.IP
+.I gains
+.IP
+This array is filled in with the band gains when in the prompt mode
+and with the point gains when in the pointwise mode.
+.sp
+.IP
+.I wts
+.IP
+This array is filled in with the band weights when in the prompt mode
+and with the point weights when in the pointwise mode.
+.PP
+In addition, the generic header items \fIsamp_freq\fR (type DOUBLE)
+and \fIdelay_samples\fP (type DOUBLE)
+are added to the header. \fIDelay_samples\fP is equal to (\fInsiz\fP \- 1)/2.
+This represents the delay to the center of the peak of the impulse response.
+.sp
+.SH DIAGNOSTICS
+The program will print an error message to standard error if the above specifications
+are not met.
+The error messages are intended to 
+be self explanatory.
+.sp
+.SH FILES
+When
+.I debug_level
+is nonzero, the program prints arrays to the files "harray", "warray", and
+"hwarray" in the format used by printarr (3-ESPS).  These arrays are the time
+domain values of the desired response, the weighting function, and the
+convolution of these two responses, respectively.
+.sp
+.SH SEE ALSO
+FEAFILT (5-ESPS), feafilter (1-ESPS), fft_filter (1-ESPS), impulse_resp (1-ESPS),
+notch_filter (1-ESPS), zero_pole (1-ESPS), atofilt (1-ESPS), iir_filt (1-ESPS),
+xpz (1-ESPS), zero_pole (1-ESPS)
+.sp
+.SH BUGS
+The program currently only designs filters with an odd 
+number of coefficients.
+.sp
+.SH AUTHOR
+Brian Sublett; modified for ESPS 3.0 by David Burton
+

@@ -1,0 +1,21 @@
+#! /bin/sh 
+# @(#)ENTROPIC.son	1.4 1/15/91  - starting point of whole demo
+#
+# this version is a rework of the original Sun demo, with a 
+# different slideshow script; the script uses xloadimage 
+# rather than screenload and therefore is general for X
+
+#put fonts on PATH
+xset +fp `pwd`/xview/fonts/snf
+xset fp rehash
+# move to starting point and set PATH
+cd erldemos
+PATH=.:esps/bin:$PATH; export PATH
+
+rm -f /tmp/erldemo.lock
+rm -f /tmp/ewaves.lock
+rm -f /tmp/eslides.lock
+rm -f /tmp/erlwtry.lock
+
+
+erldemo -m sony -S xslideshow.sh -W wavesdemo.sh  -I edemo.info -A edemo.about -t "Entropic Demo"  > /tmp/ENTROPIC.log 2>&1 &

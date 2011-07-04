@@ -1,0 +1,460 @@
+.lo
+.he '\fBwaves\fP+ Version 5.0 Release Notes''page %'
+.ce 3
+.b
+\fBwaves\fP+ Version 5.0 Release Notes
+.sp
+Document Version: 1.9 9/10/93
+.sh 1 "INTRODUCTION"
+.lp
+This document described changes to \fIxwaves\fR since version 3.1 (the
+version prior to 5.0).    For complete details refer to the \fIxwaves\fR
+manual.
+.lp
+Extensive changes were made in the previous release (ESPS Version 4.2;
+\fIwaves+\fR Version 3.1).  These changes were primarily aimed at correcting
+errors and numerous operational deficiencies in the software.  Please
+refer to either the printed copy of these earlier release notes, or
+see the on-line version in \fI$ESPS_BASE/doc/rel4.2.doc\fR 
+and \fI$ESPS_BASE/doc/wrel3.1.doc\fR.
+.lp
+Many of the new features described below are made easily accessible
+through the new \fIxwaves\fR startup environment we provide.  To be certain
+that you obtain this handy new environment, check that the global
+\fIinit_file\fR \fBis not\fR defined in your \fI.wave_pro\fR startup profile 
+file.  If
+you do not have a personal profile (in \fI$HOME/.wave_pro\fR), you will
+automatically get the new environment.
+.sh 1 "VERSION 5.0 RELEASE HIGHLIGHTS"
+.lp
+Major highlights include:
+.ip \ \ \ \(bu
+High resolution PostScript and PCL output of all \fIxwaves\fR graphics
+.ip \ \ \ \(bu
+A fully general operator-definition mechanism for designing new \fIxwaves\fP commands
+.ip \ \ \ \(bu
+Symbolic access by remote processes to \fIxwaves\fP internal state
+.ip \ \ \ \(bu
+Improved user interface, including customizable tool-bars
+.ip \ \ \ \(bu
+Full \fIxwaves\fP access and synchronization via \fIsend_xwaves\fP
+.ip \ \ \ \(bu
+Unrestricted waveform-on-waveform and waveform-on-spectrogram overlays
+.ip \ \ \ \(bu
+View-specific and view-element-specific display customization
+.ip \ \ \ \(bu
+Flexible view- and element-specific control of vertical display scale
+.ip \ \ \ \(bu
+All \fIxwaves\fP commands now mappable to the keyboard keys
+.ip \ \ \ \(bu
+Reticles available for all view types
+.ip \ \ \ \(bu
+Complete facilities for saving and restoring \fIxwaves\fP customizations
+.ip \ \ \ \(bu
+A new script, \fItest_waves\fP provides a test and \fIxwaves\fP use examples.
+.ip \ \ \ \(bu
+Multiple, simultaneous attachments
+.ip \ \ \ \(bu
+Long-lines editing interface for \fIxlabel\fP
+.ip \ \ \ \(bu
+Cepstral smoothed spectra in \fIxspectrum\fP
+.ip \ \ \ \(bu
+Frequency and amplitude zooming in \fIxspectrum\fP
+.ip \ \ \ \(bu
+Unlimited input array size for \fIxspectrum\fP
+.sh 1 "SUMMARY OF MAJOR CHANGES"
+.lp
+Version 5.0 of \fIxwaves\fP is compatible with scripts and use
+patterns established for earlier versions.  Note, however, that many
+new things are possible, and many of the old restrictions have been
+removed.  Even experienced users should be sure to read the updated
+\fIxwaves\fP and attachments manuals before designing new control
+scripts or user interfaces.  In particular, study the new \fIadd_op\fP
+command and the \fISymbols\fP section of the \fIxwaves\fP manual.
+.lp
+In most instances it is now preferable to control \fIxwaves\fP directly from
+the shell (or shell scripts) by way of the \fIsend_xwaves\fP
+command-dispatching program.  In previous versions, the utility of
+\fIsend_xwaves\fP was limited by failure of processes using it to
+synchronize properly with \fIxwaves\fP.
+The program \fIsend_xwaves\fR can now optionally block for ALL \fIxwaves\fR
+commands, including \fIsleep\fR and \fIpause\fR.  This permits much greater
+flexibility in the design of shell scripts that control \fIxwaves\fR running
+as a display server.  \fISend_xwaves\fR can send commands to \fIxwaves\fR 
+running on
+any host in the internet namespace.  \fISend_xwaves\fR now returns the result
+of \fIxwaves\fR \fIget\fP commands to it's standard output.  It also
+returns a non-zero exit status on failure to communicate correctly with
+\fIxwaves\fP.
+.lp
+We now provide an \fIxwaves\fR test script.  In addition to its use in
+verifying the soundness of your installation, it includes numerous
+examples of new and old \fIxwaves\fR features.  As you read the new manual,
+refer to the UNIX shell script in \fI$ESPS_BASE/bin/test_waves\fR.
+
+.sh 2 "Fundamentally New Capabilities"
+.sh 3 "Graphics Output"
+.lp
+\fIXwaves\fR and its attachments now have the capability to export
+their graphics (all plots) in either embedded PostScript for PCL (HP LaserJet
+code).  This can be used to print \fIxwaves\fR displays directly on the
+printer, or to generate graphics to be imported into a document with a
+suitable text editing program.  A new menu item has been added to the
+default menu on each \fIxwaves\fP data view: \fIprint graphic\fR.
+Selecting this item causes the view to be redrawn at full printer resolution
+using PostScript or PCL with the results going to a file or to the
+printer of your choice.
+.sh 3 "Multiple attachments"
+.lp
+\fIXwaves\fR may now have any number of attachments active simultaneously,
+including multiple invocations of the same attachment.  The attachment
+and \fIsend_xwaves\fR facility has been completely reimplemented using the
+standard unix remote procedure calls (RPC).  Attachments can
+either be started by \fIxwaves\fR, or run as programs in separate shells.
+.sh 3 "Overlays"
+.lp
+The signal-overlay facility has been fully generalized.  Signals can
+be overlaid on one another regardless of their respective data types
+or sampling frequencies.  Multiple overlays in distinctive colors are
+supported.  Overlays may be selectively removed from the view using
+the kill command.
+.sh 3 "View Customization"
+.lp
+Many operations formerly available only as global operators for all
+\fIxwaves\fR displays can now be performed on a view-specific and
+view-element-specific basis.  This includes setting or changing any of
+the view display attributes.  The displays are now updated automatically to
+reflect any changed made in their attributes.  Previously, an explicit
+refresh operation had to be performed.
+.sh 3 "Ordinate Markers"
+.lp
+Ordinate markers have been added to \fIxwaves\fR.  These horizontal dashed
+lines may be used to delimit y-coordinate information, select a
+channel index, or establish a data value, depending on the context.
+The markers appear in all views and are moved synchronously when their
+meaning across views is coherent.  The same basic paradigms are used
+to move the horizontal and vertical markers with the mouse pointer.
+To select horizontal cursor movement, depress the shift key.
+.sh 3 "Keyboard Mapping"
+.lp
+We have implemented the mapping of \fIxwaves\fR operators to keyboard keys.
+Any built-in menu operator or operator added with \fIadd_op\fR may be bound
+to a key.  There are three new \fIxwaves\fR commands for managing this
+mapping: \fIkey_map\fP, \fIkey_unmap\fP and \fIsave_keymaps\fP.  See
+the \fIxwaves\fP manual for details.
+.sh 3 "Long-lines Editing"
+.lp
+We have added a text widget to permit long-lines editing in \fIxlabel\fR.
+The editing mode is entered by left mousing the item to be changed
+with the CTRL key depressed, or by selecting the *EDIT* item in the
+\fIxlabel\fR menu. This quick editor uses exactly the same application rules
+as the REPLACE mode.  (It is sensitive to the active items and the
+starred active item; it applies to the label closest in time, etc.)
+.sh 3 "Cepstral Smoothing"
+.lp
+Cepstral smoothing has been added to the FFT-based spectrum estimation
+methods.  The original code modifications provided by the MIT-LCS group have
+been expanded to include control over the lifter transition region.
+Thus, one can choose highpass or lowpass; the nominal cutoff qufrency;
+and the qufrency transition duration.
+.sh 3 "Zooming in Xspectrum"
+.lp
+Zooming to markers in amplitude and frequency has been implemented in
+\fIxspectrum\fR.  By default, if a non-null region is delimited with
+the horizontal and/or vertical markers, zooming takes place
+immediately to that region.  The right-button menu permits
+enabling/disabling this feature. Markers are moved using the up/down
+move paradigm with the left mouse button.  Horizontal markers are
+moved with the shift key depressed. Since the left mouse button in
+\fIxspectrum\fR is now used to move the frequency/amplitude cursors,
+it no longer automatically saves the current spectrum as an underlay
+reference.  This can, however, still be accomplished using the right
+mouse-button menu.
+
+.sh 2 "Extensibility Features"
+.sh 3 "Custom Operators"
+.lp
+A generalized mechanism for adding \fIxwaves\fR commands that provides
+external processes with complete access to \fIxwaves\fR internal state was
+added.  The command that accesses this capability is called \fIadd_op\fR.
+It subsumes the functions of \fIadd_espsf\fR, \fIadd_espst\fR, 
+\fIadd_waves\fR, and
+\fIadd_espsn\fR.  All unix processes are now accessible via \fIadd_op\fR,
+regardless of their command-line syntax or semantics.  All internal
+\fIxwaves\fR functions may also be used in \fIadd_op\fR commands, including other
+\fIadd_op\fR commands.  All operators defined using \fIadd_op\fR may access
+\fIxwaves\fR' internal state and the state of any view using symbolic
+reference.  Output file specifications can appear anywhere on the
+command line and can include, in one command, data destined for text,
+waveform or spectrogram displays, as well as viewless output files.
+Add_esps{f,n,t} are now considered obsolescent. However, they are
+still emulated using the new \fIadd_op\fR command..
+.sh 3 "Access to Time Marks"
+.lp
+\fIXwaves\fR has always had commands to apply permanent marks to the
+displays (the \fImark\fR command).  These marks were formerly used
+primarily by the attachments, like \fIxlabel\fR and \fIxmarks\fR, to indicate
+segment boundaries.  We now provide generalized access to these
+through symbols.  This permits the development of very useful segment
+operators with the \fIadd_op\fR command.  It provides a means for very
+rapid random access for comparison of segments in a given signal.
+.sh 3 "User-defined Symbols"
+.lp
+\fIXwaves\fR now supports the definition of arbitrary symbols, much like the
+UNIX environment variable facility.  These definitions are accessed
+through exactly the same mechanisms used for managing built-in globals
+(profile file; \fIset\fR and \fIget\fR commands; symbolic reference in \fIadd_op\fR
+commands).
+.sh 3 "Arbitrary Button Bindings"
+.lp
+The Button Modes menu selection has been extended to include all
+active menu items.  Buttons may now be bound to any menu item and any
+operation defined with the \fIadd_op\fR command on a view-specific basis.
+Thus, each data view in an ensemble can have its own button semantics
+individually defined.
+.sh 3 "External Access to Menus"
+.lp
+All \fIxwaves\fR menu-driven operations and other operations, including
+those created with \fIadd_op\fR, may now be accessed by xwaves-external
+processes using the new command, op.  Op may be sent to any display
+ensemble.  It can be used to simulate any mouse or keyboard operation
+in any view.
+.sh 3 "Symbolic Access"
+.lp
+The \fIxwaves get\fR command has been expanded to access essentially all
+of \fIxwaves\fR' internal state.  This includes the so-called global
+items, as well as attributes of all current views, and lists of such
+things as current operators, commands and files.  These are the items
+also accessible through symbolic references in \fIadd_op\fR commands.
+.sh 3 "Custom Blow-up Function"
+.lp
+We added \fIblowup_op\fR as a global settable to permit specification of the
+operation to be performed when a button defined as blow_up;function
+is released.  This can be any operation added with \fIadd_op\fR, or any
+built-in menu operation.  By default, \fIxspectrum\fR, \fIxlabel\fR and \fIxmarks\fR all
+add themselves as the \fIblowup_op\fR as part of their initialization to
+emulate the behavior of older \fIxwaves\fR versions.
+.sh 3 "Commands to Attachments"
+.lp
+Since multiple attachments are now possible, the \fIxwaves\fR \fIsend\fR command
+has been augmented to permit messages to be directed to a particular
+attachment.  If only one attachment is active, the older form of the
+send command behaves as before, so that existing \fIxwaves\fR scripts will
+continue to work correctly.
+.sh 3 "Remote Xlabel Access"
+.lp
+There is now a \fIlabel\fR qualifier to the \fImark\fR command in \fIxlabel\fR.
+This permits full specification of the label to be applied via a
+\fIsend\fR command.  Now, any external process can apply labels of any
+content to the \fIxlabel\fR data view (e.g. via the send_xwaves program or
+library calls).
+.sh 3 "New Source Example"
+.lp
+A new example attachment has been provided in source form. \fIxample.c\fR
+is an RPC-based attachment for \fIxwaves\fR that does not use xview.  This
+can serve as a skeleton for developing your own, custom attachments.
+This file can be found in \fI$ESPS_BASE/lib\fR.
+.sh 3 "Custom Spectrum Estimation"
+.lp
+The new features in \fIxwaves\fR and \fIxspectrum\fR permit implementation of
+specialized spectrum estimation techniques and display of the results
+in the \fIxspectrum\fR display window.  An example script demonstrating this
+feature is provided in the \fIxspectrum\fP manual.
+
+.sh 2 "Ease of Use Features"
+.sh 3 "Graphics Export Control"
+.lp
+There is a new \fIxwaves\fR command: \fIprint_setup\fR.  This command
+invokes a setup window that allows the user to select output to a file
+or printer; name an output file; specify a command for the local or
+networked printer; choose PostScript or PCL; set the resolution of
+output device; specify a scale factor; and choose PostScript Level 1
+or 2.  This command is most easily invoked by the button \fIprint
+setup\fR on in the \fIxwaves\fR startup environment panel.  All of
+these parameters may also be set remotely by \fIsend_xwaves\fR or an
+\fIxwaves\fP script.
+.sh 3 "Customizing Xwaves"
+.lp
+We provide a graphical interface to the new \fIadd_op\fP command-definition
+facility through the \fIadd_op_panel\fR command.  The \fIxwaves\fR default
+startup environment that we now provide gives you quick access to the
+\fIadd_op_panel\fR with a single button press.  \fIAdd_op_panel\fR not 
+only helps
+you build custom operators, it also provides quick reference access to
+\fIxwaves\fR variables, commands and keywords.
+.sh 3 "Help with Symbols"
+.lp
+We have implemented informational access to argument lists for \fIxwaves\fR
+commands.  If any command is issued with a question mark (?) as the
+first non-white character in the argument list, \fIxwaves\fR returns the
+names of all acceptable keywords for the given command.  Thus the
+shell command
+.sp
+	send_xwaves set ?
+.sp
+will return the names of all \fIxwaves\fR globals.
+.sh 3 "Output File Management"
+.lp
+All displayable files created with \fIadd_op\fR operators, spectrogram
+commands, etc. now appear in the new files browser list accessible
+by right mousing the OUTPUT file control-panel item.  This list may
+also be accessed via the new \fIxwaves\fR symbol \fInew_files\fP.  Thus, to
+remove all files created during a given run of \fIxwaves\fR, you could issue
+the shell command:
+.sp
+	rm -f `send_xwaves get aname new_files`
+.sp
+Of course, this would remove ALL new files, including those saved with
+save segment in file!  A safer strategy might be to just save
+the list for perusal later:
+.sp
+	send_xwaves get aname new_files > misc_files_list
+.sp
+.sh 3 "Initializing Attachments"
+.lp
+The attachments can now be fully customized through entries in your
+startup profile file (\fI.wave_pro\fR) or interactively by sending set
+commands to the attachments.  See the attachment manuals for listings
+of the relevant symbol names.
+.sh 3 "Saving Attachment Customizations"
+.lp
+All attachment-specific globals may now be saved with the new
+\fIsave_globals\fR command that has been added to the attachments.  This
+saves the values in a form suitable for inclusion in your \fIxwaves\fR
+startup profile (\fI.wave_pro\fR), so the current configurations may be
+easily saved for future use.  This is especially handy for \fIxspectrum\fR,
+since it has so many free parameters.
+.sh 3 "Speedups for Xlabel"
+.lp
+There are now keyboard qualifiers for the MOVE and REPLACE modes of
+\fIxlabel\fR.  If SHIFT is depressed, xlabel switches into the MOVE mode
+(for middle button operations) as long SHIFT is held.  If SHIFT is
+depressed, the REPLACE mode is in effect for label menu selections
+(but not for direct keyboard entry).  The previous mode is reentered
+after the SHIFT key is released.
+.sh 3 "Et Cetera"
+.lp
+More state information is shown in the data-view frame, including
+mouse button bindings and full path names.
+.lp
+For brevity, and simplicity, the keyword \fIop\fR has been made synonymous
+with \fIcommand\fR in all \fIxwaves\fR commands that use these keywords.
+.lp
+We have resolved all differences in \fIxwaves\fR' processing of multi-word
+text arguments (e.g. for \fIop\fR or \fIcommand\fR arguments).  These may now
+be either quoted strings or not.  If a multi-word argument is the last
+item on a line, it need not be quoted, but can be quoted if it is to
+appear in another position.  Formerly, items such as the \fImiddle_op\fR
+or \fRleft_op\fR button specification were required to be the last item
+on a line.
+.lp
+We added the \fIappend_extensions\fR boolean global to \fIxwaves\fR.  
+With a zero value, this
+can switch off the appending of extensions in the save segment in
+file function (and the \fIsave\fR command).  This allows you to know
+exactly what output filename will be used so that references can be
+made later, for example, in a shell script.
+
+.sh 2 "General Enhancements"
+.sh 3 "Saving Xwaves Configurations"
+.lp
+All operator definitions and menu items created using the \fIadd_op\fR
+command may now be saved for later use with the new
+\fIsave_add_ops\fR and \fIsave_menus\fR commands.  Thus, it is
+possible to incrementally tailor \fIxwaves\fR to your exact needs.
+Operators added with add_esps{f,t,n} are automatically converted to
+equivalent \fIadd_op\fR commands when saved with the
+\fIsave_add_ops\fR command.  The operator and menu definitions are
+saved in the form of \fIxwaves\fP commands that may be executed
+to reconstruct them.
+.sh 3 "Reticles"
+.lp
+Reticles with time scale and ordinal numbering have been added to all
+waveform views.  These reticles may be enabled or disabled on a
+per-vector-element (per-channel) basis in vector-signal
+(multi-channel) views.
+.sh 3 "Improved Custom Control Panels"
+.lp
+In \fIxwaves\fR 2.1 we introduced the \fImake_panel\fR command that provides a
+simple means for developing your own custom control interfaces.  In
+version 5.0 we have added new input modes and better state feedback to
+the panels produced by \fImake_panel\fR.  We have also added the
+\fIsave_panels\fR command to save the current \fIxwaves\fR button panel
+configuration.  Thus, you can develop new panels interactively, and
+when satisfied, save the exact configuration for later use.
+.sh 3 "New Line Types"
+.lp
+Two new line types have been added to waveform plots; Type 3 is the
+DSP style, where a single vertical line is drawn from the data value
+to the zero baseline for each data point.  Type 4 is the same, except
+hat the data points are also connected with straight-line segments.
+The line type used is established by the \fIline_type\fR global or
+view-specific attribute.
+.sh 3 "Access to Attachments"
+.lp
+The attachments may now be started by a button press on the main
+\fIxwaves\fR Control Panel.  The attachment options that appear are
+determined by the new symbol \fIattachments\fR that may be defined 
+in your \fI.wave_pro\fR profile file.  For example, the entry
+.sp
+	attachments xspectrum xlabel xchart
+.sp
+would provide three options for selection.  Note that these are no
+longer mutually-exclusive. Several attachments can be active at once.
+If \fIattachments\fP is set to the distinguished value \fInone\fP, no
+attachment options will appear in the panel.
+.sh 3 "Spectra of Long Sequences"
+.lp
+\fIXspectrum\fR can now perform spectrum estimation on sequences of any
+length.  There is a soft limit on the size of the FFT set by the
+variable \fIxspectrum_max_fft_size\fR of 2 million points.  This can be
+changed by an entry in your startup profile file (\fI.wave_pro\fR).
+.sh 3 "Output from Xspectrum"
+.lp
+Spectra created by \fIxspectrum\fR may now be saved in an ASCII file.  The
+\fIxspectrum\fR control parameters, the source signal file name, and the
+spectrum, as frequency-log-magnitude tuples, are saved to a named
+.sh 3 "Et Cetera"
+.lp
+The \fIxwaves options\fR keyword is now considered obsolete.  The functional bits
+of this global have been expanded into the more easily understood
+global booleans: \fIdont_save_sgrams\fR, \fIredraw_on_release\fR,
+\fIrewrite_after_edit\fR and \fIoverlay_as_number\fR.  These attributes are
+now settable on a per-view basis.  \fIOptions\fP is still recognized, but
+its use is discouraged.  It will be removed in later \fIxwaves\fR versions.
+.lp
+The \fIxwaves save\fR and \fIspectrogram\fP commands now permit specification
+of the output file name.  This makes it much easier for external
+processes to keep track of the names of files created by these
+operations.
+.lp
+Cross-view frequency cursor tracking has been added to \fIxspectrum\fR.
+Moving the cursor in the spectrum window will cause the spectrogram
+cursors in \fIxwaves\fR to track.
+ASCII file with the new \fIsave_spectrum\fR command.
+
+.sh 2 "Major Bug Fixes"
+.lp
+The display repaint procedures have been made more efficient.  Most of
+the annoying tendencies for xview to unnecessarily refresh the screen
+have been eliminated.
+.lp
+Due to a complete change in the \fIxwaves\fR to attachments
+communications, screen lockup is no longer possible.
+
+.sh 1 "KNOWN PROBLEMS"
+.lp
+When \fIxwaves\fR starts, it attempts to register itself as an RPC
+server using a default program and version number.   If another
+application happens to be using these same numbers, then the
+registration will fail and \fIxwaves\fR will not be able to act as an
+RPC server.  In this event, communications with its attachments will
+fail.   This is very unlikely, except in the case where another
+\fIxwaves\fR is already running on a given CPU when \fIxwaves\fR is
+started.   If this does happen, a message is printed on \fIxwaves\fR
+startup.    If this happens, the user should exit \fIxwaves\fR and start
+it again using the \fB-V\fR option to specify some alternate version
+number.   In practice almost any value will work.   If no message is
+issued complaining that \fIxwaves\fR could not register as an RPC
+server, then the new value is OK.  This problem will be fixed shortly by
+having \fIxwaves\fR try alternate RPC addresses if the default fails.

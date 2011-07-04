@@ -1,0 +1,107 @@
+"Waveform Button Left" MENU
+  "align & rescale" set all 1 left_op  align & rescale
+  "blow up time"       set all 1 left_op blow up time
+  "blow up; function"   set all 1 left_op blow up; function
+  "bracket markers" set all 1 left_op  bracket markers
+  "delete segment" set all 1 left_op  delete segment
+  "insert file" set all 1 left_op  insert file
+  "kill window" set all 1 left_op  kill window
+  "move closest"  set all 1 left_op move closest
+  "page ahead" set all 1 left_op  page ahead
+  "page back" set all 1 left_op  page back
+  "play between marks" set all 1 left_op  play between marks
+  "play entire file" set all 1 left_op  play entire file
+  "play to end of file" set all 1 left_op  play to end of file
+  "play window contents" set all 1 left_op  play window contents
+  "repeat previous" set all 1 left_op  repeat previous
+  "save segment in file" set all 1 left_op  save segment in file
+  "spectrogram (N.B.)" set all 1 left_op  spectrogram (N.B.)
+  "spectrogram (W.B.)" set all 1 left_op  spectrogram (W.B.)
+  "up/down move"       set all 1 left_op up/down move
+  "window ahead" set all 1 left_op  window ahead
+  "window back" set all 1 left_op  window back
+  "zoom full out" set all 1 left_op  zoom full out
+  "zoom in" set all 1 left_op  zoom in
+  "zoom out" set all 1 left_op  zoom out
+"Waveform Button Left" END
+
+"Waveform Button Middle" MENU
+  "align & rescale" set all 1 middle_op  align & rescale
+  "blow up time"       set all 1 middle_op blow up time
+  "blow up; function"   set all 1 middle_op blow up; function
+  "bracket markers" set all 1 middle_op  bracket markers
+  "delete segment" set all 1 middle_op  delete segment
+  "insert file" set all 1 middle_op  insert file
+  "kill window" set all 1 middle_op  kill window
+  "move closest"  set all 1 middle_op move closest
+  "page ahead" set all 1 middle_op  page ahead
+  "page back" set all 1 middle_op  page back
+  "play between marks" set all 1 middle_op  play between marks
+  "play entire file" set all 1 middle_op  play entire file
+  "play to end of file" set all 1 middle_op  play to end of file
+  "play window contents" set all 1 middle_op  play window contents
+  "repeat previous" set all 1 middle_op  repeat previous
+  "save segment in file" set all 1 middle_op  save segment in file
+  "spectrogram (N.B.)" set all 1 middle_op  spectrogram (N.B.)
+  "spectrogram (W.B.)" set all 1 middle_op  spectrogram (W.B.)
+  "up/down move"       set all 1 middle_op up/down move
+  "window ahead" set all 1 middle_op  window ahead
+  "window back" set all 1 middle_op  window back
+  "zoom full out" set all 1 middle_op  zoom full out
+  "zoom in" set all 1 middle_op  zoom in
+  "zoom out" set all 1 middle_op  zoom out
+"Waveform Button Middle" END
+
+"Image Button Left" MENU
+  "align & rescale" set all 1 spec_left_op  align & rescale
+  "bracket markers" set all 1 spec_left_op  bracket markers
+  "delete segment" set all 1 spec_left_op  delete segment
+  "insert file" set all 1 spec_left_op  insert file
+  "kill window" set all 1 spec_left_op  kill window
+  "mark formants" set all 1 spec_left_op mark formants
+  "modify intensity"   set all 1 spec_left_op modify intensity
+  "move contour"       set all 1 spec_left_op move contour
+  "move closest"  set all 1 spec_left_op move closest
+  "page ahead" set all 1 spec_left_op  page ahead
+  "page back" set all 1 spec_left_op  page back
+  "play between marks" set all 1 spec_left_op  play between marks
+  "play entire file" set all 1 spec_left_op  play entire file
+  "play to end of file" set all 1 spec_left_op  play to end of file
+  "play window contents" set all 1 spec_left_op  play window contents
+  "repeat previous" set all 1 spec_left_op  repeat previous
+  "save segment in file" set all 1 spec_left_op  save segment in file
+  "up/down move"       set all 1 spec_left_op up/down move
+  "window ahead" set all 1 spec_left_op  window ahead
+  "window back" set all 1 spec_left_op  window back
+  "zoom full out" set all 1 spec_left_op  zoom full out
+  "zoom in" set all 1 spec_left_op  zoom in
+  "zoom out" set all 1 spec_left_op  zoom out
+"Image Button Left" END
+
+"Image Button Middle" MENU
+  "align & rescale" set all 1 spec_middle_op  align & rescale
+  "bracket markers" set all 1 spec_middle_op  bracket markers
+  "delete segment" set all 1 spec_middle_op  delete segment
+  "insert file" set all 1 spec_middle_op  insert file
+  "kill window" set all 1 spec_middle_op  kill window
+  "mark formants" set all 1 spec_middle_op mark formants
+  "modify intensity"   set all 1 spec_middle_op modify intensity
+  "move contour"       set all 1 spec_middle_op move contour
+  "move closest"  set all 1 spec_middle_op move closest
+  "page ahead" set all 1 spec_middle_op  page ahead
+  "page back" set all 1 spec_middle_op  page back
+  "play between marks" set all 1 spec_middle_op  play between marks
+  "play entire file" set all 1 spec_middle_op  play entire file
+  "play to end of file" set all 1 spec_middle_op  play to end of file
+  "play window contents" set all 1 spec_middle_op  play window contents
+  "repeat previous" set all 1 spec_middle_op  repeat previous
+  "save segment in file" set all 1 spec_middle_op  save segment in file
+  "up/down move"       set all 1 spec_middle_op up/down move
+  "window ahead" set all 1 spec_middle_op  window ahead
+  "window back" set all 1 spec_middle_op  window back
+  "zoom full out" set all 1 spec_middle_op  zoom full out
+  "zoom in" set all 1 spec_middle_op  zoom in
+  "zoom out" set all 1 spec_middle_op  zoom out
+"Image Button Middle" END
+# @(#)mbind.WM	1.5 6/29/93
+

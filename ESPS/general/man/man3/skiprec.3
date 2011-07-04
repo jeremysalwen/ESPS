@@ -1,0 +1,118 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1990-1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)skiprec.3	1.6 30 Sep 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH SKIPREC 3\-ESPSu 30 Sep 1997
+.SH NAME
+skiprec \- skip fixed-length records in a file
+
+fea_skiprec \- skip records in a file
+.SH SYNOPSIS
+.nf
+.ft B
+void
+skiprec(stream, nrec, size)
+FILE *stream;
+long nrec;
+int size;
+
+void
+fea_skiprec(stream, nrecs, hdr)
+FILE *stream;
+long nrecs;
+struct header *hdr;
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+.I skiprec
+changes position in a binary file.
+It skips forward
+.I nrec
+records, each containing
+.I size
+bytes.
+It first tries to accomplish this with a disk seek operation.
+If the seek would change the position to beyond the end of the file,
+the position is left at the end of the file.
+If this fails (for instance,
+.I stream
+may be a pipe) and
+.I nrec
+is nonnegative, it skips forward by reading the file and discarding the output.
+.PP
+.I fea_skiprec
+changes position in a file described by the ESPS header structure
+indicated by
+.I hdr.
+When the file is an ordinary FEA file
+.RI ( FEA (5\-ESPS)),
+the effect is simply that of
+.LP
+.RS
+.nf
+.if t .ft I
+skiprec(stream, nrecs, size_rec(hdr));
+.if t .ft P
+.fi
+.RE
+.LP
+However,
+.I fea_skiprec
+also works when
+.RI * hdr
+is a surrogate header created by
+.IR read_header (3\-ESPS)
+upon reading a NIST
+.I Sphere
+file or an Entropic
+.I Esignal
+file.
+In those cases
+.I fea_skiprec
+calls the appropriate
+.I Sphere
+or
+.I Esignal
+routine.
+It can thus handle certain formats
+that do not store records in fixed-size chunks.
+Examples are
+.I Sphere
+variable-rate compressed formats and the
+.I Esignal
+ASCII representation.
+Being more general than the combination of
+.I skiprec
+with
+.IR size_rec (3\-ESPS),
+the function
+.I fea_skiprec
+is to be preferred.
+.SH DIAGNOSTICS
+If a seek error occurs and
+.I nrec
+is negative,
+.I skiprec
+prints an error message on the error output and exits.
+An assertion failure
+.RI ( spsassert (3\-ESPS))
+occurs if
+.I skiprec
+is called with a NULL argument
+.I stream
+or a negative argument
+.I siz,
+or if
+.I fea_skiprec
+is called with a NULL argument
+.I stream
+or a NULL argument
+.I hdr.
+.SH SEE ALSO
+.IR read_header (3\-ESPS),
+.IR size_rec (3\-ESPSu),
+.IR spsassert (3\-ESPS),
+.br
+.IR FEA (5\-ESPS)
+.SH AUTHOR

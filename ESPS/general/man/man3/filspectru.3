@@ -1,0 +1,69 @@
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)filspectru.3	1.2 27 Sep 1997 ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH  fil_spectrum 3\-ESPS 27 Sep 1997
+.SH NAME
+
+fil_spectrum \- computes FIR, IIR filter spectral response
+
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/feafilt.h>
+#include <esps/feaspec.h>
+
+int fil_spectrum( spec_rec, mag, phase, filt_rec, fhd, nsamp )
+struct feaspec *spec_rec;
+double *mag;
+double *phase;
+struct feafilt *filt_rec;
+struct header *fhd;
+long nsamp;
+
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+\fIfil_spectrum\fR computes the spectral 
+response from a FIR or IIR filter as specified 
+by \fIfilt_rec\fR.  The number of output points for frequency range from
+0 to the Nyquist rate is given by \fInsamp\fR.  Output can be
+pointed to by any one of the non-NULL pointers, \fIspec_rec, mag\fR, or
+\fIphase\fR.  Output complex spectrum is pointed to by \fIspec_rec\fR,
+output linear spectral magnitude response is pointed to by \fImag\fR,
+and ouput phase response is pointed to by \fIphase\fR.  \fIfhd\fR is
+the file header of the \fIfilt_rec\fR.  Currently \fIfhd\fR is not used
+in the function.
+.PP
+For IIR spectral response, \fInsamp\fR can be an arbitrary number if
+poles and zeros coefficients are stored in \fIfilt_rec\fR.  The overall
+gain for the IIR pole/zero system equals to
+\fIfilt_rec->re_num_coeff[0]\fR.
+If \fIfilt_rec->re_num_coeff[0]\fR does not exist, the gain is set to 1.
+.PP
+For FIR spectral response, \fInsamp\fR must be a power of 2 plus 1.
+.SH EXAMPLES
+.nf
+/* The following computes linear spectral magnitude */
+
+double mag[1025];
+struct feafilt *filt_rec;
+struct header *fhd;
+FILE fp;
+
+get_feafilt_rec( filt_rec, fhd, fp);
+fil_spectrum( NULL, mag, NULL, filt_rec, fhd, 1025 );
+
+.PP
+.SH ERRORS AND DIAGNOSTICS
+The function returns 0 upon success, 1 otherwise.  The function prints
+an error message if \fInsamp\fR is not a power of 2 plus 1 when computing
+FIR spectral response.
+.PP
+.SH "SEE ALSO"
+.IR filtspec (1\-ESPS),
+.IR FEA_FILT (5\-ESPS)
+.PP
+.SH AUTHOR
+.PP
+Derek Lin

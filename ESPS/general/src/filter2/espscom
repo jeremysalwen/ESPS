@@ -1,0 +1,4 @@
+string filename = "test.sd";
+string prog = "testsd";
+int start = 1;
+int nan = 11;

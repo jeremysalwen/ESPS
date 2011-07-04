@@ -1,0 +1,177 @@
+.\" Copyright (c) 1987, 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)dtw.3	1.3  06 May 1997 ERL
+.TH DTW 3\-ESPS 1/14/91
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+dtw_l2 \- Dynamic time warp distance computation between sequences.
+dtw_tl \- Dynamic time warping distance computation using table lookup.
+.fi
+.sp
+.SH SYNOPSIS
+.ft B
+double
+.br
+dtw_l2(test, ref, N, M, dim, delta, bsofar, mapping, dist_fn)
+.br
+float **test, **ref;
+.br
+double *bsofar;
+.br
+long N, M, dim, delta, *mapping;
+.br
+double (*dist_fn)();
+.br
+extern int debug_level;
+.br
+.ft B
+.sp 
+double
+.br
+dtw_tl(test, ref, N, M, dim, delta, bsofar, mapping, dist_tbl)
+.br
+long *test, *ref, N, M, delta, dim, *mapping;
+.br
+double **dist_tbl;
+.br
+double *bsofar;
+.br
+extern int debug_level;
+.sp 
+.SH DESRIPTION
+The functions \fIdtw_l2\fP and \fIdtw_tl\fP find a distance
+between two sequences \fItest\fP and \fIref\fP using a
+dynamic time warping algorithm as described in [1] and [2].
+\fIDtw_l2\fP compares two sequences based on 
+the euclidean distance between vectors in the sequences.  
+\fIDtw_tl\fP compares two sequences of positive integers,
+where the distance between integers in the sequences is
+found from a table of distances, \fIdist_tbl\fP.  One
+intended application of these functions is discrete
+word recognition.  \fIDtw_l2\fP can find the distance between
+the acoustic feature representations of two utterances.  \fIDtw_tl\fP 
+can find the distance between the vector quantized acoustic feature
+representations of two utterances. In this case, \fIref\fP 
+and \fItest\fP are code book labels, and \fIdist_tbl\fP is a 
+table of distances between codebook centroids.
+.PP
+The sequence \fItest\fP should have length \fIN\fP and \fIref\fP
+should be length \fIM\fP.  In \fIdtw_l2\fP, the parameter \fIdim\fP
+is the dimension of vectors in the sequences \fIref\fP and \fItest\fP, 
+i.e. \fItest\fP[m][j] and \fIref\fP[n][j] must be valid floating point
+values for 
+0<=j<\fIdim\fP, 0<=m<\fIM\fP, and 0<=n<\fIN\fP.  In \fIdtw_tl\fP,
+\fItest\fP[m], \fIref\fP[n], and \fIdist_tbl\fP[j][k] must be valid
+for 0<=m<\fIM\fP, 0<=n<\fIN\fP, and 0<=j,k<\fIdim\fP.
+.PP
+The functions find a distance \fBDT\fP which corresponds to 
+.sp
+\fBDT\fP = \fBD\fP(ref(\fBw\fP(0)),test(0)) + ... 
++ \fBD\fP(ref(\fBw\fP(N-1)),test(N-1))
+.sp
+where \fBw(n)\fP is the mapping from [0,N-1] to [0,M-1]
+such that this sum is minimized, subject to the 
+constraints below.  
+In \fIdtw_l2\fP, the distance, \fBD\fP, between vectors in the
+sequence is found using \fIdist_fn\fP; if \fIdist_fn\fP is a NULL
+pointer, the euclidean distance is used.  The synopsis of
+\fIdist_fn\fP is 
+.sp
+.ft B
+double
+.br
+dist_fn( vec1, vec2, dim)
+.br
+float *vec1, *vec2;
+.br
+long dim;
+.sp
+.ft R
+and the function should return the distance between the the two
+vectors.
+In \fIdtw_tl\fP, the distance between integers in the sequence is
+found from the table \fIdist_tbl\fP, i.e. if i and j are
+elements in the sequences the distance between them is 
+\fIdist_tbl\fP[i][j].  
+.PP
+The constraints which \fBw\fP must satisfy are:
+.sp
+.nf
+0<=\fBw\fP(0) <= \fIdelta\fP
+\fIM\fP-1-\fIdelta\fP <= \fBw\fP(N-1) <= \fIM\fP-1
+\fBw\fP(n+1) - \fBw\fP(n) = 0, 1, 2   ( \fBw\fP(n) <> \fBw\fP(n-1) )
+\fBw\fP(n+1) - \fBw\fP(n) = 1, 2       ( \fBw\fP(n) = \fBw\fP(n-1) )
+.fi
+.sp
+If \fIdelta\fP=0, the mapping is forced to compare the initial
+and final points of \fItest\fP and \fIref\fP to each other.
+Errors in detecting the endpoints of sequences can be acounted
+for by allowing \fIdelta\fP to be larger than 0.
+.PP
+The distance \fBDT\fP is found using dynamic programing;
+the mapping \fBw\fP is not computed explicitly.  However, \fBw\fP is
+often of interest for time alignment, etc. If the parameter
+\fImapping\fP is a NULL pointer, the functions do not compute \fBw\fP.
+However, if \fImapping\fP is not null, the functions perform 
+backtracking to find \fBw\fP which is then returned in 
+\fImapping\fP, i.e. \fImapping\fP[i] = \fBw\fP(i) 0<=i<\fIN\fP.  
+If it is not null, \fImapping\fP should point to a block of 
+memory of size \fIN\fP \fBx sizeof(long)\fP.
+.PP
+The parameter \fIbsofar\fP is used when comparing a test 
+sequence to more than one reference sequence.  
+If \fIbsofar\fP is
+not NULL, the value \fBbestsofar\fP is set to \fI*bsofar\fP.
+The functions then check to make sure that \fBDT\fP
+is less than \fBbestsofar\fP at all intermediate points of
+computation.  If \fBDT\fP exceeds \fBbestsofar\fP, the 
+dynamic programming search halts and the functions return the
+value \fBbestsofar\fP.  Backtracking is not performed.  If 
+\fBDT\fP is less than \fIbestsofar\fP, the functions return
+\fBDT\fP and \fI*bsofar\fP is set to \fBDT\fP.  This can be
+used to find efficiently which of several reference sequences
+is closest to a particular test sequence.
+.PP
+A positive value of \fIdebug_level\fP causes debugging output to be printed 
+on the standard
+error output. Larger values give more output.  The default is 0, for
+no output.
+.PP
+The functions check that \fIN\fP, \fIM\fP, and \fIdelta\fP 
+form a valid comparison region, i.e. for a given set of these
+values there is a mapping \fBw\fP which obeys the constraints. If 
+there is no comparison region, the functions return \fBbest_so_far\fP,
+if it was passed as a parameter, or DBL_MAX (see the ESPS include file
+"limits.h") if it was not; if \fIdebug_level\fP > 0, the functions
+echo a message to standard error.
+.sp 
+.SH SEE ALSO
+.nf
+\fIdtw\fP(1-ESPS), \fIvq\fP(1-ESPS), \fIcbkd\fP(1-ESPS), 
+\fIf_mat_alloc\fP(3-ESPS), \fId_mat_alloc\fP(3-ESPS), 
+\fIf_mat_free\fP(3-ESPS), \fId_mat_free\fP(3-ESPS)
+.fi
+.SH BUGS
+None known.
+.SH FUTURE CHANGES
+Other distance measures.
+.sp 
+.SH REFERENCES
+[1] L.R. Rabiner, A.E. Rosenberg, S.E. Levinson 
+"Considerations in Dynamic Time Warping Algorithms for
+Discrete Word Recognition," I.E.E.E. Transactions on Acoustics,
+Speech, and Signal Processing, Vol. 26, No. 6, December 1978, 
+pp 575-582
+.sp
+[2] S.E. Levinson, "Structural Methods in Automatic Speech Recognition,"
+Proceedings of the I.E.E.E., Vol. 73, No. 11, November 1985, pp 1625-1650
+.sp 
+.SH AUTHOR
+Program and manual pages by Bill Byrne.
+
+
+
+
+
+
+

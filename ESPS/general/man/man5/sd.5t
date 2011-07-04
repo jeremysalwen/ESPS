@@ -1,0 +1,185 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)sd.5t	1.8 25 Sep 1997 ESI
+.TH SD 5\-ESPS 25 Sep 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.de us
+\\$1\l'|0\(ul'
+..
+.SH NAME
+ESPS Sampled Data File \- (.sd)
+.SH SYNOPSIS
+.B #include <esps/esps.h>
+.br
+.B #include <esps/sd.h>
+.SH DESCRIPTION
+A sampled data file is a header followed by a stream of data 
+values.    The type of the data values that follow the header 
+is indicated in the header.   See \fIESPS\fR(5\-ESPS).
+.PP
+The header has the following layout as defined by 
+.I <esps/header.h>.
+The data items common to all ESPS data files are described in
+\fIESPS\fR(5\-ESPS).   The type specific header structure for a sampled 
+data file is shown below.
+.br
+.nf
+.sp
+/* Sampled Data File specific header */
+.sp
+struct sd_header {
+.TS
+l1 l1 l1 l.
+    short	equip;	/\(** A/D equipment \(**/
+    float	max_value;	/\(** max value of data \(**/
+    float	sf;	/\(** sample frequency \(**/
+    float	src_sf;	/\(** source file sf \(**/
+    short	synt_method;	/\(** synthesis method \(**/
+    float	scale;	/\(** scale factor \(**/
+    float	dcrem;	/\(** DC term removed \(**/
+    short	q_method;	/\(** quant method \(**/
+    short	v_excit_method;	/\(** voiced excitation \(**/
+    short	uv_excit_method;	/\(** unvoiced excitation \(**/
+    short	spare1;	/\(** spare \(**/
+    short	nchan;	/\(** number of channels for  
+		multiplexed data \(**/
+    short	synt_interp;	/\(** reflection coefficient interpolation \(**/
+    short	synt_pwr;	/\(** power source for synthesis \(**/
+    short	synt_rc;	/\(** reflection coefficient computation \(**/
+    short	synt_order;	/\(** synthesis filter order \(**/
+    long	start;	    /\(** starting point analyzed \(**/
+    long	nan;	    /\(** number of points analyzed \(**/
+    short	spares[SD_SPARES];	/\(** spares \(**/
+    struct	zfunc *prefilter;	/\(** prefilter \(**/
+    struct	zfunc *de_emp;	/\(** deemphasis filter \(**/
+};
+.TE
+.fi
+.PP
+The following items are all in the sampled data file specific
+header structure.
+.IP equip
+Equipment used to capture analog data.  If NONE, it means that the
+data did not originate from an A/D.
+Legal values for are defined in \fI<esps/header.h>\fR.
+.IP max_value
+If the data is from an A/D \fImax_value\fR is the maximum value that
+can be represented by the A/D used (this is a function of the
+bit resolution of the converter and perhaps its operating mode).   
+If this SD file was produced by a synthesis program and
+\fImax_value\fR is non-zero, then no sample in the
+file will exceed the value of \fImax_value\fR.   If \fImax_value\fR is
+zero, then no information is available about the maximum value in the file.
+.IP sf
+Sampling frequency of this sampled data file.
+.IP src_sf
+Sampling frequency of the reference file (\fIvariable.refer\fR).  
+If zero, it means that there is no reference file.   
+.IP synt_method
+Indicates which method of synthesis was used in generating the file.
+If neither this SD file or any of its source files were produced by a
+synthesis program, \fIsynt_method\fR has a value of NONE.
+Other legal values are defined in \fI<esps/header.h>\fR.
+.IP scale
+A nonzero value here is a scale factor used by the program that
+created this sampled data file.    A zero means no scale factor was
+used; therefore zero here is equivalent to one and it is not possible
+to have a zero scale factor.
+.IP dcrem
+If nonzero, the DC term in the original source data was removed before
+analysis, and that DC value is stored here.
+.IP q_method
+The type of scaler quantization.  A value of NONE indicates no quantization.
+Legal values are defined in \fI<esps/header.h>\fR.
+.IP v_excit_method
+If the SD file or any of its source files were produced by a synthesis
+program, \fIv_excit_method\fR indicates what excitation method was used
+for voiced speech.
+Legal values are defined in \fI<esps/header.h>\fR.
+.IP uv_excit_method
+If the SD file or any of its source files were produced by a synthesis
+program, \fIuv_excit_method\fR indicates what excitation method was
+used for unvoiced speech.
+Legal values for are defined in \fI<esps/header.h>\fR.
+.IP nchan
+Number of A/D channels (for multiplexed files).  Zero or one indicates
+that all sample points are from the same A/D.   A value other than
+zero or one indicates that a sampled data file consists of \fInchan\fR
+channels. In such a file the data points cycle sequentially among the A/D
+channels.
+.IP synt_interp
+If the SD file or any of its source files were produced by a synthesis
+program, \fIsynt_interp\fR indicates what method was used for interpolation
+reflection coefficients.  Legal values are defined in
+\fI<esps/header.h>\fR.
+.IP synt_pwr
+If the SD file or any of its source files were produced by a synthesis
+program, \fIsynt_pwr\fR indicates the method that was used for
+choosing excitation power.  Legal values are defined in
+\fI<esps/header.h>\fR.
+.IP synt_rc
+If the SD file or any of its source files were produced by a synthesis
+program \fIsynt_rc\fR indicates the method that was used for selecting
+the reflection coefficients.  Legal values are defined in
+\fI<esps/header.h>\fR.
+.IP synt_order
+If the order of the synthesis filter was different from that of the
+analysis filter, \fIsynt_order\fR is the synthesis order.   If the
+synthesis order is the same as the analysis order, or if the SD file
+is not a synthetic file, the value of synt_order is zero.
+.IP "start, nan"
+Starting point and intended number of points analyzed.
+Values are set to zero if they are not meaningful.
+If the file is tagged (see description of \fIcommon.tag\fR in ESPS(5\-ESPS)),
+\fIstart\fR and \fInan\fR refer to the file named by \fIvariable.refer\fR.
+Otherwise, they refer to a relevant source file (\fIvariable.refer\fR is also
+likely to be a source file).
+If the file has many source files \- as is the case for \fIcopysd\fR(1\-ESPS)
+\- then \fIstart\fR and \fInan\fR usually refer
+to all the source files.
+Often, \fIstart\fR and \fInan\fR will be determined by a command-line range
+option or by values in the ESPS Parameter or Common file.
+In cases where an entire file is to be analyzed and the file is processed by
+means of standard input, \fInan\fR will be set to LONG_MAX (2147483648 on
+68000 class machines);
+if a disk file is used, then \fInan\fR can be set to the actual number of
+points in the file since \fIcommon.ndrec\fR is filled in by
+\fIread_header\fR(3\-ESPS) \- see ESPS(5\-ESPS).
+.sp .5
+Note that \fInan\fR is the
+.I "intended"
+number of points analyzed.
+Whether or not standard input is used, \fInan\fR will not reflect the actual
+number of points analyzed if an input file is exhausted before the intended
+range is covered.
+This is because the header is written before the data.
+To require \fInan\fR always to be the actual number of points analyzed
+would require that programs use a temporary file and therefore that they
+write the data twice.
+If it is crucial to record in \fInan\fR the actual number of points
+processed, this can be accomplished by using such a temporary file.
+.IP prefilter
+Pointer to a prefilter function.
+The function is described by the \fIstruct zfunc\fR in
+\fI<esps/header.h>\fR.  It
+consists of the numerator size, followed by the denominator size,
+followed by the zero polynomial, followed by the pole polynomial.
+.IP de_emp
+Pointer to a deemphasis filter function.
+.PP
+The data structure is simply a series of sample data.
+There are \fIcommon.ndrec\fR of these one item records.
+The type of the data is indicated by the header items \fIcommon.ndouble,
+common.nfloat, common.nlong, common.nshort, or common.nchar\fR
+(see \fIESPS\fR(5\-ESPS)).  Since a sampled data file
+has one item records, one of these type fields in the header
+should have a value of one, and all the others should have a value of
+zero.  There is a library function provided to set these type fields,
+see \fIset_sd_type\fR(3\-ESPS).
+.SH FILES
+/usr/include/esps/header.h
+.SH SEE ALSO
+ESPS(5\-ESPS), read_header(3\-ESPSu),
+write_header(3\-ESPSu), set_sd_type(3\-ESPSu).
+.SH FUTURE CHANGES
+.SH AUTHOR
+Original design by Joe Buck.  This version by Alan Parker.

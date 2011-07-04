@@ -1,0 +1,107 @@
+.lo
+.he 'ESPS Version 3.3bDEC''Page %'
+.ce 3
+\fBESPS 3.3bDEC Release Notes\fP
+
+Document version: 1.2 7/14/89 
+.sh 1 "Introduction"
+.lp
+This document provides notes relevant to release 3.3b of ESPS.  Please
+read this document and the Installation Instructions completely before
+installing this release of ESPS.  This note documents changes to ESPS
+since the revisions 3.3 and 3.3a.  Please read the 3.3 and 3.3a
+release notes first.
+.sh 1 "Differences Between 3.3a and 3.3b
+.lp
+Please duplicate this section and make it available to all current users of
+ESPS.  This information is needed by others than just the ESPS
+installer.  Differences that affect the \fIwaves\fP+ standalone 
+products are marked with an asterisk (\fIwaves+\fP standalone 
+includes a subset of ESPS).  
+.sh 1 "Portability of Data Files"
+.lp
+This version is the first release for the DEC DecStation 3100.  This
+release contains a machine independent I/O module that allows files
+written by ESPS implementations on any supported machine type to be
+read by any other ESPS implementation.   When ESPS programs create
+output ESPS files, they are either written in the machine's native data
+format (usually referring to floating point format and byte order) or in
+Entropic's external data representation (EDR).   Files written in EDR
+can always be read by any ESPS implementation on any supported machine
+type.   
+.lp
+The default is to produce files in the host machine's native data
+format.  This is the most efficient if the files will usually be used on
+that machine, since no data conversions are required.  If the Unix
+environment variable \fBESPS_EDR\fR is defined and has a value of
+\fIon\fR (done by the command \fIsetenv ESPS_EDR on\fR in the C-shell),
+then all ESPS files written will be in EDR.   If you intend to work
+primarily on the DEC machine, then do not set this variable.
+.lp
+This version can read ESPS files that are in EDR format, DS3100 native
+format, Sun 386i native format, and the native formats from all Sun
+models, Masscomp, and HP.   If you need to send an ESPS file to a system
+running a previous version of ESPS (prior to 3.3bDEC, eg. plain 3.3b)
+then set \fBESPS_EDR\fR to \fIon\fR and the file will be compatible.
+The next version of ESPS for all other system types will be able to
+process DS3100 native format files also.
+.sh 2 "Bug Fixes"
+.ip (1)
+The \fIcopysps\fP (1\-\s-1ESPS\s+1) man page stated incorrectly that
+\fIcopysps\fP does not work with SD files.  In fact it does.  The man
+page was changed to describe the supported behavior.  A (Sun only) bug
+that caused core dumps when copying entire SD files was fixed.
+.ip (2)
+\fIMlplot\fP (1\-\s-1ESPS\s+1) and \fIgenplot\fP (1\-\s-1ESPS\s+1)
+were changed to fix a bug that caused a core dump when passed an
+invalid data range.
+.ip (3)
+The Masscomp \fIxmcd\fP (1\-\s-1ESPS\s+1) binary was fixed to handle 
+icons properly.  
+.ip (4)*
+The \fB-E\fP option on \fIsgram\fP (1\-\s-1ESPS\s+1) was being
+ignored.  Also, the generic header item "pre_emphasis" was not being 
+written to the output file.  These both have been fixed.  
+.ip (5)*
+The \fB-S\fP option on \fIaddfeahd\fP (1\-\s-1ESPS\s+1) has been fixed
+to work properly.  
+.sh 2 "Other Changes"
+.ip (1)
+The new program \fImergefea\fP (1\-\s-1ESPS\s+1) was added.  This
+merges two FEA files so that output records contain fields from both.
+For an example of its use, see the \fIratios\fP demo (next item).  
+.ip (2)
+A new demo was added to the ESPS demo directory to show how ESPS tools
+can be combined to compute the ratios of power (or log power) in
+different frequency bands for a sequence of sampled data frames, with
+the results placed in a FEA file.  The script \fIratios.demo\fP sets
+up the demo.  Power ratios or log power ratios are then computed
+respectively using \fIratios\fP or \fIlogratios\fP.  The README file
+in the demo directory has been revised to describe the new demo.  
+.ip (3)
+The new program \fIfeafunc\fP (1\-\s-1ESPS\s+1) was added.
+\fIFeafunc\fP accepts a FEA file containing arbitrary fields.  It
+produces a FEA file with records that are copies of the input records
+plus an additional field containing the results of applying the
+functional form \fIg*F(element) + d\fP to each element of a selected
+input field, where \fIg\fP is a multiplicative constant, \fIF\fP is a
+single-valued scalar function (\fIlog, ln, sqrt, abs, exp\fP), and
+\fId\fP is an additive constant.
+.ip (4)
+A new library routine \fIcopy_genhd_uniq\fP (3\-\s-1ESPS\s+1) was
+added.  This copies generic header items from one header to another,
+but generates unique names in the case of conflicts.  (The routine
+\fIcopy_genhd\fP overwrites existing items in the case of duplicate
+names.)
+.ip (5)
+A new program \fImbrot\fR program has been added.  This program computes
+elements of the Mandelbrot set and writes a file that can be viewed with
+\fIimage\fR.
+.sh 1 "Known Problems with this Release"
+.lp
+One of the makefiles in the source kit (\fIwmse_filt\fR) tries to run
+the Unix \fIeqn\fR program (to process an equation in the manual page).
+Our DS3100 did not have \fIeqn\fR, but we don't know if this is the
+general case or not.  The program does get properly installed.
+There is a copy of the processed manual page in the source directory
+which will be installed if \fIeqn\fR fails on your system.

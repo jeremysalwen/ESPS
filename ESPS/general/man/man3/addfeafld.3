@@ -1,0 +1,59 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)addfeafld.3	1.8 29 Apr 1997 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH ADD_FEA_FLD 3\-ESPSu 29 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+add_fea_fld \- add definition of new field to ESPS FEA file header
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/fea.h>
+
+int
+add_fea_fld(name, size, rank, dimen, type, enums, hd)
+char *name;
+long size;
+long *dimen;
+short rank, type;
+char **enums;
+struct header *hd;
+.ft
+.SH DESCRIPTION
+.I add_fea_fld
+creates a new field in the in the ESPS Feature file pointed to by
+\fIhd\fR.   The name of the field is given by \fIname\fR.  See
+FEA(5\-ESPS) for the meaning of the arguments \fIsize, rank, dimen,
+type,\fR and \fIenums\fR.  Note that *\fIdimen\fP has to remain 
+"alive" after the call to \fIadd_fea_fld\fP, and can only be freed
+after all calls to \fIallo_fea_rec\fP (3\-\s-1ESPSu\s+1).  
+.PP
+The function returns 0 on success and -1 if \fIname\fR is already
+defined as a field in this file.
+.PP
+If \fItype\fR is not \fB\s-1CODED\s+1\fR then \fB\s-1NULL\fR\s+1 should
+be given for the argument \fIenums\fR.   If \fIrank\fR is less than 2,
+then \fB\s-1NULL\fR\s+1 should be given for the argument \fIdimen\fR.  
+.PP
+This function should be called after the header \fIhd\fR is created and
+before it is written out with the function \fIwrite_header\fR(3\-ESPSu).   
+This function should only be used on headers to be written out.
+.SH EXAMPLE
+.nf
+\fI/* create a short item of size 1 */\fR
+if(add_fea_fld("short1",1,0,NULL,SHORT,NULL,hd) == -1) \fItrouble...\fR
+.fi
+.SH BUGS
+None known.
+.SH "SEE ALSO"
+.nf
+\fIget_fea_type\fP (3\-\s-1ESPSu\s+1), \fIget_fea_siz\fP (3\-\s-1ESPSu\s+1), 
+\fIallo_fea_rec\fP (3\-\s-1ESPSu\s+1), \fIget_fea_ptr\fP (3\-\s-1ESPSu\s+1), 
+\fIget_fea_rec\fP (3\-\s-1ESPSu\s+1), \fIput_fea_rec\fP (3\-\s-1ESPSu\s+1), 
+\fIget_fea_deriv\fP (3\-\s-1ESPSu\s+1), \fIset_fea_deriv\fP (3\-\s-1ESPSu\s+1), 
+FEA(5\-ESPS)
+.fi
+.SH AUTHOR
+Alan Parker

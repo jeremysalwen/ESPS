@@ -1,0 +1,157 @@
+.lo
+.ce 2
+.b
+ESPS 3.3a Release Notes
+.sp
+Document version: 1.5 4/26/89
+.sh 1 "Introduction"
+.lp
+This document provides notes relevant to release 3.3a of ESPS.  Please
+read this document and the Installation Instructions completely before
+installing this release of ESPS.  This note documents changes to ESPS
+since the revision 3.3.  Please read the 3.3 release notes first.
+.sh 1 "Differences Between 3.3 and 3.3a
+.lp
+Please duplicate this section and make it available to all current users of
+ESPS.  This information is needed by others than just the ESPS
+installer.
+.sh 1 "Major Changes"
+.sh 2 "X Window Support"
+.lp
+The most significant change to this version of ESPS is the added support
+for the X Window System.   The current release supports X Windows on
+Masscomp and HP systems.   For Masscomp systems, an X version of
+\fImcd\fR is distributed, which we call \fIxmcd\fR.  
+\fIXmcd\fR is currently only distributed in binary form for Masscomp
+systems, since
+it will not compile on a standard Masscomp X system (they do not have X
+Toolkit and HP Widgets).   For HP systems, this program is distributed
+as source, since it will compile.   \fIXmcd\fR will process a subset of
+standard GPS produced by the ESPS plot programs.  It might not process
+any GPS output you may produce from non-ESPS programs.  See the manual
+page for \fIxmcd\fR for details.
+.lp
+On a Masscomp system, you can build ESPS for either X Windows alone,
+SP-40 graphics alone (old MC Windows system), or both.  See the defines
+in the install script and the installation instructions.  If you build
+ESPS for both X Windows and SP-40 graphics, then the program \fIimage\fR will
+default to X Windows, but can be used with SP-40 graphics by using the
+\fB-Tmcd\fR option.   See the \fIimage\fR manual page for details.
+The other plot programs (\fIplotsd, plotspec, genplot, mlplot\fR, etc)
+will only work directly with X windows.  To use them with SP-40, you
+need to use the \fB-Tgps\fR option and pipe this to the Masscomp
+\fImcd\fR program.  If ESPS is built for only SP-40 grapics, then all of
+the plot programs will work correctly.
+.lp
+For HP systems, we assume X windows as there is no
+alternative graphics environment on HP that we support.
+.sh 2 "Other Changes"
+.np
+Fixed a bug in \fImcplay\fR that caused a large FLOAT buffer to be
+allocated even when the input file is SHORTS.
+.np
+\fIsgram\fR modified: Added
+"method" to param file -- can be "wb", "nb", or "other".  If "other",
+the other parameters are then checked.  If "wb" or "nb", the standard
+defaults apply for these cases, although the defaults can be overrided
+by command line options.  The parameter "order" was changed to
+"fft_order", as was documented in the man page (i.e., the program was
+wrong).  Various standard warnings are suppressed unless -x is used
+(this so as not to clutter up the output of various scripts).  New
+generics: "sgram_method", "fft_order".
+.np
+\fIvqdesign.c\fR in library updated.  Fixed error message that said
+distortion was decreasing when it is increasing.
+.np
+\fItofspec\fR modified: default output range changed to
+(-64,+50) to avoid
+sun \fIwaves+\fR colormap probs; added -o and -i options to give
+explicit  control over input and output range; related
+parameters and generics changed.
+.np 
+\fIlib/lisp/esps.el\fR added for GNU emacs  support  of ESPS
+programming; this file  contains definitions
+of  the  interactive functions \fIeman\fR  and \fIecheck\fR - these facilitate
+calling the ESPS programs \fIeman\fR and \fiecheck\fR from within
+GNU emacs.
+.np
+The ESPS Programming Guidelines memo was updated to mention the above
+information.
+.np
+\fIfea_stats\fR modified: When \fIfea_stats -R\fR  was run on a
+FEA_SPEC file in BYTE format, or in fact any FEA file with more BYTEs
+than SHORTs per record, the wrong amount of memory would get allocated
+for a certain array containing BYTE-related data, and consequently
+other memory would get trashed.
+.np
+Sun \fImcd\fR (for suntools) fixed:  The change fixes the problem
+that garbage is left in a plot window that is resized while partly covered.
+.np
+\fIhditem\fR man page clarified.
+.np
+\fIpwr\fR has been revised power to deal with logs; the
+functional changes are:
+A -l option was added to produce log of power as output instead of 
+power.  If -l is used, the default output field name is
+"log_power" 
+instead of raw_power.  This, as ususal, can be changed via -f
+options
+or by the contents of the parameter file.  
+If the raw power is less than 10/DBL_MAX, logs aren't computed;
+in this case the output is limited to 
+log10(10/DBL_MAX).
+.np
+The -p option has been added to \fIsetrange\fR and the -z option has
+been documented.  See the man page for details.
+.np
+\fIme_sgram\fR has been updated to take a -p option.  See the man page
+for details.
+.np
+The makefile and test script for \fIsfconvert\fR has been fixed.
+.np
+The parser for parameter files had to be changed to operate correctly on
+the Sun 386i.  We believe that the problem is related to 386i C compiler
+bugs or library bugs.    The problem showed up when using the functions
+\fIgetsym_da\fR and \fIgetsym_fa\fR.
+.np
+Fixed a bug in \fIfft_filter\fR.  The numerator size variable in a zfunc
+was not being initialized to zero when it should have been.  This caused
+the test program to fail on Sun 386i.
+.np
+\fIsetmax\fR bug fix:
+there was a generic ("double") being
+added to the output file.  This was left over from previous
+debugging.  It was removed.
+.np
+A bug in \fItofspec\fR was fixed
+that caused it to fail (i.e., core dump) on input files that are not tagged.
+.np
+Demos updated: The following files were changed:
+README, clean, vqdemo, lpcdemo, Xmakeplots, and Sunmakeplots.
+There are two new files: createfiles and refparams.
+.sh 1 "Possible Problem with Masscomp C Compiler Optimizer"
+.lp
+On some Masscomp systems we have seen problems with the \fB-O\fR flag.
+In particular, the \fIvqdesign.c\fR and \fIvqencode.c\fR files in the
+library might have problems with this.   To see if you have this
+problem, change to the \fIvq\fR src directory and run the test script in
+there.  To do this, just do \fIsh vq.test\fR.   It will be obvious if
+the programs fail, because you will get messages about the vq failing to
+converge and distortion increasing when it should be decreasing, etc.
+.lp
+If this is a problem, then you have to recompile the vq library modules
+without the \fB-O\fR flag.  To do this, simply edit the 
+install script to remove the \fB-O\fR flag from the define for
+\fBOLIBCFLAGS\fR, and then do: \fIinstall lib\fR.   You might have to
+\fItouch\fR vqdesign.c and vqencode.c in \fIsrc/lib\fR in order to force
+them to recompile with \fImake\fR.
+.sh 1 "Possible Sun 386i Compiler Problems"
+.lp
+There is a bug relating to the \fIprintf\fR  \fB%g\fR format character in
+SunOS 4.0.0.   When printing values with this format an incorrect number
+is printed in some cases.   This format is used in a number of places in
+ESPS programs.   We have talked with Sun about this, and they tell us
+that it is fixed in 4.0.1.  We have not been able to confirm this
+ourselves as of this release.   If you encounter this problem on your
+system, please consult with us and we will help you work around it.
+

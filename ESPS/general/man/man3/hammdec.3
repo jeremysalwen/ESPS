@@ -1,0 +1,56 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)hammdec.3	1.5 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH HAMM_DEC 3\-ESPSsp 18 Apr 1997
+.SH NAME
+hamm_dec \- decode an 8-bit Hamming (8,4) coded integer into an
+integer that lies in the range [0,15].
+.SH SYNOPSIS
+.ft B
+int hamm_dec (data, code)
+.br
+short *data;
+.br
+int code;
+.PP
+.SH DESCRIPTION
+.PP
+.I hamm_dec
+decodes an integer 
+.I code
+into an integer between [0,15]
+and returns it in 
+.I data.
+.I hamm_dec
+does single error correction and double error detection.
+If no errors were detected, 
+.I hamm_dec 
+returns a value of 0 and the 
+.I data 
+value;
+if a single error was corrected, 
+.I hamm_dec
+returns a value of 1 and the corrected 
+.I data 
+value;
+if a double error is detected,
+it returns a value of 2 
+and a 
+.I data
+value of -1.
+.SH DIAGNOSTICS
+.PP
+.I hamm_dec
+returns a value of -1 if 
+.I code
+is greater than 255 or less than 0.
+.SH SEE ALSO
+.na
+.IR hamm_enc (3\-ESPSsp)
+.ad
+.SH REFERENCES
+[1] R. E. Hamming, Coding and Information Theory, Prentice-Hall, Inc., 
+Englewood Cliffs, New Jersey, 1980
+.SH AUTHOR
+Code by D. Burton, manual page by D. Burton

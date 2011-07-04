@@ -1,0 +1,11 @@
+"Set Color Map" MENU
+grey		set colormap $ESPS_BASE/lib/waves/colormaps/greymap
+Color		set colormap $ESPS_BASE/lib/waves/colormaps/Colormap
+COLOR		set colormap $ESPS_BASE/lib/waves/colormaps/COLORMAP
+TImap	DEFAULT	set colormap $ESPS_BASE/lib/waves/colormaps/TImap
+"Set Color Map" END
+"Show Color Scale"	make file $ESPS_BASE/lib/waves/files/color.fspec height 200 width 110 loc_x 0 loc_y 155
+"Interpolation  ON " set spect_interp 1
+"Interpolation  OFF" set spect_interp 0
+
+# @(#)dcolors.WM	1.4 11/5/91 ERL

@@ -1,0 +1,12 @@
+#@(#)reloc.wb	1.1 6/18/91 ERL 
+"   Left    "	@relocL.w
+"    Up     "	@relocU.w
+"Shape" MENU
+1x6	@reloc6.w
+2x3	@reloc3.w
+3x2	@reloc2.w
+6x1	@reloc1.w
+"Shape" END
+"   Quit    "	kill_panel name reloc
+"   Down  "	@relocD.w
+"   Right   "	@relocR.w

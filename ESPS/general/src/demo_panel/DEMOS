@@ -1,0 +1,36 @@
+#!/bin/sh
+# @(#)DEMOS	1.5 6/21/91 ERL - Main demo control panel script
+
+PATH=./scripts:$PATH; export PATH
+#
+# Make sure ESPS license exists
+echeckout 2> /dev/null
+
+#ESPS paths
+#
+ESPS_PARAMS_PATH=./param_files:$ESPS_BASE/lib/params; export ESPS_PARAMS_PATH
+ESPS_MENU_PATH=./menus;export ESPS_MENU_PATH
+#ESPS_FILTERS_PATH=./filters; export ESPS_FILTERS_PATH
+#ESPS_INPUT_PATH=./files; export ESPS_INPUT_PATH
+#
+#waves paths
+#
+WAVES_MENU_PATH=./menus:$ESPS_BASE/lib/waves/menus;export WAVES_MENU_PATH
+WAVES_COMMAND_PATH=./commands:.:$ESPS_BASE/lib/waves/commands;export WAVES_COMMAND_PATH
+WAVES_PROFILE_PATH=./init_files; export WAVES_PROFILE_PATH
+WAVES_COLORMAP_PATH=./colormaps; export WAVES_COLORMAP_PATH
+WAVES_INPUT_PATH=./files; export WAVES_INPUT_PATH
+
+#
+#check if menus directory exists 
+if test ! \( -d menus \)
+then    {
+        echo "ERROR: the \"menus\" directory doesn't seem to exist."
+        echo "Please copy all of the `get_esps_base`/demo subdirectories"
+        echo "before running the DEMOS program."
+        exit
+        }
+fi
+
+mbuttons -X 200 -Y 700 -w "ESPS DEMO PANEL" -i DEMOS -b 6 demo_menu&
+

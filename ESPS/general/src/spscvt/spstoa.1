@@ -1,0 +1,52 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\"@(#)spstoa.1	3.4 10/27/89 ESI
+.TH SPSTOA 1\-ESPS 10/27/89
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+spstoa \- convert an ESPS SD, FILT or FEA file to a machine\-independent format
+.SH SYNOPSIS
+.B spstoa
+.I infile
+.I outfile
+.SH DESCRIPTION
+.PP
+.I Spstoa
+converts an ESPS SD, FILT or FEA file to a machine\-independent, ASCII format.
+The output can
+then be moved to a different type of computer (with different representation
+for integers and floating values) and converted back into an ESPS file using
+\fIatosps\fP(1\-ESPS).
+.PP
+If the first argument is "\-",
+.I spstoa
+will read from the standard input.
+If the second argument is "\-",
+it will write to the standard output.
+Integer and character values are represented exactly in the output; float
+values retain seven significant digits; double precision values retain 15
+significant digits.
+.PP
+.I Spstoa
+informs the user and quits if the input file does not exist or is not an ESPS
+file.
+.SH BUGS
+.PP
+This version of the program cannot deal with feature files with complex
+fields.  The next version will.
+.SH ESPS PARAMETERS
+.PP
+This program does not access the parameter file.
+.SH DIAGNOSTICS
+.nf
+Usage: spstoa infile outfile
+spstoa: Input file %s must either be an ESPS SD, FILT file or an ESPS FEA file.
+spstoa: Unknown file type: \fItype_code\fP
+spstoa: Unknown embedded header type %d: removing header.
+spstoa: Error reading \fIinfile\fP
+.fi
+.SH SEE ALSO
+atosps(1\-ESPS)
+.SH AUTHOR
+.PP
+Joe Buck and Alan Parker. ESPS FEA file support by Ajaipal S. Virdy,
+Entropic Speech, Inc.

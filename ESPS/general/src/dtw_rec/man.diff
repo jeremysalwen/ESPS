@@ -1,0 +1,285 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc. All rights reserved.
+.\" @(#)dtw_rec.1	1.2 4/2/97 ERL
+.TH DTW_REC 1\-ESPS 12/21/90
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+dtw_rec \- Dynamic time warping sequence recognition system.
+.sp
+.SH "SYNOPSIS"
+.B dtw_rec
+[
+.BI \-P " param"
+] [
+.BI \-f " sequence_field"
+] [
+.BI \-d " delta"
+] [ 
+.BI \-l " best_list_length"
+] [
+.BI \-b 
+][
+.BI \-c " distance_table_file"
+][
+.BI \-t " distance_table_field"
+][
+.BI \-r " distance_table_recno"
+] [
+.BI \-x " debug_level"
+]
+.I reference_list
+.I test_list
+.I results
+.sp
+.SH "DESCRIPTION"
+\fIDtw_rec\fP compares test sequences to reference sequences using a dynamic
+time warping algorithm (see \fIdtw\fP (3-ESPS)).  
+Comparisons can be made between sequences of floating point vectors
+or sequences of codeword indices.  
+.PP
+\fIDtw_rec\fP reads a list of FEA file names from the the ASCII 
+file \fIreference_list\fP.  Sequences are read from these files to form a
+database of reference sequences. 
+\fIDtw_rec\fP then reads the ASCII file \fItest\fP which contains names of
+FEA files which contain test sequences. A test sequence is read from each
+of these files and 
+compared to every reference sequence.
+For each test sequence, the identity of the closest reference sequence is written 
+to the ASCII file \fIresults\fP.  \fIDtw\fP attempts to read the CHAR generic header item
+\fIsequence_id\fP from the FEA files named in \fIreference_list\fP and 
+\fItest_list\fP to identify each of the sequences.  If this field is not present,
+the sequences are identified by the name of the file from which they were read.
+The tasks performed by \fIdtw_rec\fP can also
+be done using \fIdtw\fP within a shell script, but \fIdtw_rec\fP 
+avoids repeatedly opening and closing reference files.
+.PP
+The ASCII file \fIresults\fP contains entries for each test
+sequence.  Each entry contains the identity of a test sequence, the 
+identity of a reference sequence,
+and the distance between the two found by the time warping algorithm.
+The parameter \fIbest_list_length\fP is the number of entries 
+for each test sequence.  For the default value of
+1, \fIresults\fP contains a single entry for each test sequence,
+which identifies the closest reference utterance to the test sequence and gives
+the DTW distance between the two sequences.  If \fIbest_list_length\fP is 
+specified, this information is written for the \fIbest_list_length\fP
+closest reference sequences to each test sequence.
+.PP
+The parameter \fIdelta\fP specifies the range of points in the reference
+sequence which may be aligned with the initial and final points of the test
+sequence.  For \fIdelta\fP = 0 (default), the algorithm forces the
+initial and final points of the test and reference sequences to be aligned.
+.PP
+The files \fIreference_list\fP, \fItest_list\fP, and \fIresults\fP 
+must be provided.  For \fIresults\fP, "-" can be used to specify that 
+results be written to standard output, but standard input cannot be
+used for the other files.
+.PP
+\fBUSAGE EXAMPLE\fP
+.br
+The following shell script contains an example of using \fIdtw_rec\fP
+for a vector quantizer recognition task.  The directory
+\fIref_data\fP contains FEA reference files, each of which contains 
+a reference
+sequence in the field \fBre_spec_val\fP, which has dimension 512.
+The test sequences are 
+in FEA files in the directory \fItest_data\fP.  These sequences must
+also be in the field \fBre_spec_val\fP.
+.sp
+.nf
+#!/bin/csh
+# Create the vector quantizer codebook
+foreach ref (`ls ref_data/*`)
+	copysps -f $ref vq.in
+end
+echo "string fea_field = "re_spec_val";" > vq.params
+echo "int fea_dim = 512; >> vq.params
+echo "double conv_ratio =  0.05;" >> vq.params
+echo "string dist_type = "MSE";" >> vq.params
+echo "int vq_size = 256;" >> vq.params
+vqdes -P vq.params vq.in vq.cbk
+# Create file of distances between codewords
+cbkd vq.cbk distance.fea_vq
+# Quantize test and reference FEA files
+foreach sequence (`ls ref_data/* test_data/*`)
+	vq -i -f spec_param vq.cbk $sequence $sequence.vq
+end
+# Create the ASCII file of reference FEA file names
+ls ref_data/*.vq > r_list
+# Create the ASCII file of test FEA file names
+ls test_data/*.vq > t_list
+# Compare all test sequences to the reference sequences 
+# and write recognition results to the file \fIresults\fP.
+dtw_rec -c distance.fea_vq -f re_spec_val_cwndx r_list t_list results
+.fi
+.sp
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP
+.BI \-P " param"
+Uses the parameter file \fIparam\fP, rather than the default, which is \fIparams\fP.
+.TP
+.BI \-f " sequence_field" 
+Name of the FEA field from which test and
+reference sequences are read.  If \fB\-c\fP option is specified, the field
+must contain a single integer of type LONG; the default field name is then
+\fIspec_param_cwndx\fP and the routine \fIdtw_tl\fP (3\-\s-1ESPS\s+1) is used.  
+If \fB\-c\fP is not specified, the field
+must be data type FLOAT and have the same number of elements in
+each file; the default field name is then \fIspec_param\fP and the routine 
+\fIdtw_l2\fP (3\-\s-1ESPS\s+1) is used.
+.TP
+.BI \-c " distance_table_file"
+The FEA_VQ file \fIdistance_table_file\fP
+should contain a two dimensional, 
+square, field \fIdistance_table_field\fP of data type DOUBLE.
+This field is read from record \fIdistance_recno\fP to form a 
+\fBdim\fP x \fBdim\fP array of distances,
+where the  value \fBdim\fP is taken from the FEA_VQ defined item 
+\fIcurrent_size\fP in the same record.
+The dimension \fBdim\fP is used to check the labels read from
+the field \fIsequence_field\fP.  If the labels fall outside the
+range [0,\fBdim\fP-1], \fIdtw\fP warns and exits.  The file
+\fIdistance_table_file\fP can be created from a FEA_VQ codebook file 
+using \fIcbkd\fP (1-ESPS).  
+.TP
+.BI \-t " distance_table_field"
+If the \fB-c\fP option is specified, the table of distances is read
+from field \fIdistance_table_field\fP in record \fIdistance_recno\fP of
+file \fIdistance_table_file\fP.  The default name of the file read is 
+"distance_table". 
+.TP
+.BI \-r " distance_table_recno"
+If the \fB-c\fP option is specified, the table of distances is read
+from field \fIdistance_table_field\fP in record 
+\fIdistance_table_recno\fP of file \fIdistance_table_file\fP.  
+By default, the last record of \fIdistance_table_file\fP is read.
+.TP
+.BI \-b " "
+If set, \fIdtw_rec\fP keeps track of the least distance between each test
+sequence and all the reference sequences.  If this distance is exceeded during
+the comparison of a test and reference sequence, the comparison halts, and 
+comparison to the next reference sequence begins.  This can speed computation. 
+.TP
+.BI \-d " delta"
+If set, the comparison algorithm may ignore the first and last 
+\fIdelta\fP vectors in the reference sequence when finding the closest
+distance to the test sequence.  For a full explanation,
+see \fIdtw\fP (3-ESPS).  The default is 0, which requires that the 
+endpoints be compared to each other.
+.TP
+.BI \-l " best_list_length"
+Number of entries in \fIresults\fP for each test sequence. The default 
+is 1. By default, only the identity of the closest reference sequence
+and the corresponding distance is written to \fIresults\fP for each
+test sequence.  If the \fB\-l\fP option is used, this information is
+written to \fIresults\fP for the \fBbest_list_length\fP closest reference
+sequences.
+The \fB\-b\fP and \fB\-l\fP options cannot be used simultaneously.
+.TP
+.BI \-x " debug_level"
+A positive value causes debugging output to be printed on the standard
+error output. Larger values give more output.  The default is 0, for
+no output.
+.sp
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not required to be present; there are default
+values which will apply.  If the parameter file does exist, the following
+parameters are read:
+.TP
+.I sequence_field
+.IP
+Name of field from which test and reference sequences are read.  This
+parameter is not read if the \fB\-f\fP option is used.
+.TP
+.I distance_table_file
+.IP
+Name of FEA_VQ file from which distance table is read to perform dynamic
+time warping comparison between sequences of indices.  This parameter is
+not read if the \fB\-c\fP option is used.  If this parameter is used, 
+\fIdtw_rec\fP
+acts as if the file name was obtained with the \fB\-c\fP option; see
+the \fB\-c\fP option description.
+.TP
+.I distance_table_field
+.IP
+If either the \fB\f-c\fP option or the \fIdistance_table_file\fP
+parameter is used, the distance table is read from the field
+\fIdistance_table_field\fP.  This parameter is not read if the
+\fB\-t\fP option is used.
+.TP
+.I distance_table_recno
+.IP
+If either the \fB\-c\fP option or the \fIdistance_table_file\fP
+parameter is used, the distance table is read from record
+\fIdistance_table_recno\fP of the specified file.  This parameter is not
+read if the \fB\-r\fP option is used.
+.TP
+.I best_so_far 
+.IP
+If set to 1, this \fIdtw_rec\fP behaves as if the \fB\-b\fP option is 
+used. This parameter is not read if the \fB\-b\fP option is used.
+.TP
+.I delta
+.IP
+Allows the comparison algorithm to ignore the first and last \fIdelta\fP
+points in the reference sequence in finding the closest distance to the
+test sequence. See the description of the \fB\-d\fP option.
+This parameter is not read if the \fB\-d\fP option is used.
+.TP 
+.I best_list_length
+.IP
+Number of entries in \fIresults\fP for each test sequence.
+See the description of the \fB\-l\fP option.
+This parameter is not read if the \fB\-l\fP option is used.
+.TP
+.I debug_level
+.IP
+A positive value causes debugging output to be printed on the standard
+error output. Larger values give more output.  This parameter is not read
+if the \fB\-x\fP option is used.
+.sp
+.SH "ESPS COMMON"
+ESPS Common is not read or written.
+.sp
+.SH ESPS HEADER
+The file \fIresults\fP is an ASCII file and has no ESPS header.
+.sp
+.SH SEE ALSO
+\fIdtw\fP (1-ESPS), \fIvq\fP (1\-\s-1ESPS\s+1)
+\fIdtw_l2\fP (3-ESPS), \fIdtw_tl\fP (3-ESPS), 
+\fIFEA\fP (5-ESPS), \fIFEA_VQ\fP (5-ESPS) 
+.sp
+.SH COMMENTS
+\fIDtw_rec\fP uses the routine \fIfree_header\fP (3-ESPS) when 
+reading reference and test sequences.  This avoids consuming and
+not freeing 
+memory when reading FEA headers using the routine 
+\fIeopen\fP (3-ESPS). There are instances when \fIfree_header\fP 
+should not be used, e.g. \fIeopen\fP reads an SD(5-ESPS) file  and
+returns an FEA_SD(5-ESPS) header.  This should not be a problem here.
+.sp
+.SH BUGS
+None known.
+.SH FUTURE CHANGES
+.sp
+.PP
+.SH REFERENCES
+[1] L.R. Rabiner, A.E. Rosenberg, S.E. Levinson 
+"Considerations in Dynamic Time Warping Algorithms for
+Discrete Word Recognition," I.E.E.E. Transactions on Acoustics,
+Speech, and Signal Processing, Vol. 26, No. 6, December 1978, 
+pp 575-582
+.sp
+[2] S.E. Levinson, "Structural Methods in Automatic Speech Recognition,"
+Proceedings of the I.E.E.E., Vol. 73, No. 11, November 1985, pp 1625-1650
+.sp
+.SH AUTHOR
+Program and manual pages by Bill Byrne.
+
+
+
+
+
+

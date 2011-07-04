@@ -1,0 +1,40 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)addcomment.3	1.8 20 Oct 1987 ESI
+.TH ADD_COMMENT 3\-ESPSu 20 Oct 1987
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+add_comment \- adds a string to the comment field of a ESPS file header
+.SH SYNOPSIS
+.ft B
+void add_comment (hd, text)
+.br
+struct header *hd;
+.br
+char *text;
+.ft
+.SH DESCRIPTION
+.I add_comment
+appends the null terminated string pointed to by
+\fItext\fR to the field \fIvariable.comment\fR in the ESPS header pointed 
+to by \fIhd\fR.
+The maximum length of the comment field is MAX_STRING, defined in
+.I <esps/header.h>.
+If there is not enough room left in the comment field for the
+new text, then the function prints a warning to \fIstderr\fR.
+In most cases, ESPS programs will add new-line terminated strings to
+the comment field, making notes of processing steps.   This function does
+not, however, add a new-line to the text passed through it.
+.PP
+Since \fIadd_source_file\fR(3\-ESPSu) copies the comments from the source file
+to \fIvariable.comment\fR, in most cases \fIadd_comment\fR should be used only after
+all calls to \fIadd_source_file\fR have been made.
+.SH EXAMPLE
+add_comment (hd, get_cmd_line (argv, argc));
+.br
+/* appends program command line to hd \-> variable.comment */
+.SH BUGS
+None known.
+.SH SEE ALSO
+ESPS(5\-ESPS)
+.SH AUTHOR
+Alan Parker

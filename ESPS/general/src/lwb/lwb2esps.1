@@ -1,0 +1,92 @@
+.\"@(#)lwb2esps.1	1.3
+.TH LWB2ESPS 1\-ESPS 2/16/90
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Processing, Inc.
+.SH NAME
+lwb2esps \- convert a Laboratory Work Bench data file to an ESPS sampled
+data file
+.SH SYNOPSIS
+.B lwb2esps
+[
+.BI \-x " debug_level"
+] [
+.BI \-c " channel_num"
+] 
+.I infile 
+.I outfile
+.SH DESCRIPTION
+.PP
+.I Lwb2esps
+accepts a specially formatted set of files 
+written by the
+Laboratory Work Bench (LWB)
+program 
+and produces an ESPS sampled data file (FEA_SD).
+.PP
+.I Lwb2esps
+opens two files: 
+.I infile.H
+and 
+.I infile.D.
+It uses the information in
+.I infile.H
+to build a header for the 
+ESPS sampled data file, and it copies the data in
+.I infile.D
+to the output sampled data file.
+.PP
+If "\-"
+is specified in place of 
+.I outfile,
+standard output is used.
+.SH OPTIONS
+.TP
+.BI \-c " channel_num"
+If the LWB data file contains multi-channel data (interleaved data
+from more than one A/D converter)
+then 
+.I lwb2esps
+converts only
+the 
+data 
+from the 
+.I channel_num
+A/D channel into the named sampled data file (
+.I outfile
+).
+.IP
+For this program, A/D channel numbers start from one.
+So if the A/D hardware has a channel zero, it corresponds to channel one
+in this program.
+.SH ESPS HEADER
+The entire LWB header file is written as a generic header item
+in the output sampled data file.
+.SH ESPS COMMON
+This program does not access the ESPS common.
+.SH ESPS PARAMETERS
+.PP
+This program does not access the parameter file.
+.SH DIAGNOSTICS
+.PP
+.I Lwb2esps
+informs the user and quits if the input files do not exist.
+It also quits and warns if the input header file is not a LWB
+header file.
+.SH ASSUMPTIONS
+\fILwb2esps\fR
+assumes that the second number in the \fIsizes\fR field 
+of the LWB header file is the
+number of recorded channels,
+and it assumes
+the value of the \fIslope\fR field contains the reciprocal
+of the sampling frequency.
+.SH SEE ALSO
+esps2lwb (1-ESPS)
+.SH WARNINGS
+.PP
+.I Lwb2esps
+is rigid about the format of the input files. 
+You will have trouble if you edit the LWB header file.
+.SH BUGS
+None Known.
+.SH AUTHOR
+Manual page and code by David Burton

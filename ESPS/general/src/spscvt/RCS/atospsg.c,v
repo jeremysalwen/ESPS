@@ -1,0 +1,676 @@
+head	1.1;
+access;
+symbols;
+locks
+	stepheni:1.1; strict;
+comment	@ * @;
+
+
+1.1
+date	2006.07.18.17.32.35;	author stepheni;	state Exp;
+branches;
+next	;
+
+
+desc
+@atospsg.c for esps
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@/* atosps: converts spstoa(1-ESPS) back to a binary ESPS data file
+ *
+ * This material contains proprietary software of Entropic Speech, Inc.
+ * Any reproduction, distribution, or publication without the prior
+ * written permission of Entropic Speech, Inc. is strictly prohibited.
+ * Any public distribution of copies of this work authorized in writing by
+ * Entropic Speech, Inc. must bear the notice
+ *
+ *    "Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved"
+ *
+ * Author: Joe Buck, Alan Parker, Ajaipal S. Virdy
+ *
+ * Based on atosds, version 1.1.
+ * Converted to SPS by Alan Parker
+ * ESPS FEA file support by Ajaipal S. Virdy
+ */
+
+#ifdef SCCS
+    static char *sccs_id = "@@(#)atospsg.c	3.12		7/8/96	ESI";
+#endif
+
+#include <stdio.h>
+#include <esps/esps.h>
+#include <esps/fea.h>
+#include <esps/unix.h>
+#include <esps/filt.h>
+#include "tagdef.h"
+
+#define geth(a) a=atoh(buf+3)
+#define getf(a) a=atof(buf+3)
+
+
+/*
+ * E S P S
+ *  F U N C T I O N S
+ *   R E F E R E N C E D
+ */
+
+char	*savestring();
+char	*get_cmd_line();
+void	addstr();
+
+/*
+ * L O C A L
+ *  F U N C T I O N S
+ *   R E F E R E N C E D
+ */
+
+char	*nextval();
+char	*cvt_typtxt();
+char	*index();
+struct zfunc *make_z();
+static void 	make_gens();
+
+/*
+ * G L O B A L
+ *  V A R I A B L E S
+ */
+
+char	*ProgName = "atosps";
+char	*in_file = "<stdin>";
+int	deleted_hdr = 0;
+
+main (argc, argv)
+char  **argv;
+{
+    FILE    *istrm = stdin;
+    FILE    *ostrm = stdout;
+    register struct header *h = new_header (0);
+    register int    i;
+    char    buf[50];
+    char    combuf[100];
+    int	    cvt_fearec ();
+
+
+    if (argc != 3) {
+	Fprintf (stderr,
+	"Usage: %s infile outfile\n", argv[0]);
+	exit (1);
+    }
+    if (argc > 1 && strcmp (argv[1], "-") != 0) {
+	TRYOPEN (ProgName, argv[1], "r", istrm);
+	in_file = argv[1];
+    }
+    if (!fgets (buf, 10, istrm)) {
+	Fprintf (stderr, "%s: %s is empty.\n", ProgName, in_file);
+	exit (1);
+    }
+    else if (strcmp (buf, "{\n") != 0) {
+	    Fprintf (stderr,
+	    "%s: %s has the wrong format.\n", ProgName, in_file);
+    }
+    if (argc > 2 && strcmp (argv[2], "-") != 0) {
+	TRYOPEN (ProgName, argv[2], "w", ostrm);
+    }
+
+    (void) readhead (istrm, h, -1);
+
+    if (deleted_hdr) {
+	(void) sprintf (combuf, "%d header%s deleted during conversion.\n",
+	deleted_hdr, (deleted_hdr == 1) ? " was" : "s were");
+	(void) add_comment (h, combuf);
+    }
+
+    add_comment(h, get_cmd_line(argc, argv));
+/* this file will be in NATIVE format, since fwrites are used
+*/
+    h->common.edr = NO;	
+    write_header (h, ostrm);
+
+    switch (h->common.type) {
+	case FT_SD:
+	case FT_FILT:
+	    for (i = 0; i < h->common.ndrec; i++)
+		readrec (istrm, ostrm, h); 
+	    break;
+	case FT_FEA:
+	    cvt_fearec (istrm, ostrm, h);
+	    break;
+    }
+
+    exit (0);
+}
+
+/* When readhead is called, the opening "{" line has already been read */
+
+readhead (in, h, lev)
+FILE	*in;
+register struct header *h;
+int	lev;
+{
+    /* Global Variables Referenced
+     * char	*in_file;
+     */
+
+#define BUFFER_SIZE 8000
+
+    char    *buf;
+    int     len;
+    int     nxthead = 0;
+    int	    nxtsrc = 0;
+    int	    tag;
+    short   type = 0;
+    short   item = 0;
+    char    gen_name[128];
+    int     gen_type;
+    long    gen_size;
+    char    **code_list;
+    int     i;
+
+    /* Local Functions Referenced */
+    int	    cvt_feahdr ();
+#if !defined(DEC_ALPHA) && !defined(HP700)
+    char    *calloc ();
+#endif
+
+    buf = malloc(BUFFER_SIZE);
+    assert(buf);
+    while (1) {
+	if (!fgets (buf, BUFFER_SIZE, in)) {
+	    Fprintf (stderr, "%s: Unexpected EOF in %s\n", ProgName, in_file);
+	    exit (1);
+	}
+	len = strlen (buf);
+	if (buf[0] == '}')
+	    return;
+	else if (buf[0] == '{') {
+		if (buf[1] == '{') {	/* reference header */
+		    h->variable.refhd = new_header (0);
+		    readhead (in, h->variable.refhd, lev-1);
+		} else
+		    if (buf[1] == '}')	    /* illegal header */
+			deleted_hdr++;
+		    else		    /* legal header */
+		    {
+			h->variable.srchead[nxthead] = new_header (0);
+			readhead (in, h->variable.srchead[nxthead], lev-1);
+			nxthead += 1;
+		    }
+	}
+	else {
+	    if (sscanf (buf, "%x", &tag) != 1)
+		synerr ("bad header tag", lev);
+	    switch (tag) {
+		case TAG_type:
+		    if(h->common.type != 0) {
+			Fprintf(stderr,
+			"%s: Type already set (%d); bad file!\n",
+			ProgName, h->common.type);
+			(void) fflush(stderr);
+			exit(1);
+		    }
+		    geth(h->common.type);
+		    type = h->common.type;
+		    switch (h->common.type) {
+			case FT_SD:
+			    if ((h->hd.sd = (struct sd_header *) 
+			     calloc(1,SD_SIZE)) == NULL) {
+			     spsassert(0,"calloc failed");
+			    }
+			    break;
+			case FT_FILT:
+			    if ((h->hd.filt = (struct filt_header *) 
+			     calloc(1,FILT_SIZE)) == NULL) {
+			     spsassert(0,"calloc failed");
+			    }
+			    break;
+			case FT_FEA:
+			    if ((h->hd.fea = (struct fea_header *) 
+			     calloc(1,FEA_SIZE)) == NULL) {
+			     spsassert(0,"calloc failed");
+			    }
+			    break;
+			default:
+			    Fprintf(stderr,"%s: Bad file type code %d.\n",
+			    ProgName, h->common.type);
+			    exit (1);
+		    }
+		case TAG_check:
+	  	    geth(h->common.check);
+		    break;
+		case TAG_date:
+		    buf[len-1] = '\0';
+		    (void) strncpy (h->common.date, buf+3, DATESIZE);
+		    break;
+		case TAG_hdvers:
+		    buf[len-1] = '\0';
+		    (void) strncpy (h->common.hdvers, buf+3, VERSIONSIZE);
+		    break;
+		case TAG_prog:
+		    buf[len-1] = '\0';
+		    (void) strncpy (h->common.prog, buf+3, PROGSIZE);
+		    break;
+		case TAG_vers:
+		    buf[len-1] = '\0';
+		    (void) strncpy (h->common.vers, buf+3, VERSIONSIZE);
+		    break;
+		case TAG_progdate:
+		    buf[len-1] = '\0';
+		    (void) strncpy (h->common.progdate, buf+3, DATESIZE);
+		    break;
+		case TAG_user:
+		    buf[len-1] = '\0';
+		    (void) strncpy (h->common.user, buf+3, USERSIZ);
+		    break;
+		case TAG_ndrec:
+		    geth(h->common.ndrec);
+		    break;
+		case TAG_tag:
+		    geth(h->common.tag);
+		    break;
+		case TAG_ndouble:
+		    if (type == FT_SD || type == FT_FILT) 
+			geth(h->common.ndouble);
+		    break;
+		case TAG_nfloat:
+		    if (type == FT_SD || type == FT_FILT) 
+			geth(h->common.nfloat);
+		    break;
+		case TAG_nlong:
+		    if (type == FT_SD || type == FT_FILT) 
+			geth(h->common.nlong);
+		    break;
+		case TAG_nshort:
+		    if (type == FT_SD || type == FT_FILT) 
+			geth(h->common.nshort);
+		    break;
+		case TAG_nchar:
+		    if (type == FT_SD || type == FT_FILT) 
+			geth(h->common.nchar);
+		    break;
+		case TAG_spare:
+		    geth(item);
+		    if (!fgets (buf, BUFFER_SIZE, in)) {
+			Fprintf (stderr, "%s: Unexpected EOF in %s\n", 
+			ProgName, in_file);
+			exit (1);
+		    }
+		    if (type == 0) h->common.spares[item] = atoh(buf);
+		    if (type == FT_SD) h->hd.sd->spares[item] = atoh(buf);
+		    if (type == FT_FILT) h->hd.filt->spares[item] = atoh(buf);
+		    break;
+		case TAG_source: 
+		    buf[len - 1] = 0;
+		    h->variable.source[nxtsrc++] = savestring (buf + 3);
+		    break;
+		case TAG_typtxt: 
+		    buf[len - 1] = '\0';
+		    h->variable.typtxt = savestring (cvt_typtxt (buf + 3));
+		    break;
+		case TAG_comment: 
+		    buf[len - 1] = '\0';
+		    h->variable.comment = savestring (cvt_typtxt (buf + 3));
+		    break;
+		case TAG_refer: 
+		    buf[len - 1] = '\0';
+		    h->variable.refer = savestring (buf + 3);
+		    break;
+		case TAG_src_sf:
+		    if (type == FT_SD) getf(h->hd.sd->src_sf);
+		    break;
+		case TAG_dcrem:
+		    if(type == FT_SD) getf(h->hd.sd->dcrem);
+		    break;
+		case TAG_equip:
+		    if (type == FT_SD) geth(h->hd.sd->equip);
+		    break;
+		case TAG_max_value:
+		    if (type == FT_SD) getf(h->hd.sd->max_value);
+		    break;
+		case TAG_sf:
+		    if (type == FT_SD) getf(h->hd.sd->sf);
+		    break;
+		case TAG_synt_method:
+		    if (type == FT_SD) geth(h->hd.sd->synt_method);
+		    break;
+		case TAG_scale:
+		    if (type == FT_SD) getf(h->hd.sd->scale);
+		    break;
+		case TAG_q_method:
+		    if (type == FT_SD) geth(h->hd.sd->q_method);
+		    break;
+		case TAG_v_excit_method:
+		    if (type == FT_SD) geth(h->hd.sd->v_excit_method);
+		    break;
+		case TAG_uv_excit_method:
+		    if (type == FT_SD) geth(h->hd.sd->uv_excit_method);
+		    break;
+		case TAG_spare1:
+		    if (type == FT_SD) geth(h->hd.sd->spare1);
+		    break;
+		case TAG_nchan:
+		    if (type == FT_SD) geth(h->hd.sd->nchan);
+		    break;
+		case TAG_synt_interp:
+		    if (type == FT_SD) geth(h->hd.sd->synt_interp);
+		    break;
+		case TAG_synt_pwr:
+		    if (type == FT_SD) geth(h->hd.sd->synt_pwr);
+		    break;
+		case TAG_synt_rc:
+		    if (type == FT_SD) geth(h->hd.sd->synt_rc);
+		    break;
+		case TAG_synt_order:
+		    if (type == FT_SD) geth(h->hd.sd->synt_order);
+		    break;
+		case TAG_prefilter: 
+		    if(type == FT_SD) h->hd.sd->prefilter = make_z (buf + 3);
+		    break;
+		case TAG_de_emp:
+		    if (type == FT_SD) h->hd.sd->de_emp = make_z (buf + 3);
+		    break;
+		case TAG_Fea:
+		    cvt_feahdr(in, h);
+		    break;
+		case TAG_gen: 
+	 	    sscanf(buf+3,"%s %d %ld",gen_name,&gen_type,&gen_size);
+		    if (gen_type == CODED)  {
+			code_list = (char **)malloc(1);
+			code_list[0] = NULL;
+		    }
+		    break;
+		case TAG_coded:
+		    if (gen_type == CODED) 
+			addstr(savestring(buf+3), &code_list);
+		    break;
+		case TAG_gen_value:
+		    (void)
+			add_genhd(gen_name,gen_type,(int)gen_size,NULL,code_list,h);
+		    make_gens(gen_name,h,buf+3);
+		    break;
+		case TAG_max_num:
+		    if(type == FT_FILT) geth(h->hd.filt->max_num);
+		    break;
+		case TAG_max_den:
+		    if(type == FT_FILT) geth(h->hd.filt->max_den);
+		    break;
+		case TAG_func_spec:
+		    if(type == FT_FILT) geth(h->hd.filt->func_spec);
+		    break;
+		case TAG_nbands:
+		    if(type == FT_FILT) geth(h->hd.filt->nbands);
+		    break;
+		case TAG_npoints:
+		    if(type == FT_FILT) geth(h->hd.filt->npoints);
+		    break;
+		case TAG_g_size:
+		    if(type == FT_FILT) geth(h->hd.filt->g_size);
+		    break;
+		case TAG_nbits:
+		    if(type == FT_FILT) geth(h->hd.filt->nbits);
+		    break;
+		case TAG_filttype:
+		    if(type == FT_FILT) geth(h->hd.filt->type);
+		    break;
+		case TAG_filtmethod:
+		    if(type == FT_FILT) geth(h->hd.filt->method);
+		    break;
+		case TAG_bandedges:
+		    if(type == FT_FILT) {
+			h->hd.filt->bandedges =
+			  malloc_f(h->hd.filt->nbands*2);
+			spsassert(h->hd.filt->bandedges,"calloc failed");
+			get_array_f(buf+3,h->hd.filt->bandedges,h->hd.filt->nbands*2);
+		    }
+		    break;
+		case TAG_points:
+		    if(type == FT_FILT) {
+			h->hd.filt->points =
+			  malloc_f(h->hd.filt->npoints);
+			spsassert(h->hd.filt->points,"calloc failed");
+			get_array_f(buf+3,h->hd.filt->points,h->hd.filt->npoints);
+		    }
+		    break;
+		case TAG_gains:
+		    if(type == FT_FILT && h->hd.filt->func_spec == BAND) {
+			h->hd.filt->gains =
+			  malloc_f(h->hd.filt->nbands);
+			spsassert(h->hd.filt->gains,"calloc failed");
+			get_array_f(buf+3,h->hd.filt->gains,h->hd.filt->nbands);
+		    }
+		    if(type == FT_FILT && h->hd.filt->func_spec == POINT) {
+			h->hd.filt->gains =
+			  malloc_f(h->hd.filt->npoints);
+			spsassert(h->hd.filt->gains,"calloc failed");
+			get_array_f(buf+3,h->hd.filt->gains,h->hd.filt->npoints);
+		    }
+		    break;
+		case TAG_wts:
+		    if(type == FT_FILT && h->hd.filt->func_spec == BAND) {
+			h->hd.filt->wts =
+			  malloc_f(h->hd.filt->nbands);
+			spsassert(h->hd.filt->wts,"calloc failed");
+			get_array_f(buf+3,h->hd.filt->wts,h->hd.filt->nbands);
+		    }
+		    if(type == FT_FILT && h->hd.filt->func_spec == POINT) {
+			h->hd.filt->wts =
+			  malloc_f(h->hd.filt->npoints);
+			spsassert(h->hd.filt->wts,"calloc failed");
+			get_array_f(buf+3,h->hd.filt->wts,h->hd.filt->npoints);
+		    }
+		    break;
+		default: 
+		    Fprintf (stderr, "%s: Bad tag code (%x) in %s\n",
+		    ProgName, tag, in_file);
+		    exit (1);
+	   } /* end switch (tag) */
+
+	}  /* end if else clause */
+
+    }  /* end while (1) */
+
+}   /* end readhead () */
+
+static void
+make_gens(name, hd, str)
+char *name, *str;
+struct header *hd;
+{
+   int i,size, type;
+   char *c_ptr = get_genhd(name,hd);
+   double *d_ptr;
+   float *f_ptr;
+   long *l_ptr;
+   short *s_ptr;
+
+   d_ptr = (double *)c_ptr;
+   f_ptr = (float *)c_ptr;
+   l_ptr = (long *)c_ptr;
+   s_ptr = (short *)c_ptr;
+   type = genhd_type(name, &size, hd);
+   for (i = 0; i < size; i++) {
+	switch (type) {
+	 case DOUBLE:
+		*d_ptr++ = atof (str);
+		break;
+	 case FLOAT:
+		*f_ptr++ = atof (str);
+		break;
+	 case LONG:
+		*l_ptr++ = atoi (str);
+		break;
+	 case SHORT:
+	 case CODED:
+		*s_ptr++ = atoi (str);
+		break;
+	}
+       str = nextval (str);
+    }
+}
+	
+	  
+
+static int
+atoh (str)
+char *str;
+{
+    long    tmp = 0;
+
+    (void) sscanf (str, "%lx", &tmp);
+    return tmp;
+}
+
+readrec (in, out, h)
+FILE *in, *out;
+struct header  *h;
+{
+    long    tag;
+    register int    i;
+    static  recnum = 0;
+
+    recnum += 1;
+    if (BOOL (h->common.tag)) {
+	if (fscanf (in, "%lx", &tag) != 1)
+	    synerr ("bad record tag", recnum);
+	(void) fwrite ((char *) & tag, sizeof tag, (int) 1, out);
+    }
+    if (h->common.ndouble) {
+	double *dbuf = malloc_d(h->common.ndouble);
+	spsassert(dbuf,"malloc failed");
+    	for (i = 0; i < h->common.ndouble; i++) {
+	    if (fscanf (in, "%lf", &dbuf[i]) != 1)
+		synerr ("bad double datum", recnum);
+        }
+    	(void) fwrite((char *)dbuf,sizeof(double), (int)h->common.ndouble,out);
+    }
+    if (h->common.nfloat) {
+	float *fbuf = malloc_f(h->common.nfloat);
+	spsassert(fbuf,"malloc failed");
+    	for (i = 0; i < h->common.nfloat; i++) {
+	    if (fscanf (in, "%f", &fbuf[i]) != 1)
+		synerr ("bad float datum", recnum);
+        }
+    	(void) fwrite ((char *)fbuf,sizeof (float), (int)h->common.nfloat,out);
+    }
+    if (h->common.nlong) {
+	long *lbuf = malloc_l(h->common.nlong);
+	spsassert(lbuf,"malloc failed");
+    	for (i = 0; i < h->common.nlong; i++) {
+	    if (fscanf (in, "%ld", &lbuf[i]) != 1)
+		synerr ("bad long datum", recnum);
+        }
+    	(void) fwrite ((char *)lbuf, sizeof (long), (int)h->common.nlong, out);
+    }
+    if (h->common.nshort) {
+	short *sbuf = malloc_s(h->common.nshort);
+	long *lbuf = malloc_l(h->common.nshort);
+	spsassert(sbuf,"malloc failed");
+	spsassert(lbuf,"malloc failed");
+    	for (i = 0; i < h->common.nshort; i++) {
+	    if (fscanf (in, "%ld", &lbuf[i]) != 1)
+		synerr ("bad short datum", recnum);
+        }
+    	for (i = 0; i < h->common.nshort; i++) 
+	    sbuf[i] = lbuf[i];
+    	(void) fwrite ((char *)sbuf,sizeof (short), (int)h->common.nshort,out);
+    }
+    if (h->common.nchar) {
+	char *cbuf = malloc(h->common.nchar);
+	spsassert(cbuf,"malloc failed");
+    	for (i = 0; i < h->common.nchar; i++) {
+	    if (fscanf (in, "%x", &cbuf[i]) != 1)
+		synerr ("bad char datum", recnum);
+        }
+    	(void) fwrite ((char *)cbuf,sizeof (char), (int)h->common.nchar,out);
+    }
+}   /* end readrec() */
+
+struct zfunc *
+make_z (str)
+register char  *str;
+{
+    register int    i;
+    int     nz, np;
+    float   *num;
+    float   *den;
+
+    nz = atoi (str);
+    str = nextval (str);
+    np = atoi (str);
+    num = (float *)malloc(nz*sizeof(float));
+    den = (float *)malloc(np*sizeof(float));
+    for (i = 0; i < nz; i++) {
+	str = nextval (str);
+	num[i] = atof (str);
+    }
+    for (i = 0; i < np; i++) {
+	str = nextval (str);
+	den[i] = atof (str);
+    }
+    return new_zfunc (nz, np, num, den);
+}
+
+get_array_f(str, ptr, size)
+char *str;
+float *ptr;
+int size;
+{
+	int i;
+	assert(size && ptr && str);
+	for (i = 0; i <size; i++) {
+	  ptr[i] = atof (str);
+	  str = nextval (str);
+   	}
+}
+	
+
+
+
+
+char *
+nextval (s)
+char   *s;
+{
+    if ((s = index (s, ' ')) != NULL) {
+	while (*s == ' ')
+	    s++;
+	if (*s != 0)
+	    return s;
+    }
+    Fprintf (stderr, "%s: data syntax error in %s\n", ProgName, in_file);
+    Fprintf (stderr, "nextval: remaining buffer: %s\n",s);
+    exit (1);
+    /* NOTREACHED */
+}
+
+char *
+cvt_typtxt (s)
+char   *s;
+{
+    register char  *p = s;
+    while (*p) {
+	if (*p == '\r')
+	    *p = '\n';
+	p++;
+    }
+    return s;
+}
+
+synerr (txt, n)
+char   *txt;
+int n;
+{
+    if (n < 0)
+    	Fprintf (stderr, "%s: syntax error in %s: %s, header level %d\n",
+		ProgName, in_file, txt, -n);
+    else
+	Fprintf (stderr, "%s: syntax error in %s: %s, record %d\n",
+		ProgName, in_file, txt, n);
+    exit (1);
+}
+@

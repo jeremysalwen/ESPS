@@ -1,0 +1,66 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)malloc.3	1.3 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH MALLOC 3\-ESPSu 18 Apr 1997
+.SH "NAME"
+malloc_s \- call Unix memory allocator for shorts
+.br
+malloc_i \- call Unix memory allocator for ints
+.br
+malloc_l \- call Unix memory allocator for longs
+.br
+malloc_f \- call Unix memory allocator for floats
+.br
+malloc_d \- call Unix memory allocator for doubles
+.SH "SYNOPSIS"
+.ft B
+#include <esps/esps.h>
+.PP
+.ft B
+.nf
+short *
+malloc_s(n)
+unsigned n;
+.sp
+int *
+malloc_i(n)
+unsigned n;
+.sp
+long *
+malloc_l(n)
+unsigned n;
+.sp
+float *
+malloc_f(n)
+unsigned n;
+.sp
+double *
+malloc_d(n)
+unsigned n;
+.fi
+.ft R
+.SH "DESCRIPTION"
+.PP
+These macros call \fImalloc\fR(3C) to allocate a block of memory of size
+\fIn\fR of the correct type (depending on which macro was used).
+.PP
+These macros are defined in \fI<esps/esps.h>\fR and should not be
+declared in your program.
+.SH EXAMPLE
+.PP
+.nf
+\fI/* get a block of 100 floats and shorts */\fR
+float *fptr;
+short *sptr;
+.sp
+fptr = malloc_f(100);
+sptr = malloc-s(100);
+.fi
+.SH DIAGNOSTICS
+.PP
+.SH "SEE ALSO"
+.PP
+.nf
+\fImalloc\fP(3), \fIcalloc\fP(3), \fIcalloc\fP(3\-ESPSu)
+.fi

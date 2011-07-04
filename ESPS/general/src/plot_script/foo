@@ -1,0 +1,291 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     scatplot - make a scatter plot
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>scatplot</STRONG> [ <STRONG>-e</STRONG> <EM>range</EM> ] [ <STRONG>-r</STRONG> <EM>range</EM> ] [ <STRONG>-s</STRONG> <EM>symbols</EM> ] [ <STRONG>-t</STRONG>  <EM>text</EM>
+     ] [ <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> ]
+     [ <STRONG>-H</STRONG> <EM>text</EM> ] [ <STRONG>-T</STRONG> <EM>device</EM> ] [ <STRONG>-V</STRONG> <EM>text</EM> ] [ <STRONG>-X</STRONG> <EM>range</EM>  ]  [   <STRONG>-</STRONG> <STRONG>Y</STRONG>
+     <EM>range</EM> ] [ <STRONG>-W</STRONG> <EM>generic</EM> <EM>window</EM> <EM>system</EM> <EM>options</EM> ] <EM>file1</EM> [ <EM>file2</EM> ]
+     . . .
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     <EM>Scatplot</EM> makes a scatter plot of pairs of elements from mul-
+     tiple  ESPS files <EM>file1</EM>, <EM>file2</EM>, . . . .  When used as a file
+     name, ``-'' denotes standard input.
+
+     By default, the output is in Unix GPS (``Graphics  Primitive
+     String'')  format  and  is  displayed on the Masscomp or Sun
+     display, but with the <STRONG>-T</STRONG> option, this may  be  sent  to  the
+     standard  output,  obtained  in Tektronix format rather than
+     GPS, or plotted on a hardcopy device.
+
+     On a Sun workstation, this program must be run  from  within
+     the  <EM>Suntools</EM>  window system.  The plot will appear in a new
+     window, which can be moved, resized, closed (reduced  to  an
+     icon),  and  removed  by using the functions on the <EM>Suntools</EM>
+     menu.   To get this menu, move the mouse cursor to the title
+     bar of the plot window and press the right mouse button.
+
+     If the <STRONG>-r</STRONG> option is omitted, then the entire contents of all
+     files are plotted.
+
+     The <STRONG>-e</STRONG> option specifies which elements  to  plot.   An  even
+     number  of  elements must always be given since there are no
+     default elements to plot.  The first  pair  of  elements  is
+     associated  with  the  first  file, the second pair with the
+     second file, and so on up to the last file or until no other
+     pair  of  elements  remains,  in which case the last pair of
+     elements is associated with the remaining files.  The  first
+     element  in  the  pair  is  plotted  as the abscissa and the
+     second element as the ordinate.  Default symbols are used to
+     distinguish between multiple files, but they can be overrid-
+     den by the <STRONG>-s</STRONG> option.
+
+     <EM>Scatplot</EM> finds the maximum and minimum of the <EM>x</EM>  values  and
+     the  <EM>y</EM> values in the specified ranges of the input files and
+     computes appropriate scales This automatic  scaling  can  be
+     overridden by the <STRONG>-X</STRONG> and <STRONG>-Y</STRONG> options.
+
+     On Masscomp systems the color and line style  of  output  to
+     ``gps''  or  ``mcd'' depend on the environment variable BUN-
+     DLE.  The default is GPS bundle number 20, which gives solid
+     lines on monochrome displays.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following options are supported:
+
+     <STRONG>-e</STRONG> <EM>elements</EM>
+          Determine which elements within a record to plot.   The
+          elements  may  be  separated  by  commas, or, more gen-
+          erally, any construct  acceptable  to  <EM>grange</EM>_<EM>switch</EM>(3-
+          ESPSu)  may  be used, as long as the number of elements
+          specified is even.  The first pair of elements is asso-
+          ciated  with  the  first file, the second pair with the
+          second file, and so on up to the last file or until  no
+          other  pair of elements remains, in which case the last
+          pair of  elements  is  associated  with  the  remaining
+          files.  The first element in the pair is plotted as the
+          abscissa and the second element as the ordinate.
+
+     <STRONG>-r</STRONG> <EM>first</EM>:<EM>last</EM>
+
+     <STRONG>-r</STRONG> <EM>first</EM>:+<EM>incr</EM>
+          Determines the range of records to be plotted.  In  the
+          first form, a pair of unsigned integers gives the first
+          and last records of the range. If <EM>first</EM> is  omitted,  1
+          is  used.   If  <EM>last</EM> is omitted, the last record in the
+          file is used.  The second form  is  equivalent  to  the
+          first with <EM>last</EM> = <EM>first</EM> + <EM>incr</EM> .
+
+     This option may be repeated.  The first <STRONG>-r</STRONG> option applies to
+     the  first  input  file,  the second <STRONG>-r</STRONG> option to the second
+     input file, and so on.  If there are more  files  than   <STRONG>-</STRONG> <STRONG>r</STRONG>
+     options,  then  the  last  option  applies  to all remaining
+     files.
+
+     <STRONG>-s</STRONG> <EM>symbols</EM> [<EM>xo</EM>*<EM>abcdefghijklmnpqrstuvwyz</EM>]
+          Plot the scatter plot using the symbols specified.  The
+          first  symbol  is  used  for the first file, the second
+          symbol for the second file, and so on up  to  the  last
+          file.  There must be at least as many symbols as files.
+          The default symbols are given in brackets.
+
+     The positions of the symbols `<EM>x</EM>' and `<EM>o</EM>' have been  modified
+     so  that the plotting point falls very close to the "center"
+     of the character.  Other  characters  will  not  have  their
+     centers exactly at the plotting points.
+
+     <STRONG>-t</STRONG> <EM>text</EM>
+          Print a line of text above the graph.
+
+     <STRONG>-x</STRONG> <EM>level</EM>
+          If <EM>level</EM> is nonzero, debugging information  is  written
+          to  the standard error output.  Default is 0 (no debug-
+          ging output).
+
+     <STRONG>-H</STRONG> <EM>text</EM>
+          Print a line of text below the graph.
+
+     <STRONG>-T</STRONG> <EM>device</EM>
+          <EM>Device</EM> may be <STRONG>gps</STRONG>, <STRONG>mcd</STRONG>, <STRONG>tek</STRONG>, <STRONG>suntools</STRONG>, <STRONG>hp</STRONG>, or <STRONG>hardcopy</STRONG>.
+          The  default is <STRONG>-Tmcd,</STRONG> which displays the output on the
+          workstation graphics screen by piping it through <EM>mcd</EM>(1)
+          or  <STRONG><A HREF="../man1.html/xmcd.1.html">xmcd(1 - ESPS)</A></STRONG>.   The  program  <EM>mcd</EM>  is supplied by
+          Masscomp for their systems, and by ESI for other works-
+          tations.  Specifying <STRONG>-Tgps</STRONG> sends output to the standard
+          output in Masscomp Unix GPS format.  Specifying  <STRONG>-</STRONG> <STRONG>Ttek</STRONG>
+          causes output to be sent to the standard output in Tek-
+          tronix 4000-series format.  If <STRONG>-Tsuntools</STRONG> is used, then
+          the  display will be forced to use <EM>suntools</EM> window sys-
+          tem (on Suns and Solbournes only),  even  if  ESPS  has
+          been  configured  to use the X window system.   If ESPS
+          is built for X, then it uses X for plotting by default.
+          If   <STRONG>-Tmcd</STRONG> is used on a Masscomp and ESPS has been con-
+          figured to use X windows, then the  old  SP-40  <EM>mcd</EM>  is
+          used instead of X windows.  Specifying <STRONG>-Thardcopy</STRONG> plots
+          it on a hardcopy device, if one was set up in the  ins-
+          tallation  script.   Note that the word <EM>imagen</EM> was used
+          for this option in previous  versions.    It  is  still
+          accepted,  but <EM>hardcopy</EM> is meant to be more general.  <STRONG>-</STRONG>
+          <STRONG>Thp</STRONG> produces output for an HP LaserJet printer.    Note
+          that  the  output is produced on standard out and it is
+          not spooled to the printer by this  command.    Use  of
+          this  option  will result in about 750K bytes of output
+          per page.   If the link to your LaserJet  is  slow,  it
+          might  take  several minutes to send it to the printer.
+          In a later version, this will be merged with the  <EM>hard-</EM>
+          <EM>copy</EM> option above for direct spooling.
+
+     <STRONG>-V</STRONG> <EM>text</EM>
+          Print a line of text along the left side of  the  graph
+          going upwards.
+
+     <STRONG>-X</STRONG> <EM>low</EM>:<EM>high</EM>
+          Specifies lower and upper limits for the  x-axis,  dis-
+          ables automatic computation of limits.
+
+     <STRONG>-Y</STRONG> <EM>low</EM>:<EM>high</EM>
+          Specifies lower and upper limits for the  y-axis,  dis-
+          ables automatic computation of limits.
+
+     <STRONG>-W</STRONG>    This option is followed by a character string consist-
+          ing  of  the  generic  window  system  options.   These
+          options are passed onto <EM>mcd</EM> or  <EM>xmcd</EM>.  This  option  is
+          used  to  pass along generic X window arguments to <EM>xmcd</EM>
+          or Suntool arguments to <EM>mcd</EM> on Suns.  This option might
+          not  have an effect on all systems.   For example, on a
+          system running X windows, to cause the plot  to  appear
+          at  a  particular screen location the following command
+          could be used:
+          <EM>scatplot</EM> -<EM>W</EM> "=<EM>300x250</EM>+<EM>50</EM>+<EM>200</EM>" <EM>file</EM>.
+          See <STRONG><A HREF="../man1.html/mcd.1.html">mcd(1-ESPS)</A></STRONG> and <STRONG><A HREF="../man1.html/xmcd.1.html">xmcd(1-ESPS)</A></STRONG> for details.
+
+     For Sun systems, this program will plot under either X  win-
+     dows,  or  Suntools.    By  default, if the <STRONG>-T</STRONG> option is not
+     used, it will expect X windows.   To plot under Suntools you
+     can  use  the  <STRONG>-Tsuntools</STRONG>  option.    If you always use Sun-
+     tools, you can avoid using the <STRONG>-T</STRONG>  option  by  defining  the
+     environment  variable  <STRONG>EPLOTDEV</STRONG>  to  be <EM>suntools</EM>.  This will
+     make the Suntools window system the default.  This  variable
+     is  ignored  if  the  machine  type  is  not  Sun4, SUN3, or
+     SUN386i.
+
+
+</PRE>
+<H2>EXAMPLES</H2><PRE>
+     <STRONG>scatplot</STRONG> <STRONG>-r</STRONG><EM>1</EM>:<EM>500</EM> <STRONG>-s</STRONG><EM>xo</EM> <STRONG>-e</STRONG><EM>5</EM>,<EM>6</EM>,<EM>15</EM>,<EM>19</EM> <EM>file1</EM> <EM>file2</EM>
+          makes a scatter plot (using the letter <EM>x</EM> for file1  and
+          the  letter  <EM>o</EM> for file2) of element 5 versus element 6
+          in <EM>file1</EM> and of element 15 versus element 19  in  <EM>file2</EM>
+          across the record range 1 to 500. The plot is displayed
+          on the graphics terminal.
+
+     <STRONG>scatplot</STRONG> <STRONG>-Tgps</STRONG> &lt;<EM>options</EM>&gt; &lt;<EM>files</EM>&gt;
+          sends the plot to standard output in Masscomp Unix  GPS
+          (``Graphic Primitive String'') format.
+
+     <STRONG>scatplot</STRONG> <STRONG>-Thardcopy</STRONG> &lt;<EM>options</EM>&gt; &lt;<EM>files</EM>&gt;
+          plots on the hardcopy plotter.
+
+     <STRONG>scatplot</STRONG> <STRONG>-Ttek</STRONG> &lt;<EM>options</EM>&gt; &lt;<EM>files</EM>&gt;
+          sends the plot to standard output in  Tektronix  format
+          and may be used to plot on a Tektronix terminal.
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     <EM>Scatplot</EM> does not read an ESPS parameter file.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     <EM>Scatplot</EM> does not read or write the ESPS common file.
+
+
+</PRE>
+<H2>ESPS HEADERS</H2><PRE>
+     <EM>Scatplot</EM> reads the  following  fields  from  the  ESPS  file
+     headers:  <EM>common</EM>.<EM>ndrec</EM>, <EM>common</EM>.<EM>tag</EM>.
+
+
+</PRE>
+<H2>DIAGNOSTICS</H2><PRE>
+     scatplot: please give only one -e option.
+     scatplot: -e option: even number of elements required.
+     scatplot: please specify an element range with the -e option.
+     scatplot: data is not tagged in <EM>file</EM>, cannot plot element 0.
+     scatplot: please specify <EM>n</EM>_<EM>symbols</EM> symbols with the -s option.
+     scatplot: start point after end point.
+     scatplot: only <EM>n</EM>_<EM>points</EM> in <EM>file</EM>.
+     scatplot: only <EM>n</EM>_<EM>records</EM> records read in <EM>file</EM>.
+     scatplot: calloc: could not allocate memory for <EM>array</EM>.
+     scatplot: d_mat_alloc: could not allocat memory <EM>matrix</EM>.
+     scatplot: command line too long: truncating string.
+
+
+</PRE>
+<H2>EXPECTED CHANGES</H2><PRE>
+     Allow range specifications of the form &lt;<EM>field</EM> <EM>name</EM>&gt;<STRONG>[</STRONG>&lt;<EM>range</EM>&gt;<STRONG>]</STRONG>
+     with FEA files.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man1.html/mlplot.1.html">mlplot(1- ESPS)</A></STRONG>,  <STRONG><A HREF="../man1.html/genplot.1.html">genplot(1 - ESPS)</A></STRONG>,  <STRONG><A HREF="../man1.html/fea_element.1.html">fea_element(1 - ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man3.html/grange_switch.3.html">grange_switch(3-ESPS)</A></STRONG>.
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Ajaipal S. Virdy
+     Generalized by Rodney Johnson to allow independent ranges in the input
+     files.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,4 @@
+string filename = "test.fana";
+string prog = "pplain";
+int start = 1;
+int nan = 4;

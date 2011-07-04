@@ -1,0 +1,137 @@
+#!/bin/csh -f
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1993  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)epochs.test	1.2	1/22/97	ERL
+# 
+# Written by:  Derek Lin
+# Checked by:
+# Revised by:
+# 
+# Brief description:  test script for epochs
+# 
+
+setenv USE_ESPS_COMMON off
+setenv ESPS_VERBOSE 0
+
+copysd $ESPS_BASE/demo/speech.sd s.d
+get_f0 s.d s.f0
+set nsamp = `hditem -i ndrec s.d`
+echo "computing RC..."
+refcof -wHANNING -l160 -S80 -o 10 -e0.0 -p1:$nsamp -z -Z s.d s.cof  
+get_resid -a1 -i0.98 s.d s.cof s.if
+
+echo 4 tests are perfomed...
+
+epochs s.if s.pe
+
+cat > ref1 <<EOD
+0 
+-10000 
+0 
+0 
+-10000 
+0 
+0 
+0 
+-10000 
+EOD
+
+pplain -r752:754 s.pe > test1
+pplain -r876:878 s.pe >> test1
+pplain -r8050:8052 s.pe >> test1
+
+echo 1. testing input/output, there should be no diff output
+diff test1 ref1
+
+cat > label_in <<EOD
+signal speech
+type 0
+color 121
+comment created using xlabel Wed Feb 16 11:03:11 1994
+font -misc-*-bold-*-*-*-15-*-*-*-*-*-*-*
+separator ;
+nfields 1
+#
+    0.087187  121 O
+    0.242778  121 V
+    0.333539  121 O
+    0.493845  121 V
+    0.573998  121 O
+EOD
+
+epochs -b label_in s.if s.pe
+
+cat > ref2 <<EOD
+0 
+-10000 
+0 
+0 
+-10000 
+0 
+0 
+0 
+0 
+EOD
+
+pplain -r752:754 s.pe > test2
+pplain -r876:878 s.pe >> test2
+pplain -r8050:8052 s.pe >> test2
+
+echo 2. testing label file input, there should be no diff output
+diff test2 ref2
+
+epochs -f s.f0 s.if s.pe2
+
+cat > ref3 <<EOD
+0 
+-10000 
+0 
+0 
+-10000 
+0 
+0 
+0 
+-10000 
+EOD
+
+pplain -r752:754 s.pe2 > test3
+pplain -r876:878 s.pe2 >> test3
+pplain -r8050:8052 s.pe2 >> test3
+
+echo 3. testing F0 file input, there should be no diff output
+diff test3 ref3
+
+epochs -o label_out s.if s.pe
+
+cat > ref4 << EOD
+           1.5202500
+           1.5283750
+           1.5362500
+           1.5445000
+           1.5527500
+           1.5610000
+           1.5686250
+           1.5767500
+           1.5846250
+          1.67000000
+EOD
+
+tail label_out > test4
+
+echo 4. testing output label file, there should be no diff output
+diff test4 ref4
+
+rm ref1 ref2 ref3 ref4 test1 test2 test3 test4
+#rm s.d s.f0 s.cof s.if s.pe label_in label_out
+
+
+

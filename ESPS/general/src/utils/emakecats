@@ -1,0 +1,36 @@
+#! /bin/sh
+#
+#   This material contains proprietary software of Entropic
+#   Speech, Inc.  Any reproduction, distribution, or	
+#   publication without the the prior written permission of
+#   Entropic Speech, Inc. is strictly prohibited.  Any
+#   public distribution of copies of this work authorized in
+#   writing by Entropic Speech, Inc. must bear the notice
+#							
+# (c) Copyright 1986, 1987 Entropic Speech, Inc.; All rights reserved
+#
+#  @(#)emakecats	3.3 9/30/97 ESI
+#
+#  John Shore - Entropic Speech, Inc. 
+#
+#This script forces eman(1-ESPS) to make the pre-stored 
+#nroff versions of man pages; these all go in the cat? directories
+
+PAGER='cat > /dev/null'
+export PAGER
+manpath=$ESPS_BASE/man
+binpath=$ESPS_BASE/bin
+list=`ls $manpath/man1 $manpath/man3 $manpath/man5`
+for i in $list
+do
+    file=`basename $i \.1`
+    file=`basename $file \.1t`
+    file=`basename $file \.3`
+    file=`basename $file \.3t`
+    file=`basename $file \.5`
+    file=`basename $file \.5t`
+    echo 'working on' $file
+    $binpath/eman $file 
+done
+
+

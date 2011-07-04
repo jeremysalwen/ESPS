@@ -1,0 +1,99 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)feaelemen.1t	3.2 5/23/88 ESI
+.TH FEA_ELEMENT 1\-ESPS 5/23/88
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+fea_element \- give information about position of fields in a FEA file
+.SH "SYNOPSIS"
+.B fea_element
+[
+.B -c
+] [
+.B -f
+.I field_name
+[
+.B -i
+.I item
+] [
+.B -n
+] [
+.I file
+]
+.SH DESCRIPTION
+.PP
+.I Fea_element
+gives information about the position of the fields in a ESPS FEA file.
+When called with no options, the program produces a table giving all
+field names, data type, size, and starting \fIelement\fR in the record.
+The element value given is  used by generic ESPS programs (such
+as stats) to identify the field in the file.  If the data is tagged, then
+the first field name refers to the tag.
+.PP
+To get information only about particular fields, rather than the entire
+file, the 
+.B -f
+option can be followed by a field name.   This option can be repeated as
+often as desired, but must be followed by a valid field name.
+When the 
+.B -f
+option is used, it can be followed by a 
+.B -i
+option to indicate a particular item within the field, rather than the
+starting point of the field.   This option does not directly support
+fields of rank greater than one; all fields with size greater than one
+are treated as simple vectors. 
+.PP
+If the 
+.B -c 
+option is given, then a table is not produced, but instead only the
+element number if written to standard output in a form that can used on
+a command following a 
+.B -e
+option on an ESPS program.  
+.PP
+When used with the \fB-c\fR option, the \fB-f\fR option without a
+\fB-i\fR option results in a range value being output that specifies all
+elements of the named field.   If only the first element is desired,
+then use \fB-i\fR 0.
+.PP
+The \fB-n\fR option causes the table header to be suppressed.  This is
+useful when the output of \fIfea_element\fR is to be the input to
+another program.
+.SH EXAMPLES
+.PP
+% fea_element file.fea
+.TS
+tab(;);
+l l l l.
+Name;Type;Size;Element
+=
+tag;LONG;1;0
+alpha;DOUBLE;10;1
+beta;FLOAT;10;11
+foo;LONG;5;21
+zeta;SHORT;1;26
+.TE
+.PP
+% fea_element -c -f alpha file.fea
+.br
+1-10
+.PP
+% fea_element -c -f foo -i 3 file.fea
+.br
+23
+.PP
+The following will cause \fIstats\fR to operate on the third 
+item in the field alpha.
+.br
+.sp
+% stats -e `fea_element -c -f alpha -i 3 file.fea` file.fea
+.SH BUGS
+.PP
+ESPS programs that use the \fB-e\fR option should accept a list of
+elements, rather than just a range.   Until they do, however, it only
+makes sense to use this program with the \fB-c\fR option look at entire
+fields, or a single item within a field.
+.SH "SEE ALSO"
+FEA(5\-ESPS)
+.SH "AUTHOR"
+Ajaipal S. Virdy, man page by Alan Parker.

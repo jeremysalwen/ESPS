@@ -1,0 +1,248 @@
+#! /bin/sh
+#
+# Install the section 3 manual pages
+#
+
+if test "x$MANDIR" = "x"
+ then
+  echo MANDIR macro not defined, check install scripts or seek help
+  exit 1
+fi
+
+if test ! -d $MANDIR
+ then
+  echo $MANDIR does not exist, check install scripts or seek help
+  exit 1
+fi
+
+if test ! -d $MANDIR/man3
+ then
+  echo $MANDIR/man3 does not exist, check install scripts or seek help
+  exit 1
+fi
+
+if test x$MANMOD = x
+ then
+  MANMOD=0640
+fi
+
+echo Comparing dates of .3 files here and in $MANDIR/man3
+echo This might take a while....
+
+for name in *.3*
+ do
+  if $BINDIR/newer $name $MANDIR/man3/$name
+   then
+    echo Updating $name...
+    set -x
+    rm -f $MANDIR/man3/$name
+    sed "s;\\\$MANDIR\\\$;$MANDIR;" $name >$MANDIR/man3/$name
+    chmod $MANMOD $MANDIR/man3/$name
+    set +x
+  fi
+done
+
+# rm any files that have the .so in them, or are symbolic links.
+# do this with a fancy grep that looks for a file that has a .so in it.
+# pipe that to cut out the first field.
+
+cd $MANDIR/man3
+LINK='ln -s'
+
+files=`grep -l  '^.so' *`
+if test "x$files" != "x"
+then
+  echo "Removing files that have .so in them... "
+  echo $files
+  rm $files
+fi
+echo "Removing files that are symbolic links... "
+find . -type l -exec rm {} \;
+
+echo "Making links..."
+set -x
+$LINK  addgenhd.3 addgenhdaf.3
+$LINK  addgenhd.3 addgenhdc.3
+$LINK  addgenhd.3 addgenhdd.3
+$LINK  addgenhd.3 addgenhde.3
+$LINK  addgenhd.3 addgenhdef.3
+$LINK  addgenhd.3 addgenhdf.3
+$LINK  addgenhd.3 addgenhdl.3
+$LINK  addgenhd.3 addgenhds.3
+$LINK  genzfunc.3 addgenzfun.3
+$LINK  cepstrum.3 afc2cep.3
+$LINK  anafearec.3 alloanafea.3
+$LINK  fearec.3 allofearec.3
+$LINK  feasdrecs.3 allofeasdr.3
+$LINK  feaspecrec.3 allofeaspe.3
+$LINK  feastat.3 allofeasta.3
+$LINK  dtw.3 dtw_l2.3
+$LINK  dtw.3 dtw_tl.3
+$LINK  window.3t windowd.3t
+$LINK  window.3t windowcf.3t
+$LINK  window.3t windowcd.3t
+$LINK  filtrec.3 allofiltre.3
+$LINK  scbkrec.3 alloscbkre.3
+$LINK  specrec.3 allospecre.3
+$LINK  vqfea.3 allovqfear.3
+$LINK  atoarray.3 atoarrayf.3
+$LINK  atoarray.3 atoarrays.3
+$LINK  alaw.3 atolinear.3
+$LINK  alaw.3 atolinear2.3
+$LINK  macros.3 bool.3
+$LINK  complex.3 cadd.3
+$LINK  calloc.3 callocd.3
+$LINK  calloc.3 callocf.3
+$LINK  calloc.3 calloci.3
+$LINK  calloc.3 callocl.3
+$LINK  calloc.3 callocs.3
+$LINK  macros.3 cantopen.3
+$LINK  complex.3 cdiv.3
+$LINK  cepstrum.3 cep2afc.3
+$LINK  sendwaves.3 closexwave.3
+$LINK  complex.3 cmult.3
+$LINK  complex.3 cmultacc.3
+$LINK  complex.3 conj.3
+$LINK  fearec.3 copyfearec.3
+$LINK  copygenhd.3 copygenhdu.3
+$LINK  complex.3 csub.3
+$LINK  etempname.3 etempfile.3
+$LINK  exvgethelp.3 exvhelpfil.3
+$LINK  exvgethelp.3 exvmaketex.3
+$LINK  rangeswitc.3 fldrangesw.3
+$LINK  rangeswitc.3 trangeswit.3
+$LINK  putsym.3 fputsym.3
+$LINK  putsym.3 fputsymf.3
+$LINK  putsym.3 fputsymi.3
+$LINK  putsym.3 fputsyms.3
+$LINK  rangeswitc.3 frangeswit.3
+$LINK  statsiz.3 fstatsiz.3
+$LINK  anafearec.3 getanafear.3
+$LINK  getcfft.3 getcfftd.3
+$LINK  getcfft.3 getcfftdin.3
+$LINK  getcfft.3 getcfftinv.3
+$LINK  getdata.3 getddata.3
+$LINK  getdata.3 getfdata.3
+$LINK  feaderiv.3 getfeaderi.3
+$LINK  fearec.3 getfearec.3
+$LINK  feasdrecs.3 getfeasdor.3
+$LINK  feasdrecs.3 getfeasdre.3
+$LINK  feaspecrec.3 getfeaspec.3
+$LINK  feastat.3 getfeastat.3
+$LINK  getfft.3 getfftd.3
+$LINK  getfft.3 getfftdinv.3
+$LINK  getfft.3 getfftinv.3
+$LINK  filtrec.3 getfiltrec.3
+$LINK  getgenhd.3 getgenhdaf.3
+$LINK  getgenhd.3 getgenhdc.3
+$LINK  getgenhd.3 getgenhdd.3
+$LINK  getgenhd.3 getgenhde.3
+$LINK  getgenhd.3 getgenhdef.3
+$LINK  getgenhd.3 getgenhdf.3
+$LINK  getgenhd.3 getgenhdl.3
+$LINK  getgenhd.3 getgenhds.3
+$LINK  getgenhd.3 getgenhdva.3
+$LINK  genzfunc.3 getgenzfun.3
+$LINK  getfft.3 getrfft.3
+$LINK  scbkrec.3 getscbkrec.3
+$LINK  getsdorec.3 getsdorecd.3
+$LINK  getsdorec.3 getsdorecf.3
+$LINK  getsdorec.3 getsdorecs.3
+$LINK  getsdrec.3 getsdrecd.3
+$LINK  getsdrec.3 getsdrecf.3
+$LINK  getsdrec.3 getsdrecs.3
+$LINK  specrec.3 getspecrec.3
+$LINK  getsym.3 getsymc.3
+$LINK  getsym.3 getsymd.3
+$LINK  getsym.3 getsymda.3
+$LINK  getsym.3 getsymfa.3
+$LINK  getsym.3 getsymi.3
+$LINK  getsym.3 getsymia.3
+$LINK  getsym.3 getsyms.3
+$LINK  vqfea.3 getvqfear.3
+$LINK  rangeswitc.3 grangeswit.3
+$LINK  writeheade.3 inhibithdr.3
+$LINK  anafearec.3 initanafea.3
+$LINK  feasdrecs.3 initfeasdh.3
+$LINK  feaspecrec.3 initfeaspe.3
+$LINK  feastat.3 initfeasta.3
+$LINK  vqfea.3 initvqfeah.3
+$LINK  iscomplex.3 isfieldcom.3
+$LINK  iscomplex.3 isfilecomp.3
+$LINK  iscomplex.3 istypecomp.3
+$LINK  alaw.3 lineartoa.3
+$LINK  alaw.3 lineartoa2.3
+$LINK  mulaw.3 lineartomu.3
+$LINK  linsearch.3 linsearch2.3
+$LINK  reverse.3 longrevers.3
+$LINK  rangeswitc.3 lrangeswit.3
+$LINK  lsqsolv.3 lsqsolv2.3
+$LINK  malloc.3 mallocd.3
+$LINK  malloc.3 mallocf.3
+$LINK  malloc.3 malloci.3
+$LINK  malloc.3 mallocl.3
+$LINK  malloc.3 mallocs.3
+$LINK  complex.3 modul.3
+$LINK  lsqsolv2.3 moorepen.3
+$LINK  mulaw.3 mutolinear.3
+$LINK  macros.3 notsps.3
+$LINK  sendwaves.3 openxwaves.3
+$LINK  autopefrc.3 pefautorc.3
+$LINK  fearec.3 printfeare.3
+$LINK  filtrec.3 printfilt.3
+$LINK  readolwmme.3 printolwmm.3
+$LINK  scbkrec.3 printscbk.3
+$LINK  specrec.3 printspec.3
+$LINK  anafearec.3 putanafea.3
+$LINK  putdata.3 putddata.3
+$LINK  putdata.3 putfdata.3
+$LINK  fearec.3 putfearec.3
+$LINK  feasdrecs.3 putfeasdre.3
+$LINK  feaspecrec.3 putfeaspec.3
+$LINK  feastat.3 putfeastat.3
+$LINK  filtrec.3 putfiltrec.3
+$LINK  scbkrec.3 putscbkrec.3
+$LINK  putsdrec.3 putsdrecd.3
+$LINK  putsdrec.3 putsdrecf.3
+$LINK  putsdrec.3 putsdrecs.3
+$LINK  specrec.3 putspecrec.3
+$LINK  putsym.3 putsymf.3
+$LINK  putsym.3 putsymi.3
+$LINK  putsym.3 putsyms.3
+$LINK  vqfea.3 putvqfear.3
+$LINK  randint.3 randintnr.3
+$LINK  autopefrc.3 rcautopef.3
+$LINK  rctrnfrm.3 rcreps.3
+$LINK  lartorc.3 rctolar.3
+$LINK  complex.3 realadd.3
+$LINK  complex.3 realmult.3
+$LINK  rctrnfrm.3 repsrc.3
+$LINK  macros.3 round.3
+$LINK  sendwaves.3 sendxwaves.3
+$LINK  sendwaves.3 sendxwaves2.3
+$LINK  feaderiv.3 setfeaderi.3
+$LINK  reverse.3 shortrever.3
+$LINK  addstr.3 strlistlen.3
+$LINK  symtype.3 symchoices.3
+$LINK  symtype.3 symdefinit.3
+$LINK  symtype.3 symlist.3
+$LINK  symtype.3 symprompt.3
+$LINK  symtype.3 symrange.3
+$LINK  symtype.3 symsize.3
+$LINK  macros.3 tryopen.3
+$LINK  macros.3 usage.3
+$LINK  typeconve.3t warnoncli.3t
+$LINK  matrixinv.3 matrixinvd.3
+$LINK   blockfilte.3 initfdata.3
+$LINK  determ.3 determd.3
+#LINK  feafiltrec.3 allofeafilt.3
+$LINK  feafiltrec.3 getfeafilt.3
+$LINK  feafiltrec.3 initfeafil.3
+$LINK  feafiltrec.3 putfeafilt.3
+$LINK  sdtosph.3 sdtosphere.3
+$LINK  eopen.3 eopen2.3
+$LINK  getgenhd.3 getgenhdco.3
+$LINK  fftcepstru.3 fftccepstr.3
+
+set +x
+exit 0

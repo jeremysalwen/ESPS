@@ -1,0 +1,30 @@
+# @(#)demo_menu	1.4 6/21/91 ERL - main demo control panel menu
+"Signal Generator" MENU
+	"Make test signal" DEFAULT	exec xtestsd test.sd
+	"Play test signal"	exec play -a files/test.sd
+	"xwaves+ on test signal"     exec xwaves -w wpro.sig_gen test.sd
+"Signal Generator" END
+
+"Plot3d Example"		/bin/sh -c "plot3d.demo"
+
+"DTW Spectral Example"		/bin/sh -c "dtwdemo"
+
+#"DTW Time Example"		/bin/sh -c "wdtwdemo"
+
+"Cepstrum Example"		/bin/sh -c "cepdemo"
+
+"Data Previewer"		/bin/sh -c "socket_waves; \
+				previewer files/speech.ratios files/menu.file"
+
+"waves+ Filters"    		/bin/sh -c "WAVES_PORT=5699;export WAVES_PORT;\
+				xwaves -w wpro.wfilters -s speech.sd"
+
+"waves+ Extensions" 		/bin/sh -c "xwaves -w wpro.wext"
+
+"Interactive Filter Design"	/bin/sh -c "xwaves -w wpro.xpz speech.sd"
+
+"TIMIT"				/bin/sh -c "cd timitdemo;rundemo"
+
+"See Demo Menu File"		exec xtext -F menus/demo_menu
+
+"See README"			exec xtext -F README.panel

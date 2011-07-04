@@ -1,0 +1,254 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)copysd.1	3.13 4/2/97 ESI/ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH COPYSD 1\-ESPS 4/2/97
+.SH NAME
+copysd - copy portions of sampled data files to a new file (with scaling and type change)
+.SH SYNOPSIS
+.B copysd
+[
+.BI \-a " add_constant"
+] [
+.BI \-d " data_type"
+] [
+.B \-o 
+] [
+.B \-g 
+] [
+.BI \-p " range"
+] [
+.BI \-r " range"
+] [
+.BI \-s " scale"
+] [
+.BI \-x " debug_level"
+] [
+.BI \-S " time_range"
+] [
+.I " file1"
+[
+.I " file2 ..."
+] ]
+.I " outfile"
+.SH DESCRIPTION
+.PP
+.I Copysd
+copies selected portions of sampled data files into a new sampled data
+file.  In addition to the range of points that are copied,
+.I copysd
+allows the user to change the data type as well as to apply
+multiplicative and additive scale factors.  Allowable output data
+types that can be specified are bytes, shorts, longs, float, 
+double, byte_cplx, short_cplx, long_cplx, float_cplx, and
+double_cplx; the default data type of the output file is that of the first
+input file.
+.PP
+If an input file name is "-", stdin is read; similarly,
+if
+.I outfile
+is "-", the output is written to stdout.  If only a single
+input file is involved, it may be omitted from the command line, in
+which case 
+.I copysd
+gets its name from ESPS Common (see EXAMPLES).  
+.PP
+When a floating type is converted to an integer type,
+the values are rounded.
+When a complex type is converted to a real type,
+the imaginary part is discarded.
+Values that are too large to represent in the output data type are
+clipped, and no warning is given.
+.PP
+For appending to an existing FEA_SD file, use \fIcopysps\fP
+(1\-\s-1ESPS\s+1).  
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-a " add_constant \fR[0]\fP"
+The argument \fIadd_constant\fP is a float value that is added 
+to samples before they are written to the output.
+.TP
+.BI \-d " data_type"
+The argument representing the desired
+output data type in \fIoutfile\fP :
+byte, short, long, float, double, byte_cplx, short_cplx, long_cplx,
+float_cplx, and double_cplx.
+.TP
+.B \-g
+By default, generic header items are not copied from the input files to
+the output file, except for \fIrecord_freq\fR.  The item
+\fIstart_time\fR is computed and filled in.   If the \fB-g\fR option is
+used, then all generic are copied from the first input file to the
+output file.  Note that this might result in some of these values not
+being valid over the range of data copied.   This program has no way of
+knowing the semantics of generic header items.   
+.TP
+.B \-o
+Normally the ESPS headers from the input files are
+copied into the header of the new output file as source files.
+If the
+.B \-o
+is specified, the input files' headers are not stored in the output file.
+.TP
+.BI \-p " range"
+\fB\-p\fP is a synonym for \fB\-r\fP.
+.TP
+.BI \-r " first:last"
+.TP
+.BI \-r " first:+incr
+Determines the range of points to be copied from each input file
+(same range for all input files).  In the first form, a pair of
+unsigned integers gives the first and last points of the range.  If
+.I first
+is omitted, 1 is used.  If 
+.I last 
+is omitted, the last point in the file is used.  The second form is
+equivalent to the first with 
+.I "last = first + incr".
+To specify a range in seconds, use \fB\-S\fP (see below)
+instead of \fB\-r\fP or \fB\-p\fP.
+.TP
+.BI \-s " scale \fR[1]\fP"
+The argument \fIscale\fP is a float value by which the input samples
+are multiplied before being written to the output.
+.TP
+.BI \-x " debug_level"
+If \fIdebug_level\fP is positive, \fIcopysd\fP prints progress and
+diagnostic messages.  Debug levels 1-3 are defined \- the higher the
+number, the more verbose the messages.  The default level is zero,
+which causes no debug output.
+.TP
+.BI \-S " start_time:end_time"
+.TP
+.BI \-S " start_time:+time_incr"
+\fB-S\fP is similar to \fB-p\fP and \fB-r\fP, except that the 
+range limits are interpreted as times (in seconds).  If
+\fIstart_time\fP is omitted, it is set to the value of the 
+\fIstart_time\fP generic header item.  If \fIend_time\fP 
+is omitted, it is set to the time corresponding to the end of the file.  
+No more than one of the options \fB\-p\fP, \fB\-r\fP, and \fB\-S\fP
+should be used.
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.SH ESPS COMMON
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+The following items are read from the ESPS Common File provided that
+only one input file or no input file is given on the command line and
+provided that standard input isn't used.  
+.IP
+.I "filename - string"
+.IP
+This is the name of the input file.  If no input file is 
+specified on the command line, \fIfilename\fP is taken to be the
+input file.  If an input file is specified on the command line, 
+that input file name must match \fIfilename\fP or the other 
+items (below) are not read from Common. 
+.IP
+.I "start - integer"
+.IP
+This is the starting point in the input file to begin copying.
+It is not read if the \fB\-p\fP, \fB\-r\fP, or \fB\-S\fP option is used.  
+.sp
+.I "nan - integer"
+.IP
+This is the number of points to copy from the input file.
+It is not read if the \fB\-p\fP, \fB\-r\fP, or \fB\-S\fP option is used.
+A value of zero means the last point in the file.
+.sp
+.PP
+Again, the values of \fIstart\fR and \fInan\fR are only used if the
+input file on the command line is the same as \fIfilename\fP in the
+common file, or if no input file was given on the command line.  If
+\fIstart\fR and/or \fInan\fR are not given in the common file, or if
+the common file can't be opened for reading, then \fIstart\fR
+defaults to the beginning of the file and \fInan\fR defaults to the
+number of points in the file.
+.PP
+The following items are written into the ESPS Common file:
+.IP
+.I "start - integer"
+.IP
+The starting point from the input file.
+.sp
+.I "nan - integer"
+.IP
+The number of points in the selected range.
+.sp
+.I "prog - string"
+.IP
+This is the name of the program (\fIcopysd\fP in this case).
+.sp
+.I "filename - string"
+.IP
+The name of the input file.  If multiple input files are processed, this
+is the name of the first file.   
+.PP
+These items are not written to ESPS COMMON if the output file is <stdout>.
+.SH "ESPS HEADERS"
+.PP
+Items in the FEA_SD header of \fIoutfile\fP are set as follows:
+.IP
+.nf
+.IR record_freq " = sampling frequency of input files (must be same in all)
+.fi
+.PP
+The generic header item \fIstart_time\fP (type DOUBLE) is written in
+the output file.  The value written is computed by taking the
+\fIstart_time\fP value from the header of the first input file (or
+zero, if such a header item doesn't exist) and adding to it the offset
+time (from the beginning of the first input file) of the first point
+copied.  If the \fB-s\fP option is used, the corresponding \fIscale\fP
+is written as the generic \fIscale_factor\fP.  If the \fB-a\fP option
+is used, the corresponding \fIadd_constant\fP is written as the
+generic \fIadd_constant\fP.
+.SH EXAMPLES
+.PP
+In this example, a range of sampled data is selected from a plot of
+\fIfile.sd\fP and then copied to another file \fIsegment.sd\fP
+(\fIcopysd\fP gets the file name and range from ESPS Common):
+.nf
+
+    %plotsd file.sd
+    %range
+    %copysd segment.sd
+
+.fi
+.PP
+In this example, some Gaussian noise is added to an existing 
+file \fId1.sd\fP, and the results are copied, together with 
+the contents of two other sampled data files, to the file
+\fIcombined.sd\fP:
+.nf
+
+    %testd -Tgauss - | addsd - d1.sd - | copysd - d2.sd d3.sd combined.sd
+
+.fi
+.SH SEE ALSO
+.PP
+.nf
+\fIcopysps\fP(1\-\s-1ESPS\s+1), FEA_SD(5\-\s-1ESPS\s+1), ESPS(5\-\s-1ESPS\s+1), 
+\fItestsd\fP(1\-\s-1ESPS\s+1), \fIsetmax\fP(1\-\s-1ESPS\s+1), \fIfeafunc\fP (1\-\s-1ESPS\s+1)
+.fi
+.SH BUGS
+.PP
+It would have been better if \fB-S\fP had been lower case (consistent
+with other ESPS programs), but we left \fB-s\fP for scaling so as to
+not break old programs.  The result is error prone.  As a precaution,
+a warning message is issued if a ':' is used in the argument to
+\fB-s\fP.  
+.SH AUTHOR
+.PP
+Alan Parker, John Shore
+.br

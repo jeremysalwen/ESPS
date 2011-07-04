@@ -1,0 +1,26 @@
+"Release Notes" MENU
+	"ESPS Release Notes"	`get_esps_base`/doc/esps.rel
+	"waves+ Release Notes"	`get_esps_base`/doc/waves.rel 
+	"Machine Specific Release Notes" `get_esps_base`/doc/machine_specific.doc
+"Release Notes" END
+"ESPS Tech Notes" MENU
+	"Introduction to ESPS"	`get_esps_base`/doc/intro.doc
+	"File Conversions"	`get_esps_base`/doc/convert.doc
+	"Record Keeping in ESPS"	`get_esps_base`/doc/history.doc
+	"Parameter Files"	`get_esps_base`/doc/param.doc
+	"ESPS Data Files"	`get_esps_base`/doc/files.doc
+	"Filtering Sampled Data" `get_esps_base`/doc/filter.doc
+	"Feature file subtypes" `get_esps_base`/doc/fea.doc
+	"FEA Files and Sampled Data" `get_esps_base`/doc/feasd.doc
+	"Machine Independent File I/O" `get_esps_base`/doc/miio.doc
+	"Living with the Entropic License Manager" `get_esps_base`/doc/keys.doc
+	"X Interface Generation in ESPS and xwaves" `get_esps_base`/doc/xig.doc
+	"ESPS/waves+ Programming Guidelines"	`get_esps_base`/doc/guide.doc
+	"Fortran and C"		`get_esps_base`/doc/FandC.doc
+"ESPS Tech Notes" END
+"Other Documents" MENU
+	"Default Waves+ profile (.wave_pro)" `get_esps_base`/lib/waves/.wave_pro
+	"Using XView: Fonts and Window Manager Hints"  `get_esps_base`/xview/README
+	"Help with Hardcopy Output"		`get_esps_base`/doc/hardcopy.doc
+"Other Documents" END
+

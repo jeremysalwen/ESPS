@@ -1,0 +1,3 @@
+# @(#)xpz.menu	1.1 6/18/91 ERL - Interactive filter design demo
+" Filter Design "   shell xpz -g1 -Ifilters/xpz.feafilt  filters/proto.filt
+

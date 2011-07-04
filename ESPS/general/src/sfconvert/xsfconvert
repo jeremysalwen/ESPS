@@ -1,0 +1,65 @@
+#!/bin/sh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1992  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)xsfconvert	1.3	1/14/93	ERL
+# 
+# Written by:  Derek Lin
+# Checked by:
+# Revised by:
+# 
+# Brief description:
+# 
+
+# prompts for the file, and options for sfconvert
+
+USE_ESPS_COMMON=off;export USE_ESPS_COMMON
+ESPS_VERBOSE=0;export ESPS_VERBOSE
+
+infile=$1
+outfile=$2
+tempfile=/tmp/interact.params
+
+PARAM=`get_esps_base`/lib/params/Psfconvert
+exprompt -X0 -Y0 -P $PARAM $tempfile
+
+new_sample_freq=`getparam -P $tempfile -p new_sample_freq`
+deviation=`getparam -P $tempfile -p deviation`
+corner_freq=`getparam -P $tempfile -p corner_freq`
+rej_db=`getparam -P $tempfile -p rej_db`
+trans_band=`getparam -P $tempfile -p trans_band`
+sfwin_type=`getparam -P $tempfile -p sfwin_type`
+sfwin_len=`getparam -P $tempfile -p sfwin_len`
+channels=`getparam -P $tempfile -p channels`
+output_type=`getparam -P $tempfile -p output_type`
+dflag=`getparam -P $tempfile -p dflag`
+kaiser=`getparam -P $tempfile -p Kaiserflag`
+
+rm -f $tempfile
+
+if test $dflag = '1'
+then
+	dflag='-d'
+else
+	dflag=''
+fi
+
+if test $kaiser = '1'
+then
+	sfconvert -s$new_sample_freq -v$deviation -c$corner_freq -R$rej_db -t$trans_band -e$channels -o$output_type $dflag $infile $outfile
+else
+	sfconvert -s$new_sample_freq -v$deviation -c$corner_freq -w$sfwin_type -l$sfwin_len -e$channels -o$output_type $dflag $infile $outfile
+fi
+	
+exit 1
+
+
+

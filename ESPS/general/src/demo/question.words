@@ -1,0 +1,14 @@
+signal question.sd
+type 0
+comment created using xlabel Thu Apr 18 12:55:19 1996
+color 115
+font -*-times-medium-r-*-*-17-*-*-*-*-*-*-*
+separator ;
+nfields 1
+#
+    0.159100  115 were
+    0.240022  115 you
+    0.537649  115 mowing
+    0.744754  115 during
+    0.817447  115 the
+    1.304349  115 morning

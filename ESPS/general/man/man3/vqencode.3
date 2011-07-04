@@ -1,0 +1,100 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)vqencode.3	1.6 11 Aug 1991 ESI
+.TH VQENCODE 3\-ESPSsp 11 Aug 1991
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+vqencode \- vector quantize a single feature vector using a full-search codebook
+.SH SYNOPSIS
+.ft B
+.nf
+long
+vqencode(fea, fea_dim, codebook, cbk_size, cbk_dim, dist_val, distort, dist_err)
+float *fea;		\fI/*feature vector to be encoded*/\fP
+long fea_dim;	\fI/*dimension of feature vector*/\fP
+float **codebook;	\fI/*the full search vq codebook*/\fP
+long cbk_size;	\fI/*number of codewords in codebook*/\fP
+long cbk_dim;	\fI/*dimension of each codeword*/\fP
+double *dist_val;	\fI/*distortion between fea and selected codeword*/\fP
+double (*distort)();	\fI/*routine to compute distortions*/\fP
+int *dist_err;	\fI/*for passing back errors from distort*/\fP
+.fi
+.ft
+.SH DESCRIPTION
+.PP
+.I vqencode
+takes a feature vector
+.I fea
+of length 
+.I fea_dim
+and searches the full-search vector quantization codebook 
+.I codebook
+for the closest codeword.  The index of the closest codeword is
+returned as the function value.  Thus if 
+.I ind
+is the return value from 
+.I vqencode,
+then \fIcodebook\fR[\fIind\fR] is a pointer to the closest 
+codeword.  The distortion value between 
+.I fea
+and this codeword is returned via the parameter
+.I dist_val.  
+.PP
+The
+.I codebook
+parameter is interpreted as a pointer to a matrix of floats containing
+.I cbk_size
+rows of 
+.I cbk_dimen
+columns each.  Space for this matrix must be allocated by 
+the calling program \- such a pointer can be assigned by
+means of 
+.I f_mat_alloc
+(3\-ESPSu).  Such codebook matrices correspond to the 
+.I codebook
+element of the struct vqcbk (see 
+.I vqdesign
+(3\-ESPSsp)).  
+.PP
+The distortion measure used in searching 
+.I codebook
+is passed to 
+.I vqencode
+as the function pointer
+.I distort.  
+If \fIdistort\fR == NULL, a mean-square-error distortion is used, in
+which case \fIvqencode\fP requires that \fIfea_dim\fP and
+\fIcbk_dim\fP be the same (it exits with an assertion violation if
+this is not the case).  Otherwise, the indicated function is called to
+compute distortions.  For the required synopsis of
+.I distort,
+see 
+.I vqdesign
+(3\-ESPSsp).  Valid distortion 
+functions include in their synopsis an error return value, and this 
+value is passed back to the caller of 
+.I vqencode
+via the parameter
+.I dist_err.  
+Thus, if 
+.I *dist_err
+is non-zero after 
+.I vqencode
+returns, then an error was detected when
+.I vqencode
+called 
+.I distort.  
+.SH EXAMPLE
+
+.SH BUGS
+None known.
+.SH SEE ALSO
+.PP
+vqdesign(3\-ESPSsp), f_mat_alloc (3\-ESPSu), 
+vqdes(1\-ESPS), vq(1\-ESPS)
+.SH REFERENCES
+.PP
+See
+.I vqdesign
+(3\-ESPSsp)
+.SH AUTHOR
+Manual page and program by John Shore.

@@ -1,0 +1,11 @@
+# @(#)vqparams	3.3 6/12/91 ESI - vqparams file for ESPS vqdemo script
+string fea_field = "spec_param";
+int fea_dim = 10;
+float conv_ratio = .1;
+int vq_size = 16;
+string dist_type = "MSE";
+string cbk_struct = "FULL_SEARCH";
+string cbk_type = "MISC";
+string init_file = "test.cbk";
+int init_rec = 3;
+string init_behav = "INIT_CLUSTER";

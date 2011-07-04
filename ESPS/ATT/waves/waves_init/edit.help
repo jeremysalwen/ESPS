@@ -1,0 +1,24 @@
+This tool bar provides limited support for editing signals.  A special
+file in the current directory (wcutbuffer.d) is used to hold a signal
+segment.  The operation "Delete to buffer" cuts the marked region out
+of the current waveform and copies it to the buffer.  The operation
+"Copy to buffer" just copies the marked regiou to the buffer.  The
+operation "View buffer" loads the buffer as a waves signals.  There is
+an associated menu operation "insert contents of edit buffer" that
+inserts the buffer's current contents at the cursor.  
+
+You might also want to bind a mouse button to the built-in command 
+"modify signal".  
+
+WARNINGS: 
+
+These operations (including "modify signal") do not work on
+partially-buffered signals.  Repeated use of "insert contents of edit
+buffer" generates ridiculously long file names (a new file is created
+each time).  
+
+While the edit operations suffice in some limited situations, they do
+not provide a general editing (or mixing) capability and should not be
+approached as such.
+
+# @(#)edit.help	1.1 7/7/93

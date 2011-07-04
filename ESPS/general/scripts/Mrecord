@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Shows two alternative ways to get the job done. the esfconvert route
+# is required if you need to get exactly, for instance, 16000 Hz
+# sample rate, but if you are doing sub-multiples of 44100, then the
+# sample-rate conversion inside of audioM will do nicely.
+
+# NOTE: This produces ESPS-format output files...
+
+# audioM -r -n1 -f11025 | btosps -cd -f11025 - $1
+
+ audioM -r -n1 | btosps -n1 -cd -f44100  - - | esfconvert -s16000 -v.01 -  $1
+

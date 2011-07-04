@@ -1,0 +1,90 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)pspsdiff.1	3.2 5/6/88 ESI
+.TH PSPSDIFF 1\-ESPS 5/6/88
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+pspsdiff \- differential ESPS file comparator
+.SH SYNOPSIS
+.B pspsdiff
+[
+.B \-aDghHlvx
+] [
+.BI \-r start:end
+] [
+.BI \-t tag
+] [
+.BI \-f field_name
+]
+.I file1 file2
+.SH DESCRIPTION
+.I Pspsdiff
+is a shell script which compares the \fIpsps\fP(1\-ESPS) listings of two
+ESPS files.  All options of \fIpsps\fP(1\-ESPS) are supported.
+Diff(1) is used to print the output on stdout.
+.SH OPTIONS
+.PP
+.TP
+.B \-a
+Compare every parameter in every subheader.  Use of
+this option along with \fB\-v\fR forces comparison of all information
+contained in the two ESPS files.
+.TP
+.B \-D
+Suppress printing of data records. Compares header information only.
+.TP
+.BI \-f " field_name"
+Compares only the feature file field that matches the given field name.
+A warning is printed on stderr if the requested field name does not
+exist.  This option may be specified as often as desired.
+.TP
+.B \-g
+Comparison is made by printing the ESPS files in a generic format.
+.TP
+.B \-h
+Compare the common part of all embedded headers in the file.
+.TP
+.B \-H
+Suppress comparison of header information. Compares record information only.
+.TP
+.B \-l
+Compare all the parameters in the header of the file, except for included
+subheaders.
+.TP
+.BI \-r " start:end"
+.TP
+.BI \-r " start:+incr
+Determines the range of data records to compare.  In the first form, a
+pair of unsigned integers gives the first and last points of the range.  
+If 
+.I start
+is omitted, 1 is used.  If 
+.I end
+is omitted, the last point in the file is used.  The second form is
+equivalent to the first with 
+.I "end = start + incr".
+.TP
+.BI \-t " tag"
+Only compare the data record with the corresponding tag.
+A warning message is printed if this option is specified and the data
+is not tagged.  This option may be specified as many times as
+desired.
+.TP
+.B \-v
+This option enables comparison of feature file field definitions. Otherwise
+feature file field definitions are not compared, even if the \fB\-l\fR
+option is used.   Using this option also sets the \fB\-l\fR.  Use of
+this option along with \fB\-a\fR forces comparison of all information
+contained in the two ESPS files.
+.TP
+.B \-x
+Compare debug output.
+.SH BUGS
+Options that take an argument (i.e., \fB\-f\fP, \fB\-r\fP, and \fB\-t\fP)
+require a space between the option and the argument.
+.SH DIAGNOSTICS
+The program bombs if the specified files does not exist, or if
+the files are not ESPS files.
+.SH SEE ALSO
+diff(1), psps(\1-ESPS)
+.SH AUTHOR
+Ajaipal S. Virdy, Entropic Speech, Inc.

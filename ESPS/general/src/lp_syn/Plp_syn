@@ -1,0 +1,8 @@
+# @(#)Plp_syn	1.4 %G ERL
+int start ?= 1: "starting frame position";
+int nan ?= 0: "number of frames to process, 0 means end of file";
+float int_const ?= 0.95: "first-order integrator constant";
+float synth_rate ?= 1.0: "synthesis rate";
+float f0_ratio ?= 1.0 : "F0 scale factor";
+int up_ratio ?= 1: "upsampling ratio";
+float damp ?= 0.1 :"damping factor";

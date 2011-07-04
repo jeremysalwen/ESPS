@@ -1,0 +1,291 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     lpcana  -  Performs  LPC  analysis  using  a  crude   pitch-
+     synchronous method
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>lpcana</STRONG> [ <STRONG>-P</STRONG> <EM>param</EM>_<EM>file</EM> ] [ <STRONG>-r</STRONG> <EM>range</EM> ] [ <STRONG>-p</STRONG>  <STRONG>range</STRONG> ]  [   <STRONG>-</STRONG> <STRONG>m</STRONG>
+     <EM>anal</EM>_<EM>method</EM> ] [ <STRONG>-F</STRONG> ] [ <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> ] <EM>input</EM>_<EM>sd</EM> <EM>output</EM>_<EM>fea</EM>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     Use of this program is not recommended.  For pitch  synchro-
+     nous  analysis,  see  <STRONG><A HREF="../man1.html/epochs.1.html">epochs  (1 -ESPS)</A></STRONG> and <STRONG><A HREF="../man1.html/ps_ana.1.html">ps_ana (1-ESPS)</A></STRONG>.
+     <EM>lpcana</EM> takes as input an ESPS sampled data <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD (5 - ESPS)</A></STRONG>
+     file and it computes LPC filter coefficients and the excita-
+     tion parameters using a crude pitch-synchronous method.  The
+     results  are stored in the <STRONG><A HREF="../man5.html/FEA_ANA.5.html">FEA_ANA (5-ESPS)</A></STRONG> file <EM>output</EM>_<EM>fea</EM>.
+     For each analysis frame of data, <EM>lpcana</EM> generates reflection
+     coefficients,  power,  and  voicing  information.  An output
+     FEA_ANA record is generated for each pulse  (several  pulses
+     per  analysis  frame),  with  enough  information  to enable
+     <STRONG><A HREF="../man1.html/lpcsynt.1.html">lpcsynt (1-ESPS)</A></STRONG> to re-synthesize speech.  The nominal frame
+     size  is  set  by the parameter <EM>lpc</EM>_<EM>frame</EM>_<EM>size</EM> but is deter-
+     mined adaptively by the program.  If the <STRONG>-F</STRONG>  option  is  not
+     used,  <EM>refcof</EM>  performs  an  additional spectral analysis on
+     each pulse within the analysis frame and  puts  out  a  dif-
+     ferent  set of reflection coefficients for each pulse (if <STRONG>-F</STRONG>
+     is used, all pulses from the same analysis  frame  have  the
+     same reflection coefficients).
+
+     If "-" is used in place of <EM>input</EM>_<EM>sd</EM>, standard input is used.
+     If  " - " is used in place of <EM>output</EM>_<EM>fea</EM>, standard output is
+     used.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following options are supported:
+
+     <STRONG>-P</STRONG> <EM>param</EM>_<EM>file</EM>
+          uses the parameter  file  <EM>param</EM>_<EM>file</EM>  rather  than  the
+          default file <EM>params</EM>.
+
+     <STRONG>-p</STRONG> <EM>range</EM>
+          Selects a subrange of points to be analyzed. The  start
+          and end points are defined with respect to the original
+          SD file that is the source of the input  FEA_ANA  file.
+          The  range  is  specified using the format <EM>start</EM>-<EM>end</EM> or
+          <EM>start</EM>:<EM>end</EM> or <EM>start</EM>:+<EM>nan</EM>.  Either <EM>start</EM> or  <EM>end</EM>  may  be
+          omitted,  in  which case the omitted parameter defaults
+          respectively to the start or end of the input SD file.
+
+     <STRONG>-r</STRONG> <EM>range</EM>
+          <STRONG>r</STRONG> is a synonym for <STRONG>p</STRONG>.
+
+     <STRONG>-m</STRONG> <EM>anal</EM>_<EM>method</EM>[mburg]
+          Specifies the spectrum analysis method.  The default is
+          the modified Burg method.  Also available are the auto-
+          correlation method ("autoc"), ovariance method ("cov"),
+          Burg   method   ("burg"),  fast  modified  Burg  method
+          ("fburg"),   stuctured   covariance    ("strcov"    and
+          "strcov1"),  and  vector Burg ("vburg", fast approxima-
+          tion to structured covariance.  Of the  two  structured
+          covariance methods, the first ("strcov" is considerably
+          faster and  better  behaved;  "strcov1"  is  older  but
+          included  as  it  may prove useful on occasion.  The <STRONG>-m</STRONG>
+          option overrides the value that may be in the parameter
+          file.  The default applies only if there is no value in
+          the parameter file.
+
+     <STRONG>-F</STRONG>    Specifies use of the framing method  of  the  previous
+          version of <EM>refcof</EM>, in which the reflection coefficients
+          for each pulse in an analysis frame are determined by a
+          spectral  analysis  of  the entire frame.  If <STRONG>-F</STRONG> is not
+          used, an additional spectrum analysis is performed  for
+          each pulse.
+
+     <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> [0]
+          option specifies that various information or  debugging
+          messages be printed on standard error.
+
+
+</PRE>
+<H2>ESPS HEADER</H2><PRE>
+     The generic header item <EM>start</EM>_<EM>time</EM> (type DOUBLE) is  written
+     in the output file.  The value written is computed by taking
+     the <EM>start</EM>_<EM>time</EM> value from the header of the input  file  (or
+     zero,  if such a header item doesn't exist) and adding to it
+     the offset time (from the beginning of the  input  file)  of
+     the first point or record processed.  Unlike many other ESPS
+     programs, <EM>lpcana</EM> does <EM>not</EM>  write  the  generic  header  item
+     <EM>record</EM>_<EM>freq</EM>  (used by <EM>waves</EM>+ for time synchronization); this
+     is because the output records  from  <EM>lpcana</EM>  result  from  a
+     variable frame length analysis.
+
+     The following generic header items are added (in addition to
+     the standard ones (FEA_ANA-5):
+
+          <EM>p</EM>_<EM>offset</EM> - <EM>integer</EM>
+
+          How many points before the beginning of the  pulse  the
+          spectrum analysis window is started.
+
+
+          <EM>dcrem</EM> - <EM>string</EM>
+
+          Yes means that the DC component was removed before  the
+          data was analyzed.
+
+
+          <EM>psynch</EM> - <EM>string</EM>
+
+          Yes means that the spectrum analysis is done pitch syn-
+          chronously.
+
+
+          <EM>matsiz</EM> - <EM>integer</EM>
+
+          The size of the autocorrelation matrix that was used in
+          the spectrum analysis.
+
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     The values of parameters obtained from  the  parameter  file
+     are printed if the environment variable ESPS_VERBOSE is 3 or
+     greater.  The default value is 3.  The following  parameters
+     are read from the parameter file:
+
+          <EM>start</EM> - <EM>integer</EM>
+
+          This is the starting point  in  the  input  file.   Its
+          value is superseded by a <STRONG>-p</STRONG> value. The default value is
+          1.
+
+
+          <EM>nan</EM> - <EM>integer</EM>
+
+          This is the number of points to analyze. Its  value  is
+          superseded by a <STRONG>-p</STRONG> value.
+
+
+          <EM>lpc</EM>_<EM>filter</EM>_<EM>order</EM> - <EM>integer</EM>
+
+          This is the order of the linear prediction filter  that
+          represents the vocal tract.  The maximum allowable size
+          is 20.  The default value is 10.
+
+          <EM>lpc</EM>_<EM>frame</EM>_<EM>size</EM> - <EM>integer</EM>
+
+          This is the nominal frame size for performing  spectral
+          analysis. The default value is 160.
+
+          <EM>minimum</EM>_<EM>pulse</EM>_<EM>length</EM> - <EM>integer</EM>
+
+          This specifies the minimum pitch period. The  algorithm
+          has  been well tested for the pitch range of 50-400 Hz.
+          Thus a typical value of this variable is 20, assuming a
+          sampling rate of 8000 Hz.  The default value is 20.
+
+          <EM>method</EM> - <EM>string</EM>
+
+          The spectrum analysis method  to  use.   The  available
+          methods   are   autocorrelation  ("autoc"),  covariance
+          ("covar"), Burg ("burg"), modified Burg ("mburg"), fast
+          modified  Burg  method  ("fburg"), stuctured covariance
+          ("strcov" and "strcov1"), and vector Burg  ("vburg",  a
+          fast  approximation  to  structured  covariance.  If no
+          value is given in the file, the modified Burg method is
+          used  by  default.   The  <EM>method</EM>  is  not read from the
+          parameter file if the command line option <STRONG>-m</STRONG> is used.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     If the input is standard input, COMMON is not read. If  COM-
+     MON  is  read and the command line input filename does match
+     the filename listed in COMMON then, the following items  are
+     read.  If  the  two  filenames do not match, then no further
+     parameters are read from COMMON.
+
+          <EM>start</EM> - <EM>integer</EM>
+
+          This is the starting point in the input file.  Any  <STRONG>-</STRONG> <STRONG>p</STRONG>
+          option value supersedes the COMMON specified value.
+
+          <EM>nan</EM> - <EM>integer</EM>
+
+          This is the number of points to analyze. A <STRONG>-p</STRONG> specified
+          value supersedes the COMMON specified value.
+
+     ESPS Common  processing  may  be  disabled  by  setting  the
+     environment  variable USE_ESPS_COMMON to "off".  The default
+     ESPS Common file is .espscom in the user's  home  directory.
+     This  may  be  overidden by setting the environment variable
+     ESPSCOM to the desired path.  User feedback of  Common  pro-
+     cessing   is   determined   by   the   environment  variable
+     ESPS_VERBOSE, with 0 causing no feedback and increasing lev-
+     els causing increasingly detailed feedback.  If ESPS_VERBOSE
+     is not defined, a default value of 3 is assumed.
+
+
+</PRE>
+<H2>COMMENTS</H2><PRE>
+     The algorithm has been developed for speech sampled at  8000
+     Hz.  It  works  best  when the data is recorded using a good
+     microphone. Its quality is degraded, when working with tele-
+     phone speech (especially if carbon microphone is used).
+
+     The speech data is not pre-emphasized prior to LPC analysis,
+     and  the  modified Burg method is used for computing the LPC
+     parameters.
+
+
+</PRE>
+<H2>FUTURE CHANGES</H2><PRE>
+     NONE.
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     If the input data consists of a long string  of  zeros,  the
+     program bombs.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man1.html/refcof.1.html">refcof (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/lpcsynt.1.html">lpcsynt (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA_ANA.5.html">FEA_ANA (5-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD (5-ESPS)</A></STRONG>, <STRONG><A HREF="../man3.html/compute_rc.3.html">compute_rc (3-ESPSsp)</A></STRONG>
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     S. Shankar Narayan.  ESPS 3.0 modification by David  Burton.
+     Modified for <STRONG><A HREF="../man3.html/compute_rc.3.html">compute_rc (3-ESPSsp)</A></STRONG> and for single-pulse out-
+     put by John Shore.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

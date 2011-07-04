@@ -1,0 +1,87 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)writeheade.3	1.7 06 Aug 1991 ESI
+.TH WRITE_HEADER 3\-ESPSu 06 Aug 1991
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+write_header \- write a ESPS file header out to data file
+.br
+inhibit_hdr_date \- inhibit updating the header field date
+.SH SYNOPSIS
+.ft B
+void write_header (hd,fd)
+.br
+struct header *hd;
+.br
+FILE *fd;
+.ft
+.br
+.sp
+.ft B
+void inhibit_hdr_date ()
+.ft
+.SH DESCRIPTION
+.I write_header
+attempts to write a ESPS file header onto a stream 
+.I fd.
+It computes and fills in values for \fIcommon.hsize, common.fixsiz, and
+common.check\fR.
+Normally, it also udpates \fIcommon.date\fR with the current date and
+time.   If \fIinhibit_hdr_date\fR is called prior to \fIwrite_header\fR
+then \fIcommon.date\fR is not updated.   The next call to
+\fIwrite_header\fR will behave normally; that is \fIinhibit_hdr_date\fR
+must be called prior to each \fIwrite_header\fR call to disable updating
+\fIcommon.date\fR.  
+.PP
+If an I/O error occurs, \fIwrite_header\fR prints
+a message on stderr and terminates the calling program.
+For file types FT_ANA, FT_PIT, FT_ROS, FT_SPEC, 
+and FT_FILT, \fIwrite_header\fR calls the
+appropriate function to fill in the data type fields in the header.
+For file type FT_SD, the user program must call
+\fIset_sd_type\fR(3\-ESPSu).
+.PP
+If the generic header item \fIforeign_hd_length\fR is defined and
+greater than zero, and \fIforeign_hd_ptr\fR is non-NULL, then 
+\fIforeign_hd_length\fR bytes
+of memory pointed to by \fIforeign_hd_ptr\fR are written to the stream
+\fIfd\fR after the ESPS header.  This would usually be a foreign header
+which was created by using \fIaddfeahd\fR(1\-ESPS) or \fIbtosps\fR(1\-ESPS) 
+with the \fB-F\fR option.
+.SH EXAMPLE
+.if n .ta 33
+hd = new_header (FT_ANA);	/* get a new header */
+.br
+hd->sd.ana->order = foo;	/* do something */
+.br
+fd = fopen (outputfile, "w");	/* open the new file */
+.br
+(void) write_header (hd,fd);	/* write the header */
+.PP
+Normally, the data records in ESPS files are written in order of the
+data type of the elements.   All doubles are written first, followed by
+floats, longs, shorts, and characters (bytes).   For feature files
+(FT_FEA) an option is to write the data elements in \fIfield_order\fR.
+This means that the data fields are written to the file in the order
+that the fields were created (with \fIadd_fea_fld\fR).   If the program
+sets the header item \fIhd.fea->field_order\fR to YES before calling
+\fIwrite_header\fR then the file will be written in field_order.
+An alternative is for the user to define the \s-1UNIX\s+1 environment
+variable \fIFIELD_ORDER\fR to any value other than \fIoff\fR.  If this
+variable is defined (and does not equal \fIoff\fR) then
+\fIwrite_header\fR will set \fIhd.fea->field_order\fR to YES before
+writing the header to the file.  When the file is read back, the ESPS
+input routines take note of the value of \fIhd.fea->field_order\fR and
+ensure that the data is correctly read.
+.SH DIAGNOSTICS
+There are a number of error messages that might be output to stderr 
+if parts of the header are bad.   The calling program is terminated
+by exit(1).   Such an error would indicate a programming error.
+.SH BUGS
+None known.
+.SH SEE ALSO
+eopen(3\-ESPSu),
+new_header(3\-ESPSu), read_header(3\-ESPSu), copy_header(3\-ESPSu)
+.SH AUTHOR
+Original version by Joe Buck.
+.br
+Modified by Alan Parker for new header structures.

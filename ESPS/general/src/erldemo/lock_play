@@ -1,0 +1,11 @@
+#! /bin/sh
+#lock_play @(#)lock_play	1.3 6/12/90
+# leave a lock file in place until the play command is finished
+# (see also wait_for) 
+
+lock_file=/tmp/erlplay.lock
+touch $lock_file
+
+/tmp/play $*
+
+rm $lock_file

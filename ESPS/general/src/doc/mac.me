@@ -1,0 +1,35 @@
+.lo
+.ce 2
+.b
+README FIRST
+1.2 9/27/90 
+.sh 1 "Diskette Installation for MAC II"
+.pp
+These diskettes are in A/UX \fItar\fR format.   There are four tar
+sets here.  You can read the sets in any order, but be sure to maintain
+the order of the diskettes within a set.   To install this version of
+ESPS, follow the enclosed instructions, except that you will be reading
+the kit from the diskette drive, rather than the tape examples shown.
+The command to read the diskettes is:
+.br
+.nf
+.ft CW
+% tar xvf /dev/floppy0
+.ft R
+.br
+.fi
+.pp
+Run this command for each of the four sets.   \fITar\fR will tell you
+when to switch diskettes.   (To eject the diskette, you need to have
+another A/UX shell window open and give the command \fIeject\fR in it.
+.pp
+After reading the diskettes, follow the enclosed instructions concerning
+links and license key installation.
+.sh 1 "Screen Graphics"
+.pp
+The plot programs in ESPS require The X Window System for screen
+graphics.    If your A/UX doesn't have X installed, it is available from
+Apple.
+.sh 1 "Bugs"
+.pp
+The program \fIselect\fR fails on some Macs.   We are working on this.

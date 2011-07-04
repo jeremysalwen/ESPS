@@ -1,0 +1,585 @@
+@(#)attachments.help.src	1.2 1/17/90 ESI ATT
+
+****************	ATTACHMENTS	   ****************
+
+This file describes the attachment facility in general terms and then
+presents instructions for using the attachments marks, label, spectrum
+and stub.
+
+Waves are relatively large and complex programs.  Adding features
+directly to them entails learning a certain amount about their
+ever-changing internal structure and living through long compilation
+and debugging sessions.  In addition, there is a serious limitation on
+the number of Sun display windows available for a given process
+although the total number of windows across several processes can be
+quite large.  One way of dealing with this situation is to permit
+functional expansion through separate, intercommunicating programs and
+processes.  The "attachment" facility is an implementation of this
+idea which uses UNIX pipes to loosely link essentially stand-alone
+programs with the display facilities of waves.  The file
+$WAVES_SRC/c/spectrum.c is a documented example of an
+attachment which can serve as a template for those wishing to add
+features of their own.
+
+The messages passed between the host (waves) and an attachment
+are text strings of the general form
+
+	receiver command [<selector> <argument>]...,
+
+where "receiver" is typically a program name, a display ensemble name,
+or a signal name; "command" is one of the operations the receiver is
+capable of performing; and the (often optional) "selector argument"
+pairs specify parameters for "command."  When one process sends a
+message to another, it waits for a response before continuing.  The
+responses are of two types: results and command recursion.  Results
+responses are either "ok" or "null," indicating the success of the
+requested operation, or a message of the form
+
+	returned <selector> <argument> [...],
+
+where the "selector argument" pair(s) specify values requested in a
+previous message.  The process can choose to ignore these or not, but
+must wait for them before proceeding.  Command recursions occur when a
+process which receives a message must get additional information from
+the sender or cause the sender to perform some operation before it can
+complete its own operation.  These recursions can nest to any depth.
+
+The SIG system library, /usr/local/lib/libsig.a, contains routines
+which perform most of the required message manipulations (see
+$WAVES_SRC/c/message.c, .../parse.c and the example
+program cited above.
+
+Waves and wave expect all attached processes to be able to respond by
+name to the following messages:
+
+message		keywords		arguments
+----------------------------------------------------------------------
+make				>> CREATE A NEW OBJECT <<
+		name		character string for the display object name
+		file		character string of a file to be manipulated
+				"File" is optional and if not present, the
+				attached process should assume that "name" is
+				to be the object name and file name.
+
+quit				>> DETACH FROM WAVES <<
+		<none>
+				Cleanup displays, close files as necessary,
+				etc. Reply with "ok" and then exit immediately.
+------------------------------------------------------------------------------
+
+Named objects created by attached processes must respond to the following
+messages:
+
+message		keywords		arguments
+------------------------------------------------------------------------------
+kill				>> DESTROY THE NAMED OBJECT <<
+		file		The name of a particular file view to be
+				deleted.  If "file" omitted, the entire named
+				object is deleted.
+				Kill an object, but remain attached.
+
+redisplay			>> UPDATE DISPLAY TO REFLECT CHANGES IN HOST <<
+		<none>
+				If attachment has a display to refresh it
+				can optionally get the attributes of the
+				corresponding display in the host through
+				command recursion with "<host-objectname>
+				get attributes display [file <filename>]."
+
+mark				>> NOTE A TIME POINT FROM THE HOST <<
+		time		floating-point time in sec (optional) [0.0]
+		rstart		region-start time (optional) [0.0]
+		rend		region-end time (optional) [0.0]
+		color		any integer (optional) [1]
+		file		a file name (optional) [object name]
+				This is the primary message of interest.  It
+				is supposed to cause the attachment to perform
+				some useful operation like storing a segment
+				mark in a file or computing a short-time
+				spectrum near the specified time.
+				Rstart and rend are sent by waves and indicate
+				the location (in sec) of the left and right
+				markers respectively.
+
+quit				>> DETACH FROM WAVES <<
+				Functions the same as "quit" to attachment.
+------------------------------------------------------------------------------
+
+Note that, except for "quit," attachments don't really need to do anything
+in response to the above messages, but must at least respond with "ok"
+or "null."  In cases of command recursion where data is requested, the
+attachment must be able to process the "returned" message.  These messages
+are described in $WAVES_DOC/waves.help under the
+"get" keyword in the "COMMAND FILES" section.  The attachment has access to
+all of the waves commands listed in the "COMMAND FILES" section.
+
+Waves can send arbitrary messages to attached processes directly from
+command files using the "send" command (see the examples in mark and
+label below).  This provides an individualized level of control beyond
+that available through the "standard" command set outlined above.
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	       SEGMENTATION AND LABELING: marks
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The program `marks' is designed to be attached to waves in order to make
+it easy to assign times to a set of speech events whose labels are
+known in advance (for instance because they have been generated
+automatically from text or from a transcription of what was said). If
+things are set up right, `marks' should only require one mouse button
+press per speech event; a skilled user can achieve average rates of
+10-20 events per minute, making it possible to segment fairly large
+data bases in moderate time.  Here is an example of an input file:
+
+** This was easy for us.
+This    "Dis
+  D_release
+  s_start
+  s_end
+was     "w^z
+  z_start
+  z_end
+easy    "EzE
+  z_start
+  z_end
+for     "f>r
+  f_start
+  f_end
+  r_F3_min
+us.     "^s
+  s_start
+  s_end
+
+The speech event labels are arbitrary. There are three levels of
+description: (1) the sentence, indicated by the beginning "**"; the
+word, indicated by a line beginning with anything other than "**" or
+white space; and the event label, corresponding to any line beginning
+with white space.  Here is a sample output file:
+
+** This was easy for us.
+This    "Dis
+   D_release     0.35825
+     s_start       0.431
+       s_end     0.56925
+was     "w^z
+     z_start    0.644875
+       z_end    0.716125
+easy    "EzE
+     z_start    0.843375
+       z_end    0.931625
+for     "f>r
+     f_start       0.999
+       f_end       1.115
+    r_F3_min      1.1965
+us.     "^s
+     s_start     1.35125
+       s_end      1.5945
+
+It is obviously the same as the input, except that times (in seconds)
+have been added to the event labels.
+
+The marks attachment creates two windows in addition to those that
+waves uses.  The control window shows the current sentence, the
+current word, and the names of the marks for that word.  It can be
+moved to any convenient location on the screen.  The current mark is
+shown in boldface print.  The other window is time-aligned with the
+newest waves window.  Marks are displayed there as vertical bars, and
+the names are printed just to the left of the bars.  If the waves
+window is moved or zoomed, this window will adjust itself accordingly.
+Marks are only visible if they have been assigned a time.  The current
+mark will have a different color than the others.
+
+Event marks can be set in two ways: by selecting the "marks" menu item
+in the waves main menu, or by using the middle button option "blow up;
+function" on a waveform type of display.  In either case, the current
+mark is assigned the indicated time and the next mark becomes current.
+The control window has a number of buttons that give the user control
+over the list of markers; most are self-explanatory.  The "next" and
+"last" buttons shift the current point through the list.  "Change"
+simply changes the name string.  "Unset" removes the time assignment
+from the current mark, while "delete" excises that name from the list.
+"Add" splices a new name into the list, either before or after the
+current mark, as indicated by the "Where?" item.  Setting a time twice
+on one name simply replaces any previous time.
+
+The results are written to a file when waves sends the "write file"
+message.  In the scripts given below, this will happen when the user
+activates the "Continue" button on the waves control panel.  Here is a
+waves command file invoking marks to segment a file example1 from an
+event description file example1.seg.in, producing an output file
+example.seg.out:
+
+waves attach function marks
+waves set middle_op blow up; function
+waves pause
+waves make name example1 file example1.d loc_y 350 height 200 loc_x 0
+example1 spectrogram file example1.d loc_y 600 loc_x 0
+waves send make name example1
+waves send read file example1.seg.in
+waves pause
+waves send write file example1.seg.out
+waves send quit
+waves kill
+
+Here is a shell script that generates and executes command files for a
+real speech database segmenting task.  The command file created is
+similar to the one above.
+
+#!/bin/sh
+CMDS=/tmp/pt$$; rm -f $CMDS; touch $CMDS
+echo waves attach function marks >>$CMDS
+echo waves set middle_op "blow up; function" >>$CMDS
+echo waves pause >>$CMDS
+for i in $*; do
+  NAME=${i}
+  FILE=${i}.d
+  echo waves make name $NAME file $FILE loc_y 157 height 200 loc_x 41 >>$CMDS
+  echo $NAME spectrogram file $FILE loc_y 350 loc_x 0 >>$CMDS
+  echo waves send make name $NAME >>$CMDS
+  echo waves send read file $NAME.in >>$CMDS
+  echo waves pause >>$CMDS
+  echo waves send write file $NAME.out >>$CMDS
+  echo waves send kill >>$CMDS
+  echo waves kill >>$CMDS
+done
+echo waves quit >>$CMDS
+echo "running waves script $CMDS ..."
+waves $CMDS
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	       SEGMENTATION AND LABELING: label
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The "Label" attachment is designed as a general-purpose point or
+region signal segmentation and labeling program.  Up to 32
+label/segmentation files may be viewed and edited simultaneously.
+Labels may be selected from a user-configurable menu or typed in
+directly from the keyboard.  Label is especially useful for comparing
+and generating multiple segmentations of the same signal where the
+label sequence can not be easily predicted in advance (see "mark"
+above).
+
+This waveform segmentation and labeling utility may be added to waves
+by entering "label" for the "Attach:" item in the Control Panel.  This
+may be done either before or after a waveform window is created.  If
+the labeler is attached after a waveform is displayed, the label
+window will not appear until the waveform is redrawn (e.g. by
+"paging"), or until the "Label File:" and "Object:" items have been
+entered in the "Labeler" control panel.  In the former case the
+labeler automatically assigns a label file name by appending ".lab" to
+the "Object" name from waves.  In the latter case, any
+pathname/filename may be specified as the "Label File."  The label
+window will appear below the most recently created waveform or
+spectrogram window and will remain time aligned as the object is moved
+around, zoomed, etc.  Moving the mouse in the label window causes the
+label cursor to appear in all representations of the signal at the
+corresponding time location.
+
+When started, the labeler attempts to read a text file named
+"labelmenu" from the current directory.  If this is not found, a
+default (and generally worthless) menu is created.  The "Labeler"
+control panel item "Label Menu File:" may be used to specify the path
+name of an alternate menu (also see "labelmenu" command below).  The
+first line of the label menu file should contain the keyword "columns"
+or "rows" followed by a space and the decimal number of columns or
+rows which you would like your menu of labels to have.  The balance of
+the file contains two blank-separated text items per line; the left
+item will appear in the menu; the right one in the label file to be
+created (see $WAVES_MISC/labelmenu for an example).
+The menu may optionally include lines containing "*DEL*" and/or
+"*UNLOAD*" as their right-hand members (explained below).
+
+If a label file exists, its contents will be read and displayed by the
+labeler.  Otherwise, a new label file is created.  Label files are
+ordinary text files with a short header followed by lines
+corresponding to each boundary marked.  These lines contain the time
+in seconds, a number indicating the color of the boundary marker and
+the label text string.  Label files may be generated or edited at will
+using any text manipulation program as long as the format is adhered
+to.  Boundary times need not be ordered chronologically.
+
+Labeling is best performed by moving the mouse, with no buttons
+pressed, in the label window.  When the label cursor is at the
+appropriate time location, depressing the right button will show the
+label menu.  The selected label will be applied at the location of the
+cursor upon release of of the right button.  The same operations may
+be performed in any of the waveform windows by selecting the "label"
+menu item, but response is slower and two right button clicks will be
+required.
+
+Labels and comment fields of arbitrary content and length may be
+directly typed in at the label cursor location without pressing any
+mouse buttons.  An existing label may be edited by placing the cursor
+exactly on its boundary mark and then using the keyboard.  The
+"Delete" key removes characters right to left; "Return" causes
+the label file to be rewritten to reflect the current state of the
+display (this is automatically done for menu-selected labels).
+Multiple, separately displayable label fields may be entered by
+separating them with the "separator" character (generally a
+semi-colon, but any character may be used) specified in the label file
+header.  Selection of the menu item corresponding to "*DEL*" will
+cause the entire label nearest the cursor to be removed.
+
+Label "fields" are delimited in the label file by the "separator"
+character.  Blank or null fields are indicated by two or more
+consecutive (or blank-separated) delimiters.  Which fields will be
+displayed by the labeler is determined by the "Active fields:" item in
+the Labeler panel.  The fields are numbered consecutively starting at
+one.  Up to 32 space-separated numbers may be entered on one line in
+any order to indicate the corresponding active fields.  If the
+"Label File" item is blank when this is done, the display of all label
+files will be effected, otherwise only the specified file's display will
+be effected.
+
+Multiple label files are displayed time-aligned in the labeler window
+with the most recently created/loaded file at the top.  Enter the
+relative or absolute pathname of the label file(s) in the Label File
+panel item after the "Object" item has been correctly established.
+Alternately, one or more label files may be loaded with the "make"
+command via a "send" from a waves command file (see below).  If the
+labels get crowded, the window may be resized with the usual Sunview
+ritual.  As the cursor is moved horizontally and vertically, the time
+and corresponding label file name are displayed in the window's frame.
+Label files may be removed from the display (and saved in updated
+files) by selecting the menu item corresponding to "*UNLOAD*" in the
+labelmenu while the horizontal crosshair is in the file's display region.
+
+Two D/A playback features are supported in the labeler.  A left button
+press while in the labeler window causes the marked segment containing
+the cursor to be played.  A middle button press causes the segment
+delimited by the cursor and the label boundary immediately to the left
+of the cursor to be played.
+
+All functions normally available in waves are active in conjunction
+with the labeler.  NOTE: The label file does NOT automatically adjust
+to time changes caused by waveform segment deletion or insertion.  It
+is recommended that no waveform editing be performed on files being
+labeled.  Selecting the "QUIT" item in the Labeler panel will update
+and close all label files and "disconnect" label from waves.
+
+Waves can be controlled by a command file (see
+$WAVES_DOC/waves.help: "COMMANDS AND COMMAND FILES").
+Commands in these files may be passed through to label via the "send"
+command to waves.  The following additional commands are recognized by
+label:
+
+----------------------------------------------------------------------
+message		keywords		arguments
+----------------------------------------------------------------------
+make			>> MAKE A NEW, OR LOAD AN EXISTING LABEL FILE <<
+		file		label file pathname to be displayed or created
+		color		colormap entry to use for the segment boundary
+				marks (new label files only).  Numbers in the
+				range of 115-125 are best.
+		name		name of a "waves" display object to synchronize
+				the labels with.
+	        signal		a particular signal in display object.  If
+				omitted, the label window will always attach to
+				the most recently displayed signal.
+activate		>> SET ACTIVE LABEL DISPLAY FIELDS <<
+		file		label file who's display is to be changed.
+		name		display object containing the file.  If file
+				and/or name is omitted, the Label File and/or
+				Object from the Labeler panel will be used.
+		fields		one or more blank-separated numbers specifying
+				the display fields to be enabled.
+unload			>> CLOSE, UNLOAD AND REMOVE DISPLAY OF A LABEL FILE <<
+		name		name of display object containing label file
+		file		name of the label file to be closed
+kill			>> REMOVE ALL OR PART OF A LABEL DISPLAY OBJECT <<
+		name		name of an existing label display object which
+				is to be partly, or completely distroyed.
+		file		file name of a particular label display to be
+				destroyed.  Note that the actual label file
+				is updated to reflect the state of the display
+				before the display is removed.  If file is
+				omitted, all of object <name> will be removed.
+labelmenu		>> SPECIFY AN ALTERNATE LABEL MENU SOURCE FILE <<
+		menufile	UNIX path name of the desired menu.  This
+				may be changed at any time while labeling.
+set			>> SET GLOBAL PARAMETERS IN LABELING PROGRAM <<
+		label_height	height (in pixels) of the labeling window
+		menufile	same as in "labelmenu" above and "Label
+				Menu File:" in control panel.
+		active_fields	same as "fields" above under "activate"
+				and "Active Fields:" in control panel.
+		object		same as "name" above under "make" and
+				"Object:" in control panel.
+		labelfile	same as "file" above under "make" and
+				"Label File:" in control panel.
+----------------------------------------------------------------------
+
+
+The following c-shell script demonstrates how label might be used with
+a waves command file:
+
+----------------------------------------------------------------------
+#!/bin/csh
+echo waves set middle_op 'blow up; function' > /tmp/wave$$
+echo waves set ref_size 3 ref_step 2.5 ref_start 0.0 >> /tmp/wave$$
+foreach f ($*)
+  set bn = `basename $f`
+  echo waves make name $bn file $f loc_x 0 loc_y 150 height 200 >> /tmp/wave$$
+  echo waves attach function label >> /tmp/wave$$
+  echo waves send activate name $bn fields 1 3 5 >> /tmp/wave$$
+  echo waves send make name $bn  file $f.1.lab color 125 >> /tmp/wave$$
+  echo waves send make name $bn  file $f.2.lab  color 118 >> /tmp/wave$$
+  echo waves pause >> /tmp/wave$$
+  echo waves kill >> /tmp/wave$$
+  echo waves detach >> /tmp/wave$$
+end
+waves /tmp/wave$$
+rm -f /tmp/wave$$
+----------------------------------------------------------------------
+
+This above script is called with some signal file pathnames as
+arguments.  Lines 2-3 set some waves system globals; 5 generates an
+object name which will be common to waves and label; 6 displays the
+signal; 7 attaches the label program; 8 specifies to label that label
+fields 1, 3 and 5 are to be displayed; 9-10 load (or generate) two
+label files with different colored markers; 11 pauses the command
+script to permit interaction with the programs; 12 destroys all
+displays; and 13 detaches label.  Note that the attach and detach
+operations are performed within the loop to prevent label's default
+behavior which is to generate a single label file with a name of the
+form $bn.lab.  If this behavior is desired, the script could be
+rewritten:
+
+----------------------------------------------------------------------
+#!/bin/csh
+echo waves set middle_op 'blow up; function' > /tmp/wave$$
+echo waves set ref_size 3 ref_step 2.5 ref_start 0.0 >> /tmp/wave$$
+echo waves attach function label >> /tmp/wave$$
+echo waves send activate fields 1 3 5 >> /tmp/wave$$
+foreach f ($*)
+  set bn = `basename $f`
+  echo waves make name $bn file $f loc_x 0 loc_y 150 height 200 >> /tmp/wave$$
+  echo waves pause >> /tmp/wave$$
+  echo waves kill >> /tmp/wave$$
+end
+echo waves detach >> /tmp/wave$$
+waves /tmp/wave$$
+rm -f /tmp/wave$$
+----------------------------------------------------------------------
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		SPECTRUM ANALYSIS: spectrum
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Attaching spectrum to waves provides spectral analysis facilities for
+one dimensional, short integer signals (e.g. standard PCM files).
+Spectrum also displays spectral "slices" from spectrograms and
+spectrogram-like signals (e.g. "eih-grams").  Spectra may be compared
+by overlaying on a common plot.  Analysis is performed by selecting a
+signal segment with the waves waveform cursor or markers and then
+selecting the "spectrum" menu item with the right mouse button.  Note
+that this operation will only succeed if performed in a window
+displaying a one-dimensional short-integer signal or a "spectrogram"
+for which a file exists on disc.  After the spectrum is computed and
+displayed, the right and left waves markers are moved to the analysis
+window limits.
+
+The spectrum analysis parameters are available for modification in a
+control panel.  When one of the analysis parameters is changed, the
+active spectra are recomputed using the new parameters.  When spectral
+"slices" are being displayed from a "spectrogram" file, the analysis
+parameters in the panel have no affect.
+
+The "Function" item will cycle through the spectral estimation methods
+available on left button clicks.  Currently available methods are: log
+magnitude spectrum using a radix-2 FFT (log-mag-DFT), inverse log
+magnitude spectrum of an autocorrelation LP model (log-mag-DFT-LPC);
+and inverse log magnitude of a covariance LP model (log-mag-DFT-CLPC).
+These spectra are all scaled to dB re unity.  All computations are
+performed in double precision arithmetic.  The minimum size FFT used
+is 512 points, zero-padded as necessary.
+
+The "Window type:" item permits selection of the time weighting
+function to be applied before analysis.  Note that for the covariance
+LPC computation, rectangular weighting is always used.
+
+"Window size(sec):" specifies the total window duration.  The size of
+the FFT used to perform the computations is expanded (in powers of 2)
+as necessary to accommodate the data.  The window size must be chosen
+so that no more than 4096 waveform samples are included (sample-rate
+dependent).  Note that the "Window size(sec):" item is only effective
+for input when the "Window limits from:" item is set to "Local."  When
+it is set to "Host," the window size and location are both determined
+by the left and right marker positions in the waves windows when the
+"spectrum" item is selected from a waves menu.
+
+The "Preemphasis coeff:" item allows the coefficient, a, of the
+1st-order prefilter {H(z) = 1 - a*(z**-1)} to be adjusted.  This
+preemphasis is applied to all signals before spectrum computation.
+When this preemphasis is applied, one extra sample is used from the
+input sequence to initialize the filter memory and maintain the
+requested window size.
+
+"Analysis order:" sets the order for LPC analysis (if specified by
+"Function").  The maximum order available is 30.
+
+Left mousing the "Reticle:" item will toggle the spectrum reticle on
+and off.  Note that the reticle dynamically adjusts itself to the
+window size.
+
+"Filt. Int:" and "Int. Coef:" are explained below.
+
+The spectrum display window has a frequency/amplitude cursor which may
+be moved with the mouse.  Numeric display of frequency and amplitude
+are available in the upper-left corner of the window.  The time
+corresponding to the center of the analysis window is printed in the
+display's frame.  The cursor may be left at a particular frequency by
+removing the mouse pointer from the window with the middle button
+depressed.  The spectrum display window may be resized at will using the
+standard Sun ritual.
+
+The currently displayed spectrum (in blue) will be copied into the
+reference spectrum (in red) if the right mouse button is pressed inside
+the spectrum display window.  The reference spectrum will then remain
+unchanged, permitting comparison with other spectra, until the right
+button is again pressed.  The amplitude at the spectrum cursor
+location for the reference spectrum is also printed (in red) in the
+upper left of the spectrum window.
+
+When linear prediction has been used to compute an all-pole spectrum,
+the LP coefficients may be used to inverse filter the original signal
+(yielding a residual signal).  This operation can be initiated by
+pressing the left mouse button in the spectrum window after either
+"log-mag-DFT-LPC" or "log-mag-DFT-CLPC" computations have been
+performed.  The amount of the original signal (centered on the
+analysis window) to be inverse filtered is determined by the "Filt.
+Int:" panel item (sec).  The inverse filtered signal is integrated (to
+convert pressure to volume velocity) using a leaky integrator with the
+coefficient determined by the "Int. Coef:" panel item (0.0 implies no
+integration).  The resultant signal is then stored in a file and
+displayed in a regular waves waveform window.
+
+The program "spectrum" was written as an example of how attachments
+work.  It is well documented and can be adapted to a variety of needs.
+Feel free to copy and modify it to your needs.  It may be found in
+$WAVES_SRC/c/spectrum.c.
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+			DEBUGGING, ETC.: stub
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+When debugging waves or an attachment, it is often handy to see just
+what messages are being sent in various contexts.  Sometimes it may be
+handy to have "mark" messages sent directly to a file or some
+"non-attachment-like" unix process.  The "stub" facility provides this
+capability.  When "stub" is entered as the attachment name (either in
+the waves control panel or in a command file), waves sends messages
+pretty much as it would to a real attached process, except that they
+are written to stdout.  When stub is "attached," waves does not expect any
+response to its messages (i.e. it does not block as usual in return_value()
+waiting for "ok," "null" or "returned" responses).
+
+When stub is attached, waves accepts messages (of the type specified above)
+directly from stdin and responds exactly as it would to an attached
+process sending the same messages.

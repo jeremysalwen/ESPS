@@ -1,0 +1,46 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)hdshrink.1	3.3 12/13/88 ESI
+.TH HDSHRINK 1\-ESPS 12/13/88
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+hdshrink \- remove the recursive headers from an ESPS file
+.SH SYNOPSIS
+.B hdshrink
+[
+.B \-c 
+]
+.I in_file out_file
+.SH DESCRIPTION
+.PP
+.I Hdshrink
+takes an ESPS file
+.I in_file 
+and copies all the data records and only the top level header
+into the output file
+.I out_file.
+It is normally used to remove embedded headers from a file 
+in which the complete processing history is not important. 
+.PP
+If \fIin_file\fR is replaced by "\-", standard input is used;
+if \fIout_file\fR is replaced by "\-", standard output is used.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.B \-c
+If this options is given, then all of the comments in the embedded
+headers are brought up to the main header.   In this way, some
+processing history is preserved.
+.SH ESPS PARAMETERS
+The parameter file is not accessed.
+.SH ESPS COMMON
+ESPS Common is not used.
+.SH ESPS HEADER
+All input file header items are copied to the output file header.
+.SH "SEE ALSO"
+bhd(1\-ESPS)
+.SH BUGS
+.PP
+None known.
+.SH AUTHOR
+Manual page by David Burton; program by Alan Parker.

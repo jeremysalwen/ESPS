@@ -1,0 +1,4 @@
+#! /bin/sh
+# @(#)short_his	1.1 7/25/91 ERL
+# we just drop the range option and run comment
+comment -a $2

@@ -1,0 +1,230 @@
+.\"@(#)btosps.1	3.13 02 Apr 1997 CSPL ESI
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc. All rights reserved.
+.ds ]W (c) 1991 ERL, Inc.
+.TH BTOSPS 1\-ESPS 02 Apr 1997
+.SH NAME
+btosps \- convert headerless binary sampled data to an ESPS FEA_SD file
+.SH SYNOPSIS
+.B btosps
+[
+.BI \-P " param_file"
+] [
+.BI \-f " sampling_rate"
+] [
+.BI \-T " start_time"
+] [
+.BI \-n " nchan"
+] [
+.BI \-t " data_type"
+] [
+.BI \-S " skip_bytes"
+] [
+.BI \-F 
+] [
+.BI \-c " comment"
+] [
+.BI \-C " comment_file"
+] [
+.BI \-E 
+] [
+.BI \-x " debug_level"
+]
+.I infile
+.I outfile
+.SH DESCRIPTION
+.PP
+.I Btosps
+converts a headerless binary sampled data file into an ESPS FEA_SD
+file.  The input data can be of any ESPS supported data type (DOUBLE,
+FLOAT, LONG, SHORT, BYTE, DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX,
+SHORT_CPLX, BYTE_CPLX); multi-channel data are supported.  
+.PP
+If the first argument is "\-",
+.I btosps
+will read from the standard input.
+If the second argument is "\-",
+it will write to the standard output.  
+.PP
+Use \fIaddfeahd\fP (1\-\s-1ESPS\s+1) for more general conversions to
+FEA files. 
+.PP
+For record-keeping purposes, \fIbtosps\fP stores an ASCII comment in
+the header of of the output file.  The comment should describe the
+origins of the data.  If a comment is not supplied in the parameter
+file or by means of the \fB\-c\fR or \fB\-C\fR options, the user is
+prompted for one.  If \fIinfile\fP is standard input, the comment must
+be supplied directly as the user cannot be prompted.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-P " param_file \fR[params]\fP"
+The name of the ESPS parameter file.   
+.TP
+.BI \-f " sampling_rate \fR[8000]\fP"
+The sampling rate \- the value is stored in the generic header item
+\fIrecord_freq\fP in the output file.  
+.TP
+.BI \-T " start_time \fR[0]\fP"
+The starting time of the data \- the value is stored in the generic
+item \fIstart_time\fP.
+.TP
+.BI \-n " nchan \fR[1]\fP"
+The number of data channels.  The data are assumed to be stored in the
+same order as in an ESPS FEA_SD file, i.e., the first sample from all
+channels, followed by the second sample from all channels, etc.
+The dimension of the output field "samples" is \fInchan\fP.  
+.TP
+.BI \-S " skip_bytes"
+This many bytes will be skipped at the beginning of the input file.
+If only a section of the raw input file is to be converted, the
+\s-1UNIX\s+1 \fIdd\fR program can be used to pre-process the raw data
+file.  This option is normally used to skip over an existing non-ESPS
+file header.
+.TP
+.B \-F
+If this option is used, then the \fB-S\fR option described above must
+also be used.   
+This option causes the data skipped at the beginning of the file to be
+saved in the output ESPS file, as a \fIforeign header\fR.   Two generic
+header items are created in the output file; \fIforeign_hd_length\fR and
+\fIforeign_hd_ptr\fR.   The item \fIforeign_hd_length\fR is given the
+value of the \fB-S\fR option; i.e. the number of bytes to skip.  The
+item \fIforeign_hd_ptr\fR is set to the in memory address of this block
+of data after it is read from the input file.   This is used by
+\fIwrite_header\fR(3\-ESPS) to save this information in the ESPS file.
+The intention here, is to allow a non-ESPS header that might already be
+on a file, to be preserved as the file is converted to ESPS.
+On the ESPS file, the foreign header is physically
+located between the ESPS header and the data records.   
+The program \fIbhd\fR(1\-ESPS) can be used to remove the ESPS header and
+leave the original foreign header.
+Also see
+\fIread_header\fR(3\-ESPS) and \fIwrite_header\fR(3\-ESPS).
+.sp
+Note that the machine independent file I/O cannot operate on foreign
+headers (since we have no way of knowing the internal structure). 
+If an ESPS file containing a foreign header is moved to a machine of a
+different data format than the one on which it was created, the foreign
+header will not be translated as the ESPS header and data is.
+.sp
+A user written program can use the value of the generic
+\fIforeign_hd_ptr\fR in order to access any information that is in the
+foreign header.   The type of this generic is \fBlong\fR, so it must be
+cast to a \fB(char *)\fR and then it can be used to address into the
+foreign header.
+.TP
+.BI \-c " comment"
+Specifies that the ASCII string 
+.I comment
+be added as a comment in the header of the output file.  
+.TP
+.BI \-C " comment_file"
+Specifies that the contents of the file
+.I comment_file
+be added as a comment in the header of the output file.
+.TP
+.B \-E
+By default, the input file is assumed to be in the machine's native data
+representation.   If this option is used, the input is taken to be in
+ESPS EDR representation.   This would be the case, for example, if the input
+file was an ESPS that was processed with \fIbhd\fR on a system that
+produced EDR format files.   Regardless of the format of the input file,
+the output file format is controlled by the \fBESPS_EDR\fR environment
+variable, as are all programs which produce ESPS files.  If the Unix
+environment variable \fBESPS_EDR\fR has the value of \fIon\fR, then the
+output file is in Entropic's external data representation and can be
+read by any ESPS implementation on any supported machine.  If this
+variable is not defined, then the output file is in the machine's native
+format.  This format can be read by some ESPS implementations, but not
+all.
+.TP
+.BI \-t " data_type \fR[short]\fP"
+Specifies the numberic type of the data in \fIinfile\fP.  Possible
+values are DOUBLE, FLOAT, LONG, SHORT, BYTE, DOUBLE_CPLX, FLOAT_CPLX,
+LONG_CPLX, SHORT_CPLX, BYTE_CPLX.
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+For \fIdebug_level\fP values greater than 0, various debugging
+messages are printed.  The higher the value of \fIdebug_level\fP, the
+more verbose the messages.
+.SH ESPS PARAMETERS
+.PP
+The following values are read from the parameter file if they exist.
+Command line options override the parameter file values.:
+.IP
+.I "sampling_rate - float"
+.IP
+The data sampling rate, stored in the generic header item
+\fIrecord_freq\fP.  Default is 8000 Hz.  
+.IP
+.I "nchan - int"
+.IP
+The number of data channels.  Default value is 1.  
+.IP
+.I "start_time - float"
+.IP
+The starting time of the converted data.  Default is 0.  
+.IP
+.I "data_type - string"
+.IP
+The data_type of the input data; possible values are DOUBLE, FLOAT,
+LONG, SHORT, BYTE, DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX, SHORT_CPLX,
+BYTE_CPLX.
+.IP
+.I "skip_bytes - int"
+.IP
+The number of bytes to skip at the beginning of the input file.
+Default is 0.
+.SH ESPS COMMON
+.PP
+ESPS Common is not read by \fIbtosps\fP.  The following items are
+written into the ESPS Common file if the output is not standard
+output:
+.IP
+.I "start - integer"
+.IP
+The starting point, always 1 in this case.
+.sp
+.I "nan - integer"
+.IP
+The number of points in the output file.
+.sp
+.I "prog - string"
+.IP
+This is the name of the program (\fIbtosps\fP in this case).
+.sp
+.I "filename - string"
+.IP
+The name of the output ESPS file. 
+.PP
+These items are not written to ESPS COMMON if the output file is <stdout>.
+.SH ESPS HEADER
+.PP
+The universal part of the header if filled in in the usual way.  The
+generic \fIrecord_freq\fP is filled in with the sampling rate, and the
+item \fIstart_time\fP is filled in with the starting time.  If the
+output is not standard output,
+the generic header item \fImax_value\fP is filled in with the
+maximum absolute value of the data in the file.
+.SH DIAGNOSTICS
+.PP
+.I Btosps
+informs the user and quits if the input file does not exist.
+.I Btosps
+informs the user and quits if no comment is supplied and if the user
+cannot be prompted for one.
+.SH BUGS
+.PP
+None known.
+.SH SEE ALSO
+.PP
+.nf
+dd(1), \fIaddfeahd\fP (1\-\s-1ESPS\s+1), \fIaddfea\fP(1\-\s-1ESPS\s+1), \fImergefea\fP (1\-\s-1ESPS\s+1), 
+\fImux\fP(1\-\s-1ESPS\s+1), \fIdemux\fP (1\-\s-1ESPS\s+1), \fIbhd\fP(1\-\s-1ESPS\s+1), \fIcomment\fP (1\-\s-1ESPS\s+1)
+.fi
+.SH AUTHOR
+Original program by Ajaipal S. Virdy, Communications and Signal
+Processing Laboratory, University of Maryland, College Park.  ESPS
+changes by Alan Parker and John Shore, Entropic Speech, Inc.

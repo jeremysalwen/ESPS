@@ -1,0 +1,213 @@
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)cb_filt.1	1.5 4/2/97 ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH  CB_FILT 1\-ESPS 4/2/97
+.SH NAME
+.nf
+cb_filt \- design a constraint-based FIR filter using the 
+Simplex algorithm
+.fi
+.SH SYNOPSIS
+.B
+pkmc_filt
+.BI \-P " param_file"
+[
+.BI \-x " debug_level"
+]
+.I feafilt_file
+.SH DESCRIPTION
+.PP
+The program \fIcb_filt\fR designs a linear phase finite impulse response
+(FIR) filter with its specifications defined in the parameter file 
+\fIparam_file\fR.  The filter coefficients are saved in the output file
+\fIfeafilt_file\fR.  If \fIfeafilt_file\fR is replaced by "-", the 
+standard output is written.
+.PP
+The filter is designed using the Simplex algorithm to solve for a 
+constraint-based problem.  The constraints are expressed in terms of 
+upper/lower limits and concavity properties on the response, 
+the algorithm finds the shortest
+filter length which allows these constraints to be met, and then find
+a filter of that order which is farthest from the upper and lower
+constraint boundaries in a mini-max sense.
+.PP
+The constraints have the following forms:  bandedges, upper bounds and lower
+bounds on the bands, concavity, and huggness constraints.  They are
+expressed in various combinations of parameters in \fIparam_file\fR.
+.PP
+This program is more general than \fIpkmc_filt(1-ESPS)\fR.  It can
+design filter with nearly flat passband magnitude response by specifying
+the concavity property on the band.
+.PP
+Also see the shell script \fIxfir_filt(1-ESPS)\fR that is a cover
+script for this and other FIR filter design programs.
+.PP
+.SH OPTIONS
+.PP
+The following option is supported:
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If \fIdebug_level\fR is positive, \fIcb_filt\fR prints debugging messages 
+and other information on the standard error output.  The messages 
+proliferate as the \fIdebug_level\fR increases.  If \fIdebug_level\fP 
+is 0 (the default), no messages are printed.  
+.SH ESPS PARAMETERS
+The following parameters are read from \fIparam_file\fR.
+.TP
+.I filt_length_L - int
+The largest filter length allowed.  It must be less or equal to 128
+.TP
+.I filt_length_S - int
+The smallest filter length allowed.  It must be greater or equal to 1.
+\fIcb_filt\fR will finds the shortest filter length that satisfies the
+constraints.  If fixed filter length is desired, set \fIfilt_length_L\fR
+equal to \fIfilt_length_S\fR.
+.TP
+.I ngrid - int
+This is an optional parameter. It specifies the number of grid points 
+The default value is 10 * (\fIfilt_length_L\fR /2 ) + 1.
+.TP
+.I samp_freq - float
+The sampling frequency.
+.TP
+.I nspec - int
+Number of specifications.  Each band needs at least two specifications,
+one for lower bound constraint, one for upper bound constraint, and 
+possibly one for concavity constraint.  For example, a lowpass filter may
+have \fInspec\fR equals 5 -- 2 constraints for upper and lower bounds in
+passband, 2 constraints for upper and lower bounds in stopband, and 1
+concavity constraint for passband.
+.TP
+.I model - string
+Specifies the symmetry property of the designed FIR impulse response.
+Use the value \fIcosine\fR for even symmetry -- Type I or Type II FIR for
+multiband filters.  Use the value \fIsine\fR for odd symmetry -- Type
+III or Type IV FIR for differentiators
+.PP
+The following set of the parameters have the forms of \fIspec[i]_XXX\fR,
+where \fIi\fR denotes the specification number, \fIXXX\fR denotes
+the kind of specification.  For example, 
+\fIspec2_edge1\fR is a parameter for the left edge of the second 
+specification.  \fIi\fR starts from 1.  
+.TP
+.I spec[i]_type - string
+Type of constraint on the \fIi\fRth specification.  The value \fI"limit"\fR
+denotes upper/lower bound limit specification for the \fIi\fRth spec.
+The value \fI"concave"\fR denotes up/down concavity specification for
+the \fIi\fRth spec.  If \fIspec[i]_type\fR is \fI"concave"\fR, then
+only \fIspec[i]_sense\fR, \fIspec[i]_edge1\fR, and \fIspec[i]_edge2\fR
+need be defined.  Concavity constraint to the passband of the
+filter gives nearly flat frequency response.  Otherwise, an upper/lower
+limit constraint gives an equiripple frequency response.
+.PP
+
+.TP
+.I spec[i]_sense - string
+If \fIspec[i]_type\fR is \fI"limit"\fR, a value of "+" denotes an upper
+bound spec; or "-" for a lower bound spec.  If \fIspec[i]_type\fR is
+\fI"concave"\fR, "+" denotes concave up, "-" for concave down.
+.TP
+.I spec[i]_edge1 - float
+The left bandedge for the \fIi\fRth spec.
+.TP
+.I spec[i]_edge1 - float
+The right bandedge for the \fIi\fRth spec.
+.TP
+.I spec[i]_bound1 -  float
+The bound on \fIspec[i]_edge1\fR.
+.TP
+.I spec[i]_bound2 -  float
+The bound on \fIspec[i]_edge2\fR.  Values in between \fIspec[i]_bound1\fR
+and \fIspec[i]_bound2\fR over the \fIi\fRth spec will be interpolated
+according to the parameter \fIspec[i]_interp\fR.
+.TP
+.I spec[i]_hug - string
+If it is \fI"not hugged"\fR, the response on the \fIi\fRth specification 
+will be pushed as far as possible from the specified bounds.  If this
+constraint needs not be optimized, then use the value \fI"hugged"\fR.
+.TP
+.I spec[i]_interp - string
+If it is \fI"arithmetic"\fR, frequency response values from 
+\fIspec[i]_bound1\fR to \fIspec[i]_bound2\fR over the band 
+\fIspec[i]_edge1\fR to \fIspec[i]_edge2\fR is interpolated arithmetically
+(linearly); if it is \fI"geometric"\fR, values are interpolated
+geometrically (linearly in decibels).
+.TP
+.I push_direction - string
+If it is \fI"left"\fR, a set of bandedges are pushed as far left as
+possible while still respecting the constraints for the fixed 
+length (i.e. \fIfilt_length_L = filt_length_S\fR) specified by user.
+If it is \fI"right"\fR, the set of bandedges are pushed right.  If
+no pushing is desired, specify \fIneither\fR.
+If \fIpush_direction\fR is set to \fI"right"\fR or \fI"left"\fR, the
+parameters \fInspec_pushed\fR, \fIspec[j]_pushed\fR must be specified.
+.TP
+.I nspec_pushed - int
+Number of bands to be pushed.
+.TP
+.I spec[j]_pushed - int
+A single number corresponding the specification number that contains
+the desired bandedges to be pushed.  For example, if \fIspec1_pushed\fR 
+equals to 4, \fIspec2_pushed\fR equals 3 means the bandedges specified in
+specification number 3 and 4 are to be pushed.  The specification
+numbers can be assigned to \fIspec[j]_pushed\fR, \fI1 <= j <= nspec\fR,
+in any arbitrary order.
+.PP
+.SH ESPS COMMON
+No ESPS common parameter processing is used.
+.PP
+.SH ESPS HEADERS
+A new FEAFILT header is created for the  output  file.   The
+program  fills  in  appropriate values in the common part of
+the header as well as the  following  generic  header  items
+associated with the FEAFILT type.
+.PP
+The \fIcb_specs\fR generic header item is a string containing
+\fInspec\fR specifications.  Each specification starts with \fISPEC[i]\fR,
+followed by \fI"limit"/"concave"\fR, \fIsense\fR, left edge, right edge,
+bound at left edge, bound at right edge, huggness, and interpolation mode.
+.PP
+The \fImodel\fR generic header item denotes whether \fIsine\fR or \fIcosine\fR
+model is used.
+.PP
+If \fIpush_direction\fR parameter is \fI"left"\fR or \fI"right\fR,
+the \fInspec\fR generic header item denotes numbers of specification pushed.
+.PP
+If \fIpush_direction\fR parameter is \fI"left"\fR or \fI"right\fR,
+the \fIpush_direction\fR generic header item is a string that first 
+starts with the band direction pushed, followed by specification numbers
+that are pushed.
+.PP
+In addition, the generic header item \fIdelay_samples\fR  (type  DOUBLE) is
+added  to the header. \fIDelay_samples\fR  is  equal  to  
+(filter length  -  1)/2.   
+This represents  the  delay  to  the  center  of  the peak of the
+impulse response.
+
+.PP
+.SH FUTURE CHANGES
+.PP
+.SH EXAMPLES
+See its parameter setting example in \fI$ESPS_BASE/lib/params/Pcb_filt\fR.
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+"METEOR: A Constraint-Based FIR Filter Design Program", Kenneth Steiglitz,
+Thomas Parks, and James Kaier.  IEEE Transaction on Signal Processing,
+Vol. 40, No. 8, August 1992.
+.PP
+.SH "SEE ALSO"
+.nf
+xfir_filt(1\-ESPS), pkmc_filt(1\-ESPS), win_filt(1\-ESPS), 
+notch_filt(1\-ESPS), FEA_FILT(5\-ESPS), atofilt(1\-ESPS), 
+wmse_filt(1\-ESPS), iir_filt(1\-ESPS), sfconvert(1\-ESPS)
+.nf
+.PP
+.SH AUTHOR
+Thanks to Dr. Kenneth Steiglitz, Thomas Parks, and James Kaiser for
+permission to use the original C codes.  Program is made ESPS-compatible
+by Derek Lin.

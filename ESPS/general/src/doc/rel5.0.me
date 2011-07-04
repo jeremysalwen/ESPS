@@ -1,0 +1,372 @@
+.lo
+.de SM          \"macro to shrink left margin
+.br
+.nr $i \\n($i+\\$1i
+..
+.de RM          \"macro to restore original left margin
+.br
+.nr $i 0
+..
+.he 'ESPS Version 5.0 Release Notes''page %'
+.ce 3
+.b
+ESPS Version 5.0 Release Notes
+.sp
+Document version: 1.8 9/10/93
+.sh 1 "INTRODUCTION"
+.lp
+This document provides notes for release 5.0 of ESPS.  These release
+notes document changes to ESPS since the revision 4.2.  This document
+can be viewed conveniently using \fIeinfo\fP (1\-\s-1ESPS\s+1) or
+\fIeversion\fP (1\-\s-1ESPS\s+1).
+.lp
+This document does not attempt to explain new and changed programs
+in detail.  Refer to the manual pages for all new and changed programs
+for complete details needed to use the programs.
+.lp
+Extensive changes were made in the previous release (ESPS Version 4.2;
+\fIwaves+\fR Version 3.1).  These changes were primarily aimed at correcting
+errors and numerous operational deficiencies in the software.  Please
+refer to either the printed copy of these earlier release notes, or
+see the on-line version in \fI$ESPS_BASE/doc/rel4.2.doc\fR 
+and \fI$ESPS_BASE/doc/wrel3.1.doc\fR.
+.sh 1 "SUMMARY OF MAJOR CHANGES"
+.lp
+Major highlights include:
+.ip \ \ \ \(bu
+major improvements to the filter design and filtering programs
+.ip \ \ \ \(bu
+new analysis and synthesis programs
+.ip \ \ \ \(bu
+improved hardcopy output
+.ip \ \ \ \(bu
+updated documentation
+.sh 1 "NEW PROGRAMS"
+.sh 2 "ANALYSIS/SYNTHESIS PROGRAMS"
+.lp
+A new set of ESPS analysis/synthesis programs are created for ESPS 5.0
+release.  These programs allow maximum control over analysis/synthesis
+parameters and permit experimentation with intermediate results.  
+They are intended to replace the older \fIlpcana\fR(1-ESPS) 
+and \fIlpcsynt\fR(1-ESPS).
+The following is a list of new ESPS 5.0 speech analysis/synthesis programs:
+.ip \fIepochs\fR 
+A pitch-epoch estimation program.  Pitch epochs
+are computed by dynamic programming optimization algorithm from 
+speech residual.  \fIEpochs\fR also attempts to estimate the voicing state
+of speech residual.  Use its various parameters to control the estimation.
+.ip \fIformsy\fR
+This is n-formant synthesizer.  Controls over bandwidths, synthesis rate,
+F0 and formant characteristics are provided.
+.ip \fIget_f0\fR
+A faster F0 estimation program than \fIformant\fR(1-ESPS).  
+Unlike \fIformant\fR, \fIget_f0\fR has a simple interface - one FEA_SD
+input to produce one FEA file output, with no intermediate files produced.
+In addition, \fIget_f0\fR is more flexible in controlling F0 
+characteristics by means of various parameters.  Highpass filtering 
+for input signal in \fIformant\fR is not automatically performed in 
+\fIget_f0\fR to save computational time.
+.ip \fIget_resid\fR
+A program to compute speech residual by inverse filtering.  The speech
+residual is required for pitch-epoch estimation program \fIepochs\fR(1-ESPS).
+Use \fIrefcof\fR(1-ESPS) to compute fixed-frame based LPC or reflection 
+coefficients before inverse filtering.
+.ip \fIlp_syn\fR
+This synthesizes speech signal from either a direct excitation source such
+as speech residual, or from a parametric source such as F0, RMS data.
+Controls over parameter source, such as synthesis rate, are provided.
+.ip \fImask\fR
+This is a useful program to suppress/fade segments of a FEA_SD file or
+to mix segments of FEA_SD files.  For example, a FEA_SD file containing
+pitch epoch impulses produced by \fIepochs\fR often misclassifies
+unvoiced regions as voiced, you can use \fImask\fR to suppress the
+pitch epochs in unvoiced regions.
+.ip \fIps_ana\fR 
+This computes LP parameters pitch-synchronously.  Analysis frames
+are based on the pitch-epoch impulse files produced by \fIepochs\fR.
+Output analysis results are periodically resampled.  \fIPs_ana\fR
+also computes F0 trajectory pitch-synchronously. 
+.ip \fIsyntdemo\fR 
+This is a demonstration shell script that introduces the new ESPS 
+analysis/synthesis programs and also serves as an general example of
+utilizing \fIxwaves\fR, the signal visualization tool, and XIG (X-interface 
+Generation), the X-Window user-interface customization facility, for 
+interactive DSP programming.  You can find this script in \fI$ESPS_BASE/demo\fR.
+.sh 2 "NEW FILTER PROGRAMS"
+.ip \fIcb_filt\fR
+desings a multiband FIR filter or a differentiator by
+constraint-based algorithm based on
+\fIMeteor: A constraint-based FIR filter design program\fR, Steiglitz,
+Parks, and Kaiser, IEEE Trans. on Signal Processing, Vol 40, No.8,
+August, 1992.   This program is capable of designing a nearly flat
+filter on its passband.
+.ip \fIpkmc_filt\fR
+designs an equi-ripple FIR filter by Parks-McClellan algorithm.  It
+designs multiband filter, differentiator, and Hilbert transformer.
+.ip \fIwin_filt\fR
+designs a multi-band FIR filter using Kaiser windowing method.
+.ip \fIxfir_filt\fR
+This is a shell script intended as an example of extending ESPS programs
+with
+XIG user interface to build a customized filtering design environment.
+All ESPS FIR programs are used.
+.sh 2 "OTHER NEW PROGRAMS"
+.ip \fIebanner\fR
+a cute program that 
+converts ASCII text into  a  sampled  data  waveform
+whose  wide-band  spectrogram  image shows the ASCII text in
+the form  of  raster-graphics  fonts.   The  characters  are
+represented as a matrix of dots - some on and some off.  For
+each "on" dot, a wavelet with the correct  location  in  the
+time-frequency  plane  is  generated.  All of these wavelets
+are then summed to produce the output.
+.ip \fImeter\fR
+this is a X-window based front-end program for ESPS
+recording programs to control and monitor recording process.
+.ip \fIps2frame\fR 
+this program is used to convert embedded PostScript
+files produced by the \fIprint graphic\fR feature of \fIxwaves\fR and
+other programs to a form that can be imported into \IFrameMaker\fR.   We
+believe that the embedded Postscript files produced by our programs is
+legal PostScript, but \fIFrame\fR will not handle these files, because
+of the user of \fIBoundingBox: (atend)\fR near the top of the file.
+\fIps2frame\fR replaces this with the real boundingbox information that
+is located near the end of the file.
+.ip \fIspec_subr\fR
+this is a new program for
+selecting frequency subranges of FEA_SPEC files.  The output is a 
+FEA_SPEC file containing the subset of the data in the input file 
+corresponding to a range of frequencies specified with a command-line option.  
+The output frequency format is "ARB_FIXED"---frequencies are listed 
+explicitly in the header.  A command running the program can be added 
+to the xwaves menu to provide a frequency-zoom capability.
+.ip \fIxspecav\fR
+to be called from \fIxwaves\fR.  The new xspecav uses
+filtering operation to do spectral averaging.
+The filter kernels can be one of the rectangular, hanning, hamming window-
+designed FIRs.  The delay introduced by non-causal filtering is offset
+by start_time -- a time value corresponding to filter delay is subtracted from
+the original start_time.
+This means the resulting spectral slice to which the cursor points comes from
+a region of the original data windowed by one of the windows, with its
+center corresponding to the time cursor.
+.ip \fIzst\fR
+a shell script which sets start times to zero and
+adjusts corresponding label files, has been added.
+.sh 1 "CHANGES TO ESPS PROGRAMS"
+.ip \fIaddfea\fR
+there was a bug that caused core dumps on some
+architectures when
+the length of the comment added with the \fB-c\fR option was exactly 11.
+.ip \fIatosps\fR
+same fix as for \fIfea_edit\fR above.
+.ip \fIbtosps\fR
+A bug was fixed that sometimes caused btosps to put
+an incorrect value for the header item \fImax_value\fR in its output file.
+.ip \fIclassify\fR
+added parameter file processing and a default
+parameter file.
+.ip \fIclassify\fR
+added warning message if 0 determinant of inverse
+covariance is found.  
+.ip \fIfbuttons\fR
+added \fB-s\fR option to specify a scrollable list
+in the panel.
+.ip \fIfbuttons\fR
+added \fB-q\fR option to allow suppression of quit
+button; added \fB-Q\fR option to allow arbitrary label for quit button;
+added \fB-l\fR option to allow command for execution on exit via quit
+button; fixed some bugs in the placement geometry; and program buttons
+labels not appear above the buttons, to save space.
+.ip \fIfbuttons\fR
+\fB-c\fR and \fB-h\fR options were added.
+If \fB-c\fR is specified, a set of exclusive panel choice buttons is used
+for each olwm submenu instead of a menu button with a pull-down menu.
+By default the choice buttons are laid out vertically.  If \fB-h\fR is used,
+they are laid out horizontally.
+.ip \fIfea_edit\fR
+fixed problem that \fIfea_edit\fR had with files
+containing CHAR generic header items.
+.ip \fIfeafunc\fR
+an additional function \fIexp10\fR
+(ten-to-the-power, inverse of \fIlog10\fR) has been added.
+.ip \fIfeafunc\fR
+minor changes were made to specify explicitly the
+value returned by
+convention by LOG for zero arg.  This was done for the benefit of the new
+function \fIarr_op\fR, which uses the LOG case of arr_func in computing powers.
+.ip \fIfilter\fR
+this program has been removed and replaced by \fIfilter2\fR, which was
+introduced in the previous ESPS release.   \fIFilter\fR has been
+removed (it is unstable) and the name \fIfilter\fR is now linked to
+\fIfilter2\fR.
+.ip \fIfind_ep\fR
+bugs fixed: (1) the filename in the common file was not 
+updated if the \fB-w\fR option was in effect;
+(2) one of the debugging messages produced with the \fB-x\fR option showed
+garbage for the output file name;
+(3) if the \fB-n\fR option was used with no filename in common, the program
+would produce a core dump, rather than an error message, before
+exiting.
+The 150 ms lower limit on "silence_req", the argument of the \fB-s\fR
+option, is no longer enforced; it is just stated as a recommend lower
+limit in the manual entry.
+A missing \fB-b\fR option was added to the Synopsis in the manual entry.
+.ip \fIimage\fR
+a bug in the \fIimage\fR program was fixed that caused core
+dumps when a
+debug level of 2 or higher was specified with the \fB-x\fR option.
+.ip \fImbuttons\fR
+If \fB-c\fR is specified, a set of exclusive panel choice buttons is used
+for each olwm submenu instead of a menu button with a pull-down menu.
+By default the choice buttons are laid out vertically.  If \fB-h\fR is
+used, they are laid out horizontally.
+.ip \fImbuttons\fR
+added \fB-Q\fR option to allow arbitrary label for
+quit button; added \fB-l\fR option to allow command for execution on
+exit via quit button.
+.ip \fImu2esps\fR
+this program can now handle SUNOS 4.1 audio file
+headers.
+.ip \fIplot3d\fR
+Two \fIplot3d\fR bugs were fixed:  moving the box with the
+mouse with no
+data loaded could cause a core dump; sometimes the 3d cursors were
+drawn in the wrong relation to the mouse position.   Major improvement
+is that hardcopy output of the plot is now possible, in either
+PostScript or PCL.   A print setup panel is available for selecting
+output type, scaling, and output device.
+.ip \fIplotfield\fR
+A bug was fixed in the plotfield script that
+caused incorrect processing
+of command-line arguments when the text argument of the -t option
+contained blanks.
+.ip \fIsfconvert\fR
+changed the default value of \fIsfwin_len\fR in
+the default parameter file to a more reasonable value of .01 (seconds).
+.ip \fIsgram\fR
+reversed the sense of the \fB-z\fR option so that
+warnings about zero power in frames are off by default.
+.ip \fIsplay\fR
+a bug was fixed with caused the \fB-a\fR to have no
+effect unless the \fB-b\fR option was used also.  And if \fB-a\fR and
+\fB-b\fR are both used, the \fB-b\fR option has no effect.
+.ip \fIsrecord\fR
+modified to require an output file, or \- to specify
+standard output.
+.ip \fItofspec\fR
+The tofspec program can now produce FEA_SPEC files
+in "ARB_FIXED" format---frequency values are not necessarily uniformly 
+spaced and are given by an explicit list in the header.  The frequencies 
+may be specified by a command-line option or a parameter-file entry.
+.ip \fIvqasc\fR
+memory leak fixed.
+.ip \fIvqdesasc\fR
+added \fB-l\fR option as was added to \fIvqasc\fR
+in version 4.2.   This option is to allow specification of input line
+length to override compiled in default.
+.ip \fIwmse_filt\fR
+a FIR design program by minimum mean square error criteria,
+no longer prompts user for design parameters.  It now supports
+standard ESPS parameter file processing, which can be used with
+\fIxeparam\fR(1-ESPS), and \fIeparam(1-ESPS)\fR.
+.ip \fIxfft\fR
+\fIxfft\fR was changed to permit a \fB-c\fR option; a new parameter
+file \fIPWfftc\fR was created to facilitate taking fft-spectrograms of
+complex sampled data.
+.sh 1 "NEW AND CHANGED LIBRARY FUNCTIONS"
+.ip \fIarr_func\fR
+modified to handle additional function,
+\fIexp10\fR, inverse of \fIlog10\fR.  Use by \fIfeafunc\fR program.
+.ip \fIarr_op\fR
+This a new library function for performing
+element-by-element arithmetic operations on arrays of any of the ESPS
+numeric types.  The currently supported operations are addition,
+subtraction, multiplication, division, forming a complex number from
+its real and imaginary parts, and raising a given number to a given
+power.
+.ip \fIexv_bbox\fR
+exv_bbox was extended to support exclusive
+panel_choice buttons for submenus instead of menu buttons with pull-down menus.
+There are two new items in the parameter structure (typedef bbox_par):
+.nf
+  int button_choice;            /* if true, show submenus as panel choice
+                                   items instead of button menus */
+  int choice_horizontal;        /* if true, panel choice items are
+                                   displayed horizontally */
+.fi
+.ip \fIexv_bbox\fR 
+added the following parameters for allowing the user to put
+an arbitrary label on the QUIT button and to execute an
+arbitrary function when it is pressed
+.nf
+          char *quit_label;     /* if non-NULL, name for QUIT button */
+          char *quit_data;      /* QUIT button data string */
+          void (*quit_data_proc)(); /* execution function for QUIT data data */
+.fi
+these changes are needed in order to support analogous
+changes to fbuttons and mbuttons
+.ip \fIget_genhd_coded\fR
+A bug was fixed in the library function
+\fIget_genhd_coded\fR for
+items with more than one element, the returned value consisted of
+repetitions of the first element.
+.ip \fImatinv\fR 
+a bug in the determinant functions, \fIdeterm\fR and
+\fIdeterm_d\fR was
+fixed: they would allocate memory and not free it before returning.
+The problem was apparent in the operation of the \fIclassify\fR program,
+which would fail with a memory allocation failure after classifying
+some number of records (a number depending on the number of classes
+and the number of features used for classification).
+.ip \fIread_header\fR
+a bug was fixed that could cause a program to
+fail when reading a FEA_SPEC file with frequency format ARB_FIXED by 
+unnecessarily demanding the presence of a \fIsf\fR generic header item.
+\fIread_header\fR was also modified to handle version 1.7a of Sphere
+headers.
+.ip \fIwaves_show_sd\fR
+this new library function allows user to
+display an array of data by
+a simple call and have the result displayed in an xwaves window if
+xwaves is running in server mode.
+.sh 1 "THE PUB DIRECTORY" 
+.lp
+The directory $ESPS_BASE/pub contains full-source copies of 
+certain relevant and useful public domain programs. You are 
+free to use them and pass them on in any manner consistent with 
+restrictions stated by their authors.  This release 
+contains these programs:
+.ip \fIghostscript\fR
+This is a GNU implementation of PostScript.   It can be used to display 
+PostScript files on the screen for certain PostScript translations.  We have 
+included it to make the script \fIps2epsi\fR available.  This script (which 
+uses \fIghostscript\fR will take the PostScript file from the new print
+option on \fIxwaves\fR and \fIplot3d\fR and generate a new file including a
+preview image.  This allows a low resolution image of the PostScript file to
+be shown on the screen when the file is imported into programs such as 
+FrameMaker.    
+.ip \fItpipe\fP
+This is a utility that splits a \fIunix\fP pipeline into two
+pipelines.  Stated differently, the output of one pipe can provide the
+intput to two others.  \fItpipe\fP was written by David B. Rosen of
+Boston University.
+.ip \fIxgrabsc\fP
+A utility that allows you to grab arbitrary portions of the 
+screen and output them in Postscript or many other formats.
+\fIxgrabsc\fP was written by Bruce Schuchardt.  
+.ip \fItek2ps\fR
+Written by Michael Fischbein, this program converts tektronix graphics
+codes into Postscript.  This is used by some of our plotting programs.
+.ip \fIshellforms\fP
+This is a utility to build and edit forms.  It was written by
+Paul Lew.
+.ip \fIghostscript\fR
+This is a GNU implementation of PostScript.  It is included here because it 
+includes a script that can process a PostScript file as output by the new print 
+graphics feature of ESPS and \fIxwaves\fR and add a preview image.  This
+script is \fIps2epsi\fR.   The particular version of this script in our bin
+directory has been modified to refer the the \fIghostscript\fR library
+in our pub directory.   If you desire to use the general features of 
+\fIghostscript\fR, you will have to install it from the source.  
+.sh 1 "KNOWN PROBLEMS"

@@ -1,0 +1,977 @@
+.lo
+.he '\fIwaves+\fP Version 2.0b Release Notes''page %'
+.ce 3
+.b
+\fIwaves\fP+ Version 2.0b Release Notes
+.sp
+Document version: 1.11 2/25/91
+.sh 1 "INTRODUCTION"
+.lp
+This document provides notes relevant to release 2.0b of \fIwaves\fP+.
+Please read this document and the Installation Instructions completely
+before installing this release.  This note documents changes to
+\fIwaves\fP+ since the revision 1.2a.  
+.lp
+Note that there's an option (\fB-u\fP) on the program
+\fIeversion\fP (1\-\s-1ESPS\s+1) that will display an on-line copy of
+these release notes to any ESPS user.  This is a convenient way for
+ESPS users to find out about the changes.
+.sh 1 "CHANGES SINCE 2.0a AND 2.0b RELEASE"
+.lp
+All of the major changes in this release of \fIwaves+\fR are in the X Window
+version, \fIxwaves+\fR.   The major change is that \fIxwaves+\fR is now
+built under Version 2.0 of the XView toolkit.   This includes a number
+of X Window related bug fixes from the previous version (XView 1.0.1).
+This release also includes the first release of \fIxwaves+\fR for Convex
+computers and Apollo (Domain 10.3).
+.lp
+Be sure to consult the \fIREADME\fR file in \fI/usr/esps/xview\fR for
+the latest information on how to run \fIxwaves+\fR with different window
+managers and servers.
+.sh 2 "CHANGES SPECIFIC TO 2.0b"
+.lp
+The following bug fixes and changes have been made to \fIwaves+\fR
+and/or \fIxwaves+\fR:
+.np
+At present, a FEA_SPEC file read by \fIwaves+\fR or \fIxwaves+\fR must have
+SPTYP_DB as the value of its "spec_type" header item (though this will
+eventually be generalized).  Because of a bug (a missing check), trying
+to read a FEA_SPEC file with any other spec_type would cause a core
+dump.
+The check has been added, and the current behavior is to print a warning
+message instead of dumping core.
+.np
+A problem has been fixed that caused
+a few pixels to get cut off at the bottom
+of a signal window.  This could it impossible to read the label and value
+readout,
+especially for the lowermost trace in a window with several traces.  
+Also, a few extra pixels of extra margin have been eliminated at
+the bottom and right of the window.
+Finally, some unevenness has been eliminated in the spacing of the
+labels and value readouts in multi-trace signal windows.
+.np
+Colormap handling in \fIxwaves+\fR, \fIxspectrum\fR, and \fIxlabel\fR 
+has been revised to
+use the CMS package introduced in OpenWindows version 2.0.
+.np
+The \fIxwaves+\fR control panel now has a "Pause" button that works like
+the "pause" command in waves command scripts.  
+Pushing it causes a running script
+to stop, and pushing the "Continue" button causes the script to resume
+execution.
+.np
+A kill window button has been added to the waveform menus in \fIxwaves+\fR.
+This is needed for window managers that do not implement a frame menu
+with a kill function.
+.np
+Bug fixes in \fIxlabel\fR: The left and middle mouse buttons
+were playing segments of speech twice:  when released as well as when
+pressed.  The cursor was not returning to its former position after
+being
+used to select a label from the menu.  Dismissing the label menu without
+selecting a label would cause a mark to be set in the signal window with
+no corresponding mark in the label window.
+.np
+Bug fix in \fIxspectrum\fR.  The mouse buttons were performing
+their functions twice:  when released as well as when pressed.
+.np
+Whenever a waveform or spectrogram window is created or repainted, and
+an attachment is running, \fIxwaves+\fR will instruct the attachment to
+create or update its display for the object to which the window
+belongs.  This implies in particular that if you start \fIxwaves+\fR, start
+an attachment, and then bring up a waveform or spectrogram, the label
+or spectrum window will appear immediately, rather than at a later
+stage of the proceedings.
+(This feature was present at one point in SunView waves+, but
+was lost about a year and a half ago through an overzealous attempt 
+to eliminate unnecessary repainting of some windows when other
+windows were uncovered after being obscured.)
+The change will be especially apparent with \fIxlabel\fR, which
+responds to the instruction by repositioning and rescaling the label
+window to align the marks in the label window with the marks in the
+signal window (the most recently created signal window in the object
+when there are more than one.)  The \fIxspectrum\fR attachment does not
+reposition its window.  The \fIxlabel\fR attachment now does a better job of
+maintaining alignment.  Previously the repositioning and rescaling
+would be triggered by certain events, such as zooming or scrolling
+operations, but resizing the signal window would destroy the
+alignment.  Now resizing will also cause automatic realignment.  So
+will simply refreshing the signal window.  Simply moving a signal
+window can still break the alignment, but you can restore it by causing
+a refresh.  If a signal window is at the bottom of the screen, the
+label window may be positioned off the bottom of the screen.  If that
+happens, just move the signal window up and cause a refresh.
+.np
+A bug has been fixed that used to cause incorrect positioning
+of the label window under the olwm window manager.  Occasionally the
+label
+window would be drawn across the middle of the signal window rather than
+beneath; the rest of the time, the frame at the top of the label window
+would obscure a narrow strip at the bottom of the signal window.  Now
+under olwm the top of the label window just touches the bottom of the
+signal
+window.  Under current twm, the horizontal alignment is correct, and
+the top of the label window is separated from the bottom of the signal
+window
+by a narrow gap.
+Window positioning is highly window-manager-dependent, and it is
+impossible to guarantee correct positioning under all window managers.
+.lp
+The following changes have been made to \fIformant\fR
+(1\-\s-1ESPS\s+1):
+.np
+A bug has been fixed relating to the \fB-R\fR option.
+.np
+A new option, \fB-M\fR has been added for passing in a constant rms
+value.
+.lp
+The program \fImu2esps\fR (1\-\s-1ESPS\s+1) has been added to the
+\fIwaves+\fR product distribution.  
+.lp
+The remainder of this release note describes changes since 1.2a.
+.sh 1 "BRIEF SUMMARY OF MAJOR CHANGES"
+.lp
+\fIWaves\fP+ Version 2.0a has the following general improvements
+relative to \fIwaves\fP+ Version 1.2a:
+.ip \ \ \ \(bu
+initial version of \fIwaves\fP+ under X Windows
+.ip \ \ \ \(bu
+additional DSP boards supported 
+.ip \ \ \ \(bu
+ESPS file conversion programs now bundled with \fIwaves\fP+
+.ip \ \ \ \(bu
+support for display of complex data
+.ip \ \ \ \(bu
+support for the new ESPS self-describing sampled data files 
+(including multi-channel and complex data) 
+.ip \ \ \ \(bu
+machine independent file I/O
+.ip \ \ \ \(bu
+\fIwaves\fP+ can act as a display server
+.ip \ \ \ \(bu
+support for creating and editing colormaps (SunView only)
+.ip \ \ \ \(bu
+new attachment to support labeling of pre-defined events (SunView only)
+.ip \ \ \ \(bu
+additional \fIwaves\fP+ globals and commands
+.ip "\ \ \ \(bu" 5
+Enhancements to \fIlabel\fP, \fIspectrum\fP, and \fIformant\fP.  
+.ip "\ \ \ \(bu" 5
+A new class of external ESPS calls. 
+.ip "\ \ \ \(bu" 5
+Numerous additional improvements and bug fixes. 
+.sh 1 "PROGRAMS IN THE RELEASE"
+.lp
+This Section lists the various programs that are part of the Version
+2.0 release.  Naturally, the release includes the \fIwaves\fP+ program
+itself.
+.sh 2 "\fIwaves\fP+ Attachments"
+.lp
+The following \fIwaves\fP+ attachments are included: 
+.sp .5
+.nf
+.ta 1.0i
+  \fIspectrum\fP \-	interactive spectrum analysis
+  \fIlabel\fP \-	interactive labeling 
+  \fImarks\fP \-	interactive labelling of pre-defined events
+.fi
+.lp
+The \fImarks\fP attachment is new with \fIwaves\fP+ Version 2.0, and 
+is available only for Sunview; an X Windows version will be released
+later.  
+.sh 2 "Auxiliary Programs"
+.lp
+In previous releases, "Standalone \fIwaves\fP+" was distinguished from
+"Basic \fIwaves\fP+" by the inclusion (in Standalone) of various ESPS
+file conversion programs.  In Version 2.0, we have eliminated this
+distinction so that \fIwaves\fP+ is always shipped with the file
+conversion programs.  We have also added \fItestsd\fP and the new
+program \fItofeasd\fP to the set of ESPS programs shipped, and we have
+included a new program (\fIcmap\fP) to support the generation or
+editing of \fIwaves\fP+ colormaps (in Version 2.0, \fIcmap\fP is only
+available under Sunview; an X windows version will be released later).
+The set now includes 18 file conversion and display programs, five
+utilities (\fIeman\fP, \fIeversion\fP, \fIespsenv\fP, \fItestsd\fP,
+\fIcmap\fP), two processing programs (\fIsgram\fP, \fIformant\fP), and
+two license management programs (\fIwcheckout\fP, \fIwfree\fP).
+Distributions for the SPARCstation I also include programs to record
+and play by means of the built-in codec.  Here's the full list:
+.sp .5
+.nf
+.ta 1.25i
+  \fIaddfea\fP \-	adds a new FEA file field based  on ASCII data
+  \fIaddfeahd\fP \-	adds an ESPS feature file header to non-ESPS binary data
+  \fIaddgen\fP \-	adds a generic header item to an existing  nor new ESPS file header
+  \fIbhd\fP \-	behead an ESPS file
+  \fIbtosps\fP \-	convert binary sampled data file to an ESPS FEA_SD file
+  \fIcmap\fP -	generate or edit a \fIwaves\fP+ colormap
+  \fIcomment\fP \-	displays or appends to comment field in ESPS file headers
+  \fIeman\fP \-	displays or prints ESPS manual pages
+  \fIeparam\fP \-	run an ESPS program with parameter prompts
+  \fIespsenv\fP \-	display relevant UNIX environment variables
+  \fIeversion\fP \-	displays current version of ESPS and \fIwaves\fP+
+  \fIfea_element\fP \-	prints binary format table for ESPS FEA files
+  \fIfeatosd\fP \-	convert ESPS FEA_SD file to old-style SD file
+  \fIformant\fP \-	compute formant frequencies,  formant bandwidths, and voicing
+  \fIhditem\fP \-	print an item from an ESPS header
+  \fIhdshrink\fP \-	remove embedded headers from an ESPS file
+  \fIils_esps\fP \-	convert an ILS sampled data file to an ESPS file
+  \fIlwb2esps\fP \-	convert a Laboratory Work Bench data file to ESPS FEA_SD
+  \fIpplain\fP \-	print values from ESPS file in "plain format"
+  \fImu2esps\fP \-	converts mu-encoded data to ESPS FEA_SD file
+  \fIpsps\fP \-	print headers and data from ESPS file in "pretty format"
+  \fIpspsdiff\fP \-	differential ESPS file comparator
+  \fIsdtofea\fP \-	convert old-style ESPS SD file to FEA_SD
+  \fIsgram\fP \-	compute FFT-based narrow- or wide-band spectrogram
+  \fIsigtosd\fP \-	convert SIGnal sampled data file to ESPS
+  \fIsplay\fP \-	play sampled data using SPARCStation I codec
+  \fItestsd\fP \-	make test signal (sine wave, square wave, noise, pulses, ASCII input, etc.)
+  \fItofeasd\fP \-	converts data from arbitrary FEA field to FEA_SD (sampled data) file
+  \fItofspec\fP \-	converts FEA data to FEA_SPEC file (for spectrogram-style displays)
+  \fIwcheckout\fP \-	checks out a \fIwaves\fP+ license
+  \fIwfree\fP \-	frees a \fIwaves\fP+ license
+.fi
+.sh 2 "DSP Board Programs"
+.lp
+\fIwaves\fP+ can exploit several DSP boards that provide speech I/O
+and fast computation of spectrograms.  Driver kits are now or will 
+shortly be available for three boards:
+.ip \ \ \ \(bu
+AT&T DSP32 VME board
+.ip \ \ \ \(bu
+AT&T DSP32C VME board
+.ip \ \ \ \(bu
+Ariel DSP32C AT board (for Sun 386i) 
+.lp
+The driver kits include a UNIX driver (with installation
+instructions) and the following standalone programs: 
+.nf
+.sp .5
+.ta 1.25i
+  \fIwplay\fP \-	perform D/A conversion using DSP32 or DSP32C board
+  \fIwrecord\fP \-	perform A/D conversion using DSP32 or DSP32C board
+  \fIdspsgram\fP \-	compute spectrogram using DSP32 or DSP32C board
+.fi
+.sh 2 "On-Line Manual and Other Documentation"
+.lp
+The distribution includes on-line manual pages for \fIwaves\fP+,
+the attachments, the auxiliary programs, and the file structure 
+descriptions ESPS (5\-\s-1ESPS\s+1), FEA (5\-\s-1ESPS\s+1), FEA_SPEC
+(5\-\s-1ESPS\s+1), and FEA_SD (5\-\s-1ESPS\s+1).  
+.lp
+The following new documents are included in this release: 
+.sp .5
+.nf
+	"FEA_SD Files \- Feature Files for Sampled Data in ESPS"
+	"Applications Note: Converting to and From ESPS Files"
+	"Machine-Independent File I/O in ESPS"
+
+.fi
+.sh 1 "X WINDOWS VERSION OF \fIwaves\fP+"
+.lp
+Version 2.0 \fIwaves\fP+ has been ported to run under X Windows
+(instead of SunView).  To do this, we used the XView toolkit under X11
+R4.  Sun has released XView for Suns as a supported product and has
+also placed the XView source code in the public domain.  We refer to X
+Windows versions of \fIwaves\fP+ as \fIxwaves\fP+.  Owing to the use
+of XView, \fIxwaves\fP+ uses the Open Look Graphics User Interface. 
+.lp
+Version 2.0a of \fIxwaves\fP+ will run on Sun SPARC CPUs with Sun
+OpenWindows 1.0.1 or greater, on HP 300 systems with HP/UX 7.0, and on
+Masscomp systems with RTU 5.0.  An ICCCM complient window manager
+should be used with \fIxwaves\fP+, and some of the Open Look fonts are
+necessary.  In particular, \fIxwaves\fP+ runs well under Sun's
+OpenLook window manager (\fIolwm\fP).  On HP systems it runs under the
+VUE window manager or their Motif window manager.  On Masscomp
+systems, it runs under Masscomp's \fImwm\fP.  \fIxwaves\fP+ will also
+run using a "vanilla" server built from the R4 MIT tape and it will
+run with the window manager \fItwm\fP.  On all systems other than Suns
+running OpenWindows, some of the Open Look fonts have to be installed.
+We provide them under /usr/esps/xview \- see the README file there. We
+also provide a copy of \fIolwm\fP.
+.lp
+In a number of cases we have tried, acceptable performance with
+non-ICCCM complient window managers results from adding this resource
+to the .Xdefaults file:
+.nf
+
+	XView.ICCCMCompliant: False
+
+.fi
+When running \fIxwaves\fP+ under Sun OpenWindows 1.0.1 (via the
+\fIxnews\fP server), dynamic colormaps will not work properly unless
+you define the environment variable USE_MIT_VISUALS prior to starting
+\fIxnews\fP.  Otherwise, correct colors for any window will be seen
+only when the mouse is in that window, and the colormap will change on
+window entry and exit.
+.lp
+We will subsequently release versions of \fIxwaves\fP+ for other CPUs.
+These will also use the Xview toolkit, which means that the Open Look
+fonts and an ICCCM complient window manager will be needed.  We will
+provide these as necessary.
+.lp
+The current release of \fIxwaves\fP+ includes X Windows versions of
+the attachments \fIlabel\fP and \fIspectrum\fP; it does not include X
+Windows versions of the attachment \fImarks\fP or the auxilliary
+program \fIcmap\fP \- these will become available in a later release.
+.lp
+There are a number of known problems with \fIxwaves\fP+.  Among the
+more noticable are these: Windows sometimes pop up in inconvenient
+positions (especially with align-and-rescale operations).  Ghost
+cursors and markers sometimes appear (just refresh the window).
+Operations with the browser-menu can sometimes lead to core dumps.
+Windows often are refreshed more than once when they are first
+displayed, and occasionally at other times as well (especially on HP).
+\fIXwaves\fP+ works well under the \fIolwm\fP window manager; with
+some other window managers, windows come up with immense initial
+sizes.  With certain combinations of clients and servers, digital
+halftone displays appear with a reversed-sense for black and white
+pixels (in this case, you can use the \fIwaves\fP+ global
+\fIinvert_dither\fP to get the desired display).
+.lp
+On the HP300, the "waves+ manual" button does not work (from the
+\fIwaves\fP+ control panel).  On Masscomps, external ESPS calls may
+return early (e.g. spectrograms and any functions added via the
+add_esps commands), in which case the display will be incomplete.  If
+this happens, note the file name, kill the relevant display window,
+and reload the file by entering the file name in the INPUTfile item on
+the control panel.
+.lp
+With some window managers (e.g., \fItwm\fP on any system and \fImwm\fP
+on Masscomps), windows have to be placed manually.  We consider
+this to be a bug and are looking for a solution.
+.lp
+Many (but not all!) of the \fIxwaves\fP+ bugs reflect XView bugs.  In
+general, we expect \fIxwaves\fP+ to improve steadily.  
+.lp
+If you see numerous X Window errors, and you are running under Sun
+may also need to install the revised cgsix segment driver installed
+(from /home/openwin/sys); this seems to be needed on certain
+SPARCstation models, but not others. 
+.lp
+Your system should be configured with 25-30MB of swap space.  If
+additional swap space is needed, the following procedure can be used 
+on Suns (by a super-user): First, create a swap file with mkfile(1).  For
+example, to create a 25MB swap file called "swapfile" in /home:
+.nf
+
+	%mkfile -v 25M /home/swapfile
+
+Then, add an entry in /etc/fstab:
+
+	/home/swapfile  swap  swap rw  0 0 
+
+Then, reboot the system.  
+.fi
+.lp
+On occasion, especially after frequent use, xwaves+ may fail with
+various X Errors being reported in the console or other windows.  When
+this happens, it is best to exit the window manager and restart.
+.sh 1 "CHANGES AND BUG FIXES IN \fIwaves\fP+"
+.sh 2 "Complex FEA Fields"
+.lp
+Complex data types are now supported in ESPS FEA files.  Previously,
+FEA records were restricted to the fundamental types BYTE, SHORT,
+LONG, FLOAT, and DOUBLE.  Support has been added for corresponding
+complex types BYTE_CPLX, SHORT_CPLX, LONG_CPLX, FLOAT_CPLX, and
+DOUBLE_CPLX.  Each complex type has a real and an imaginary part of
+the corresponding integer or floating type.  For details see the FEA
+man page FEA (5\-\s-1ESPS\s+1).  
+.lp
+\fIwaves\fP+ plots the real and imaginary parts of the elements of a
+complex field as separate traces, each with a label consisting of the
+field name, possibly followed by some bracketed subscripts, and
+terminated with ".r" or ".i" (for "real part" or "imaginary part").
+.lp
+Note that ESPS FEA files with complex data can be created (from
+headerless binary data) using the auxiliary program \fIaddfeahd\fP.  
+.sh 2 "Multidimensional FEA Fields"
+.lp
+Multidimensional fields now have labels with multiple subscripts
+rather than being treated as one-dimensional.
+.sh 2 "FEA_SD Support"
+.lp
+In Version 4.0 of ESPS, the built-in file type for sampled data (SD)
+has been replaced by a feature file subtype (FEA_SD).  Version 2.0
+This has been done in a backward-compatible manor \- i.e.,
+\fIwaves\fP+ will still read the old-style SD files (converting them
+to FEA_SD on input).  We have also included conversion programs
+between the old and new file types (\fIsdtofea\fP (1\-\s-1ESPS\s+1)
+and \fIfeatosd\fP (1\-\s-1ESPS\s+1)).  For details about FEA_SD see
+the man page FEA_SD (5\-\s-1ESPS\s+1).
+.lp
+Now that sampled data are stored as self-describing FEA files, such
+data no longer has to be handled in general as a special case \- such
+files can be read, viewed, and manipulated with \fIwaves\fP+ in the
+same manner as any other FEA file.  This has several advantages.  For
+one thing, it means that sampled data of any data type can be handled
+(in previous versions sampled data was always converted to SHORTs on
+input).  For another, FEA_SD files might have other fields besides the
+sampled data itself ("samples"), in which case \fIwaves\fP+ can
+display all of the fields in a single window.
+.lp
+The handling of sampled data is complicated, however, when the
+optional DSP32 and DSP32C boards are used.  Because these boards are
+limited to operating (for both spectrogram computations and D/A
+output) on SHORTs, special handling is required for FEA_SD files since
+they may contain sampled data of any data type.  (Note that this is
+not an issue for AT&T SIGnal PCM files since they may only contain
+SHORTs).
+.lp
+In this regard, the handling of FEA_SD files by \fIwaves\fP+ is
+determined by a new global \fIfea_sd_special\fP.  The initial value
+(on startup) of fea_sd_special is determined by the presence or
+absence of a DSP board.  If the board is present, \fIfea_sd_special\fP
+is set to 1; if it is absent, \fIfea_sd_special\fP is set to 0.
+.lp
+If \fIfea_sd_special\fP == 1, (the default if a DSP board is present),
+data from the "samples" field in ESPS FEA_SD files are read in as
+SHORTs (regardless of their external representation), and other fields
+are ignored.  Values outside of the range (-32768,+32768) are clipped
+to the extremes of the range.  When a signal is read in this manner,
+\fIwaves\fP+ can use the DSP board for spectrogram computations and
+D/A operations.  
+.lp
+If \fIfea_sd_special\fP == 0 (the default if the board is not
+present), FEA_SD files are treated in the same manner as other FEA
+files \- all fields are read and displayed, and no data type
+conversions are performed.  In this case, whether or not the DSP board
+is present, \fIwaves\fP+ cannot use it for spectrogram computations
+and D/A operations, so the external programs determined by the
+\fIwaves\fP+ globals \fIsgram_prog\fP and \fIplay_prog\fP are called
+instead.  If these globals refer respectively to the ESPS programs
+\fIsgram\fP and \fIwplay\fP (the default case), then the expected
+operations and displays will occur, although with more of a delay than
+occurs with the DSP board.  If one chooses to set \fIfea_sd_special\fP
+== 0 when the board is in fact present, a useful option is to set the 
+global \fIsgram_prog\fP to invoke \fIdspsgram\fP (which uses the
+board) instead of \fIsgram\fP.  (But keep in mind that \fIdspsgram\fP
+will convert the data to SHORTs before using the board, while
+\fIsgram\fP works with FLOATs.)  
+.lp
+Note that it can sometimes be relatively time-consuming to read in a
+non-SHORT FEA_SD file if \fIfea_sd_special\fP == 1, as the conversion
+to SHORT (with limits checking) has to be done on every sample.
+.sh 2 "Machine-Independent I/O"
+.lp
+In previous versions, files written by ESPS or \fIwaves\fP+ on one
+machine could be read by ESPS program or \fIwaves\fP+ running on
+another machine only if the two machines happened to have identical
+numerical data formats and byte order.  This meant, for example, that
+files from a Sun 4 could be read by \fIwaves\fP+ on a Sun 3 but not on
+a Sun 386i or a DECStation 3100.  A goal for ESPS Version 4.0 and
+\fIwaves\fP+ Version 2.0 was that differences in numeric formats and
+byte-order among machines on the network be hidden from ESPS user
+programs.
+.lp
+To meet the goal of machine independence, we defined an external ESPS
+format that permits programs running on different machine
+architectures to work cooperatively on the same files, and we revised
+the ESPS file system accordingly to provide general support for
+machine independent I/O (MIIO).
+.sh 3 "NATIVE vs. EDR Format"
+.lp
+ESPS files in Version 4.0 can be in one of two format: NATIVE or EDR.
+Data in NATIVE format files are written using the native numeric
+formats for a particular machine.  Data in EDR (ESPS Data
+Representation) format files are written in a standard representation:
+floats and doubles are stored using IEEE standard 32 bit and 64 bit
+floating point.  Integers and long integers are stored respectively as
+16 and 32 bit twos-complement integers.  The byte type is stored as an
+8 bit byte.  Character data is stored in ASCII with one character per
+byte.  The byte order is that of the Motorola 680X0 processors.  The
+ESPS external format essentially is similar to the Sun Microsystems
+external data representation (XDR) format.
+.sh 3 "I/O of ESPS Files"
+.lp
+ESPS programs and \fIwaves\fP+ will read files in either NATIVE or EDR
+format (and also files from older versions of ESPS).  By default, ESPS
+programs write files in the NATIVE format for the machine on which the
+programs are run.  EDR format output files can be obtained in general
+for all programs by creating the UNIX environment variable ESPS_EDR
+and giving it the value "on".  The conversion program \fIaddfeahd\fP
+(add an ESPS header to an existing headerless, binary file) has an
+option to specify whether the data are in NATIVE or EDR format.  
+.lp
+The ESPS and \fIwaves\fP+ input routines can not in general handle
+files written in native mode by other architectures \- files to be
+exchanged should be written in EDR format unless the native modes
+happen to match.  This lack of generality is a compromise that
+supports file sharing but only requires a single machine-dependent
+conversion module for each architecture (the module converts between
+native mode and ESPS external format).  Some exceptions to the
+foregoing have been allowed for.  In particular, the input
+routines will usually recognize cases where NATIVE modes differ only
+with respect to byte order.  Thus, for example, NATIVE format files
+from a DECStation 3100 or Sun 386i can be read by \fIwaves\fP+
+running on a Sun 4 or Concurrent (and \fIvice\fP \fIversa\fP).
+.lp
+Using the ESPS external format can result in increased file I/O times,
+but the feature can be turned off (so that native formats are always
+used) when it isn't needed.  As mentioned, the default is to use
+native formats.  
+.sh 2 "New Menu Item"
+.lp
+A "kill-window" item has been added to display menus.  This is useful
+since some window managers do not facilitate the operation.  (For
+example, \fItwm\fP's window kill operation ends up terminating
+\fIwaves\fP+).  
+.sh 2 "New \fIwaves\fP+ Globals"
+.lp
+The following globals have been added in \fIwaves\fP+ Version 2.0:
+.nf
+.i
+
+	fea_sd_special
+	max_buff_size
+	temp_path
+	write_common
+	readout_bar_height
+	min_spec_height
+	min_spec_width
+
+.r
+.fi
+.np
+The global \fIfea_sd_special\fP was added to control the handling of
+FEA_SD files (see the description above).  It is set on \fIwaves\fP+
+startup to be the same setting as \fIuse_dsp32\fP after the presence
+or absence of a DSP board is established (i.e., 1 if a board is
+present, 0 otherwise).  Thus, special treatment for FEA_SD files
+occurs by default only if a board is present.  Processing of the
+\fIwaves\fP+ startup profile now occurs after the board check, so 
+an explicit setting of \fIfea_sd_special\fP in your profile will take
+precedence over the default.  
+.np
+The global \fImax_buff_size\fP determines a limit on the number of
+bytes of storage that \fIwaves\fP+ will attempt to allocate for
+in-memory data storage for any one signal.  Previously this was a
+compiled-in constant with a value of 1048576.  The value is now
+2000000 by default, and this can be changed with an entry for
+\fImax_buff_size\fP in the startup profile or with the \fIset\fP
+command.  If this limit is set high enough for a signal to be
+contained entirely in memory, operations such as scrolling through the
+signal will be faster than they would be otherwise, since \fIwaves\fP+
+will not have to reread data repeatedly from a disk file.  Smaller
+values of the limit may be necessary to prevent \fIwaves\fP+ from
+failing by running out of memory.
+.np
+The global \fItemp_path\fP determines the directory in which
+\fIwaves\fP+ will write temporary files (e.g., files generated by
+external ESPS calls that result from \fIwaves+\fP commands
+\fIadd_espsf\fP or \fIadd_espst\fP).  The default for \fItemp_path\fP
+is "." (i.e., current working directory).  
+.np
+The global \fIwrite_common\fP determines whether or not ESPS Common is
+written whenever the user marks a new segment in a \fIwaves\fP+
+window.  If \fIwrite_common\fP is 1, each time the mouse is used to
+change the position of segment markers, the file name ("filename"),
+starting record ("start"), and number of records ("nan") are written
+to ESPS Common; if write_common is 0, Common is not written.  For more
+information about ESPS Common processing, see various ESPS manual
+pages (e.g., \fIgetparam\fP (1\-\s-1ESPS\s+1) \fIread_params\fP 
+(3\-\s-1ESPS\s+1), \fIxprompt\fP (1\-\s-1ESPS\s+1)).  
+.np
+The global \fIreadout_bar_height\fP determines the height of a
+region containing digital readouts for waveform and spectrogram
+windows.  This readout bar is below the title bar and above the
+scrollbar.  The readout bar is only used under X Windows, so the
+global can be ignored if you are running under Sunview.  
+Under Sunview, the readout bar is not used, since the
+readouts are inserted into the title bar.  
+.lp
+The global \fImin_spec_height\fP gives the minimum height in pixels of
+spectrogram windows; if there are more spectral values per record than
+\fImin_spec_height\fP, the initial window size is set at one pixel per
+spectral value up to a pre-defined maximum. 
+.lp
+The global \fImin_spec_width\fP gives minimum width in pixels of
+spectrogram windows; regardless of window width, spectrograms are
+painted as one record per pixel column.
+.sh 2 "New Waves Commands"
+.sh 3 "Add External ESPS (No Output) Call to \fIwaves\fP+ Menu (\fIadd_espsn\fP
+.lp
+The new \fIadd_espsn\fP command is a companion to the existing
+\fIadd_espsf\fP and \fIadd_espst\fP commands; like them, it 
+may be directed at \fIwaves\fP+.  All three of the "add_esps" commands
+add an item to the \fIwaves\fP+ that can be used to invoke an external
+ESPS program on a marked signal segment.  There are three
+corresponding classes of ESPS programs that can be invoked from within
+\fIwaves\fP+: (1) programs that take two ESPS file arguments (input
+file and output file) and produce an ESPS output file (for example,
+\fIfilter\fP (1\-\s-1ESPS\s+1)); (2) programs that take a single ESPS
+input file argument and produce ASCII text output on standard
+output (for example, \fIstats\fP (1\-\s-1ESPS\s+1)); and (3) programs
+that produce no direct output (but may have side effects like printing
+or plotting), for example, \fIplotsgram\fP (1\-\s-1ESPS\s+1).  To
+summarize the correspondence:
+.ip 
+\fIadd_espsf\fP: adds call to program that produces an ESPS file
+.ip 
+\fIadd_espst\fP: adds call to program that produces text
+.ip 
+\fIadd_espsn\fP: adds call to program that produces no direct output
+.lp
+The \fIadd_espsn\fP command takes two keywords, \fIname\fP and
+\fIcommand\fP.  As with the other "add_esps" commands, \fIname\fP is
+the menu label, and \fIcommand\fP is the corresponding external
+command to be invoked on the marked segment (including any options or
+\fIrsh\fP prefixes).  When \fIname\fP is invoked from the menu, a
+system call is issued to run \fIcommand\fP in the background.
+(WARNING: you can't QUIT \fIwaves\fP+ until all such background jobs
+have terminated.)  As with the other "add_esps" commands, the
+\fIremote_path\fP global is used as a prefix to the file name in order
+to handle the case of remote executions on files accessible via NFS.
+Only one external ESPS program can be incorporated at a time with
+\fIadd_espsn\fP.  Subsequent uses of \fIadd_espsn\fP just override the
+current values.  For details, see "RUNNING ESPS PROGRAMS FROM \fIwaves\fP+"
+in the \fIwaves\fP+ manual.
+.lp
+Here are a couple of examples: In order to view spectrogram segments
+without interpolation (i.e., so that each data point is displayed as a
+uniform rectangle), one might use:
+.nf
+
+     add_espsn name rect_sgram command plotsgram -D 
+
+.fi
+One could then mark a spectrogram segment and invoke the "rect_sgram" 
+menu entry, the result being an separate ESPS plot of the marked
+segment.  Similarly, 
+.nf
+
+     add_espsn name print_sgram command plotsgram -Tpostscript
+
+.fi
+could be use to plot the marked segment on a local postscript printer,
+assuming one was set up in the ESPS installation script.  One could
+the same thing for sampled data files by means of \fIplotsd\fP
+(1\-\s-1ESPS\s+1).  
+.sh 3 "Change Working Directory (\fIcd\fP)"
+.lp
+The command \fIcd\fP, which may be directed to \fIwaves\fP+, changes
+the current working directory.  The optional keyword \fIpath\fP gives
+the new directory.  If issued without the keyword \fIpath\fP, the
+user's home directory is assumed.  All file names passed to
+\fIwaves\fP+ (e.g., in the INPUTfile item of the control panel) are
+interpreted relative to the current working directory.  On startup,
+the working directory is the directory in which \fIwaves\fP+ is
+invoked.
+.sh 3 "Page Signal in Window (\fIpage\fP)"
+.lp
+The command \fIpage\fP, which may be sent to display ensembles, 
+provides a means for paging forward or backwards from command files
+(in previous versions, this function was available only as a menu
+item).  There are three optional keywords:
+.ip \ \ \fIfile\fP: 12
+The name of the signal to be paged forward or back. If
+omitted, the name from INPUTfile in the command window is used.
+.ip \ \ \fIstep\fP: 12
+If positive, the number of seconds to page forward; if
+negative, the number of seconds to page backwards.  If omitted, the
+value of the global \fIref_step\fP is used.
+.ip \ \ \fIref_step\fP: 12
+Optional new value for the global \fIref_step\fP. 
+.sh 3 "Play Signal in Window (\fIplay_wind\fP)"
+.lp
+The command \fIplay_wind\fP, which may be sent to display ensembles, 
+provides a means for playing the data currently displayed in a window
+(in previous versions, this function was available only as a menu
+item).  The optional keyword \fIfile\fP names the signal to be played. 
+If \fIfile\fP is not given, some heuristics are used to find a window to
+play.  
+.sh 3 "Save Signal Segment (\fIsave\fP)"
+.lp
+The command \fIsave\fP, which may be sent to display ensembles,
+provides a means for saving specific segments of signals (in previous
+versions, this function was available only as a menu item).  There are
+three optional keywords:
+.ip \ \ \fIfile\fP: 12
+The name of the signal file containing the segment to be
+saved.  The name of the in which the segment is saved is determined by
+the OUTPUTfile item in the \fIwaves\fP+ control panel (see description
+in the \fIwaves\fP+ manual).  Note that the base name for the output
+file can be changed by re-setting the global \fIoutputname\fP.
+.ip \ \ \fIstart\fP: 12
+The start time of the segment to be saved.  
+.ip \ \ \fIend\fP: 12
+The end time of the segment to be saved.
+.sh 2 "Spectrogram Improvements"
+Spectrograms are now painted significantly faster than previously
+when interpolation is unnecessary \- that is, when the vertical scale is
+one frequency point per pixel.  (By default, spectrograms are
+automatically initially painted at that scale unless they would be too
+tall to fit on the screen or below a minimum height that corresponds
+to 153 frequency points.)
+.np
+The spectrogram computations performed by the DSP board were cleaned
+up.  A faulty assumption about the analysis window symmetry was
+corrected, resulting in improved spectral dynamic range.  Parameter
+range checking was made more robust.  Buffer overrun problems causing
+vertical stripes on spectrograms for certain parameter settings have
+been fixed.  An initialization problem that caused a glitch near the
+beginning of the spectrogram has been fixed.
+.sh 2 "\fIwaves\fP+ as a Display Server"
+.lp
+\fIwaves\fP+ can now optionally accept commands from stdin, and
+therefore can use the UNIX pipe facility in the usual way or be run in
+the background as a display server with invocations like:
+.sp .5
+.nf
+	waves \- < /dev/ptyra &
+.fi
+.sp .5
+Any waves commands subsequently sent to /dev/ttyra will be received
+and executed by waves.
+.sh 2 "Visual Cues for Colormap Dynamics"
+.lp
+A special ESPS FEA_SPEC file (ESPS/lib/waves/color.fspec) is available
+to provide visual cues about the current colormap.  To use it, just
+load the file (enter its full path name as the "INPUTfile:" in the
+control panel).  This file has a series of identical records, with
+each record containing all possible numerical values for spectra.  As
+viewed on the screen, the values range from -64 at the bottom of the
+window to +50 at the top; these are displayed with the first 115
+entries in the colormap (the colormap entry number is shown on the
+vertical, "frequency" axis).  The resulting display is particularly
+useful with the "move contour" operation.
+.pp
+To try this, bring up a spectrogram in a separate window, load the
+ESPS/lib/waves/greymap as the colormap, change the middle button mode
+to "move contour", put the mouse in the spectrogram window, hold down
+the middle button, and move the mouse.  The red band in the
+color.fspec window will indicate the range of spectral values that are
+displayed in red.  Similarly, use the "modify intensity" operation
+after loading the colormap ESPS/lib/waves/Colormap.
+.sh 2 "Improved Error Reporting for Commands"
+.lp
+If the global \fIverbose\fP is set greater than 1 (the default is 1),
+detailed feedback is now provided for the parsing of commands given to
+\fIwaves\fP+.  Unrecognized commands are now reported as such (even
+for \fIverbose\fP == 1), rather than being ignored silently as they
+were in previous releases.
+.sh 2 "Other Changes and Fixes"
+.np
+The \fIwaves\fP+ option to specify use of a particular startup profile
+has been changed from \fB-W\fP to \fB-w\fP (this because \fB-W\fP is
+often used to pass window-system parameters). 
+.np
+When a header-less file is read by \fIwaves\fP+, the default header
+specified by the \fIwaves\fP+ global \fIdef_header\fP is used.  This
+default header can now be any ESPS FEA header.  Such a header can be
+generated from an ASCII description of the data by \fIaddfeahd\fP
+(1\-\s-1ESPS\s+1).  The default .wave_pro sets the default header to
+/usr/esps/lib/waves/def_head.feasd.  This is a FEA_SD header with
+sampling rate 8000.  The previous default (the SIGnal header
+dummy.header) is now in /usr/esps/lib/waves/def_head.sig.
+.np
+Play commands implemented as external system calls (to the
+\fIplay_prog\fP) are now run in the background. This means that cursor
+and menu interactions can continue as soon as the play has been
+initiated.  
+.np
+External play commands generated via \fIadd_espsf\fP are now 
+run in the background if the \fIdisplay\fP keyword has the value 0
+(i.e., when \fIwaves\fP+ is not to display the resulting signal). 
+.np
+The \fIwaves\fP+ global \fIdo_color\fP (0 for monchrome, 1 for
+multi-plane) is now set internally on startup prior to reading the
+startup profile, and is no longer reset each time a new window is
+created.  The global should not be set in your profile unless
+you wish to override the default.  
+.np 
+The tracks of arbitrary FEA files overlaid on spectrograms are now
+colored in the same way as formant-bandwidth files rather than being
+all black.
+.np
+Axis marking algorithms have been improved for spectrogram and F0 views.
+.np
+Command files can now contain comments (lines with "#" as the first
+character).  
+.np
+Much of the annoying behavior in "align and rescale" has been fixed.  
+.np
+The external calls to esps programs were all changed so that the range
+option is given as -r start:end in all cases.  (Previously, -p was
+used for SD files).  These changes correspond to changes in ESPS 4.0. 
+.np
+Previously, when formant tracks overlaid on a spectrogram were
+edited, the modified version would not be written out when the
+spectrogram was killed, or when waves quit.  This bug has been fixed.
+.np
+The `bracket-markers' operation will refuse to operate when the left
+and right markers coincide.  Previously in such circumstances, the operation
+would leave the window in an awkward state that was difficult to get out of--
+for example, no amount of `zooming out' would have any effect.  (It is easy
+to superpose the markers inadvertently with the `up-down-move' button action
+by pressing and releasing the button without moving the mouse.)
+.np
+The behavior of the \fIwaves\fP+ \fIsleep\fP command has been
+improved.  Correct operation no longer depends on the cursor
+remaining in the control panel.
+.np
+Fixed failure to remove display object when all signal windows were
+removed.  This bug had the side effect of sometimes leaving 
+attachment objects active after explicit or implicit "kill ..."
+commands. 
+.np
+Fixed bug causing core dump on exit with \fIdebug_level\fP non-zero. 
+.np
+When markers are at extremes of signal (as initially), some
+requests appeared to require more data (by 1 sample) than was 
+present; this has been fixed.  
+.np
+Fixed bug causing core dump when quitting \fIwaves\fP+ after bringing 
+up empty formant file and editing (no edited file was written out).  
+.np
+When one of the various `play' menu items is invoked in a display of a
+signal, such as a spectrogram or derived FEA file, that is not itself
+playable, \fIwaves\fP+ searches for a related signal that is playable,
+such as a sampled-data file belonging to the same object as the
+original signal.  In version 2.0, the scope of the search has been
+expanded to include the ESPS refer file and the first source file
+given in the ESPS header (if present) of the original signal.  As a
+last resort, the search always returns the current signal.  This means
+that the external programs determined by the globals \fIplay_prog\fP
+and \fIsgram_prog\fP will be called as a last resort (they will refuse
+to run on many files, but that is under the user's control).
+.np
+The behavior of the HELP button was changed to bring up the file a
+short help file (ESPS/lib/waves/waves+.help) in a text window.  This 
+file gives startup information, explains the command panel, lists 
+the \fIwaves\fP+ globals, and lists the \fIwaves\fP+ commands.  
+Users
+can display the entire \fIwaves\fP+ manual by running \fIeman\fP in
+a suitable window.  In the X Windows version, \fIwaves\fP+ has a
+control panel button to view the manual.  
+.np
+Overlays on non-spectrogram signals behave a little more reasonably
+than before in that negative values are no longer clipped to zero.
+Such overlays are still useful only in special cases, however, and
+should not be considered as a general feature.
+.np
+Various inconsistencies between displayed data and data in files were 
+corrected (prior to external ESPS calls). 
+.np
+Fixed a bug that sometimes caused the external play command to be
+incorrectly called when a DSP board is present.  
+.np
+There is now better documentation (in the \fIwplay\fP and
+\fIwrecord\fP man pages) for the rate conversions performed by the 
+DSP32 board. 
+.np
+The valid receiver name for \fIwaves\fP+ commands is "waves"; i.e., it
+no longer depends on the name of the program that was invoked.  
+.sh 1 "CHANGES TO \fIformant\fP"
+.np
+The maximum number of formants tracked has been increased to seven. 
+.np
+An interpolation scheme was added to F0 estimation algorithm;
+quantization problems are decreased significantly.
+.np
+The debug option was changed from \fB-d\fP to the ESPS-standard
+\fB-x\fP.  
+.np
+A new option (-\fBR\fP) was added to control the window over which 
+maximum rms energy calculations are made.  
+.np
+A new option (-\fBB\fP) was added to control the maximum internal 
+buffer size.  This controls the maximum signal length that can be 
+handled by \fIformant\fP.  
+.sh 1 "CHANGES TO \fIspectrum\fP"
+.np
+An additional spectrum analysis method has been added:
+\fIlog-mag-DFTR\fP.  This is a discrete Fourier transform of arbitrary
+size (i.e., not necessarily a power of 2), with a maximum size of 500
+points.
+.np
+A new control window item \fIreticle\fP toggles a frequency vs. dB
+reticle in the spectrum analysis window. 
+.np
+A new control window item \fIFB\fP toggles (ON/OFF) the computation
+and printout of formant frequency and bandwidth estimates. The
+\fIFB\fP switch only has an effect if the spectrum analysis method is
+an autoregressive type, i.e., autocorrelation or covariance.
+.np
+To make the \fIreticle\fP and \fIFB\fP switches fit
+in the control panel, several names have been shortened or changed.
+.np
+Some of the start up defaults have been changed, so be careful.
+.sh 1 "CHANGES TO \fIlabel\fP"
+.np
+The label control panel has a new item: \fILabel Menu File\fP.  This
+allows the user to change the label menu directly (the initial menu is
+still ESPS/lib/waves/labelmenu).  
+.np
+The view to which the label window attaches may now be
+specified explicitly.  
+.np
+The label window size is now an adjustable parameter.
+.sh 1 "LICENSE MANAGER ISSUES"
+.lp
+\fIwaves\fP+ checks out a license (if one is available) on startup and
+returns it on exit.  The auxiliary programs will run provided that a
+\fIwaves\fP+ license has been checked out.  Thus, if you are running
+\fIwaves\fP+, you can run the auxiliary programs in other windows and
+\fIwaves\fP+ can run them as external calls.  The program pair
+\fIwcheckout\fP/\fIwfree\fP are provided so that you can run the
+auxilliary programs without running \fIwaves\fP+ (assuming a license
+is available).  This is useful, for example, when you not on a display
+terminal (e.g., rlogin or dialup).
+.lp
+If \fIwaves\fP+ exits ungracefully (e.g., ^C or harsh kill), the
+license will not be returned and it take approximately 3 minutes for
+the license manager (\fIelmd\fP) to declare it defunct.  This is a bug
+and will be fixed in a future release.       
+.sh 1 "KNOWN BUGS PROBLEMS"
+.np
+On Convex systems, with our X programs (and perhaps others?), it is
+necessary to use the Internet address of the X server when setting the
+\fBDISPLAY\fR environment variable.   For example, instead of:
+.nf
+.ft CW
+% setenv DISPLAY fred:0.0
+.fi
+.ft R
+.br
+It is necessary to use the command:
+.nf
+.ft CW
+% setenv DISPLAY 134.45.232.8:0.0
+.fi
+.ft R
+.br
+Where 134.45.232.8 is the Internet address of host fred.
+.np
+On Convex systems, depending on the X server, the \fIxmcd\fR program
+might fail and result in a white plot on a white background.
+(\fIxmcd\fR is called by the plot programs to do the X Window drawing.)
+There is an alternate binary, \fI/usr/esps/bin/xmcd.old\fR, that should
+be renamed to \fIxmcd\fR if the standard \fIxmcd\fR fails.   
+.np
+On Masscomp/Concurrent systems it may be necessary to set the \fIDISPLAY\fR
+environment variable to the full hostname of your system, rather than
+the generic unix:0.0.   For example, if the network hostname of your
+system is fred, then you may have to:
+.nf
+.ft CW
+% setenv DISPLAY fred:0.0
+.fi
+.ft R
+.np
+On systems not running a network, in order the for the license server
+software to operate you need to set the \fBELM_HOST\fR variable to
+\fIlocalhost\fR, instead of the network hostname.   Also in this case,
+you may need to set the X Window \fBDISPLAY\fR variable to localhost
+also (\fIe.g.\fR localhost:0.0).
+.np
+Under certain conditions on Apollo systems, data windows are painted twice
+when uncovered or when changing size or scale.   We realize that this is
+annoying and are working on a solution.
+.np
+For the most recent information about known problems with \fIwaves+\fR, 
+please see the
+BUGS section in the on-line copy of the waves+ manual page (i.e., run
+"eman waves+").
+

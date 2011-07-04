@@ -1,0 +1,8 @@
+#@(#)image.control.menu	1.1 6/18/91 ERL - standard image control stuff
+"Horiz. rescale ON "  set h_spect_rescale 1
+"Vert. rescale  ON "  set v_spect_rescale 1
+"Interpolation  ON " set spect_interp 1
+"Horiz. rescale OFF" set h_spect_rescale 0
+"Vert. rescale  OFF" set v_spect_rescale 0
+"Interpolation  OFF" set spect_interp 0
+

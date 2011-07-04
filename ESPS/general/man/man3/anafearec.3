@@ -1,0 +1,157 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)anafearec.3	1.5 30 Apr 1997 ESI
+.TH ANAFEA_REC 3\-ESPSu 30 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+allo_anafea_rec   \- allocate memory for FEA_ANA file record
+get_anafea_rec    \- get the next data record from an ESPS FEA_ANA data file
+init_anafea_hd    \- initialize an FEA file header for subtype FEA_ANA
+put_anafea_rec    \- write the next data record of an ESPS FEA_ANA file
+.SH SYNOPSIS
+.ft B
+.nf
+#include <esps/esps.h>
+#include <esps/fea.h>
+#include <esps/anafea.h>
+
+struct anafea *
+allo_anafea_rec(hd)
+struct header *hd;
+
+int
+get_anafea_rec(data, hd, file)
+struct anafea *data;
+struct header *hd;
+FILE *file;
+
+int
+init_anafea_hd(hd, order_vcd, order_unvcd, maxpulses, maxraw, 
+	maxlpc, filt_nsiz, filt_dsiz)
+struct	header *hd;
+long	order_vcd;
+long	order_unvcd;
+long	maxpulses;
+long	maxraw;
+long	maxlpc;
+short	filt_nsiz;
+short	filt_dsiz;
+
+void
+put_anafea_rec(data, hd, file)
+struct anafea *data;
+struct header *hd;
+FILE *file;
+.ft
+.fi
+.SH DESCRIPTION
+.I allo_anafea_rec
+allocates memory for a FEA_ANA file record and returns a pointer to it.
+Since the size of the allocated record depends on values in the data
+file header, it is important to be sure that a given FEA_ANA record is
+consistent with the header of the file it is being used with.  (See
+\fIinit_anafea_hd\fR(3\-ESPSu)).
+Internally, \fIallo_anafea_rec\fR calls \fIallo_fea_rec\fR(3\-ESPSu)
+and then hooks the FEA record up to a anafea struct.
+.PP
+.I get_anafea_rec
+reads the next FEA_ANA record from stream \fIfile\fR into the data structure
+pointed to by \fIdata\fR, which must have been allocated by means of 
+a call to \fIallo_anafea_rec\fR(\3-ESPSu).  The parameter \fIhd\fR
+points to the ESPS header in which the various FEA_ANA fields have been
+defined.
+An EOF is returned upon end of file.
+A positive non-zero value is returned otherwise.  
+.PP
+.I Init_anafea_hd
+takes a pointer 
+.I hd
+to an ESPS FEA header.  It sets
+.I hd.hd.fea\->fea_type
+to FEA_ANA and initializes the record-field definitions to define the
+fields that make up a file of subtype FEA_ANA.  It does this
+by means of calls to
+.I add_fea_fld
+(3\-ESPSu).  
+For a description of the various FEA_ANA record fields, see FEA_ANA(5\-ESPS).
+.PP
+.I init_anafea_hd
+also defines the generic header items described in FEA_ANA(5\-ESPS).  
+The values of the following generic header items are set equal to 
+the values of the corresponding parameter to \fIinit_anafea_hd\fR:
+\fIorder_vcd, order_unvcd, maxpulses, maxraw, maxlpc, filt_nsiz\fR,
+and \fIfilt_dsiz\fP. The value of the generic header item \fIfilters\fR
+is set to NO if both \fIfilt_nsiz \fRand\fI filt_dsiz\fR
+are zero; otherwise it is set to YES.
+.I init_anafea_hd 
+also creates the generic header items \fIspec_rep \fRand\fI src_sf\fR,
+but it is left to the calling program to store appropriate values.  
+.I init_anafea_hd
+returns 1 if any of the internal calls to the function 
+\fIadd_fea_fld\fR(3\-ESPSu)
+return an error code.  Otherwise, it returns 0.  
+.I init_anafea_hd
+should only be called when creating a new FEA_ANA file, after  
+calling \fInew_header\fR(3\-ESPSu).  
+.PP
+.I put_anafea_rec
+writes an FEA_ANA data record pointed to by \fIdata\fR onto the stream
+\fIfile\fR, which should be an open ESPS FEA_ANA file.   The header must
+be written out to the FEA_ANA file before calling this function.   
+.SH EXAMPLE
+.sp .5
+.if n .ta 33
+.if t .ta 3i
+\fB\s-1Reading an existing file:\s+1\fR
+.sp .5
+struct anafea *p;	
+.br
+struct header *ih;
+.br
+ih = read_header(file);	\fI/* read FEA_ANA file header */\fR
+.br
+p = allo_anafea_rec(ih);	\fI/* allocate record */\fR
+.br
+if(get_anafea_rec(p,ih,file) == EOF) . . .     \fI/* get next data record */\fR
+.br
+*p->frame_len = length;		\fI/* record reference */\fR
+
+.nf
+\fB\s-1Creating a new file:\s+1\fR
+.sp .5
+struct header *ih;
+ih = new_header(FT_FEA);
+\fI/*create FEA_ANA header for file without filters in the records*/\fR
+if (init_anafea_hd(fea_oh, vord, uvord, pulses, raw, lpc, 0, 0) != 0) 
+         ERROR_EXIT("error filling FEA header");
+ .
+ .
+ .		
+write_header(ih);
+p = allo_anafea_rec(ih); 
+ .
+ .
+ .
+put_anafea_rec(p,ih,file);
+
+.fi
+.SH DIAGNOSTICS
+If \fIhd\fR does not point to a FEA header of subtype
+FEA_ANA, then the program terminates with an assertion failure.  
+In \fIget_anafea_rec\fR, if an incomplete record is read a message
+is printed on the standard error output.
+In \fIput_anafea_rec\fR, if an I/O error occurs during the write,
+a message is written to standard error and the program exits
+with status 1.
+.SH BUGS
+None known.
+.bp
+.SH SEE ALSO
+.nf
+\fIallo_fea_rec\fR(3-ESPSu), \fIcopy_header\fR(3\-ESPSu), \fIeopen\fR(3\-ESPSu),
+\fInew_header\fR(3\-ESPSu), \fIread_header\fR(3\-ESPSu), FEA_ANA(5\-ESPS), 
+FEA(5\-ESPS), ESPS(5\-ESPS)
+.fi
+.SH AUTHOR
+John Shore
+

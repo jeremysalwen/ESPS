@@ -1,0 +1,756 @@
+make: Nothing to be done for `clean'.
+rm -f dreflpc.o dlpcref.o dplympy.o dlpcwtd.o dcwmtrx.o dchlsky.o dlwrtrn.o  dcovlpc.o dfbwsos.o dsoslpc.o lpcfloat.o libdsigproc.a
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dreflpc.o dreflpc.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dlpcref.o dlpcref.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dplympy.o dplympy.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dlpcwtd.o dlpcwtd.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dcwmtrx.o dcwmtrx.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dchlsky.o dchlsky.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dlwrtrn.o dlwrtrn.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dcovlpc.o dcovlpc.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dfbwsos.o dfbwsos.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dsoslpc.o dsoslpc.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o lpcfloat.o lpcfloat.c
+ar rv libdsigproc.a dreflpc.o dlpcref.o dplympy.o dlpcwtd.o dcwmtrx.o dchlsky.o dlwrtrn.o dcovlpc.o dfbwsos.o dsoslpc.o lpcfloat.o
+a - dreflpc.o
+a - dlpcref.o
+a - dplympy.o
+a - dlpcwtd.o
+a - dcwmtrx.o
+a - dchlsky.o
+a - dlwrtrn.o
+a - dcovlpc.o
+a - dfbwsos.o
+a - dsoslpc.o
+a - lpcfloat.o
+ranlib libdsigproc.a
+rm -f /Users/davidt/src/erlHacked/esps60.mac/lib/waves/libdsigproc.a
+cp libdsigproc.a /Users/davidt/src/erlHacked/esps60.mac/lib/waves/libdsigproc.a
+chmod 0644 /Users/davidt/src/erlHacked/esps60.mac/lib/waves/libdsigproc.a
+ranlib /Users/davidt/src/erlHacked/esps60.mac/lib/waves/libdsigproc.a
+rm -f *.o hget addhead rmhead convert scale xlibsig.a
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o read_data.o read_data.c
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o parse.o parse.c
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o header.o header.c
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o convert_data.o convert_data.c
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o write_data.o write_data.c
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o signal.o signal.c
+gcc  -fno-builtin -c -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -DDPATH=\"/Users/davidt/src/erlHacked/esps60.mac\" -DLBIN=\"/Users/davidt/src/erlHacked/esps60.mac/bin\" \
+ -DDSP32_BIN=\"/Users/davidt/src/erlHacked/esps60.mac/32bin\" -DDSP32C_BIN=\"/Users/davidt/src/erlHacked/esps60.mac/32cbin\" \
+environment.c
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o tag_writer.o tag_writer.c
+ar rv xlibsig.a   read_data.o parse.o header.o convert_data.o write_data.o signal.o environment.o tag_writer.o
+a - read_data.o
+a - parse.o
+a - header.o
+a - convert_data.o
+a - write_data.o
+a - signal.o
+a - environment.o
+a - tag_writer.o
+ranlib xlibsig.a
+rm -f /Users/davidt/src/erlHacked/esps60.mac/lib/waves/xlibsig.a
+cp xlibsig.a /Users/davidt/src/erlHacked/esps60.mac/lib/waves
+chmod 0644 /Users/davidt/src/erlHacked/esps60.mac/lib/waves/xlibsig.a
+ranlib /Users/davidt/src/erlHacked/esps60.mac/lib/waves/xlibsig.a
+rm -f addstr.o anafeasupp.o atoarray.o atoh.o copy_fea_rec.o dcopy.o faterr.o fcopy.o fea_compat.o feasdsupp.o feaspecsupp.o feastatsupp.o feasupport.o filtsupport.o fldrangesw.o fmatalloc.o frngswitch.o ftypes.o gensupport.o genzfunc.o getcmdline.o getddata.o getderiv_vec.o getfdata.o getopt.o grngswitch.o index.o is_complex.o  lin_search.o  locks.o lrngswitch.o marg_index.o methods.o miio.o pfparser.o printarr.o printmat.o putddata.o putfdata.o putsym.o rngswitch.o savstring.o scbksupport.o sdsupport.o sizerec.o sizetype.o skiprec.o specsupport.o strchr.o strpbrk.o strrchr.o strtok.o symbols.o tmpfile.o typeconver.o uniq_name.o updatewave.o vqsupport.o execcom.o tempname.o feadstsupp.o isespsfile.o pr_farray.o typesiz.o findespsfi.o getespsbas.o sendwaves.o feafiltsupp.o buildespsp.o convertlab.o trngswitch.o malloc.o ereader.o wavesshow.o is_numeric.o xsend.o audio_.o  audio_mac.o usleep.o eddy.o pfparser.c pflexan.c vqdesign.o vqencode.o \
+	libespsg.a llib-lespsg.ln
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o addstr.o addstr.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o anafeasupp.o anafeasupp.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o atoarray.o atoarray.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o atoh.o atoh.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o copy_fea_rec.o copy_fea_rec.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o dcopy.o dcopy.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o faterr.o faterr.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o fcopy.o fcopy.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o fea_compat.o fea_compat.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o feasdsupp.o feasdsupp.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o feaspecsupp.o feaspecsupp.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o feastatsupp.o feastatsupp.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o feasupport.o feasupport.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o filtsupport.o filtsupport.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o fldrangesw.o fldrangesw.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o fmatalloc.o fmatalloc.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o frngswitch.o frngswitch.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o ftypes.o ftypes.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o gensupport.o gensupport.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o genzfunc.o genzfunc.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getcmdline.o getcmdline.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getddata.o getddata.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getderiv_vec.o getderiv_vec.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getfdata.o getfdata.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getopt.o getopt.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o grngswitch.o grngswitch.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o index.o index.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o is_complex.o is_complex.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o lin_search.o lin_search.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o locks.o locks.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o lrngswitch.o lrngswitch.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o marg_index.o marg_index.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o methods.o methods.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o miio.o miio.c
+yacc  pfparser.y 
+mv -f y.tab.c pfparser.c
+lex  -t pflexan.l > pflexan.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o pfparser.o pfparser.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o printarr.o printarr.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o printmat.o printmat.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o putddata.o putddata.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o putfdata.o putfdata.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o putsym.o putsym.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o rngswitch.o rngswitch.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o savstring.o savstring.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o scbksupport.o scbksupport.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o sdsupport.o sdsupport.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o sizerec.o sizerec.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o sizetype.o sizetype.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o skiprec.o skiprec.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o specsupport.o specsupport.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o strchr.o strchr.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o strpbrk.o strpbrk.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o strrchr.o strrchr.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o strtok.o strtok.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o symbols.o symbols.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o tmpfile.o tmpfile.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o typeconver.o typeconver.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o uniq_name.o uniq_name.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o updatewave.o updatewave.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o vqsupport.o vqsupport.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o execcom.o execcom.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o tempname.o tempname.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o feadstsupp.o feadstsupp.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o isespsfile.o isespsfile.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o pr_farray.o pr_farray.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o typesiz.o typesiz.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o findespsfi.o findespsfi.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getespsbas.o getespsbas.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o sendwaves.o sendwaves.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o feafiltsupp.o feafiltsupp.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o buildespsp.o buildespsp.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o convertlab.o convertlab.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o trngswitch.o trngswitch.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o malloc.o malloc.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o ereader.o ereader.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o wavesshow.o wavesshow.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o is_numeric.o is_numeric.c
+gcc  -fno-builtin -I/usr/X11R6/include -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX  -c xsend.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o audio_.o audio_.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o audio_mac.o audio_mac.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o usleep.o usleep.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o eddy.o eddy.c
+ar rv /Users/davidt/src/erlHacked/esps60.mac/lib/libespsg.a addstr.o anafeasupp.o atoarray.o atoh.o copy_fea_rec.o dcopy.o faterr.o fcopy.o fea_compat.o feasdsupp.o feaspecsupp.o feastatsupp.o feasupport.o filtsupport.o fldrangesw.o fmatalloc.o frngswitch.o ftypes.o gensupport.o genzfunc.o getcmdline.o getddata.o getderiv_vec.o getfdata.o getopt.o grngswitch.o index.o is_complex.o lin_search.o locks.o lrngswitch.o marg_index.o methods.o miio.o pfparser.o printarr.o printmat.o putddata.o putfdata.o putsym.o rngswitch.o savstring.o scbksupport.o sdsupport.o sizerec.o sizetype.o skiprec.o specsupport.o strchr.o strpbrk.o strrchr.o strtok.o symbols.o tmpfile.o typeconver.o uniq_name.o updatewave.o vqsupport.o execcom.o tempname.o feadstsupp.o isespsfile.o pr_farray.o typesiz.o findespsfi.o getespsbas.o sendwaves.o feafiltsupp.o buildespsp.o convertlab.o trngswitch.o malloc.o ereader.o wavesshow.o is_numeric.o xsend.o audio_.o audio_mac.o usleep.o eddy.o
+a - addstr.o
+a - anafeasupp.o
+a - atoarray.o
+a - atoh.o
+a - copy_fea_rec.o
+a - dcopy.o
+a - faterr.o
+a - fcopy.o
+a - fea_compat.o
+a - feasdsupp.o
+a - feaspecsupp.o
+a - feastatsupp.o
+a - feasupport.o
+a - filtsupport.o
+a - fldrangesw.o
+a - fmatalloc.o
+a - frngswitch.o
+a - ftypes.o
+a - gensupport.o
+a - genzfunc.o
+a - getcmdline.o
+a - getddata.o
+a - getderiv_vec.o
+a - getfdata.o
+a - getopt.o
+a - grngswitch.o
+a - index.o
+a - is_complex.o
+a - lin_search.o
+a - locks.o
+a - lrngswitch.o
+a - marg_index.o
+a - methods.o
+a - miio.o
+a - pfparser.o
+a - printarr.o
+a - printmat.o
+a - putddata.o
+a - putfdata.o
+a - putsym.o
+a - rngswitch.o
+a - savstring.o
+a - scbksupport.o
+a - sdsupport.o
+a - sizerec.o
+a - sizetype.o
+a - skiprec.o
+a - specsupport.o
+a - strchr.o
+a - strpbrk.o
+a - strrchr.o
+a - strtok.o
+a - symbols.o
+a - tmpfile.o
+a - typeconver.o
+a - uniq_name.o
+a - updatewave.o
+a - vqsupport.o
+a - execcom.o
+a - tempname.o
+a - feadstsupp.o
+a - isespsfile.o
+a - pr_farray.o
+a - typesiz.o
+a - findespsfi.o
+a - getespsbas.o
+a - sendwaves.o
+a - feafiltsupp.o
+a - buildespsp.o
+a - convertlab.o
+a - trngswitch.o
+a - malloc.o
+a - ereader.o
+a - wavesshow.o
+a - is_numeric.o
+a - xsend.o
+a - audio_.o
+a - audio_mac.o
+a - usleep.o
+a - eddy.o
+ranlib /Users/davidt/src/erlHacked/esps60.mac/lib/libespsg.a
+rm -f /Users/davidt/src/erlHacked/esps60.mac/src_examples/lib/feaspecsupp.c
+cp feaspecsupp.c /Users/davidt/src/erlHacked/esps60.mac/src_examples/lib/feaspecsupp.c
+chmod 0644 /Users/davidt/src/erlHacked/esps60.mac/src_examples/lib/feaspecsupp.c
+<<< src >>>
+<< lib >>
+< util >
+rm -f cfg.o comments.o ds.o err_util.o fobops.o hist.o hsgetopt.o itoa.o maldie.o mtrf.o order.o pad.o rsprintf.o sfgets.o statdist.o str_srch.o string.o t_or_f.o word.o  libutil.a util.doc *.BAK dependlist;
+< sp >
+rm -f alaw.o array.o dif_wavf.o dupfinfo.o exit.o fixio.o h_fix.o license.o lpc.o nat_bord.o poly.o sdatamod.o shorten.o shpack_s.o shpacki2.o shpackio.o sp_ntoh.o sp_utils.o spalloc.o spchksum.o spclose.o speof.o sperror.o sphere.o sphio.o spinput.o sploadf.o spopen.o spoutput.o spread.o sprewind.o sprstat.o spseek.o sptell.o sptemp.o sputils2.o spvers.o spwrite.o stdfield.o ulaw.o vario.o verbose.o wavedit.o wavpack.o  libsp.a sp.doc *.BAK dependlist;
+<< bin >>
+rm -f *.o h_add h_delete h_edit h_read h_strip h_test tsphere w_decode w_diff w_edit w_encode  core a.out *.BAK
+<< scripts >>
+<<< src >>>
+<< lib >>
+< util >
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -M cfg.c comments.c ds.c err_util.c fobops.c hist.c hsgetopt.c itoa.c maldie.c mtrf.c order.c pad.c rsprintf.c sfgets.c statdist.c str_srch.c string.c t_or_f.c word.c  > dependlist
+< sp >
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -M alaw.c array.c dif_wavf.c dupfinfo.c exit.c fixio.c h_fix.c license.c lpc.c nat_bord.c poly.c sdatamod.c shorten.c shpack_s.c shpacki2.c shpackio.c sp_ntoh.c sp_utils.c spalloc.c spchksum.c spclose.c speof.c sperror.c sphere.c sphio.c spinput.c sploadf.c spopen.c spoutput.c spread.c sprewind.c sprstat.c spseek.c sptell.c sptemp.c sputils2.c spvers.c spwrite.c stdfield.c ulaw.c vario.c verbose.c wavedit.c wavpack.c  > dependlist
+<< bin >>
+gcc -ansi  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -L/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib -g  -DNARCH_SUN -M h_add.c h_delete.c h_edit.c h_read.c h_strip.c h_test.c tsphere.c w_decode.c w_diff.c w_edit.c w_encode.c  > dependlist
+make depend complete
+<< scripts >>
+<<< src >>>
+<< lib >>
+< util >
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o cfg.o cfg.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o comments.o comments.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o ds.o ds.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o err_util.o err_util.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o fobops.o fobops.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o hist.o hist.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o hsgetopt.o hsgetopt.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o itoa.o itoa.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o maldie.o maldie.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o mtrf.o mtrf.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o order.o order.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o pad.o pad.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o rsprintf.o rsprintf.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sfgets.o sfgets.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o statdist.o statdist.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o str_srch.o str_srch.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o string.o string.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o t_or_f.o t_or_f.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o word.o word.c
+ar ru libutil.a cfg.o comments.o ds.o err_util.o fobops.o hist.o hsgetopt.o itoa.o maldie.o mtrf.o order.o pad.o rsprintf.o sfgets.o statdist.o str_srch.o string.o t_or_f.o word.o
+ranlib libutil.a
+mv libutil.a /Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib
+chmod 664 /Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib/libutil.a
+ranlib /Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib/libutil.a
+< sp >
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o alaw.o alaw.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o array.o array.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o dif_wavf.o dif_wavf.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o dupfinfo.o dupfinfo.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o exit.o exit.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o fixio.o fixio.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o h_fix.o h_fix.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o license.o license.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o lpc.o lpc.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o nat_bord.o nat_bord.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o poly.o poly.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sdatamod.o sdatamod.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o shorten.o shorten.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o shpack_s.o shpack_s.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o shpacki2.o shpacki2.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o shpackio.o shpackio.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sp_ntoh.o sp_ntoh.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sp_utils.o sp_utils.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o spalloc.o spalloc.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o spchksum.o spchksum.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o spclose.o spclose.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o speof.o speof.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sperror.o sperror.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sphere.o sphere.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sphio.o sphio.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o spinput.o spinput.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sploadf.o sploadf.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o spopen.o spopen.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o spoutput.o spoutput.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o spread.o spread.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sprewind.o sprewind.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sprstat.o sprstat.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o spseek.o spseek.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sptell.o sptell.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sptemp.o sptemp.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o sputils2.o sputils2.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o spvers.o spvers.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o spwrite.o spwrite.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o stdfield.o stdfield.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o ulaw.o ulaw.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o vario.o vario.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o verbose.o verbose.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o wavedit.o wavedit.c
+gcc -ansi -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -DNARCH_SUN -c -o wavpack.o wavpack.c
+ar ru libsp.a alaw.o array.o dif_wavf.o dupfinfo.o exit.o fixio.o h_fix.o license.o lpc.o nat_bord.o poly.o sdatamod.o shorten.o shpack_s.o shpacki2.o shpackio.o sp_ntoh.o sp_utils.o spalloc.o spchksum.o spclose.o speof.o sperror.o sphere.o sphio.o spinput.o sploadf.o spopen.o spoutput.o spread.o sprewind.o sprstat.o spseek.o sptell.o sptemp.o sputils2.o spvers.o spwrite.o stdfield.o ulaw.o vario.o verbose.o wavedit.o wavpack.o
+ranlib libsp.a
+mv libsp.a /Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib
+chmod 664 /Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib/libsp.a
+ranlib /Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib/libsp.a
+<< bin >>
+gcc -ansi  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -L/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib -g  -DNARCH_SUN h_add.c  -lsp -lutil  -lm -o h_add
+gcc -ansi  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -L/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib -g  -DNARCH_SUN h_delete.c  -lsp -lutil  -lm -o h_delete
+gcc -ansi  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -L/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib -g  -DNARCH_SUN h_edit.c  -lsp -lutil  -lm -o h_edit
+gcc -ansi  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -L/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib -g  -DNARCH_SUN h_read.c  -lsp -lutil  -lm -o h_read
+gcc -ansi  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -L/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib -g  -DNARCH_SUN h_strip.c  -lsp -lutil  -lm -o h_strip
+gcc -ansi  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -L/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib -g  -DNARCH_SUN h_test.c  -lsp -lutil  -lm -o h_test
+gcc -ansi  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -L/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib -g  -DNARCH_SUN tsphere.c  -lsp -lutil  -lm -o tsphere
+gcc -ansi  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -L/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib -g  -DNARCH_SUN w_decode.c  -lsp -lutil  -lm -o w_decode
+gcc -ansi  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -L/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib -g  -DNARCH_SUN w_diff.c  -lsp -lutil  -lm -o w_diff
+gcc -ansi  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -L/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib -g  -DNARCH_SUN w_edit.c  -lsp -lutil  -lm -o w_edit
+gcc -ansi  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/include -L/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/lib -g  -DNARCH_SUN w_encode.c  -lsp -lutil  -lm -o w_encode
+install -c -s -m 755 h_add h_delete h_edit h_read h_strip h_test tsphere w_decode w_diff w_edit w_encode  /Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/lib_header/sphere2.6/bin
+<< scripts >>
+   gen_lord.sh
+   gen_setv.sh
+   h_header.sh
+   raw2nist.sh
+rm genhd.o eopen.o ss.o foo.o nolic_headers.o headers.o esps/*.o \
+		waves/*.o ers/*.o sphere.o esignal_fea.o pc_wav.o
+gcc  -fno-builtin -g -DNO_LIC  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX       -c -o genhd.o genhd.c
+gcc  -fno-builtin -g -DNO_LIC  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX       -c -o eopen.o eopen.c
+gcc  -fno-builtin -g -DNO_LIC  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX       -c -o ss.o ss.c
+gcc  -fno-builtin -g -DNO_LIC  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX       -c -o headers.o headers.c
+gcc -ansi -DANSI_C -c -g -DNO_LIC -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include \
+		-DLINUX -Isphere2.6/include  sphere.c
+cd esignal/src; emake clean ; emake lib
+rm -f esignal.o esig_asc.o esig_edr.o esig_nat.o t_esignal.o /Users/davidt/src/erlHacked/esps60.mac/lib/libesignal.a core
+gcc  -fno-builtin -g -I.   -c -o esignal.o esignal.c
+gcc  -fno-builtin -g -I.   -c -o esig_asc.o esig_asc.c
+gcc  -fno-builtin -g -I.   -c -o esig_edr.o esig_edr.c
+gcc  -fno-builtin -g -I.   -c -o esig_nat.o esig_nat.c
+ar r /Users/davidt/src/erlHacked/esps60.mac/lib/libesignal.a esignal.o esig_asc.o esig_edr.o esig_nat.o
+ranlib /Users/davidt/src/erlHacked/esps60.mac/lib/libesignal.a
+gcc -ansi -DANSI_C  -c -g -DNO_LIC  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX     -DLINUX -Iesignal/src \
+		esignal_fea.c
+gcc -ansi -DANSI_C -c -g -DNO_LIC -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX  pc_wav.c
+gcc -DANSI_C  -c  -g -DNO_LIC  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX       -DESPS_PROG  license.c
+mv license.o esps
+ld -o esps/headers.o -r headers.o  esps/license.o \
+	  sphere.o \
+	esignal_fea.o /Users/davidt/src/erlHacked/esps60.mac/lib/libesignal.a  pc_wav.o \
+	sphere2.6/lib/libsp.a  sphere2.6/lib/libutil.a 
+ld: can't open: sphere2.6/lib/libsp.a (No such file or directory, errno = 2)
+ld: can't open: sphere2.6/lib/libutil.a (No such file or directory, errno = 2)
+rm -f alaw.o auto_pefrc.o block_filter.o cepstrum.o classify.o complex.o convolv.o covar.o cover_type.o emphasis.o gauss.o getarspect.o getatal.o getauto.o getburg.o getcfft.o getdct.o getfft.o hamming.o interp_filt.o is_distort.o lar_to_rc.o lloyd.o lsf_to_pc.o lsq_solv.o matalloc.o matinv.o minrelent.o mulaw.o pc_to_lsf.o pef_autorc.o pz_to_co.o rand_int.o rand_intnr.o rc_autopef.o rc_reps.o rc_to_lar.o rctoc.o refl_to_auto.o refl_to_filt.o relent.o reps_rc.o reverse.o statsiz.o stsolv.o vqdesign.o vqencode.o  window.o zero_fill.o blt.o fft_cepstrum.o dtw_tl.o dtw_l2.o genburg.o getvburg.o  getfburg.o bestauto.o  struct_cov.o compute_rc.o arr_func.o block_futil.o block_f2.o fil_spectrum.o arr_op.o lp_procs.o bark_hertz.o crit_band_filt_wt.o mel_hertz.o phon_to_sone.o get_snr.o pfparser.c pflexan.c vqdesign.o vqencode.o \
+	libespsg.a llib-lespsg.ln
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o alaw.o alaw.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o auto_pefrc.o auto_pefrc.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o block_filter.o block_filter.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o cepstrum.o cepstrum.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o classify.o classify.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o complex.o complex.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o convolv.o convolv.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o covar.o covar.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o cover_type.o cover_type.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o emphasis.o emphasis.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o gauss.o gauss.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getarspect.o getarspect.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getatal.o getatal.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getauto.o getauto.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getburg.o getburg.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getcfft.o getcfft.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getdct.o getdct.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getfft.o getfft.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o hamming.o hamming.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o interp_filt.o interp_filt.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o is_distort.o is_distort.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o lar_to_rc.o lar_to_rc.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o lloyd.o lloyd.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o lsf_to_pc.o lsf_to_pc.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o lsq_solv.o lsq_solv.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o matalloc.o matalloc.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o matinv.o matinv.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o minrelent.o minrelent.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o mulaw.o mulaw.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o pc_to_lsf.o pc_to_lsf.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o pef_autorc.o pef_autorc.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o pz_to_co.o pz_to_co.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o rand_int.o rand_int.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o rand_intnr.o rand_intnr.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o rc_autopef.o rc_autopef.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o rc_reps.o rc_reps.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o rc_to_lar.o rc_to_lar.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o rctoc.o rctoc.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o refl_to_auto.o refl_to_auto.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o refl_to_filt.o refl_to_filt.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o relent.o relent.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o reps_rc.o reps_rc.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o reverse.o reverse.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o statsiz.o statsiz.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o stsolv.o stsolv.c
+cc -c -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX   vqdesign.c
+cc -c -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX   vqencode.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o window.o window.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o zero_fill.o zero_fill.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o blt.o blt.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o fft_cepstrum.o fft_cepstrum.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o dtw_tl.o dtw_tl.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o dtw_l2.o dtw_l2.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o genburg.o genburg.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getvburg.o getvburg.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o getfburg.o getfburg.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o bestauto.o bestauto.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o struct_cov.o struct_cov.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o compute_rc.o compute_rc.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o arr_func.o arr_func.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o block_futil.o block_futil.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o block_f2.o block_f2.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o fil_spectrum.o fil_spectrum.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o arr_op.o arr_op.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o lp_procs.o lp_procs.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o bark_hertz.o bark_hertz.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o crit_band_filt_wt.o crit_band_filt_wt.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o mel_hertz.o mel_hertz.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o phon_to_sone.o phon_to_sone.c
+gcc  -fno-builtin -O3  -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX    -c -o get_snr.o get_snr.c
+ar rv /Users/davidt/src/erlHacked/esps60.mac/lib/libespsg.a alaw.o auto_pefrc.o block_filter.o cepstrum.o classify.o complex.o convolv.o covar.o cover_type.o emphasis.o gauss.o getarspect.o getatal.o getauto.o getburg.o getcfft.o getdct.o getfft.o hamming.o interp_filt.o is_distort.o lar_to_rc.o lloyd.o lsf_to_pc.o lsq_solv.o matalloc.o matinv.o minrelent.o mulaw.o pc_to_lsf.o pef_autorc.o pz_to_co.o rand_int.o rand_intnr.o rc_autopef.o rc_reps.o rc_to_lar.o rctoc.o refl_to_auto.o refl_to_filt.o relent.o reps_rc.o reverse.o statsiz.o stsolv.o vqdesign.o vqencode.o window.o zero_fill.o blt.o fft_cepstrum.o dtw_tl.o dtw_l2.o genburg.o getvburg.o getfburg.o bestauto.o struct_cov.o compute_rc.o arr_func.o block_futil.o block_f2.o fil_spectrum.o arr_op.o lp_procs.o bark_hertz.o crit_band_filt_wt.o mel_hertz.o phon_to_sone.o get_snr.o; ranlib /Users/davidt/src/erlHacked/esps60.mac/lib/libespsg.a
+a - alaw.o
+a - auto_pefrc.o
+a - block_filter.o
+a - cepstrum.o
+a - classify.o
+a - complex.o
+a - convolv.o
+a - covar.o
+a - cover_type.o
+a - emphasis.o
+a - gauss.o
+a - getarspect.o
+a - getatal.o
+a - getauto.o
+a - getburg.o
+a - getcfft.o
+a - getdct.o
+a - getfft.o
+a - hamming.o
+a - interp_filt.o
+a - is_distort.o
+a - lar_to_rc.o
+a - lloyd.o
+a - lsf_to_pc.o
+a - lsq_solv.o
+a - matalloc.o
+a - matinv.o
+a - minrelent.o
+a - mulaw.o
+a - pc_to_lsf.o
+a - pef_autorc.o
+a - pz_to_co.o
+a - rand_int.o
+a - rand_intnr.o
+a - rc_autopef.o
+a - rc_reps.o
+a - rc_to_lar.o
+a - rctoc.o
+a - refl_to_auto.o
+a - refl_to_filt.o
+a - relent.o
+a - reps_rc.o
+a - reverse.o
+a - statsiz.o
+a - stsolv.o
+a - vqdesign.o
+a - vqencode.o
+a - window.o
+a - zero_fill.o
+a - blt.o
+a - fft_cepstrum.o
+a - dtw_tl.o
+a - dtw_l2.o
+a - genburg.o
+a - getvburg.o
+a - getfburg.o
+a - bestauto.o
+a - struct_cov.o
+a - compute_rc.o
+a - arr_func.o
+a - block_futil.o
+a - block_f2.o
+a - fil_spectrum.o
+a - arr_op.o
+a - lp_procs.o
+a - bark_hertz.o
+a - crit_band_filt_wt.o
+a - mel_hertz.o
+a - phon_to_sone.o
+a - get_snr.o
+rm -f exv_misc.o xecolors.o xerlicons.o xhelp.o xpromptpar.o xbbox.o exv_olwm.o libexv.a 
+gcc  -fno-builtin -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX  -I/usr/openwin/include  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/Xp2.2/lib   -c -o exv_misc.o exv_misc.c
+gcc  -fno-builtin -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX  -I/usr/openwin/include  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/Xp2.2/lib   -c -o xecolors.o xecolors.c
+gcc  -fno-builtin -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX  -I/usr/openwin/include  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/Xp2.2/lib   -c -o xerlicons.o xerlicons.c
+gcc  -fno-builtin -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX  -I/usr/openwin/include  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/Xp2.2/lib   -c -o xhelp.o xhelp.c
+gcc  -fno-builtin -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX  -I/usr/openwin/include  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/Xp2.2/lib   -c -o xpromptpar.o xpromptpar.c
+gcc  -fno-builtin -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX  -I/usr/openwin/include  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/Xp2.2/lib   -c -o xbbox.o xbbox.c
+gcc  -fno-builtin -g -DLIB -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX  -I/usr/openwin/include  -I/Users/davidt/src/erlHacked/esps60.mac/../src/ESPS/general/src/Xp2.2/lib   -c -o exv_olwm.o exv_olwm.c
+ar rv /Users/davidt/src/erlHacked/esps60.mac/lib/libexv.a exv_misc.o xecolors.o xerlicons.o xhelp.o xpromptpar.o xbbox.o exv_olwm.o; ranlib /Users/davidt/src/erlHacked/esps60.mac/lib/libexv.a
+a - exv_misc.o
+a - xecolors.o
+a - xerlicons.o
+a - xhelp.o
+a - xpromptpar.o
+a - xbbox.o
+a - exv_olwm.o
+(cd sigproc; emake clean)
+rm -f dreflpc.o dlpcref.o dplympy.o dlpcwtd.o dcwmtrx.o dchlsky.o dlwrtrn.o  dcovlpc.o dfbwsos.o dsoslpc.o lpcfloat.o libdsigproc.a
+(cd libsig; emake clean)
+rm -f *.o hget addhead rmhead convert scale xlibsig.a
+(cd waves/src/c; emake clobber)
+rm -f *.o *~ core *.a xwaves xspectrum xlabel xmarks
+(cd waves/text; emake clean)
+rm -f *.help *~ sedxx
+(cd formant/src; emake clean)
+rm -f *.o   formant  addnoise downsamp gate formsy debias xversion.c pole_methods.c
+(cd cmap; emake clean)
+rm -f *.o cmap xcmap
+(cd sigproc; emake install)
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dreflpc.o dreflpc.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dlpcref.o dlpcref.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dplympy.o dplympy.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dlpcwtd.o dlpcwtd.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dcwmtrx.o dcwmtrx.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dchlsky.o dchlsky.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dlwrtrn.o dlwrtrn.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dcovlpc.o dcovlpc.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dfbwsos.o dfbwsos.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o dsoslpc.o dsoslpc.c
+gcc  -fno-builtin -O3  -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o lpcfloat.o lpcfloat.c
+ar rv libdsigproc.a dreflpc.o dlpcref.o dplympy.o dlpcwtd.o dcwmtrx.o dchlsky.o dlwrtrn.o dcovlpc.o dfbwsos.o dsoslpc.o lpcfloat.o
+a - dreflpc.o
+a - dlpcref.o
+a - dplympy.o
+a - dlpcwtd.o
+a - dcwmtrx.o
+a - dchlsky.o
+a - dlwrtrn.o
+a - dcovlpc.o
+a - dfbwsos.o
+a - dsoslpc.o
+a - lpcfloat.o
+ranlib libdsigproc.a
+rm -f /Users/davidt/src/erlHacked/esps60.mac/lib/waves/libdsigproc.a
+cp libdsigproc.a /Users/davidt/src/erlHacked/esps60.mac/lib/waves/libdsigproc.a
+chmod 0644 /Users/davidt/src/erlHacked/esps60.mac/lib/waves/libdsigproc.a
+ranlib /Users/davidt/src/erlHacked/esps60.mac/lib/waves/libdsigproc.a
+(cd libsig; emake install)
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o read_data.o read_data.c
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o parse.o parse.c
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o header.o header.c
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o convert_data.o convert_data.c
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o write_data.o write_data.c
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o signal.o signal.c
+gcc  -fno-builtin -c -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -DDPATH=\"/Users/davidt/src/erlHacked/esps60.mac\" -DLBIN=\"/Users/davidt/src/erlHacked/esps60.mac/bin\" \
+ -DDSP32_BIN=\"/Users/davidt/src/erlHacked/esps60.mac/32bin\" -DDSP32C_BIN=\"/Users/davidt/src/erlHacked/esps60.mac/32cbin\" \
+environment.c
+gcc  -fno-builtin -g -I../waves/src/h -I/usr/openwin/include  -DHEAD_STANDALONE -DFOR_XVIEW -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC     -c -o tag_writer.o tag_writer.c
+ar rv xlibsig.a   read_data.o parse.o header.o convert_data.o write_data.o signal.o environment.o tag_writer.o
+a - read_data.o
+a - parse.o
+a - header.o
+a - convert_data.o
+a - write_data.o
+a - signal.o
+a - environment.o
+a - tag_writer.o
+ranlib xlibsig.a
+rm -f /Users/davidt/src/erlHacked/esps60.mac/lib/waves/xlibsig.a
+cp xlibsig.a /Users/davidt/src/erlHacked/esps60.mac/lib/waves
+chmod 0644 /Users/davidt/src/erlHacked/esps60.mac/lib/waves/xlibsig.a
+ranlib /Users/davidt/src/erlHacked/esps60.mac/lib/waves/xlibsig.a
+(cd waves/src/c; emake  install)
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o message.o message.c
+gcc  -fno-builtin -c -DPW_PLOT -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC xreticle.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o pole_methods.o pole_methods.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xcolormap.o xcolormap.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xversion.o xversion.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o globals.o globals.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xnotice.o xnotice.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xp_stubs.o xp_stubs.c
+rm -f xlibsigw.a
+cp /Users/davidt/src/erlHacked/esps60.mac/lib/waves/xlibsig.a xlibsigw.a
+ar r xlibsigw.a   message.o  xreticle.o pole_methods.o xcolormap.o xversion.o globals.o xnotice.o xp_stubs.o
+ranlib xlibsigw.a
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o paste.o paste.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xplot_data.o xplot_data.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o tag_methods.o tag_methods.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xwaves.o xwaves.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o view_utils.o view_utils.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o browser.o browser.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xcursors.o xcursors.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xesps.o xesps.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xmenus.o xmenus.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xmethods.o xmethods.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xoverlays.o xoverlays.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xedit_data.o xedit_data.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xf0_methods.o xf0_methods.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xwaves_utils.o xwaves_utils.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xaddop.o xaddop.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o rpc.o rpc.c
+gcc  -fno-builtin -c -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC -DLBIN=\"/Users/davidt/src/erlHacked/esps60.mac/bin\" play_data.c
+gcc  -fno-builtin -c -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC  playrec.c
+gcc  -fno-builtin -c -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC  nplay.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xspect.o xspect.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o view_setter.o view_setter.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o odd_objects.o odd_objects.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o text_utils.o text_utils.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xpanels.o xpanels.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o xserver.o xserver.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o ibm_stub.o ibm_stub.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o dac.o dac.c
+gcc  -fno-builtin -g   -I../h -I/usr/openwin/include  -DFOR_XVIEW  -DWAVES_BINS -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC   -DNO_LIC   -c -o keymapper.o keymapper.c
+rm -f acf.o  acf *.sd core test.fea t2.acf preemp.sd preemp.data
+rm -f addclass.o addclass
+rm -f addfea.o addfea data a.fea aa.fea b.fea bb.fea c.fea cc.fea
+rm -f addfeahd.o addfeahd 
+rm -f addgen.o addgen
+rm -f addsd.o addsd multsd *.sd
+rm -f atofilt.o  atofilt
+rm -f auto.o  auto test.sd espscom t2.auto t2s.auto test2.sd test1.sd
+rm -f bhd.o bhd
+rm -f btosps.o btosps
+rm -f cbkd.o cbkd 
+rm -f cbkedit.o cbkedit test.cbk *.bak
+rm -f classify.o classify
+gcc  -fno-builtin -O -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o classify.o classify.c
+rm -f clip clip.o core lint clip.ln
+rm -f cnvlab.o  cnvlab core test*.out test.lab test*.expout
+rm -f comment.o comment
+rm -f copysd.o  copysd t.sd t?.sd 
+rm -f *.o copysps
+gcc  -fno-builtin -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o copysps.o copysps.c
+gcc  -fno-builtin -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o sps_compat.o sps_compat.c
+rm -f cross_cor cross_cor.o
+make: Nothing to be done for `clean'.
+cp speech12.sd speech.sd speech.ratios /Users/davidt/src/erlHacked/esps60.mac/demo
+cp poet.sd poet.phones poet.words canyon.phones canyon.sd \
+canyon.words question.sd question.phones question.words /Users/davidt/src/erlHacked/esps60.mac/demo
+chmod 0644 /Users/davidt/src/erlHacked/esps60.mac/demo/speech12.sd /Users/davidt/src/erlHacked/esps60.mac/demo/speech.sd
+chmod 0644 /Users/davidt/src/erlHacked/esps60.mac/demo/poet.sd /Users/davidt/src/erlHacked/esps60.mac/demo/poet.phones /Users/davidt/src/erlHacked/esps60.mac/demo/poet.words \
+/Users/davidt/src/erlHacked/esps60.mac/demo/canyon.phones /Users/davidt/src/erlHacked/esps60.mac/demo/canyon.sd \
+/Users/davidt/src/erlHacked/esps60.mac/demo/canyon.words /Users/davidt/src/erlHacked/esps60.mac/demo/question.sd /Users/davidt/src/erlHacked/esps60.mac/demo/question.phones \
+/Users/davidt/src/erlHacked/esps60.mac/demo/question.words /Users/davidt/src/erlHacked/esps60.mac/demo/speech.ratios
+rm -f /Users/davidt/src/erlHacked/esps60.mac/demo/600lpfilt.params /Users/davidt/src/erlHacked/esps60.mac/demo/1750bpfilt.params /Users/davidt/src/erlHacked/esps60.mac/demo/3000hpfilt.params
+cp  600lpfilt.params 1750bpfilt.params 3000hpfilt.params /Users/davidt/src/erlHacked/esps60.mac/demo
+chmod 0644 /Users/davidt/src/erlHacked/esps60.mac/demo/600lpfilt.params
+chmod 0644 /Users/davidt/src/erlHacked/esps60.mac/demo/1750bpfilt.params
+chmod 0644 /Users/davidt/src/erlHacked/esps60.mac/demo/3000hpfilt.params
+rm -f demux.o demux 
+rm -f distort.o check_dist.o  gendistort.o prnt_dist.o specdistort.o anafeadist.o anamodules.o distort
+gcc  -fno-builtin -O -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o distort.o distort.c
+gcc  -fno-builtin -O -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o check_dist.o check_dist.c
+gcc  -fno-builtin -O -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o gendistort.o gendistort.c
+gcc  -fno-builtin -O -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o prnt_dist.o prnt_dist.c
+gcc  -fno-builtin -O -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o specdistort.o specdistort.c
+gcc  -fno-builtin -O -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o anafeadist.o anafeadist.c
+gcc  -fno-builtin -O -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o anamodules.o anamodules.c
+
+rm -f dtw.o  dtw
+
+rm -f dtw_rec.o dtw_rec sgram.params
+
+rm eparam.lo test.sd test.spec
+chmod 0755 eparam
+ln -s eparam xeparam
+
+rm -f ereverse.o ereverse *.sd *.fana espscom
+
+echo "Ain't nothing to clean here."
+Ain't nothing to clean here.
+
+rm -f *.o esps2mu *.diff *.sd *.mu
+gcc  -fno-builtin -DSCCS -I/Users/davidt/src/erlHacked/esps60.mac/include -DLINUX -DNO_LIC    -c -o esps2mu.o esps2mu.c
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+rm -f featosd.o featosd  lint
+rm -f featospec.o  featospec  lint
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

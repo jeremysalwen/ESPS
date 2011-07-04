@@ -1,0 +1,32 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getreclen.3	1.6 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GET_REC_LEN 3\-ESPSu 18 Apr 1997
+.SH NAME
+get_rec_len \- return the number of elements in a record of an ESPS file
+.SH SYNOPSIS
+.ft B
+#include <esps/headers.h>
+.br
+long
+.br
+get_rec_len (hd)
+.br
+struct header *hd;
+.ft
+.SH DESCRIPTION
+.PP
+.I get_rec_len
+returns the number of elements in a record of an  ESPS file.   This is
+the number of items (elements) in a record, as opposed  to the number
+of bytes that  a record  takes (that's  called size).   It determines
+this information by examining fields in the supplied ESPS file header.
+.SH DIAGNOSTICS
+None.
+.SH SEE ALSO
+.nf
+\fIsize_rec\fP(3\-ESPSu)
+.fi
+.SH AUTHOR
+Alan Parker, man page by Ajaipal S. Virdy.

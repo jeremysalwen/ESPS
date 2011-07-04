@@ -1,0 +1,156 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)filtrec.3	1.2 06 May 1997 ESI
+.TH FILT_REC 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+allo_filt_rec \- allocate memory for FILT file record
+get_filt_rec \- get the next data record from an ESPS FILT data file
+print_filt_rec \- print an ESPS FILT data record
+put_filt_rec \- put an ESPS FILT data record onto the file
+.SH SYNOPSIS
+.ft B
+#include <esps/filt.h>
+.br
+struct filt_data *
+.br
+allo_filt_rec(hd)
+.br
+struct header *hd;
+.sp
+.br
+#include <esps/filt.h>
+.br
+int
+.br
+get_filt_rec(data, hd, file)
+.br
+struct filt_data *data;
+.br
+struct header *hd;
+.br
+FILE *file;
+.sp
+.br
+void
+.br
+print_filt_rec(data, hd, file)
+.br
+struct filt_data *data;
+.br
+struct header *hd;
+.br
+FILE *file;
+.sp
+.br
+#include <esps/filt.h>
+.br
+void
+.br
+put_filt_rec(data, hd, file)
+.br
+struct filt_data *data;
+.br
+struct header *hd;
+.br
+FILE *file;
+.ft
+.SH DESCRIPTION
+.I allo_filt_rec
+allocates memory for an FILT file record and returns a pointer to it.
+The number of items allocated to \fIfilt_func.zeros\fR is the value of FILT
+header item \fImax_num\fR, and the number of items allocated to 
+\fIfilt_func.poles\fR is the value of FILT header item \fImax_den\fR.
+Since the size of the allocated record depends on values in the data file
+header, it is important to be sure that a given FILT record is 
+consistent with the header of the file it is being used with.
+The FILT data read/write routines use these same values in the header to
+determine the amount of data to read or write.
+A mismatch could cause the program to fail in unpredictable ways.
+It is possible to allocate only one 
+record, for both input and output, if the programmer is certain that the
+values of \fIhd.filt->max_num\fR and \fIhd.filt->max_den\fR
+are the same in both the input and output files.
+If the record is being allocated for a new file (to be written),
+then the above mentioned values in the new header
+(after calling \fInew_header\fR(3\-ESPSu)) must be filled in before calling 
+.I allo_filt_rec.
+.PP
+.I get_filt_rec
+reads the next FILT record from stream \fIfile\fR into the data structure
+pointed to by \fIdata\fR.
+The ESPS file header pointed to by \fIhd\fR
+is consulted for the values of \fIhd.filt->max_num\fR and
+\fIhd.filt->max_den\fR.
+These values determine the size of the data record.   
+See the caution on \fIallo_filt_rec\fR.
+EOF is returned upon end of file.
+A positive non-zero value is returned otherwise.
+.PP
+.I print_filt_record
+prints the FILT record pointed to by \fIdata\fR onto the stream \fIfile\fR.
+The ESPS header pointed to by \fIhd\fR 
+is consulted for the values of \fIhd.filt->max_num\fR and
+\fIhd.filt->max_den\fR.
+The values determine the size of the data record.   
+See the caution on \fIallo_filt_rec\fR.
+This function is useful for debug output in programs which
+process FILT data files.
+.PP
+.I put_filt_rec
+writes an FILT data record pointed to by \fIdata\fR onto the stream
+\fIfile\fR, which should be an open ESPS FILT file.
+The header must be written out to the FILT file before calling this function.
+The ESPS file header pointed to by \fIhd\fR
+is consulted for the values of \fIhd.filt->max_num\fR and 
+\fIhd.filt->max_den\fR.
+The values determine the size of the data record.   
+See the caution on \fIallo_filt_rec\fR.
+.SH EXAMPLE
+.if n .ta 33
+.if t .ta 3i
+struct filt_data *p;	
+.br
+struct header *ih;
+.br
+ih = read_header(file);	/* read filt file header */
+.br
+p = allo_filt_rec(ih);	/* allocate record */
+.br
+foo = p->filt_func.zeros[1];	/* record reference */
+.br
+if(get_filt_rec(p,ih,file) == EOF) \fIeof...\fR	/* read a record */
+.br
+print_filt_record(p,ih,stderr)	/* print the record */
+.sp
+.br
+struct filt_data *p;	
+.br
+struct header *oh;
+.br
+oh = new_header(FT_FILT);	/* create file header */
+.br
+\fI ... fill in some values, including hd.filt->max_num and
+hd.filt->max_den ...\fR
+.br
+(void) write_header(oh,file);	/* write out header */
+.br
+p = allo_filt_rec(oh);	/* allocate record */
+.br
+\fI ... fill in desired data record values...\fR
+.br
+(void) put_filt_rec(p,oh,file);	/* write data record */
+.SH DIAGNOSTICS
+If \fIhd\fR does not point to a FILT header then a message is printed
+on stderr and the program terminates with exit 1.
+If an I/O error occurs during write in
+.I put_filt_rec,
+a message is output to standard error and the program exits with exit 1.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+\fIeopen\fR(3\-ESPSu), \fIread_header\fR(3\-ESPSu), FILT(5\-ESPS), ESPS(5\-ESPS)
+.fi
+.SH AUTHOR
+Alan Parker

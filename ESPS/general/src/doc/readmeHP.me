@@ -1,0 +1,26 @@
+.lo
+.ce 2
+.b
+README FIRST (HP Release)
+1.1 4/10/89
+.sh 1 "Tape Contents"
+.pp
+This tape contains both the ESPS source distribution and a binary
+distribution.   There are two top level directories on the tape:
+\fIgeneral\fR and \fIesps\fR.
+.pp
+We suggest that you install the system from source, but the binary is
+provided in case you have trouble compiling ESPS.
+.pp
+To build the system from source, modify the enclosed source distribution
+instructions to only read in the \fIgeneral\fR directory.  Just specify
+\fIgeneral\fR as the last argument to the \fItar\fR.
+.pp
+If you do not want to build the system from source, you can install the
+binary directory.  You do this by reading in the binary directory,
+\fIesps\fR into \fI/usr\fR.  Alternately, you can read it in someplace
+else and put a symbolic link from \fI/usr/esps\fR to the directories
+actual location.  See the enclosed instructions for installing the
+binary distribution.   Modify these instructions to specify the name of
+the binary directory on the \fItar\fR command.  For example, \fItar xpv
+esps\fR.  (Note the \fBp\fR option on \fItar\fR.)

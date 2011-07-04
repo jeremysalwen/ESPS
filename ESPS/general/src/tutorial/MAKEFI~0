@@ -1,0 +1,39 @@
+#  This material contains proprietary software of Entropic Research Lab, Inc.  
+#  Any reproduction, distribution, or publication without the prior	   
+#  written permission of Entropic Research Lab., Inc. is strictly prohibited.
+#  Any public distribution of copies of this work authorized in writing by
+#  Entropic Research Lab., Inc. must bear the notice			
+# 								
+#      "Copyright (c) 1990 Entropic Research Lab., Inc.; All rights reserved"
+# 				
+#
+# makefile for waves and esps tutorial scripts  "@(#)Makefile	1.4 6/14/91 ERL"
+
+# remove comments for testing only.  Put comments back before sccs'ing.
+#BINDIR = /tmp
+#PROGMOD = 0755
+#
+
+PROGNAME1 = initwtut
+PROGNAME2 = initetut
+PROGNAME3 = demoetut
+
+install: 
+	rm -f $(BINDIR)/initwtut
+	rm -f $(BINDIR)/initetut
+	rm -f $(BINDIR)/demoetut
+
+	mv -f $(PROGNAME) $(BINDIR)/$(PROGNAME1)
+	mv -f $(PROGNAME) $(BINDIR)/$(PROGNAME2)
+	mv -f $(PROGNAME) $(BINDIR)/$(PROGNAME3)
+
+	chmod $(PROGMOD) $(BINDIR)/$(PROGNAME1)
+	chmod $(PROGMOD) $(BINDIR)/$(PROGNAME2)
+	chmod $(PROGMOD) $(BINDIR)/$(PROGNAME3)
+
+clean:
+	@echo nothing here to clean
+	
+test:	install
+	@echo There is no test script
+

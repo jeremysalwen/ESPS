@@ -1,0 +1,17 @@
+psps.c:
+
+psps.c
+==============
+(111)  warning: feasd_rec unused in function main
+warning: possible pointer alignment problem
+    (176)  	    (619)  	
+prnt_hdr.c:
+
+
+==============
+value type used inconsistently
+    get_rec_len   	llib-lespsg.c(412) :: psps.c(416)
+value type declared inconsistently
+    get_rec_len   	llib-lespsg.c(412) :: psps.c(416)
+function returns value which is always ignored
+    fprintf	    printf	    putchar

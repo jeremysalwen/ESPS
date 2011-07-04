@@ -1,0 +1,5 @@
+#! /bin/sh
+# @(#)null_play	1.1 7/25/91 ERL
+# "play" program to use when there's no D/A hardware 
+#  i.e., there's nothing here!
+

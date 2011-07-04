@@ -1,0 +1,38 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)spsassert.3	1.3 30 Jul 1991 ESI
+.TH SPSASSERT 3\-ESPSu 30 Jul 1991
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+spsassert \- ESPS program verification
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/spsassert.h>
+
+spsassert(expression,message)
+char *message
+.ft
+.SH DESCRIPTION
+This macro is very helpful in catching programming errors, it is a tool
+for defensive programming.  The macro is also useful for putting diagnostics 
+into ESPS programs.
+.PP
+When it is executed, if \fIexpression\fR is false,
+it prints
+
+.nf
+.ta 1i
+	ESPS assertion failed:  \fImessage\fR
+	Assertion failed:  file \fIxyz\fR, line \fInnn\fR
+
+.fi
+on the standard error file and exits.
+\fIXyz\fR is the source file and \fInnn\fR the source line number
+of the \fIassert\fR statement.
+.I Message
+is the message passed as the second argument of the macro. The message should
+include the name of the program or the function name (if a library function)
+calling spsassert.
+.PP
+The include file \fI<esps/spsassert.h>\fR is included automatically
+in programs that include \fI<esps/esps.h>\fR.

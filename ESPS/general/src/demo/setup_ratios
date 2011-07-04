@@ -1,0 +1,165 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of
+# Entropic Research Laboratory, Inc. Any reproduction, distribution,
+# or publication of this work must be authorized in writing by Entropic
+# Research Laboratory, Inc., and must bear the notice:
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc.
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc.
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended
+# publication of this source code.
+#
+# @(#)setup_ratios	1.3 11/18/96 ERL
+#
+# Written by:
+# Checked by:
+# Revised by: David Burton
+#
+# Brief description:  Designs filters for use by ratios and logratios
+#
+SLEEP=6
+USE_ESPS_COMMON=off
+ESPS_VERBOSE=0
+export USE_ESPS_COMMON
+export ESPS_VERBOSE
+if test `mach_type` = CONVEX
+ then
+  echo This script will fail if you do not have write permission on this directory.
+ else
+  if test ! -w . 
+    then
+	echo "You do not have write permission in this directory."
+	exit 1
+  fi
+fi
+echo " "
+
+
+echo '"ratios" shows how ESPS programs can be combined'
+echo "by using shell scripts and pipes to quickly and easily solve"
+echo "problems that at first glance would appear to require the"
+echo "development of new programs."
+echo " "
+sleep $SLEEP
+echo "In speech recognition research, it is often necessary to"
+echo "compare the power in various frequency bands in order to"
+echo "discriminate among several similar sounding speech sounds."
+echo "This demonstration illustrates how this comparison could"
+echo "be implemented without writing any C code."
+echo " "
+sleep $SLEEP
+echo "The first step is designing filters that capture information"
+echo "about the frequency bands of interest. We chose to"
+echo "design 3 filters: 600 Hz low pass, 1750 Hz. band pass,"
+echo "and 3000 Hz. high pass."
+echo " "
+sleep $SLEEP
+echo "First let's design the low pass"
+echo " "
+echo "The parameters for the filter design are in"
+echo "the demo script, but they are not shown here."
+echo " "
+echo "   %wmse_filt -P600lpfilt.params 600lp.filt"
+wmse_filt  -P600lpfilt.params 600lp.filt
+echo " "
+echo "Now the band pass filter"
+echo " "
+echo "   %wmse_filt -P1750bpfilt.params 1750bp.filt"
+wmse_filt  -P1750bpfilt.params 1750bp.filt 
+echo " "
+echo "Finally the high pass filter"
+echo " "
+echo "   %wmse_filt -P3000hpfilt.params 3000hp.filt"
+wmse_filt  -P3000hpfilt.params 3000hp.filt 
+echo " "
+sleep $SLEEP
+echo "Let's also compute the filter transfer functions"
+echo " "
+echo "   %filtspec -s8000 -n513 600lp.filt 600lp.fspec"
+filtspec -s8000 -n513 600lp.filt 600lp.fspec
+echo " "
+echo "   %filtspec -s8000 -n513 1750bp.filt 1750bp.fspec"
+filtspec -s8000 -n513 1750bp.filt 1750bp.fspec
+echo " "
+echo "   %filtspec -s8000 -n513 3000hp.filt 3000hp.fspec"
+filtspec -s8000 -n513 3000hp.filt 3000hp.fspec
+echo " "
+echo '"ratios" is a shell script that uses ESPS programs to'
+echo "compute the power and ratio-of-powers in each of the 3" 
+echo "frequency bands. This script can be run from the shell level"
+echo "or from within waves+. ratios requires 3 input arguments:"
+echo "range in points, input file name, and output file name. The"
+echo "command lines in the "ratios" script, along with a brief description,"
+echo "are shown below.  Note that these commands are not being run;"
+echo "they are simply being shown and described."
+echo " "
+sleep $SLEEP
+sleep $SLEEP
+sleep $SLEEP
+sleep $SLEEP
+echo "Use the low pass filter to get the power"
+echo "in the low frequency band"
+RANGE="-r1:13421"
+INPUT=speech.sd
+OUTPUT=speech.ratios
+echo " "
+echo "   %filter $RANGE -F600.bp $INPUT - | frame -Pfrm.params - - |"
+echo "   pwr  -f sd -f pwr1 - - | mergefea -fpwr1 - /usr/tmp/r$$"
+
+
+echo " "
+echo "Use the band pass filter to get the power"
+echo "in the mid-frequency band"
+echo " "
+echo "   %filter $RANGE -F1750bp.filt $INPUT - | frame -Pfrm.params - - |"
+echo "   pwr  -f sd -f pwr2 - - | mergefea -fpwr2 - /usr/tmp/r$$"
+
+
+
+echo " "
+echo "Use the high pass filter to get the power"
+echo "in the high frequency band"
+echo " "
+echo "   %filter $RANGE -F3000hp.filt $INPUT - | frame -Pfrm.params - - |"
+echo "   pwr  -f sd -f pwr3 - - | mergefea -fpwr3 - /usr/tmp/r$$"
+
+sleep $SLEEP
+echo " "
+echo "Finally, use select(1-ESPS) to evaluate the ratio of the"
+echo "powers in each of the three frequency bands and use"
+echo "addfea (1-ESPS) to put the result into the output file."
+echo " "
+echo "   %select -e \(pwr2/pwr1\)  /usr/tmp/r$$ | "
+echo "   addfea -fratio2to1 -c "added pwr2/pwr1 ratio" -"
+echo "   /usr/tmp/r$$ $OUTPUT"
+
+echo " "
+echo "   %select -e \(pwr3/pwr1\)  /usr/tmp/r$$ |"
+echo "   addfea -fratio3to1 -c "added pwr3/pwr1 ratio" -"
+echo "   /usr/tmp/r$$ $OUTPUT"
+
+echo " "
+echo "   %select -e \(pwr3/pwr2\)  /usr/tmp/r$$ |"
+echo "   addfea -fratio3to2 -c "added pwr3/pwr2 ratio" -"
+echo "   /usr/tmp/r$$ $OUTPUT"
+sleep $SLEEP
+echo " "
+echo 'After you run the "ratios" script (for example, try'
+echo '"ratios -r1:12000 speech.sd speech.rat"), use genplot(1-ESPS)'
+echo '(try "genplot -e1:6 -X12 speech.rat") or waves+ to plot'
+echo "the output file and use plotspec(1-ESPS) to look at the"
+echo "three filter responses: 600lp.fspec, 1750bp.fspec, 3000hp.fspec."
+echo " "
+echo '"logratios" is a script that computes the logarithm of'
+echo "powers and the ratios of the log powers. You may also"
+echo "want to try it."
+
+
+
+
+
+
+
+

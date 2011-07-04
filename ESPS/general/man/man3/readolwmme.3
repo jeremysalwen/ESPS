@@ -1,0 +1,97 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)readolwmme.3	1.1 22 Apr 1991 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  READ_OLWM_MENU 3\-Exu 22 Apr 1991
+.SH NAME
+
+.nf
+read_olwm_menu \- read a menu file in OPEN LOOK window manager (olwm) format
+print_olwm_menu \- print a menu file read by read_olwm_menu
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/exview.h>
+
+menudata *
+read_olwm_menu(menu_file)
+char *menu_file;
+
+void
+print_olwm_menu(men)
+menudata *men;
+
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+\fIread_olwm_menu\fP reads the file \fImenu_file\fP and assumes that
+it is an ASCII file containing a menu specification in the format as
+menu files for the OPEN LOOK window manager \fIolwm\fP (same as
+\fIsunview\fP menu files).  For details about the format of menu
+files, see \fIolwm\fP(1) \- the manual page is included in the ESPS
+distribution.  The simplest case for \fImenu_file\fP is a file with
+two columns \- item names are taken from the first column and the
+corresponding execution strings are taken from the second column.  If
+blanks are needed in the button labels, use quotes to surround the
+string in the first column.  Do not use quotes in the execution
+strings unless they are part of the command (you may have to escape
+them).  More complicated cases (e.g., with submenus) can be created
+using the full syntax of \fIolwm\fP(1) menu files.
+.PP
+\fIread_olwm_menu\fP returns a menu structure defined as follows 
+(these are the definitions from Sun's \fIolwm\fP):
+.nf
+.ft B
+
+typedef struct {
+	char *title;
+	char *label;
+	int idefault;		/* index of default button */
+	int nbuttons;
+	Bool pinnable;
+	buttondata *bfirst;
+} menudata;
+
+typedef struct _buttondata {
+	struct _buttondata *next;
+	char *name;
+	Bool isDefault;
+	Bool isLast;
+	FuncPtr func;
+	char *exec;    /* string to be executed, like "xterm" */
+	void *submenu; /* this really is type menudata - js */
+	} buttondata;
+
+.ft
+.fi
+The function \fIprint_olwm_menu prints the names and execution strings
+from menus read by \fIread_olwm_menu\fP.
+.SH EXAMPLES
+.PP
+\fIread_olwm_menu\fP is used within \fIexv_bbox\fP to read the menu
+file whose name is passed to that routine.  It is also used in
+\fIfbuttons\fP (1\-\s-1ESPS\s+1) to read the menu passed via the
+\fB-M\fP option.  For examples of simple menu files, see
+\fImbuttons\fP (1\-\s-1ESPS\s+1).
+.SH ERRORS AND DIAGNOSTICS
+.PP
+.SH FUTURE CHANGES
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+\fIolwm\fP(1), (3xu\-\s-1ESPS\s+1), \fIexv_bbox\fP (3xu\-\s-1ESPS\s+1)
+.SH AUTHOR
+.PP
+program and man page by John Shore.  This is little more than a 
+cover function for the \fIolwm\fP function \fImenuFromFile\fP.  
+
+
+
+

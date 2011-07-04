@@ -1,0 +1,419 @@
+#!/bin/csh -f
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1993  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)test_waves	1.10 10/4/93 ERL
+# 
+# Written by:   David Talkin
+# 
+# Brief description: The beginnings of a test suite for waves+
+#
+
+alias sx send_xwaves
+
+alias pau 'echo Hit "CONTINUE" in the xwaves Control Panel to proceed. ; echo " " ; sx pause'
+
+cd /tmp
+
+# This creates a little script that echoes its command-line arguments by
+# printing them out one per line.  This allows multi-word arguments to
+# be clearly separated.
+echo \#\!/bin/sh > /tmp/myecho$$
+echo 'while test "$1" != ""' >> /tmp/myecho$$
+echo do >> /tmp/myecho$$
+echo 'echo $1' >> /tmp/myecho$$
+echo shift >> /tmp/myecho$$
+echo done >> /tmp/myecho$$
+chmod +x /tmp/myecho$$
+
+
+echo If xwaves is running, it should quit.
+echo If it\'s not, you should see an error message.
+echo " "
+
+# Tell xwaves, if it exists, to exit.
+sx -D 0 quit
+
+# Now start xwaves with a known profile (the default master version).
+xwaves -w $ESPS_BASE/lib/waves/.wave_pro &
+
+# Use one of the speech files in the timitdemo.  The analysis
+# parameters, etc. are somewhat different for the male and female voices.
+# Enable the definition of "bn" that you prefer and make the
+# corresponding male/female adjustments later in the script.
+# Female voice
+#set bn = si648
+# Male voice
+set bn = sa2
+
+# Remove any old files that may be around to avoid possible confusion.
+rm -f $bn.* >& /dev/null
+
+# Female voice
+#ln -s $ESPS_BASE/newdemos/timitdemo/files/cjf/$bn.wav .
+# Male voice
+ln -s $ESPS_BASE/newdemos/timitdemo/files/rws/$bn.wav .
+
+sx set colormap $ESPS_BASE/lib/waves/colormaps/TImap
+
+clear
+
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
+echo "===================================================="
+echo This script is designed to demonstrate some ways in which xwaves
+echo may be used.  It also serves as a quick test of xwaves and related
+echo programs.  As this script is operating, it will print various
+echo informational messages to the terminal, so you should try to keep the
+echo terminal window visible.
+echo ""
+echo Sometimes this script will suggest that you hit mouse buttons or
+echo keyboard keys.  In these cases, you should have the pointer in
+echo one of the data view windows.
+echo "===================================================="
+echo " "
+echo The program \"formant\" is now computing formant estimates.
+echo Please wait.
+
+# Use a lower LPC order and search for fewer formants in the female
+# voice, since the vocal tract is smaller.
+# Female voice
+#formant -f8000 -n3 -o10 $bn.wav
+# Male voice
+formant -f8000 $bn.wav
+
+# Assign names for the downsampled and highpassed speech file, the
+# spectrogam file, the F0 file and the formant estimates.
+set fi = $bn.hp
+set sg = /tmp/$fi.fspec
+set fb = $bn.fb
+set f0 = $bn.f0
+set oname = dt
+
+sx make name $oname file $fi loc_x 0 loc_y 160 width 1000 height 150
+echo Creating a spectrogram.
+sx $oname spectrogram loc_y 350 output $sg start 0 end 2
+sx $oname align file $sg
+echo " "
+echo You should see a time aligned spectrogram and waveform.
+echo The spectrogram scale should remain fixed after window resize.
+pau
+
+# Note that the auto-rescale is set here on a view-specific basis.
+sx $oname set file $sg h_rescale 1 v_rescale 1
+echo The spectrogram should now auto-rescale.
+pau
+
+# The colormap setting must be global to all views.
+sx set colormap greymap
+echo The colormap should now be greyscale.
+pau
+
+# The colormap range and threshold settings are also settable only globally.
+sx $oname colormap range 40 threshold 50
+echo The spectrogram display range and threshold should now be 40 and 50.
+pau
+
+# Overlay the formant file on the spectrogram.  Enable display of only
+# the first three formants.  Allow formant modification by drawing with
+# the left button pressed.
+sx $oname overlay file $fb on_file $sg
+sx $oname activate file $fb numbers 0 1 2
+sx $oname set file $sg left_op mark formants
+echo You should now see formant trajectory estimates overlaid on the
+echo spectrogram.  You may draw on the spectrogram with the left mouse
+echo button depressed to modify the trajectories.
+pau
+
+# This shows how to map a key to an xwaves operator.  This operator
+# (play between marks) just happens to be a built-in menu item.
+# Operators defined with add_op may also be bound to keys.
+sx key_map key _ op play between marks
+echo The space-bar should now be bound to \"play between marks\".
+pau
+
+# Set up the F0 display scaling appropriately for the male or female voice.
+# Display only the F0 and rms.
+# Female voice
+#sx make name $oname file $f0 loc_y 560 height 320 f0_min 75 f0_range 250 f0_size .8 numbers 0 2
+# Male voice
+sx make name $oname file $f0 loc_y 560 height 320 f0_min 50 f0_range 150 f0_size .8 numbers 0 2
+sx $oname align file $sg
+echo You should now see a plot of the speech fundamental \(pitch\).
+echo It, and the speech waveforms should be time aligned with the
+echo spectrogram.  Only the first and third elements of the .f0 file should be
+echo visible.
+pau
+
+# This is how an overlay may be removed without destroying the host view.
+# This also shows how to retrieve the names of all overlays on a given
+# view.  Note that the success of this example depends on the fact that
+# only one overlay is present.  If more than one existed, it would be
+# necessary to issue a "kill" command for each.
+sx kill name $oname file `sx $oname get file $sg aname overlays`
+echo The overlay on the spectrogram should have disappeared.
+pau
+
+sx kill name $oname file $f0
+echo The f0 display should have disappeared.
+pau
+
+# With Version 5.0, waveforms may be overlaid on other waveforms using
+# the same syntax as for overlays on spectrograms.
+sx $oname overlay file $bn.wav on_file $fi
+echo You should now see the original 16kHz file speech file overlaid
+echo on the 8kHz file.  You may want to zoom in to look at details.
+pau
+
+# This makes the middle button toggle the reticle in the channel under
+# the cursor on/off.
+# Note that the command created with the add_op changes the state of the
+# reticle AND redefines the meaning of the middle mouse button, thus
+# implementing a toggle function.
+sx add_op name ron command \#_name set file _file chann _cursor_channel reticle_on 1 middle_op roff
+sx add_op name roff command \#_name set file _file chann _cursor_channel reticle_on 0 middle_op ron
+# Note that the values for the button operators may be optionally
+# quoted.  Here both forms are used.  The quoted form need only be used
+# if the definition is not the last item on the line.
+sx set all t middle_op \"roff\"
+sx set all t spec_middle_op roff
+echo There should now be a multi-trace signal present \(formant and
+echo bandwidth estimates\).
+echo The middle button should now toggle the reticle on and off in all views.
+sx make file $fb loc_y 560 height 300
+pau
+
+# Note that the "all t" keyword-value pair causes all views to adopt
+# the new attribute settings.
+sx set all t reticle_grid 0
+echo The reticles should now be OFF in all views.
+pau
+sx set all t reticle_grid 1
+echo The reticles should now be ON in all views.
+pau
+
+# This shows view-specific setting of button modes.
+sx $oname set file $fb left_op "zoom in"
+sx $oname set file $fb middle_op zoom out
+echo The multi-trace view should now have ZOOM IN and ZOOM OUT bound to the
+echo left and middle buttons.
+pau
+
+sx $oname activate file $fb num 0 1 2 3
+sx $oname set file $fb background 121
+sx $oname set file $fb channels \"0 1\" line_type 2
+sx $oname set file $fb channel 2 line_type 3 plot_min 0
+sx $oname set file $fb channel 3 line_type 4 plot_min 0
+sx $oname bracket file $fb start 1 end 2
+echo The multi trace view should now show channels 0,1,2,3 on a color
+echo background.  Channels 0 and 1 should be displayed with line type
+echo 2\; channel 2 with line type 3\; and channel 3 with line_type 4.
+echo The minimum data value plotted on channels 2 and 3 should be zero.
+pau
+
+sx set all t middle_op foo bar
+sx set all t spec_middle_op buff car
+echo This should be preceded by three error messages.
+echo \(The middle op in all views should now be NO OP.\)
+pau
+
+sx add_op menu wave name \"show variables\" op /tmp/myecho$$ _variables \; echo
+sx add_op menu spect name \"show settables\" op /tmp/myecho$$ _settables \; echo
+sx add_op menu none name \"show operators\" op /tmp/myecho$$ _operators \; echo
+sx add_op menu none name \"show w_ops\" op /tmp/myecho$$ _waves_commands \; echo
+sx add_op menu all  name \"show object commands\" op /tmp/myecho$$ _object_commands \; echo
+sx key_map key o op show object commands
+sx key_map key w op \"show w_ops\"
+sx $oname set file $fb middle_op \"show variables\"
+sx $oname set file $fi middle_op \"show operators\"
+sx $oname set file $sg left_op \"show w_ops\"
+sx $oname set file $sg middle_op show settables
+echo Hit \"o\" key to see commands for display objects.
+echo Hit the left mouse button in the spectrogram to see waves commands.
+echo Hit the middle button in the single-trace view to see view operators.
+echo Hit the middle button in the multi-trace view to see variable names.
+echo Hit the middle button in the spectrogram to see view settables.
+pau
+
+sx add_op name testit menu DT op send_xwaves save_add_ops output ops$$ \; cat ops$$
+sx key_map key _ op testit
+echo Hit the space bar to see all current add_op commands.
+pau
+
+sx add_op name log menu wave op echo _cursor_values
+sx key_map key _ menu wave op log
+echo Hit space bar in waveform views to log data values.
+pau
+
+echo ' '`send_xwaves $oname get aname variables` | sed 's/ / _/g' > vars$$
+sx add_op name WORLD op /tmp/myecho$$ `cat vars$$`
+echo Select WORLD from the view menus to see all variable values.
+pau
+
+sx set xspectrum_datwin_x \"500\" xspectrum_datwin_y \"400\" xspectrum_datwin_width \"500\" xspectrum_datwin_height \"400\" xspectrum_window_limits \"0\" xspectrum_window_size .1
+sx attach function xspectrum
+echo Waiting for xspectrum to attach.
+
+set foundit = 255
+while ( $foundit != 0 )
+  sx save_menus menu wave output /tmp/tmp$$
+  grep xspectrum /tmp/tmp$$
+  set foundit = $status
+end
+
+echo Xspectrum should now be operating.  Space bar should cause new
+echo spectrum computation when cursor is in single-trace view.
+sx send function xspectrum op $oname mark file $fi time 1.5
+sx key_map key _ op xspectrum
+pau
+
+sx delete_all_items menu wave
+echo 'The waveform menu should now be empty (i.e. It should no longer appear'
+echo 'when the right button is pressed). The spectrogram menu should be'
+echo  'unchanged.'
+pau
+
+sx @/tmp/tmp$$
+echo The waveform menu should now be restored to its previous state.
+pau
+
+sx save_menus menu spect output /tmp/tmp$$
+sx delete_all_items menu spect
+echo The spectrogram menu should now be empty.
+pau
+
+sx @/tmp/tmp$$
+echo The spectrogram menu should now be restored.
+pau
+rm -f /tmp/tmp$$
+
+sx send set xspectrum_cep_liftering 1 xspectrum_cep_cutoff .005 xspectrum_analysis_type 10
+echo Xspectrum should now be operating in the cepstral smoothing mode.
+pau
+
+rm -f $bn.lab
+sx set xlabel_ctlwin_y 750
+sx $oname bracket start .5 end 2.5 file $fi
+sx attach function xlabel
+
+sx send function xlabel op xlabel make name $oname file $bn.lab signal $sg
+sx send function xlabel op $oname mark time 1.5 label Hello World
+echo Xlabel should now be attached.  Its control panel should be near
+echo the bottom of the screen.  Hello World should appear in the label
+echo window.  The label window should be attached to the spectrogram view.
+pau
+
+sx detach function xlabel
+echo Xlabel should have gone away.  Xspectrum should still be there.
+pau
+
+sx detach
+echo All attachments should now be absent.
+pau
+
+sx kill name $oname file $sg
+echo The spectrogram should have disappeared.
+pau
+
+echo 'send_xwaves $1 bracket file $2 start $3 end $4' > zoom$$
+echo 'send_xwaves $1 set file $2 channels $5 plot_min $6 plot_max $7' >> zoom$$
+chmod +x zoom$$
+echo 'send_xwaves $1 op file $2 op zoom full out' > zout$$
+echo 'send_xwaves $1 set file $2 v_rescale 1' >> zout$$
+chmod +x zout$$
+sx add_op name MAGNIFY menu wave op zoom$$ _name _file _l_marker_time _r_marker_time _t_marker_chan _b_marker_yval _t_marker_yval
+sx add_op name zout menu none op zout$$ _name _file
+foreach f (`sx $oname get aname files`)
+   sx $oname set file $f left_op \"up/down move\" middle_op zout
+end
+echo There should now be a menu item called MAGNIFY on the waveform menus.
+echo Using the left mouse button, position the abscissa markers and \(with
+echo the shift key depressed\) the ordinate markers to bracket a region to
+echo magnify.  Then select MAGNIFY.  Press the middle button to zoom full
+echo out.
+pau
+
+foreach f (`sx $oname get aname files`)
+	sx $oname op file $f op zout
+	sx $oname set file $f line_type 1
+end
+echo All waveforms should now be zoomed full out.  The multi-trace
+echo view should now be plotted with line type 1.
+pau
+
+sx set output_dir /tmp append_extensions 0
+sx add_op name SAVE menu none op send_xwaves _name save file _file start _l_marker_time end _r_marker_time outputname _out.g.test
+sx key_map key _ op SAVE
+sx set all t middle_op play between marks
+echo The middle button should now be bound to \"play between marks\" and
+echo the space bar should save the currently-marked segment in a file and
+echo then display the segment.
+pau
+
+
+sx kill
+echo All data views should now be absent
+pau
+
+sx set xspectrum_window_limits 1
+sx attach function xspectrum
+sx make name $oname file $fi loc_x 10 loc_y 200 width 1100 height 200
+sx add_op name \"mark\" menu all op \# _name mark time _cursor_time
+sx add_op name \"clear\" menu all op \#_name unmark all t
+sx add_op name \"foo\" menu all op \# _name play start _l_mark_time end _r_mark_time
+sx set samp_range_prefix -r
+set pp = `sx get aname play_prog`
+sx add_op name \"eplay\" menu all op $pp _mark_range_samp _file
+sx add_op name \"s\" menu all op \#send function xspectrum op _name mark signal _file rstart _l_mark_time rend _r_mark_time
+sx add_op name \"xspectrum\" menu all op \#send function xspectrum prognum 90245 versnum 15 command _name mark signal _file time _cursor_time rstart _l_marker_time rend _r_marker_time
+sx key_map key s op s
+sx key_map key x op eplay
+sx key_map key z op foo
+sx key_map key c op clear
+sx key_map key _ op mark
+sx set blowup_op mark
+sx $oname set file $fi middle_op 'blow up; function'
+echo The space bar should now apply marks wherever the cursor is at the time
+echo the bar is hit.  The \"z\" and \"x\" keys should both play the region
+echo delimited by the two marks closest to the cursor when the key is hit.
+echo Xspectrum should be attached.  Hitting the \"s\" key should cause the
+echo region delimited by the nearest marks to have its spectrum computed
+echo and displayed.  Hitting the \"c\" key should erase all marks.
+echo
+echo The middle mouse button should be bound to \"blow up\; function\" and,
+echo when pressed, should expand the waveform.  When the middle button is
+echo released, a mark should be applied.
+pau
+
+echo After you hit the next \"CONTINUE\", the following files created by
+echo xwaves during this test will be deleted\:
+echo `sx get aname new_files`
+pau
+
+sx kill
+rm -f `sx get aname new_files`
+rm -f zoom$$ zout$$ ops$$ vars$$ /tmp/myecho$$ $bn.*
+echo All signal files created during this test should have now been deleted.
+pau
+
+
+sx quit
+echo Xwaves should have exited.  The test is complete.
+

@@ -1,0 +1,23 @@
+#! /bin/sh
+# @(#)echeck.test	3.1 8/18/87 ESI
+# this is a test script for echeck (1-ESPS)
+echo "First, run echeck on some functions in general portion"
+echo "echeck get_sd_recd"
+echeck get_sd_recd
+echo "echeck read_params"
+echeck read_params
+echo "echeck eopen"
+echeck eopen
+echo " "
+echo "Now, run echeck on some functions in local portion"
+echo "echeck get_pitch_rec"
+echeck get_pitch_rec
+echo "echeck get_vburg"
+echeck get_vburg
+echo " "
+echo "Now, run echeck on a non-existing function"
+echo "echeck foo"
+echeck foo
+echo " "
+echo "Test completed"
+

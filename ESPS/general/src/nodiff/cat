@@ -1,0 +1,132 @@
+
+
+
+NODIFF(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     nodiff - nth order difference program
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     nnnnooooddddiiiiffffffff [[[[ ----oooo _o_r_d_e_r ] [ ----ffff _f_i_e_l_d__n_a_m_e ] [ ----rrrr _r_a_n_g_e  ]  [   ---- xxxx
+     _d_e_b_u_g__l_e_v_e_l ] fea.in fea.out
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     _N_o_d_i_f_f is a shell script which finds the  nth-order  differ-
+     ence  of  field  _f_i_e_l_d__n_a_m_e  in  the  ESPS FEA (5-ESPS) file
+     _f_e_a__i_n and writes the result to  the  output  file  _f_e_a._o_u_t.
+     The  name  of  the  field  in the output file is obtained by
+     appending one of __d_1, ..., __d_5 to _f_i_e_l_d__n_a_m_e,  in  agreement
+     with _o_r_d_e_r.
+
+     The first order difference of _f_i_e_l_d__n_a_m_e is computed element
+     -  by-element as _f_i_e_l_d__n_a_m_e[_i][_r_e_c_n_o] - _f_i_e_l_d__n_a_m_e[_i][_r_e_c_n_o-
+     _1] for all elements iiii of the field  _f_i_e_l_d__n_a_m_e.  The  second
+     order   difference   is  found  as  _f_i_e_l_d__n_a_m_e[_i][_r_e_c_n_o]  -_2
+     _f_i_e_l_d__n_a_m_e[_i][_r_e_c_n_o-_1] + _f_i_e_l_d__n_a_m_e[_i][_r_e_c_n_o-_2].
+
+     _N_o_d_i_f_f uses _t_o_f_e_a_s_d (1- ESPS)  to  translate  the  specified
+     field  in  the  input file into a FEA_SD (5-ESPS) file.  The
+     output of _t_o_f_e_a_s_d is piped to _f_i_l_t_e_r (1- ESPS),  which  uses
+     predefined FEA_FILT (5-ESPS) files to find the correct order
+     difference.  _f_e_a_f_u_n_c (1-ESPS) is used to give  the  filtered
+     data  the  correct field name, and _m_e_r_g_e_f_e_a (1-ESPS) is used
+     to combine the differenced data with the  original  data  to
+     form the output records.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following options are supported:
+
+     ----oooo _o_r_d_e_r [1]
+          determines which order  difference  to  compute;  valid
+          values  are 1 through 5.  The FEAFILT files _d_i_f_f_1._f_i_l_t,
+          ..., _d_i_f_f_5._f_i_l_t contain the  necessary  filter  coeffi-
+          cients.    They    are    found    in   the   directory
+          $ESPS_BASE/lib/filters.
+
+     ----ffff _f_i_e_l_d__n_a_m_e [spec_param]
+          name of the field whose difference is to be found.
+
+     ----rrrr _r_a_n_g_e [1:last_in_file]
+          range of records to process.   Default  is  to  process
+          every  record  in the input file.  The ----rrrr option cannot
+          be used with standard input.
+
+     ----xxxx _d_e_b_u_g__l_e_v_e_l [0]
+          If _d_e_b_u_g__l_e_v_e_l  is  positive,  debugging  messages  and
+          other  information  are  printed  on the standard error
+          output.  The messages proliferate  as  the  _d_e_b_u_g__l_e_v_e_l
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+NODIFF(1-ESPS)                              ENTROPIC RESEARCH LAB
+
+
+
+          increases.   If _d_e_b_u_g__l_e_v_e_l is 0 (the default), no mes-
+          sages are printed.
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     There is no paramter processing.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     Common files are not used.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+     All header information is copied from input to output. Addi-
+     tionally, _f_i_l_t_e_r (1-ESPS) adds information about the differ-
+     ence filter used.
+
+BBBBUUUUGGGGSSSS
+     None known.
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     copysps (1-ESPS), tofeasd (1-ESPS), filter (1-ESPS),
+     feafunc (1-ESPS), mergefea (1-ESPS), ESPS (5-ESPS),
+     FEA (5-ESPS), FEA_SD (5-ESPS)
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Program and man page by Bill Byrne.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+

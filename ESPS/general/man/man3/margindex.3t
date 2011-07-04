@@ -1,0 +1,250 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)margindex.3t	1.4 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH MARG_INDEX 3\-ESPSu 18 Apr 1997
+.SH NAME
+marg_index \- allow indexing of allocated storage as multidimensional array
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+
+char *
+marg_index(arr, rk, dim, typ, lvl)
+char	*arr;
+int	rk;
+long	*dim;
+int	typ, lvl;
+.fi
+.ft
+.SH DESCRIPTION
+.PP
+This function creates a ``marginal index''
+to an existing linear block of storage \-
+that is a structure of pointer arrays
+that permits accessing the block of storage as a multidimensional array.
+.PP
+The argument
+.I arr
+is a pointer to the first byte of the block of storage,
+which must be large enough to hold all the array elements.
+This storage is not allocated by
+.I marg_index.
+It may be a block allocated by malloc(3) or calloc(3),
+or it may be some other available piece of storage;
+what matters is that it must be allocated before
+.I marg_index
+is called.
+.PP
+The argument
+.I rk
+gives the desired number of dimensions, and
+.I dim
+is a long-integer array containing the dimensions themselves.
+It is required that
+.I rk
+> 0.
+.PP
+The arguments
+.I typ
+and
+.I lvl
+together determine the type of the array elements
+for which marginal indexing is desired,
+according to the following table.
+.sp
+.TS
+center, box, tab(;);
+ ri | c | c | c | ci
+ li | c | c | c | ^ 
+ c    c   c   c   ^
+ l  | l | l | l | ^ .
+lvl;0;1;2;etc.
+typ
+_;_;_;_
+DOUBLE;(double);(double *);(double **)
+FLOAT;(float);(float *);(float **)
+LONG;(long);(long *);(long **)
+SHORT, CODED;(short);(short *);(short **)
+BYTE, CHAR;(char);(char *);(char **)
+DOUBLE_CPLX;(double_cplx);(double_cplx *);(double_cplx **)
+FLOAT_CPLX;(float_cplx);(float_cplx *);(float_cplx **)
+LONG_CPLX;(long_cplx);(long_cplx *);(long_cplx **)
+SHORT_CPLX;(short_cplx);(short_cplx *);(short_cplx **)
+BYTE_CPLX;(byte_cplx);(byte_cplx *);(byte_cplx **)
+.TE
+.sp
+The allowed values DOUBLE, FLOAT, etc. for
+.I typ
+are integer constants defined in
+.I esps.h.
+In general, the array-element type can be written as a base type,
+indicated by
+.I typ,
+followed by the number of stars indicated by
+.I lvl.
+.PP
+The return value is a pointer to the created structure and should be
+converted by a cast to the appropriate type before being treated as a
+multidimensional array.
+The appropriate type can be written as the
+array-element type followed by
+.I rk
+stars.
+For example, to get a 3-dimensional array with elements of type (float *),
+call
+.I marg_index
+with
+.IR rk " = 3,"
+.IR typ " = FLOAT,"
+and
+.IR lvl " = 1,"
+and cast the result to type (float ****).
+Here there are 4 stars in all:  1 from the array-element type and 3
+for the number of dimensions.
+In general the total number of stars in the result type should be
+.RI ( lvl " + " rk ).
+.PP
+.I marg_index
+is not needed for a one-dimensional array;
+if called with
+.I rk
+= 1, it simply returns its argument
+.I arr.
+For a matrix
+.RI ( rk " = 2),"
+the function creates an array of pointers,
+one to the first element of each row of the matrix,
+and returns a pointer to the beginning of the pointer array.
+The rows are laid out contiguously within the block of storage,
+with the last element of each row
+followed immediately by the first element of the next row (if any).
+.PP
+For a 3-dimensional array,
+.I marg_index
+first creates an array of pointers to the first elements of the rows.
+this first pointer array must be accessed as a 2-dimensional array, so
+the function creates a second array, containing pointers into the first.
+The return value is a pointer to the start of the second pointer array.
+In general, the number of pointer arrays created is
+.IR rk " \- 1."
+These are created with
+.IR calloc (3).
+The number of pointers in the first pointer array is the product of
+all the array dimensions except the last.  The number of pointers in
+the second pointer array is the product of all but the last two array
+dimensions.  So it goes, until the number of pointers in the last
+pointer array is just the first array dimension,
+.IR dim [0].
+The value returned by the function is a pointer to the first byte of
+this last pointer array.
+.PP
+The structure allocated by
+.I marg_index
+can be freed by
+.IR arr_free (3\-ESPSu).
+.SH EXAMPLE
+.PP
+The following allocates a block of storage for 30 floats that is to
+be indexed as a 2 \(mu 3 \(mu 5 array.
+It then allocates two pointer arrays to support the indexing:
+one with 6 pointers and one with 2.
+.IP
+char	*p;
+.br
+float   ***a;
+.br
+static long	dim[3] = {2, 3, 5};
+.br
+p = malloc(30 * sizeof(float));
+.br
+a = (float ***) marg_index(p, 3, dim, FLOAT, 0);
+.PP
+Then an expression of the form
+.IR a [ i ]\c
+.RI [ j ][ k ].
+can be used to refer to a location in the allocated storage.
+.PP
+The variable
+.I p
+can be dispensed with.
+.IP
+a = (float ***) marg_index(malloc(30 * sizeof(float)), 3, dim, FLOAT, 0);
+.PP
+The following gives a 2 \(mu 3 \(mu 5 array of pointers to floats.
+.IP
+float ****a;
+.br
+a = (float ****) marg_index(malloc(30 * sizeof(float *)), 3, dim, FLOAT, 1);
+.PP
+Then the expression
+.IR a [ i ]\c
+.RI [ j ][ k ].
+is of type (float *).
+.PP
+The examples above could be coded more easily with
+.IR arr_alloc (3\-ESPSu),
+which allocates the array storage and then calls
+.I marg_index.
+A more likely direct use for
+.I marg_index
+itself is to support multidimensional fields in feature
+files.
+.PP
+Assume declarations
+.IP
+struct header	*hd;
+.br
+struct fea_data *record;
+.br
+float	***array;
+.br
+char	*name;
+.br
+short	rank;
+.br
+long	*dimen;
+.PP
+Suppose that
+.I hd
+points to a feature-file header and that the string
+.I name
+is the name
+of a three-dimensional field of type FLOAT defined in the header.
+Then the statements
+.IP
+record = allo_fea_rec(hd);
+.br
+(void) get_fea_siz(name, hd, &rank, &dimen);
+.br
+array = (float ***) marg_index(get_fea_ptr(record,name,hd),
+.br
+		3, dimen, FLOAT, 0);
+.PP
+will allocate storage for a record compatible with the header
+and set up a pointer-array structure
+so that the storage for the named field within the record can be
+accessed through a triply indexed variable of the form
+.IR array [ i ]\c
+.RI [ j ][ k ].
+.SH DIAGNOSTICS
+.PP
+.nf
+marg_index: rank < 1
+marg_index: level < 0
+marg_index: unrecognized type
+marg_index: unable to allocate storage
+.fi
+.SH BUGS
+.PP
+None known with this implementation.  
+There may be architectures to which the C code is not portable.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIarr_alloc\fP(3\-ESPSu), \fIarr_free\fP(3\-ESPSu), \fIcalloc\fP(3),
+\fImalloc\fP(3), FEA(5\-ESPS)
+.fi
+.SH AUTHOR
+Rodney Johnson

@@ -1,0 +1,181 @@
+               Entropic Research Laboratory, Inc. 
+
+          Unix Signal Processing Software Demonstration
+
+INTRODUCTION
+============
+
+This demonstration software provides a brief introduction to
+Entropic's signal processing software -- the Entropic Signal
+Processing System (ESPS), and the waves+ graphics interface.
+
+The demo has two parts: "waves+ intro" and "slide show". The waves+
+intro is a live demo that shows the software in action. The slide show
+is a sequence of fixed ESPS and waves+ images.  The demo has an
+optional voice narrative that describes what you see on the screen.  
+This option may not be supported on all systems (and it can be turned 
+off even on systems that support it).  Note that the text of the
+narrative is contained at the end of the file that is displayed 
+when the "About this demo..." button is pressed.  (This file usually
+is erldemos/edemo.about).  
+
+SETTING UP THE DEMO
+===================
+
+The tape contains a single tar image: the directory "entropic".  This
+can be loaded anywhere; root privileges are not required.  Extract the
+directory with "tar xvf /dev/rst8".
+
+By setting your umask to 022 ("umask 022") before reading the tar
+tape, anyone may execute the demo, but this is not necessary for a
+single user.  The demo only requires write permission in the directory
+/tmp, so changing the modes on the files to global read-and-execute
+permission only ("chmod -R 555 entropic") will not break the demo.
+
+Requirements and recommendations are as follows:
+
+	1) SPARC CPU running at least Sun OS 4.0.3 (must) 
+
+	2) color display for "slide show" (must).  A color display is highly 
+	   desirable for the "waves+ intro" portion, as many things will not 
+	   work without one.  If the display is monochrome display, on 
+	   some systems the spectrogram displays will come up with 
+	   high-energy regions light instead of dark.  In this case, 
+	   un-comment "#invert_dither 1" (remove the "#") in the 
+	   ".wave_pro" file located in the directory erldemos/esps/lib/waves".
+
+	3) 25 MB disk space (must) 
+
+	4) 16 MB memory highly recommneded. You can try it with only 12 MB,
+	   but the audio and slides may loose sync. With less than 12 MB,
+	   things become sluggish and sometimes confusing; turn the audio off.
+
+	5) X Windows (must have Sun OpenWindows 2.0) 
+
+	6) swap space of at least 20 MB, preferably 30MB
+
+A user must be standing in the "entropic" directory in order to run the demo. 
+If you want to make it easy for anyone to run the demo, put a script in
+/usr/local or /usr/local/bin that "cd"s to the "entropic" directory and 
+runs ENTROPIC. 
+
+RUNNING THE DEMO
+=================
+
+To start the demo, change into the entropic directory ("cd entropic")
+and run the program ENTROPIC.  This will put up a command window from
+which the user can operate the demo.  
+
+The top part of the control panel has buttons that present information
+about the demo, ESPS, waves+, and the Entropic Research Laboratory.
+
+The bottom part of the control panel allows you to select various demo
+and audio options. By using the check boxes, you can select the live
+part, the slide show or both.  The "Single" and "Continuous" buttons
+determine whether the "Start Demo" button runs the demo once or 
+continuously.  The "Audio Output" buttons control the play back 
+options.  Once the options have been selected, clicking on the 
+"Start demo" button starts the demo.
+
+If you are using a SPARCstation, the demo will sound much better if
+you go to the trouble to hook up an external speaker, instead of using
+the internal speaker.
+
+For more information about the demo, see the file displayed 
+when the "About this demo..." button is pressed.  (This file usually
+is erldemos/edemo.about).
+
+CONFIGURATION CONSIDERATIONS
+============================
+
+This demo has been tested on a SPARCstation running Sun OS 4.0.3 and
+OpenWindows 2.0. Ideally, the CPU should have 16 MB of memory and
+25-30 MB of swap space.  The demo will run on some systems with as
+little as 12 MB of memory, but it can be slow.
+
+The demo has been tested with the olwm window manager.  It should run
+with any ICCCM compliant window manager, but, we have only tested
+it under twm. Unless you are running Sun's X/News server, you must put
+the XView fonts on your font path.  To do this do, move to the "xview"
+directory and type:
+
+	source setxview
+
+
+Also, note that under twm, you must have the following line
+in your .twmrc file:
+
+	UsePPosition "on" # use program-specified size hints
+
+(Without this statement, you must manually place windows as they
+appear.)
+
+In general, the performance of the demo varies as a function of the
+system configuration and load (CPU speed, disk speed, available
+memory, role of NFS, network traffic, swap space, other processes,
+etc.).  Since there is no foolproof method of synchronizing speech
+output with the actual appearance of particular windows; inadequate
+system resources may result not just in a slower demo, but in a
+confusing demo.
+
+If the demo is not smooth, try running it without speech output, as it
+is most reliable in this mode (it is also faster).  If there is
+considerable trouble, some system adjustments may be necessary; see
+the recommendations below.
+
+If additional swap space is needed, the following procedure can be
+used (by a super-user): First, create a swap file with mkfile(1).  For
+example, to create a 25MB swap file called "swapfile" in /home:
+
+	%mkfile -v 25M /home/swapfile
+
+Then, add an entry in /etc/fstab:
+
+	/home/swapfile  swap  swap rw  0 0 
+
+Then reboot the system.  
+
+For each loop through the demo, a log file is written in /tmp/erldemo.log.
+Problems can often be tracked down by looking at this file.
+
+A single run of the demo takes between 5 and 8 minutes, depending
+on the system.  
+
+For more information or for help, please contact us:
+
+  Entropic Research Laboratory    Voice:     202-547-1420
+  600 Pennsylvania Ave., S.E. 	  FAX:       202-546-6648
+  Suite 202                       Internet:  esps@wrl.epi.com
+  Washington, D.C. 20003          uucp:	     ...uunet!epiwrl!esps-info
+  USA
+
+Particular contacts are:
+
+	David Burton (burton@wrl.epi.com)
+	Alan Parker (parker@wrl.epi.com)
+	John Shore (shore@wrl.epi.com)         
+
+COPYRIGHT NOTICE
+================
+
+The programs (except xloadimage and next_slide), data files, and text
+files in this demo directory (and subdirectories) are the property of
+Entropic Research Laboratory, Inc.  (Copyright (c) 1986-1990, Entropic
+Speech, Inc.  and Entropic Research Laboratory, Inc.; All rights
+reserved).  The demo may be freely distributed and used by prospective
+customers to evaluate Entropic Software products, or by Sun
+Microsystems employees to demonstrate the capabilities of workstations
+and windowing software.
+
+Xloadimage was originally written by Jim Frost Copyright (c) 1989,
+1990.  Rod Johnson of Entropic modified xloadimage and wrote
+next_slide in order to enhance the capabilities for showing a series
+of slides.  Both xloadimage and next_slide are in the public domain.
+If anyone wants copies of these, please contact us.
+
+---
+(@(#)README.sparc	1.3 12/5/90)
+
+
+
+

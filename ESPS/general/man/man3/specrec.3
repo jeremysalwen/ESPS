@@ -1,0 +1,153 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)specrec.3 @(#)specrec.3	1.2 06 May 1997 ESI
+.TH SPEC_REC 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+.nf
+allo_spec_rec \- allocate memory for an ESPS SPEC file record
+get_spec_rec \- get the next data record from an ESPS SPEC data file
+print_spec_rec \- print an ESPS SPEC data record
+put_spec_rec \- put an ESPS SPEC data record onto the file
+.SH SYNOPSIS
+.ft B
+#include <esps/spec.h>
+.br
+#include <esps/header.h>
+.sp
+.br
+struct spec_data *
+.br
+allo_spec_rec(hd)
+.br
+struct header *hd;
+.sp
+.br
+int
+.br
+get_spec_rec(data, hd, file)
+.br
+struct spec_data *data;
+.br
+struct header *hd;
+.br
+FILE *file;
+.sp
+.br
+void
+.br
+print_spec_rec(data, hd, file)
+.br
+struct spec_rec *data;
+.br
+struct header *hd;
+.br
+FILE *file;
+.sp
+.br
+void
+.br
+put_spec_rec(data, hd, file)
+.br
+struct spec_rec *data;
+.br
+struct header *hd;
+.br
+FILE *file;
+.ft
+.SH DESCRIPTION
+.I allo_spec_rec
+allocates memory for a SPEC file record and returns a pointer to it.
+The number of  elements allocated to
+\fIre_spec_val, im_spec_val, \fRand\fI frqs\fR is 
+.br
+\fIhd->hd.spec->num_freqs\fR.
+Since the size of the allocated record depends on a value in the data file
+header, it is important to be sure that a given SPEC record is 
+consistent with the header of the file it is being used with.   The SPEC
+data read/write routines use this and other 
+header values to determine
+the amount of data to read or write.   A mismatch could cause the program
+to fail in unpredictable ways.    
+It is not recommended that the same record be allocated for both input
+and output (\fIe.g.\fR for use with two different headers).
+If the record is being allocated for a new file (to be written) then
+the above mentioned value in the new header
+(after \fInew_header\fR(3\-ESPSu)) must be filled in before calling 
+.I allo_spec_rec.
+.PP
+.I get_spec_rec
+reads the next SPEC record from stream \fIfile\fR into the data structure
+pointed to by \fIdata\fR.    The ESPS file header pointed to by \fIhd\fR
+is consulted for the values of \fIhd.spec->num_freqs,
+hd.spec->freq_format, \fRand\fI hd.spec->frame_meth\fR.
+The values determine the size of the data record.   
+See the caution on \fIallo_spec_rec\fR.
+EOF is returned upon end of file.    
+A positive non-zero value is returned otherwise.  
+.PP
+.I print_spec_rec
+prints the SPEC record pointed to by \fIdata\fR onto the stream 
+\fIfile\fR.   The ESPS header pointed to by \fIhd\fR 
+is consulted for the values of \fIhd.spec->num_freqs,
+hd.spec->freq_format, \fRand\fI hd.spec->spec_type\fR.
+These values determine the size and format of the data record.   
+See the caution on \fIallo_spec_rec\fR.
+Only significant values are printed.  For example, \fIim_spec_val\fR
+is not printed unless \fIhd.spec->spec_type == ST_CPLX\fR.
+This function is useful for debug output in programs which
+process SPEC data files.
+.PP
+.I put_spec_rec
+writes a SPEC data record pointed to by \fIdata\fR onto the stream
+\fIfile\fR, which should be an open ESPS SPEC file.   The header must
+be written out to the SPEC file before calling this function.   
+The ESPS file header pointed to by \fIhd\fR
+is consulted for the value of \fIhd.spec->num_freqs,
+hd.spec->spec_type, hd.spec->freq_format, \fRand\fI
+hd.spec->frame_meth\fR.
+The values determine the size of the data record.   
+See the caution on \fIallo_spec_rec\fR.
+.SH EXAMPLE
+.if n .ta 33
+.if t .ta 3i
+struct spec_data *p;	
+.br
+struct header *ih;
+.br
+ih = read_header(file);	/* read spec file header */
+.br
+p = allo_spec_rec(ih);	/* allocate record */
+.br
+x = p->re_spec_val[0];	/* record reference */
+.br
+if(get_spec_rec(p,ih,file) == EOF) \fIeof...\fR	/* read a record */
+.br
+(void) print_spec_record(p,ih,stderr)	/* print the record */
+.br
+struct header *oh;
+.br
+oh = new_header(FT_SPEC);	/* create file header */
+.br
+\fI ... fill in some values, including hd.spec->num_freqs,
+.br
+hd.spec->frame_meth, hd.spec->spec_type, hd.spec->freq_format...\fR
+.br
+(void) write_header(oh,file);	/* write out header */
+.br
+p = allo_spec_rec(oh);	/* allocate record */
+.br
+\fI ... fill in desired data record values...\fR
+.br
+(void) put_spec_rec(p,oh,file);	/* write data record */
+.SH DIAGNOSTICS
+If \fIhd\fR does not point to a SPEC header (or an I/O error occurs in
+.I put_spec_rec
+),then a message is printed on stderr and the program terminates with exit 1.
+.SH BUGS
+None known.
+.SH SEE ALSO
+eopen(3\-ESPSu),
+read_header(3\-ESPSu),  copy_header(3\-ESPSu)
+SPEC(5\-ESPS), ESPS(5\-ESPS)
+.SH AUTHOR
+Alan Parker

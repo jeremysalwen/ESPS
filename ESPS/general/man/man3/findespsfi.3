@@ -1,0 +1,160 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)findespsfi.3	1.10 24 Sep 1997 ERL
+.TH FIND_ESPS_FILE 3\-Eu 24 Sep 1997
+.SH NAME
+find_esps_file \- finds full path to an ESPS or waves+ file.
+.SH SYNOPSIS
+.nf
+#include <esps/esps.h>
+
+char *find_esps_file(fullpath,filename,defpath,env_var_name)
+char* fullpath;
+char* filename; 
+char *defpath;
+char *env_var_name
+.fi
+.SH DESCRIPTION
+.PP
+Looks along a path for \fIfilename\fR. If the file is found and is
+readable then return the the string containing the full Unix path to
+the file.  If the file is not found NULL is returned.
+.PP
+Environment variables may also be used in the requested file.
+Variable \fBESPS_BASE\fR is treated specially (see below).  An example
+of this would be:
+.nf
+
+   find_esps_file(fullpath,"bin/$ARCH/xwaves",defpath,env_var_name);
+
+.fi
+
+.PP
+The parameter \fIfilename\fR should the basename of the file to be
+discovered. If \fIfilename\fR already specifies a full path (begins
+with / or ./), then that path is returned (if it points to a readable
+file). The parameter \fIfullpath\fR
+should be a string large enough to hold the longest path on your
+system, or NULL in which case a new string will be allocated and
+returned containing the file path.  You should deallocate the string
+when you do not need it anymore. Parameter \fIfilename\fR (provided or a
+newly allocated) is returned.
+.PP
+The first two paramaters may be the same string.  However, remember
+that it is \fBVERY\fR important that the string be large enough to
+hold the resulting path. 
+.PP
+Parameter \fIdefpath\fR specifies the default search path.  The
+syntax of the search path (just like Unix) is given below.
+.PP
+The default search path can be overridden by the environment variable
+specified in \fBenv_var_name\fR.  If the environment variable specified
+by \fBenv_var_name\fR is not set, or cannot be parsed then
+the default file path (as specified by \fIdefpath\fR ) is used.
+.PP
+The syntax of the search path is a colon separated list of
+directories; just like the normal Unix path. An example path is:
+.PP
+.nf
+
+   $ESPS_BASE/bin:/usr/local/bin/$ARCH:/usr/esps/demo:$HOME/esps/bin
+
+.fi
+Environment variables may be used in the path by prefixing them
+with a $ sign.  The value of environment variable \fBESPS_BASE\fR is
+retrieved by calling \fIget_esps_base\fR(3\-\s-1ESPSu\s+1) . If the
+environment variable is not set then it is replaced in the path
+with nothing.
+.SH EXAMPLES
+.nf
+
+/* provide string  */
+
+char datafile[255];
+(void) find_esps_file(datafile,"speech.sd","/usr/esps/bin:/usr/esps/demo","ESPS_PATH"); 
+
+/* allocate new string */
+
+char *datafile;
+datafile  = find_esps_file(NULL,"speech.sd","/usr/esps/bin:/usr/esps/demo","ESPS_PATH"); 
+
+.fi
+.SH CONVIENENCE MACROS
+.PP
+Several macros are provided in include file $ESPS_BASE/include/esps/epaths.h.  They provide standard environment variables to specify paths and
+standard default paths if the standard environment variable is not
+set.
+.PP
+Parameter \fIa\fR is the string to fill the path in (or NULL)
+(corresponds find_esps_file(3) parameter \fIfullpath\fR).
+Paramater \fIb\fR is the file desired (corresponds to \fIfind_esps_file\fR(3)
+parameter \fBfilename\fI).
+.PP
+FIND_ESPS_MENU(a,b) \- find ESPS menu files.  
+.PP
+FIND_ESPS_BIN(a,b)  \- find ESPS executable files.
+.PP
+IFIND_ESPS_PARAM_FILE(a,b)  \- find ESPS paramater files.
+.PP
+FIND_ESPS_FILTER(a,b) \- find ESPS filter files.
+.PP
+FIND_ESPS_LIB(a,b)  \- search for files in the ESPS library.
+.PP
+FIND_ESPS_INPUT(a,b) \- search for ESPS input files.
+.PP
+FIND_WAVES_INPUT(a,b) \- search for waves+ input files.
+.PP
+FIND_WAVES_LIB(a,b) \- search for files in the waves+ library
+directory.
+.PP
+FIND_WAVES_COMMAND(a,b) \- find waves+ command files.
+.PP
+FIND_WAVES_MENU(a,b) \- find waves+ menu files.
+.PP
+FIND_WAVES_COLORMAP(a,b) \-  find waves+ colormaps.
+.PP
+FIND_WAVES_PROFILE(a,b) \- find a waves profile .
+.PP
+FIND_FAB2_BIN(a,b) \- find FAB2 board binaries.
+.PP
+FIND_SURF_BIN(a,b) \- find Surf board binaries.
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+None.  Always returns something unless too small a string is provided
+which could cause problems if other memory addresses are overwritten.
+.SH FUTURE CHANGES
+.PP
+Make environment variable handling match the way the shell handles
+them. Things like ${foobar}, etc... .
+.SH BUGS
+.PP
+If the user provided string is too small then who knows what will happen.
+.SH REFERENCES
+.PP
+None.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIget_esps_base\fP(3\-\s-1ESPSu\s+1), \fIget_esps_base\fP(1\-\s-1ESPS\s+1), 
+\fIfind_esps_file\fP(1\-\s-1ESPS\s+1), \fIbuild_filename\fP(3\-\s-1ESPS\s+1)
+.fi
+.SH AUTHOR
+Ken Nelson wrote the routine and the man page.
+.PP
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

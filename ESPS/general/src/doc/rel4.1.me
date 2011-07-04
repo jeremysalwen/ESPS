@@ -1,0 +1,807 @@
+.lo
+.de SM          \"macro to shrink left margin
+.br
+.nr $i \\n($i+\\$1i
+..
+.de RM          \"macro to restore original left margin
+.br
+.nr $i 0
+..
+.he 'ESPS Version 4.1 Release Notes''page %'
+.ce 3
+.b
+ESPS Version 4.1 Release Notes
+.sp
+Document version: 1.14 11/21/91
+.sh 1 "INTRODUCTION"
+.lp
+This document provides notes for release 4.1 of ESPS.  These release
+notes document changes to ESPS since the revision 4.0c.  This document
+can be viewed conveniently using \fIeinfo\fP (1\-\s-1ESPS\s+1) or
+\fIeversion\fP (1\-\s-1ESPS\s+1).
+.sh 1 "SUMMARY OF MAJOR CHANGES"
+.lp
+Perhaps the most important change in this release is the introduction
+of powerful X Interface Generation (XIG) capabilities.  XIG refers to
+the combined facilities of various programs and libraries; included
+are \fIfbuttons\fP, \fImbuttons\fP, \fIexprompt\fP, \fIexpromptrun\fP,
+\fIxeparam\fP, \fIxtext\fP, and \fIxwaves\fP+ (see the \fIxwaves\fP+
+release notes for a summary of \fIxwaves\fP+, and \fIlibxv\fP.  For an
+overview, see the new ESPS applications note "X Interface Generation
+in ESPS and \fIxwaves\fP+".  For a detailed example, look at the
+directory structure and files that comprise the new demos
+($ESPS_BASE/newdemos).  The sources for one of these are provided in
+$ESPS_BASE/src_examples/xig/testsignal.
+.lp
+Other major changes include the following:
+.ip \ \ \ \(bu
+Over 25 new user_level signal processing and utility programs, including
+.SM .75i
+.ip *
+programs for dynamic time warping, fft cepstrum, and VQ-based
+classification
+.ip *
+cover-program for computing acoustic classification parameters
+.ip *
+programs for Nth-order differences and for clipping
+.ip *
+interactive program for pole-zero filter design
+.ip *
+conversion programs for MATLAB files
+.RM
+.ip \ \ \ \(bu
+Over 35 new signal processing and utility library functions, including
+.SM .75i
+.ip *
+signal processing library functions for dynamic time warping, bilinear
+transform, FFT cepstrum, structured covariance, etc.
+.ip *
+utility functions for skip headers, free headers, fork programs, 
+generate temp files, communicate with an \fIxwaves\fP+ display server,
+etc. 
+.RM
+.ip \ \ \ \(bu
+new utility library to support XView programs
+.ip \ \ \ \(bu
+ESPS programs now read files with NIST (Sphere) headers
+.ip \ \ \ \(bu
+Improved support for reading headerless files and files with 
+foreign headers
+.ip \ \ \ \(bu
+All filter-related programs modified to use a feature file format (FEA_FILT).
+.ip \ \ \ \(bu
+Structured covariance (and fast structured covariance) methods for
+computing autocorrelations (and autoregressive spectra) have been
+added to the library, as well as to \fIrefcof\fP, \fIlpcana\fP, and
+\fIauto\fP.  These methods are particularly good on short data
+sequences (such as those that produce "classic" line splitting from
+the modified Burg method).
+.ip \ \ \ \(bu
+\fIfeafunc\fP has many more arithmetic functions and can also 
+be used for FEA field name or type changes
+.ip \ \ \ \(bu
+\fIplot3d\fP can now drive synchronized \fIxwaves\fP+ cursors
+.ip \ \ \ \(bu
+filters are now represented by feature files (FEA_FILT)
+.ip \ \ \ \(bu
+\fIsplay\fP includes approximate (fast) down-sampling code (for 
+signals not sampled at 8000 Hz.) 
+.ip \ \ \ \(bu
+"position-independent" installation (no longer /usr/esps)
+.ip \ \ \ \(bu
+new program for on-line documentation (\fIeinfo\fP)
+.sh 1 "CHANGES TO USER-LEVEL ESPS PROGRAMS"
+.sh 2 "Position independence; Environment Variables" 
+.lp
+ESPS and \fI(x)waves\fP+ have been made "position independent".  
+In practice, this means that the system (or a link) no longer 
+has to be at /usr/esps.  Thus, root access is no longer required, and 
+it is easy to switch between different versions (e.g., between old
+and new release). 
+.lp
+To support position independence, and to support customization of 
+ESPS/\fI(x)waves\fP+ packages, various environment variables 
+have been defined.  The main ones are these: 
+.ip ESPS_BASE
+This should be set to the root of the ESPS (and \fIwaves\fP+) install
+tree.  If not defined, programs all use /usr/esps as a default. 
+.ip ESPS_TEMP_PATH
+This can be set to the directory that you want programs to use for
+temporary files.  Not all programs currently pay attention to
+ESPS_TEMP_PATH, but over time they will be modified to do so.  The 
+plot programs have been modified to support ESPS_TEMP_PATH.  
+.ip ESPS_MENU_PATH
+This is the path used by \fImbuttons\fP (1\-\s-1ESPS\s+1) and
+\fIfbuttons\fP (1\-\s-1ESPS\s+1) to find \fIolwm\fP-format menu
+files.   If ESPS_MENU_PATH is not defined, the default path used is
+".:$ESPS_BASE/lib/menus".
+.ip ESPS_PARAMS_PATH
+This is the path used to find ESPS parameter files specified by the
+standard ESPS \fB-P\fP option.  If ESPS_PARAMS_PATH is not defined,
+the default path used is ".:$ESPS_BASE/lib/params".
+.ip DEF_HEADER
+If defined when \fIread_header\fP() encounters
+a headerless file, DEF_HEADER specifies a default header to be used.  
+.ip DSP_NO_LOCK
+If set, disables locking of the DSP by \fIwaves\fP+, \fIxwaves\fP+,
+and the record and play programs.
+.sh 2 "LICENSE MANAGER CHANGES"
+.lp
+Unlike the previous version, the environment variable \fBELM_HOST\fR
+must now always be defined.  It must always contain the hostname of the
+host running the Entropic License Manager (\fIelmd\fR).  It is best to
+have all users define this in their \fI.cshrc\fR (or equivalent).
+One other environment variable affects the license manager system:
+.ip ELM_TIMEOUT
+controls the length of time \fIxwaves\fP+ and ESPS programs wait while
+trying to contact the license server.   The default is 10 seconds.  Some
+adjustment may be required depending upon the nature of your network.
+.sh 2 "NIST (Sphere) HEADERS"
+.lp
+ESPS sampled data programs now read NIST (Sphere) format sampled data
+files.  This is also the case for all ESPS programs that process
+sampled data.  Thus, (x)waves+ and ESPS can now be used directly on
+the following NIST databases: TIMIT, Air Travel Information System
+(ATIS), Extended Resource Management, TIDIGITS, and Resource
+Management.  Note that files produced by ESPS continue to be in ESPS
+format.
+.sh 2 "READING HEADERLESS FILES"
+.lp
+ESPS also has improved support for dealing with headerless files. 
+In particular, if any ESPS program does not recognize an input file (to
+be precise, it's \fIread_header\fP (3\-\s-1ESPS\s+1) that's doing
+this), the file is assumed to be "headerless".  If in this case the
+\fIunix\fP environment variable DEF_HEADER is defined and points to a
+file with a valid ESPS header (whether or not there is data in that
+file is irrelevant), the header of that file is used as a "virtual"
+header for the headerless file.  Thus, the data description in the
+DEF_HEADER should be valid for the input data.  The ESPS conversion
+programs \fIbtosps\fP and \fIaddfeahd\fP are useful in creating such
+headers.  Here's an example that creates a 12 Khz FEA_SD header 
+and uses it to filter a headerless data file sg1.a1:
+.nf
+
+	%btosps -f 12000 -c "header for sg1" /dev/null k12.hd
+	%setenv DEF_HEADER `pwd`/k12.hd
+	. . . 
+	%filter -F data/sg1.filt  data/sg1.a1 sg1.a1.filt.sd
+	%send_xwaves make file sg1.a1.filt.sd
+
+.fi
+The last command sends an \fIxwaves\fP+ display server a command to
+display the filtered file.  Note that the output files are ESPS files
+(i.e., they have ESPS headers).  Note also that this approach is not
+limited to sampled data.  DEF_HEADER can point to any FEA header, and
+it will "do the right thing" with any FEA-eating program, provided
+that the header properly describes the data.
+.sh 2 "FILES WITH FOREIGN HEADERS" 
+.lp
+If data files have foreign headers, it can be convenient to leave them
+in place during ESPS processing, so that they are left when a final
+ESPS \fIbhd\fP is run.  To support this, \fIbtosps\fP, \fIaddfeahd\fP,
+and \fIbhd\fP have options to leave skipped data (the foreign header)
+in place, for example:
+.nf
+
+  btosps -S 512 -F for.sd - | filter -F esps.filt - - | bhd -F - for.filt.sd
+
+.fi
+The \fB-F\fP option on \fIbtosps\fP causes the 512 skipped bytes to be
+kept in place between the ESPS header and the data.  Actually, it is
+kept there by means of new generic header items in the ESPS header, so
+that it will be carried along by later programs (like \fIfilter\fP,
+above).  The \fB-F\fP option on \fIbhd\fP causes the foreign header to
+be left in place after the ESPS header is removed.  The result, in the
+above case, is a pipe that starts and ends with a file in the foreign
+format.
+.lp
+Foreign headers are kept in the ESPS header in the following 
+manner:  The generic header item \fIforeign_hd_length\fP 
+contains the size (in bytes) of the foreign header.  If this
+item is present (and non-zero), \fIread_header\fP() will 
+read this many additional bytes of data, put it into the 
+header, and set an additional generic header item 
+\fIforeign_hd_ptr\fP to point to it.  From that point on, 
+the foreign header is just part of the ESPS header.  Note that
+one can use \fIaddgen\fP (1\-\s-1ESPS\s+1) to modify 
+\fIforeign_hd_length\fP in the header specified by DEF_HEADER
+before calling an ESPS program. 
+.lp
+With this mechanism, it is possible to write programs that 
+use the ESPS header and record I/O functions while still having
+access to the foreign header.  The procedure is simple: use 
+\fIread_header\fP() to read the ESPS header, and \fIget_genhd\fP() 
+to get the pointer to the foreign header.  
+.sh 2 "New License Manager Release"
+.lp
+A new license manager accompanies this release. 
+A \fIunix\fP environment variable
+ELM_TIMEOUT is available to control the length of time programs
+waits while trying to contact the license server.
+.sh 2 "New Programs"
+.np
+\fIfbuttons\fP - new program that pops up a panel of screen buttons
+for invoking one of a given set of programs on one of a given set of
+files.  By default, fbuttons is configured to either play the contents
+or view the header of files in the current directory with suffixes
+".sd" or ".d", but arbitrary program and file sets can be specified.
+.np
+\fImbuttons\fP - new pops up a panel of screen buttons for invoking
+arbitrary ESPS program calls (e.g., creating certain test signals,
+sending display commands to \fIxwaves\fP+, whatever).  Standard OLWM (same
+as Sunview) format menu files can be used to specify the button names
+and associated commands.
+.np
+\fIexpromptrun\fP \- new program that provides an extended version of
+\fIexprompt\fP.  It prompts for parameters in an X window (like
+\fIexprompt\fP) and then runs the associated ESPS program on the
+resulting parameter file.  \fIexpromptrun\fP terminates after the ESPS
+program terminates.  For example:
+.nf
+
+   %expromptrun -h sgram -P PWsgram sgram -r1:2000 speech.sd speech.fspec
+
+.fi
+puts up a an interactive form based on the parameter file (PWsgram is
+a new paramfile in lib/params that prompts for all but \fIstart\fP and
+\fInan\fP; note that \fIread_params\fP now uses a search path that by
+default includes . and $ESPS_BASE/lib/params), and then uses the
+resulting parameters to compute a spectrogram on the first 2000 points
+of speech.sd.  \fIxromptrun\fP is well suited for shell scripts and
+particularly for \fIxwaves\fP menu commands.  For example:
+.nf
+
+      add_espsf name "custom spectrogram" menu wave command \\
+		expromptrun -h sgram -P PWsgram sgram 
+
+.fi
+adds a custom spectrogram (with parameter prompting) to the
+\fIxwaves\fP waveform menu.  (You can add this to the menu via the
+menus->"menu changes"->"add waveform buttons" buttons provided in the
+default startup environment.)
+.np
+\fIxeparam\fP \- new program that runs \fIexpromptrun\fP in the 
+manner of \fIeparam\fP; i.e., you just give it the ESPS command 
+line for a program, and it prompts for the needed parameters.  
+.np
+\fIacf\fP - new program that computes a selection of acoustic
+recognition features (includes mel-warped cepstrum).
+.np
+\fIxacf\fP \- new program that provides an interactive (X-Windows)
+front-end for \fIacf\fP.
+.np
+\fIcbkd\fP \- new program that computes distances between codewords in
+vector quantization codebooks (FEA_VQ files).
+.np
+\fIdtw\fP \- new program computes dynamic time warping distance
+between two sequences stored as feature file fields.
+.np
+\fIdtw_rec\fP \- new program that compares test sequences to reference
+sequences using a dynamic time warping algorithm.  Comparisons can be
+made between sequences of floating point vectors or sequences of VQ
+codeword indices.
+.np
+\fIaddclass\fP \- new program for 
+VQ-based classification; \fIaddclass\fP adds 
+a vector quantization codebook to a set of codebooks being prepared for
+classification computations (each codebook represents one class).
+.np
+\fIvqdst\fP \- new program for VQ-based classification; \fIvqdst\fP
+encodes an input feature with respect to each of a set of vector
+quantization codebooks (each codebook represents one class); the
+encoding rule is minimum mean square error.
+.np
+\fIvqclassify\fP \- new program for VQ-based classification; applies a
+classification rule to the output of \fIvqdst\fP (initial program implements
+the "voting" rule - i.e., it selects the class with the largest number
+of encodings.
+.np
+\fInodiff\fP \ new program to compute Nth order differences 
+of an arbitrary field in a FEA file.  
+.np
+\fIxpz\fP \- new program for interactive filter-design program.
+\fIxpz\fP provides mouse operations to add, delete, or move poles and
+zeros displayed against the unit circle.  As poles and zeros are
+modified, the resulting spectral response or other derivative function
+is shown in a separate window.
+.np
+\fIfftcep\fP \- new program for computing complex FFT cepstrum; will
+process multi-channel and complex inputs.  
+.np
+\fIclip\fP \- new program to apply clipping or center clipping to 
+FEA fields.  This is useful in certain VQ thresholding applications, 
+among others.  It can also be used from \fIxwaves\fP+ to replot 
+data on an expanded scale.  
+.np
+FEA_FILT (5\-\s-1ESPS\s+1) \- this is a new FEA subtype that is used
+for store digital filters.  All filter-related programs
+(\fInotch_filt, wmse_filt, iir_filt, filter, fft_filter, filtspec,
+toep_solv\fP, etc.) have been modified to use the file type.  In
+addition to the filter coefficients, FEA_FILT files contain optional
+fields to store the poles and zeros.  The \fIxpz\fP, \fInotch_filt\fP,
+and \fIiir_filt\fP design programs programs have been modifed to
+output poles and zeros in addition to coefficients.  Conversions to
+and from the old file format are available via \fIfea2filt\fP
+(1\-\s-1ESPS\s+1) and \fIfilt2fea\fP (1\-\s-1ESPS\s+1).  
+.np
+\fIxrefcof\fP \- new script that runs \fIrefcof\fP on a single frame
+of data after using a pop-up window for parameter prompts; the
+analysis results are displayed in two pop-up windows, one containing
+the reflection coefficients, and one containing a maximum-entropy
+power spectrum computed from these reflection coefficients.  It is
+sometimes useful to attach \fIxrefcof\fP to the \fIxwaves\fP+ menu
+(e.g., via the menus->"->"menu changes"->"add waveform function"
+buttons provided in the default startup environment) for cases in
+which the \fIxspectrum\fP attachment gets into computational trouble.
+.np
+\fIxfft\fP \- new script that runs \fIfft\fP on a single frame of data
+after using a pop-up window for parameter prompts; the analysis
+results are displayed as a pop-up spectral plot.  It is sometimes
+useful to attach \fIxrefcof\fP to the \fIxwaves\fP+ menu (e.g., via
+the menus->"->"menu changes"->"add waveform function" buttons provided
+in the default startup environment) for cases where \fIxspectrum\fP
+proves to be inadequate (e.g., \fIfft\fP (1\-\s-1ESPS\s+1) and hence
+\fIxfft\fP will compute arbitrary transforms, limited only by memory
+size).
+.np
+\fIcnvlab\fP \- new user-level program for converting NIST/Sphere
+(e.g., TIMIT) label files to \fI(x)waves\fP+ format.  
+.np
+\fIget_esps_base\fP \- new program for locating the
+base of the installed ESPS tree (returns $ESPS_BASE or default
+/usr/esps).  Useful for writing position-independent scripts. 
+.np
+\fIfind_esps_file\fP \- new program for finding an ESPS file within
+the ESPS tree, with options for a default search path and an
+environment variable that overrides the default.  Like
+\fIget_esps_base\fP, \fIfind_esps_file\fP is useful for writing
+position-independent scripts.
+.np
+\fImat2fea\fP/\fIfea2mat\fP \- new programs to convert between 
+MATLAB .mat files and ESPS FEA files.  
+.np
+\fIxloadimage\fP \- new program; an enhanced version of Jim Frost's
+public domain \fIxloadimage\fP program for displaying images.  Our
+variant allows a "slideshow" to run under control of an external
+program, \fInext_slide\fP (also included); we use these in one of the
+standard demos.  The sources for \fIxloadimage\fP and \fInext_slide\fP 
+are included in $ESPS_BASE/pub.
+.np
+\fIeinfo\fP \- new program to provide a convenient interface to ESPS
+release notes and other documentation.  
+.np
+\fIedemos\fP \- new X interface to a set of demos that illustrate
+ESPS/\fIxwaves\fP+ and X Interface Generation (XIG).  
+.np
+\fIwsystem\fP \- new program to tell what window system you're running
+.np
+\fIerlsupport\fP \- new convenience program for e-mailing a support
+request 
+.np
+\fIelpr\fP \- new ESPS utility to print ascii text.  
+.sh 2 "Major Program Revisions" 
+.np
+\fIfilter\fP \- generalized to filter multichannel signals and 
+complex signals with real filters.  
+.np
+\fIrefcof\fP \- modified to provide 4 additional autoregressive 
+spectrum analysis methods (references are to the corresponding 
+ESPS signal processing library routine): 
+.nf
+
+    Fast Modified Burg Method (FBURG) \- \fIget_fburg\fP (3\-\s-1ESPS\s+1)
+
+    Structured Covariance Method (STRCOV and STRCOV1) \- see
+    \fIbestauto\fP (3\-\s-1ESPS\s+1), \fIstruct_cov\fP (3\-\s-1ESPS\s+1), and \fIgenburg\fP (3\-\s-1ESPS\s+1)
+
+    Vector Burg Method (VBURG) (fast approximation to structured 
+    covariance)  \- see \fIget_vburg\fP (3\-\s-1ESPS\s+1)
+
+.fi
+.np
+\fIlpcana\fP \- modified to provide an option (\fB-m\fP) for selecting
+the analysis method used for computing reflection coefficients.  The
+available methods are the same 8 methods available from \fIrefcof\fP
+(i.e., from the new library routine \fIcompute_rc\fP
+(3\-\s-1ESPS\s+1)), namely: 
+.nf
+
+    Autocorrelation method (AUTOC)
+
+    Covariance method (COV)
+
+    Burg method (BURG) 
+
+    Modified Burg method (MBURG) 
+
+    Fast Modified Burg method (FBURG) 
+
+    Two Structured Covariance methods (STRCOV and STRCOV1) 
+
+    Vector Burg method (VBURG) (fast approximation to structured 
+    covariance)  
+
+.fi
+\fIlpcana\fP was also modified to compute reflection coefficients
+separately for each frame (i.e., for each pitch pulse).  The old 
+framing method is available as an option (\fB-F\fP).  
+.np
+\fIauto\fP \- \fB-B\fP supports computation via structured covariance 
+rather than lag-product.  
+.np
+\fIsplay\fP \- (SPARCStation codec output) modified to include fast,
+approximate resampling code so that files can be played even if they
+are not sampled at 8000 Hz.  (Modifications courtesy of Tom Veatch, 
+Univ. of Pa.).  \fIsplay\fP also has a \fB-q\fP (quiet) option to
+suppress warning messages.  
+.np
+\fIfeafunc\fP \- the set of computed functions has been expanded
+considerably to: \fIabs\fP (absolute magnitude), \fIarg\fP (phase
+angle), \fIatan\fP (arctangent), \fIconj\fP (complex conjugate),
+\fIcos\fP (cosine), \fIexp\fP (exponential), \fIim\fP (imaginary
+part), \fIlog\fP (natural logarithm), \fIlog10\fP (base 10 logarithm),
+\fInone\fP (no change \- the identity function), \fIre\fP (real part),
+\fIrecip\fP (reciprocal), \fIsgn\fP (signum; for a complex number z
+off the real axis, the value is z/|z|), \fIsin\fP (sine), \fIsqr\fP
+(square), \fIsqrt\fP (square root), and \fItan\fP (tangent).
+Furthermore, the output field no longer has to be a new field,
+different from the fields already present in the input; it can now
+replace a field with the same name in the input file, including the
+input field.  
+changed from "ln" and "log" to "log" and "log10" for consistency with
+\fIselect\fP and with C; thus the meaning of "log" is now different.
+The parameters "gain_factor" and "add_constant" have been replaced
+with "gain_real" and "add_real", and "gain_imag" and "add_imag" are
+allowed in case complex coefficients are needed.  The same list of
+functions available with feafunc can now be applied to arrays of any
+of the real and complex ESPS data types in a C program using the 
+new library function \fIarr_func\fP.  
+.np
+\fIplot3d\fP \- modified for optional startup (\fB-w\fP) in a mode
+that sends cursor commands to an \fIxwaves\fP+ display server.  Thus,
+a spectrogram can be viewed simultaneously in conventional and 
+3D formats, with cursor synchronization.  To see an example of this, 
+start \fIxwaves\fP+ in server mode (\fB-s\fP), add \fIplot3d\fP 
+to the menu via the menus->"menu changes"->"add image function" 
+buttons provided in the default startup environment, bring up 
+a spectrogram, and invoke \fIplot3d\fP on a marked segment.  
+Other \fIplot3d\fP improvements include visible painting of the 
+first plot, a \fB-M\fP for a monochrome plot (useful for screen 
+dumps), startup allowed without a named file, visible busy signal, 
+and load window defaults to current data.  
+.np
+\fIsgram\fP \- has a new (\fB-T\fP \fIdesired_frames\fP) to force a
+particular number of output records; \fIsgram\fP adjusts
+\fIstep_size\fP accordingly.  If the start and end times are decreased
+while the \fIdesired_frames\fP is kept constant, \fIsgram\fP in effect
+computes a spectrogram in the new region with finer time-domain
+resolution.  This permits zooming in without interpolation.  This form
+of analysis is popular at TI.
+.np
+\fIvq\fP \- modified so that the codeword index is written to
+output file along with quantized fea field, with optional\fB- i\fP 
+output of the codeword index alone. 
+.np
+\fIimage\fP \- modified to display FEA_SPEC fies in ARB_FIXED format; 
+also, \fIimage\fP now works properly on untagged FEA_SPEC files. 
+Several \fIimage\fP colormaps are now included in the
+$ESPS_BASE/lib/colormaps.  
+.np
+\fIme_sgram\fP \- modified to use support standard ESPS parameter 
+file and Common processing (via \fB-P\fP).   \fIme_sgram\fP inherits
+the new spectrum analysis methods of \fIrefcof\fP; the \fB-c\fP and
+\fB-i\fP options were added to \fIme_sgram\fP to handle optional
+parameters in the case of the structured covariance methods. 
+.np
+\fIfft_filter\fP \- output data type now matches input data type, and 
+computations revised for double precision.  
+.np
+\fIfft, refcof, sgram\fP \- new \fB-z\fP option to suppress warnings.
+.np
+\fIme_spec\fP \- no longer warns unnecessarily about \fB-G\fP option. 
+.np
+\fIfilter\fP and \fIrm_dc\fP \- no longer destroy input if output is 
+not specified.  
+.np
+\fIsfconvert\fP \- more robust with respect to erroneous input.  A
+\fB-z\fP was added to adjust the output \fIstart_time\fP for the
+filter delay.  This permits better synchonization in \fIxwaves\fP+
+displays.  
+.np
+\fIclassify\fP \- modified to remove errooneous assumption that 
+the order of records in the statistics file is the same as the
+order of the enumerated field "class".  Thanks to Richard Goldhor 
+for this.  
+.np
+\fIcopysd\fP \- new \fB-S\fP option allows range specification in
+seconds.  The "standard" option name for this is \fB-s\fP (lower
+case), but that's already in use by \fIcopysps\fP (for scale) and we
+didn't want to break existing scripts.  However, if \fB-s\fP is now
+used with what looks like a range argument, we print a warning.  
+A bug was also fixed that prevented \fIstart\fP and \fInan\fP from
+being taken from Common as specified in the man page.  Other
+Common-related bugs were also fixed.  
+.np
+\fIcomment\fP \- new \fB-S\fP option to suppress the user-date-time
+stamp. 
+.np
+\fIcopysps\fP \- new \fB-s\fP option to specify range in seconds. 
+.np
+\fImux\fP \- \fIstart_time\fP generic is now correct (was always
+zero), output now correct for 3 or more files (it wasn't), and the
+Pmux parameter file now exists.  
+.np
+\fIaddfead\fP \- modified to accept ascii as well as binary data
+(thanks to Richard Goldhor of AudioFile for this); also, there's a
+new \fB-F\fP option to save a skipped header as a foreign header;
+.np
+\fIbtosps\fP \- added \fB-F\fP to save a skipped header as a 
+foreign header. 
+.np
+\fIbhd\fP \- added \fB-F\fP to support foreign headers If \fB-F\fP is
+used without the \fB-h\fP, then the foreign header is retained and
+written to the output file before the data.  If \fB-F\fP is used with
+\fB-h\fP, then the foreign header is written out after the ESPS
+header.
+.np
+\fIfea_edit/spstoa/atosps\fP, \- revised so that blanks now remain in
+strings.
+.np
+\fIpplain\fP \- has a new \fB-n\fP which facilitates output 
+of character fields as strings; the \fB-i\fP option now works
+correctly.  
+.np
+\fIecheckout\fP \- no longer gets a license if one is already 
+checked out.
+.sh 1 "ESPS LIBRARY CHANGES"
+.sh 2 "Signal Processing Library"
+.sh 3 "New Signal Processing Functions"
+.np
+\fIdtw_l2\fP \- new function; dynamic time warping based on euclidean
+distance
+.np
+\fIdtw_tl\fP \- new function; dynamic time warping based on table lookup
+.np
+\fIblt\fP \- new function for bilinear transform
+.np
+\fIfft_cepstrum\fP \- new function; computes the cepstrum of a data sequence.
+.np
+\fIfft_cepstrum_r\fP \- new function; computes the cepstrum of real data sequence.
+.np
+\fIfft_ccepstrum\fP \- new function; computes the complex cepstrum of a data sequence.
+.np
+\fIfft_ccepstrum_r\fP \- new function; computes complex cepstrum of a real data sequence
+.np
+\fIget_fburg\fP \- new function; computes reflection coefficients
+using a fast modified Burg method. 
+.np
+\fIstruct_cov\fP \- new functions; computes a structured covariance
+estimate of a Toeplitz autocorrelation matrix (STRCOV)
+.np
+\fIgenburg\fP \- new function; generalized Burg (structured
+covariance) estimation of covariance matrix (STRCOV1)
+.np
+\fIstrcov_auto\fP \- new function; estimates auto-correlation
+coefficients using structured covariance
+.np
+\fIget_vburg\fP \- new function; computes reflection coefficients
+using a vector Burg method (this is a fast approximation to a 
+structured covariance method).
+.np
+\fIcompute_rc\fP \- new function; this is a cover function for the
+various ESPS library functions that compute reflection coefficients.
+It provides a common calling interface for all eight methods:
+autocorrelation, covariance, Burg, modified Burg, fast modified Burg,
+two structured covariance methods, and vector Burg (fast approximation
+to structured covariance). 
+.np
+\fIwindowcf, windowcfd\fP \- new functions for windowing complex data
+.np
+\fIconvertlab\fP \- new function for converting NIST/Sphere (e.g.,
+TIMIT) label files to \fI(x)waves\fP+ format.
+.np
+\fIa_to_linear_2\fP/\fIlinear_to_a_2\fP \- new N-law conversion
+functions.  These differ from the existing functions \fIa_to_linear\fP
+and \fIlinear_to_a\fP in the code byte inverted in accordance with a
+CCITT recommendation.  TIMIT) label files to \fI(x)waves\fP+ format.
+.np
+\fIarr_func\fP \- new function for computing various standard functions such
+as cosine, square root, logarithm, and absolute value for real and
+complex arguments (any of the ESPS numeric data types).  It will take
+an array input and apply the function to all elements of the array.
+The function is used in the new version of the user-level program
+\fIfeafunc\fP.  
+.sh 2 "Utility Library"
+.sh 3 "New Utility Functions"
+.np
+\fIskip_header\fP \- new function; skips an ESPS header (without
+the overhead of the recursive header read); 
+.np
+\fIfree_header\fP \- new function; frees the storage associated with
+an ESPS header. 
+.np
+\fIexec_command\fP \- new function; forks a shell to run a unix
+command
+.np
+\fIe_temp_name, e_temp_file\fP \- new functions to support creating 
+and opening temporary ESPS files.  These make use of the \fIunix\fP
+environment variable ESPS_TEMP_PATH.  
+.np
+\fIget_esps_base\fP \- new function or ESPS position-independence; 
+returns the base directory of ESPS  (ESPS_BASE or /usr/esps).  
+.np
+\fIfind_esps_file\fP \- new function for ESPS position-independence; 
+searches for a file along a path that is specified through a default
+path which can be overridden by an environment variable.  Various
+cover macros are also defined (in $ESPS_BASE/include/esps/epaths.h) 
+for various important categories of ESPS and \fI(x)waves\fP+ files.  
+.np
+\fIbuild_esps_path\fP \- new function for ESPS postition-independence; 
+appends an arbitrary extension to a valid path in the ESPS hierarchy.  
+.np
+\fIbuild_file_name\fP \- new function; expands environment variables
+in a path name
+.np
+\fIopen_xwaves\fP \- new function; opens a socket connection to an
+\fIxwaves+\fP server
+.np
+\fIsend_xwaves\fP \- new function sends a command to an \fIxwaves+\fP
+server
+.np
+\fIclose_xwaves\fP \- new function; closes a socket connection to an
+\fIxwaves+\fP server
+.np
+\fIsend_xwaves2\fP \- new function; sends a single command to an
+\fIxwaves+\fP server without a separate open and close
+.np
+\fIatoarrays\fP \- new function; converts ASCII file to a data 
+array of strings (similar to \fIatoarrayf\fP and \fIatoarray\fP).
+.np
+\fIstrlistlen\fP \- new function; returns the current number of 
+strings in a string array.  
+.np
+\fItrange_switch\fP \- new function to assist in parsing command-line
+arguments expressed in seconds (parses -s<a>:<b> and returns 
+start and end records).  
+.sh 3 "Revised Utility Functions"
+.np
+\fIread_header\fP \- modified to read NIST (Sphere) sampled data 
+headers and return an equivalent ESPS FEA_SD header.  From the 
+viewpoint of programs that call \fIread_header\fP, NIST files are
+FEA_SD files.  
+.np
+read_header \- modified to assume that a default header properly 
+describes any header-less file.  If the environment variable
+DEF_HEADER exists, and if the input file is a headerless (i.e.,
+non-ESPS and non-SIGnal), then \fIread_header\fP uses the 
+file pointed to by DEF_HEADER as a "virtual header". 
+.np
+read_header \- modified to look for generic header item
+"foreign_header".  If it is defined and non-zero, then it is taken as
+a number of bytes of a foreign header in the file after our header.
+The foreign header is skipped over, so that the next read after
+read_header will get the data. 
+.np
+\fIread_params\fP \- The assumption of "params" as the default ESPS
+parameter file has been moved into \fIread_params\fP().  In
+particular, if the parameter \fIparam_file\fP is NULL, then
+read_params uses the ESPS default parameter file name "params".  If
+\fIparam_file\fP is non-NULL, and if \fIread_params\fP is unable to
+find a corresponding, readable parameter file, a warning is printed.
+By default, \fIread_params\fP uses \fIfind_esps_file\fP() to search
+along the path
+.nf
+
+     ".:$ESPS_BASE/lib/params".
+
+.fi
+This default search path can be overridden by setting the unix
+environment variable ESPS_PARAMS_PATH.  The unix environment variable
+ESPS_VERBOSE is used (as before) to control the extent of parameter
+processing feedback messages issued by read_params. There are now
+three significant settings: 0, 1, and 2.  If it is equal to 0, no
+feedback is provided.  If ESPS_VERBOSE is 1, programs report the value
+of any parameters taken from ESPS common.  If it is 2 or greater,
+programs report the values of parameters taken from ESPS common, the
+name of the actual parameter file used (if any), and the values of
+parameters taken from the parameter file.  If ESPS_VERBOSE is not set,
+a value of 2 is assumed.  Note that parameter file selection is
+affected by ESPS_PARAMS_PATH (as described above). Regardless of
+ESPS_VERBOSE, if debug_level is non-zero, read_params will warn if a
+parameter file cannot be found (including the default "params"), will
+report the name of any parameter file found, and will report if ESPS
+Common is processed.  This new behavior is documented in the
+\fIread_params\fP and \fIespsenv\fP man pages.
+.np
+\fIaddstr\fP \- modified so that it is now legal to call it with a 
+NULL for the string array, in which case initial allocation results.  
+.sh 2 "New XView Utility Library"
+.lp
+This release includes the first version of \fIlibxv\fP, an extension
+of the utility library that supports XView applications.  The 
+following functions are included: 
+.np
+\fIexv_helpfile\fP \- return file name containing cleaned man page or
+plain text
+.np
+\fIexv_get_help\fP \- creates XView frame containing text of man page
+or help file
+.np
+\fIexv_make_text_window\fP \- create XView frame containing text of ASCII
+file  (complete with quit, search-forward, and search-backward
+buttons). 
+.np
+\fIexv_attach_icon\fP \- attachs one of a selection of standard ESPS
+icons to a frame.  
+.np
+\fIexv_prompt_params\fP \- fills in an ESPS parameter file by means of
+an interactive X-Windows prompt panel
+.np
+\fIexv_bbox\fP \- create panel with arbitrary screen buttons
+.np
+\fIread_olwm_menu\fP \- reads a menu in Open Look Window Manager
+format; this is a support function for \fIexv_bbox\fP()
+.np
+\fIprint_olwm_menu\fP \- prints an \fIolwm\fP-format menu; support
+function for \fIexv_bbox\fP(). 
+.sh 1 "ADDITIONS TO THE PUB DIRECTORY" 
+.lp
+The directory $ESPS_BASE/pub contains full-source copies of 
+certain relevant and useful public domain programs. You are 
+free to use them and pass them on in any manner consistent with 
+restrictions stated by their authors.  This release 
+contains these new additions:
+.ip \fItpipe\fP
+This is a utility that splits a \fIunix\fP pipeline into two
+pipelines.  Stated differently, the output of one pipe can provide the
+intput to two others.  \fItpipe\fP was written by David B. Rosen of
+Boston University.
+.ip \fIxloadimage\fP
+Rod Johnson at ERL enchanced Jim Frost's \fIxloadimage\fP so that a
+"slideshow" can run under the control of an external program,
+\fInext_slide\fP (also included).  
+.ip \fIshellforms\fP
+This is a utility to build and edit forms.  It was written by 
+Paul Lew.  
+.ip \fIxgrabsc\fP
+A utility that allows you to grab arbitrary portions of the 
+screen and output them in Postscript or many other formats.
+\fIxgrabsc\fP was written by Bruce Schuchardt.  
+.ip \fIGNUtar\fP
+We use \fIGNUtar\fP to make and read tapes, so we distribute 
+in in the GNU spirit.  
+.sh 1 "WHAT MIGHT BREAK"
+.lp
+\fIfeafunc\fP has changed in some ways that may break existing
+scripts.  In particular, the notation for the natural and common
+logarithms has been changed from "ln" and "log" to "log" and "log10"
+for consistency with \fIselect\fP and with C; The parameters
+"gain_factor" and "add_constant" have been replaced with "gain_real"
+and "add_real", and "gain_imag" and "add_imag" are allowed in case
+complex coefficients are needed.
+.lp
+If filter (FILT) files from the old release are used as intput for 
+the filter programs in Version 4.1, they won't work.  The most likely
+symptom is an exit from a FEA_FILT support routine with an assertion
+error stating that a non FEA_FILT file was detected.  Just convert 
+the file with \fIfilt2fea\fP (1\-\s-1ESPS\s+1).  
+.lp
+FEA_FILT files generated with the beta release of Version 4.1 also
+will not work with this final release (sorry!).  Unfortunately the
+most likely symptom is that ever-informative "segmentation fault, core
+dump."  An assertion error is also possible.  If it is difficult to
+re-create such a filter, many of them can be fixed by running
+\fIfea_edit\fP on the file and changing all instances of the string
+"degree" to "size".  This is not possible if the FEA_FILT contains the
+fields "poles" and "zeros" (e.g., if generated from \fIxpz\fP).  In
+this case, the ugly but workable solution is to use \fIxpz\fP to
+create a FEA_FILT file with the right number of poles and zeros, use
+\fIbhd\fP to obtain the header, use \fIbhd\fP to get rid of the header
+in the beta file, and then glue the new header on with \fIcat\fP.
+.ex
+.lp
+.sh 1 "KNOWN PROBLEMS"
+
+
+
+

@@ -1,0 +1,38 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)statsiz.3	1.4 22 Oct 1987 ESI
+.TH STATSIZ 3\-ESPSu 22 Oct 1987
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+statsiz, fstatsiz \- get size of a file in bytes
+.SH SYNOPSIS
+.ft B
+long statsiz(name)
+.br
+char *name;
+.sp
+long fstatsiz(stream)
+.br
+FILE *stream;
+.ft
+.SH DESCRIPTION
+.PP
+.I statsiz
+returns the size of the file named by the argument in bytes.
+.PP
+.I fstatsiz
+is identical to
+.I statsiz
+except that the argument is a file descriptor (as returned by
+.IR fopen )
+rather than a file name. It calls the system service
+.IR fstat .
+.SH DIAGNOSTICS
+If the file
+does not exist, or if there is no permission to run
+.I stat
+or
+.I fstat
+on the file, -1 is returned.
+.SH SEE ALSO
+Unix documentation for stat(2).
+.SH AUTHOR

@@ -1,0 +1,39 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)prfarray.3	1.1 03 May 1991 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  PR_FARRAY 3\-ESPSu 03 May 1991
+.SH NAME
+
+.nf
+pr_farray \- print a float array
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+ 
+void 
+pr_farray(arr, size, title)
+    float  *arr;
+    long    size;
+    char    *title;
+
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+\fIpr_farray\fP prints \fIsize\fP floating point values starting 
+at location \fIarr\fP.  The numbers are formatted with 5 values 
+per line.  Before the first line, \fItitle\fP and \fIsize\fP
+are printed.  
+.SH BUGS
+.PP
+None known.
+.SH "SEE ALSO"
+.PP
+.SH AUTHOR
+.PP
+Program and man page by John Shore.  
+
+
+
+

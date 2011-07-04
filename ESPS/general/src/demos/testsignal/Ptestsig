@@ -1,0 +1,12 @@
+# parameter file for test signal
+# @(#)Ptestsig	1.1 7/25/91 ERL
+float freq ?= 500 : "Frequency for periodic signals"; 
+float phase ?= 0 : "Phase for periodic signals";
+int samp_rate ?= 8000 : "Sampling rate":[1,30000];
+float level ?= 500 : "Signal power level";
+float sweep_rate ?= 0 : "Frequency sweep rate for periodic signals (0 means no sweep)";
+float decay_time ?= 0 : "Exponential decay time (0 means no decay)";
+int length ?= 1000 : "Number of points to create":[500,16000];
+int seed ?= 1234567 : "Random seed for noise signals";
+char *data_type =? "SHORT" : "Signal data type": {"DOUBLE", "FLOAT", "LONG", "SHORT", "BYTE"};
+char *type =? "SINE" : "Signal type": {"SINE", "SQUARE", "TRIANGLE", "SAWTOOTH", "PULSES", "GAUSS", "UNIFORM"};

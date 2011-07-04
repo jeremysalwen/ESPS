@@ -1,0 +1,25 @@
+.lo
+.ce 2
+.b
+README FIRST -- For Masscomp (Concurrent) Source Tape
+11/17/89 1.1
+.sh 1 "About this tape"
+.pp
+This tape contains both the ESPS sources as described in the
+attached instructions and a binary directory.   You can either build the
+system from source (see the source installation instructions), or use
+the pre-compiled binary (see the binary installation instructions).
+The names of the directories are described in the installation
+instructions.  
+.pp
+The full sources take two to three hours to compile (depending on
+whether you use NFS and your CPU speed), so you might want to load the
+binary and just use the sources for reference or to modify an programs.
+.pp
+On Masscomp (Concurrent) systems we have noticed that some 
+C compiler versions fail to correctly compile a few
+of our programs.  The problem is with some libraries and this results
+in some undefined symbols.   Some minor changes to the makefiles will
+fix this.  The problem seems to vary with different Masscomp systems,
+so it has been difficult to fix it for certain. 
+Call us if you see this problem. 

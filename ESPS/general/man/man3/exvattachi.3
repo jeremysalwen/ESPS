@@ -1,0 +1,84 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)exvattachi.3	1.4 09 Jan 1993 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  EXV_ATTACH_ICON 3\-ESPSxu 09 Jan 1993
+
+.SH NAME
+
+.nf
+exv_attach_icon \-  attaches one of a number of available XView to \fIframe\fP. 
+
+
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+#include <stdio.h>
+#include <esps/esps.h>
+#include <esps/exview.h>
+#include <xview/cms.h>
+
+extern int debug_level;
+extern int do_color; 
+
+Icon
+exv_attach_icon(frame, icon_id, label, trans)
+Frame frame;			/* frame to which epi icon gets attached */
+int  icon_id;			/* indicates which icon is wanted */
+char *label;			/* text label for icon*/
+int  trans;			/* flag for transparent icon */
+
+.fi
+.SH DESCRIPTION
+.PP
+\fIexv_attach_icon\fP attaches one of a number of available XView
+icons to \fIframe\fP.  The icon's title is set to \fIlabel\fP, and it
+is created with a transparent background if \fItrans\fP is non-zero.
+The icon is returned by the function; NULL is returned if the icon
+could not be created.  The choice of icon is determined by
+\fIicon_id\fP, with these currently available:
+.nf
+.ta .25i 2i
+
+    ERL_BORD_ICON	Standard ESPS icon with border
+    ERL_NOBORD_ICON	Standard ESPS icon without border
+    HIST_ICON	Histogram icon
+    IMAGE_ICON	Shaded rectangle icon (used by \fIimage\fP (1\-\s-1ESPS\s+1)
+    SINE_ICON	Sinusoid icon (generic waveform)
+    SPEC_ICON	Spectral slice icon (generic smooth spectrum) 
+    P3D_ICON	3D plot icon (used by \fIplot3d\fP (1\-\s-1ESPS\s+1)
+
+.fi
+.SH EXAMPLES
+.PP
+.nf
+
+  Frame frame; 
+
+  (void) exv_attach_icon(frame, ERL_NOBORD_ICON, "params", TRANSPARENT);
+
+.fi
+
+.SH ERRORS AND DIAGNOSTICS
+.PP
+.SH FUTURE CHANGES
+.PP
+Additional icons. 
+.SH BUGS
+.PP
+None known
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+\fIexv_get_help\fP (3\-\s-1ESPS\s+1xu), \fIexv_make_text_window\fP
+(3\-\s-1ESPS\s+1xu)
+.SH AUTHOR
+.PP
+Program and man page by John Shore.  
+
+
+
+
+
+

@@ -1,0 +1,12 @@
+
+pplain.c
+==============
+warning: possible pointer alignment problem
+    (179)  	
+
+
+==============
+name used but not defined
+    get_fea_element   	pplain.c(154)
+value type declared inconsistently
+    exit   	llib-lc(49) :: pplain.c(192)

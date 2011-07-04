@@ -1,0 +1,38 @@
+.lo
+.ce 2
+.b
+README FIRST
+@(#)READMEC.me	1.1 3/9/90 ESI
+.sh 1 "About this tape"
+.pp
+This tape contains both the ESPS sources as described in the
+attached instructions and a binary directory for the Convex C2.   
+You can either build the
+system from source (see the source installation instructions), or use
+the pre-compiled binary (see the binary installation instructions).
+The names of the directories are described in the installation
+instructions.  
+.pp
+It is probably best to use the binaries, and install the sources for
+reference purposes.
+.pp
+The full sources take about 40 minutes to compile 
+on a lightly loaded C2
+(depending on
+whether you use NFS and your CPU speed), so you might want to load the
+binary and just use the sources for reference or to modify an programs.
+The enclosed binary is 100% consistent with the enclosed sources.  
+.pp
+The tape also contains the waves+ standalone product
+(\fIwsa.sun3_68881\fR) for the Sun3.
+.sh 1 "Problem with Convex X Window Support"
+.pp
+This Convex binary distribution does not contain the program
+\fIimage\fR, or the X Window based plotting programs.   We have been
+unable to build these on a Convex due to a lack of IEEE floating point
+support in the Convex X libraries.   We have talked to Convex about this
+problem and they are sending us corrected libraries.   We will build
+these and supply then in a few weeks.   
+.pp
+In their place, we are providing you a Sun3 version of \fIimage\fR and
+the ESPS plotting programs for use with Suntools or X.

@@ -1,0 +1,20 @@
+#
+# testfile for mcrecord
+# @(#)testfile	3.1 10/2/87 ESI
+echo To test record you must have the a/d converter configured
+echo correctly.  Normally we use clock 1 for record.  We default to
+echo channel 0.  Either of these might have been changed by someone else.
+echo
+#
+#
+echo do record with no arguments to get usage statement
+echo % record
+record
+echo
+echo Just record 100 points. I will  hit return for you.
+echo "% yes | record -p100 -t \"This is a comment\" a.sd"
+yes | record -p100 -t "This is a comment" a.sd
+echo look at the file with psps.  check the header.
+echo % psps a.sd
+psps a.sd
+rm a.sd

@@ -1,0 +1,10 @@
+#!/bin/sh
+# install script for menus and command files
+# @(#)install_init	1.1	6/4/91	ERL
+# 
+echo rm -f $2
+rm -f $2
+echo cp $1 $2
+cp $1 $2
+echo chmod 644 $2
+chmod 644 $2

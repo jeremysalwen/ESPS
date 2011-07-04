@@ -1,0 +1,457 @@
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)sfconvert.1	1.1 11/10/92 ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH  SFCONVERT 1\-ESPS 11/10/92
+.SH NAME
+sfconvert \- converts sampling frequency in a sampled data file by using a
+lowpass interpolation filter designed by the windowing method
+
+.SH SYNOPSIS
+.B
+sfconvert [
+.BI \-P "param_file"
+] [
+.BI \-s " new_sample_freq"
+] [
+.BI \-r " range"
+] [
+.BI \-v " deviation"
+] [
+.BI \-c " corner_freq"
+] [
+.BI \-R " rej_db"
+] [
+.BI \-t " trans_band"
+] [
+.BI \-w " sfwin_type"
+] [
+.BI" \-l " sfwin_len"
+] [
+.BI \-e " channels"
+] [
+.BI \-o " output_type"
+] [
+.BI \-d
+] [
+.BI \-f
+] [
+.BI \-x " debug_level"
+] [
+.I input.sd
+]
+.I output.sd
+.SH DESCRIPTION
+.PP
+.I Sfconvert
+takes an input ESPS Sampled Data (FEA_SD) file,
+.I input.sd,
+and resamples it with a new sampling frequency specified by
+.B \-s
+and
+.B \-v
+options to produce an ESPS FEA_SD file,
+.I output.sd.
+By default, the new sampling frequency is the input sampling frequency.  
+.PP
+If \fIinput.sd\fR 
+is replaced by "\-", the standard input is read.  If \fIoutput.sd\fR
+is replaced by "\-", the standard output is written.  If \fIinput.sd\fR
+is missing from the command line, \fIsfconvert\fR gets its name from
+ESPS Common.
+.PP
+The actual new sampling frequency is of the form 
+(\fIup\fR/\fIdown\fR)*\fIsf_in\fR.  The variable \fIsf_in\fR is the sampling 
+rate of
+the input file and the variables \fIup\fR and \fIdown\fR are 
+interpolation and decimation factors.  They are the smallest 
+integers such that the actual new sampling frequency is deviated from 
+\fInew_sample_freq\fR with the maximum tolerable deviation in percent, 
+\fIdeviation,\fR from \fInew_sample_freq\fR.  The default of \fIdeviation\fR is zero.
+.PP
+\fISfconvert\fR supports multichannel input data.  Single or multiple 
+channels selected are 
+extracted from \fIinput.sd\fR, resampled, and written in a single or
+multichannel \fIoutput.sd\fR.  Channels are selected with the 
+\fB\-e\fR options.  Default is all channels.
+.PP
+\fISfconvert\fR supports data types of DOUBLE, FLOAT, LONG, SHORT, BYTE,
+DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX, SHORT_CPLX, and BYTE_CPLX.  The data type
+of \fIouput.sd\fR by default is the same as that of \fIinput.sd\fR.  But it
+can be set to any data type by \fB\-o\fR option.  If input data type is complex
+and output data type is set to real, imaginary part of input data is 
+discarded.  If
+input data type is real and output data type is set to complex, zeros are 
+filled in the imaginary part of output data.  Converting one data type to
+another with less dynamic range will result in clipping.
+.PP
+Actual resampling is
+computed via floating point or double precision operation.  By default, if 
+\fIinput.sd\fR
+is of any data types other than DOUBLE or DOUBLE_CPLX, resampling is carried 
+out in
+floating point computation.  Otherwise, double precision is used.
+\fB\-d\fR option forces all computation to be carried out in double precision,
+regardless of input data types.
+.PP
+\fISfconvert\fR first designs a non-causal type I lowpass FIR filter (a
+filter with odd length and with filter shape symmetrical about its center
+point) by the windowing method.  By default, the Kaiser windowing method is 
+used to 
+design the lowpass filter with the transition bandwidth, \fItrans_band\fR by 
+the \fB-t\fR option, between
+passband and stopband, and with the rejection ratio, \fIrej_db\fR by the 
+\fB-R\fR option, in dB values
+from passband to stopband.  Such filter is then convoluted with
+input sampled data.  
+.PP
+The parameters,
+\fItrans_band\fR and \fIrej_db\fR determine the filter length designed by  the 
+Kaiser windowing method and they have direct impact
+on computational time.
+The filter length is directly proportional to \fIrej_db\fR and 
+inversely proportional to \fItrans_band\fR.
+.PP
+The lowpass filter can be designed by the windowing method using other window 
+types,
+such as rectangular, Hanning, Hamming, triangular, and cosine^4 windows.
+The \fB-w\fR option specifies which window type to use and the \fB-l\fR option 
+specifies the time duration of the filter length in seconds.  
+ Kaiser windowing method allows the lowpass 
+filter to be designed from the criteria of stopband rejection ratio and 
+transition bandwidth, but these other windowing methods do not use such
+criteria.
+.PP
+The paramters \fIrej_db\fR and \fItrans_band\fR for the Kaiser windowing
+design method may coexist with \fIsfwin_type\fR and \fIsfwin_len\fR for
+other windowing design method in command line or in paramter file.
+A non-Kaiser windowing design is used only when the \fB-w\fR option
+exists on command line, or when the \fIsfwin_type\fR paramter in a paramter
+file is set to a non-Kaiser window and \fIKaiserflag\fR is set to zero in 
+a paramter file.  Otherwise, Kaiser windowing design method is used.
+.PP
+In the case when the input data is too short to convolute with the designed
+filter, zeros are padded to input data.
+.PP
+By default the corner frequency or cutoff frequency for the
+lowpass filter is the Nyquist frequency,
+(the output sampling frequency divided by two).  Since the transition
+bandwidth must be nonzero, in many cases
+it is desirable to have a broad transition region that occurs
+entirely below Nyquist frequency.  The \fB-c\fR option sets the corner
+frequency, \fIcorner_freq\fR, in Hertz.
+.PP
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-P " param_file"
+The file \fIparam_file\fR is used for the parameter file instead of the 
+default, which is \fIparams\fR.
+.TP
+.BI \-s " new_sample_freq \fR[input sampling frequency]\fP"
+Sampling frequency of \fIoutput.sd\fR.  Default is the input sampling
+frequency.
+.TP
+.BI \-v " deviation \fR[0]\fP"
+Maximum tolerable frequency deviation from \fInew_sample_freq\fR in percent.
+For example, \fIdeviation=2\fR means the actual output sampling frequency is
+the requested sampling frequency plus or minus 2%.  This options allows 
+\fIsfcovnert\fR to find the smallest integer conversion factors, 
+\fIup\fR and \fIdown\fR, within the allowable range, and thereby
+reduce the problem of generating long filter lengths in the Kaiser windowing
+method due to a large interpolation factor.  Note that this only affects
+memory requirement.
+.TP
+.BI \-r " first:last"
+.TP
+.BI \-r " first:+incr"
+Determines the range of points from input file for frequency conversion.  In
+the first form, a pair of unsigned integers gives the first and last points
+of the range.  If \fIfirst\fR is omitted, 1 is used.  If \fIlast\fR is
+omitted, the last point in the file is used.  The second form is equivalent
+to the first with \fIlast = first + incr\fR.
+.TP
+.BI \-c " corner_freq \fR[output sampling frequency/2]\fP"
+Corner frequency of the lowpass interpolation filter designed by the windowing 
+method.  If this paramter is not specified or a value of zero is given, a
+default value of the Nyquist rate of output data file is used.
+.TP
+.BI \-R " rej_db \fR[60]\fP"
+Rejection ratio in dB values from passband to stopband in the lowpass filter
+designed by the Kaiser windowing method.  \fISfconvert\fR ignores this option
+if a non-Kaiser windowing design method is used.
+.TP
+.BI \-t " trans_band \fR[200]\fP"
+Transition bandwidth in Hertz from passband to stopband in the lowpass filter
+designed by the Kaiser windowing method.  \fISfconvert\fR ignores this option
+if a non-Kaiser windowing filter design method is used.
+.TP
+.BI \-w " sfwin_type"
+If Kaiser windowing method is not desired in designing the lowpass filter, 
+another
+window type can be used.  \fIsfwin_type\fR can be set to any of these
+window types: WT_RECT (rectangular), WT_HAMMING (Hamming), WT_TRIANG
+(triangular), WT_HANNING (Hanning), and
+WT_COS4 (cosine^4).  If this option is selected, the \fB-R\fR and \fB-t\fR
+are ignored.
+.TP
+.BI \-l " sfwin_len"
+Time duration in seconds of the window selected by \fB-w\fR option. 
+\fISfconvert\fR
+ensures the window length in samples is an odd number by 
+adding 1 to the multiplication product of \fIsfwin_len\fR and the 
+maximum of \fIup\fR or \fIdown\fR, if the product
+is even.  This is to ensure the lowpass interpolation filter is
+a type I filter.  \fISfwin_len\fR must be greater than zero.  \fISfconvert\fR
+ignores this option if the Kaiser windowing filter design method is used.
+.TP
+.BI \-e " channels \fR[all channels]\fP"
+Determines which channels are extracted out of \fIinput.sd\fR for
+sampling frequency conversion.  The format is that of a comma separated
+list of integers and pairs \fIa:b\fR, where \fIa\fR and \fIb\fR are integers.
+This specifies the channel numbers that are selected for output.  
+For example, \fI2,5:8,12\fR specifies
+channel 2, channels 5 through 8, and channel 12.  Additionally, an expression
+\fIa:+c\fR may be written instead of \fIa:b\fR where \fIc\fR is an integer
+such that \fIa+c=b\fR.  Thus \fI5:8\fR could be replaced with \fI5:+3\fR
+in the example.
+
+The numbering of channels begins with 0.  The channel numbers must be
+specified in increasing order without repetitions.  If this option is not
+specified, the default is to select all channels in the input file.
+.TP
+.BI \-o " output_type \fR[input data type]\fP"
+This option specifies the data type of \fIoutput.sd\fR.  Available data types
+are DOUBLE, FLOAT, LONG, SHORT, BYTE, DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX, 
+SHORT_CPLX, and BYTE_CPLX.  By default, output data type is the same as
+input data type.
+.TP
+.B \-d
+This option forces all computation to be carried out in double precision
+format. By default if this option is not specified, 
+floating point operation is used for
+input data types of FLOAT, LONG, SHORT, BYTE, FLOAT_CPLX, LONG_CPLX, 
+SHORT_CPLX, and BYTE_CPLX; otherwise if input data type is DOUBLE or 
+DOUBLE_CPLX,
+double precision operation is used.
+.TP
+.B \-f
+This option saves the lowpass filter coeffiecients in the header of output
+file.
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If 
+.I debug_level
+is positive,
+.I sfconvert
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the  
+.I debug_level
+increases.  If \fIdebug_level\fP is 0 (the default), no messages are
+printed.  
+.SH ESPS PARAMETERS
+The parameter file is not required to be present, as there are default
+parameters that apply.  If the parameter file does exist, the following
+parameters are read:
+.TP
+.I new_sample_freq - int
+The sampling frequency of output file.  This parameter is not read if the
+\fB-s\fR option is used.
+.TP
+.I deviation - float
+The maximum tolerable deviation from \fInew_sample_freq\fR in percent.
+This parameter is not read if the \fB-v\fR option is used.
+.TP
+.I start - integer
+The first point in the input sampled-data file that is processed.  A value
+of 1 denotes the first sample in the file.  If it is not in the parameter
+(or Common) file, the default value of 1 is used.
+.TP
+.I nan - integer
+The total number of points to analyze.  If it is set to 0 or if the value
+is not given, \fInan\fR is set equal to the total number of points in the 
+input file minus \fIstart\fR plus 1.  
+.TP
+.I corner_freq - float
+The corner frequency of the lowpass filter designed for interpolation.
+This parameter is not read if the \fB-c\fR option is used.  A value of zero
+indicates the Nyquist rate of output file is used.
+.TP
+.I Kaiserflag - int
+This paramter is optional.  
+It is used to determine the window type used for the filter design
+in case of ambiguity.  Set \fIKaiserflag\fR to 1 for the Kaiser window type,
+or 0 for non-Kaiser window type.  If there is no \fB-w\fR on the command line,
+\fIsfwin_type\fR is set to a non-Kaiser window type in the paramter file, 
+and \fIKaiserflag\fR exists in the paramter file and it is 
+equal to zero, then the window type determined by \fIsfwin_type\fR is
+used for the filter design.  Otherwise, the Kaiser windowing filter 
+design is used.  In the case when \fB-w\fR exists on the command line and
+\fIKaiserflag\fR is 1, then window type specified by \fB-w\fR is used since
+a command line option always takes precedence.
+.I rej_db - float
+The rejection ratio of the lowpass filter designed by Kaiser window 
+from passband to stopband in dBs.  This paramter is ignored if a non-Kaiser
+window type is used for filter design.
+.TP
+.I trans_band - float
+The transition bandwidth of the lowpass filter designed by the Kaiser windowing
+method between passband and stopband.
+This paramter is ignored if a non-Kaiser
+window type is used for filter design.
+.TP
+.I sfwin_type - string
+Window type used in designing the lowpass filter other than Kaiser
+windowing method.  Available parameters are WT_RECT (rectangular window), 
+WT_HAMMING (Hamming window), WT_TRIANG (Triangular window),
+WT_HANNING (Hanning window), and WT_COS4 (Cosine to power of 4 window).
+.TP
+.I sfwin_len - float
+Window length in seconds used in designing the lowpass filter designed by
+\fIsfwin_type\fR window type.
+This paramter is ignored if the Kaiser windowing filter design method is used.
+.TP
+.I channels - string
+This parameter specifies which channels from a multichannel input file for
+sampling frequency conversion.  This parameter is not read if the \fB-e\fR
+option is used.  
+.TP
+.I output_type - string
+This parameter specifies the output data type.  Available data types are
+DOUBLE, FLOAT, LONG, SHORT, BYTE, DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX, 
+SHORT_CPLX, and BYTE_CPLX. This parameter is not read if the \fB-o\fR option
+is used.
+.TP
+.I dflag - int
+This specifies whether resampling is to be carried out in floating point or
+double precision.  A value of \fI1\fR is for double precision.  
+A value of \fI0\fR specifies floating point computation.
+.PP
+.SH ESPS COMMON
+.PP
+If the \fB-r\fR option is not used and ESPS Common processing is enabled,
+the following items are read from the ESPS Common File provided that no 
+input file is given on the command line and provided that standard input
+is not used.
+.IP
+.I "filename - string"
+.IP
+This is the name of the input file.
+.IP
+.I "start - integer"
+.IP
+This is the starting point in the input file for frequency conversion.
+.sp
+.I "nan - integer"
+.IP
+This is the number of points in the input file for frequency conversion.
+A value of zero means the last point in the file.
+.sp
+.PP
+The following items are written into the ESPS Common file, provided
+ESPS Common processing is enabled and the output file is not <stdout>.
+.IP
+.I "start - integer"
+.IP
+A value of 1 is written to the Common file.
+.sp
+.I "nan - integer"
+.IP
+The number of points in the output file.
+.sp
+.I "prog - string"
+.IP
+This is the name of the program (\fIsfconvert\fP in this case).
+.sp
+.I "filename - string"
+.IP
+The name of the output file.
+.PP
+.SH ESPS HEADERS
+The generic header item \fIrecord_freq\fR  is written in the 
+output file with the actual sampling frequency which may be different from
+\fInew_sample_freq\fR if \fIdeviation\fR by the \fB-v\fR option is not zero. The
+input file sampling frequency is also written as \fIsource_freq\fR.  Both
+header items are type DOUBLE.  The corner frequency of lowpass filter is
+written as \fIcorner_freq\fR as type DOUBLE if its default value 0 is not
+used.
+
+\fIstart_time\fR header item of type DOUBLE of output file is computed
+by taking the \fIstart_time\fR of the input file and adding to it the 
+offset time (from the beginning of the first input file) of the first
+point used in frequency conversion.
+
+The header item, \fIfilter_siz\fR, for the size of the lowpass filter is 
+written as type SHORT.  If \fB-f\fR is specified on the command line,
+the lowpass filter coeffiecients are saved in the header.  The coefficients, 
+\fIfilter\fR, is 
+written as type DOUBLE if input data is type DOUBLE or DOUBLE_CPLX,
+if the \fB-d\fR option is set, or if the value of \fIdflag\fR in the 
+parameter file is \fIyes\fR.  Otherwise \fIfilter\fR is type FLOAT.
+
+If the Kaiser windowing method is used in filter design, \fIrej_db\fR and
+\fItrans_band\fR are written as type FLOAT. 
+Otherwise, \fIsfwin_type\fR and \fIsfwin_len\fR are written as type
+CODED and FLOAT, respectively.
+
+The header item, \fIsource_file\fR, is the input file name.  If the input
+data is multichannel, channels selected for sampling frequency conversion
+is written in the header item \fIchannels\fR.
+.PP
+.SH EXAMPLES
+Converting the input sampling frequency 8000 Hz of input data channels
+1, 3, 4, and 5 to 6000 Hz with the aliased components 80 dB down.
+
+	\fIsfconvert -s6000 -R80 -e1,3:5 input.sd output.sd\fR
+
+Dividing the input sampling frequency of 8000 Hz by one third (2666.66...).  
+The conversion factor is 1/3.  However, using the option \fI-s 2666\fR for
+new sampling frequency will result in large \fIup\fR and \fIdown\fR factors and
+long filter length. The \fB-v\fR option 
+allows \fIsfconvert\fR to find the exact intended conversion factor of 1/3
+by allowing a small deviation from the necessarily truncated
+\fInew_sample_freq\fR.  
+The following command finds the actual sampling frequency to be 2666 
+Hz within plus or minus 26.66 Hz, or exactly 8000/3 Hz with the values
+of 1 and 3 for the \fIup\fR and \fIdown\fR ratios. 
+
+	\fIsfcovnert -s2666 -v1 input.sd output.sd\fR
+
+Converting the input sampling frequency 8000 Hz to 6000 Hz with a lowpass
+filter of corner frequency of 2500 Hz instead of the default 3000 Hz, Nyquist
+frequency.
+
+	\fIsfcovnert -s6000 -c2500 input.sd output.sd\fR
+
+Frequency conversion to 12000 Hz using a lowpass filter designed by Hamming 
+window for input data sampled at 8000 Hz.  The filter will be 0.02 second
+long, or 160 points in samples.
+
+	\fIsfconvert -s12000 -wWT_HAMMING -l0.02 input.sd output.sd\fR
+
+.PP
+.SH ERRORS AND DIAGNOSTICS
+In the case when the interpolation factor \fIup\fR is very large and window 
+length \fIsfwin_len\fR supplied by \fB-l\fR is too short such that 
+no convolution is possible,
+an error message is issued and the program exits.
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+Alan V. Oppenheim and Ronald W. Schafer, \fIDiscrete-Time Signal Processing\fP.
+Englewood Cliffs, New Jersey: Prentice-Hall, Inc., 1989
+.PP
+.SH "SEE ALSO"
+filter(1-ESPS), demux(1-ESPS), type_convert(3-ESPS), window(3-ESPS) 
+.PP
+.SH AUTHOR
+.PP
+Program and man page by Derek Lin
+
+
+
+
+
+

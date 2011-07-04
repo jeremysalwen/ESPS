@@ -1,0 +1,14 @@
+#Default params file for iir_filt
+#@(#)Piir_filt	1.6 4/7/93 ESI
+string filt_method ?= "ELLIPTICAL": "Desired filter type:":{"BUTTERWORTH", "CHEBYSHEV1", "CHEBYSHEV2", "ELLIPTICAL"};
+float samp_freq ?= 8000: "Desired sampling frequency.";
+float gain ?= 1: "Desired pass band gain.";
+string filt_type ?= "LP": "Desired filter reponse":{"LP", "HP","BP","BS"};
+float pass_band_loss ?= 1: "Desired maximum pass band loss (dB).";
+float stop_band_loss ?= 20.: "Desired minimum stop band attenuation (dB).";
+float p_freq1 ?= 1000: "Passband frequency 1";
+float p_freq2 ?= 2100: "Passband frequency 2";
+float s_freq1 ?= 1100: "Stopband frequency 1";
+float s_freq2 ?= 2000: "Stopband frequency 2";
+#int filt_order = 3: "Desired filter order.";
+

@@ -1,0 +1,40 @@
+/*
+ * This material contains unpublished, proprietary software of 
+ * Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+ * or publication of this work must be authorized in writing by Entropic 
+ * Research Laboratory, Inc., and must bear the notice: 
+ *
+ *    "Copyright (c) 1986-1990  Entropic Speech, Inc. 
+ *    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc. 
+ *                   All rights reserved"
+ *
+ * The copyright notice above does not evidence any actual or intended 
+ * publication of this source code.     
+ *
+ * @(#)exv_func.h	1.11 12/5/91 ESI/ERL
+ *
+ * Written by:  John Shore
+ * Checked by:
+ * Revised by:
+ *
+ * Brief description: include file with libxv func definitions
+ *
+ */
+
+char *e_colormap_name(); 
+Cms   exv_init_colors();
+char *exv_cms_name();
+int   exv_color_status();
+#ifndef HP400
+Icon   exv_attach_icon(); 
+#endif
+int   exv_get_help();
+Frame  exv_make_text_window();
+char *exv_get_helpfile();
+void  exv_free_data();
+char *exv_make_temp(); 
+int  exv_prompt_params();
+bbox_par *exv_bbox();
+void print_bbox_par();
+menudata *read_olwm_menu();
+void print_olwm_menu();

@@ -1,0 +1,94 @@
+#!/bin/sh
+# @(#)pkmc_filt.tes	1.1 9/7/93
+
+USE_ESPS_COMMON=off;export USE_ESPS_COMMON
+ESPS_VERBOSE=0;export ESPS_VERBOSE
+
+outfile='/tmp/out'
+donefile='/tmp/done'
+
+#--------EQUIRIPPLE LOWPASS-----------------
+echo " Lowpass filter, visually inspect"
+echo "  passband at 1600, stopband at 2000"
+cat >> $donefile << END
+string filt_type = "multiband";
+float samp_freq = 8000.000000;
+int filt_length = 33;
+int nbands = 2;
+float band1_edge1 = 0.000000;
+float band1_edge2 = 1600.000000;
+float band1_des = 1.000000;
+float band1_wt = 1.000000;
+float band2_edge1 = 2000.000000;
+float band2_edge2 = 4000.000000;
+float band2_des = 0.000000;
+float band2_wt = 1.000000;
+END
+
+pkmc_filt -P$donefile $outfile
+filtspec -ml $outfile - |plotspec -
+
+echo "click on QUIT to continue " 
+#--------EQUIRIPPLE HIGHPASS-----------------
+echo " Highpass filter, visually inspect"
+echo " stopband at 1600, passband at 2000"
+cat >> $donefile << END
+string filt_type = "multiband";
+float samp_freq = 8000.000000;
+int filt_length = 33;
+int nbands = 2;
+float band1_edge1 = 0.000000;
+float band1_edge2 = 1600.000000;
+float band1_des = 0.000000;
+float band1_wt = 1.000000;
+float band2_edge1 = 2000.000000;
+float band2_edge2 = 4000.000000;
+float band2_des = 1.000000;
+float band2_wt = 1.000000;
+END
+pkmc_filt -P$donefile $outfile
+filtspec -ml $outfile - |plotspec -
+
+#--------EQUIRIPPLE DIFFERENTIATOR
+echo " Differentiator, visually inspect "
+echo " passband from 0 to 2000, stopband from 3200 to 4000"
+cat >> $donefile << END
+int filt_length = 21;
+float band1_edge2 = 2000.000000;
+float band2_edge1 = 3200.000000;
+float band1_des = 1.000000;
+float band1_wt = 1.000000;
+float band2_wt = 1.000000;
+string filt_type = "DIFFERENTIATOR";
+float samp_freq = 8000.000000;
+int nbands = 2;
+float band1_edge1 = 0.000000;
+float band2_edge2 = 4000.000000;
+float band2_des = 0.000000;
+END
+pkmc_filt -P$donefile  $outfile
+filtspec -ml $outfile - |plotspec -
+
+#--------EQUIRIPPLE HILBERT TRANSFORMER
+echo " Hilbert transformer, visually inspect "
+echo " should be an all pass"
+cat >>$donefile << END
+int filt_length = 41;
+float samp_freq = 8000.000000;
+string filt_type = "HILBERT";
+int nbands = 1;
+float band1_edge1 = 0.000000;
+float band1_edge2 = 4000.000000;
+float band1_des = 1.000000;
+float band1_wt = 1.000000;
+END
+pkmc_filt -P$donefile  $outfile
+filtspec -ml $outfile - |plotspec -
+
+rm $outfile
+rm $donefile
+
+
+
+
+

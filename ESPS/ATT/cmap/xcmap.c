@@ -1,0 +1,668 @@
+/*    Copyright (c) 1987, 1988, 1989, 1990, 1991 AT&T and
+/*    Entropic Research Laboratory, Inc.  All Rights Reserved.	*/
+
+/*	THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T	*/
+/*	AND ENTROPIC RESEARCH LABORATORY, INC.			*/
+/*	The copyright notice above does not evidence any	*/
+/*	actual or intended publication of such source code.	*/
+
+/* xcmap.c */
+/*
+
+This is the beginnings of a colormap editor.  This version assumes a
+colormap size of CM_SIZE (must be power of 2).  Left mouse pics in the
+displayed colormap at the top of the frame cause "handles" to appear
+below the map.  Left pics in the region of these handles select them;
+middle pics remove the closest handle.  Movement of the mouse with left
+button depressed inside the color "triangle" causes color mix to
+change.  Movement of the "slider" causes the intensity of the selected
+handle to change.  Selected level number and RGB intensity levels are
+displayed at bottom of screen.  RGB intensity levels are linearly
+interpolated between handles.  A colormap is saved by entering an
+"OUTPUT file" name when the desired effect has been achieved.  An
+existing colormap may be read and modified by entering its name for
+the "INPUT file" item.  These colormaps are in a form acceptable to the
+"wave" and "waves" programs.
+*/
+
+#ifndef lint
+static char *sccs_id = "@(#)xcmap.c	1.2	1/7/93	AT&T, ERL";
+#endif
+
+#include <stdio.h>
+#include <math.h>
+#include <sys/file.h>
+#include <xview/xview.h>
+#include <xview/font.h>
+#include <xview/canvas.h>
+#include <xview/panel.h>
+#include <xview/text.h>
+#include <xview/cms.h>
+#include <esps/exview.h>
+
+
+#define CM_SIZE 128
+#define RADIUS 350
+#define CM_WIDTH 1024
+
+Panel_item	file_item, infile_item, quit_item, slider;
+char		outputname[100] = "colormap", inputname[100] = "";
+Xv_singlecolor	colors[CM_SIZE];
+Cms		cms;
+int		bstart = 0, bwidth = CM_WIDTH/CM_SIZE, bheight = 75,
+		cheight = 510, cwidth = 1100, tox = 200, toy = 197,
+		intensity = 1000;
+
+typedef struct cbreak {
+    int		    where;
+    u_char	    r, g, b;
+    struct cbreak   *next, *prev;
+} Cbreak;
+
+Cbreak	cb1 = {CM_SIZE -1, 0, 0, 0, NULL, NULL};
+Cbreak	cb0 = {0, 255, 255, 255, &cb1, NULL};
+Cbreak	*cbp = &cb0;
+u_char	curr=255, curb=255, curg=255;
+Canvas	canvas;
+Panel	panel;
+Xv_font	font;
+
+/*************************************************************************/
+Cbreak *
+new_cbreak(where,r,g,b)
+int where, r, g, b;
+{
+  Cbreak  *cb, *cb2;
+
+  cb = &cb0;
+  while(cb) {
+    if(cb->where == where) {
+      cb->r = r;
+      cb->b = b;
+      cb->g = g;
+      return(cb);
+    }
+    if((cb->where < where) && (cb->next) && (cb->next->where > where)) {
+      cb2 = (Cbreak*)malloc(sizeof(Cbreak));
+      cb2->where = where;
+      cb2->r = r;
+      cb2->b = b;
+      cb2->g = g;
+      cb2->next = cb->next;
+      cb->next->prev = cb2;
+      cb->next = cb2;
+      cb2->prev = cb;
+      return(cb2);
+    }
+    cb = cb->next;
+  }
+  return(NULL);
+}
+extern int fullscreendebug;
+
+static void	newText(), doit(), repaint(), intensity_proc(), quit_proc();
+
+/*************************************************************************/
+main(argc, argv)
+    int		argc;
+    char	**argv;
+{
+    Frame	frame, frm;
+
+    fullscreendebug = 1; /* this global inhibits server grabs that cause
+			    problems on the SGI */
+    xv_init(XV_INIT_ARGC_PTR_ARGV, &argc, argv, 0);
+
+    font = (Xv_Font) xv_find(XV_NULL, FONT,
+			FONT_FAMILY,	    FONT_FAMILY_DEFAULT_FIXEDWIDTH,
+			0);
+
+    cb1.prev = &cb0;
+
+    frm = xv_create(XV_NULL, FRAME,
+			WIN_X,			    10,
+			WIN_Y,			    10,
+			XV_LABEL,		    "Colormap Generator",
+			0);
+
+    panel = xv_create(frm, PANEL, 0);
+
+    infile_item = xv_create(panel, PANEL_TEXT,
+			XV_Y,			    xv_row(panel, 0),
+			XV_X,			    xv_col(panel, 0),
+			PANEL_LABEL_STRING,	    "INPUT file:",
+			PANEL_VALUE_DISPLAY_LENGTH, 40,
+			PANEL_VALUE,		    inputname,
+			PANEL_NOTIFY_PROC,	    newText,
+			0);
+
+    file_item = xv_create(panel, PANEL_TEXT,
+			XV_Y,			    xv_row(panel, 1),
+			XV_X, 			    xv_col(panel, 0),
+			PANEL_LABEL_STRING,	    "OUTPUT file:",
+			PANEL_VALUE_DISPLAY_LENGTH, 40,
+			PANEL_VALUE,		    outputname,
+			PANEL_NOTIFY_PROC,	    newText,
+			0);
+
+    quit_item = xv_create(panel, PANEL_BUTTON,
+			XV_Y,			    xv_row(panel, 2),
+			XV_X, 			    xv_col(panel, 0),
+			PANEL_LABEL_STRING,	    "QUIT!",
+			PANEL_NOTIFY_PROC,	    quit_proc,
+			0);
+
+    slider = xv_create(panel, PANEL_SLIDER,
+			XV_Y,			    xv_row(panel, 2),
+			XV_X,			    xv_col(panel, 15),
+			PANEL_NOTIFY_LEVEL,	    PANEL_DONE,
+			PANEL_NOTIFY_PROC,	    intensity_proc,
+			PANEL_LABEL_STRING,	    "Brightness %",
+			PANEL_MIN_VALUE,	    0,
+			PANEL_MAX_VALUE,	    1000,
+			PANEL_SHOW_RANGE,	    TRUE,
+			PANEL_SHOW_VALUE,	    TRUE,
+			PANEL_SLIDER_WIDTH,	    300,
+			PANEL_VALUE,		    1000,
+			0);
+
+    window_fit(panel);
+    window_fit(frm);
+
+    (void) exv_attach_icon(frm, ERL_NOBORD_ICON, "cmap", TRANSPARENT);
+
+    frame = xv_create(XV_NULL, FRAME,
+			WIN_X,			    10,
+			WIN_Y,			    100,
+			XV_LABEL,		    "Colormap Generator",
+			0);
+    canvas = xv_create(frame, CANVAS,
+			CANVAS_AUTO_SHRINK,	    FALSE,
+			CANVAS_AUTO_EXPAND,	    FALSE,
+			XV_WIDTH,		    cwidth,
+			XV_HEIGHT,		    cheight,
+			CANVAS_WIDTH,		    cwidth,
+			CANVAS_HEIGHT,		    cheight,
+			CANVAS_PAINTWINDOW_ATTRS,
+			    WIN_DYNAMIC_VISUAL,		TRUE,
+			    0,
+			CANVAS_NO_CLIPPING,	    TRUE,
+			0);
+
+    xv_set(canvas_paint_window(canvas),
+			WIN_CONSUME_EVENTS,
+			    LOC_DRAG,
+			    WIN_IN_TRANSIT_EVENTS,
+			    LOC_MOVE,
+			    0,
+			WIN_EVENT_PROC,		    doit,
+			0);
+
+    window_fit(frame);
+
+    (void) exv_attach_icon(frame, ERL_NOBORD_ICON, "cmap", TRANSPARENT);
+
+    xv_set(canvas,	CANVAS_REPAINT_PROC,	    repaint,
+			0);
+
+    xv_set(frame,	WIN_SHOW,		    TRUE,
+			0);
+
+    cms = (Cms) xv_create(XV_NULL, CMS,
+			CMS_TYPE,		    XV_DYNAMIC_CMS,
+			CMS_SIZE,		    CM_SIZE,
+			0);
+
+    xv_main_loop(frm);
+
+    exit(0);
+}
+
+/*************************************************************************/
+static void
+repaint(canvas, pw, repaint_area)
+    Canvas	canvas;
+    Xv_window	pw;
+    Rectlist	*repaint_area;
+{
+    redraw_colormap();
+    draw_colorboxes();
+    plot_bp();
+    draw_color_triangle();
+}
+
+/*************************************************************************/
+draw_color_triangle()
+{
+  double    r = RADIUS,
+	    pi = 3.141592653589793238,
+	    dt = .01;
+  double    x, y, th, lim;
+  int	    xp, yp, xo, yo;
+  Pixwin    *pw;
+
+  pw = canvas_pixwin(canvas);
+
+  x = .5 + tox;
+  y = .5 + toy;
+  pw_text(pw, (int) x - 30, (int) y, PIX_SRC, font, "RED");
+  lim = pi/3.0;
+  for(th = dt, xo = x + r, yo = y; th < lim + dt; th += dt) {
+    if (th > lim) th = lim;
+    xp = x + r * cos(th);
+    yp = y + r * sin(th);
+    pw_vector(pw, xo, yo, xp, yp, PIX_SRC, 255);
+    xo = xp;
+    yo = yp;
+  }
+
+  x = .5 + tox + r;
+  y = .5 + toy;
+  pw_text(pw, (int) x, (int) y, PIX_SRC, font, "GREEN");
+  lim = pi/3.0;
+  for(th = dt, xo = tox, yo = toy; th < lim + dt; th += dt) {
+    if (th > lim) th = lim;
+    xp = x - r * cos(th);
+    yp = y + r * sin(th);
+    pw_vector(pw, xo, yo, xp, yp, PIX_SRC, 255);
+    xo = xp;
+    yo = yp;
+  }
+
+  x = .5 + tox + r*0.5;
+  y = .5 + toy + r*sqrt(3.0)/2.0;
+  pw_text(pw, (int) x + 20, (int) y, PIX_SRC, font, "BLUE");
+  lim = 2.0*pi/3.0;
+  for(th = pi/3.0 + dt, xo = x + r*0.5, yo = toy; th < lim + dt; th += dt) {
+    if (th > lim) th = lim;
+    xp = x + r * cos(th);
+    yp = y - r * sin(th);
+    pw_vector(pw, xo, yo, xp, yp, PIX_SRC, 255);
+    xo = xp;
+    yo = yp;
+  }
+}
+
+/*************************************************************************/
+static void
+newText(item, event)
+     Panel_item item;
+     Event *event;
+{
+  FILE *fdt, *fopen();
+  char *name, next[50], *get_output_file_names();
+  int n;
+  static int pin, pout;
+
+  if(item == file_item) {
+    strcpy(outputname, (char *) xv_get(item, PANEL_VALUE));
+    save_colormap(outputname);
+    return;
+  }
+
+  if(item == infile_item) {
+    strcpy(inputname, (char *) xv_get(item, PANEL_VALUE));
+    read_colormap(inputname);
+    return;
+  }
+}
+
+/*************************************************************************/
+save_colormap(name)
+    char    *name;
+{
+    FILE    *fd, *fopen();
+    int	    i;
+
+    if ((fd = fopen(name, "w")))
+    {
+	for (i = 0; i < CM_SIZE; i++)
+	    fprintf(fd, "%3d %3d %3d\n",
+		    colors[i].red, colors[i].green, colors[i].blue);
+	fclose(fd);
+    }
+}
+
+/*************************************************************************/
+read_colormap(name)
+    char    *name;
+{
+    FILE    *fd, *fopen();
+    int	    i, r, g, b;
+    char    line[120];
+
+    if ((fd = fopen(name, "r"))) {
+	for (i = 0; i < CM_SIZE; i++) {
+	    if (fgets(line, 120, fd) == NULL) break;
+	    sscanf(line, "%d%d%d", &r, &g, &b);
+	    colors[i].red = r;
+	    colors[i].green = g;
+	    colors[i].blue = b;
+	}
+	fclose(fd);
+	reset_colormap();
+	redraw_colormap();
+    } else
+	printf("Can't open %s for input\n", name);
+}
+
+/*************************************************************************/
+static void
+quit_proc(item, val, event)
+    Panel_item	item;
+    int		val;
+    Event	*event;
+{
+    exit(0);
+}
+
+/*************************************************************************/
+get_rgb(x,y,r,g,b)
+     int x, y;
+     u_char *r,*g,*b;
+{
+  double dr, db, dg, euclid(), rad, amax;
+  int rx0, bx0, gx0, ry0, by0, gy0;
+
+  rad = RADIUS;
+  rx0 = tox;
+  ry0 = toy;
+  bx0 = tox + .5 + (rad/2);
+  by0 = toy + .5 + ((sqrt(3.0)*rad)/2.0);
+  gx0 = tox + rad;
+  gy0 = toy;
+  dr = euclid(rx0,ry0,x,y);
+  dg = euclid(gx0,gy0,x,y);
+  db = euclid(bx0,by0,x,y);
+  if((dr <= rad) && (db <= rad) && (dg <= rad)) {
+    dr = rad - dr;
+    dg = rad - dg;
+    db = rad - db;
+    if(dr > dg) {
+      if(dr > db) amax = dr;
+      else  amax = db;
+    } else {
+      if(dg > db) amax = dg;
+      else amax = db;
+    }
+    amax = 255.0/amax;
+    *r = .5 + (dr*amax);
+    *b = .5 + (db*amax);
+    *g = .5 + (dg*amax);
+    return(TRUE);
+  }
+  return(FALSE);
+}
+
+/*************************************************************************/
+double
+euclid(x,y,x1,y1)
+     int x,y,x1,y1;
+{
+  int xd, yd;
+
+  xd = x - x1;
+  yd = y - y1;
+  return(sqrt((double)((xd*xd) + (yd*yd))));
+}
+
+/*************************************************************************/
+Cbreak *
+get_nearest_cb(x)
+     int x;
+{
+  int xi;
+  Cbreak *cb;
+
+  xi = (x-bstart)/bwidth;
+  if((xi < 0) || (xi > CM_SIZE)) return(NULL);
+
+  cb = &cb0;
+  while(cb->next) {
+    if((cb->where <= xi) && (cb->next->where >= xi)) {
+      if((xi - cb->where) < (cb->next->where - xi)) return(cb);
+      else return(cb->next);
+    }
+    cb = cb->next;
+  }
+  return(cb);
+}
+
+/*************************************************************************/
+kill_cb(cb)
+     Cbreak *cb;
+{
+  int amax;
+
+  if((cb == &cb0) || (cb == &cb1)) return;
+
+  cb->prev->next = cb->next;
+  cb->next->prev = cb->prev;
+  if(cbp == cb) cbp = cb->next;
+  reset_current_color(cbp->r,cbp->g,cbp->b);
+  free(cb);
+
+}
+
+/*************************************************************************/
+reset_current_color(r,g,b)
+     u_char r,g,b;
+{
+  int amax;
+
+  if(r > g) {
+    if(r > b) amax = r;
+    else  amax = b;
+  } else {
+    if(g > b) amax = g;
+    else amax = b;
+  }
+  intensity = (1000 * amax)/255;
+  if(amax) {
+    curg = ((int)g * 255)/amax;
+    curb = ((int)b * 255)/amax;
+    curr = ((int)r * 255)/amax;
+  } else curg = curb = curr = 255;
+/*  printf("r%d g%d b%d cr%d cg%d cb%d amax%d int%d\n",(int)r,(int)g,(int)b,
+	 (int)curr, (int)curg, (int)curb, amax, intensity);
+	 */
+
+  xv_set(slider,	PANEL_VALUE,		    intensity,
+			0);
+}
+
+/*************************************************************************/
+static void
+doit(pw, event, arg)
+  Xv_window *pw;
+  Event	    *event;
+  caddr_t   arg;
+{
+  Rect *rec;
+  int x, y, xi;
+  u_char r, b, g;
+  int e = event_id(event);
+  Cbreak *cb;
+
+  x = event_x(event);
+  y = event_y(event);
+  switch(e) {
+  case MS_MIDDLE:
+    if(event_is_up(event)) return;
+    if((y > bheight) && ( y < (bheight << 1))) {
+      if(cb = get_nearest_cb(x)) {
+	kill_cb(cb);
+	redraw_colormap();
+	plot_bp();
+      }
+    }
+    break;
+
+  case MS_LEFT:
+    if(event_is_up(event)) return;
+    /* FALL THROUGH */
+  case LOC_DRAG:
+    if(y < bheight) {
+      xi = (x - bstart)/bwidth;
+      if (xi < 0 || xi >= CM_SIZE) return;
+      cbp = new_cbreak(xi, colors[xi].red, colors[xi].green, colors[xi].blue);
+      reset_current_color(cbp->r,cbp->g,cbp->b);
+      plot_bp();
+      return;
+    }
+    if((y > bheight) && ( y < (bheight << 1))) {
+      if(cb = get_nearest_cb(x)) {
+	cbp = cb;
+	reset_current_color(cb->r,cb->g,cb->b);
+	plot_bp();
+      }
+      return;
+    }
+    if(get_rgb(x,y,&r,&g,&b)){
+      curr = r;
+      curb = b;
+      curg = g;
+      redraw_colormap();
+      return;
+    }
+
+  case LOC_MOVE:
+    if(y < (bheight << 1)) {
+      if((x >= bstart) && (x <= CM_WIDTH)) {
+	char str[100];
+	
+	xi = (x-bstart)/bwidth;
+	sprintf(str,"Level:%3d  R:%3d  G:%3d  B:%3d",
+		xi, colors[xi].red, colors[xi].green, colors[xi].blue);
+	pw_text(pw, cwidth/2, cheight-5, PIX_SRC, font, str);
+      }
+    }
+    break;
+	
+  default:
+    break;
+  }
+  return;
+}
+
+/*************************************************************************/
+plot_bp()
+{
+  Pixwin *pw;
+  Rect * rec;
+  Cbreak *cb;
+  int x, y1;
+  char str[100];
+
+  pw = canvas_pixwin(canvas);
+  rec = (Rect*)xv_get(canvas,WIN_RECT);
+  pw_rop(pw,bstart,bheight,CM_WIDTH,bheight,
+	   PIX_SRC|PIX_COLOR(0),NULL,0,0);
+
+  cb = &cb0;
+  y1 = 2 * bheight/3;
+  while(cb) {
+    x = (cb->where * bwidth) + bwidth/2;
+    pw_rop(pw,x,bheight,bwidth>>2,y1,
+	   PIX_SRC|PIX_COLOR(cb->where),NULL,0,0);
+    cb = cb->next;
+  }
+  x = (cbp->where * bwidth);
+  pw_rop(pw,x,bheight,bwidth,bheight,
+	 PIX_SRC|PIX_COLOR(cbp->where),NULL,0,0);
+  print_maplevel(cbp);
+}
+
+/*************************************************************************/
+static void
+intensity_proc(item, val, event)
+     Panel_item item;
+     int val;
+     Event *event;
+{
+
+  intensity = val;
+  redraw_colormap();
+
+}
+
+/*************************************************************************/
+print_maplevel(cbp)
+  Cbreak *cbp;
+{
+  Pixwin *pw;
+  char str[100];
+
+  sprintf(str,"Level:%3d  R:%3d  G:%3d  B:%3d",cbp->where,cbp->r,cbp->g,cbp->b);
+  pw = canvas_pixwin(canvas);
+  pw_text(pw, cwidth/2, cheight-5, PIX_SRC, font, str);
+  return;
+}
+
+/*************************************************************************/
+redraw_colormap()
+{
+  register int i, j,k, n;
+  double r, b, g, rs, bs, gs;
+  Cbreak *cb, *nb;
+  char str[100];
+  Pixwin *pw = canvas_pixwin(canvas);
+
+  cbp->r = (.5 + ((double)curr * intensity)/1000.0);
+  cbp->b = (.5 + ((double)curb * intensity)/1000.0);
+  cbp->g = (.5 + ((double)curg * intensity)/1000.0);
+  print_maplevel(cbp);
+  cb = &cb0;
+  nb = cb->next;
+  while(nb) {
+    r = cb->r;
+    g = cb->g;
+    b = cb->b;
+    n = nb->where - cb->where;
+    rs = ((double)(nb->r - r))/n;
+    bs = ((double)(nb->b - b))/n;
+    gs = ((double)(nb->g - g))/n;
+    for(i = cb->where, j=nb->where; i < j; i++) {
+      colors[i].red = r + .5;
+      colors[i].green = g + .5;
+      colors[i].blue = b + .5;
+      r += rs;
+      g += gs;
+      b += bs;
+    }
+    cb = nb;
+    nb = cb->next;
+  }
+
+  xv_set(cms,		CMS_COLORS,		colors,
+			0);
+  xv_set(canvas_paint_window(canvas),
+			WIN_CMS,		cms,
+			0);
+}
+
+/*************************************************************************/
+reset_colormap()
+{
+  register int i, j,k, n;
+
+  for (i = 0; i < CM_SIZE; i++) {
+    if(! new_cbreak(i, colors[i].red, colors[i].green, colors[i].blue))
+    {
+      printf("Problems setting up new cbreaks in reset_colormap()\n");
+      exit(-1);
+    }
+  }
+  plot_bp();
+}
+
+/*************************************************************************/
+draw_colorboxes()
+{
+  Pixwin *pw;
+  int i, loc, k;
+
+  pw = canvas_pixwin(canvas);
+  for(i=0, loc=bstart ;i < CM_SIZE; i++, loc += bwidth)
+    pw_rop(pw,loc,0,bwidth,bheight,PIX_SRC|PIX_COLOR(i),NULL,0,0);
+}

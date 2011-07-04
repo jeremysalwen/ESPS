@@ -1,0 +1,6 @@
+call commandname $HOME/.w_add_op.WC
+call commandname $HOME/.w_keymap.WC
+call commandname $HOME/.w_menus.WC
+call commandname $HOME/.w_panels.WC
+return
+# @(#)cust_xw_init.WC	1.2 9/9/93

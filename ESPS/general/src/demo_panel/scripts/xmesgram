@@ -1,0 +1,4 @@
+#!/bin/sh
+#@(#)xmesgram	1.1 6/18/91 ERL - maximum entropy prompter
+xprompt -Prefcof.defaults param_files/xmesgram.params
+refcof -Pxmesgram.params $1 $2 - | me_spec -n 257 - $3

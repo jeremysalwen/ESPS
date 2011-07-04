@@ -1,0 +1,3 @@
+cd $1
+esccs $1 get rundemo
+

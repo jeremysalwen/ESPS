@@ -1,0 +1,121 @@
+.\" Copyright (c) 1990 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)freeheader.3	1.3	06 May 1997	ERL
+.TH FREE_HEADER 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Research Laboratory, Inc.
+.if t .ds - \(em\h'-0.2m'\(em
+.if n .ds - ---
+.SH NAME
+free_header \- free storage for an ESPS header
+.SH SYNOPSIS
+.ft B
+void
+.br
+free_header(hdr, flags, ptr)
+.br
+struct header *hdr;
+.br
+unsigned long flags;
+.br
+char *ptr;
+.ft
+.SH DESCRIPTION
+If
+.I hdr
+points to an ESPS header,
+.I free_header
+attempts to free storage for all parts of the header,
+including embedded headers.
+If
+.I hdr
+is NULL,
+.I free_header
+simply returns immediately.
+The arguments
+.I flags
+and
+.I ptr
+are reserved for future elaboration of the function
+and are ignored by the present version.
+.PP
+.B "Use with CAUTION.  This function is DANGEROUS."
+A header may share storage with other data structures in a C program,
+including other headers.
+Using
+.I free_header
+on such a header will destroy part or all of the other data structures.
+Moreover, a header may contain pointers to storage that has not been
+allocated by
+.IR malloc.
+Using
+.I free_header
+on such a header will disrupt the memory-allocation mechanism by causing
+.I free
+to be called with inappropriate arguments;
+``grave disorder'' will result, according to the
+.IR malloc (3)
+manual page.
+.PP
+Here are some examples, by no means exhaustive, of problem situations.
+After
+
+add_source_file(hdr_1, "name_2", hdr_2);
+
+freeing all of
+.I hdr_1
+will destroy
+.I hdr_2,
+and freeing all of
+.I hdr_2
+will destroy part of
+.I hdr_1.
+After
+
+add_genhd_d("name", ptr, size, hdr);
+
+if the pointer argument
+.I ptr
+is non-NULL, it is incorporated into the structure of
+.I hdr;
+if
+.I ptr
+points to a variable in the C program, rather than
+.IR malloc ed
+storage, freeing
+.I hdr
+will bring disaster.
+.PP
+When
+.I can
+you use
+.IR free_header ?
+The safest rule is to use it only on headers that have been freshly read in by
+.IR read_header (3-ESPS)
+and have not been modified or included in other headers.
+With one exception, it is also safe to free a header that has been read by
+.IR eopen (3-ESPS)
+and has not been modified or included in another header.
+The exception is a header that
+.I eopen
+has read from an old-style SD file and converted to FEA_SD (see the
+.IR eopen (3-ESPS)
+manual page).
+The resulting FEA_SD header should not be freed with
+.I free_header.
+.SH EXAMPLE
+.SH DIAGNOSTICS
+.SH "FUTURE CHANGES"
+Allow use of the last two arguments to specify parts of the header that
+.I read_header
+should not attempt to free.
+.SH BUGS
+This function can do great damage to a program's data structures if used
+incautiously.  Please read the advice in the ``Description'' section above.
+.SH SEE ALSO
+.nf
+read_header(3-ESPSu), eopen(3-ESPSu),
+free_fea_rec(3-ESPSu), skip_header(3-ESPSu), 
+add_source_file(3-ESPSu), add_genhd(3-ESPSu),
+malloc(3), free(3)
+.fi
+.SH AUTHOR
+Rodney Johnson.

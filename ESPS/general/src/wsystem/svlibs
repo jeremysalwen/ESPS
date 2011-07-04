@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if test -r /usr/lib/suntools
+then
+	echo "-lsuntool -lsunwindow -lpixrect"
+fi
+exit 0

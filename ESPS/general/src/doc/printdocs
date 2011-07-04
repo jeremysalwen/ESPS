@@ -1,0 +1,40 @@
+#!/bin/sh
+
+for i in $*
+do
+  srcname=$i.*me*
+  if test -h $srcname
+  then
+    echo "$srcname is link, not doing."
+  else
+    until test `lpq | wc -l` -lt 20
+    do
+      echo "to many (`lpq | wc -l`) in queue, waiting 10 seconds..."
+      sleep 10
+    done
+    case $name in
+      history)
+	set -x 
+	 refer -n -p esps.refs -e history.prme | \
+	   itroff -me -D'prersterization on' 
+	set +x
+	 ;;
+      intro)
+	set -x
+	 refer -n -p esps.refs -e $srcname | itroff -me 
+	set +x
+	;;
+      *)
+    	set -x
+    	typeset $srcname 
+    	set +x
+	;;
+    esac
+  fi
+done
+
+
+
+
+
+

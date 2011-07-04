@@ -1,0 +1,57 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getfeatype.3	1.4 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GET_FEA_TYPE 3\-ESPSu 18 Apr 1997
+.SH NAME
+get_fea_type \- return the type of a FEA file field
+.SH SYNOPSIS
+.ft B
+#include <esps/fea.h>
+.br
+short
+.br
+get_fea_type(name, hd)
+.br
+char	*name;
+.br
+struct header *hd;
+.ft
+.SH DESCRIPTION
+.I get_fea_type
+returns the type of the feature field \fIname\fP from the ESPS
+Feature File header \fIhd\fP.  Valid types are DOUBLE, FLOAT, LONG,
+SHORT, CODED, and CHAR.  These are defined in <esps/esps.h>.
+.PP
+If \fIname\fP is NULL or if it does
+not exist in \fIhd\fP, the type returned is UNDEF.
+The program prints a message on stderr and terminates
+if either \fIhd\fP does not point to an ESPS Feature File
+header.
+.SH EXAMPLE
+.if n .ta 33
+.if t .ta 3i
+.nf
+
+struct header *hd;
+int	type;
+
+if ((type = get_fea_type("field_name", hd)) == UNDEF) . . . /* trouble */
+.fi
+.SH DIAGNOSTICS
+.nf
+get_fea_type: called with non fea hd
+.fi
+.SH BUGS
+None known.
+.SH SEE ALSO
+.PP
+.nf
+\fIget_fea_siz\fP(3\-\s-1ESPSu\s+1), \fIallo_fea_rec\fP(3\-\s-1ESPSu\s+1),
+\fIadd_fea_fld\fP(3\-\s-1ESPSu\s+1), \fIget_fea_ptr\fP(3\-\s-1ESPSu\s+1),
+\fIget_fea_rec\fP(3\-\s-1ESPSu\s+1), \fIput_fea_rec\fP(3\-\s-1ESPSu\s+1),
+\fIget_fea_deriv\fP(3\-\s-1ESPSu\s+1), \fIset_fea_deriv\fP(3\-\s-1ESPSu\s+1),
+FEA(5\-ESPS)
+.fi
+.SH AUTHOR
+Man page by Ajaipal S. Virdy, Entropic Speech, Inc.

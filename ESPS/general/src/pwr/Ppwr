@@ -1,0 +1,7 @@
+# @(#)Ppwr	1.2	3/3/89	EPI
+# default parameter file for pwr
+string	sd_field_name ?= "sd": "Input sampled_data field name";
+string	power_field_name ?= "raw_power": "Output power field name";
+string	power_function ?= "none": "Power function name (none,log)";
+int	start ?= 1: "First record from input file to process";
+int	nan ?= 0: "Number of input records to process (0 means all)";

@@ -1,0 +1,123 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getfft.3	1.10 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GET_FFT 3\-ESPSsp 18 Apr 1997
+.SH NAME
+.nf
+get_fft \- Compute the fast Fourier transform of a data sequence.
+get_fftd \- Compute the fast Fourier transform of a (double) data sequence.
+get_fft_inv \- Compute the inverse fast Fourier transform of a data sequence.
+get_fftd_inv \- Compute the inverse fast Fourier transform of a (double)data sequence.
+get_rfft \- Compute the fast Fourier transform of a real data sequence.
+.SH SYNOPSIS
+.ft B
+void
+.br
+get_fft (data_real, data_imag, log_fft_size)
+.br
+float   *data_real, *data_imag;
+.br
+int     log_fft_size;
+.sp
+void
+.br
+get_fftd (data_real, data_imag, log_fft_size)
+.br
+double  *data_real, *data_imag;
+.br
+int     log_fft_size;
+.sp
+void
+.br
+get_fft_inv (data_real, data_imag, log_fft_size)
+.br
+float   *data_real, *data_imag;
+.br
+int     log_fft_size;
+.sp
+void
+.br
+get_fftd_inv (data_real, data_imag, log_fft_size)
+.br
+double   *data_real, *data_imag;
+.br
+int     log_fft_size;
+.sp
+void
+.br
+get_rfft (data_real, data_imag, log_fft_size)
+.br
+float   *data_real, *data_imag;
+.br
+int     log_fft_size;
+.sp .5
+.SH DESCRIPTION
+The
+.I get_fft
+and
+.I get_fft_inv
+routines compute the discrete Fourier transform and the inverse discrete
+Fourier transform, respectively, of a given complex data sequence using the
+fast Fourier transform algorithm.
+The input data is supplied through two arrays
+.B
+data_real
+and
+.B
+data_imag.
+The transform size is
+.B
+2**log_fft_size.
+The FFT output is returned through the same arrays.
+For transform size N, there are N/2 negative frequencies,
+and N/2 positive frequencies.
+The order in which the frequency components are returned is as follows:
+f(0), f(1),..., f(N/2), f(\-(N/2) + 1), f(\-(N/2) + 2),..., f(\-1).
+This amounts to N values, with no explicit value for f(\-(N/2)) since
+f(N/2) = f(\-(N/2)).
+.PP
+The functions
+.I get_fftd
+and 
+.I get_fftd_inv
+are the same as 
+.I get_fft
+and 
+.I get_fftd
+except they pass data through arrays of type double.
+.PP
+The function
+.I get_rfft
+is an FFT routine similar to
+.I get_fft
+except that the input data is assumed to be real.  If the 
+input array 
+.I data_imag
+is not filled with zero, 
+.I get_rfft
+will exit with an error message.  
+.I get_rfft
+function is two times faster than the
+.I get_fft
+routine.
+.SH BUGS
+None
+.SH SEE ALSO
+.nf
+\fIget_arspect\fP(3\-ESPSsp).
+.fi
+.SH COMMENTS
+The sine and cosine tables needed by the FFT algorithm are computed first time
+these routines are called.  During the subsequent calls, these tables are 
+recomputed only if the transform sizes are different from the previous calls.
+This information can be exploited to implement the user's program efficiently
+in certain situations.
+.SH REFERENCES
+[1] A. V. Oppenheim and R. W. Schafer,
+.I
+Digital Signal Processing,
+Prentice-Hall, NJ. 1975.
+.SH AUTHOR
+Shankar Narayan
+

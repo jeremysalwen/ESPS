@@ -1,0 +1,63 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)wsystem.1	1.4 7/23/93 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH WSYSTEM 1\-ESPS 7/23/93
+.SH wsystem 
+.nf
+wsystem \- outputs the type of window system available to stdout.
+.fi
+.SH SYNOPSIS
+.B
+wsystem
+.SH DESCRIPTION
+.PP
+\fBWsystem\fR tells you what window system is available.  It first checks to
+see if Sunview is available. If Sunview and X-Windows is available at the same
+time then X11R2000 (the Openwindow server release) is returned.  If not it 
+checks for X-Windows. If X is available
+it outputs  "X11Rx", where x is the release
+of X that is running. For example, X11R4, X11R3, etc... 
+.PP
+If Suntools only is present and it  outputs "Sunview".  
+.PP
+If no windowing system is present, then it outputs "none".
+.PP
+.SH OPTIONS
+No options.
+.PP
+.SH FUTURE CHANGES
+Add some options to say what Window manager, or which server.
+.PP
+.SH EXAMPLES
+.nf
+
+  echo `wsystem`
+  case `wsystem` in
+    X11R2) oldxtool;;
+    X11*)  xtool;;
+    Sunview) sunviewtool;;
+    none) echo "error: no windowing system available";;
+  esac
+
+.fi
+.SH ERRORS AND DIAGNOSTICS
+.PP
+Exit status of 0 if a window system is found.  Exit status of 1 if no window
+system is found.
+.PP
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+X(1), suntools(1)
+.SH AUTHOR
+.PP
+Ken Nelson
+
+
+
+
+

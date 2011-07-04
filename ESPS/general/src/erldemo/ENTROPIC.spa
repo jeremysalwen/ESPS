@@ -1,0 +1,16 @@
+#! /bin/sh 
+# DEMO1 @(#)ENTROPIC.spa	1.1 11/15/90  - starting point of whole demo
+#
+# this version is a rework of the original Sun demo, with a 
+# different slideshow script; the script uses xloadimage 
+# rather than screenload and therefore is general for X
+
+cd erldemos
+PATH=.:esps/bin:$PATH; export PATH
+
+rm -f /tmp/erldemo.lock
+rm -f /tmp/ewaves.lock
+rm -f /tmp/eslides.lock
+rm -f /tmp/erlwtry.lock
+
+erldemo -S xslideshow.sh -W wavesdemo.sh  -I edemo.info -A edemo.about -t "Entropic Demo" &

@@ -1,0 +1,18 @@
+"rundemo.sh   (startup script)" xtext -F rundemo.sh
+
+"plot3d.BM   (control panel menu file)"	xtext -F menus/plot3d.BM
+
+"demoinit.WC   (initial xwaves+ command file)" xtext -F wcommands/demoinit.WC
+
+"dcolors.WM   (xwaves+ color control panel)"	xtext -F menus/dcolors.WM
+
+"demoquit.WC  (xwaves+ termination command file)" xtext -F wcommands/demoquit.WC
+"demofiles.BM   (menu file for this panel)"	xtext -F menus/demofiles.BM
+
+# @(#)demofiles.BM	1.5 1/18/93 ERL
+
+
+
+
+
+

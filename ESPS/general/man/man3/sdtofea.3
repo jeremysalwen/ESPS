@@ -1,0 +1,44 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc.; All rights reserved
+.\" @(#)sdtofea.3	1.2 02 May 1997	ESI
+.TH "SDTOFEA" 3\-ESPSu 02 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+.nf
+sdtofea \- convert SD header to FEA_SD header
+.SH "SYNOPSIS"
+.ft B
+#include <esps/esps.h>
+.br
+#include <esps/sd.h>
+.br
+#include <esps/feasd.h>
+.sp
+.nf
+struct header *
+sdtofea(hd)
+struct header *hd;
+.fi
+.ft R
+.SH "DESCRIPTION"
+\fIsdtofea\fP converts an old SD file
+header (SD (5\-\s-1ESPS\s+1)) 
+to a FEA_SD (5\-\s-1ESPS\s+1) file header. 
+\fIhd\fP must be a SD (5\-\s-1ESPS\s+1) header, and
+\fIsdtofea\fP returns a FEA (5\-\s-1ESPS\s+1)
+header with the subtype FEA_SD (5\-\s-1ESPS\s+1) set.
+New programs that read
+and use the FEA_SD file type, can use \fIsdtofea\fP
+to make the new programs 
+compatible with old sampled data (SD) files.
+The \fIsf\fP header item is converted to \fIrecord_freq\fP;
+all other type-specific SD header items are converted to generic header
+items in the new FEA_SD header.
+.SH DIAGNOSTICS
+.PP
+If \fIhd\fP is not a FT_SD header, \fIsdtofea\fP
+warns and exits.
+.SH "SEE ALSO"
+FEA_SD (5\-\s-1ESPS\s+1), SD (5\-\s-1ESPS\s+1)
+.SH "AUTHOR"
+.PP
+Manual page by David Burton. Code by Alan Parker

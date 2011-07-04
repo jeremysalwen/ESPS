@@ -1,0 +1,61 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991-1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getvburg.3	1.4 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH  GET_VBURG 3\-ESPSsp 18 Apr 1997
+.SH NAME
+get_vburg \- Compute reflection coefficients using a vector Burg method.
+.SH SYNOPSIS
+.nf
+.ft B
+
+get_vburg (x, lnt, r, order, c, rc, pgain, matsiz)
+.br
+float     *x;
+int      lnt;
+double    *r;
+int    order;
+float     *c;
+float    *rc;
+float *pgain;
+int   matsiz;
+
+.fi
+.SH DESCRIPTION
+.PP
+This routine computes the reflection coefficients and the lpc
+filter coefficients directly from the data using a Burg-like
+algorithm. The resulting reflection coefficients are found to be
+very close to those obtained using structured covariance method, 
+so we think of this as a fast approximation to structured covariance.
+.PP
+\fIget_vburg\fP takes data of size \fIlnt\fP in array \fIx\fP as input
+and computes \fIorder\fP reflection coefficients, \fIrc\fP[1] to
+\fIrc\fP[\fIorder\fP], \fIorder\fP lpc filter coefficients, \fIc\fP[1]
+to \fIc\fP[\fIorder\fP], the signal \fIpower\fP *r, and the lpc filter
+gain, *\fIpgain\fP.  The parameter \fImatsiz\fP specifies the size of
+the sample covariance matrix that is to be used in obtaining the
+reflection coefficients (when \fIget_vburg\fP is used in \fIrefcof\fP,
+\fImatsiz\fP = \fIorder\fP + 1).  For more details on this algorithm,
+see [1].
+.SH BUGS
+None
+.SH SEE ALSO
+.PP
+.nf
+\fIstrcov_auto\fP(3\-\s-1ESPS\s+1sp), \fIgenburg\fP(3\-\s-1ESPS\s+1sp),
+\fIestimate_covar\fP(3\-\s-1ESPS\s+1sp), \fIstruct_cov\fP(3\-\s-1ESPS\s+1sp),
+\fIget_fburg\fP(3\-\s-1ESPS\s+1sp), \fIget_burg\fP(3\-\s-1ESPS\s+1sp),
+\fIcompute_rc\fP(3\-\s-1ESPS\s+1sp), \fIrefcof\fP(1\-\s-1ESPS\s+1) 
+.fi
+.SH REFERENCES
+.\" an internal reference is Shankar Narayan, ETM-S-86-49:ssn, 
+.\" Spectrum Analysis of periodic data,
+.PP
+.TP
+[1]
+Shankar Narayan and J.P. Burg, "Spectral Estimation of Quasi-Periodic
+Data", \fIProceedings ICASSP 87\fP, pp. 944-947.  
+.SH AUTHOR
+Shankar Narayan
+

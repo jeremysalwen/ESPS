@@ -1,0 +1,50 @@
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)echeckout.1	1.6 9/26/97 ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH ECHECKOUT 1\-ESPS 9/26/97
+.SH "NAME"
+echeckout \- checkout an ESPS license for a host
+.SH "SYNOPSIS"
+.B echeckout
+.B [-w]
+.SH "DESCRIPTION"
+.PP
+.I Echeckout
+.PP
+checks out an ESPS license for the host on which this command is run.
+Only one ESPS license needs to be checked out for a given host.   This
+version of the program does not check to see if another license is
+already assigned to this host.   You can check for this with \fIelmadmin -l\fR.
+.PP
+The Unix environment variable, \fBELM_HOST\fR must be set to contain the
+name of the host on your network that the ESPS license manager daemon is
+running on, unless it is running on the same host that you are checking
+the license out on.   In this case \fBELM_HOST\fR can be undefined.
+.PP
+The license can be freed with the \fIefree\fR command by the same user
+that checked it out.
+If it is necessary to free a license that was checked out by another
+user, the super-user will have to find the process id of the
+\fIecheckout\fR and kill that process.
+.SH "ESPS HEADERS"
+.PP
+This program ignores all header items.
+.SH "ESPS PARAMETERS"
+.PP
+This program does not access the parameter file.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.B \-w
+Causes \fIecheckout\fR to emit an hourly reminder that
+an ESPS license is checked out.   This message goes to the
+standard error for the tty or window first running \fIecheckout\fR.  In
+some cases, the warning message might end up on an unrelated device after
+the initial user logs out.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIefree\fR(1\-ESPS), \fIelmd\fR(1\-ESPS), \fIelmadmin\fR(1\-ESPS), 
+.fi
+

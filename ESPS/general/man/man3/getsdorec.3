@@ -1,0 +1,180 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getsdorec.3	1.6 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GET_SD_OREC 3\-ESPSu 18 Apr 1997
+.SH NAME
+.nf
+get_sd_orecd \- get overlapping data from an ESPS SD or FEA_SD file in DOUBLE format
+get_sd_orecf \- get overlapping data from an ESPS SD or FEA_SD file in FLOAT format
+get_sd_orecs \- get overlapping data from an ESPS SD or FEA_SD file in SHORT format
+.SH SYNOPSIS
+.ft B
+#include <esps/esps.h>
+.sp
+int
+.br
+get_sd_orecd(dframebuf, framelen, nmove, first, hd, file)
+.br
+double *dframebuf;
+.br
+int framelen;
+.br
+int nmove;
+.br
+int first;
+.br
+struct header *hd;
+.br
+FILE *file;
+.sp
+int
+.br
+get_sd_orecf(fframebuf, framelen, nmove, first, hd, file)
+.br
+float *fframebuf;
+.br
+int framelen;
+.br
+int nmove;
+.br
+int first;
+.br
+struct header *hd;
+.br
+FILE *file;
+.sp
+int
+.br
+get_sd_orecs(sframebuf, framelen, nmove, first, hd, file)
+.br
+short *sframebuf;
+.br
+int framelen;
+.br
+int nmove;
+.br
+int first;
+.br
+struct header *hd;
+.br
+FILE *file;
+.ft
+.SH DESCRIPTION
+Like the
+.I get_sd_rec 
+functions
+.RI ( get_sd_recd (3\-ESPS)
+etc.) the
+.I get_sd_orec
+functions read frames of sampled data
+from ESPS SD or single-channel FEA_SD files.
+However, while
+.I get_sd_rec
+moves a full frame length between calls, 
+.I get_sd_orec
+moves an arbitrary amount and is therefore suitable for use
+by programs that analyze overlapping frames.  
+.PP
+If \fIfirst\fP==1, 
+.I get_sd_orec
+attempts to read the next \fIframelen\fR ESPS sampled data file records
+(points) from stream \fIfile\fR into the buffer pointed to by
+\fIdframebuf\fR, \fIfframebuf\fR, or \fIsframebuf\fR, and it returns the
+number of valid samples in the buffer.  If the return value is less than
+\fIframelen\fR then the end of the input file has been reached.  If the
+return value is zero, then there are no valid samples in the buffer.  The
+ESPS file header pointed to by \fIhd\fR is consulted for the type of data
+in the file.  The data is converted to double, float, or short if
+necessary.  If fewer than the requested \fIframelen\fR points are read
+(because end of file is reached), \fIdframebuf\fR, \fIfframebuf\fR, or
+\fIsframebuf\fR is zero-filled.
+.PP
+If \fIfirst\fP==0, the contents of \fIdframebuf\fR, \fIfframebuf\fR, or
+\fIsframebuf\fR are assumed to contain the sampled data from the previous
+call.
+.I Get_sd_orec
+then drops the first \fInmove\fP points, shifts the the remaining contents
+\fInmove\fP positions to the left (thinking of the zero-th element as
+left-most), and then attempts to fill out the buffer by reading the next
+\fInmove\fP samples from \fIfile\fP.  It returns the number of valid
+samples in the buffer (including previous samples in the buffer and new
+ones from the input file).  If the return value is less than \fIframelen\fR
+then the end of the input file has been reached.  If the return value is
+zero, then there are no valid samples in the buffer (i.e.  nothing more can
+be read from the input file and all samples have been shifted out of the
+buffer).  The ESPS file header pointed to by \fIhd\fR is consulted for the
+type of data in the file.  The data is converted to double, float, or short
+if necessary.  If fewer than the requested \fIframelen\fR points are read
+(because end of file is reached), \fIdframebuf\fR, \fIfframebuf\fR, or
+\fIsframebuf\fR is zero-filled.
+.PP
+If \fIfirst\fP==0 and \fInmove\fP>=\fIframelen\fP, 
+.I get_sd_orec
+ignores the contents of \fIdframebuf\fR, \fIfframebuf\fR, or
+\fIsframebuf\fR, skips \fInmove\fP\-\fIframelen\fP points in \fIfile\fP,
+and then attempts to read the next \fIframelen\fP points \- i.e., after
+skipping \fInmove\-framelen\fP points, it operates as in the case
+\fIfirst\fP==0 described above.  Note that, if \fInmove\fP==\fIframelen\fP,
+the net effect is for adjacent, non-overlapping frames (i.e., same as
+\fIget_sd_rec\fP).
+.PP
+These functions can be called with \fInmove\fR == 0; they simply return
+\fIframelen\fR and the buffer is not altered.
+.PP
+ The file may be either an SD file (see
+.IR SD (5-\ESPS))
+or a
+.I single-channel
+FEA_SD file (see
+.IR FEA_SD (5\-ESPS)).
+These functions were originally written for use with the SD file type,
+which is being replaced with FEA_SD.
+Limited FEA_SD support is provided in these functions
+to help in converting existing programs
+from using SD files to using FEA_SD files.
+More complete FEA_SD support is provided by the function
+.IR get_feasd_orecs (3-ESPSu),
+which should be used in all new programs.
+.SH EXAMPLE
+.nf
+
+double data[100];		/* room for 100 samples */
+hd = read_header(file);	/* read header */
+/*read first 100 samples*/
+first = 1;
+if ((get_sd_orecd(data,100,50,first,hd,file) == 0) 
+    error;
+else
+    .... /*process first frame*/
+/*shift 50 points into file*/
+first = 0;
+if ((get_sd_orecd(data,100,50,first,hd,file) == 0) 
+    error;
+else
+    .... /*process next frame*/
+
+.fi
+.SH DIAGNOSTICS
+If \fIhd\fR does not point to the header
+of an SD file or a single-channel FEA_SD file,
+then an error message is printed on stderr,
+and the program is terminated with exit status 1.
+In an SD file, if the header type information is not set,
+then an error message is printed on stderr,
+and the program is terminated with exit 1.
+If \fInmove\fP<0, the program exits with an assertion error.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+ESPS(5\-ESPS), SD(5\-ESPS), FEA_SD(5-ESPS),
+\fIget_sd_recf\fP(3-ESPSu), \fIget_sd_recs\fP(3-ESPSu),
+\fIget_sd_recd\fP(3-ESPSu), \fIget_feasd_recs\fP(3-ESPS),
+\fIget_feasd_orecs\fP(3-ESPS)
+.fi
+.SH AUTHOR
+Manual page by John Shore
+.br
+Functions by Alan Parker
+

@@ -1,0 +1,24 @@
+#! /bin/sh
+# edemo.wtry 	@(#)edemo.wtry	1.3 6/6/90
+# main script for starting up waves+ on some test files
+
+# environment setup 
+
+PATH=.:esps/bin:$PATH; export PATH
+ESPS_VERBOSE=0; export ESPS_VERBOSE
+USE_ESPS_COMMON=off; export USE_ESPS_COMMON
+WAVES_MISC=esps/lib/waves; export WAVES_MISC
+DSPDEV="NEW,CODEC,FREQ=3072,PATH=./esps/32bin"; export DSPDEV
+
+log_file=/tmp/erldemo.log
+
+rm -f $log_filedemo.log
+
+#xwaves+ -w esps/lib/waves/.wave_pro wtry.com >> $log_file 2>&1 
+
+xwaves+ -w esps/lib/waves/.wave_pro wtry.com
+
+
+
+
+

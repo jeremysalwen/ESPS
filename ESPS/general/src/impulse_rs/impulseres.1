@@ -1,0 +1,173 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc. All rights reserved.
+.\" @(#)impulseres.1	3.8  27 Sep 1997  ESI
+.TH IMPULSE_RESP 1\-ESPS 27 Sep 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+impulse_resp \- compute unit impulse responses of filters in FEA_FILT file.
+.SH SYNOPSIS
+.PP
+.B impulse_resp
+[
+.B \-i
+]
+.BI \-n " size"
+[
+.BI \-p " range"
+]
+[
+.BI \-r " range"
+] [
+.B \-s
+] [
+.BI \-x " debug_level"
+]
+.I input.feafilt
+.I output
+.SH DESCRIPTION
+.PP
+For each record in the specified range in the input FEA_FILT file,
+.I impulse_resp
+reads the filter zfunc (see
+.IR ESPS (5\-ESPS))
+.IR FEA_FILT (5\-ESPS),
+and computes a specified number of points
+of the unit impulse response of the filter
+by using
+.IR block_filter2 (3\-ESPSsp)
+to filter a sequence consisting of a single 1 followed by zeros.
+Normally the result is written as a
+FEA_FILT record; the response is stored in the field \fIre_num_coeff\fP.
+Tags are copied from input to output.
+.PP
+Alternatively, output to a sampled-data file may be specified.  In that case,
+if there is more than one filter in the input, the output consists of several
+sampled-data segments that are simply catenated.  (To recover a particular
+segment, it is necessary to use knowledge of the number of points per
+segment.)
+.PP
+If the input or output filename is given as ``\-'', the standard input or
+output is used.
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not referred to.
+.SH "ESPS COMMON"
+.PP
+The ESPS common file is not referred to.
+.SH "ESPS HEADERS"
+The input file is included as the only source file of the output file, and
+the reference file of the input file becomes the reference file of the output
+file.  The command line is included as a comment in the output file header.
+.PP
+The generic header item
+.I start_rec
+in the output header records the number of the starting input record
+(counting from 1 for the first in the file).
+.PP
+The generic header item
+.I invert
+records the
+.I \-i
+option (1 if the option was specified, 0 if not).
+.PP
+When output is to a filter file, the value of the generic header item
+.I max_num
+in the output header is taken from the
+.I \-n
+input option.  That of
+.I max_denom
+is zero.  The value of field \fInum_degree\fP in the output record is
+also set to
+.I \-n.
+The other items in the filter-file-specific part of the output
+header are given null values such as NONE or NO.  The corresponding values from
+the input header are available, since the input file is given as the source
+of the output file.
+.PP
+When output is to a sampled-data file, the generic output header item
+.I size
+records the value specified with the
+.I \-n
+option, which equals the length of the sampled-data segment written for each
+input record.  The sampling frequency
+.I record_freq
+in the output header is arbitrarily set equal to 1.0, but this can be
+changed by using \fIaddgen\fP (1\-\s-1ESPS\s+1).
+.PP
+If the generic header item \fIsamp_freq\fP exists in the input
+.IR FEA_FILT (5\-\s-1ESPS\s+1)
+file, and if the output file is also a 
+.IR FEA_FILT (5\-\s-1ESPS\s+1)
+file, \fIsamp_freq\fP is copied to the output file.
+.SH OPTIONS
+.PP
+The following options are supported.  Values in brackets are defaults.
+.TP
+.B \-i
+Causes the impulse response of the inverse of each input filter to be
+computed, rather than that of the filter itself.
+.TP
+.BI \-n " size" "\fR [(no default)]"
+This is the number of points of the output impulse response function;
+for filter-function output, it equals
+.I nsiz
+of the output zfunc.  (See ESPS(5\-ESPS).)
+.TP
+.BI \-r " first" : "last" "\fR [(first in file):(last in file)]"
+.TP
+.BI \-r " first" :+ "incr"
+.TP
+.BI \-r " first"
+In the first form, a pair of unsigned integers specifies the range
+of records to be processed.
+Either
+.I first
+or
+.I last
+may be omitted; then the default value is used.
+If
+.IR last " = " first " + " incr,
+the second form (with the plus sign) specifies the same range as the first.
+The third form is equivalent to
+.BI \-r " first" : "first;"
+it specifies a single record.
+.TP
+.BI \-p " range"
+\fBr\fP and \fBp\fP are synonyms.
+.TP
+.B \-s
+Specifies output to a sampled-data file rather than to a filter file.
+.TP
+.BI \-x " debug_level" "\fR [0]"
+A nonzero value may invoke various debugging messages on the standard error
+output.
+.SH "SEE ALSO"
+.PP
+block_filter2(3\-ESPSsp), FEA_FILT(5\-ESPS), FEA_SD(5\-ESPS), ESPS(5\-ESPS)
+.SH DIAGNOSTICS
+.PP
+impulse_resp: unknown option:
+.RI \- letter
+.br
+Usage: impulse_resp [\-i] \-n size [\-r range][\-s][\-x debug_level] input.feafilt output
+.br
+impulse_resp: output length unspecified or negative
+.br
+impulse_resp: can't open
+.IR filename ": " reason
+.br
+impulse_resp: 
+.I filename
+is not an ESPS file
+.br
+impulse_resp: input file
+.I filename
+is not a filter file.
+.br
+impulse_resp: beginning of range precedes 1.
+.br
+impulse_resp: empty range specified.
+.br
+impulse_resp: premature EOF encountered.
+.SH AUTHOR
+.PP
+Rodney W. Johnson

@@ -1,0 +1,23 @@
+"Vert. Rescale" MENU
+	"ON"  set v_spect_rescale 1 all 1 
+	"OFF" set v_spect_rescale 0 all 1
+"Vert. Rescale" END
+"Horiz. Rescale" MENU
+	"ON"  set h_spect_rescale 1 all 1
+	"OFF" set h_spect_rescale 0 all 1
+"Horiz. Rescale" END
+"Interpolation" MENU
+	"ON" set spect_interp 1 all 1
+	"OFF" set spect_interp 0 all 1
+"Interpolation" END
+"Reticle Grid" MENU
+	"ON" set reticle_grid 1 all 1
+	"OFF" set reticle_grid 0 all 1
+"Reticle Grid" END
+"Interpolation scope" MENU
+	"BUFFER" set spect_rescale_scope buffer all 1
+	"VIEW" set spect_rescale_scope view all 1
+"Interpolation scope" END
+# @(#)imageglbl.WM	1.6 6/5/93
+
+

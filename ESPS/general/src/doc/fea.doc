@@ -1,0 +1,990 @@
+
+
+
+
+
+
+
+                         ENTROPIC RESEARCH LABORATORY, INC.
+
+
+       TECHNICAL MEMORANDUM
+
+       SUBJECT: Guidelines for Implementing ESPS Feature File Subtypes
+
+       ID: ETM-S-86-25:rap
+
+       VERSION: 3.3
+
+       DATE: 1/22/93
+
+       AUTHOR: Alan Parker
+
+       LAST REVISED BY: Rodney Johnson
+
+       REFERENCES:
+
+        [1] ESPS User's Manual
+
+        [2] J. Shore and R. Parker, Introduction to the Entropic Signal  Pro-
+            cessing System (ESPS)
+
+        [3] ETM-S-86-13:rap/jtb, Data Files in the Entropic Signal Processing
+            System (ESPS)
+
+        [4] ETM-S-86-14, Entropic Signal Processing System Programming Guide-
+            lines
+
+       1 .  Introduction
+
+            This document describes how to use the  ESPS  Feature  file  type
+       (fea(5-ESPS)). ESPS feature files allow the user  to  create  an  ESPS
+       data  file  with named fields of different data types and sizes.  They
+       can be used to define  a  new  public  ESPS  file  type  (known  as  a
+       feature-file  subtype)  or  to  implement  a private file type for the
+       user's own work.  The private file type may be a completely  new  type
+       or  an  extension  of an existing type.  When used in conjunction with
+       the generic header feature (see add_genhd(3-ESPS)), FEA files  provide
+       a very general way for the user to create ESPS data files.
+
+            The general model for using feature files depends on whether  the
+       file  is  being used for input or output, but in either case a program
+       must obtain a file header before doing anything else with a file.  Not
+       only  is the header the first piece of information to be read or writ-
+       ten, it must be referred to by the routines that  allocate  space  for
+       data  records  and  read, access, and write them.  The common part and
+       ____________________
+          c                                                                 c
+            Copyright 1987-90 Entropic Speech, Inc.; All rights  reserved.
+       Copyright 1990-93 Entropic Research Lab, Inc.; All rights reserved.
+
+
+
+
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                 page 2
+
+
+       the variable part of the header in a feature  file  contain  the  same
+       information,  including  generic  header items, as in other ESPS files
+       (see ESPS(5-ESPS)).  The type-specific part of the header contains the
+       definition  of  each data field, including its name, size, dimensions,
+       and location within the record (see FEA(5-ESPS)).
+
+            When an output feature file is created,  a  new  header  must  be
+       built unless a copy of an existing header can be suitably modified.  A
+       new feature-file header is created  with  new_header;  then  the  data
+       fields  are  defined  with  add_fea_fld,  and generic header items are
+       created with the functions add_genhd_*(3-ESPS).  Details are given  in
+       Section  3.   After  all the header information is fixed in place, the
+       header is written out, as with any other kind of ESPS file.  After the
+       header  has been written to the file, the program can allocate storage
+       for a data record and start filling in data and writing  out  records.
+       Methods for dealing with the data are discussed in Sections 4 and 5.
+
+            For input feature files, life is simpler since  the  fields  have
+       already  been  defined (when the file was created).  After reading the
+       header, the program can allocate storage for a data record  and  start
+       reading  in  records  and  accessing the data in them.  The programmer
+       will usually know what the fields are and their types.  The  sizes  of
+       the  fields might be known by definition or through header items.  But
+       in all cases this information is  in  the  FEA  header  and  available
+       through access functions (see get_fea_siz(3-ESPS)).
+
+            If the feature file is a predefined public subtype (public in the
+       sense  that a file type like SD is public), then documentation of that
+       subtype will list the fields and give their type and size information.
+       Usually a support module will be provided:  a data structure and func-
+       tions for dealing with the subtype more conveniently than through  the
+       basic  feature-file  facilities.   The  functions support initializing
+       headers, allocating record storage, and reading and  writing  records.
+       The  use  of a typical set of such support functions is illustrated in
+       Section 2.
+
+            Sections 3 through 6 show how the functions of a  support  module
+       are  implemented  in terms of the basic feature-file facilities.  Sec-
+       tion 7 shows how a predefined subtype can be extended with  additional
+       fields  to  meet special needs.  Section 8 describes the documentation
+       and other material that should be provided  when  a  new  feature-file
+       subtype is installed for general use.
+
+       2 .  Example - Use of a Subtype Support Module
+
+            This document uses as  an  example  a  simplified  version  of  a
+       feature-file  subtype  FEA_ANA that was created to hold the results of
+       analysis of speech data.  The subtype is defined to be tagged  and  to
+       have  four vector fields and a scalar field as listed in the following
+       table:
+
+          ________________________________________________________________
+              Name                  Size                  Rank      Type
+          ________________________________________________________________
+           raw_power     maxraw                        1 (vector)   float
+           lpc_power     maxlpc                        1 (vector)   float
+           p_pulse_len   maxpulses                     1 (vector)   float
+           ref_coeff     MAX(order_vcd, order_unvcd)   1 (vector)   float
+          _frame_len_____1_____________________________0_(scalar)___long__
+
+
+
+
+       ETM-S-86-25:rap                                                 page 3
+
+
+
+          |            |                             |            |       |
+          |            |                             |            |       |
+       The|variables in|the Size column refer to the |ollowing gen|ric hea|er
+       ite|s, which are|also part of the FEA_ANA defi|ition.      |       |
+          |            |                             |            |       |
+          |            |    _________________________|_           |       |
+          |            |    |___Name_____|_Size_|_Typ|_|          |       |
+          |            |    |maxraw      | 1    | lon| |          |       |
+          |            |    |maxlpc      | 1    | lon| |          |       |
+          |            |    |maxpulses   | 1    | lon| |          |       |
+          |            |    |order_vcd   | 1    | lon| |          |       |
+          |            |    |order_unvcd | 1    | lon| |          |       |
+          |            |    |____________|______|____|_|          |       |
+          |            |                             |            |       |
+       (If|you consult |he FEA_ANA(5-ESPS) manual pag| you  will  |ind  ot|er
+       fie|ds  and head|r items listed, but these are|enough for a| illust|a-
+       tio|.)          |                             |            |       |
+          |            |                             |            |       |
+          | To use the |EA_ANA file subtype, we have |o create a h|ader  w|th
+       the| field  defi|itions  if  it is a new file.| The basic E|PS util|ty
+       fun|tion  new_he|der   will   create   the   h|ader.    The|  funct|on
+       ini|_anafea_hd  |rom the FEA_ANA support modul| will add th| necess|ry
+       fie|d definition| and generic header items.  T|is  function| takes |as
+       arg|ments  the  |alues  that determine the rec|rd size.  Th| follow|ng
+       wil| do the job:|                             |            |       |
+          |            |                             |            |       |
+          | hd = new_he|der(FT_FEA);                 |            |       |
+          | init_anafea|hd(hd, maxraw, maxlpc, maxpul|es, order_vc|, order|unvcd);
+          |            |                             |            |       |
+       The|functions ne|_header and init_anafea_hd re|lly  may  re|urn  er|or
+       cod|s,  but  I'm| ignoring  that  here.   Othe| header init|alizati|ns
+       sho|ld also be d|ne, such as filling in  the  |omment  fiel|  and  |he
+       sou|ce  files,  |ut  these  are not shown, as |hey are not |eculiar|to
+       fea|ure files.  |ow assuming that the header i| complete, w| write |it
+       out|            |                             |            |       |
+          |            |                             |            |       |
+          | write_heade|(hd, file);                  |            |       |
+          |            |                             |            |       |
+       jus| as with any|other ESPS file.             |            |       |
+          |            |                             |            |       |
+          | One simple |ay  to  use  feature-file  da|a  records  |s  to  |et
+       poi|ters to the |ata and then move data betwee| variables i| your p|o-
+       gra| and the fea|ure file record.  But with  t|e  pointers |it's  e|en
+       eas|er  to  use |the  memory in the feature-fi|e record ins|ead of |he
+       pro|ram variable|.  This is one reason  C  has| pointers.  |It's  c|n-
+       ven|ent to defin| a data structure to hold all|the pointers|       |
+          |            |                             |            |       |
+          | struct anaf|a                            |            |       |
+          | {          |                             |            |       |
+          |     long *t|g;                           |            |       |
+          |     float *|aw_power;                    |            |       |
+                float *lpc_power;
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                 page 4
+
+
+                float *p_pulse_len;
+                float *ref_coeff;
+                long *frame_len;
+                struct fea_data *fea_rec;
+            }
+
+       For a public feature subtype, a structure  declaration  like  this  is
+       provided  as  part  of  the support module and included in the program
+       with a line like
+
+            #include <esps/anafea.h>
+
+       near the beginning.  Besides pointers for the tag and the  5  feature-
+       file  fields,  we  have a pointer fea_rec to a fea_data structure con-
+       taining the data values.  This is used by functions get_anafea_rec and
+       put_anafea_rec that are introduced further down.
+
+            Now an anafea structure must be allocated.   The  support  module
+       contains  a  function  allo_anafea_rec  for  that purpose.  Assuming a
+       declaration
+
+            struct anafea *ana;
+
+       the statement
+
+            ana = allo_anafea_rec(hd);
+
+       will allocate the anafea  structure  and  the  fea_data  structure  it
+       refers to and assign the proper pointer values.
+
+            Now, let's use the data.  Note that you have two ways for knowing
+       the  size  of an array, such as lpc_power.  One way is to know that it
+       is maxlpc from the header.  In case you don't know that, or the  rules
+       change, you can get the size of a feature file field with get_fea_siz.
+       Assignments as in
+
+            for (i=0; i<maxlpc; i++)
+                ana->lpc_power[i] = some_expression;
+
+       will store values in the pool of memory set up by the  allo_anafea_rec
+       call.  The stored values can be used in expressions as in
+
+            something = ana->lpc_power[some_index] + something_else;
+
+       Of course, you could be a real C programmer and avoid the use of array
+       subscripts entirely and just increment the pointer value.
+
+            As for the scalars (tag and frame_len) you just have to  remember
+       that they are pointers.  So to set the frame_len value do
+
+            *ana->frame_len = xx;
+
+
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                 page 5
+
+
+       You can use *ana->frame_len in any expression as often as you  please.
+       No  need  to assign it to another variable.  You can access the tag by
+       *ana->tag.
+
+            Once values have been assigned to all the fields in  the  record,
+       copy the data in the allocated storage to the file by doing
+
+            put_anafea_rec(ana, hd, file);
+
+       Then you are ready to assign new values to the fields, output  another
+       record with put_anafea_rec, and so on as often as you like.  After the
+       initial call, you never call allo_anafea_rec again.
+
+            The functions new_header and  init_anafea_hd  are  not  used  for
+       input  files.   If  you are reading a FEA_ANA file instead of creating
+       one, get the header with
+
+            hd = read_header(file);
+
+       or use eopen(3-ESPSu).  With the header in  hand,  allocate  a  record
+       structure just as above:
+
+            ana = allo_anafea_rec(hd);
+
+       Before you can use the data (for an input file) it must be  read  from
+       the file:
+
+            get_anafea_rec(rec, hd);
+
+       This reads a record from  a  file  into  the  memory  set  up  by  the
+       allo_anafea_rec  call.   Now  you  can access the data by referring to
+       ana->lpc_power[i], *ana->frame_len, and the other fields.  After  pro-
+       cessing  one  record,  you  can use get_anafea_rec to read another and
+       repeat.  Since get_anafea_rec returns EOF on end of file (and a  posi-
+       tive integer otherwise), it is possible to use a loop of the form
+
+            while (get_anafea_rec(ana, hd, file) != EOF)
+            {
+                /* Process one record. */
+            }
+
+       to process an entire file.
+
+       3 .  Creating Headers
+
+            To use the FEA_ANA file subtype, we have to create a header  with
+       the  field  definitions  if  it is a new file.  Here is how to do this
+       with the basic feature-file facilities.  Use
+
+            hd = new_header(FT_FEA);
+
+       to create the header.  Then do
+
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                 page 6
+
+
+            hd->common.tag = YES;
+
+       since FEA_ANA files are supposed to be tagged.
+
+            The basic function  for  defining  fields  in  feature  files  is
+       add_fea_fld.  The statement
+
+            add_fea_fld("raw_power", maxraw, 1, (long *) NULL,  FLOAT,  (char
+            **) NULL, hd);
+
+       adds to the header information defining the size, type, and dimensions
+       of  the  field  raw_power.   Similar  invocations  of  add_fea_fld are
+       required for the other FEA_ANA fields.
+
+            The functions add_genhd_*(3-ESPS) add  generic  header  items  of
+       various  types  to ESPS file headers.  The one that adds long items is
+       add_genhd_l.  The function returns a pointer to the storage  allocated
+       in the header for the item, so a statement like
+
+            *add_genhd_l("maxraw", (long *) NULL, 1, hd) = maxraw;
+
+       both creates the item and assigns a value to it.  One  such  statement
+       is needed for each FEA_ANA generic header item.
+
+            The functions new_header and add_fea_fld may return  error  codes
+       that should be checked, though the checking code is not shown above.
+
+            After the header is complete, but before any records are written,
+       executing the statement
+
+            write_header(hd, file);
+
+       writes the header to the file.
+
+            The steps above show what is required to  create  a  feature-file
+       header.  Often there will be several programs that deal with a partic-
+       ular feature-file subtype.  In that case it is  worth  the  effort  to
+       create a support module for the subtype and to include in it a routine
+       like init_anafea_hd for filling in the header of a  feature  file  and
+       making  it a file of the correct subtype.  The routine creates generic
+       header items as needed and creates the data record  fields.   In  gen-
+       eral,  such  a routine takes as arguments those values that affect the
+       size of the data record.  These values are stored in the  file  header
+       (as generic header items).
+
+            This routine is only used when creating a new  FEA_ANA  file  for
+       output.   It  is  not used when reading a FEA_ANA file.  This function
+       returns zero on success and non-zero on  failure.   It  uses  a  macro
+       ADDFLD   to   simplify  rewriting  the  series  of  5  invocations  of
+       add_fea_fld and to check the return codes.
+
+            #define ADDFLD(name, size, rank, dimen, type, enums) \
+                {if (add_fea_fld((name), (long)(size), (rank), (long*)(dimen), \
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                 page 7
+
+
+                    type, (char**)(enums), hd) == -1) return 1;}
+
+            int
+            init_anafea_hd(hd, maxraw, maxlpc, maxpulses, order_vcd, order_unvcd)
+                struct header *hd;
+                int maxraw, maxlpc, maxpulses, order_vcd, order_unvcd;
+            {
+                /* file is tagged */
+
+                hd->common.tag = YES;
+
+                /* save parameters in the header */
+
+                *add_genhd_l("maxraw", (long *) NULL, 1, hd) = maxraw;
+                *add_genhd_l("maxlpc", (long *) NULL, 1, hd) = maxlpc;
+                *add_genhd_l("maxpulses", (long *) NULL, 1, hd) = maxpulses;
+                *add_genhd_l("order_vcd", (long *) NULL, 1, hd) = order_vcd;
+                *add_genhd_l("order_unvcd", (long *) NULL, 1, hd) = order_unvcd;
+
+                /* create the record fields */
+
+                ADDFLD("raw_power", maxraw, 1, NULL, FLOAT, NULL)
+                ADDFLD("lpc_power", maxlpc, 1, NULL, FLOAT, NULL)
+                ADDFLD("p_pulse_len", maxpulses, 1, NULL, FLOAT, NULL)
+                ADDFLD("ref_coeff",
+                    MAX(order_vcd,  order_unvcd), 1, NULL, FLOAT, NULL)
+                ADDFLD("frame_len", 1, 0, NULL, LONG, NULL)
+
+                hd->hd.fea->fea_type = FEA_ANA;  /* this type code is assigned when
+                                                        the subtype becomes official */
+                return 0;
+            }
+
+       4 .  Allocating Data Records
+
+            To deal with a data record, two structures are to  be  allocated:
+       a  fea_data structure to hold the data and an anafea structure to hold
+       pointers to the locations in the fea_data structure where the  various
+       fields are stored.  First we'll see how to allocate the structures and
+       set up the pointers with just the basic feature-file facilities.  Then
+       comes  code  for  a support-module function allo_anafea_rec that takes
+       care of all these tasks.
+
+            We begin with allocation of the  anafea  structure.   Assuming  a
+       variable declaration
+
+            struct anafea *ana;
+
+       the statement
+
+            ana = (struct anafea *) calloc(1, sizeof *ana);
+
+
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                 page 8
+
+
+       will allocate the structure and assign a pointer to  it  to  ana.   Of
+       course,  depending  on  the  needs of the program, the structure could
+       have simply been declared at compile time.
+
+            The data-record memory is allocated with the  basic  feature-file
+       routine  allo_fea_rec,  which  uses  information in the file header to
+       allocate the correct amount of memory of each data type.
+
+            ana->fea_rec = fea_rec = allo_fea_rec(hd);
+
+       The address of the feature-file record  (the  fea_data  structure)  is
+       saved  in  the FEA_ANA subtype record (the anafea structure).  This is
+       so that subtype-specific routines can simply be passed  a  pointer  to
+       the  subtype  record  and still have access to the underlying feature-
+       file record.  (We have also saved the address in  a  variable  fea_rec
+       for convenience of reference.)
+
+            After the feature record is allocated, get_fea_ptr is called  for
+       a  pointer  to the memory associated with each particular named field.
+       The return data type of this function is (char *), and it must be cast
+       to the correct data type.  (This is like malloc(3)).  For example,
+
+            ana->raw_power = (float *) get_fea_ptr(fea_rec, "raw_power", hd);
+
+       makes ana->raw_power point to the storage for the first element of the
+       float array field named "raw_power", and
+
+            ana->frame_len = (long *) get_fea_ptr(fea_rec, "frame_len", hd);
+
+       makes ana->frame_len point to the storage for the  long  scalar  field
+       named "frame_len".  Then you can use statements like
+
+            ana->lpc_power[i] = new_value;
+            xx = *ana->frame_len;
+
+       to set and get values of field elements.
+
+            One invocation of get_fea_ptr is needed for  each  field  defined
+       for  the subtype.  If you fail to use the correct cast, you will get a
+       compile-time error complaining about illegal pointer combinations.
+
+            If you forget that frame_len is a pointer and say  ana->frame_len
+       instead  of  *ana->frame_len  in  an  expression, you will get a funny
+       number which is the address of the data.  In some such cases you  will
+       get a message about illegal combination of pointer and integer or some
+       such, but don't count on it.
+
+            Since get_fea_ptr returns a pointer, you  could  use  its  return
+       value  directly  to access the data instead of saving the pointer in a
+       structure as we have shown.  This probably is not the best way to  use
+       the  function  in  general.  In particular, you probably don't want to
+       put the function call in a processing loop that gets  executed  10,000
+       times.  But this does work:
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                 page 9
+
+
+            something = *(long *)  get_fea_ptr(fea_rec,  "frame_len",  hd)  +
+            something_else;
+
+       So does this:
+
+            *(long *) get_fea_ptr(fea_rec, "frame_len", hd) = 779;
+
+            The tag is handled specially, since it's the one  field  that  is
+       directly built in and preallocated in feature file records.
+
+            ana->tag = &fea_rec->tag;
+
+       ana->tag is a pointer containing the address of  fea_rec->tag,  so  to
+       say *ana->tag is to refer to the same memory as fea_rec->tag.  You can
+       access the tag as *ana->tag, but if you  do  not  want  to  access  it
+       through  a pointer, you can just use it directly from the feature file
+       record.
+
+            The function allo_anafea_rec allocates a feature-file record  for
+       the FEA file subtype FEA_ANA.  It allocates a structure and assigns to
+       the pointers in it the addresses  of  the  data  in  the  feature-file
+       record.   The function uses a macro GETPTR to simplify writing several
+       invocations of get_fea_ptr The feature-file  header  must  be  set  up
+       before this function is called.
+
+            #define GETPTR(member,type,field) \
+                {fana->member = (type *) get_fea_ptr(fea_rec, field, hd);}
+
+            struct anafea *
+            allo_anafea_rec(hd)
+                struct header hd;
+            {
+                struct anafea *fana = (struct anafea *) calloc(1, sizeof *ana);
+                struct fea_data *fea_rec = allo_fea_rec(hd);
+
+                /* check to be sure this is the right kind of file
+                 */
+
+                if(hd->common.type != FT_FEA) error("Not a feature file");
+                if(hd->hd.fea->fea_type != FEA_ANA) error("Not a FEA_ANA file");
+
+                /* hook the pointers in the ana record up to the data area in the
+                 * feature file record
+                 */
+
+                fana->tag = &fea_rec->tag;
+                GETPTR(raw_power, float, "raw_power")
+                GETPTR(lpc_power, float, "lpc_power")
+                GETPTR(p_pulse_len, float, "p_pulse_len")
+                GETPTR(ref_coeff, float, "ref_coeff")
+                GETPTR(frame_len, long, "frame_len")
+
+                /* save the pointer to the feature file record in the ana record
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                page 10
+
+
+                 */
+
+                fana->fea_rec = fea_rec;
+
+                return fana;
+            }
+
+       5 .  Reading and Writing Records
+
+            In addition to a  header-initialization  routine  and  a  record-
+       allocation  function,  a  support module for a new file type typically
+       includes get/put record functions that do the record input/output.
+
+            In most cases the  get/put  functions  simply  read  or  write  a
+       feature file record.  Since the subtype record consists of pointers to
+       the data record memory there is no moving of data required.    In some
+       cases,  however,  it  might  be desirable to move the data into a dif-
+       ferent type of  data  structure.   For  example,  you  might  want  to
+       represent the data in the program as a matrix (this could also be done
+       just by setting up an array of pointers, but in some cases it might be
+       just  as well to move the data).   In such cases, the get/put routines
+       would be where this movement of the data is done.
+
+            We continue to use our example from above where we implement  the
+       FEA_ANA  file  type  as  a  feature file and show the required support
+       modules.
+
+       5 .1 .  put_anafea_rec
+
+            This routine writes a record of the  FEA  file  subtype  FEA_ANA.
+       In  this  example,  it  does  nothing more than write the feature-file
+       record.  In some other cases, it might have to do some  transformation
+       of the data (for example to support a matrix data structure).
+
+            void
+            put_anafea_rec(rec, hd, strm)
+                struct anafea *rec;
+                struct header *hd;
+                FILE *strm;
+            {
+                if (hd->common.type != FT_FEA) error("Not a feature file");
+                if (hd->hd.fea->fea_type != FEA_ANA) error("Not a FEA_ANA file");
+
+                put_fea_rec(rec->fea_rec, hd, strm);
+            }
+
+       5 .2 .  get_anafea_rec
+
+            This routine reads a record of  the  FEA  file  subtype  FEA_ANA.
+       Like the put function above, it does nothing more than get the feature
+       file  record.   It  returns  1  on  success  because  all  other  ESPS
+       get_record  functions return EOF on end of file or a positive non-zero
+       integer if the record is read correctly.
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                page 11
+
+
+            int
+            get_anafea_rec(rec, hd, strm)
+                struct anafea *rec;
+                struct header *hd;
+                FILE *strm;
+            {
+                if (hd->common.type != FT_FEA) error("Not a feature file");
+                if (hd->hd.fea->fea_type != FEA_ANA) error("Not a FEA_ANA file");
+
+                if (get_fea_rec(rec->fea_rec, hd, strm) == EOF) return EOF;
+                return (1);
+            }
+
+       6 .  Other Parts of the Support Module
+
+            In addition to these routines the support module  should  contain
+       definitions  for  any global variables needed by the feature file sub-
+       type.  The most common  examples  of  required  global  variables  are
+       string  arrays  used to define possible values for coded or enumerated
+       data fields in the record.  See lin_search(3-ESPS).
+
+            For a more complete (and more complex) example of a feature  file
+       subtype  support  routine  see  vqsupport.c in the ESPS library source
+       directory.  The most significant difference  between  vqsupport.c  and
+       the  example  here  that  one  of the items in the data structure is a
+       two-dimensional array, so the data is moved between the  feature  file
+       record  and the vq record.  This could have been done by setting up an
+       array  of  pointers   with   the   correct   values.    The   function
+       marg_index(3-ESPSu)  is intended for that purpose; see its manual page
+       for an example of its use.  But  since  vq  files  do  not  have  many
+       records  it  did not seem necessary at the time.   Of course, it could
+       be changed without affecting existing programs.  The other  difference
+       between  vqsupport.c  and this example is that it is complete and does
+       compile and execute.
+
+       7 .  Extension of Predefined Feature-File Subtypes
+
+            Sometimes an application arises for which a  predefined  feature-
+       file  subtype is suitable except that a little extra information needs
+       to be recorded in each record.  Rather than define an entire new  sub-
+       type that differs only slightly from the existing subtype, you can use
+       the support functions for the existing subtype unchanged and just  use
+       auxiliary  functions to take care of the additional fields.  If just a
+       single additional field is needed, the basic  feature-file  facilities
+       may be enough.
+
+            Suppose for example that a FEA_ANA file with an additional scalar
+       field  comb_cm_lag  of  type  float is called for.  (The name is taken
+       from an actual application.) To create a header,  you  can  just  call
+       add_fea_fld after using init_anafea_hd:
+
+            hd = new_header(FT_FEA);
+            if (init_anafea_hd(hd, maxraw, maxlpc, maxpulses, order_vcd, order_unvcd) != 0)
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                page 12
+
+
+                    error("error filling FEA_ANA header");
+            if (add_fea_fld("comb_cm_lag",
+                            1L, 0, (long *) NULL, FLOAT, (char **) NULL, hd) == -1)
+                    error("error adding auxiliary field");
+
+       After creating or reading such a  header,  you  can  allocate  a  data
+       record as usual:
+
+            ana = allo_anafea_rec(hd);
+
+       this creates space for the new field as well as the predefined fields.
+       The  latter  are  accessed as usual through the pointers in the anafea
+       structure:
+
+            *ana->frame_len = some_length;
+
+       The new field is accessed through a pointer obtained from get_fea_ptr:
+
+            comb_cm_lag_p = (float *) get_fea_ptr(ana->fea_rec, "comb_cm_lag", hd);
+                /* . . . */
+            old_val = *comb_cm_lag_p;
+            *comb_cm_lag_p = new_val;
+
+       Finally, nothing new is needed for reading or writing the record:
+
+            get_anafea_rec(ana, hd, istrm);
+
+       will read a record, including the new field, from an input file istrm,
+       and
+
+            put_anafea_rec(ana, hd, ostrm);
+
+       will write the record, including the new  field,  to  an  output  file
+       ostrm.
+
+            If several new fields are needed, it may be worthwhile to  define
+       an  auxiliary data structure and support functions.  For example, sup-
+       pose these fields are required:
+
+                       _____________________________________
+                       |___Name_____|__Size___|_Rank_|_Type_|
+                       |cm_lag      | n_rows  | 1    | NULL |
+                       |comb_cm_lag | 1       | 0    | NULL |
+                       |posteriors  | n_vclas | 1    | NULL |
+                       |____________|_________|______|______|
+
+
+            A support function parallel to init_anafea_hd will take  care  of
+       defining the new fields.
+
+            #define ADDFLD(name, size, rank, dimen, type, enums) \
+                    {if (add_fea_fld((name), (long)(size), (rank), (long*)(dimen), \
+                            type, (char**)(enums), hd) == -1) return 1;}
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                page 13
+
+
+            int
+            init_auxana_hd(hd, n_rows, n_vclas)
+                struct header *hd;  /* FEA file header */
+                int n_rows;         /* number of elements of cm_lag */
+                int n_vclas         /* number of elements of posteriors */
+            {
+                int i;
+
+                *add_genhd_l("n_rows", (long *) NULL, 1, hd) = n_rows;
+                *add_genhd_l("n_vclas", (long *) NULL, 1, hd) = n_vclas;
+
+                ADDFLD("cm_lag", n_rows, 1, NULL, FLOAT, NULL)
+                ADDFLD("comb_cm_lag", 1, 0, NULL, FLOAT, NULL)
+                ADDFLD("posteriors", n_vclas, 1, NULL, FLOAT, NULL)
+                return 0;
+            }
+
+       This is called along with init_anafea_hd when a new header is created:
+
+            hd = new_header(FT_FEA);
+            if (init_anafea_hd(hd, maxr, maxl, maxp, o_vcd, o_unv) != 0)
+                    error("error filling FEA_ANA header");
+            if (init_auxana_hd(hd, n_rows, n_vclas) != 0)
+                    error("error adding auxiliary fields");
+
+       For record access, define a pointer structure
+
+            struct auxana
+            {
+                float *cm_lag;      /* vector */
+                float *comb_cm_lag; /* scalar */
+                float *posteriors;  /* vector */
+            };
+
+       This can be put in a private include file.  For each anafea structure,
+       the program should have a corresponding auxana structure:
+
+            struct anafea *ana;
+            struct auxana *aux;
+
+       The structure is allocated and the pointer values filled in by a  sup-
+       port function parallel to allo_anafea_rec:
+
+            #define GETPTR(member, type, field) \
+                    {aux_rec->member = (type *) get_fea_ptr(fea_rec, field, hd);}
+
+            struct auxana *
+            allo_auxana_rec(hd, rec)
+                struct header *hd;
+                struct anafea *rec;
+            {
+                int i;
+                struct auxana *aux_rec;
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                page 14
+
+
+                struct fea_data *fea_rec;
+
+                aux_rec = (struct auxana *) calloc(1, sizeof(struct auxana));
+                fea_rec = rec->fea_rec;
+
+                GETPTR(cm_lag, float, "cm_lag")
+                GETPTR(comb_cm_lag, float, "comb_cm_lag")
+                GETPTR(posteriors, float, "posteriors")
+                return aux_rec;
+            }
+
+       This is called after each invocation of allo_anafea_rec:
+
+            ana = allo_anafea_rec(hd);
+            aux = allo_auxana_rec(hd, ana);
+
+       Then the predefined fields are accessed as usual  through  the  anafea
+       structure, as before, and the new fields are accessed through the aux-
+       ana structure:
+
+            old_val = *aux->comb_cm_lag;
+            *aux->comb_cm_lag = new_val;
+
+       8 .  Documentation for Official Feature File Subtypes
+
+            This section describes the standard documentation format  for  an
+       official  feature  file  subtype.  The feature file header has a field
+       for a type code to allow for the definition of new file  types  imple-
+       mented with feature files.   When this is done, the new file type must
+       be documented so that other programmers can properly  design  programs
+       that must use these files.
+
+            The format of the documentation for these  files  is  nearly  the
+       same  as  the  existing section 5 manual pages for files types such as
+       SD.  The information that a programmer must have to use a feature file
+       includes:
+
+           file type code,
+           generic header items and their meaning,
+           listing of the fields in the feature file and their size information,
+           the data structure of the record if one is appropriate, and
+           manual pages for supporting functions as appropriate.
+
+
+            In most cases when a new file type is implemented  using  feature
+       files,  the  designer should provide a data structure like our FEA_ANA
+       example above for other programmers to use.   This  will  go  into  an
+       include  file  that  will be installed in the ESPS include-file direc-
+       tory.  This header file should also include declarations for any  sup-
+       port functions for the new file type.   See <esps/vq.h> for an example
+       of this.
+
+
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+
+
+
+
+
+       ETM-S-86-25:rap                                                page 15
+
+
+            When a feature file subtype is to be made official, the  designer
+       will submit the following to the ESPS maintainer:
+
+           section 5 manual page,
+           section 3 manual pages for support functions,
+           support functions as described above in a C module xxsupport.c, and
+           include file <esps/xx.h> with structure declarations,
+
+       where xx is a name for the subtype.
+
+            The ESPS maintainer  will  assign  the  file  type  a  type  code
+       (FEA_xx)  and  add  this  to  the  others  in  <esps/fea.h>.  The file
+       ftypes.c in the ESPS library source directory contains the  definition
+       of  an  array  fea_file_type of strings that associates each type code
+       with its name; for example
+
+            fea_file_type[FEA_ANA] == "FEA_ANA"
+
+       The ESPS maintainer will update the definition of  fea_file_type  when
+       the new type code is assigned.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       Version 3.3                      ERL                           1/22/93
+
+
+

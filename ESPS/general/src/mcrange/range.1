@@ -1,0 +1,125 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved.
+.\" @(#)range.1	3.5 12/20/88 ESI
+.TH RANGE 1\-ESPS 12/20/88
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+range - select a range from a sampled data plot/interactive plot and play
+.SH "SYNOPSIS"
+.B range
+[
+.BI \-p 
+] [
+.BI \-b " shift-value"
+] [
+.BI \-c " d/a channel number"
+]
+.SH "DESCRIPTION"
+.PP
+.I range
+is used to select a range from a sampled data plot that is currently 
+displayed on
+a \s-1MASSCOMP\s+1 graphics terminal and to enter that range into the
+ESPS Common file.  
+It can also be used with \fIplotsd\fR and \fIplay\fR as an interactive
+plot/play program.
+.PP
+After \fIplotsd\fR is used to display a sampled data plot on the
+graphics terminal screen, \fIrange\fR is run.  It displays instructions
+at the top of the display.  To use \fIrange\fR simply to put a range into 
+the ESPS Common
+file, \fIrange\fR is used without any options.
+First, click the left mouse
+button while pointing to any vertical position above the origin of
+the graph (extreme left side).  Next, do the same thing at the end
+point (extreme right side).  This completes the set-up portion of the
+process.  
+The program is now in what we will call \fIselect mode\fR.
+At this point, the left mouse button will select the starting point of
+the range, the middle button will call the \fIplay\fR program on the
+entire displayed plot, and the right buttton will zoom out the plot
+(replot the entire sampled data file). 
+After the starting point of the range is selected (with the left button)
+the current range
+will be displayed at the top of the screen as the mouse is moved
+across the graph.  The program is now in \fIrange mode\fR.
+In this mode pressing the left button will zoom in on the selected
+range (replot the sampled data file using the selected range).  The
+middle button will save the selected range into the Common file and
+exit.  The right button will abort the current range and allow you to
+reselect the starting point again (that is it returns to \fIselect mode\fR). 
+.PP
+If the \fB\-p\fR option is used, then \fIrange\fR will call the
+\fIplay\fR program, instead of saving the selected range and exiting
+when the middle button is pressed in \fIrange mode\fR.  This causes the
+selected range to by played (assuming of course, that your system has
+playback capability and the ESPS \fIplay\fR program has been correctly
+configured).  When \fIplay\fR returns, if the mouse has not been moved,
+pressing the middle button again will save the range into Common
+and exit.   If the mouse has moved, then the program simply remains in
+\fIrange mode\fR.
+.PP
+The \fB\-b\fR and \fB\-c\fR options are passed on to \fIplay\fR when it
+is run.  See \fIplay\fR(1\-ESPS) for details.
+.PP
+The ESPS Common file is updated each whenever the plot is redrawn (zoom
+in or out), or when a segment is played.   This could be useful when
+running \fIplotsd/range\fR in one window and another ESPS program that
+uses Common in another window.
+The top line of the display always tells what the mouse buttons will do
+in each mode.
+You can use your Unix interrupt character to abort out of range at
+anytime.
+.PP
+Note that since this program depends on ESPS Common and processes it
+often during its execution, the messages from Common processing if the
+ESPS_VERBOSE environment variable is non-zero will interfere with the
+plotting.
+.SH "ESPS PARAMETERS"
+No ESPS parameter file is read.
+.SH ESPS COMMON
+The following items are read from the ESPS Common file:
+.IP
+.I "beginplot - integer"
+.IP
+This is the x-coordinate position at the origin of the graph.
+.sp
+.I "endplot - integer"
+.IP
+This is the x-coordinate position at the end point of the graph.
+.PP
+The following items are written into the ESPS Common file:
+.IP
+.I "start - integer"
+.IP
+The left point in the range selected.
+.sp
+.I "nan - integer"
+.IP
+The number of points in the selected range.
+.PP
+The ESPS Common file is updated everytime \fIplay\fR or \fIplotsd\fR is
+called by \fIrange\fR.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off" (though it would be pointless to do so when using
+this program).  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.SH "ESPS HEADERS"
+No ESPS header is read.
+.SH DIAGNOSTICS
+.PP
+.SH "BUGS"
+.PP
+.SH "SEE ALSO"
+.PP
+mlplot(1\-ESPS), plotsd(1\-ESPS), plotspec(1\-ESPS), play(1\-ESPS)
+.SH "FUTURE CHANGES"
+Mark selected range with vertical bars.
+.SH "AUTHOR"
+.PP
+Ajaipal S. Virdy, Alan Parker

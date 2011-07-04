@@ -1,0 +1,259 @@
+.\" Copyright (c) 1987,1988,1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)window.1	1.8 1.8 ESI
+.TH WINDOW 1\-ESPS 3/16/90
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+window \- windows sampled data in FEA records 
+.SH "SYNOPSIS"
+.B window
+[
+.BI \-P " params"
+] [
+.BI \-f " sd_field"
+[
+.BI \-f " power_field"
+] [
+.BI \-r " range"
+] [
+.BI \-l " window_len"
+] [
+.BI \-w " window_type"
+] [
+.BI \-x " debug_level"
+]
+.I "input output"
+.SH "DESCRIPTION"
+.PP
+.I Window
+accepts a FEA file \fIinput\fP containing a vector sampled-data field
+in each record.  It produces a FEA file \fIoutput\fP with records
+containing the results of applying a fixed window to the input
+sampled-data field.  Each field of sampled data may be thought of as a
+separate frame of data, such as might be produced by \fIframe\fP
+(1\-\s-1ESPS\s+1).  The default name for the sampled data field in
+\fIinput\fP is \fIsd\fP, and the default name for the window field in
+\fIoutput\fP is \fIwind_sd\fP.  Both defaults can be changed by means
+of the \fB\-f\fP option.  If the input is tagged or segment labelled,
+the relevant information is copied over to the output.  If \fIinput\fP
+is "\-", standard input is used for the input file.  If \fIoutput\fP
+is "\-", standard input is used for the output file.
+.PP
+The window is computed using \fIwindow\fP (3\-\s-1ESPS\s+1).  
+The fixed window length \fIwindow_len\fP must not be larger than the size
+of the sampled data field.  If it is smaller, zeros are filled to the 
+end of the field.  All of the first \fIwindow_len\fP elements in 
+each input field are processed.  If \fIinput\fP is segment-labelled, 
+\fIwindow\fP warns if any of the \fIsegment_length\fP values are 
+less than \fIwindow_len\fP.  (This may be intentional, so it 
+would be too verbose to identify each such frame.  They may, however,
+be identified using \fIselect\fP (1\-\s-1ESPS\s+1).)  
+.PP
+Note that windowed FEA sampled data records can also be produced 
+by \fIframe\fP (1\-\s-1ESPS\s+1).  \fIWindow\fP is intended for 
+occasions when it is appropriate to defer windowing because of 
+intermediate processing.  
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-P " param" " \fR[params]\fP"
+Specifies the name of the parameter file.
+.TP
+.BI \-r " start" : "last" "\fR [1:(last in file)]"
+.TP
+.BI \-r " start" :+ "nan"
+In the first form, a pair of unsigned integers specifies the range
+of records to be processed.
+Either
+.I start
+or
+.I last
+may be omitted; then the default value is used.
+If
+.IR last " = " start " + " nan,
+the second form (with the plus sign) specifies the same range as the first.
+The \fB\-r\fP overrides the values of \fIstart\fP and \fInan\fP from 
+the parameter file.  
+.TP
+.BI \-f " field_name" 
+If this option is used once, it specifies the name of the sampled 
+data field in \fIinput\fP.  If it is used twice, the second time
+it specifies the name of the window field in \fIoutput\fP.  
+The default names for these fields are "sd" and "wind_sd", respectively. 
+.TP
+.BI \-l " window_len" "\fR [0]"
+Specifies the window length.  If the option is omitted, the
+parameter file is consulted.  A value of 0 (from either the option or the
+parameter file) indicates that the window length is the size of the sampled
+data field in \fIinput\fP.  This is also the default value in case
+.I window_len
+is not specified either with the
+.B \-l
+option or in the parameter file.
+.TP
+.BI \-w " window_type" "\fR[RECT]"
+The name of the data window to apply to the data in each frame before
+computing reflection coefficients.  If the option is omitted, the parameter
+file is consulted, and if no value is found there, the default used is a
+rectangular window with amplitude one.  Possible window types include
+rectangular ("RECT"), Hamming ("HAMMING"), and triangular ("TRIANG"); see
+the window(3-ESPSsp) manual page for the complete list of supported
+window types.
+.IP
+If the \fB\-w\fP specified
+value is not a supported window type,
+it is assumed to be the name of an ascii file containing
+weighting function values. If no file by this name exists,
+\fIwindow\fP (1\-\s-1ESPS\s+1) warns and exits.
+Otherwise the file is read, the weighting values are saves, and the number
+of weighting values is counted (\fIwindow_len\fP). 
+In this case, the \fIwindow_len\fP value from either the \fB\-l\fP option
+or the specified \fIparams\fP file is ignored.
+The same rules 
+about \fIwindow_len\fP as described above in \fBDESCRIPTION\fP
+are in effect.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file does not have to be present,
+since all the parameters have default values.
+The following parameters are read, if present, from the parameter file:
+.TP
+.I "sd_field_name \- string"
+.IP
+This is the name of the sampled data field in \fIinput\fP.
+The default is "sd".  A paramter file value (if present) is overidden
+by the first use of the \fB\-f\fP option.  
+.TP
+.I "wind_field_name \- string"
+.IP
+This is the name of the windowed sampled data field in \fIoutput\fP.  The
+default is "wind_sd".  A paramter file value (if present) is overidden
+by the second use of the \fB\-f\fP option.
+.TP
+.I "start \- integer"
+.IP
+This is the first record of \fIinput\fP to process.
+The default is 1.
+It is not read if the \fB\-r\fP option is used.  
+.TP
+.I "nan \- integer"
+.IP
+This is the number of records to process.  It is not read if the \fB\-r\fP
+option is used.
+A value of zero means all subsequent records in the file;
+this is the default.
+.TP
+.I "window_len - integer"
+.IP
+The window size. This parameter is not read if the
+.B \-l
+option is specified.  A value of 0 indicates that the window length is the
+size of the sampled data field in \fIinput\fP; this is also the default
+value in case
+.I window_len
+is specified neither with the
+.B \-l
+option nor in the parameter file.
+.TP
+.I "window_type \- string"
+The data window to apply to the data.
+This parameter is not read if the command-line option
+.B \-w
+is specified.  If the option is omitted and if no value is found in
+the parameter file, the default used is "RECT", for a rectangular
+window with amplitude one.  
+If the specified value is not a supported window type,
+it is assumed to be a user-defined window function.
+See the discussion of the \fB-w\fP option.
+.PP
+Remember that command line option values override parameter file
+values.
+.SH "ESPS COMMON"
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+ESPS Common is not processed by 
+.I window
+if \fIinput\fP is 
+standard input.  Otherwise, provided that the Common file is newer 
+than the parameter file, and provided that the \fIfilename\fP entry in 
+Common matches \fIinput\fP, the Common values for \fIstart\fP and 
+\fInan\fP override those that may be present in the parameter file. 
+.PP
+The following items are written into the ESPS Common file 
+provided that \fIoutput\fP is not <stdout>.  
+.IP
+.I "start \- integer"
+.IP
+The starting point from the input file.
+.sp
+.I "nan \- integer"
+.IP
+The number of points in the selected range.
+.sp
+.I "prog \- string"
+.IP
+This is the name of the program 
+.RI ( window
+in this case).
+.sp
+.I "filename \- string"
+.IP
+The name of the input file \fIinput\fP.
+.SH ESPS HEADERS
+.PP
+The \fIoutput\fP header is a new FEA file header.  If it exists in the
+input header, the generic header item \fIsrc_sf\fP is copied from
+input to output.  Following the convention from \fIframe\fP
+(1\-\s-1ESPS\s+1), this generic is intended to contain the sampling
+rate of the original sampled data.  The generic header item
+\fIstart_time\fP is written with a value computed by taking the
+\fIstart_time\fP value from the header of the input file (or zero, if
+such a header item doesn't exist) and adding to it the relative time
+from the first record in the file to the first record processed.  The
+computation of \fIstart_time\fP depends on the value of the generic
+header item \fIrecord_freq\fP in the input file.  If this item is not
+present, \fIstart_time\fP is just copied from the input file to the
+output.
+.PP
+The items \fIstart\fP and \fInan\fP are rewritten (if they already
+exist) to contain the starting record number and number of records
+processed.  Generic header items are added for the \fIwindow_len\fP
+and \fIwindow_type\fP.  As usual, the command line is added as a
+comment and the header of \fIinput\fP is added as a source file to
+\fIoutput\fP.  
+.SH "FUTURE CHANGES"
+.PP
+Control over the type of the output windowed sampled data field.  
+.SH "SEE ALSO"
+.PP
+\fIframe\fP (1\-\s-1ESPS\s+1), window (3\-\s-1ESPS\s+1), \fIpwr\fP
+(1\-\s-1ESPS\s+1), FEA (5\-\s-1ESPS\s+1), \fImake_sd\fP
+(1\-\s-1ESPS\s+1), \fIplotfield\fP (1\-\s-1ESPS\s+1)
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+.I window
+will exit with an error message if any of the 
+following are true: 
+.I input
+does not exist or is not an ESPS FEA file; 
+the sampled-data field does not exist in
+.I input;
+the window field already exists in
+.I input;
+the \fIwindow_len\fP is larger than the size of the \fIinput\fP sampled
+data field.
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Manual page and program by John Shore. 
+

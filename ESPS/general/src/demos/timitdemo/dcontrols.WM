@@ -1,0 +1,34 @@
+# adapted for timitdemo from standard panel 
+
+"Image Painting" MENU
+  "Rescale" DEFAULT @rescale_on.WC
+  "No Rescale" @rescale_off.WC
+  "Image Painting Panel" make_panel name scont file imageglbl.WM columns 4 icon_title scontrol title "Image Painting Controls"
+"Image Painting" END
+
+"Image Colors" make_panel name color title "Image Color Support" icon_title Colors file colors.WM 
+
+"Menu Changes" make_panel name mstyle file menus.WM icon_title menus title "Menu Styles"
+
+"Mouse Bindings" make_panel name bindings file mbind.WM icon_title bindings title "Mouse Bindings"
+
+"Ganging" MENU
+ "Scroll Ganging ON " set scroll_ganged 1
+ "Scroll Ganging OFF" set scroll_ganged 0
+ "Zoom Ganging ON " set zoom_ganged 1
+ "Zoom Ganging OFF" set zoom_ganged 0
+ "Edit Ganging ON " set edit_ganged 1
+ "Edit Ganging OFF" set edit_ganged 0
+  "Ganging Panel" make_panel name ganging file ganging.WM columns 3 icon_title debug title "Ganging Controls"
+"Ganging" END
+
+"Field Annotation" MENU
+ "Show Field Labels "  set show_labels 1
+ "Hide Field Labels "  set show_labels 0
+ "Show Field Values "  set show_vals 1
+ "Hide Field Values "  set show_vals 0
+ "Annotation Panel" make_panel name annot file annot.WM columns 2 icon_title annotation title "Annotation Controls"
+"Field Annotation" END
+
+# @(#)dcontrols.WM	1.3 1/16/93 ERL
+

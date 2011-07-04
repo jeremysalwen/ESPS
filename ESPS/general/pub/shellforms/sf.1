@@ -1,0 +1,185 @@
+.TH sf 1-gsg "Ver 1.8  01/28/88"
+.SH NAME
+sf - shell form (form editor to be used in shell scripts)
+.SH SYNOPSIS
+.B sf
+[-Hbhmpru] [-o outfile] [formfile]
+.IP -H
+display help message
+.IP -b
+generate Bourne shell script, default is Csh script
+.IP -h
+display input field in highlight mode
+.IP -m
+display help message automatically for selection fields
+.IP -o
+set output file to outfile (if not given, no output)
+.IP -p
+generate perl script, default is Csh script
+.IP -r
+display input field in reverse video mode
+.IP -u
+display input field in underline mode
+.IP formfile
+file contains form layout (default to stdin)
+.SH DESCRIPTION
+.I Sf
+is a tool that allows users write shell scripts with elegant form
+editing user interface.  It reads an input form, displays it on the
+screen, and process all the data entry.  At the end of the form
+filling session, sf generates a file contains Csh set commands (or
+Bourne shell commands if -b is specified, Perl script if -p is
+specified) which is intended to be 'sourced' by Csh (or "." if you use
+Bourne shell, "eval" in perl).  After source operation, all the fields
+in the form will be defined as shell variables and shell script can
+continue after that.
+.PP
+The form template may be stored in a file, but the easiest way to use
+sf is to send it thru stdin so you do not have to have a script file
+and a separate form file to do one job.
+.SH FORM DEFINITION
+Input field are specified by '~' characters in the form template,
+therefore, it it not possible to have ~ characters displayed on the
+form.  If the 1st char of a line is a CTRL L (^L) character, it
+indicates the end of form layout part and the start of field
+definition part.  In field definition part, the 1st character on a
+line will be used as the delimiter of each token on that line.
+Currently only five tokens are valid:
+.IP "v="
+this means the following token string (until the next delimiter or
+eol) will be used as the symbol to set at shell.
+.IP "d="
+this means the following token should be used as the default value to
+store in the form before form is displayed.
+.IP "s="
+this means the following string is the selection list with the first
+character as the delimiter, the ending delimiter is optional.
+.IP "h="
+this means the possible help message for selection field, multiple h=
+is needed. For example, if you have a selection field:
+.IP
+s=/find/add/delete/print/quit
+.IP
+you should specify the help message by:
+.sp
+.nf
+	h=find record based on user name
+	h=add a new record to database
+	h=delete current user from database
+	h=print current user record on printer
+	h=quit this program
+.fi
+.IP
+where each h= entry refers to each of the fields in selection list.
+.IP "a="
+this specifies the possible attributes for the given field which
+should be supplied as parameters, the following characters will be
+recognized:
+.RS
+.IP "a"
+autotab, when user typed a character at the last position, the field
+editing will be terminated and cursor will move to next field on the
+form.
+.IP "d"
+digits only field, any characters not '0' - '9' will not be accepted.
+.IP "b"
+block field, next/prev block command (ESC N, ESC P) will move cursor
+to next field with block attribute set. This makes it easier for user
+to move to the desired 'block' of fields. (not implemented yet)
+.RE
+.SH COMMANDS
+Field editing commands are designed to be simple.  Sf understands
+arrow keys so it can be used easily for non-technical personnel.
+Field cursor movement keys are Emacs-like with one major difference:
+there is no insert mode (any volunteer?), character entered will
+overwrite existing data.  The following is a list of them:
+.IP "TAB"
+Move to next field on the screen. If there are more fields on the current
+line, move to the first one to the right of current field.  If there is
+no more fields, moves to the first field on the following lines.
+.IP "CTRL T"
+Same as TAB except moves backwards.
+.IP "RETURN or LINEFEED"
+Terminates the form edit session.
+.IP "up arrow or CTRL P"
+Moves to the closest fields on the previous lines, wrap around if no more.
+.IP "down arrow or CTRL N"
+Same as up arrow execpt moves downward instead.
+.IP "left arrow or CTRL B"
+Moves cursor left on character on the current field.
+.IP "right arrow or CTRL F"
+Moves cursor right on character on the current field.
+.IP "CTRL E"
+Moves cursor to the end of last non-blank characters on the current field.
+.IP "CTRL A"
+Moves cursor to the beginning of the current field.
+.IP "CTRL U"
+Blanks all the characters from cursor to beginning of the current field.
+.IP "CTRL K"
+Blanks all the characters from cursor to the end of the current field.
+.IP "CTRL W"
+Blanks the previous word before cusor on the current field.
+.IP "CTRL L"
+Redisplay the form.
+.IP "CTRL Z"
+(Or whatever your stop key is) Stop sf.
+.IP "CTRL C"
+(Or whatever your interrupt key is) Aborts the form editing session,
+sf will display a message and terminate.
+.SH EXAMPLE
+The following is an example of how to use it (C shell script):
+.PP
+.nf
+#! /bin/csh -f
+set srcfile = "/tmp/form.$$"
+sf -o ${srcfile} -u << sf_eof
+
+	     General Systems Group Fast Printer Spooler
+
+   File Name: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	[-#] Number of copies:	~~~	      [-h] Burst Header Page: ~~~
+	[-m] Send mail on completion: ~~~     [-p] Format with pr:    ~~~
+
+	[-J] Job Name:		~~~~~~~~~~~~~
+	[-C] Class Name:	~~~~~~~~~~~~~
+	[-T] Title for pr:	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		    Current Print Queue Status
+`lpq | head -5`
+
+	[Press TAB to move to next field, RETURN to execute]
+
+@v=fn@d=$*@
+@v=copy@d=1@a=d@v=burst@s=/Yes/No@
+@v=mail@s=/No/Yes@v=pr@s=/Yes/No@
+@v=job@d=$1@
+@v=class@d=`hostname`@
+@v=title@d=$1@
+sf_eof
+if ( ! -e ${srcfile} ) goto end
+source ${srcfile}
+set copy burst pr mail tf cf jf
+if ( "${copy}" != "1" ) set copy = "-#${copy}"
+if ( "${burst}" != "Yes" ) set burst = "-h"
+if ( "${pr}" == "Yes" ) set pr = "-p"
+if ( "${mail}" == "Yes" ) set mail = "-m"
+if ( "${title}" != "" ) set tf = "-T"
+if ( "${class}" != "" ) set cf = "-C"
+if ( "${job}" != "" ) set jf = "-J"
+if ( "${fn}" != "" ) then
+	lpr ${copy} ${burst} ${pr} ${mail} ${tf} "${title}" \
+	${cf} "${class}" ${jf} "${job}" ${fn}
+	endif
+/bin/rm -f ${srcfile}
+end:
+.nf
+.fi
+.SH AUTHOR
+Paul Lew
+.br
+General Systems Group, Salem NH
+.SH BUGS
+This version of sf comes from my previous work on IBM-PC for my friends and
+it is rather primitive.  Form editor itself may be improved comments are
+welcome.

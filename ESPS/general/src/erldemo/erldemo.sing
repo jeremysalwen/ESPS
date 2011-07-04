@@ -1,0 +1,11 @@
+# erldemo.single 	@(#)erldemo.sing	1.6 10/2/90
+# top level script for single loop demo of waves+ and ESPS 
+# this for Version 1.14 or 1.15 of erldemo.c
+
+rm -f /tmp/erldemo.wtry
+rm -f /tmp/erldemo.stop
+touch /tmp/erldemo.lock
+edemo.single
+rm -f /tmp/erldemo.stop
+rm -f /tmp/erldemo.lock
+

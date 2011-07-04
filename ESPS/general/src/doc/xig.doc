@@ -1,0 +1,660 @@
+
+
+
+
+
+
+
+
+                         ENTROPIC RESEARCH LABORATORY, INC.
+
+
+
+
+
+
+
+
+         ESPS APPLICATIONS NOTE: X Interface Generation in ESPS and xwaves+
+
+
+
+                                    John Shore
+
+
+                         Entropic Research Laboratory, Inc.
+                       600 Pennsylvania Ave. S.E., Suite 202
+                               Washington, D.C. 20003
+                                   (202)547-1420
+
+
+
+
+       1 .  INTRODUCTION
+
+       ESPS Version 4.1 and xwaves+ Version  2.1  contain  a  variety  of  X-
+       Windows  Interface  Generation  (XIG)  features  for  customizing  and
+       extending the user-interface.  By using a variety of simple ASCII con-
+       figuration files, it is easy to produce highly-customized xwaves+/ESPS
+       packages that  meet  personal  or  application-specific  needs.   This
+       technical  note  summarizes the these XIG features and explains how to
+       use them.
+
+       2 .  OVERVIEW OF ESPS AND xwaves+ FACILITIES
+
+       In this section, we list the  relevant  ESPS  (or  xwaves+)  programs,
+       library  functions,  environment  variables,  xwaves+ globals, xwaves+
+       commands, etc.
+
+       2 .1 .  User-Level Programs
+
+       Here is a list of the user-level programs relevant to XIG.   For  more
+       information  about  each of them, see the ESPS reference manual or use
+       eman (1-ESPS) to view the on-line man pages.
+
+       einfo -     X-based tool for reading ESPS release notes, tech notes. etc.
+       edemos -    put up a button control panel for ESPS demos
+
+       xtext -     create window for text file or output of any text-producing command
+
+       fbuttons -  create window with buttons that run programs on specific files
+
+
+
+
+
+
+
+
+
+
+       XIG NOTE                                                        page 2
+
+
+       mbuttons -  create window with buttons for running arbitrary programs
+
+       exprompt -  interactive ESPS parameter entry in a pop-up window
+       expromptrun -runs program after interactive parameter prompts
+       xeparam -   run an ESPS program with interactive parameter prompt window
+       getparam -  prints value of ESPS parameter from parameter file or ESPS Common
+
+       xrefcof -   run refcof (1-ESPS) with X Windows interactions and displays
+       xfft -      run fft (1-ESPS) with X Windows interactions and displays
+       xacf -      interactive tool for making acf (1-ESPS) parameter files
+
+       plot3d -    interactive 3-D plot (perspective plots with hidden lines removed)
+
+       xwaves -    general interactive analysis and display program for ESPS data
+       xspectrum - xwaves+ attachment for spectrum estimation
+       xlabel -    xwaves+ attachment for time-series labelling
+       send_xwaves -open a connection to an xwaves+ server socket and send commands
+
+       aplot -     non-interactive plot of ASCII data
+       plotsd -    non-interactive plot of sampled data
+       xmcd -      non-interactive plot of any data in Unix GPS format
+       genplot -   non-interactive plot of ESPS data in multiline format
+       mlplot -    non-interactive plot of sampled-data in multiline format
+       plotspec -  non-interactive plot of ESPS spectral data (FEA_SPEC record(s))
+       scatplot -  non-interactive scatter plot of ESPS FEA data
+       plotsgram - non-interactive plot of FEA_SPEC data as spectrogram
+       image -     non-interactive plot of ESPS FEA data as an image
+
+       wsystem -   return the type of window system being run
+
+       2 .2 .  ESPS Library Functions
+
+       Here is a list of the user-level programs relevant to XIG.   For  more
+       information  about  each of them, see the ESPS reference manual or use
+       eman (1-ESPS) to view the on-line man pages.
+
+       exv_get_help -      create XView frame containing text of man page or help file
+       exv_make_text_window -create XView frame containing text of ASCII file
+       exv_helpfile -      return file name containing cleaned man page or plain text
+       exv_attach_icon -   attach one of the standard ESPS icons to a frame.
+
+       exv_prompt_params - create interactive window for ESPS parameter file
+
+       exv_bbox -          create panel with arbitrary screen buttons
+       read_olwm_menu -    reads a menu in Open Look Window Manager format;
+       print_olwm_menu -   prints an olwm-format menu;
+
+       open_xwaves -       open a socket connection to an xwaves+ server
+       send_xwaves -       send a command to an xwaves+ server
+       close_xwaves -      close a socket connection to an xwaves+ server
+       send_xwaves2 -      send command to an xwaves+ server without separate
+                                open and close
+
+
+
+       1.2                           ERL1/22/93
+
+
+
+
+
+
+
+       XIG NOTE                                                        page 3
+
+
+       2 .3 .  xwaves+ Globals
+
+       The initial state of xwaves+ is  determined  by  the  globals  in  the
+       ".wave_pro"  file that is read on startup.  Included in the effects of
+       the globals are:
+
+          + initial xwaves+ control window position (and iconization state)
+
+          + default position and size of first xwaves+  data  display  window
+            and default relative positions of subsequent windows
+
+          + heights for scrollbar and digital readout panels
+
+          + whether or not to display the spectrogram reticle
+
+          + whether or not to display field labels and digital readouts
+
+          + ganging control for scrolling and zooming
+
+          + controls for spectrogram (image) interpolation and rescaling
+
+          + initial semantics for left and middle mouse buttons
+
+          + initial colormap
+
+          + parameters for digital halftone algorithms (monochrome displays)
+
+          + crude controls for plotting scales
+
+          + initial position of xspectrum and xlabel control windows
+
+          + initial position and size of xspectrum data (plot) window
+
+       For details on these and other globals, see the the  heavily-commented
+       default  ".wave_pro" ($ESPS_BASE/lib/waves/.wave_pro).  Note that this
+       file can be viewed by means of einfo (1-ESPS).
+
+       Two globals deserve special mention.  One is init_file - this  is  the
+       name  of  a  command  file to be executed on startup.  Execution takes
+       place after all the other variable initializations in the profile  are
+       done,  regardless  of  where  in that file the definition of init_file
+       occurs.  The init_file usually is the best place in which to put  ini-
+       tial  xwaves+  commands for reconfiguring the menu, bringing up button
+       panels, etc.
+
+       The other global is output_dir.  If output_dir is defined, all  output
+       files  from xwaves+, xspectrum, and xlabel will go into this directory
+       (including edited  files,  saved  file  segments,  spectrogram  output
+       files,  outputs  from add_espsf, etc.).  If output_dir is not defined,
+       outputs go in the same directory as  the  corresponding  input.   This
+       global  is  important  for  multi-user  applications in which a set of
+       standard, read-only, input files are used by everyone.
+
+
+
+       1.2                           ERL1/22/93
+
+
+
+
+
+
+
+       XIG NOTE                                                        page 4
+
+
+       2 .4 .  xwaves+ Commands
+
+       Since xwaves+ is primarily a display program, a large  number  of  the
+       xwaves+ commands are relevant to the customization of user-interfaces.
+       Here, we mention some particularly  relevant  commands  -  those  that
+       bring  up new display windows, that reconfigure the waveform and spec-
+       trogram menus, and that create arbitrary screen buttons  that  can  be
+       used  to  invoke xwaves+ commands or command files.  For details about
+       these and other commands, see the xwaves+ manual.
+
+       add_espsf -    add external ESPS (file output) call to menu
+       add_espst -    add external ESPS (text output) call to menu
+       add_espsn -    add external ESPS (no output) call to menu
+       add_waves -    add xwaves+ command (or command file) to menu
+
+       delete_item -  delete specific item from xwaves+ menu
+       delete_all_items-delete all items from xwaves+ menu
+
+       make_panel -   create auxiliary control panel with screen buttons
+       close_panel -  close (iconize) auxiliary control panel
+       open_panel -   open auxiliary control panel
+       kill_panel -   kill auxiliary control panel
+
+       close_ctlwin - close (iconize) main xwaves+ control
+       open_ctlwin -  open main xwaves+ control panel
+
+       make -         create a new data display window
+       close -        close (iconize) a data window
+       open -         open a data window
+       kill -         destroy one or more data display windows
+
+       attach -       start an attachment (xlabel, xspectrum)
+       detach -       terminate an attachment
+       send -         send a message to an attachment
+
+       enable_server -start operation as display server
+       disable_server -stop operation as display server
+
+       2 .5 .  Environment Variables
+
+       ESPS and xwaves+ programs are sensitive to a variety of unix  environ-
+       ment  variables  that support position independence and XIG customiza-
+       tion.  For a  list  and  discussion  of  the  full  set,  see  espsenv
+       (1-ESPS).  Here are some particularly relevant ones:
+
+       ESPS_BASE
+            This should be set to the root of the ESPS (and  waves+)  install
+            tree.  If not defined, programs all use /usr/esps as a default.
+
+       ESPS_TEMP_PATH
+            This can be set to the directory that you want  programs  to  use
+            for temporary files.  Not all programs currently pay attention to
+            ESPS_TEMP_PATH, but over time they will be  modified  to  do  so.
+
+
+       1.2                           ERL1/22/93
+
+
+
+
+
+
+
+       XIG NOTE                                                        page 5
+
+
+            The plot programs have been modified to support ESPS_TEMP_PATH.
+
+       ESPS_MENU_PATH
+            This is the path used by mbuttons (1-ESPS) and fbuttons  (1-ESPS)
+            to  find  olwm-format  menu  files.    If  ESPS_MENU_PATH  is not
+            defined, the default path used is ".:$ESPS_BASE/lib/menus".
+
+       ESPS_PARAMS_PATH
+            This is the path used to find ESPS parameter files  specified  by
+            the standard ESPS -P option.  If ESPS_PARAMS_PATH is not defined,
+            the default path used is ".:$ESPS_BASE/lib/params".
+
+       WAVES_INPUT_PATH
+            This is the path used by waves+ and xwaves+  to  find  all  input
+            signal   files,   label   files,   and   label  menu  files.   If
+            WAVES_INPUT_PATH  is  not  defined,  the  default  path  used  is
+            ".:$ESPS_BASE/lib/waves/files".
+
+       WAVES_LIB_PATH
+            This is the path used by  waves+  and  xwaves+  to  find  certain
+            library  files.   If  WAVES_LIB_PATH  is not defined, the default
+            path used is "$ESPS_BASE/lib/waves".
+
+       WAVES_MENU_PATH
+            This is the path used by xwaves+ to find olwm-format  menu  files
+            used  with the xwaves+ command make_panel.  If WAVES_MENU_PATH is
+            not     defined,     the      default      path      used      is
+            ".:$ESPS_BASE/lib/waves/menus".
+
+       WAVES_COMMAND_PATH
+            This is the path used by  waves+  and  xwaves+  to  find  command
+            files.   If  WAVES_COMMAND_PATH  is not defined, the default path
+            used is ".:$ESPS_BASE/lib/waves/commands".
+
+       WAVES_COLORMAP_PATH
+            This is the path used by waves+ and xwaves+  to  find  colormaps.
+            If  WAVES_COLORMAP_PATH  is not defined, the default path used is
+            ".:$ESPS_BASE/lib/waves/colormaps".
+
+       WAVES_PROFILE_PATH
+            This is the path used by waves+ and xwaves+ to find  the  startup
+            profile.   IF WAVES_PROFILE_PATH is not defined, the default path
+            used is "$HOME:$ESPS_BASE/lib/waves".
+
+       WAVES_HOST
+            This is the hostname of an  xwaves+  display  server.   That  is,
+            send_xwaves  (1-ESPS)  send_xwaves  (3-ESPS) attempt to send mes-
+            sages to an xwaves+ process running on WAVES_HOST.  If WAVES_HOST
+            is not defined, the local host is assumed.
+
+       WAVES_PORT
+            This is the INET domain socket port number  used  by  send_xwaves
+            (1-ESPS)  and  send_xwaves  (3-ESPS)  when sending messages to an
+
+
+       1.2                           ERL1/22/93
+
+
+
+
+
+
+
+       XIG NOTE                                                        page 6
+
+
+            xwaves+ display server.  It is also used by xwaves+ in  determin-
+            ing  the  port on which to listen.  If WAVES_PORT is not defined,
+            than a compiled-in default is used.  This is the  default  socket
+            that  xwaves+  listens on when started in server mode (-s).  If a
+            non-default socket is to be used, it  is  specified  to  xwaves+,
+            send_xwaves  (1-ESPS),  and  send_xwaves  (3-ESPS)  by  means  of
+            WAVES_PORT.  Note that send_xwaves (1-ESPS) and xwaves+ also have
+            a -p option that can be used to override WAVES_PORT.
+
+       BBOX_QUIT_BUTTON
+            If this variable is defined, it forces  a  "QUIT"  button  to  be
+            included  at  the  top of every button panel created via exv_bbox
+            (3-ESPS).   This  includes  button  panels  created  by  mbuttons
+            (1-ESPS),  fbuttons (1-ESPS), and the xwaves+ command make_panel.
+            The variable has  no  effect  if  a  quit  button  was  specified
+            directly  using the -q option to mbuttons or the quit_button key-
+            word of the xwaves+ command make_panel.
+
+       DEF_HEADER
+            If defined when ESPS programs or xwaves+ encounters a  headerless
+            file, DEF_HEADER specifies a default header to be used. Note that
+            the value of DEF_HEADER relevant for xwaves+ is the value in  the
+            environment when xwaves+ starts up.
+
+       3 .  COMBINING AND ENCAPSULATING THE XIG FEATURES
+
+       The demos that are accessible from the panel put up by edemos (1-ESPS)
+       all  serve as examples for how to make use of the facilities mentioned
+       above.  They operate in a manner that encapsulates an application  and
+       presents it to the user with an application-specific user-interface.
+
+       As an example for discussion here, we shall make use of the demo  that
+       facilitates  the  creation and spectrum analysis of test signals. This
+       demo is located in $ESPS_BASE/newdemos/testsignal.
+
+       3 .1 .  Directory Organization
+
+       The testsignal directory is organized as follows:
+
+          % ls $ESPS_BASE/newdemos/testsignal
+
+          README  bin/    files/  menus/   params/  rundemo*  wcommands/
+
+
+         rundemo        Users start  up  the  application  by  invoking  this
+                        script.
+
+         README         This is an ASCII file containing a brief overview  of
+                        the application.
+
+         bin            This is a directory  containing  executable  programs
+                        and scripts needed by the application.
+
+
+
+       1.2                           ERL1/22/93
+
+
+
+
+
+
+
+       XIG NOTE                                                        page 7
+
+
+         files          This is a directory containing input files needed  in
+                        the  application,  including the xwaves+ startup pro-
+                        file.
+
+         menus          This is a  directory  containing  (olwm-format)  menu
+                        files needed in the application.  Such files are used
+                        by the programs fbuttons and mbuttons,  and  also  by
+                        the xwaves+ command make_panel.
+
+         params         This is a directory containing ESPS  parameter  files
+                        needed in the application.
+
+         wcommands      This is a directory containing xwaves+ command  files
+                        needed in the application.
+
+       3 .2 .  How it Works
+
+       As mentioned above, users start the application by running the  script
+       rundemo.   (In  the  case of testsignal, this is often done indirectly
+       via a button on a demo panel.)  To understand  how  it  works,  it  is
+       helpful  to  run the demo now.  Click on "See Demo Scripts and Files",
+       which brings up another panel, and then  click  on  "rundemo  (startup
+       script)"  in the new panel.  You can then track the following descrip-
+       tion of rundemo's actions (when appropriate, click on additional  but-
+       tons to see other files):
+
+       (1)  Creates or checks a directory that will be used for output files,
+            and  exports  an  environment variable with the full path to that
+            directory.  Testsignal is an example of a multi-user  application
+            that uses a set of standard, read-only, input files for everyone,
+            but that also needs to write output files that are user-specific.
+            To  handle  this  rundemo  takes a single argument: the path of a
+            writable directory that can be used for  output  files.   If  the
+            argument  is missing, rundemo sets it to a unique subdirectory of
+            /usr/tmp.
+
+       (2)  Sets and exports  environment  variables  for  various  ESPS  and
+            xwaves+ paths.  Most of these cause the application to get menus,
+            parameter file, command files, and executables from the subdirec-
+            tories below rundemo.
+
+       (3)  Creates a unique xwaves+ server port number and  exports  it  via
+            WAVES_PORT.
+
+       (4)  Runs bin/guess_audio to try and set up output  D/A  according  to
+            what is available.
+
+       (5)  Modifies a standard  xwaves+  profile  (files/waves_pro)  to  set
+            output_dir  to  the  output  directory  determined by (1), above.
+            (The resulting profile is written to that directory.)
+
+       (6)  Starts xwaves+ in server mode, using the xwaves+ profile  created
+            by  (5).   The  init_file  global is set so that the command file
+
+
+       1.2                           ERL1/22/93
+
+
+
+
+
+
+
+       XIG NOTE                                                        page 8
+
+
+            wcommands/demoinit.WC is run when xwaves+ starts up.   This  com-
+            mand file does the following:
+
+              +  reconfigures the xwaves+ menu;
+
+              +  starts the attachment xspectrum;
+
+              +  brings up two xwaves+ control panels, one for mouse bindings
+                 and one for miscellaneous controls.
+
+              +  sets xspectrum to display using harmonic cursors and to com-
+                 pute using the fast modified Burg method;
+
+              +  puts up an initial test signal (files/sample.sd)
+
+              +  computes an initial spectrum;
+
+              +  puts up the text of the README file describing the  applica-
+                 tion
+
+            Note that xwaves+ is started up in the background,  so  that  the
+            rundemo script proceeds.
+
+       (7)  Puts up an application control panel using mbuttons (1-ESPS) run-
+            ning  on the menu file tsignal.BM.  (Other applications use fbut-
+            tons (1-ESPS); see the timitdemo, for example.)   The  menu  file
+            tsignal.BM yields the following buttons:
+
+            QUIT exits mbuttons (and the application)
+
+            README
+                 puts up the README file (again)
+
+            Setup Audio Output
+                 this is a button menu with selections for  different  output
+                 options
+
+            Generate New Test Signal
+                 this invokes  the  script  bin/newsignal,  which  kills  the
+                 current  signal  displays,  uses exprompt (1-ESPS) to prompt
+                 the user for new signal and noise parameters,  computes  the
+                 new  signal plus noise, displays the signal, and computes an
+                 initial spectrum;
+
+            see Demo Scripts and Files
+                 this brings up another panel with a button to  display  each
+                 of  the  files in the application; this is appropriate for a
+                 demo, but usually not for a turn-key application;
+
+            As an example of the simplicity of the configuration  files  used
+            by  mbuttons,  fbuttons, and the xwaves+ command make_panel, here
+            is the text of the file that creates the buttons described  above
+            (menu/tsignal.BM):
+
+
+       1.2                           ERL1/22/93
+
+
+
+
+
+
+
+       XIG NOTE                                                        page 9
+
+
+              README                        xtext -Wp 555 400 -F README
+
+              "Setup Audio Output" MENU
+
+                "Setup SPARCStation Output" rm -f bin/play; \
+                                            ln -s `get_esps_base`/bin/splay bin/play
+
+                "Setup Ariel S32C Output"   rm -f bin/play; \
+                                            ln -s `get_esps_base`/bin/s32cplay bin/play
+
+                "Setup AT&T FAB2 Output"    rm -f bin/play; \
+                                            ln -s `get_esps_base`/bin/wplay bin/play
+
+                "Setup no output"           rm -f bin/play; \
+                                            ln -s `pwd`/bin/null_play bin/play
+
+              "Setup Audio Output" END
+
+              "Generate New Test Signal"    newsignal
+
+              "See Demo Scripts and Files"  mbuttons -q 1 -X0 -Y 350 \
+                                            -w"Demo Configuration Files" -i"demo" \
+                                            -b1 demofiles.BM
+
+
+            Note that mbuttons is run in the foreground, so that rundemo does
+            not  proceed until mbuttons terminates.  The idea here is an exit
+            from mbuttons (when the user clicks on QUIT)  signifies  termina-
+            tion  of  the  application.  (Of course, this behavior may differ
+            from application to application.)
+
+       (8)  After mbuttons terminates, send_xwaves (1-ESPS) instructs xwaves+
+            to  run  a  termination  command file (demoquit.WC) that detaches
+            xspectrum and quits xwaves+.
+
+       (9)  Removes various temporary files in the output directory.   (Other
+            applications might leave these in place.)
+
+       3 .3 .  Organizing the Sources
+
+       Rather than keeping the sources for such an  encapsulated  application
+       in  a  set  of  directories that mirror the structure of the installed
+       application (e.g., as described above), it is better to keep them in a
+       flat directory with a Makefile that creates the various subdirectories
+       and installs into them.
+
+       To show how this is  done,  we  have  included  the  sources  for  the
+       installed     testsignal    demo.     You    can    find    them    in
+       $ESPS_BASE/src_examples/xig/testsignal.  Notice that all of the  ASCII
+       files  (which we control using SCCS) are at the same (flat) level, and
+       that all of the binary files (in this case only one (binary_files/).
+
+       (end)
+
+
+       1.2                           ERL1/22/93
+
+
+
+
+
+
+
+       XIG NOTE                                                       page 10
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       1.2                           ERL1/22/93
+
+
+

@@ -1,0 +1,10 @@
+string filt_method = "YYYY";
+float samp_freq = 8000;
+float gain = 1;
+string filt_type = "LP";
+float pass_band_loss = 1: "Desired maximum pass band loss (dB).";
+float stop_band_loss = 20.: "Desired minimum stop band attenuation (dB).";
+float p_freq1 = 1000;
+float p_freq2 = 002;
+float s_freq1 = 1100;
+float s_freq2 = 004;

@@ -1,0 +1,57 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)copyfeafie.3	1.2 30 Apr 1997 ESI
+.TH COPY_FEA_FIELDS 3\-ESPSu 30 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+copy_fea_fields \- replicate all feature field definitions
+.SH SYNOPSIS
+.ft B
+#include <esps/fea.h>
+.br
+int
+.br
+copy_fea_fields(hd1, hd2)
+.br
+struct header *hd1;
+.br
+struct header *hd2;
+.ft
+.SH DESCRIPTION
+.I copy_fea_fields
+attempts to add a field definition 
+to \fIhd1\fR for each record field found in
+\fIhd2\fP.  That is, 
+for each field definition in \fIhd2\fP, 
+a corresponding field with the same name, size, rank, etc. is
+created in \fIhd1\fP (see FEA(5\-ESPS) for details concerning
+feature field definitions).   Only the field definitions are copied,
+not the actual data contents of the fields.  
+.PP
+If the source file header (\fIhd2\fR) indicates that the
+file is segment labeled,
+the destination file header (\fIhd1\fR) is marked as segment labeled.
+.PP
+If a field with a particular name and size cannot be
+created in \fIhd1\fP, the
+program prints a warning message and exits.
+The program prints a message on stderr and terminates
+if either \fIhd1\fP or \fIhd2\fP do not point to ESPS Feature File
+headers.
+.SH DIAGNOSTICS
+.nf
+copy_fea_fields: dest is NULL.
+copy_fea_fields: dest not FEA.
+copy_fea_fields: src is NULL.
+copy_fea_fields: src not FEA.
+copy_fea_fields: couldn't add field to dest header.
+.fi
+.SH BUGS
+None known.
+.SH SEE ALSO
+.PP
+.nf
+\fIadd_fea_fld\fR(3\-ESPSu), \fIcopy_fea_rec\fR(3\-ESPSu), 
+\fIcopy_fea_fld\fR(3\-ESPSu), FEA(5\-ESPS)
+.fi
+.SH AUTHOR
+Man page by David Burton.

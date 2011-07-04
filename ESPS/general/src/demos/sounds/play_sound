@@ -1,0 +1,5 @@
+#! /bin/sh 
+# @(#)play_sound	1.2 10/11/91 ERL
+play -q files/audio/$1.sd
+
+

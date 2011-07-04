@@ -1,0 +1,396 @@
+
+
+
+ME_SGRAM(1-ESPS)                            ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     me_sgram - produces a  maximum-entropy-based  FEA_SPEC  file
+     suitable for displaying as a spectrogram
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     mmmmeeee____ssssggggrrrraaaammmm [ ----ssss _r_a_n_g_e ] [ ----PPPP _p_a_r_a_m__f_i_l_e ] [ ----pppp _r_a_n_g_e ] [   ---- rrrr
+     _r_a_n_g_e ] [ ----mmmm _m_e_t_h_o_d ] [ ----aaaa _l_p_c__m_e_t_h_o_d ] [ ----wwww _w_i_n_d_o_w__l_e_n ] [
+     ----EEEE _p_r_e__e_m_p_h_a_s_i_s ] [ ----oooo _a_n_a_l_y_s_i_s__o_r_d_e_r ] [ ----SSSS _s_t_e_p__s_i_z_e ] [ ----
+     dddd  _d_a_t_a__w_i_n_d_o_w  ]  [  ----cccc _c_o_n_v__t_e_s_t ] [ ----iiii _m_a_x__i_t_e_r ] [ ----DDDD ]
+     _i_n_p_u_t._S_D _o_u_t_p_u_t._S_P_E_C
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     _M_e__s_g_r_a_m reads an ESPS sampled data file, pre-emphasizes it,
+     and  produces  an ESPS FEA_SPEC(5-ESPS) file, which qresults
+     from maximum entropy spectral analysis.  This file is  suit-
+     able for displaying as a speech spectrogram.  (See _p_l_o_t_s_g_r_a_m
+     (1-ESPS).)  By default (specifying no options) or by  speci-
+     fying  _w_b  for  the  ----mmmm option, _m_e__s_g_r_a_m produces a FEA_SPEC
+     file that simulates the analysis done to produce a wide-band
+     speech spectrogram.  Alternatively, by specifying _n_b for the
+     ----mmmm option, a FEA_SPEC file that simulates the analysis for a
+     narrow-band  spectrogram  is computed.  The ----mmmm option simply
+     defines different defaults for the other options.  By speci-
+     fying  any  of  the  other  options,  in addition to ----mmmm, the
+     default  values  are  overridden  by  the  specified  option
+     values.   This allows the user to alter the basic display to
+     highlight facets of the spectrogram that are  of  particular
+     interest.
+
+     _m_e__s_g_r_a_m is a shell script that makes  use  of  _f_i_l_t_e_r  (1 -
+     ESPS),  _r_e_f_c_o_f (1-ESPS), and _m_e__s_p_e_c (1-ESPS); the parameter
+     file is processed using _g_e_t_p_a_r_a_m (1-ESPS).
+
+     If "-" is specified for the output file, standard output  is
+     used.  Note, standard input cannot be read by this script.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     ----ssss _s_t_a_r_t__t_i_m_e:_e_n_d__t_i_m_e [0.0:(end of file)]
+
+     ----ssss _s_t_a_r_t__t_i_m_e:+_d_u_r_a_t_i_o_n
+          Determines the range in seconds in the input file  over
+          which  the  spectrogram  values are to be computed.  In
+          the first form, a pair of real numbers gives the start-
+          ing  and ending times of the range.  The correspondence
+          between samples and times is determined by two  quanti-
+          ties:   the  starting time of the file and the interval
+          between samples.  The former is given  by  the  generic
+          header item _s_t_a_r_t__t_i_m_e in the input file, or 0.0 if the
+          header item is not present.  The latter is the recipro-
+          cal  of  the  sample frequency _s_f in the type-dependent
+          part of the SD header.  If _s_t_a_r_t__t_i_m_e is  omitted,  the
+          starting  time  of  the  file  is used.  If _e_n_d__t_i_m_e is
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+ME_SGRAM(1-ESPS)                            ENTROPIC RESEARCH LAB
+
+
+
+          omitted, the range extends through the end of the file.
+          The  second  form  of  the  option is equivalent to the
+          first with _e_n_d = _s_t_a_r_t + _d_u_r_a_t_i_o_n .
+
+     ----pppp _s_t_a_r_t_i_n_g__p_o_i_n_t:_e_n_d__p_o_i_n_t [1:(end of file)]
+
+     ----pppp _s_t_a_r_t_i_n_g__p_o_i_n_t:+_i_n_c_r
+          Determines the range in points in the input  file  over
+          which  the  spectrogram  values are to be computed.  In
+          the first form, a pair of unsigned integers  gives  the
+          first and last points of the range, counting from 1 for
+          the first point in the file.  If first is omitted, 1 is
+          used.  If last is omitted, the range extends to the end
+          of the file.  The second  form  is  equivalent  to  the
+          first with last = first + incr . This option should not
+          be specified if -s is specified.
+
+     ----rrrr _r_a_n_g_e
+          ----rrrr is a synonym for ----pppp.
+
+     ----mmmm _m_e_t_h_o_d [wb]
+          The basic method is specified here. There are two  pos-
+          sible values:  _w_b for wide band and _n_b for narrow band.
+          By  specifying  _w_b,  the  following  values  are   set:
+          lpc_method  = fburg, pre-emphasis = .94, analysis_order
+          = 10, window_len = 8 msec., step_size =  2  msec.,  and
+          data_window  =  RECT.   By specifying _n_b, the following
+          values are set: lpc_method = fburg, pre-emphasis = .94,
+          analysis_order = 10, window_len = 40 msec., step_size =
+          2 msec., and data_window = RECT.
+
+     ----aaaa _l_p_c__m_e_t_h_o_d [fburg]
+          Specifies the spectrum analysis method.  The default is
+          the  fast  modified Burg ("fburg") method.  Also avail-
+          able are the autocorrelation method  "autoc"),  covari-
+          ance  method  ("cov"),  Burg  method ("burg"), modified
+          Burg method ("mburg"), stuctured  covariance  ("strcov"
+          and "strcov1"), and vector Burg ("vburg", fast approxi-
+          mation to structured covariance.  Of the two structured
+          covariance methods, the first ("strcov" is considerably
+          faster and  better  behaved;  "strcov1"  is  older  but
+          included  as  it  may  prove useful on occasion.  ** If
+          "strcov"  is  used,  the  ----cccc  and  ----iiii  options   become
+          relevant.   The  ----mmmm option overrides the value that may
+          be in the parameter file.
+
+     ----cccc _c_o_n_v__t_e_s_t[1e-5]
+          Specifies, for the STRCOV method  only  (not  including
+          STRCOV1),  a  convergence  test  value.   The lower the
+          value, the smaller the change required on  each  itera-
+          tion  before  the  estimator  terminates,  and the more
+          iterations that normally will result.
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+
+
+
+
+ME_SGRAM(1-ESPS)                            ENTROPIC RESEARCH LAB
+
+
+
+     ----iiii _m_a_x__i_t_e_r[20]
+          Specifies, for the STRCOV method  only  (not  including
+          STRCOV1),  the  maximum  number  of iterations that the
+          estimator will run through before terminating.  A warn-
+          ing  will  indicate if the estimator terminates because
+          max_iter has been exceeded.
+
+     ----wwww _w_i_n_d_o_w__l_e_n
+          The duration of data in milliseconds over which the the
+          power spectrum is computed for each column of the spec-
+          trogram. The analysis bandwidth  is  inversely  propor-
+          tional to this value.
+
+     ----EEEE _p_r_e__e_m_p_h_a_s_i_s
+          The coefficient _A in the pre-emphasis filter: 1 -  _A/z.
+          This  filter is applied to the sampled data before com-
+          puting the power spectrum. A value of _A = 1 provides  a
+          6 dB/octave boost to the high frequencies; a value of 0
+          provides no boost.
+
+     ----oooo _a_n_a_l_y_s_i_s__o_r_d_e_r
+          The number of parameters in  the  autoregressive  model
+          that is used to compute the power spectrum.
+
+     ----SSSS _s_t_e_p__s_i_z_e
+          The time step in milliseconds between  columns  in  the
+          spectrogram.   The  time resolution and horizontal mag-
+          nification are affected by this parameter.
+
+     ----dddd _d_a_t_a__w_i_n_d_o_w
+          The data window applied to the data before the computa-
+          tion  of the power spectrogram. Possible values include
+          RECT (rectangular), HAMMING, and  TRIANG  (triangular).
+          See  _w_i_n_d_o_w  (3 -ESPS) for a complete list of supported
+          data windows.
+
+     ----DDDD    Include in the output records  a  field  _d_i_t_h__s_p_e_c__v_a_l
+          containing  1s  and  0s intended for display as a simu-
+          lated gray-scale spectrogram on a black-and-white moni-
+          tor.   The  _r_e_f_c_o_f (1-ESPS) output is piped through the
+          _d_i_t_h_e_r(1-ESPS) program.
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     The parameter file is not required to be present,  as  there
+     are  default  parameter values that apply.  If the parameter
+     file does exist, the following parameters are read:
+
+     _m_e_t_h_o_d - _s_t_r_i_n_g
+          The spectrogram method to use.  This parameter  is  not
+          read  if  the  ----mmmm  option is used.  If the parameter is
+          present and is read, it determines default  values  for
+          all  other parameters as discussed under the ----mmmm option.
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+
+
+
+
+
+ME_SGRAM(1-ESPS)                            ENTROPIC RESEARCH LAB
+
+
+
+          The other parameters  (or  command  line  options),  if
+          present,   override  these  defaults.   The  choice  of
+          "other" uses defaults that are the same as "wb".
+
+     _l_p_c__m_e_t_h_o_d - _s_t_r_i_n_g
+          The analysis method used to compute reflection  coeffi-
+          cients.  This parameter is not read if the ----aaaa is used.
+
+     _d_a_t_a__w_i_n_d_o_w - _s_t_r_i_n_g
+          The data window to apply to the data.   This  parameter
+          is  not read if the ----dddd option is specified or if _m_e_t_h_o_d
+          is in the parameter file and does not  have  the  value
+          "other".   Acceptable  values include "RECT" for a rec-
+          tangular window, "HAMMING", for Hamming, "HANNING"  for
+          Hanning,  "COS4" for cosine 4th, and "TRIANG", for tri-
+          angular; see the _w_i_n_d_o_w(3-ESPSsp) manual page  for  the
+          complete list.
+
+     _s_t_a_r_t - _i_n_t_e_g_e_r
+
+          The first point in the input sampled data file that  is
+          processed.   A  value  of 1 denotes the first sample in
+          the file.  This parameter is not read  if  any  of  the
+          range  command  line options are used.  If it is not in
+          the parameter file, and neither option is specified,  a
+          default value of 1 is used.
+
+     _n_a_n - _i_n_t_e_g_e_r
+
+          The total number of data points to process.  If _n_a_n  is
+          0,  processing  continues  through the end of the file.
+          This parameter is not read if any of the range  command
+          line options are used.
+
+     _w_i_n_d_o_w__l_e_n - _f_l_o_a_t
+
+          The duration in milliseconds of each frame. This param-
+          eter  not  read  if  the  ----wwww  option is specified of if
+          _m_e_t_h_o_d is in the file  and  does  not  have  the  value
+          "other".
+
+     _p_r_e__e_m_p_h_a_s_i_s - _f_l_o_a_t
+          The coefficient in the preemphasis filter (see  ---- EEEE  in
+          the Options section). This parameter not read if the ----EEEE
+          option is specified.
+
+     _s_t_e_p__s_i_z_e - _f_l_o_a_t
+          Initial points of consecutive  frames  differ  by  this
+          number of milliseconds.  This parameter not read if the
+          ----SSSS option is specified.
+
+     _o_r_d_e_r - _i_n_t_e_g_e_r
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 4G4        4
+
+
+
+
+
+
+ME_SGRAM(1-ESPS)                            ENTROPIC RESEARCH LAB
+
+
+
+          The number of reflection coefficients computed for each
+          frame of input data.  If no value is given in the file,
+          a default value of 15 is used.  This value is not  read
+          if the command line option ----oooo is used.
+
+     _s_t_r_c_o_v__t_e_s_t - _f_l_o_a_t
+
+          If STRCOV is used, this is the convergence  test  value
+          (the lower the value, the smaller the change per itera-
+          tion before termination). This is not  read  if  ----cccc  is
+          used.
+
+     _s_t_r_c_o_v__m_a_x_i_t_e_r - _i_n_t
+
+          If STRCOV is used, this is the maximum number of itera-
+          tions allowed before the estimator terminates.  This is
+          not read if ----iiii is used.
+
+     The values of parameters obtained from  the  parameter  file
+     are printed if the environment variable ESPS_VERBOSE is 3 or
+     greater.  The default value is 3.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     ESPS Common is  read  provided  that  Common  processing  is
+     enabled  and  that  the  _f_i_l_e_n_a_m_e  entry  in  Common matches
+     _i_n_p_u_t._S_D, in which case parameters present in  Common  over-
+     ride  values  from  the parameter file, which in turn may be
+     overriden by command line options  (see  the  discussion  in
+     ESPS  PARAMETERS  and under each option).  Common processing
+     is useful when _r_a_n_g_e (1-ESPS) is used to  select  a  segment
+     from  _f_i_l_e._s_d.  Common  is  not  read if _f_i_l_e._s_d is standard
+     input. If _f_i_l_e._r_c is not standard output and _f_i_l_e._s_d is  not
+     standard  input, the Common parameters _f_i_l_e_n_a_m_e (= file.sd),
+     _p_r_o_g (= refcof), _s_t_a_r_t, and _n_a_n are written to ESPS Common.
+
+     ESPS Common  processing  may  be  disabled  by  setting  the
+     environment  variable USE_ESPS_COMMON to "off".  The default
+     ESPS Common file is setting the environment variable ESPSCOM
+     to  the desired path.  User feedback of Common processing is
+     determined by the environment variable ESPS_VERBOSE, with  0
+     causing  no  feedback and increasing levels causing increas-
+     ingly detailed feedback.  If ESPS_VERBOSE is not defined,  a
+     default value of 3 is assumed.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+     The generic header item _s_t_a_r_t__t_i_m_e (type DOUBLE) is  written
+     in the output file.  The value written is computed by taking
+     the _s_t_a_r_t__t_i_m_e value from the header of the input  file  (or
+     zero,  if such a header item doesn't exist) and adding to it
+     the offset time (from the beginning of the  input  file)  of
+     the  first  point  processed.  Also, the generic header item
+     _r_e_c_o_r_d__f_r_e_q (type DOUBLE) is written  in  the  output  file.
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 5G5        5
+
+
+
+
+
+
+ME_SGRAM(1-ESPS)                            ENTROPIC RESEARCH LAB
+
+
+
+     The  value  is  the  number  of output records per second of
+     input data.  For details on the parameters used  by  all  of
+     the  programs in the script, look at all of the intermediate
+     headers (e.g., via _p_s_p_s ----aaaa).
+
+FFFFUUUUTTTTUUUURRRREEEE CCCCHHHHAAAANNNNGGGGEEEESSSS
+     _M_e__s_g_r_a_m (1-ESPS) will be re-implemented as a C program.
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     _s_g_r_a_m (1-ESPS), _p_l_o_t_s_g_r_a_m (1-ESPS), _f_i_l_t_e_r (1-ESPS),
+     _r_e_f_c_o_f (1-ESPS), _m_e__s_p_e_c (1-ESPS), _c_o_m_p_u_t_e__r_c (3-ESPSsp),
+     _d_i_t_h_e_r (1-ESPS), FEA_SPEC (5-ESPS), FEA_SD (5-ESPS)
+
+BBBBUUUUGGGGSSSS
+     This script cannot read standard input.
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Manual page and program by David Burton. Revisions  by  John
+     Shore.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 6G6        6
+
+
+

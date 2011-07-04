@@ -1,0 +1,10 @@
+# @(#)Pcross_cor	1.2	12/23/88
+# default parameter file for cross_cor
+int start1 ?= 1: "First point from first input file to process";
+int start2 ?= 1: "First point from second input file to process";
+int nan ?= 0: "Number of points to process (0 means continue to end of file)";
+int frame_len ?= 0: "Number of points in each frame (0 means nan)";
+int step ?= 0: "Difference between starting points of successive frames (0 means frame_len)";
+int minlag ?= -10: "First lag to compute cross correlation for";
+int maxlag ?= 10: "Last lag to compute cross correlation for";
+string window_type ?= "RECT": "Window to apply to data";

@@ -1,0 +1,37 @@
+#! /bin/sh
+# test script for psps @(#)psps.test	3.2	11/2/87 ESI
+set -x
+testsd -p20 t.sd
+testsd -p3000 t1.sd
+testsd -Tgauss gauss.sd
+testsd -Tsine -f600 sine.sd
+addsd gauss.sd sine.sd signal.sd
+refcof -o11 -p1:4000 -l1000 signal.sd signal.rc
+spectrans -mauto signal.rc - | spectrans -mlsf - signal.lsf
+
+psps t.sd
+
+cat t.sd | psps -
+
+psps -r1:2 -l t.sd
+
+psps -r3 signal.rc
+
+psps -lD signal.rc
+
+psps -r1:+1 signal.lsf
+
+psps -Dh signal.lsf
+
+psps -Da signal.lsf
+
+psps -Dav signal.lsf
+
+psps -gH -r1 signal.lsf
+
+psps -t1002 -H signal.lsf
+
+psps -t1 -v -f spec_param signal.rc
+
+
+

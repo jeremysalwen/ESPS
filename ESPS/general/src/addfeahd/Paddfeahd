@@ -1,0 +1,5 @@
+# default parameter file for addfeahd @(#)Paddfeahd	1.1 5/23/88 ESI
+#
+int skip ?= 0: "Bytes to skip at beginning of file";
+string subtype ?= "NONE": "FEA file subtype code to fill in";
+string comment ?= "";

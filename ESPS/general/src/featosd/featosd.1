@@ -1,0 +1,129 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc. All rights reserved.
+.\" @(#)featosd.1	1.2	01 Apr 1997	ESI
+.TH FEATOSD 1\-ESPS 01 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.if t .ds - \(em\h'-0.2m'\(em
+.if n .ds - ---
+.SH "NAME"
+featosd \- convert FEA_SD sampled-data file to SD file
+.SH "SYNOPSIS"
+.B featosd
+[
+.BI \-x " debug_level"
+]
+.I input.fea output.sd
+.SH "DESCRIPTION"
+.PP
+This program
+accepts an ESPS FEA_SD file
+.I input.fea
+and writes an ESPS SD file
+.I output.sd
+containing the same sample values.
+Any fields other than "samples" in the input file are ignored.
+The samples in multichannel input files are written out in order
+with the samples from one input record
+immediately followed by the samples from the next.
+The number of channels is stored
+in the type-specific part of the output header as
+.I hd.sd\->nchan.
+The sample data from all channels of a multichannel input file
+is thus preserved;
+however, the resulting output file may not be particularly useful,
+as there is little ESPS support for multichannel SD files
+(as opposed to FEA_SD files\*-see
+.IR mux (1-ESPS)
+and
+.IR demux (1-ESPS)).
+If the input data type is DOUBLE, FLOAT, LONG, SHORT, or BYTE,
+the output data type is the same.
+If the input data type is one of the complex types
+.RI ( e.g.,
+FLOAT_CPLX), the output data type is the corresponding real type
+.RI ( e.g.,
+FLOAT).
+In that case each input channel is split into two output channels
+containing the real and imaginary parts.
+.PP
+If
+.I input.fea
+is "\-", standard input is used for the input file.
+If
+.I output.sd
+is "\-", standard output is used for the output file.
+.SH "OPTIONS"
+.PP
+The following option is supported:
+.TP 
+.BI \-x " debug_level"
+Positive values of
+.I debug_level
+cause debugging information to be printed.
+The default value is 0, which suppresses the messages.
+.SH "ESPS PARAMETERS"
+.PP
+No parameter file is read.
+.SH "ESPS COMMON"
+.PP
+The ESPS common file is not accessed.
+.SH ESPS HEADERS
+The output header is a new SD file header, with appropriate items
+copied from the input header.
+The number of channels is recorded in the item
+.I nchan
+in the type-specific part of the output header.
+The value of the generic header item
+.I record_freq
+is recorded in the item
+.I sf
+in the type-specific part of the output header.
+The information in any of the generic header items
+.I equip, max_value, src_sf, synt_method, scale,
+.I dcrem, q_method, v_excit_method, uv_excit_method, synt_interp,
+.I synt_pwr, synt_rc, synt_order, start,
+and
+.I nan
+that are present
+is copied into the like-named item
+in the type-specific part of the output header.
+If generic header items
+.I prefilter_siz, prefilter_zeros,
+and
+.I prefilter_poles
+are all present, the information is converted to a zfunc (see
+.IR get_genzfunc (3-ESPSu)),
+a pointer to which is stored in
+.I prefilter
+in the type-specific part of the output header.
+Similarly, if generic header items
+.I de_emp_siz, de_emp_zeros,
+and
+.I de_emp_poles
+are all present, the information is saved in the output
+as a zfunc pointed to by the type-specific header item 
+.I de_emp.
+Input generic header items not used as above are copied into
+generic header items in the output header.
+As usual, the command line is added as a comment, and the header of
+.I input.fea
+is added as a source file to
+.I output.sd.
+.SH "FUTURE CHANGES"
+.PP
+None planned.
+.SH "SEE ALSO"
+.nf
+\fISD\fP(5-ESPS),\fIFEA\fP(5-ESPS),\fIFEA_SD\fP(5-ESPS),\fIget_genzfunc\fP(3-ESPSu),
+\fIsdtofea\fP(3-ESPSu).
+.fi
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+The program exits with an error message
+if the command line contains unrecognized options or too many or too
+few file names.
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Manual page and program by Rodney Johnson. 

@@ -1,0 +1,37 @@
+This is sf (shell form) version 1.8.  Having used so many high quality
+programs from the net, this is my time to contribute.
+
+This  program  was written to   augment the versatility  of  Unix user
+interface in shell level.   It does  only  one  thing -- form editing.
+Shell script writer has to process the data afterwards.
+
+Some typical usage for this program are:
+
+    o interface for non-Unix user  to access system  resource. One can
+      easily write shell  scripts  display menus and forms  for novice
+      users.
+
+    o Something like bulletin board system might use sf interface.
+
+    o I personally  use   it   to interface  with those commands  with
+      zillions of  options  (e.g.,  stty, sa, admin,  cpio)  or  those
+      commands used infrequently   (e.g., print).  I  used capitalized
+      command  names for those  shell scripts with sf interface, e.g.,
+      Stty for stty, Admin for admin, etc.
+
+    o With  proper database  interface  program,  sf  may be  used for
+      system administrator to configure system, e.g.,  add new user to
+      system, configure I/O ports,  etc.   The recently posted  "perl"
+      might be a good candidate.
+
+To build sf, simply type: "make".  Sf  has not been  tested on non-BSD
+system,  some porting will  be   needed.  You might   want to run some
+sample scripts supplied with the package to see how it works.  Enjoy!
+
+Sample scripts:
+
+	Print	(csh)	interface to BSD 4.2 print command
+	Stty	(sh)	interface to BSD 4.3 stty command
+	Lib	(csh)	maintain on-line library index (need modification)
+
+Mail bugs/comments to Paul Lew at {olivea,harvard,decvax}!gsg!lew

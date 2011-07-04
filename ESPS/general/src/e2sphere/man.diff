@@ -1,0 +1,78 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)e2sphere.1	1.2 1/4/93 ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH  E2SPHERE 1\-ESPS
+.SH NAME
+
+e2sphere \- convert ESPS FEA_SD sampled data files to Sphere (NIST) format
+
+.SH SYNOPSIS
+.B e2sphere
+[ 
+.BI \-b " sample_byte_format"
+] [ 
+.BI \-x " debug_level"
+]
+.I in.sd out.sphere
+.sp 1
+.SH DESCRIPTION
+.PP
+\fIe2sphere\fP converts a single-channel, non-complex FT_SD or FEA_SD
+file \fIin.sd\fP to Sphere format and writes the result to
+\fIout.sphere\fP.  The input data can be any type, but are converted to
+SHORT before output to \fIout.sphere\fP.
+.PP
+All scalar generic header items from \fIin.sd\fP are reproduced as
+sphere header items in the header of \fIout.sphere\fP.  Note that
+CODED generics from \fIin.sd\fP are converted as integers.  In
+addition, the Sphere header items \fIchannel_count, sample_count,
+sample_rate, sample_min, sample_max, sample_n_bytes,
+sample_byte_format,\fP and \fIsample_sig_bits\fP are included in the
+output header.
+.PP
+If \fIin.sd\fP "\-" then the input is read from the standard
+input.  If \fIout.sphere\fP is "\-" then the output is directed to the
+standard output.
+.PP
+\fIe2sphere\fP makes two passes over the data, once to find values for
+\fIsample_min\fP and \fIsample_max\fP, and once to copy the data (with
+appropriate conversions) from \fIin.sd\fP to \fIout.sphere\fP.  If
+the input is stdin, a temporary file is created to permit the second
+pass.
+.sp
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-b " sample_byte_format" "\fR [10]"
+Specifies the desired byte order in \fIout.sphere\fP.  Only "10" or
+"01" are permitted.  If the value is "01", the data are byte-reversed
+before output.
+.TP
+.BI \-x " debug_level" "\fR [0]"
+A positive value specifies that debugging output be printed on the
+standard error output.  Larger values result in more output.  The
+default is 0, for no output.
+.br
+.SH ESPS PARAMETERS
+.PP
+A parameter file is not read by \fIe2sphere\fP.
+.SH ESPS COMMON
+.PP
+ESPS Common is not read by \fIe2sphere\fP.
+.SH ESPS HEADER
+All scalar generic header items from \fIin.sd\fP are reproduced as
+sphere header items in the header of \fIout.sphere\fP. 
+.SH  SEE ALSO
+.PP
+\fIbtosps\fP (1\-\s-1ESPS\s+1),
+\fIaddfeahd\fP (1\-\s-1ESPS\s+1),
+sd_to_sphere (3\-\s-1ESPS\s+1)
+.sp
+.SH BUGS
+.PP
+Multi-channel files are not supported; output as FLOAT data is not
+supported.  
+.SH  AUTHOR
+.PP
+Man page and program by John Shore.
+

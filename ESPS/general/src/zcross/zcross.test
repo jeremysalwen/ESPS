@@ -1,0 +1,7 @@
+#! /bin/sh
+# @(#)zcross.test	1.1 6/5/88 ESI
+# test script for zcross
+echo "-1 1 -1 1 1 -1 1 -1 1 -1" | testsd -r 10 -a- test.sd
+echo "should show 2 frames, rate 6 and rate 8"
+cat test.sd | frame -l5 - - | zcross - - | psps -H -fzero_cross_rate -
+

@@ -1,0 +1,78 @@
+
+adc.c,521
+static char    *sccs_id 21,636
+#define BUF_SIZE 34,884
+int             input_buffer[36,907
+int             ad_done 39,1007
+static int      sizeof_sample 40,1082
+FILE           *output 41,1127
+int             audio_port 42,1158
+int             audio_port_ctl 43,1193
+void            (*sig_save[44,1232
+double          amax,46,1296
+double          amax, amin;46,1296
+int             input_size;47,1324
+get_buff_maxmin(51,1434
+stop_ad(76,1953
+stop_ad_send_xwaves(86,2176
+handle(99,2498
+record_file(126,3293
+
+dac.c,703
+static char    *sccs_id 19,576
+int             maxsamps,30,800
+int             maxsamps, samps_sent 30,800
+static int channel 31,858
+static int da_done 32,882
+static short   *input_buffer 36,959
+static int      buff_bytes 37,996
+static void    *inhead 39,1081
+static FILE    *instream 40,1112
+static int      infd 41,1145
+static short   *inbuff 42,1216
+void (*sig_save[43,1247
+check_underflow(48,1359
+scale(54,1402
+linux_handle(76,1850
+linux_completion(161,4369
+dac_linux(172,4593
+dacmaster_linux(182,4923
+linux_samps_sent(268,7160
+play_from_file(278,7325
+void stop_linux_da_waves(306,8098
+void interrupt_linux_da(331,8803
+set_dac_callbacks(342,9018
+clear_dac_callbacks(352,9297
+
+newplay.c,267
+static char *sccs_id 20,660
+#define SYNTAX 42,1142
+#define SYNTAX 52,1813
+#define ERR 63,2559
+#define REALLY_HUGE_INTEGER 64,2573
+#define MAXDA 65,2612
+int debug_level 67,2634
+char *waves_name 69,2714
+char *display_name 70,2739
+dim_ok(75,2838
+main(81,2905
+
+newrec.c,259
+static char *sccs_id 21,625
+#define SYNTAX 33,858
+#define SYNTAX 48,1943
+#define ERR 70,3192
+#define BUF_SIZE 76,3363
+int debug_level 78,3388
+char *pstring 79,3455
+char *waves_name 80,3499
+int  Iflag 81,3528
+output_the_header(84,3619
+main(108,4377
+
+version.c,109
+static char *sccs_id 23,768
+char	*ProgName 28,868
+char	*Version 29,896
+char	*Date 30,919
+set_pvd(33,949

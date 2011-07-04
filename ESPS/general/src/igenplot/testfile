@@ -1,0 +1,184 @@
+#!/bin/sh
+#
+#  This material contains proprietary software of Entropic Speech, Inc.   
+#  Any reproduction, distribution, or publication without the prior	   
+#  written permission of Entropic Speech, Inc. is strictly prohibited.
+#  Any public distribution of copies of this work authorized in writing by
+#  Entropic Speech, Inc. must bear the notice			
+# 								
+#      "Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved"
+# 				
+#
+# test file for igenplot @(#)testfile	3.1 10/20/87 ESI
+
+echo "Testing igenplot."
+atosps - tst.fana <<'aArDvArK'
+{
+01 d
+02 6a1a
+03 Tue Oct 13 20:08:01 1987 
+04 1.51
+05 copysps
+06 3.2
+07 9/29/87
+53 johnson
+08 4
+09 1
+0b 13
+0c 2
+0d 1
+10 /u/johnson/recog/tmp.5.ana
+12 copysps -r1:4 /u/johnson/recog/tmp.5.ana tst.fana  Converted from tst.fana by spstoa.
+13 rwj.r2.sd
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 15 1 
+
+@src_sf FLOAT 1 8000 
+@order SHORT 1 15 
+@method CODED 1 [ NONE AUTOC BURG COV MBURG STRCOV VBURG ] AUTOC 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 0 
+@maxraw LONG 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@order_unvcd LONG 1 15 
+@DC_removed CODED 1 [ NO YES ] NO 
+@maxpulses LONG 1 1 
+
+{
+01 d
+02 6a1a
+03 Fri Aug 28 03:07:03 1987 
+04 1.51
+05 refcof2
+06 3.1
+07 10/20/87
+53 johnson
+08 19
+09 1
+0b 13
+0c 2
+0d 1
+10 rwj.r2.sd
+12 analog data digitized with an EF-12M at EPIWRLrefcof2 -l180 rwj.r2.sd tmp.5.ana 
+13 rwj.r2.sd
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 15 1 
+
+@order SHORT 1 15 
+@src_sf FLOAT 1 8000 
+@method CODED 1 [ NONE AUTOC BURG COV MBURG STRCOV VBURG ] AUTOC 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 0 
+@maxraw LONG 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@order_unvcd LONG 1 15 
+@DC_removed CODED 1 [ NO YES ] NO 
+@maxpulses LONG 1 1 
+
+{
+01 9
+02 6a1a
+03 Fri Aug 28 03:06:23 1987 
+04 1.51
+05 RECORD
+06 1.5
+53 johnson
+08 8ca0
+0d 1
+12 analog data digitized with an EF-12M at EPIWRL
+42 1
+43 2047
+44 8000
+20 0
+45 0
+46 1
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+}
+}
+}
+
+#Tag 24462
+#frame_len	180 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	846.394 
+#lpc_power	502.79 
+#p_pulse_len	0 
+#spec_param	0.487814 0.269276 0.000288808 0.130547 -0.0525597 -0.0967834 -0.0162628 -0.211781 
+	0.0169932 -0.08953 -0.0555174 -0.0362976 0.14623 -0.201327 -0.149246 
+
+#Tag 24642
+#frame_len	180 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	30.5167 
+#lpc_power	12.3929 
+#p_pulse_len	0 
+#spec_param	0.70071 0.209218 0.304511 0.185957 -0.00222595 0.0117143 -0.0138459 -0.111746 
+	-0.080945 -0.0420834 0.0462285 -0.108113 -0.0100039 -0.109044 0.0372307 
+
+#Tag 24822
+#frame_len	180 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	101.206 
+#lpc_power	36.518 
+#p_pulse_len	0 
+#spec_param	0.699676 0.165495 0.262812 -0.195799 -0.128395 0.0736036 -0.172848 -0.0752957 
+	0.213517 -0.0527857 0.0571979 -0.0465987 0.209913 -0.197562 -0.102728 
+
+#Tag 25002
+#frame_len	180 
+#num_pulses	0 
+#frame_type	NONE 
+#voiced_fraction	0 
+#raw_power	28566.1 
+#lpc_power	491.12 
+#p_pulse_len	0 
+#spec_param	0.951786 -0.86532 0.327313 0.102833 0.259615 -0.0832688 -0.156199 0.123283 
+	0.0336652 -0.178124 -0.125816 -0.043771 0.0572399 -0.0508807 -0.143055 
+aArDvArK
+( echo -i5:19 ; echo -r1:4 ; echo -X150 ; echo -l1 ; echo -y1 ; \
+	echo m ; echo q ) | igenplot tst.fana
+rm tst.fana

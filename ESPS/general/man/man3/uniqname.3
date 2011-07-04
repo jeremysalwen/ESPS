@@ -1,0 +1,77 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)uniqname.3	1.5 22 Oct 1987
+.TH UNIQ_NAME 3\-ESPSu 22 Oct 1987
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+uniq_name \- create unique generic header item name by modifying proposed name
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+
+char *
+uniq_name(name_in, names)
+char *name_in;
+char **names;
+.ft
+.SH DESCRIPTION
+.I uniq_name
+checks a proposed generic header item name 
+.I name_in
+against a given list of names 
+.I names,
+and returns a pointer to a unique name that it generates.  
+In many cases, 
+.I names
+are generic header item names that have already 
+been defined for a particular ESPS file header; such lists
+can be obtained using
+.I genhd_list
+(3\-ESPSu). 
+.PP
+If 
+.I name_in 
+is different from any of 
+.I names,
+then the returned name is the same as 
+.I name_in.
+Otherwise, the returned name is is generated from
+.I name_in
+by appending the digit "1" if there is no trailing numerical string
+in
+.I name_in,
+or by incrementing the trailing number if one already is present.  
+.PP
+uniq_name
+allocates the memory required for the returned name.
+.PP
+Names created by 
+.I uniq_name
+are referred to as "incremented names".  The value of 
+.I name_in
+without any trailing digit is known as the "base name".  
+.SH EXAMPLE
+.PP
+.nf
+int  size;
+char *newname;
+float bias;
+char *fieldname = "spec_param";
+/*create "normal" generic header items*/
+(void) add_genhd_f("bias", &bias, sizeof(float), hd);
+(float *) *add_genhd_f("foo", NULL, sizeof(float), hd) = 3*bias + 2.3;
+/*create "incremented" generic header item*/
+newname = uniq_name("quant_field", genhd_list(&size, hd));
+(void) add_genhd_c(newname, fieldname, strlen(fieldname), hd);
+
+.fi
+.SH BUGS
+None known.
+.SH "SEE ALSO"
+genhd_list(3\-ESPSu),
+add_genhd(3\-ESPSu),
+get_genhd(3\-ESPSu),
+genhd_type(3\-ESPSu)
+.SH AUTHOR
+Manual page by John Shore.  
+

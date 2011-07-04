@@ -1,0 +1,79 @@
+#! /bin/sh 
+# test script for fbuttons
+# @(#)cnvlab.test	1.1	5/30/91	ERL
+
+#set -x
+
+cat > t.lab << ZAP
+2200 7000 don't
+7000 10480 ask
+11760 14720 me
+14720 16760 to
+16760 23979 carry
+23979 26223 an
+26223 32292 oily
+32292 39530 rag
+39530 44040 like
+44040 49660 that
+ZAP
+
+cat > test1.expout << ZAP1
+1st label in file t.lab doesn't start at time 0
+Labels at 11760 in file t.lab are not contiguous
+#
+    0.137500  125  UNL
+    0.437500  121  don't
+    0.655000  121  ask
+    0.735000  125  UNL
+    0.920000  121  me
+    1.047500  121  to
+    1.498687  121  carry
+    1.638937  121  an
+    2.018250  121  oily
+    2.470625  121  rag
+    2.752500  121  like
+    3.103750  121  that
+ZAP1
+
+cat > test2.expout << ZAP2
+#
+    0.137500  125  don't_S
+    0.437500  121  don't_E
+    0.437500  125  ask_S
+    0.655000  121  ask_E
+    0.735000  125  me_S
+    0.920000  121  me_E
+    0.920000  125  to_S
+    1.047500  121  to_E
+    1.047500  125  carry_S
+    1.498687  121  carry_E
+    1.498687  125  an_S
+    1.638937  121  an_E
+    1.638937  125  oily_S
+    2.018250  121  oily_E
+    2.018250  125  rag_S
+    2.470625  121  rag_E
+    2.470625  125  like_S
+    2.752500  121  like_E
+    2.752500  125  that_S
+    3.103750  121  that_E
+ZAP2
+
+echo "Testing cnvlab with one output label per input label"
+rm -f test1.out
+cnvlab -s 16000 t.lab test.out 2> test1.out
+cat test.out >> test1.out
+echo "There should be no diff output:"
+diff test1.out test1.expout
+echo " "
+
+echo "Testing cnvlab with two output labels per input label (-b)"
+rm -f test2.out
+cnvlab -s 16000 -b t.lab test.out 2> test2.out 
+cat test.out >> test2.out
+echo "There should be no diff output:"
+diff test2.out test2.expout
+echo " "
+
+
+

@@ -1,0 +1,31 @@
+# @(#)reconfigure	1.3 6/19/91 ERL - waves command script for reconfiguring menu
+waves set colormap TImap
+delete_item name "zoom in"
+delete_item name "zoom out"
+delete_item name "page ahead"
+delete_item name "page back"
+delete_item name "spectrogram (W.B.)"
+delete_item name "spectrogram (N.B.)"
+delete_item name "save segment in file"
+delete_item name "delete segment"
+delete_item name "insert file"
+delete_item name "Run psps on segment"
+add_waves menu wave name " --> <-- " builtin "zoom in"
+add_waves menu wave name " <-- --> " builtin "zoom out"
+add_waves name "  --->>  " builtin "page ahead"
+add_waves name "  <<---  " builtin "page back"
+add_waves builtin "page ahead"
+add_waves builtin "page back"
+add_espst name "run psps on segment" command psps -H
+add_espst name "run pplain on seg't" command pplain
+add_waves menu wave builtin "insert file"
+add_waves menu wave builtin "delete segment"
+add_waves menu wave builtin "save segment in file"
+add_waves menu wave builtin "spectrogram (W.B.)"
+add_waves menu wave builtin "spectrogram (N.B.)"
+add_espsf menu wave name "low pass" command filter -Ffilters/600lp.filt
+add_espsf menu wave name "band pass" command filter -Ffilters/1750bp.filt
+add_espsf menu wave name "high pass" command filter -Ffilters/3000hp.filt
+add_espsf menu wave name ratios command ratios
+add_waves name "calc panel" command make_panel name calc title "C a l c u l a t o r" icon_title CALC file bcalc
+

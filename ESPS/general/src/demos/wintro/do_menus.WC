@@ -1,0 +1,8 @@
+# Make menus control panel
+# @(#)do_menus.WC	1.3 3/16/92 ERL
+
+shell xtext -Wp 35 320 -F help/menus.doc -t "Menus Help" -i menuhelp &
+
+make_panel name mstyle file menus.WM icon_title menus title "Menu Styles" loc_x 35 loc_y 220
+
+

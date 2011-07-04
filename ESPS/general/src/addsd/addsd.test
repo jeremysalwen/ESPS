@@ -1,0 +1,74 @@
+#! /bin/sh
+# @(#)addsd.test	3.3 10/9/87 ESI
+# test script for addsd (1-ESPS)
+
+testsd -Tsine -l100 -p100 test1.sd
+cp test1.sd test2.sd
+
+# Now test -g option with zero gain
+# there should be 10 elements = 0, 38.26, 70.71, 92.39, 100, 92.39,
+# 70.71, 38.27, 0, -38.27
+echo "Test of -g option - "
+echo "there should be 10 elements = 0, 38.26, 70.71, 92.39, 100,"
+echo "                             92.39, 70.71, 38.27, 0, -38.27"
+addsd -p1:10 -g0 test1.sd test2.sd tst.sd ; psps tst.sd
+echo " "
+
+# Now test with -1 gain and standard input
+# There should be 10 elements - all about 0
+echo "Test of -p option - there should be 10 elements = 0"
+
+addsd -p1:10 -g-1 - test2.sd tst.sd < test1.sd ; psps -H tst.sd
+echo " "
+
+# Now test -t option
+# There should be 6 elements - all 0
+echo "Test of -t option"
+echo "There should be 6 elements - all 0"
+echo "1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1" | testsd -a- alt1.sd
+echo "-1 1 -1 1 -1 1" | testsd -a- alt2.sd
+addsd -t alt1.sd alt2.sd test3.sd
+psps -H test3.sd
+
+#Now test reuse
+echo "Test reuse -- there should be 20 zeros"
+addsd alt1.sd alt2.sd test3.sd
+psps -H test3.sd
+
+# Now test stdin
+# There should be a PSPS listing with 10 zeros
+echo "Testing STDIN"
+echo "There should be a PSPS listing with 10 zeros"
+addsd -p1:10 -g-1 - test2.sd tst.sd < test1.sd ; psps -H tst.sd
+echo " "
+
+#Now test stdout
+# There should be a PSPS listing with 10 zeros
+echo " Testing STDOUT"
+echo " There should be a PSPS listing with 10 zeros"
+addsd -p1:10 -g-1 test1.sd test2.sd - > tst.sd ; psps -H tst.sd
+echo " "
+
+echo "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"| testsd -a- zeros.sd
+addsd -t -g-1 zeros.sd test1.sd test3.sd
+
+# Now Test when f2 = f1
+# There should be a PSPS listing with 100 elements - all zero
+echo "Test when f2 has same number of points as f1"
+echo "There should be 100 points - all about zero"
+echo "First check psps header for 100 elements"
+addsd test1.sd test3.sd test4.sd
+psps -D test4.sd - | grep records:
+echo "Now see that they are all about zero"
+psps -H test4.sd
+
+testsd -Tsine -p16 -l100 test1.sd
+
+# Now Test when f2 > f1
+# There should be a PSPS listing with 16 elements
+# They should all be about zero
+echo "Test when f2 has more points than f1"
+echo "There should be 16 elements; they should all be about zero"
+addsd test1.sd test3.sd - | psps -H -
+echo " "
+

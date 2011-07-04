@@ -1,0 +1,30 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)savestring.3	1.5 14 Apr 1988 ESI
+.TH SAVESTRING 3\-ESPSu 14 Apr 1988
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+savestring \- save a string in dynamic memory
+.SH SYNOPSIS
+.ft B
+char *
+.br
+savestring (text)
+.br
+char *text;
+.ft
+.SH DESCRIPTION
+.PP
+.I savestring
+allocates dynamic memory for a string, copies the argument string to the
+copied space, and returns a pointer to the copy. If the argument is NULL,
+no space is allocated and NULL is returned.
+.PP
+The dynamic memory may be reclaimed with free(3C).
+.SH DIAGNOSTICS
+If enough dynamic memory cannot be allocated, savestring returns NULL.
+.SH SEE ALSO
+calloc(3C), 
+free(3C), 
+malloc(3C)
+.SH AUTHOR
+Joe Buck

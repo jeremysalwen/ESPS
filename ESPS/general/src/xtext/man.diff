@@ -1,0 +1,147 @@
+.\" Copyright (c) 1990-1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)xtext.1	1.9 7/18/91 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH XTEXT 1\-ESPS 7/18/91
+.SH "NAME"
+xtext \- popup X window containing text file or output of any text-producing command
+.SH "SYNOPSIS"
+.B xtext
+[
+.BI \-t
+.I window_title
+] [
+.BI \-i
+.I icon_title
+] [
+.BI \-F
+.I file_name
+] [
+.BI \-L
+] [
+.BI \-x
+.I debug_level
+]
+.I command_line
+.SH "DESCRIPTION"
+.PP
+\fIxtext\fP assumes that \fIcommand_line\fP is a full unix command
+line for any program that produces ASCII text output.  \fIxtext\fP
+runs the \fIcommand_line\fP, puts the output into a temporary file,
+and pops up an X Window containing the file contents.  The resulting
+window is scrollable and includes a "find" button to facilitate
+browsing.  The window can be split horizontally (with independent
+scrollbars).  Unless the \fB-L\fP option is used, \fIxtext\fP will
+delete the temporary file when it exits.  The temporary file
+is by default located in /usr/tmp, but this location can be 
+changed by setting the \fIunix\fP environment variable ESPS_TEMP_PATH.
+.PP
+The \fB-F\fP option permits the display of an existing text file
+(rather than of the output from \fIcommand_line\fP.  If this option is
+used, the \fIcommand_line\fP cannot be given, and the \fB-L\fP option
+has no effect (i.e., the file is never deleted).  
+.PP
+The window and icon titles can be set directly via the \fB-t\fP and
+\fB-i\fP options.  The default titles depend on on whether or not the
+\fB-F\fP option is used; if \fB-F\fP is used, the default window and
+icon titles are both set to \fIfile_name\fP; if \fB-F\fP is not used,
+the default window title is set to the \fIcommand_line\fP followed by
+the temporary file name (in parentheses), and the default icon title
+title is set to the first item in the \fIcommand_line\fP (usually the
+name of the program being run from within \fIxtext\fP).
+.PP
+Window position can be specified by means of the the standard XView
+\fB-Wp\fP and standard X11 \fB-geometry\fP options.  
+.PP
+\fIxtext\fP can be used in shell scripts to provide window-oriented
+displays to the user.  
+.PP
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-t " window_title"
+Specifies that the string \fIwindow_title\fP be used in the title bar
+of the displayed window.  
+.TP
+.BI \-i " icon_title"
+Specifies the title to use for the window icon.  
+.TP
+.BI \-F " file_name"
+Specifies that the contents of the existing file \fIfile_name\fP
+should be displayed (rather than of the output from
+\fIcommand_line\fP).  If this option is used, the \fIcommand_line\fP
+cannot be given.  The \fIfile_name\fP may be a full path or a partial
+path relative to the current directory.  If \fIunix\fP environment
+variables are contained in the path (e.g., $HOME), they are expanded
+properly.  If $ESPS_BASE appears in the path and is not defined 
+as an environment variable, it is expanded automatically to the 
+to base ESPS directory (same one as found by \fIget_esps_base\fP
+(1\-\s-1ESPS\s+1)). 
+.TP
+.BI \-L 
+Specifies that the temporary file (containing the \fIcommand_line\fP
+output) be left in place.  (Note that the file name is given in the
+default window title.)  This option has no effect if \fB-F\fP is used.
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If \fIdebug_level\fP is positive,
+.I xtext
+outputs debugging messages. The messages proliferate as
+.I debug_level 
+increases.  For level 0, there is no output.
+.SH "ESPS PARAMETERS"
+.PP
+The ESPS parameter file is not read by \fIxtext\fP.  
+.SH ESPS HEADERS
+.PP
+No ESPS files are processed by \fIxtext\fP.
+.SH ESPS COMMON
+.PP
+ESPS Common is neither read nor written by \fIxtext\fP. 
+.SH EXAMPLES
+.PP
+The command
+.nf
+
+	%xtext psps -lD foo.fea
+
+.fi
+will run \fIpsps\fP (1\-\s-1ESPS\s+1) on the file foo.fea and put up a
+long listing of the header in a text window.  Similarly,
+.nf
+
+	%xtext -t foo.fea fea_stats foo.fea
+
+.fi
+will pop up the results of running \fIfea_stats\fP (1\-\s-1ESPS\s+1).
+The file name is used in this case as the icon title.  The command
+.nf
+
+	%xtext psps -F $HOME/.wave_pro
+
+.fi
+will pop up the \fIwaves\fP profile from the user's home directory. 
+.PP
+Note that aliases provide a convenient means of 
+providing versions of ESPS text-producing programs psps that
+always pops up the results in a window, for example:
+.nf
+
+	%alias pspstool xtext psps 
+	%pspstool foo.fea
+
+.fi
+.PP
+If you are running under Sun`s OpenWindows and the \fIfilemgr\fP, it
+can be convenient to use the \fIbinder\fP so that "xtext psps -lD" is
+bound to certain file name patterns.   This yields the header in a
+pop-up window when you double click on the file's icon. 
+.SH "SEE ALSO"
+.PP
+\fIexprompt\fP (1\-\s-1ESPS\s+1), \fIxwaves\fP (1\-\s-1ESPS\s+1),
+\fIpsps\fP (1\-\s-1ESPS\s+1), \fIfea_stats\fP (1\-\s-1ESPS\s+1)
+.SH "AUTHOR"
+.PP
+Manual page and code by John Shore.  
+
+

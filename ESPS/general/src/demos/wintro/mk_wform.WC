@@ -1,0 +1,5 @@
+kill name signal file files/signal.sd
+make name signal file files/signal.sd loc_x 10 loc_y 180 height 220 width 480
+
+
+#@(#)mk_wform.WC	1.2 11/5/91 ERL

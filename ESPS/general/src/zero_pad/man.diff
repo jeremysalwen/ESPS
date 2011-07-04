@@ -1,0 +1,132 @@
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)zero_pad.1	1.1 1/5/93 ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH  ZERO_PAD 1\-ESPS 1/5/93
+.SH NAME
+
+.nf
+zero_pad \- append or prepend empty records to a fea file
+.fi
+.SH SYNOPSIS
+.B
+zero_pad
+[
+.BI \-x " debug_level"
+] [
+.BI \-l " padding"
+] [
+.BI \-L " padding"
+] [
+.BI \-i
+] [
+.BI \-d
+]
+input.fea output.fea
+.SH DESCRIPTION
+.PP
+.I zero_pad
+reads data from the fea file 
+.I input.fea
+and copies it to the fea file 
+.I output.fea.  
+Additional records are appended to the data from
+.I input.fea,
+unless the 
+.BI \-i
+option is specified, in which case they are written to 
+.I output.fea
+before the data from 
+.I input.fea.  
+By default the additional records are
+empty (the fields in the records are zeros) unless the
+.BI \-d 
+option is specified.
+
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If 
+.I debug_level
+is positive,
+.I zero_pad
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the  
+.I debug_level
+increases.  If \fIdebug_level\fP is 0 (the default), no messages are
+printed.  
+.TP
+.BI \-i
+If specified, the additional records are written to 
+.I outfile.fea
+before the data of 
+.I input.fea.
+If not specified, the additional records are written
+to 
+.I outfile.fea
+after the data of 
+.I input.fea.
+.TP
+.BI \-l " padding \fR[0]\fP"
+specifies the number of additional records which should be written
+to 
+.BI output.fea. 
+.TP
+.BI \-L " padding \fR[0]\fP"
+specifies in seconds the duration of the additional data which
+should be written to
+.BI output.fea. 
+The generic header item 
+.BI record_freq
+is read from the header of 
+.BI input.fea
+to convert the duration from seconds to records. 
+.BI \-L
+and
+.BI \-l
+cannot be used together.
+.TP 
+.BI \-d
+specifies that data from 
+.BI input.fea
+should be extended to provide the additional records.  The default
+is to use empty records.  If 
+.BI \-i 
+is specified, the first record of 
+.I input.fea
+is duplicated to provide the additional
+data needed to prepend. 
+If 
+.BI \-i 
+is not specified, the last record of
+.I input.fea 
+is duplicated to provide the data to append.
+
+.SH ESPS PARAMETERS
+.PP
+No parameters are supported.
+
+.SH ESPS COMMON
+.PP
+Common is not processed.
+.SH ESPS HEADERS
+.PP
+The header of 
+.I input.fea
+is copied to 
+.I output.fea.
+The (long) generic header item 
+.I records_padded
+is added to the output header.
+.SH BUGS
+.PP
+None known.
+.SH AUTHOR
+.PP
+Bill Byrne
+
+
+
+
+

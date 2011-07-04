@@ -1,0 +1,10 @@
+"Set Color Map" MENU
+grey		set colormap greymap
+Color	DEFAULT	set colormap Colormap
+color		set colormap colormap
+COLOR		set colormap COLORMAP
+COLOR_		set colormap COLOR_MAP
+TImap		set colormap TImap
+"Set Color Map" END
+
+# @(#)dcolors.WM	1.2 8/1/91 ERL

@@ -1,0 +1,57 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)feadecode.3	1.5 06 May 1997 ESI
+.TH FEA_DECODE 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+fea_decode \- get string corresponding to code for coded field in ESPS
+FEA file
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/fea.h>
+
+char *
+fea_decode(code, name, hd)
+short code;
+char *name;
+struct header *hd;
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+.I Fea_decode
+returns a pointer to a character string corresponding to value
+\fIcode\fR in the value space of Feature file field \fIname\fR in the
+file pointed to by \fIhd\fR.
+.PP
+The returned value is a character pointer to the CODED value string in
+the header \fIhd\fR.    Bad things could happen the area pointed to is
+modified.
+.PP
+NULL is returned if \fIcode\fR is out of the range of the values for
+\fIname\fR or if \fIname\fR is not a valid CODED field in this file.
+.SH EXAMPLE
+.PP
+Assume field name \fIzeta\fR was created as a field of type coded with
+possible values "ZA", "ZB", and "ZC" in ESPS feature file \fIhd\fR.   
+"ZA" corresponds to a value of
+0, "ZB" corresponds to a value of 1, and "ZC" corresponds to a value of
+2.    Calling:
+.PP
+.nf
+char *s;
+
+s = fea_decode(2, "zeta", hd);
+.fi
+.PP
+will return a pointer to "ZC".
+.SH "SEE ALSO"
+.PP
+.nf
+allo_fea_rec(3\-ESPSu), add_fea_fld(3\-ESPSu), get_fea_deriv(3\-ESPSu),
+get_fea_ptr(3\-ESPSu), fea_encode(3\-ESPSu), set_fea_deriv(3\-ESPSu),
+FEA(5\-ESPS)
+.fi
+
+

@@ -1,0 +1,81 @@
+#! /bin/sh
+# @(#)refcof.test	3.7 1/6/93 ESI
+# test script for refcof 
+echo ""
+echo "Creating SD file of alternating ones and zeros"
+echo "echo ""1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1"" | testsd -P/dev/null -a- alt.sd"
+echo "1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1" | testsd -P/dev/null -a- alt.sd
+echo "Compute reflection coefficients then back to autocorrelations"
+echo  "refcof -P /dev/null -o5 -p1:+9 -d alt.sd alt.rc"
+refcof -P/dev/null -o5 -p1:+9 -d alt.sd alt.rc
+echo "spectrans -m auto alt.rc alt.auto"
+spectrans -m auto alt.rc alt.auto
+echo ""
+echo "spec_params of alt.auto should be -.9, .8, -.7, .6, -.5"
+echo ""
+echo "psps -H -f spec_param alt.auto"
+psps -H -f spec_param alt.auto
+#now do with some other methods; can't use alt since it would 
+#be unstable
+echo " "
+echo "Now generate sine wave (1500 Hz.), add some noise,"
+echo "and analyze by different methods"
+echo ""
+echo "testsd -P/dev/null -p1000 -f1500 -Tsine sine.sd"
+testsd -P/dev/null -p 1000 -f1500 -Tsine sine.sd
+echo "testsd -P/dev/null -p1000 -Tgauss - | addsd - sine.sd test.sd"
+testsd -P/dev/null -p1000 -Tgauss  - | addsd - sine.sd test.sd
+echo ""
+echo "The results of these analyses should be close to each other"
+echo ""
+set -x
+rm -f combo.rc
+refcof -P/dev/null -r10:+799  -m autoc test.sd autoc.rc
+copysps autoc.rc combo.rc
+refcof -P/dev/null -r10:+799 -m cov   test.sd cov.rc
+copysps cov.rc combo.rc
+refcof -P/dev/null -r10:+799 -m burg  test.sd burg.rc
+copysps burg.rc combo.rc
+refcof -P/dev/null -r10:+799 -m mburg test.sd mburg.rc
+copysps mburg.rc combo.rc
+refcof -P/dev/null -r10:+799 -m fburg test.sd fburg.rc
+copysps fburg.rc combo.rc
+refcof -P/dev/null -r10:+799 -m vburg test.sd vburg.rc
+copysps vburg.rc combo.rc
+refcof -P/dev/null -r10:+799 -m strcov test.sd strcov.rc
+copysps strcov.rc combo.rc
+refcof -P/dev/null -r10:+799 -m strcov1 test.sd strcov1.rc
+copysps strcov1.rc combo.rc
+set +x
+echo ""
+echo "The RC and power values should be close in psps output"
+echo "and the plots should be almost on top of each other."
+echo ""
+set -x
+xtext psps -H -f spec_param -f raw_power -f lpc_power combo.rc &
+me_spec -P/dev/null combo.rc combo.fspec 
+plotspec combo.fspec &
+set +x 
+sleep 5
+echo ""
+echo "Now we generate a sine wave with very low level of noise."
+echo "testsd -p 100 -l .5 -Tgauss - | addsd - sine.sd test2.sd"
+testsd -p100 -Tgauss -l .5 - | addsd - sine.sd test2.sd
+echo "The following analysis should show different results"
+echo "for FBURG (split lines) and STRCOV (right on)."
+echo "The warning about PREMATURE EXIT from struct_cov is OK."
+echo ""
+set -x
+rm -f combo2.rc
+refcof -P/dev/null -r15:+25 -m fburg test2.sd fburg2.rc
+copysps fburg2.rc combo2.rc
+refcof -P/dev/null -r15:+25 -m strcov test2.sd strcov2.rc
+copysps strcov2.rc combo2.rc
+psps -H -f spec_param -f raw_power -f lpc_power combo2.rc
+me_spec -P/dev/null combo2.rc combo2.fspec
+plotspec combo2.fspec &
+
+set +x
+echo "Don't forget to clean up"
+
+

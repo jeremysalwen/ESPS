@@ -1,0 +1,124 @@
+###############################################################################
+#
+#	Copyright (C)   Paul Lew, 1988, All rights reserved
+#
+#	sccsid = "%W% %G%"
+#
+#	File Name:	Makefile
+#
+#	Author:         Paul Lew
+#	Creation Date:  05/07/86  05:06 PM
+#	Last update:	02/07/88  10:29 PM  (Edition: 25)
+#
+#	Function:	Makefile for shell form editor
+#
+#	Update History:
+#	     Date		Modification Description		By
+#	   --------	-----------------------------------------------	---
+#	   05/07/86	Initial version					Lew
+#	   08/01/87	Added field.h, split shform.c into load.c,	Lew
+#			option.c, field.c, and form.c			Lew
+#	   01/11/88	Added field.h (was missing)			Lew
+#	   01/13/88	Added summary.c					Lew
+#	   01/14/88	Added make zoo					Lew
+#	   01/28/88	Added make shar					Lew
+#	   02/07/88	Added Makefile to shar list (was missing)	Lew
+#	   02/07/88	Added COPYRIGHT					Lew
+#
+###############################################################################
+TITLE = sf
+
+MODULE	= sf
+OBJECTS	= sf.o form.o load.o field.o selection.o keyword.o	\
+	  option.o msg.o term.o io.o summary.o
+FILES	= sf.c form.c load.c field.c selection.c keyword.c	\
+	  option.c msg.c term.c io.c summary.c
+EXAMPLES= Print Stty Lib
+INFO	= sf.1 README MANIFEST COPYRIGHT TODO
+LIBS	= 
+LIBSRC	=
+CFLAGS	= -n -g
+LIBRARY	= -ltermcap -lc
+INCLUDES= basic.h form.h field.h term.h
+EDITION	= 1
+#------------ The remainder of this makefile is module independent -------#
+
+.SUFFIXES: .rel .obj .r .o .c
+
+CFLAG2	=
+CREF	= /gsg/lew/bin/cref
+DEPEND	= /gsg/lew/sh/depend
+
+#------------- Make executable -------------------------------------------#
+
+$(MODULE):	$(OBJECTS) $(LIBS)
+		$(CC) $(CFLAGS) -o $(MODULE) $(OBJECTS) $(LIBS) $(LIBRARY)
+
+.c.o:
+		$(CC) $(CFLAGS) $(CFLAG2) -c $*.c
+
+#------------- Utilities -------------------------------------------------#
+
+util:		lint TAGS listing depend
+
+lint:		$(FILES)
+		lint $(FILES) > lint
+
+TAGS:		$(INCLUDES) $(FILES)
+		etags $(INCLUDES) $(FILES)
+
+listing:	$(INCLUDES) $(FILES)
+		-$(CREF) $(INCLUDES) $(FILES) > listing
+
+clean:
+		-rm *.o sf
+
+print:		listing xxx
+xxx:
+		lpr -J '$(TITLE)' listing
+
+depend:		$(FILES)
+		@ touch depend
+		@ $(DEPEND) $(FILES)
+
+name:
+		@ echo $(INCLUDES) $(FILES)
+
+zoo:
+		@ /bin/rm -f sf.zoo
+		zoo a sf RCS/* TAGS ID
+		@ chmod a-w sf.zoo; ls -l sf.zoo
+
+shar:
+		echo '----shar.01-----' > MANIFEST
+		vitals $(INFO) $(EXAMPLES) $(INCLUDES) Makefile >> MANIFEST
+		echo '----shar.02-----' >> MANIFEST
+		vitals $(FILES) >> MANIFEST
+		shar -a $(INFO) $(EXAMPLES) $(INCLUDES) Makefile > shar.01
+		shar -a $(FILES) > shar.02
+
+help:
+		@ echo "make lint     -- generate lint file: lint"
+		@ echo "make TAGS     -- generate tag file:  TAGS"
+		@ echo "make listing  -- generate cross ref listing:  listing"
+		@ echo "make print    -- print out listing:  listing"
+		@ echo "make depend   -- update makefile dependency rule"
+		@ echo "make util     -- do all above"
+		@ echo "make name     -- output source name list"
+		@ echo "make zoo      -- recreate sf.zoo archive"
+		@ echo "make shar     -- create shell archive files"
+#-------------------------------------------------------------------------#
+# DO NOT DELETE THIS LINE, auto-generated dependency rules follow:
+field.o:		basic.h field.h form.h term.h
+form.o:		basic.h field.h form.h term.h
+keyword.o:	basic.h
+load.o:		basic.h field.h form.h
+msg.o:		basic.h form.h
+option.o:	basic.h form.h
+selection.o:	basic.h field.h form.h term.h
+sf.o:		basic.h form.h
+summary.o:	basic.h form.h
+term.o:		form.h term.h
+#
+# Rules made at:		Thu Jan 28 20:55:24 EST 1988  by lew
+# DEPENDENCIES END HERE.

@@ -1,0 +1,15 @@
+"Field Labels" MENU
+	"Show" set show_labels 1 all 1
+	"Hide" set show_labels 0 all 1
+"Field Labels" END
+"Field Values" MENU
+	"Show"  set show_vals 1 all 1
+	"Hide"  set show_vals 0 all 1
+"Field Values" END
+"Reticle" MENU
+	"Show"  set reticle_grid 1 all 1
+	"Hide"  set reticle_grid 0 all 1
+"Reticle" END
+
+
+# @(#)annot.WM	1.4 6/29/93

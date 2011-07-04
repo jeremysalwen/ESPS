@@ -1,0 +1,26 @@
+.lo
+.ce 2
+.b
+README FIRST
+10/25/89 1.3
+.sh 1 "About these tapes"
+.pp
+This package contains both the ESPS Masscomp sources as described in the
+attached instructions and a binary directory.   You can either build the
+system from source (see the source installation instructions), or use
+the pre-compiled binary (see the binary installation instructions).
+.pp
+The larger tape contains
+two binary distributions, one built for X windows and one
+built for MC Windows.  The directories are \fIesps.mc_X11\fR and 
+\fIesps.mc_SP40\fR.    The source is under \fIgeneral\fR and
+\fIlocal.skel\fR as described in the source instructions on the smaller
+tape.
+.pp
+The binary is included because we have noticed that some Masscomp
+systems have a C compiler version that fails to correctly compile a few
+of our programs.  The problem is actually with the libraries and results
+in some undefined symbols.   Some minor changes to the makefiles will
+fix this.  The problem seems to vary with different Masscomp systems,
+so it has been difficult to fix it for cetain.   (The risk of a source
+distribution.)  Call us if you see this problem. 

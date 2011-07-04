@@ -1,0 +1,17 @@
+delete_all_items menu spect
+add_waves menu spect builtin "bracket markers"
+add_waves menu spect name "zoom in" builtin "zoom in"
+add_waves menu spect name "zoom out" builtin "zoom out"
+add_waves menu spect name "zoom full out" builtin "zoom full out"
+add_waves menu spect name "  --->>  " builtin "window ahead"
+add_waves menu spect name "  <<---  " builtin "window back"
+add_waves menu spect builtin "align & rescale"
+add_espst menu spect name "Show segment data" command epsps -H
+add_espst menu spect name "Show header (brief) and segment" command psps -l 
+add_espst menu spect name "Show header (full) and segment" command psps -a
+
+add_waves menu spect builtin "kill window"
+return
+
+# @(#)imagmen1.WC	1.2 2/5/92 ERL 
+

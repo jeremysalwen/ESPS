@@ -1,0 +1,14 @@
+# SUNDEMO @(#)SUNDEMO	1.2 10/9/90  - starting point of whole demo
+# this version assumes Sun OpenWindows is installed
+# it is the original demo and uses screenload to 
+# display slides; thus it works on Suns only
+
+cd erldemos
+PATH=.:esps/bin:$PATH; export PATH
+
+rm -f /tmp/erldemo.lock
+rm -f /tmp/ewaves.lock
+rm -f /tmp/eslides.lock
+rm -f /tmp/erlwtry.lock
+
+erldemo -S slideshow.sh -W wavesdemo.sh -T wavestry.sh -I edemo.info -A edemo.about -t "Entropic Demo" &

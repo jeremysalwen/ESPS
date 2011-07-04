@@ -1,0 +1,5 @@
+#! /bin/sh
+rm log
+echo "find . \( -name #\*# -o -name \*~ -name core -name foo \) -print -exec rm -f {} \;"
+eval "find .  \( -name \#\*\# -o -name \*~ -name core -name foo \) -print -exec rm -f {} \;"
+find . -name \*.o -print

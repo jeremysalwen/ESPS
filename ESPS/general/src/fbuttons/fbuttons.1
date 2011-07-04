@@ -1,0 +1,412 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)fbuttons.1	1.16 01 Apr 1997 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  FBUTTONS 1\-ESPS 01 Apr 1997
+.SH NAME
+.nf
+fbuttons \- create panel with buttons that run programs on specific files
+.fi
+.SH SYNOPSIS
+.B
+fbuttons
+[
+.BI \-F " file_menu"
+] [ 
+.BI \-s " max_scroll_lines"
+] [ 
+.BI \-R " regexp"
+] [ 
+.BI \-L " proglist_file"
+] [ 
+.BI \-S " progmenu_file"
+] [
+.BI \-M " mbuttons_menu"
+] [
+.B  \-a
+] [
+.BI \-b " but_per_row"
+] [ 
+.BI \-q " quit_button"
+] [ 
+.BI \-Q " quit_label"
+] [ 
+.BI \-l " quit_command"
+] [ 
+.B \-c
+] [
+.B \-h
+] [
+.BI \-w " window_title"
+] [ 
+.BI \-i " icon_title"
+] [ 
+.BI \-X " x_pos"
+] [ 
+.BI \-Y " y_pos"
+] [
+.BI \-x " debug_level"
+] [
+\fIfilename1\fP
+] [
+\fIfilename2\fP ...
+]
+.SH DESCRIPTION
+.PP
+\fIfbuttons\fP ("file buttons") pops up an X window with screen
+buttons (or a scrollble list) for invoking one of a given set of
+programs on one of a given set of files.  By default, the window
+displayed by \fIfbuttons\fP has two panels, one panel to provide
+selections for the program to be run, and one panel with buttons that
+invoke the selected program on a given file.  By default,
+\fIfbuttons\fP is configured to either play or view the header of all
+files in the current directory with suffixes ".sd" or ".d".  If the
+\fB-M\fP option is used, a third panel is created with screen buttons
+that can have arbitrary functions in the style of \fImbuttons\fP
+(1\-\s-1ESPS\s+1).
+.PP
+Programs are invoked on a given file by pressing (left mouse) the
+corresponding button in the bottom panel of the window.  Buttons there
+may have menus associated with them, in which case programs are
+invoked on a given file by making an appropriate menu selection.
+Often the button labels duplicate the file names, but (if \fB-F\fP is
+used) it is possible to create file buttons with arbitrary labels.
+The program that is invoked by pressing such a file button (or making
+a button-menu selection) is controlled by an exclusive set of
+toggle-buttons in the top panel of the window (or in the middle panel
+if the \fB-M\fP option is used).  Pushing the "program button"
+labelled with the desired program selects the named program as the one
+that will be invoked on a file when a the file is selected by pressing
+a file button in the bottom panel or making a button-menu selection
+there.  (Note that the act of pushing a program button has no effect
+other than selecting that program for subsequent invocation via the
+file buttons.)  Programs invoked by \fIfbuttons\fP inherit its
+environment.  A QUIT button is also provided in the panel containing
+the program buttons; it can be disabled using the \-\fBq\fP option.  
+.PP
+File names associated with the file buttons, scrollable file list, or file
+button-menus can be provided to \fIfbuttons\fP using any combination
+of three methods: (1) a list on the command line (\fIfilename1\fP
+\fIfilename2\fP ...), in which case the button labels are given by the
+file names; (2) a regular expression for a set of file names
+(\fB-R\fP), in which case the button labels are also given by the file
+names; and (3) a menu file containing button labels and associated
+file names (\fB-F\fP).  If none of these three methods is used, by
+default \fIfbuttons\fP uses the regular expression "\\.s*d$" to select
+all files in the current directory with suffixes ".sd" or ".d",
+If the \fB-a\fP is used, file names will be sorted alphabetically 
+(but note that sorting does not apply to a menu file associated
+with \fB-F\fP).  
+.PP
+If \fB-s\fP is used, a scrollable list is provided instead of buttons 
+in the bottom panel.  The number of files shown is limited to 
+\fImax_scroll_lines\fP (but of course the list can be scrolled).  
+If \fB-s\fP is used, the list labels are limited to file names (i.e., 
+\fB-F\fP cannot be used).  A scrollable list cannot be used if a 
+\fIfile_menu\fP is specified (\fB-F\fP). 
+.PP
+The \fIfile_menu\fP specified with \fB-F\fP uses uses the same format
+as menu files for the OPEN LOOK window manager \fIolwm\fP (same as
+\fIsunview\fP menu files).  If submenus are specified, they result in
+menu buttons with pull-down menus.
+.PP
+The simplest case for \fIfile_menu\fP is a file with two columns \-
+the button labels are taken from the first column and the
+corresponding files are taken from the second column.  If blanks are
+needed in the button labels, use quotes to surround the string in the
+first column (e.g., "Max Headroom").  More complicated cases can be
+created using the full syntax of \fIolwm\fP(1) menu files.  The only
+restriction is that there can only be one level of submenus \- i.e.,
+each entry in the \fIfile_menu\fP can itself specify a menu (either
+directly or by giving the full path to another menu file), but the
+specified submenu cannot have additional submenus.  Also, while the
+\fIolwm\fP command keyword DEFAULT is handled, others (PROPERTIES,
+REFRESH, FLIPDRAG, etc.)  are treated as ordinary strings.  For
+details about the format of menu files, see \fIolwm\fP(1) \- the
+manual page is included in the ESPS distribution.  Also, see
+\fImbuttons\fP (1\-\s-1ESPS\s+1) and the EXAMPLES.
+.PP
+Program names for the program buttons can be provided to
+\fIfbuttons\fP in one of two ways: (1) by means of a file containing a
+list of programs (\fB-L\fP) \- in this case, the program "name" is
+actually the full command line to be used (i.e., each "name" is used
+both as a button label and as the command line to be executed); (2) by
+means of a file containing a list of names and associated command
+lines (\fB-S\fP) \- in this case, the name is used as the button label
+and is independent of the command line to be executed.  If neither
+\fB-L\fP or \fB-S\fP is specified, \fIfbuttons\fP uses a default
+\fIprogfile_menu\fP to create two program buttons: one labeled "play
+file" and one labeled "show header".  The former causes "play \-r1: "
+to be invoked on any file whose file button is pressed; the latter
+causes "xtext psps -aD" to be invoked (this results in a pop-up window
+with a full-history header but no data).  If the default menu cannot
+be found, \fIfbuttons\fP uses "play -r1:" and "xtext psps -aD" both as
+program button labels and command strings.
+.PP
+The \fB-M\fP option can be used to specify a menu file of the type
+used by \fImbuttons\fP (1\-\s-1ESPS\s+1) to create arbitrary screen
+buttons.  The syntax of the menu file and the semantics of the
+resulting button panel are exactly the same as for \fImbuttons\fP,
+execept that the panel appears as the top panel within the
+\fIfbuttons\fP window rather than in its own window (as is the case
+for \fImbuttons\fP).  Pressing a simple button invokes an associated
+command.  Pressing a menu button (specified as a sub-menu within the
+\fImbuttons_file\fP) produces a pop-down menu; selecting an item from
+the menu invokes an associated command.  If the \-\fBc\fP is specified
+a set of exclusive choice buttons is presented instead of a menu
+button.  For details, see the \fImbuttons\fP man page.
+.PP
+In a typical application, each file name (as specfied on the command
+line or via \fB-F\fP and \fB-R\fP) is the name of an existing file.
+In some cases, however, it makes sense for the names to have other
+meanings that are known to the invoked programs.  For example, in the
+TIMIT demo (included in the ESPS demo directory), the button labels
+are file prefixes, and the invoked programs derive relevant file names
+by appending appropriate suffixes.
+.PP
+If \fB-S\fP, \fB-M\fP, or\fB- F\fP is used, \fIfbuttons\fP looks looks
+for the named \fIprogmenu_file\fP, \fImbuttons_menu\fP or
+\fIfile_menu\fP file first in the current directory and then in
+$ESPS_BASE/lib/menus.  This default search path can be overriden by
+setting the \fIunix\fP environment variable ESPS_MENU_PATH. 
+\fIfind_esps_file\fP(3\-\s-1ESPS\s+1) is used in implementing this
+behavior, so environment variables (preceeded by the character $) can be
+embedded within the \fIprogmenu_file\fP and \fImbuttons_menu\fP
+strings.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-F " file_menu"
+Specifies that file buttons be created from the file \fIfile_menu\fP.
+In the simplest case, the button labels are taken from the first
+column and the associated files are taken from the second column.
+Butons with associated pop-down menus can also be created (see the
+discussion above under DESCRIPTION).  Note that the \fB-F\fP option
+can be used in combination with \fB-R\fP and with file names listed
+explicitly on the command line.
+.TP 
+\fB\-R\fI regexp\fR ['\\\\\\\\.s*d$'] Specifies that file buttons be
+created for any file in the current directory that matches the regular
+expression \fIregexp\fP.  By default, any file name with suffix ".sd"
+or ".d" is selected, provided that the \fB-F\fP option isn't use and
+that file names are not given explicitely on the command line.  The
+\fB-R\fP option can be used in combination with \fB-F\fP and with file
+names listed explicitly on the command line.
+.TP 
+.BI \-L " proglist_file"
+Specifies that program buttons be created for the strings listed in
+the file \fIproglist_file\fP, one string per line (empty lines are
+ignored).  A set of exclusive toggle-buttons is created.  The button
+labels are the strings in \fIproglist_file\fP.  The same string is
+used as a program command line if a given program button is down when
+any file button is pressed, the file name is appended to the program
+button label (i.e., to the string that was in \fIproglist_file\fP) and
+the resulting command is executed.  The command inherits the
+environment of \fIfbuttons\fP.  This option and \fB-S\fP are mutually
+exclusive.  If neither are used, then a default menu file is used to
+create two program buttons: one labeled "play file" and one labeled
+"show header".  The former causes "play \-r1: " to be invoked on any
+file whose file button is pressed; the latter causes "xtext psps -aD"
+to be invoked (this results in a pop-up window with a full-history
+header but no data).  If the default menu cannot be found,
+\fIfbuttons\fP uses "play -r1:" and "xtext psps -aD" both as program
+button labels and command strings.
+.TP
+.BI \-S " progmenu_file"
+Specifies that program buttons be created from the file
+\fIprogmenu_file\fP, with the button labels taken from the first
+column in the file and the corresponding command strings taken from
+the second column.  If blanks are needed in the button labels, use
+quotes to surround the string in the first column (e.g., "Display
+Header").  Do not use quotes in the command string unless they are
+part of the command (you may have to escape them).  The
+\fIprogmenu_file\fP format corresponds to a special case of \fIolwm\fP
+and \fIsunview\fP menu files, namely single-level menus (no submenus).
+Thus, a menu title line and certain other standard keywords can be
+present, although they are ignored by \fIfbuttons\fP.  For more
+information, see \fIolwm\fP(1) \- the manual page is included in the
+ESPS distribution.
+.TP
+.BI \-M " mbuttons_file"
+Specifies that a top panel be created with arbitrary screen buttons
+defined by the menu file \fImbuttons_file\fP.  This ASCII file defines
+button names and associated commands using the same format as menu
+files for the OPEN LOOK window manager \fIolwm\fP (same as
+\fIsunview\fP menu files).  If submenus are specified, they result in
+menu buttons with pull-down menus.  The resulting button panel behaves
+exactly the same as the independent button windows created by
+\fImbuttons\fP (1\-\s-1ESPS\s+1).  For details, see the manual 
+pages for \fImbuttons\fP (1\-\s-1ESPS\s+1) and \fIolwm\fP(1).  
+.TP
+.BI \-s " max_scroll_lines"
+Specifies that a scrollable list be used in the bottom panel instead
+of buttons, with \fImax_scroll_lines\fP being the number visible.  A
+scrollable list cannot be used if a \fIfile_menu\fP is specified
+(\fB-F\fP).
+.TP
+.B \-a 
+Specifies that the file names obtained from the command line and from
+the \fB-R\fP option be sorted in alphabetical order.  Sorting does not
+apply to the button names derived from a \fIfile_menu\fP (\fB-F\fP
+option).  
+.TP
+.BI \-b " but_per_row \fR[10]\fP"
+Specifies the number of file buttons per row and is also used to
+adjust the geometry of the program toggle buttons.  If
+\fIbut_per_row\fP is set to 1, for example, a single column of buttons
+will result.  
+.TP
+.BI \-q " quit_button \fR[1]\fP"
+If zero, inhibits the "QUIT" button from the program panel.  If the
+\fIunix\fP environment variable BBOX_QUIT_BUTTON is defined, this
+results in a "QUIT" button being added to every panel even if
+\fIquit_button\fP is 0.  The main reason for providing global control
+via BBOX_QUIT_BUTTON is to facilitate usage on systems with window
+managers that do not provide an independent means for killing windows.
+.TP
+.BI \-Q " quit_label" \fR[QUIT]\fP"
+If a "QUIT" button is included (see \-\fBq\fP), the \fIQ\fP option
+specifies the label shown on the button.  This option has no effect if
+there there is not a quit button.  
+.TP
+.BI \-l " quit_command"
+If a "QUIT" button is included, this option may be used to provide a
+command that is to be executed prior to quitting.  Any Unix command
+can be given as the argument of the \-\fBl\fP option.  This option has
+no effect if there there is not a quit button.  
+.TP
+.B \-c
+For the top panel, use a set of exclusive panel choice buttons for
+each \fIolwm\fP submenu instead of a menu button with a pull-down
+menu.  This option has no effect unless \-\fBM\fP is used.  
+.TP
+.B \-h
+For the top panel, lay out each set of panel choice buttons
+horizontally instead of vertically (this option has no effect unless
+\-\fBM\fP and \-\fBc\fP are used).
+.TP 
+\fB\-w\fI window_title \fR["Run Program on File"]
+Specifes a title for the \fIfbuttons\fP window.  
+.TP 
+.BI \-i " icon_title \fR[fbuttons]"
+Specifies a title for the \fIfbuttons\fP icon.  
+.TP 
+.BI \-X " x_pos"
+Specifies the x-position (in the root window) of the frame displayed
+by \fIfbuttons\fP.  Both \fIx_pos\fP and \fIy_pos\fP must be specified
+and be non-negative; otherwise, the positioning will be left up to the
+window manager.  The standard XView \fB-Wp\fP and standard X11
+\fB-geometry\fP options can also be used to position the window.  
+.TP 
+.BI \-Y " y_pos"
+Specifies the y-position (in the root window) of the frame displayed
+by \fIfbuttons\fP.  Both \fIx_pos\fP and \fIy_pos\fP must be specified
+and be non-negative; otherwise, the positioning will be left up to the
+window manager.  The standard XView \fB-Wp\fP and standard X11
+\fB-geometry\fP options can also be used to position the window.  
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If 
+.I debug_level
+is positive,
+.I fbuttons
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the  
+.I debug_level
+increases.  If \fIdebug_level\fP is 0 (the default), no messages are
+printed.  
+.SH ESPS PARAMETERS
+.PP
+ESPS parameter files are not used by the current version of
+\fIfbuttons\fP.  
+.SH ESPS COMMON
+.PP
+ESPS Common is not processed by \fIfbuttons\fP.  
+.SH FUTURE CHANGES
+.PP
+Add parameter file processing.  
+.SH EXAMPLES
+.PP
+The command
+.nf
+	%fbuttons
+	
+is equivalent to 
+   
+	%fbuttons *.d *.sd    
+		
+.fi
+Here's another example of exploiting the shell to expand wild cards 
+in order to generate a file list for \fIfbuttons\fP:
+.nf
+
+	%fbuttons *.sd */*.sd dataCP??.sd
+
+.fi
+Here's an example of a program file (for use with \fB-L\fP);
+.nf
+
+.ta .5i 2.5i
+	splay \-g.5 
+	splay \-g.5 \-R2
+	back_play
+	xtext psps \-l
+	xtext psps \-lD
+
+.fi
+Here, \fIback_play\fP is the name of a program on the user's path.  
+A more "user friendly" approach would be to use the following 
+menu file (with \fB-S\fP): 
+.nf
+
+.ta .5i 2.5i
+	play	splay \-g.5 
+	"play twice"	splay \-g.5 \-R2
+	"play backwords"	back_play
+	"show file"	xtext psps \-l
+	"show header"	xtext psps \-lD
+
+.fi
+In fact, \fIback_play\fP is a one-line script containing:
+.nf
+
+.ta .5i 2.5i
+	#!/bin/sh
+	ereverse $1 \- | splay \-
+
+.fi
+For examples of \fIfbuttons\fP used with all three panels and 
+with \fB-F\fP see the TIMIT and Sounds demos in $ESPS_BASE/demos.  
+.SH ERRORS AND DIAGNOSTICS
+.PP
+\fIfbuttons\fP will exit with an error message if it can't connect 
+to the specified X server (DISPLAY variable or standard -display
+option).  
+.PP
+\fIfbuttons\fP will exit with error messages if it can't create the 
+button window for various reasons (e.g., no valid list of files, 
+invalid or empty file given to \fB-L\fP or \fB-S\fP, etc.)  
+.SH BUGS
+.PP
+If the environment variable BBOX_QUIT_BUTTON is set, quit buttons
+will appear in all panels (not just the panel containing program 
+buttons).  This is a bit ugly and wastes space, but should not be
+harmful. 
+.PP
+In a previous version, the quit button was always present in 
+the program panel.  So as not to break existing scripts, the 
+more recent \-\fBq\fP option defaults to the previous behavior (i.e., 
+having the quit button).  Unfortunately, this means that fbuttons
+and \fImbuttons\fP (3\-Eu) have opposite quit button defaults. 
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+\fImbuttons\fP (1\-\s-1ESPS\s+1), \fIxtext\fP (1\-\s-1ESPS\s+1),
+\fIexprompt\fP (1\-\s-1ESPS\s+1), \fIexv_bbox\fP (3\-\s-1ESPSxu\s+1)
+.SH AUTHOR
+.PP
+Program and man page by John Shore.  Thanks to Stephen Marcus 
+(AT&T Bell Laboratories, Napirville) for the \fB-s\fP code.  
+
+

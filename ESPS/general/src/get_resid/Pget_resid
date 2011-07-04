@@ -1,0 +1,9 @@
+# @(#)Pget_resid	1.1 2/17/94 ERL
+int start ?= 1: "starting sample position";
+int nan ?= 0: "number of samples to process, 0 means end of file";
+
+float int_const ?= 0: "integration constant";
+int normal ?= 0: "normalization"; 	
+float band_width ?=0: "formant bandwith";
+int nformants ?=0: "number of formants";
+int interp ?= 1: "interpolation";

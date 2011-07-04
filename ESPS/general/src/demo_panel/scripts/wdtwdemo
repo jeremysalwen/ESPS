@@ -1,0 +1,5 @@
+#!/bin/sh
+#@(#)wdtwdemo	1.1 6/18/91 ERL
+xwaves -w wpro.dtw wdtw.com
+
+

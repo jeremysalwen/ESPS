@@ -1,0 +1,141 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.  All rights reserved.
+.\" @(#)arralloc.3t	1.4  23 Aug 1989  ESI
+.TH ARR_ALLOC 3\-ESPSu 23 Aug 1989
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+arr_alloc \- allocate storage indexed as multidimensional array
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+
+char *
+arr_alloc(rk, dim, typ, lvl)
+int     rk;
+long	*dim;
+int	typ, lvl;
+.fi
+.ft
+.SH DESCRIPTION
+.PP
+This function allocates a block of array storage together with auxiliary
+pointer arrays that allow the block to be accessed as a multidimensional
+array.
+.PP
+The argument
+.I rk
+gives the desired number of dimensions, and
+.I dim
+is a long-integer array containing the dimensions themselves.
+It is required that
+.I rk
+> 0.
+.PP
+The arguments
+.I typ
+and
+.I lvl
+together determine the desired type of the array elements
+according to the following table.
+.sp
+.TS
+center, box, tab(;);
+ ri | c | c | c | ci
+ li | c | c | c | ^ 
+ c    c   c   c   ^
+ l  | l | l | l | ^ .
+lvl;0;1;2;etc.
+typ
+_;_;_;_
+DOUBLE;(double);(double *);(double **)
+FLOAT;(float);(float *);(float **)
+LONG;(long);(long *);(long **)
+SHORT, CODED;(short);(short *);(short **)
+BYTE, CHAR;(char);(char *);(char **)
+DOUBLE_CPLX;(double_cplx);(double_cplx *);(double_cplx **)
+FLOAT_CPLX;(float_cplx);(float_cplx *);(float_cplx **)
+LONG_CPLX;(long_cplx);(long_cplx *);(long_cplx **)
+SHORT_CPLX;(short_cplx);(short_cplx *);(short_cplx **)
+BYTE_CPLX;(byte_cplx);(byte_cplx *);(byte_cplx **)
+.TE
+.sp
+The allowed values DOUBLE, FLOAT, etc. for
+.I typ
+are integer constants defined in
+.I esps.h.
+In general, the array-element type can be written as a base type,
+indicated by
+.I typ,
+followed by the number of stars indicated by
+.I lvl.
+.PP
+The return value is a pointer to the created structure and should be
+converted by a cast to the appropriate type before being treated as a
+multidimensional array.
+The appropriate type can be written as the
+array-element type followed by
+.I rk
+stars.
+For example, to get a 3-dimensional array with elements of type (float *),
+call
+.I arr_alloc
+with
+.IR rk " = 3,"
+.IR typ " = FLOAT,"
+and
+.IR lvl " = 1,"
+and cast the result to type (float ****).
+Here there are 4 stars in all:  1 from the array-element type and 3
+for the number of dimensions.
+In general the total number of stars in the result type should be
+.RI ( lvl " + " rk ).
+.PP
+.I Arr_alloc
+uses calloc(3C) to create a linear block of storage to hold the array
+elements; its size is the array-element size times the product of the
+dimensions.  The function then uses
+.IR marg_index (3\-ESPS)
+to create pointer arrays to support the indexing.
+The allocated storage can be freed by
+.IR arr_free (3\-ESPS).
+Within the block of storage, rows of the array are stored contiguously,
+with the last element of each row followed immediately by the first
+element of the next row (if any).
+.SH EXAMPLE
+.PP
+The following gives a 2 \(mu 3 \(mu 5 array of pointers to floats.
+.IP
+float ****a;
+.br
+static long	dim[3] = {2, 3, 5};
+.br
+a = (float ****) arr_alloc(3, dim, FLOAT, 1);
+.PP
+Then an expression of the form
+.IR a [ i ]\c
+.RI [ j ][ k ]
+is of type (float *);
+it may appear on the left side of an assignment.
+.SH DIAGNOSTICS
+.PP
+The program may exit with the following messages or similar messages
+from
+.IR marg_index (3\-ESPS).
+.PP
+.nf
+arr_alloc: rank < 1
+arr_alloc: level < 0
+arr_alloc: unrecognized type
+arr_alloc: unable to allocate storage
+.fi
+.SH BUGS
+None known with this implementation.  
+There may be architectures to which
+the C code is not portable.
+.SH "SEE ALSO"
+.PP
+marg_index(3\-ESPSu), arr_free(3\-ESPSu),
+calloc(3C), malloc(3C),
+f_mat_alloc(3\-ESPSu), d_mat_alloc(3\-ESPSu)
+.SH AUTHOR
+Rodney Johnson

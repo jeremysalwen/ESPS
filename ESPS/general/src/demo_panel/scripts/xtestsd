@@ -1,0 +1,4 @@
+#!/bin/sh
+#@(#)xtestsd	1.1 6/18/91 ERL - signal generator prompter
+xprompt -P Ptestsd param_files/tparams
+testsd -Ptparams files/$1

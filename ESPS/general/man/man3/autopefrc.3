@@ -1,0 +1,126 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+./" @(#)autopefrc.3	1.5 06 May 1997 ESI
+.TH AUTO_PEF_RC 3\-ESPSsp 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+auto_pefrc \- convert autocorrelations to prediction error filter and
+reflection coefficients
+.PP
+pef_autorc \- convert prediction error filter coefficients to
+autocorrelations and reflection coefficients
+.PP
+rc_autopef \- convert reflection coefficients to autocorrelations and
+prediction error filter coefficients
+.SH SYNOPSIS
+.ft B
+int 
+.br
+auto_pefrc (order, auto, pef, rc)
+.br
+int order;
+.br 
+double *pef, *auto, *rc;
+.sp
+.br
+int 
+.br
+pef_autorc (order, pef, auto, rc)
+.br
+int order;
+.br 
+double *pef, *auto, *rc;
+.sp
+.br
+int 
+.br
+rc_autopef (order, rc, auto, pef)
+.br
+int order;
+.br 
+double *pef, *auto, *rc;
+.SH DESCRIPTION
+.PP
+Each function transforms a set of coefficients that
+contain spectral information 
+(either autocorrelations, prediction error filter coefficients, or
+reflection coefficients) into the other two coefficient sets.
+.PP
+.I auto_pefrc 
+transforms 
+.I order 
++ 1 autocorrelations into
+the mean square residual (stored in 
+.I pef[0]
+and 
+\fIrc[0]\fR)
+and
+.I order
+prediction error filter (\fIpef\fR)
+coefficients and 
+.I order 
+reflection coefficients 
+(\fIrc\fR).
+The prediction error filter coefficients and the reflection coefficients
+are stored in the 1st through 
+.I order 
+positions of
+.I pef[]
+and 
+.I rc[],
+respectively.
+.PP
+.I pef_autorc
+transforms 
+the mean square residual 
+(stored in 
+\fIpef[0]\fR)
+and 
+.I order 
+prediction error filter coefficients
+into 
+.I order 
++ 1 autocorrelations 
+(stored in positions 0 through 
+\fIorder\fR)
+and 
+.I order
+reflection coefficients (stored
+in position  1 through
+\fIorder\fR).
+.PP
+.I rc_autopef
+transforms the mean square residual
+(stored in 
+\fIrc[0]\fR) and
+.I order 
+reflection coefficients
+into
+.I order
++ 1  autocorrelations 
+(stored in positions 0 through
+\fIorder\fR) and 
+\fIorder\fR
+prediction error filter coefficients
+(stored in positions 1 through
+\fIorder\fR).
+.SH DIAGNOSTICS
+.PP
+All functions return  0 if no problem
+is discovered in the input data or in the parameter transformation.
+If the mean square residual <=0, then \-1 is returned;
+if any reflection coefficient >= 1., then
+the index of the invalid coefficient is returned.
+.SH SEE ALSO
+refl_to_filter(3-ESPSsp), get_atal(3-ESPSsp), refl_to_auto(3-ESPSsp)
+.SH WARNINGS
+Remember, the calling routine must allocate memory for 
+.I order
++ 1 elements for each of the three pointers
+.I *auto, *pef, 
+and
+.I *rc.
+.SH AUTHOR
+Code by John P. Burg; ESPS modification by David Burton;
+manual page by David Burton.
+
+

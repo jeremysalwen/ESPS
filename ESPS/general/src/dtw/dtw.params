@@ -1,0 +1,6 @@
+string sequence_field = "samples_cwndx";
+double best_so_far = 10.0;
+int delta = 1;
+string distance_table_file = "cbk.dist";
+string distance_table_field = "distance_table";
+int distance_table_recno = 4;

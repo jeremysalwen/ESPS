@@ -1,0 +1,33 @@
+"rundemo.sh   (startup script)" xtext -F rundemo.sh
+
+"demoinit.WC   (initial xwaves+ command file)" xtext -F wcommands/demoinit.WC
+
+"wave_pro   (xwaves+ startup profile)" xtext -F files/wave_pro
+
+"setup.BM   (upper panel menu file)"	xtext -F menus/setup.BM
+
+"timit.BM   (middle panel menu file)"	xtext -F menus/timit.BM
+
+"tfiles.BM  (bottom panel file list)"  xtext -F menus/tfiles.BM
+
+"showtext  (script for displaying sentence text)"  xtext -F bin/showtext
+
+"showhead  (script for displaying the waveform file header)" xtext -F bin/showhead
+
+"play_timit  (script for playing the file)" xtext -F bin/play_timit
+
+"backplay  (script for playing the file backwards)" xtext -F bin/backplay
+
+"dotimit   (script for generating displays)" xtext -F bin/dotimit
+
+"demoquit.WC  (xwaves+ termination command file)" xtext -F wcommands/demoquit.WC
+
+"demofiles.BM   (menu file for this panel)"	xtext -F menus/demofiles.BM
+
+# @(#)demofiles.BM	1.3 11/5/91 ERL
+
+
+
+
+
+

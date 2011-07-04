@@ -1,0 +1,54 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of
+# Entropic Research Laboratory, Inc. Any reproduction, distribution,
+# or publication of this work must be authorized in writing by Entropic
+# Research Laboratory, Inc., and must bear the notice:
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc.
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc.
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended
+# publication of this source code.
+#
+# @(#)pipedemo	3.9   6/12/91     ESI/ERL
+#
+# Written by:
+# Checked by:
+# Revised by: David Burton
+#
+# Brief description:  Illustrates pipe processing
+#
+
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+if test `mach_type` = CONVEX -o `mach_type` = SONY_RISC -o `mach_type` = SONY_68K
+ then
+  echo This script will fail if you do not have write permission on this directory.
+ else
+  if test ! -w . 
+    then
+	echo "You do not have write permission in this directory."
+	exit 1
+  fi
+fi
+echo " "
+echo "make 1 second of a sine wave at frequency 600 Hz"
+echo "   %testsd -Tsine -r20000 -f600 psine1.sd"
+testsd -Tsine -r20000 -f600 psine1.sd
+echo " "
+echo "make 1 second of a sine wave at frequency 1100 Hz and add to other one"
+echo "   %testsd -Tsine -f1100 -r20000 - | addsd - psine1.sd  psines.sd"
+testsd -Tsine -f1100 -r20000 - | addsd - psine1.sd  psines.sd
+echo " "
+echo "make 1 second of Gaussian noise, then add it to the two sines;"
+echo "then compute reflection coefficients to 100th order ;"
+echo "and then compute the spectrum "
+echo "   %testsd -Tgauss -r20000 - | addsd - psines.sd - "
+echo "    | refcof -o100 -p1:2500 -l0 - - | me_spec - psignal.spec"
+testsd -Tgauss -r20000 - | addsd - psines.sd -    \
+| refcof -o100 -p1:2500 -l0 - - | me_spec - psignal.spec
+
+

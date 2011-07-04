@@ -1,0 +1,210 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)v32play.1	1.1 1/15/93 ERL
+.ds ]W (c) 1993 ERL, Inc.
+.TH V32PLAY 1\-ESPS 1/15/93
+.SH NAME
+v32play - send sampled data to a AT&T FAB2 DSP32, AT&T Surf DSP32C, or Heurikon Surf DSP32C board
+.PP
+.SH SYNOPSIS
+.B v32play
+[
+.BI \-r " range"
+] [
+.BI \-s " start time"
+] [
+.BI \-e " end time"
+] [
+.BI \-f " sample rate"
+] [
+.BI \-c " channel"
+] [
+.BI \-x " debug-level"
+] [
+.BI \-H
+] [[
+.BI \-i
+]
+.I file
+] [
+.I more-files
+]
+.PP
+.SH DESCRIPTION
+.PP
+.I V32play
+sends all or a portion of one or more ESPS, SIGnal, NIST or headerless
+sampled data files to a AT&T FAB2 DSP32, AT&T Surf DSP32C, or a Heurikon Surf 
+DSP32C board.   The FAB2 board uses an on board codec chip.  The Surf board 
+use an Ariel Pro-Port d/a converter.  The FAB2 board is single channel.  The
+other boards are dual channel.
+A subrange of data within the files may be chosen; this
+subrange may be specified in seconds or sample points.  Dual-channel
+(stereo) or single-channel (monaural) data may be converted.
+Single-channel input data may be directed to either or both output
+channels.
+.PP
+Playback may be stopped by sending the terminal's interrupt character
+(normally control-C) after playback has started.
+.PP
+If "\-" is given for a filename, then the input is taken from standard
+input and must be an ESPS file or a headerless file (i.e., SIGnal or
+NIST/Sphere files cannot be used with standard input).
+.PP
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-r " range"
+Select a subrange of points to be played, using the format
+.I start\-end
+,
+.I start:end 
+or
+.IR start:+count .
+Either the start or the end may be omitted; the beginning or the end of the
+file are used if no alternative is specified. 
+.IP
+If multiple files were specified, the same range from each file is played.
+.TP
+.BI \-s " start time"
+Specify the start time in seconds.  Play will continue to the end of file or
+the end time specified with -e.  -s may not be used with -r.
+.TP
+.BI \-e " end time"
+Specify the playback end time in seconds.  Play will start at the
+beginning of file or the time specified by -s.  -e may not be used
+with -r.
+.TP
+.BI \-f " frequency"
+Specifies the sampling frequency.  The closest frequency to that
+requested will be selected from those available and the user will be notified
+if the selected value differs from that requested.  If -f is not
+specified, the sampling frequency in the header is used, else
+the default value for headerless files is 16kHz (assuming the standard Ariel crystal).
+.TP
+.BI \-c " channel"
+Select the output channel configuration.  For files with headers, the
+default is to play stereo if the file is stereo and to provide
+identical output on both channels if the file is single-channel.  If
+the file has a header and is single channel, acceptable arguments to
+-\fIc\fP are 0 or 1 to select channel A or B respectively for output.
+If the file has no header, the default is to assume single-channel
+data and provide identical output to both channels.  For headerless
+files, acceptable arguments to -\fIc\fP are 0 (output on channel A), 1
+(output on channel B) or 2 (stereo data, stereo output).
+.TP
+.BI \-H
+Force \fIv32play\fP to treat the input as a headerless file.  This is probably unwise
+to use unless the gain on your loudspeaker or earphones is way down, since
+a file that really does have a header, or a file composed of data types other
+than shorts (of the correct byte order!) will cause a terrible sound.
+.TP
+.BI \-i " input file"
+Specify a file to be D/A converted.  Use of -i before the file designation is optional
+if the filename is the last command-line component.  If no input file is
+specified, or if "-" is specified, input is taken from stdin.
+.TP
+.BI \-x " debug_level"
+Setting debug_level nonzero causes several messages to be printed as
+internal processing proceeds.  The default is level 0, which causes no debug
+output.
+.PP
+.SH "INTERACTION WITH XWAVES"
+.I V32play
+is designed to optionally use the server mode of \fIxwaves\fP (1\-\s-1ESPS\s+1).  This
+is especially handy when
+.I v32play
+is used as an \fIxwaves\fP external play
+command (e.g. by setting the \fIxwaves\fP global play_prog).  When the latter is the case,
+play commands initiated via \fIxwaves\fP' menu operations may be interrupted
+by pressing the left mouse button in the data view.  \fIXwaves\fP will send
+a signal 30 (SIGUSR1) to the play program.  V32play responds to this
+by sending back to \fIxwaves\fP a command "set da_location xx", where xx is
+the sample that was being output when play was interrupted.  This
+setting, in conjunction with \fIxwaves\fP' built-in callback procedure for
+handling child-process exits, causes the \fIxwaves\fP signal display to
+center itself on the sample where play was halted.
+.PP
+The SIGUSR1 signal to terminate 
+.I v32play
+may come from any source.  If
+it comes from sources other than \fIxwaves\fP, the environment variables
+WAVES_PORT and WAVES_HOST must be correctly defined (see
+\fIespsenv\fP (1-ESPS)), for correct functioning of the \fIxwaves\fP view
+positioning.  (Of course, \fIxwaves\fP must actually be displaying the
+signal in question at the time and \fIxwaves\fP must have initiated the
+play.)
+.PP
+.I V32play
+may also be interrupted with kill -2 (SIGINT) or kill -3
+(SIGQUIT).  These signals are caught gracefully and 
+.I v32play
+halts immediately, but no message is sent to \fIxwaves\fP.  No message is sent if
+the play operation finishes without interruption.
+.PP
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.PP
+.SH ESPS COMMON
+.PP
+ESPS Common is not read or written.
+.PP
+.SH DIAGNOSTICS
+.PP
+.I V32play
+informs the user if the input file does not exist, if inconsistent
+options are used, or if an unsupported sample rate is requested.
+Also see \fBWARNINGS\fP below.
+.PP
+If the starting point requested is greater than the last point in the
+file, then a message is printed.  If
+the ending point requested is greater than the last point in the file,
+it is reset to the last point and processing continues.
+.PP
+.SH WARNINGS
+.PP
+\fIV32play\fP provides stereo D/A conversion at rates up to at least
+48kHz when playing from local disk.  Sampling from network disks is
+often feasible as well.  The maximum rate over the network is
+unpredictable in general, but we routinely achieve 16kHz stereo at
+Entropic Research Laboratory.  Of course rate limitations due to
+network speed will be less severe for single-channel playing.
+Obviously, processes supplying input to
+.I v32play
+on a pipe must be able to keep up with the average aggregate sampling frequency.
+.SH FILES
+.B "ESPS_BASE/32bin/"
+contains the DSP board code for the FAB2 board.
+.PP
+.B "ESPS_BASE/32cbin/"
+contains the DSP board code for the DSP32C board.
+.PP
+.SH BUGS
+.PP
+If readable header IS present, but -H is specified, the header is
+treated like sampled data -- usually resulting in very unpleasant
+sounds.
+.PP
+If a \fIv32play\fP is in progress when another board operation is
+requested on the same machine, unpredictable results will occur.
+.PP
+There is currently no reliable notification in the event of loss of
+realtime.
+.PP
+.SH EXPECTED CHANGES
+.PP
+Implement a locking mechanism to prevent collision of multiple simultaneous
+attempts to use the board.
+.PP
+Implement a robust check for loss of real-time operation.
+.PP
+.SH SEE ALSO
+.PP
+SD (5\-\s-1ESPS\s+1), \fItestsd\fP (1\-\s-1ESPS\s+1), \fIcopysd\fP
+(1\-\s-1ESPS\s+1), \fIv32record\fP (1\-\s-1ESPS\s+1), \fIsfconvert\fP (1\-\s-1ESPS\s+1),
+\fIsend_xwaves2\fP (3\-\s-1ESPS\s+1)
+.PP
+.SH AUTHORS
+.PP
+David Talkin

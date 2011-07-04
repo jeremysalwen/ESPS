@@ -1,0 +1,209 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc. All rights reserved.
+.mc |
+.\" @(#)aplot.1	3.11	4/5/90 ESI
+.TH APLOT 1\-ESPS 4/5/90
+.mc
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+aplot \- Plot an array of data in ASCII format.
+.SH SYNOPSIS
+.B aplot
+[
+.BI \-d
+] [
+.BI \-l
+] [
+.B \-z
+] [
+.mc |
+.BI \-T " device"
+] [
+.mc
+.BI \-W " generic window system options"
+] [
+.I data_file
+]
+.SH DESCRIPTION
+.I aplot
+plots an array of ordered pairs <x, y>, stored in ASCII format.
+If
+.I data_file
+is ``\-'' or omitted, the standard input is read.
+.mc |
+By default,
+the output is in Unix GPS (``Graphics Primitive String'') format
+and is displayed on the workstation graphics display
+but with the
+.B \-T
+option, this may be sent to the standard output,
+obtained in Tektronix format rather than GPS,
+or plotted on a hardcopy device.
+.mc
+.SH "DATA FORMAT"
+.PP
+The
+.I data_file
+is expected to contain the following parameters, each
+separated by a blank.
+
+.RI < No_of_Samples >
+
+.RI < No_of_plots >
+
+.RI < x_axis_min >
+.RI < x_axis_max >
+.RI < x_axis_step >
+
+.RI < y_axis_min >
+.RI < y_axis_max >
+.RI < y_axis_step >
+
+followed by plot data (x and y values separated by blank).
+.PP
+Any
+.I Text
+following the data (after a blank line) is reproduced as plotter output.
+.PP
+In the case of multiple plots, the line thickness is varied to distinguish
+between different plots.
+.mc |
+.PP
+On a Sun workstation (not running X windows), 
+this program must be run from within the
+\fISuntools\fR window system.  The plot will appear in a new window,
+which can be moved, resized, closed (reduced to an icon), and removed by
+using the functions on the \fISuntools\fR menu.   To get this menu, move
+the mouse cursor to the title bar of the plot window and press the right
+mouse button.
+.mc
+.SH OPTIONS
+.PP
+Normally, a coninuous plot is generated.  However, the following
+options can be used, in the case of single plots:
+.TP
+.B \-d
+If this option is specified, there will be a dot for each <x, y>
+pair. However, there will be no continuous plot.
+.TP
+.B \-l
+If this option is specified, there will be a vertical line from <x,
+y_axis_min> to <x, y> for each <x, y> pair; the points themselves 
+will not be connected to each other.  
+.TP
+.B \-z
+If this option is specified,
+the vertical and horizontal grid lines are suppressed \- only tick
+marks are made on the graph.
+.TP
+.mc |
+.BI \-T " device"
+.I Device
+may be
+.BR gps ,
+.BR mcd ,
+.BR tek ,
+.BR suntools ,
+.BR hp ,
+or
+.BR hardcopy .
+The default is
+.BR \-Tmcd,
+which displays the output on the graphics screen by piping it through
+.IR mcd
+or
+.IR xmcd (for X window system).
+The program \fImcd\fR is supplied by Masscomp for their systems and by
+ESI for other systems and those running X windows.
+Specifying
+.B \-Tgps
+sends output to the standard output in Masscomp Unix GPS format.
+Specifying
+.B \-Ttek
+causes output to be sent to the standard output in Tektronix 4000-series
+format.
+If
+.B \-Tsuntools
+is used, then the display will be forced to use \fIsuntools\fR window
+system (on Suns and Solbournes only), even if ESPS has been configured
+to use the X window system.   If ESPS is built for X, then it uses X for
+plotting by default.
+If
+.B \-Tmcd
+is used on a Masscomp and ESPS has been configured to use X windows,
+then the old SP-40 \fImcd\fR is used instead of X windows.
+Specifying
+.B \-Thardcopy
+plots it on a hardcopy device, if one was set up in the installation
+script.  Note that the word \fIimagen\fR was used for this option in
+previous versions.   It is still accepted, but \fIhardcopy\fR is meant
+to be more general.
+.B \-Thp
+produces output for an HP LaserJet printer.   Note that the output is
+produced on standard out and it is not spooled to the printer by this
+command.   Use of this option will result in about 750K bytes of output
+per page.   If the link to your LaserJet is slow, it might take
+several minutes to send it to the printer.    
+In a later version, this will be merged with the
+\fIhardcopy\fR option above for direct spooling.
+.TP
+.mc
+.BI \-W
+This option is followed by a character
+.mc |
+string consisting of the generic window system options.   These options are
+passed onto \fImcd\fR or \fIxmcd\fR.   
+This option is used to pass along generic X window
+arguments to \fIxmcd\fR or Suntool arguments to \fImcd\fR on Suns.  This
+option might not have an effect on all systems.   For example, on a
+.mc
+system running X windows, to cause the plot to appear at a particular
+screen location the following command could be used: 
+.mc *
+.mc
+.br
+\fIaplot -W "=300x250+50+200" file\fR.
+.mc |
+.br
+See \fImcd(1\-ESPS)\fR and \fIxmcd(1\-ESPS)\fR for details.
+.PP
+For Sun systems, this program will plot under either X windows, or
+Suntools.   By default, if the \fB-T\fR option is not used, it will 
+expect X windows.   To plot under Suntools you can use the \fB-Tsuntools\fR
+option.    If you always use Suntools, you can avoid using the \fB-T\fR
+option by defining the environment variable \fBEPLOTDEV\fR to be
+\fIsuntools\fR.  This will make the Suntools window system the default.
+This variable is ignored if the machine type is not Sun4, SUN3, or
+SUN386i.
+.mc
+.SH "ESPS PARAMETERS"
+No ESPS parameter file is read.
+.SH "ESPS COMMON"
+The ESPS common file is not read or written.
+.SH "ESPS HEADERS"
+No ESPS headers are processed, since the input and output are not ESPS
+files.
+.SH DIAGNOSTICS
+.nf
+aplot: unknown option \-\fIletter\fP
+.mc |
+Usage: aplot [\-d] [\-l] [\-z] [\-T] [input_file]
+.mc
+aplot: Cannot specify both \-d and \-l flags
+aplot: can't open \fIfilename\fP: \fIreason\fP
+aplot: EOF encountered
+.SH "SEE ALSO"
+.mc |
+plotsd(1\-ESPS), plotspec(1\-ESPS), scatplot(1\-ESPS), mcd(1G)(Masscomp),
+mcd(1\-ESPS), xmcd(1\-ESPS)
+.mc
+.SH AUTHOR
+.PP
+.nf
+.mc |
+Shankar Narayan, Entropic Speech, Inc.
+Modified for \-T option by Rodney Johnson.
+\fB\-z\fR option added by David Burton.
+.mc
+.fi
+.mc *
+.mc

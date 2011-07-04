@@ -1,0 +1,26 @@
+sf -o ${srcfile} -u <<!
+
+	     General Systems Group Fast Printer Spooler
+
+   File Name: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	[-#] Number of copies:	~~~	      [-h] Burst Header Page: ~~~
+	[-m] Send mail on completion: ~~~     [-p] Format with pr:    ~~~
+
+	[-J] Job Name:		~~~~~~~~~~~~~
+	[-C] Class Name:	~~~~~~~~~~~~~
+	[-T] Title for pr:	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		    Current Print Queue Status
+`lpq | head -5`
+
+	[Press TAB to move to next field, RETURN to execute]
+
+v=fnd=$*
+v=copya=add=1v=bursts=/Yes/Noa=a
+v=mails=/No/Yesa=av=prs=/Yes/Noa=a
+v=jobd=$1
+v=classd=`hostname`
+v=titled=$1
+sf_eof
+

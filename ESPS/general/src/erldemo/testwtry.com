@@ -1,0 +1,11 @@
+#testwtry.com @(#)testwtry.com	1.1 10/4/90
+#just puts up one file
+waves make name a file files/speech.sd loc_x 45 loc_y 190 height 280 width 500 start .05 duration .97
+sleep seconds 2
+pause
+kill
+quit
+
+
+
+

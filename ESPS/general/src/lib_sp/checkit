@@ -1,0 +1,8 @@
+#! bin/sh 
+rm -f foo foo2
+for i in *.c
+ do
+  what $i >>foo
+  what $ESPS_BASE/lib/libespsg.a | grep $i >>foo2
+ done
+diff -w foo foo2

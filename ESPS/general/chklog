@@ -1,0 +1,1 @@
+egrep -nie "stop|error|can't|not found|fatal" $1 | egrep -iv ignored

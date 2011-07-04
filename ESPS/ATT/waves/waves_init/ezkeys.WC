@@ -1,0 +1,154 @@
+#
+# This material contains proprietary software of Entropic Research 
+# Laboratory, Inc. Any reproduction, distribution, or publication 
+# of this work must be authorized in writing by Entropic Research 
+# Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1991-1998  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# Brief description: key bindings for EnSig (EZWaves) operations
+#
+# Author:               Gayle Ayers Elam
+# Last edited by:       $Author: ayers $
+# SCCS info:		@(#)ezkeys.WC	1.4 9/28/98
+# In SCCS "waves_init"
+ 
+#---------------------------------------------------------------------------
+#
+# This defines the EnSig key map bindings for the xwaves view menus.
+#
+# Invoke these keybindings by EnSig's initialization, essentially a 
+# send_xwaves @filename.
+#
+# For any operation defined as an add_op, the name of the operation must 
+# match the name that appears as the alias in xmenus.tcl, e.g.,
+#
+#     set xmenus($functionID,alias)         "Play - cursor to end of view <r>"
+#
+# The alias is also how the item appears in the xwaves view menus.
+#
+# However, for built-in xwaves functions (e.g. "align & rescale", 
+# "zoom in") the name of the operation cannot be the alias name but 
+# instead it must match the name of the built-in function.  This is the 
+# same as the name specified as the add_wave in xmenus.tcl, e.g., 
+#
+#     set xmenus($functionID,add_wave)           "zoom in"
+#
+# You must have the names typed *exactly*, including the same number 
+# of spaces, or the key map binding will not work.
+#
+# This file must be called before any menu building set-up is done.
+#
+#---------------------------------------------------------------------------
+
+# ---------------------------
+# Built-in xwaves operations.   
+# ---------------------------
+
+#      "play between marks"	Play - between vert. markers  <p>
+#      "play window contents"	Play - window contents  < >
+#      "play entire file"	Play - entire file  <e>
+#      "play to end of file"	Play - cursor to end of file
+#      "window ahead"		View - window ahead  <f>
+#      "window back"		View - window back  <b>
+#      "align & rescale"	View - align & rescale  <a>
+#      "bracket markers"	View - zoom to markers (horiz.)  <m>
+#      "zoom in"		View - zoom in (horiz.)  <i>
+#      "zoom out"		View - zoom out (horiz.)  <o>
+#      "zoom full out"		View - zoom to full horiz.  <h>
+#      "kill window"		View - quit  <q>
+
+
+# -----------------------------------------------------------------
+# Initialize key bindings for built-ins operations.
+# Add items to the menu and remove them from the menu immediately.
+#
+# Built-in xwaves operations bind automatically.  
+# -----------------------------------------------------------------
+
+# Add items to the menu.
+
+add_waves name "Play - between vert. markers  <p>" menu all op "play between marks"
+add_waves name "Play - entire file  <e>" menu all op "play entire file"
+add_waves name "Play - window contents  < >" menu all op "play window contents"
+add_waves name "View - align & rescale  <a>" menu all op "align & rescale"
+add_waves name "View - quit  <q>" menu all op "kill window"
+add_waves name "View - window ahead  <f>" menu all op "window ahead"
+add_waves name "View - window back  <b>" menu all op "window back"
+add_waves name "View - zoom in (horiz.)  <i>" menu all op "zoom in"
+add_waves name "View - zoom out (horiz.)  <o>" menu all op "zoom out"
+add_waves name "View - zoom to full horiz.  <h>" menu all op "zoom full out"
+add_waves name "View - zoom to markers (horiz.)  <m>" menu all op "bracket markers"
+
+# Delete items from the menu.
+
+delete_item name "Play - between vert. markers  <p>" menu all
+delete_item name "Play - entire file  <e>" menu all
+delete_item name "Play - window contents  < >" menu all
+delete_item name "View - align & rescale  <a>" menu all
+delete_item name "View - quit  <q>" menu all
+delete_item name "View - window ahead  <f>" menu all
+delete_item name "View - window back  <b>" menu all
+delete_item name "View - zoom in (horiz.)  <i>" menu all
+delete_item name "View - zoom out (horiz.)  <o>" menu all
+delete_item name "View - zoom to full horiz.  <h>" menu all
+delete_item name "View - zoom to markers (horiz.)  <m>" menu all
+
+
+# -------------------------------------------------
+# Key bindings for the built-in xwaves operations.
+# -------------------------------------------------
+
+key_map key a op align & rescale
+key_map key m op bracket markers
+key_map key q op kill window
+key_map key p op play between marks
+key_map key e op play entire file
+key_map key _ op play window contents
+key_map key f op window ahead
+key_map key b op window back
+key_map key h op zoom full out
+key_map key i op zoom in
+key_map key o op zoom out
+
+
+# -----------------------------------------------------------------
+# Initialize key bindings for add_op operations.
+# Add items to the menu and remove them from the menu immediately.
+#
+# Add_op operations must be initialized by being added to the internal 
+# operators list before they can be bound to a key.  Add them to
+# the menu and then remove them so that the key binding work 
+# independent of what the user has included in the ensig menus.  
+# Be sure to initialize with add_op and delete_item for any item to be 
+# bound to a key in the future, and make sure that the operation name
+# exactly matches the function's "alias" in the xmenus.tcl file.
+# -----------------------------------------------------------------
+
+# Add items to the menu.
+
+add_op name "Play - cursor to end of view  <r>" menu wave op "# _name play file _file start _cursor_time end _view_end_time"
+
+add_op name "Play - view beginning to cursor  <l>" menu wave op "# _name play file _file start _view_start_time end _cursor_time"
+
+add_op name "Feature - waveform data logging  <d>" menu wave op "# . mark color 117 time _cursor_time :: shell formatDataLog _output_dir _file _cursor_time _l_marker_time _r_marker_time _dur_time _f_value _cursor_labels _cursor_values"
+
+
+# Delete items from the menu.
+
+delete_item name "Play - cursor to end of view  <r>" menu all
+delete_item name "Play - view beginning to cursor  <l>" menu all
+delete_item name "Feature - waveform data logging  <d>" menu wave
+
+
+# -----------------------------------------------
+# Key bindings for the add_op defined operations. 
+# -----------------------------------------------
+
+key_map key r op Play - cursor to end of view  <r>
+key_map key l op Play - view beginning to cursor  <l>
+key_map key d menu wave op Feature - waveform data logging  <d>
+
+
+

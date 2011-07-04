@@ -1,0 +1,6 @@
+# parameter file for noise portion
+# @(#)Pnoise	1.1 7/25/91 ERL
+float level ?= 10 : "Noise power level";
+int seed ?= 1234567 : "Random seed for noise signals";
+char *type =? "GAUSS" : "Signal type": {"GAUSS", "UNIFORM"};
+

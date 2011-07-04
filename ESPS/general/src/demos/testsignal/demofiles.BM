@@ -1,0 +1,33 @@
+"rundemo.sh   (startup script)" xtext -F rundemo.sh
+
+"demoinit.WC   (initial xwaves+ command file)" xtext -F wcommands/demoinit.WC
+
+"wave_pro   (xwaves+ startup profile)" xtext -F files/wave_pro
+
+"dcontrols.WM (menu file for xwaves+ controls" xtext -F menus/dcontrols.WM
+
+"dmbind.WM (menu file for xwaves+ mouse controls" xtext -F menus/dmbind.WM
+
+"demoquit.WC  (xwaves+ termination command file)" xtext -F wcommands/demoquit.WC
+
+"tsignal.BM   (control panel menu file)"	xtext -F menus/tsignal.BM
+
+"newsignal   (signal generation script)" xtext -F bin/newsignal
+
+"Ptestsig   (ESPS parameter prompt file for signal)" xtext -F params/Ptestsig
+
+"Pnoise   (ESPS parameter prompt file for signal)" xtext -F params/Pnoise
+
+"short_his  (script for short history)"  xtext -F bin/short_his
+
+"full_his  (script for full history)"  xtext -F bin/full_his
+
+"demofiles.BM   (menu file for this panel)"	xtext -F menus/demofiles.BM
+
+# @(#)demofiles.BM	1.3 11/5/91 ERL
+
+
+
+
+
+

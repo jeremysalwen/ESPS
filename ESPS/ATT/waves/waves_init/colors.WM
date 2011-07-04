@@ -1,0 +1,10 @@
+"Set Color Map" MENU
+grey		set colormap $ESPS_BASE/lib/waves/colormaps/greymap
+Color		set colormap $ESPS_BASE/lib/waves/colormaps/Colormap
+color		set colormap $ESPS_BASE/lib/waves/colormaps/colormap
+COLOR		set colormap $ESPS_BASE/lib/waves/colormaps/COLORMAP
+COLOR_		set colormap $ESPS_BASE/lib/waves/colormaps/COLOR_MAP
+TImap	DEFAULT	set colormap $ESPS_BASE/lib/waves/colormaps/TImap
+"Set Color Map" END
+"Show Color Scale"	make file $ESPS_BASE/lib/waves/files/color.fspec height 175 width 110
+# @(#)colors.WM	1.7 1/6/93

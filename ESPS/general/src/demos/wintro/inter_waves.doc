@@ -1,0 +1,55 @@
+		Demo Control Panel Description for waves+ INTRO
+		-----------------------------------------------
+
+This demo allows a user to explore some of the display capabilities of 
+waves+ on several different types of data files. Also, the customizability
+of the waves+ menus is demonstarted by using a pop-up screen panel.
+In the middle of your display, there is a control panel (called 
+"waves+ INTRO Demo") containing several push buttons. Each is described 
+briefly below.
+
+HOW TO
+------
+After you finish reading this description of the demo control panel, 
+you should begin the demo by pushing the "How To" button. It provides 
+brief instructions for moving about in a data display and how to use waves+.
+
+INPUT FILES
+-----------
+There are several data files containing different kinds of signals for
+your viewing pleasure. The "Input Files" button allows you access to them.
+(You will get a short help screen with this button.)
+
+COLORS
+------
+The "Colors" button pops up a control panel allowing you to change colormaps
+and see the current threhold and range settings in a convenient manner.
+(You will get a short help screen with this button.)
+
+MENU CHANGES
+------------
+The "Menu Changes" button pops up another control panel. This control
+panel allows you to interactively modify the waves+ environment, 
+by changing the set of allowable commands, deleting commands, and 
+adding new ones. (You will get a help screen with this buton.)
+
+ABOUT THIS DEMO
+---------------
+The "ABOUT THIS DEMO" button shows this file.
+
+SEE DEMO SCRIPTS AND MENUS
+--------------------------
+"See Demo Scripts and Menus" pops up a button panel that contains buttons
+for many of the scripts, command files, and menus files needed for this demo. 
+Pushing a button results in the corresponding file being shown.  This serves as
+an example of building a cusomized waves+ environment.
+
+QUIT INTERACTIVE WAVES+
+-----------------------
+Finally, the "Quit Interactive waves+" button exits the demo. It does the 
+same thing as the "QUIT!" in the upper right corner on the main xwaves+
+control panel.
+
+
+
+(@(#)inter_waves.doc	1.4 8/8/91 ERL)

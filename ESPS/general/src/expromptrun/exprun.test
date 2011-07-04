@@ -1,0 +1,16 @@
+#! /bin/sh
+#  test script for expromptrun
+#  @(#)exprun.test	1.2 7/2/91 ERL
+
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+echo "Running expromptrun on the testsd library parameter file; fill in some"
+echo "values after the window comes up, then click on DONE."
+expromptrun -x2 -h testsd -P./exprun.params testsd test.sd
+echo ""
+echo "Now check the plot and psps output (in windows); data file is test.sd"
+xtext psps -l test.sd  &
+plotsd test.sd 
+
+
+

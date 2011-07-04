@@ -1,0 +1,33 @@
+.lo
+.ce 2
+.b
+README FIRST
+8/4/89 1.1
+.sh 1 "About this tape"
+.pp
+This tape contains both the ESPS sources as described in the
+attached instructions and a binary directory.   You can either build the
+system from source (see the source installation instructions), or use
+the pre-compiled binary (see the binary installation instructions).
+The names of the directories are described in the installation
+instructions.  
+.pp
+The full sources take two to three hours to compile (depending on
+whether you use NFS and your CPU speed), so you might want to load the
+binary and just use the sources for reference or to modify an programs.
+The enclosed binary is 100% consistent with the enclosed sources.  
+.pp
+On Masscomp (Concurrent) systems we have noticed that some 
+systems have a C compiler version that fails to correctly compile a few
+of our programs.  The problem is actually with the libraries and results
+in some undefined symbols.   Some minor changes to the makefiles will
+fix this.  The problem seems to vary with different Masscomp systems,
+so it has been difficult to fix it for certain.   (The risk of a source
+distribution.)  Call us if you see this problem. 
+.pp
+If this is an upgrade and it includes the DSP driver kit (for Suns),
+please note that you will need to change into the dsp.sunXX directory
+and run \fIemake install\fR to install the new versions of any programs
+with that kit.   You do not need to reinstall the device driver itself
+unless there is a specific note enclosed in this package that instructs
+you to.

@@ -1,0 +1,330 @@
+.\" Copyright (c) 1988-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1990-1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)me_sgram.1	1.10 27 Sep 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH ME_SGRAM 1\-ESPS 27 Sep 1997
+.SH "NAME"
+me_sgram - produces a maximum-entropy-based FEA_SPEC file suitable for displaying as a spectrogram
+.SH "SYNOPSIS"
+.B me_sgram 
+[
+.BI \-s " range
+] [
+.BI \-P " param_file
+] [
+.BI \-p " range
+] [
+.BI \-r " range"
+] [
+.BI \-m " method"
+] [
+.BI \-a " lpc_method"
+] [
+.BI \-w " window_len"
+] [
+.BI \-E " pre_emphasis"
+] [
+.BI \-o " analysis_order"
+] [
+.BI \-S " step_size"
+] [
+.BI \-d " data_window"
+] [
+.BI \-c " conv_test"
+] [ 
+.BI \-i " max_iter"
+] [
+.B \-D
+]
+.I " input.SD output.SPEC"
+.SH "DESCRIPTION"
+.PP
+.I Me_sgram
+reads an ESPS sampled data file, pre-emphasizes it, and produces an
+ESPS FEA_SPEC(5\-ESPS) file, which qresults from maximum entropy spectral
+analysis.  This file is suitable for displaying as a speech
+spectrogram.  (See \fIplotsgram\fP (1\-\s-1ESPS\s+1).)  By default
+(specifying no options) or by specifying \fIwb\fR for the \fB\-m\fR
+option, \fIme_sgram\fR produces a FEA_SPEC file that simulates the
+analysis done to produce a wide-band speech spectrogram.
+Alternatively, by specifying \fInb\fR for the \fB\-m\fR option, a
+FEA_SPEC file that simulates the analysis for a narrow-band
+spectrogram is computed.  The \fB\-m\fP option simply defines
+different defaults for the other options.  By specifying any of the
+other options, in addition to \fB\-m\fP, the default values are
+overridden by the specified option values.  This allows the user to
+alter the basic display to highlight facets of the spectrogram that
+are of particular interest.
+.PP
+.I me_sgram 
+is a shell script that uses \fIfilter\fP(1\-\s-1ESPS\s+1),
+\fIrefcof\fP(1\-\s-1ESPS\s+1), and \fIme_spec\fP(1\-\s-1ESPS\s+1);
+the parameter file is processed using \fIgetparam\fP(1\-\s-1ESPS\s+1).
+.PP
+If "\-" is specified for the output file, standard output is used.
+Note, standard input cannot be read by this script.
+.SH OPTIONS
+.PP
+.TP
+.BI \-s " start_time:end_time \fR[0.0:(end of file)]\fP"
+.TP
+.BI \-s " start_time:+duration"
+Determines the range in seconds in the input file over which
+the spectrogram values are to be computed.
+In the first form, a pair of
+real numbers gives the starting and ending times of the range.
+The correspondence between samples and times is determined by two quantities:
+the starting time of the file and the interval between samples.
+The former is given by the generic header item
+.I start_time
+in the input file,
+or 0.0 if the header item is not present.
+The latter is the reciprocal of the sample frequency
+.I sf
+in the type-dependent part of the SD header.
+If
+.I start_time
+is omitted, the starting time of the file is used.  If 
+.I end_time 
+is omitted, the range extends through the end of the file.
+The second form of the option is equivalent to the first with 
+.I "end = start + duration".
+.TP
+.BI \-p " starting_point:end_point \fR[1:(end of file)]\fP"
+.TP
+.BI \-p " starting_point:+incr"
+Determines the range in points in the input file over which
+the spectrogram values are to be computed.
+In the first
+form, a pair of unsigned integers gives the first and
+last points of the range, counting from 1 for the first
+point in the file.  If first is omitted, 1 is used.  If
+last is omitted, the range extends to the end of the
+file.  The second form is equivalent to the first with
+last = first + incr . This option should not be
+specified if -s is specified.  
+.TP
+.BI \-r " range"
+\fB\-r\fP is a synonym for \fB\-p\fP.
+.TP
+.BI \-m " method \fR[wb]\fP"
+The basic method is specified here. There are two possible values:
+\fIwb\fR for wide band and \fInb\fR for narrow band.  By specifying
+\fIwb\fR, the following values are set: lpc_method = fburg,
+pre-emphasis = .94, analysis_order = 10, window_len = 8 msec.,
+step_size = 2 msec., and data_window = RECT.  By specifying
+\fInb\fR, the following values are set: lpc_method = fburg,
+pre-emphasis = .94, analysis_order = 10, window_len = 40 msec.,
+step_size = 2 msec., and data_window = RECT.
+.TP
+.BI \-a " lpc_method \fR[fburg]\fP"
+Specifies the spectrum analysis method.  The default is the fast
+modified Burg ("fburg") method.  Also available are the
+autocorrelation method "autoc"), covariance method ("cov"), Burg
+method ("burg"), modified Burg method ("mburg"), stuctured covariance
+("strcov" and "strcov1"), and vector Burg ("vburg", fast approximation
+to structured covariance.  Of the two structured covariance methods,
+the first ("strcov" is considerably faster and better behaved;
+"strcov1" is older but included as it may prove useful on occasion.
+**
+If "strcov" is used, the \fB-c\fP and \fB-i\fP options become
+relevant.  The \fB-m\fP option overrides the value that may be in the
+parameter file.  
+.TP
+.BI \-c " conv_test\fR[1e-5]\fP"
+Specifies, for the STRCOV method only (not including STRCOV1), 
+a convergence test value.  The lower the value, the smaller the 
+change required on each iteration before the estimator terminates, 
+and the more iterations that normally will result.  
+.TP
+.BI \-i " max_iter\fR[20]\fP"
+Specifies, for the STRCOV method only (not including STRCOV1), the 
+maximum number of iterations that the estimator will run through 
+before terminating.  A warning will indicate if the estimator
+terminates because max_iter has been exceeded. 
+.TP
+.BI \-w " window_len"
+The duration of data in milliseconds over which the the power spectrum
+is computed for each column of the spectrogram. The analysis bandwidth
+is inversely proportional to this value.
+.TP
+.BI \-E " pre_emphasis"
+The coefficient \fIA\fR in the pre-emphasis filter: 1 \- \fIA\fR/z.
+This filter is applied to the sampled data before computing
+the power spectrum. A value of \fIA\fR = 1 provides a 6 dB/octave
+boost to the high frequencies; a value of 0 provides no boost.
+.TP
+.BI \-o " analysis_order"
+The number of parameters in the autoregressive
+model that is used to compute the 
+power spectrum. 
+.TP
+.BI \-S " step_size"
+The time step in milliseconds between columns in the spectrogram.
+The time resolution and horizontal magnification are
+affected by this parameter.
+.TP
+.BI \-d " data_window"
+The data window applied to the data before the computation
+of the power spectrogram. Possible values include RECT (rectangular),
+HAMMING, and TRIANG (triangular). See \fIwindow\fP (3\-\s-1ESPS\s+1) for
+a complete list of supported data windows.
+.TP
+.B \-D
+Include in the output records a field
+.I dith_spec_val
+containing 1s and 0s intended for display as a simulated gray-scale spectrogram
+on a black-and-white monitor.
+The \fIrefcof\fP (1\-\s-1ESPS\s+1) output is piped through the
+.IR dither (1-ESPS)
+program.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file is not required to be present, as there are 
+default parameter values that apply.  If the parameter file 
+does exist, the following parameters are read:
+.TP
+.I "method \- string"
+The spectrogram method to use.  This parameter is not read if the
+\fB-m\fP option is used.  If the parameter is present and is read, it
+determines default values for all other parameters as discussed under
+the \fB-m\fP option.  The other parameters (or command line options),
+if present, override these defaults.  The choice of "other" uses
+defaults that are the same as "wb".  
+.TP
+.I "lpc_method \- string"
+The analysis method used to compute reflection coefficients.  This
+parameter is not read if the \fB-a\fP is used.  
+.TP
+.I "data_window \- string"
+The data window to apply to the data.  This parameter is not read if
+the \fB-d\fP option is specified or if \fImethod\fP is in the
+parameter file and does not have the value "other".  Acceptable values
+include "RECT" for a rectangular window, "HAMMING", for Hamming,
+"HANNING" for Hanning, "COS4" for cosine 4th, and "TRIANG", for
+triangular; see the
+.IR window (3-ESPSsp)
+manual page for the complete list.
+.TP
+.I "start \- integer"
+.IP
+The first point in the input sampled data file that is processed.  A
+value of 1 denotes the first sample in the file.  This parameter is
+not read if any of the range command line options are used.  If it is
+not in the parameter file, and neither option is specified, a default
+value of 1 is used.
+.TP
+.I "nan \- integer"
+.IP
+The total number of data points to process.
+If
+.I nan
+is 0, processing continues through the end of the file.
+This parameter is not read if any of the range command line 
+options are used.
+.TP
+.I "window_len \- float"
+.IP
+The duration in milliseconds of each frame.  
+This parameter not read if the \fB-w\fP option is specified of if
+\fImethod\fP is in the file and does not have the value "other".
+.TP
+.I "pre_emphasis \- float"
+The coefficient in the preemphasis filter (see
+.B \-E
+in the Options section).  
+This parameter not read if the \fB-E\fP option is specified.
+.TP
+.I "step_size \- float"
+Initial points of consecutive frames differ by this number of
+milliseconds.  This parameter not read if the \fB-S\fP option is
+specified.
+.TP
+.I "order - integer"
+.IP
+The number of reflection coefficients computed for each frame of input data.
+If no value is given in the file, a default value of 15 is used.  This value 
+is not read if the command line option \fB\-o\fP is used.  
+.TP
+.I "strcov_test - float"
+.IP
+If STRCOV is used, this is the convergence test value (the lower 
+the value, the smaller the change per iteration before termination).  
+This is not read if \fB-c\fP is used. 
+.TP
+.I "strcov_maxiter - int"
+.IP
+If STRCOV is used, this is the maximum number of iterations allowed
+before the estimator terminates.  This is not read if \fB-i\fP is
+used.
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 3.
+.SH ESPS COMMON
+.PP
+ESPS Common is read provided that Common processing is enabled and 
+that the 
+.I filename
+entry in Common matches 
+.I input.SD,
+in which case parameters present in Common override values from the
+parameter file, which in turn may be overriden by command line options
+(see the discussion in ESPS PARAMETERS and under each option).
+Common is not read if 
+.I file.sd
+is standard input.  
+If 
+.I file.rc
+is not standard output and 
+.I file.sd
+is not standard input, the Common parameters 
+\fIfilename\fP (= file.sd), \fIprog\fP (= refcof), 
+.I start,
+and
+.I nan
+are written to ESPS Common.
+.PP
+ESPS Common processing may be disabled by setting the environment
+variable USE_ESPS_COMMON to "off".  The default ESPS Common file is
+.espscom in the user's home directory.  This may be overidden by
+setting the environment variable ESPSCOM to the desired path.  User
+feedback of Common processing is determined by the environment
+variable ESPS_VERBOSE, with 0 causing no feedback and increasing
+levels causing increasingly detailed feedback.  If ESPS_VERBOSE is not
+defined, a default value of 3 is assumed.
+.SH ESPS HEADERS
+.PP
+The generic header item \fIstart_time\fP (type DOUBLE) is written in
+the output file.  The value written is computed by taking the
+\fIstart_time\fP value from the header of the input file (or zero, if
+such a header item doesn't exist) and adding to it the offset time
+(from the beginning of the input file) of the first point processed.
+Also, the generic header item \fIrecord_freq\fP (type DOUBLE) is
+written in the output file.  The value is the number of output records
+per second of input data.  For details on the parameters used 
+by all of the programs in the script, look at all of the intermediate
+headers (e.g., via \fIpsps\fP \fB-a\fP).  
+.SH "FUTURE CHANGES"
+.PP
+\fIme_sgram\fP will be re-implemented as a C program.  
+.SH "SEE ALSO"
+.PP
+\fIsgram\fP (1\-\s-1ESPS\s+1),
+\fIplotsgram\fP (1\-\s-1ESPS\s+1),
+\fIfilter\fP (1\-\s-1ESPS\s+1), 
+.br
+\fIrefcof\fP (1\-\s-1ESPS\s+1),
+\fIme_spec\fP (1\-\s-1ESPS\s+1), 
+\fIcompute_rc\fP (3\-\s-1ESPS\s+1sp),
+.br
+\fIdither\fP (1\-\s-1ESPS\s+1), 
+FEA_SPEC (5\-\s-1ESPS\s+1), 
+FEA_SD (5\-\s-1ESPS\s+1)
+.SH "BUGS"
+.PP
+This script cannot read standard input.
+.SH "AUTHOR"
+.PP
+Manual page and program by David Burton. Revisions by John Shore. 
+

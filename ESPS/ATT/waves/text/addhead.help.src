@@ -1,0 +1,51 @@
+@(#)addhead.help.src	1.1 12/16/88 ATT ESI
+Usage: addhead [-fn -bn -sn -en -nn -dn -tn -T<quoted text>] <input_file(s)>
+
+	Addhead prepends (or updates) a SIG header and creates a new file named
+	<input_file>.d; the original file is unchanged.  The options are:
+  -f	n is the sampling frequency in Hz [10000]
+  -b	n is the bandwidth of the data [f/2]
+  -s	n is the starting time(sec) of the data (re "parent" file) [0]
+  -e	n is the end time(sec) of the data [start + duration]
+  -n	n is the # of samples in file; must be specified for ASCII [file size]
+  -d	n the number of dimensions (channels) in each vector sample [1]
+  -t	the hexidecimal code for the data type and format [shorts (4)]
+  -T	<quoted text> will be placed in the header.  This may be any of
+	the "standard" keyword-value pairs or any novel keyword followed
+	by format and value fields
+	(see $WAVES_DOC/headers.help).
+
+The supported types numbers are formed from the inclusive OR of one of:
+ P_CHARS 		0x1
+ P_UCHARS 		0x2
+ P_USHORTS 		0x3
+ P_SHORTS 		0x4
+ P_INTS			0x5
+ P_UINTS 		0x6
+ P_FLOATS 		0x7
+ P_DOUBLES 		0x8
+					with zero or one of:
+ SIG_F0			0x02000  /* "special" types */
+ SIG_FORMANTS		0x03000
+ SIG_MPLPC_REF		0x04000
+ SIG_MPLPC_EXC		0x05000
+ SIG_SPECTROGRAM	0x06000
+ SIG_LPCA		0x07000
+ SIG_LPCRC		0x08000
+					and one of:
+ SIG_BINARY 		0x000
+ SIG_ASCII 		0x100
+	
+For example, suppose you needed to add a header to a file of ASCII data which
+can be represented as short integers; sampled at 12kHz; containing 12345
+samples; and of dimension 1:
+	addhead -t104 -f12000 -n12345 <file>
+
+For one dimensional binary shorts sampled at 10kHz:
+	addhead <file>
+
+For 100 dimension; binary bytes; sampled at 200Hz; 5kHz bandwidth;
+to be represented graphically as a spectrogram:
+	addhead -b5000 -f200 -t6001 -d100 <file>
+
+The program hget may be used to print all or part of a header on the terminal.

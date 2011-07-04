@@ -1,0 +1,5087 @@
+----------------------------------------------------------------------------
+
+
+                          ----------------------
+                          waves+ Reference Guide
+                          ----------------------
+
+                        Entropic Research Laboratory
+
+This is a reference guide to the commands and symbols in the waves+ package.
+It essentially consists of the material in the ``Reference Guide'' part of
+the waves+ Manual.  It covers language to be used to control xwaves and the
+attachments; it will not go into detail about how to use the commands to
+build your specific application or how to embed them in a standard setup.
+For that type of information see the parts ``waves+ in Detail'' and ``The
+Attachments'' in the full manual.
+
+ Chapters
+
+   26  xwaves command reference
+   27  xwaves symbols reference
+   28  xlabel reference
+   29  xspectrum reference
+   30  xmarks reference
+   31  xchart reference
+
+contain a comprehensive reference. Chapters
+
+   32  xwaves quick reference
+   33  xlabel quick reference
+   34  xspectrum quick reference
+   35  xmarks quick reference
+   36  xchart quick reference
+
+contain a quick reference to all symbols and commands, which are
+alphabetical lists with symbols and commands and their parameters.
+
+In the command references we make frequent use of terms like quoted string,
+simple quoted string, boolean, etc. For the definition of these terms refer
+to the glossary.
+
+----------------------------------------------------------------------------
+
+   26  xwaves command reference
+       26.1  Introduction
+       26.2  Global xwaves Commands
+       26.3  Obsolete global commands
+       26.4  xwaves object commands
+   27  xwaves symbols reference
+       27.1  Introduction
+       27.2  Global symbols
+       27.3  View-specific symbols
+             27.3.1  Read-only (get only) object symbols
+             27.3.2  Write-only (set only) View Symbols
+             27.3.3  Read-Write (get or set) View Symbols
+             27.3.4  Notes for display window specific symbols
+   28  xlabel reference
+       28.1  xlabel commands
+       28.2  xlabel symbols
+   29  xspectrum reference
+       29.1  xspectrum commands
+       29.2  xspectrum symbols
+   30  xmarks reference
+   31  xchart reference
+   32  xwaves quick reference
+       32.1  xwaves commands
+             32.1.1  xwaves global commands
+             32.1.2  xwaves object commands
+             32.1.3  xwaves built-in commands
+       32.2  xwaves symbols
+             32.2.1  Global symbols
+             32.2.2  Objebct symbols
+   33  xlabel quick reference
+       33.1  xlabel command reference
+       33.2  xlabel symbols
+   34  xspectrum quick reference
+       34.1  xspectrum command reference
+       34.2  xspectrum symbols
+   35  xmarks quick reference
+   36  xchart quick reference
+       36.1  xchart command reference
+       36.2  xchart symbol reference
+   37  Glossary
+
+----------------------------------------------------------------------------
+
+Chapter 26
+
+xwaves command reference
+
+----------------------------------------------------------------------------
+
+   26.1  Introduction
+   26.2  Global xwaves Commands
+   26.3  Obsolete global commands
+   26.4  xwaves object commands
+
+----------------------------------------------------------------------------
+
+26.1  Introduction
+
+There are five routes by which commands may be directed to xwaves:
+
+  1. from xwaves command files.
+  2. With the send_xwaves program from the UNIX command-line or from shell
+     scripts.
+  3. From an attached program (like xspectrum or xlabel).
+  4. By way of the send_xwaves ESPS library call.
+  5. By typing directly in the COMMAND (or @file): field in the Control
+     Panel.
+
+Regardless of the source, the syntax remains the same:
+
+     object command [keyword value] [keyword value] ...
+
+as described in the chapter ``The waves+ Command Language'' of the full
+manual.
+
+When commands are read from a xwaves command file, three special xwaves
+commands can be used that can not used in other contexts: branch , call  and
+return . Refer to their descriptions below.
+
+Note that xwaves command files may be executed by xwaves at startup by
+specifying one as the init_file in your profile file, as a file
+specification on the xwaves command line, or after xwaves has started by
+using the COMMAND or (@file): item (see the section ``The Main Control
+Panel'' of the full manual) or via the send_xwaves  (1-ESPS) command. A UNIX
+command for starting an xwaves command file with send_xwaves might look like
+this:
+
+     send_xwaves @file.WC
+
+where file.WC is the ASCII file containing the command sequence.
+
+The commands for xwaves are divided into two groups: the global commands and
+the object commands. The global commands perform general functions in xwaves
+not specifically directed at a particular display window or object. The
+object commands have an effect on the selected object or display window
+only.
+
+----------------------------------------------------------------------------
+
+26.2  Global xwaves Commands
+
+The following commands and keyword/arguments may be directed to xwaves.
+These are referred to as waves commands since the explicit or implicit
+receiver of them is the xwaves-internal object named waves. If the first
+word in a command does not match the name of any existing xwaves object,
+waves is assumed, thus shortcutting the expression of commonly used
+commands. Thus:
+
+     set verbose 0
+
+is exactly equivalent to
+
+     waves set verbose 0
+
+add_op
+     DEFINE NEW XWAVES MENUS AND OPERATORS
+
+     name
+          A simple quoted string specifying the name of the new operator.
+          This can be any ASCII string with embedded spaces as required. If
+          the operator is being added to a menu, this is the string that
+          will appear in the menu.
+     op
+          A quoted string specifying the operation to be performed. This
+          operation can either be a command to be executed in a UNIX shell
+          or an xwaves-internal command drawn from either the waves or
+          object commands list. If the operation is an xwaves-internal
+          command it must be preceded by a # sign. The keyword command is an
+          exact synonym for op.
+     menu
+          The menu list in which the new operator is to be placed. The value
+          is usually one of wave, spect, all or none, but can be any name
+          you choose. The values wave, spect, and all cause the new operator
+          to appear in the corresponding data display window menus. Any
+          other name will prevent the operator from appearing in the menus,
+          but will make it accessible to the key_map and op commands
+          described below.
+
+     The add_op command provides the primary means for specifying new object
+     commands to be added to the xwaves command set. The operators may be
+     added to the data display window menus or simply placed on lists
+     internal to xwaves for access by other means, such as a keyboard
+     bindings. Several examples of the use of add_op may be found in
+     $ESPS_BASE/bin/test_waves. The syntax for the add_op command is an
+     extended version of the standard syntax, with the following two
+     extensions:
+       1. symbolic access to xwaves state: Any string preceded by a
+          non-alpha-numeric character and an underline (e.g. _name) is
+          interpreted as an xwaves variable symbol and is evaluated at the
+          time the added operator is invoked. Acceptable symbols include any
+          of the display window-specific variables, any of the built-in or
+          user defined global variables and the distinguished symbol out.
+          (note that ``.'' is the last character of the symbol).
+
+          The sequence _out. is interpreted at execution time as an output
+          file name generation request. The name of the display window from
+          which the operator was invoked is processed to take into account
+          the output_dir  specification and then has an extension added to
+          make its name unique. The out. symbol can, itself, have extended
+          qualifiers, as follows:
+             + out.g.[ext]
+
+             + out.t.[ext]
+
+             + out.n.[ext]
+
+          The g. qualifier indicates that the output file should be
+          displayed graphically by xwaves after the operation is complete.
+          The t. qualifier means that the new file should be displayed as
+          ASCII information in a text window. The n. qualifier or absence of
+          any qualifier means that xwaves is not to display the new file.
+          The optional ext is a filename extension that you would like
+          appended to the other name components. If ext is omitted, xwaves
+          uses the extension ``.out'' added to the name of the input name of
+          the file in the current display window. Subsequent file name
+          generation requests results in insertion of sequence numbers
+          before the extension .out. The out. symbol may be used any number
+          of times in a given add_op command; each instance will result in
+          the generation of a unique name. As files are generated by
+          execution of the new command, their names are added to the ``new
+          files'' list. They may be browsed by right mousing the OUTPUT
+          file: main control panel item.
+
+          It is possible to prepend and append some special characters to
+          the symbol references. For a description see the section ``Using
+          Symbols in the add_op Command'' of the full manual.
+       2. Access to xwaves commands or other UNIX processes:
+
+          If the first character in the command specification is the #
+          character, the command will be interpreted as an internal waves
+          command drawn from either the waves_commands or the
+          object_commands list. Commands not preceded by the # will be
+          executed by a UNIX shell.
+
+          Except for xwaves symbol-value substitution described above, any
+          text strings to be interpreted as UNIX commands are passed through
+          unmodified. Thus, several UNIX processes on a pipe or sequences of
+          semicolon-separated UNIX commands are permitted. The output file
+          specifications described above, may appear anywhere in the op
+          value.
+     A simple add_op command to create a menu item that will play (D/A
+     convert) the data from the left edge of the window to the cursor
+     position might look like this:
+
+          add_op name "LEFT PLAY" op # _name play \
+              start _view_start_time end _cursor_time
+
+
+     As a more interesting example, we will demonstrate the use of the
+     add_op command to implement a sorting operator using a combination of
+     UNIX and ESPS utilities. This operator will sort the samples in a
+     one-dimensional signal according to increasing value and then create a
+     new ``signal'' consisting of the sorted samples. Put the following in a
+     file and execute it as a waves command file by typing @filename into
+     the COMMAND (or @file): item of the xwaves main control panel. Put the
+     whole add_op command on a single line and DO NOT include the backslash
+     (\) line continuation characters.
+
+          add_op name sort menu wave op copysd \
+             _range_samp  _file - | pplain - | sort -n | \
+             testsd -r `echo _r_marker_samp - \
+             _l_marker_samp | bc` -a - _out.g.
+
+
+     This creates the item sort on a waveform menu. It works like this:
+     copysd  extracts the segment delimited by the left and right xwaves
+     markers. pplain  converts the signal to an ASCII representation. The
+     UNIX sort orders the samples numerically. testsd  is used to convert
+     the sorted samples back into an ESPS sampled data file. Note that the
+     sample rate argument to testsd (-r) is adjusted to normalize the
+     ``duration'' of the sorted samples to unity by setting the rate equal
+     to the number of samples sorted. The UNIX ``desk calculator'', bc is
+     used to compute the number of samples based on the left and right
+     marker positions. To use this new operator, position the left and right
+     markers on a waveform display window to delimit a second or so of the
+     signal. Then select the sort item from the display window menu.
+
+     It is also possible to define operators as composed xwaves command,
+     i.e. multiple xwaves commands in a row. You need to separate them with
+     a double colon (::). See also the description of the send_xwaves
+     command for precautions when using add_op with send_xwaves.
+
+     Here is a rather complex example, that also shows how symbols can be
+     used as commands. It is worthwhile to spend some time on this example
+     to get a good understanding of both add_op and the command language in
+     general:
+
+          add_op name magnify menu none \
+             op # set res_mag "_name set file _file \
+             chan _cursor_channel plot_max _plot_max \
+             plot_min _plot_min:: \
+             _name bracket file _file \
+             start _view_start_time end _view_end_time:: \
+             _name set file _file \
+             l_marker_time _l_marker_time \
+             r_marker_time _r_marker_time":: \
+             _name set file _file \
+             chan _cursor_channel plot_max _t_marker_yval \
+             plot_min _b_marker_yval:: \
+             _name bracket file _file \
+             start _l_marker_time end _r_marker_time
+          add_op name restore_mag menu none op #_res_mag
+          key_map key m menu wave op magnify
+          key_map key M op restore_mag
+
+
+     (NB: Backslashes at the end of lines in the last example only mean that
+     the text is continued on the next line. Don't use backslashes in the
+     COMMAND (or @file): field; just type all the following text on a single
+     line.)
+
+     The first add_op command defines the operator magnify, which is not on
+     any menu. This operator executes a complex xwaves command. Its
+     operation consists of three ``simple'' commands:
+       1. defines a symbol res_mag, that contains a three-part complex
+          command as its value. If executed, res_mag resets the symbols
+          plot_max and plot_min to the values they had before the
+          magnification was executed, it resets the view borders, and it
+          resets the markers.
+       2. sets the range of the plot to the range between the top and bottom
+          marker (the horizontal marker lines).
+       3. sets the view to contain the signal segment between the left and
+          right marker.
+     The second add_op command creates an operator restore_mag that executes
+     the value of the symbol res_mag, which is set at each execution of
+     magnify. The following two commands bind these two operators to keys.
+
+add_op_panel
+     GUI INTERFACE TO THE ADD_OP COMMAND
+
+     help_file
+          The name of an ASCII file explaining the use of the add_op panel.
+          This file is displayed in response to a press of the Help button
+          on the add_op panel. If help_file  is omitted, a useful help file
+          will be made available.
+     loc_x, loc_y
+          The X and Y pixel coordinates desired for the upper left corner of
+          the add_op panel. Reasonable defaults will be used if either of
+          these is omitted.
+     show_vars
+          A boolean that determines if the lists of variable names should
+          automatically be displayed when the add_op panel is created.
+     show_ops
+          A boolean that determines if the list of available display window
+          commands should automatically be displayed when the add_op panel
+          is created.
+
+     The add_op_panel command creates a handy graphical interface to aid in
+     building custom xwaves operators via the add_op command. When opened,
+     the main add_op_panel displays the following items:
+     operation name:
+          This corresponds to the name keyword of the add_op command. The
+          command must be named, so you need to enter the name here. Any
+          ASCII string is acceptable. You need not quote names with multiple
+          words.
+     add_to_windows
+          These two buttons determine which, if any, display window menus
+          the new operation will appear on. If neither of these buttons is
+          depressed, the new item will be on the none list, meaning it will
+          be available for mapping to keys and for access by other means,
+          but will not appear on any display window menus.
+     show variables...
+          This button opens another panel that displays two scrollable lists
+          of xwaves global symbols and display window-specific symbols that
+          may be used as components in add_op commands. It also permits
+          specification of output file names.
+     show commands...
+          This button opens a panel providing access to the list of object
+          commands and their keyword lists.
+     Enter command...
+          This text window is the area in which the add_op command will be
+          constructed. You may type any or all of the components of an op
+          value for an add_op command into this window. In many cases, you
+          do not actually need to type, since selecting items from the
+          scrollable lists in the variables and commands panels
+          automatically adds them to the string being constructed at the
+          current cursor location.
+     Apply add_op
+          Causes the add_op command to be executed with the components you
+          have just constructed. Immediately after you Apply, you can use
+          the new operation.
+     Help
+          Invokes a text window explaining the add_op command and the
+          add_op_panel.
+     Dismiss
+          Closes the add_op_panel, but does NOT cause the add_op under
+          construction to be installed. If you Dismiss without Apply first,
+          the add_op being constructed will be lost and ignored.
+
+     As an example, we will describe step-by-step the use of the add_op
+     panel to construct a command to set the vertical display limits of a
+     file to the current horizontal marker locations (vertical bracket
+     markers). We assume the add_op panel is open.
+       1. Left mouse the operation name: item and type in a name for the
+          command: e.g vbracket.
+       2. Press the show commands... and show variables... buttons.
+       3. Press the current object button in the commands panel. Select the
+          set command from the Commands: list.
+       4. Select file from the Command attributes: list.
+       5. Select file from the View-Specific Variables: list.
+       6. Select plot_max from the Command attributes: list.
+       7. Select t_marker_yval from the View-Specific Variables: list.
+       8. select plot_min from the Command attributes: list.
+       9. Select b_marker_yval from the View-Specific Variables: list.
+      10. Be sure the waveform button is in, and the image button is out.
+      11. Press the Apply add_op button.
+     As you become more familiar with xwaves and the add_op command, you may
+     prefer to to issue the command directly (or via send_xwaves). The
+     direct xwaves command to create the vbracket menu item might look like
+     this:
+
+          add_op name vbracket menu wave op \
+             # _name set file _file plot_max  _t_marker_yval \
+             plot_min _b_marker_yval
+
+
+     Note, however, that whether or not the the add_op_panel is routinely
+     used to create operators, it can still serve as a quick interactive
+     reference to xwaves commands, command argument names, and variable
+     symbols.
+
+add_waves
+     RESTORE (OR ADD) AN ITEM TO A DATA DISPLAY WINDOW MENU
+
+     name
+          a quoted string to be used as an entry in xwaves menus.
+     menu
+          one of the strings wave, spect, and all. This indicates whether
+          the new item is to be added only to the menu for waveform windows,
+          only to the menu for spectrogram windows, or to both menus. The
+          default is all.
+     op
+          any named operator on the spect, wave or all menu-operator lists.
+          This includes the built-in operators that are compiled into xwaves
+          and any operators you have added with the add_op command. Note
+          that the name of the menu-operator list containing the operator
+          must be all or the same as the menu name specified to the
+          add_waves command. See the chapter ``Data Window Menu Items'' of
+          the full manual for discussions of the built-in menu items. The
+          built-in Button Modes item is not an acceptable op.
+     submenu
+          identifier of a submenu to be added to the menu. In the current
+          version, only the standard Button Modes  pull-right menu can be
+          added as a submenu. For example, the command:
+
+               add_waves submenu buttons
+
+
+          will add the Button Modes, if one is not already present, to both
+          window menus. The submenus for the waveform window menu and the
+          spectrogram window menu are different; the appropriate submenu is
+          added to each menu. The keyword menu can be used to restrict the
+          operation to a specific menu. The keyword name can be used to make
+          the added item appear with a name other than Button Modes. The
+          argument of the submenu keyword, shown above as buttons, must be
+          present for consistency with command syntax, but the value is
+          ignored in the present implementation, submenu foo would do just
+          as well. In a future extension of xwaves, the argument may be used
+          to distinguish among different submenus to be added to a menu.
+     command
+          an arbitrary quoted string (may contain blanks) that is executed
+          as an xwaves command when the new menu item is selected. So this
+          may not be a UNIX command. The keywords command, builtin, and
+          submenu are mutually exclusive. This means of adding a new command
+          to menus by use of add_waves is now considered obsolete. See the
+          add_op command.
+
+     The command that is specified with the op option of the add_waves
+     command is added to one or both of the xwaves window menus. Thus an
+     item that has been removed with either the delete_item  or
+     delete_all_items  command can be restored to a menu. In fact this
+     should be the main function of add_waves .
+
+     If name is specified, the function will be identified in the menu by
+     that name, rather than by the string in the menu-operator list. The
+     keywords command, op, and submenu are mutually exclusive. In the
+     context of the add_waves command, builtin is an exact synonym for the
+     op keyword.
+
+attach
+     ATTACH A FUNCTION
+
+     function
+          the name of the desired function (e.g. xspectrum or xlabel.)
+
+     Several attachments may be active simultaneously. If more than one
+     invocation of a given attachment is to be active at a time, create
+     alternate names for the attachment that are symbolically linked to the
+     same executable and refer to these names when creating the extra
+     invocations.
+
+branch
+     TRANSFER CONTROL TO ANOTHER xwaves COMMAND FILE
+
+     commandname
+          the path name of the new command file. No return to the original
+          command file is possible (although it may be branched to). The
+          branch command provides a means for chaining together command
+          files.
+
+     The call, branch, and return xwaves commands are only used in xwaves
+     command files. They are of no use as direct commands. Before writing a
+     new xwaves command file, consider using a UNIX shell script with
+     send_xwaves , instead.
+
+call
+     CALL AN xwaves COMMAND FILE AS A SUBROUTINE
+
+     commandname
+          the path name of the subroutine command file. There is currently
+          no mechanism for argument passing other than mutually agreed-upon
+          use of xwaves global symbols or the UNIX file system.
+
+     The call, branch, and return xwaves commands are only used in xwaves
+     command files. They are of no use as direct commands. Before writing a
+     new xwaves command file, consider using a UNIX shell script with
+     send_xwaves, instead.
+
+cd
+     CHANGE WORKING DIRECTORY
+
+     path
+          the new working directory. Subsequent relative file names passed
+          to xwaves are interpreted relative to this directory. Path must be
+          specified.
+
+close_ctlwin
+     CLOSE (ICONIZE) MAIN CONTROL PANEL
+
+     invisible
+          This boolean if set to 1 makes the view completely invisible. So
+          there no icon left on the screen.
+
+     The main xwaves control panel is closed down to an icon. Note that the
+     global ctlwin_iconized  can be used to start xwaves in this state.
+
+close_panel
+     CLOSE AUXILIARY CONTROL PANEL
+
+     name
+          contiguous string of non-blank characters that has been used in
+          creating an auxiliary control panel with the make_panel  command.
+          The named panel is closed (i.e. iconized).
+     invisible
+          This boolean if set to 1 makes the view completely invisible. So
+          there no icon left on the screen.
+
+delete_all_items
+     REMOVE EVERYTHING FROM xwaves MENUS
+
+     menu
+          one of the strings wave, spect, and all. This indicates whether
+          the new item is to be removed only from the menu for waveform
+          windows, only from the menu for spectrogram windows or from both
+          menus. The default is all.
+
+     All items are removed from the specified menus. Note that the
+     underlying operator definitions are not affected, so the named
+     menu-operator lists may still be accessed for key_map, save_add_ops,
+     op, etc.
+
+delete_item
+     REMOVE ITEM FROM xwaves MENUS
+
+     name
+          a quoted string that exactly matches an entry in the data display
+          window menu(s).
+     menu
+          one of the strings wave, spect, or all. This indicates whether the
+          new item is to be removed only from the menu for waveform windows,
+          only from the menu for spectrogram windows, or from both menus.
+          The default is all.
+
+     The named item is removed from any of the specified menus in which it
+     occurs. As with delete_all_items, the underlying operator definition in
+     the menu-operator list(s) is not affected.
+
+detach
+     DETACH ANY FUNCTION CURRENTLY ATTACHED TO xwaves
+
+     function
+          the name of the function to detach. If the function specification
+          is omitted, all attachments will be detached.
+
+enable_server
+     START LISTENING FOR COMMANDS ON SOCKET
+
+     xwaves starts listening for commands on an INET domain socket port. The
+     port number used is determined in the following order:
+       1. the global socket_port as specified in the .wave_pro file or by a
+          direct set command. Setting this global has no effect if xwaves is
+          already operating as a display server (e.g., if it was started
+          with -s), but it determines the socket number used the next time
+          server mode is started by enable_server;
+       2. the port specified by the command line option -p;
+       3. the contents of the UNIX environment variable WAVES_PORT  at the
+          time xwaves starts;
+       4. a compiled-in default.
+     Note that as of version 5.0, the socket-based ``server mode'' is only
+     used in conjunction with the send_xwaves  (3-ESPS) library functions,
+     not with the send_xwaves  program. In future releases, the
+     enable_server and disable_server commands may be eliminated since they
+     will be unnecessary.
+
+get
+     GET GLOBAL ATTRIBUTES FROM xwaves
+
+     attributes
+          This optional keyword has only one meaningful value at this time:
+          global . If global is specified, the data is provided as
+          keyword-value pairs suitable for output into a file that may then
+          be used as an xwaves profile file (.wave_pro). Otherwise, only the
+          variable values explicitly requested are returned (without their
+          corresponding keywords).
+     output
+          the name of an output file to receive keyword- value pairs (in a
+          format suitable for a .wave_pro file) in the case where global is
+          specified for attributes or an unadorned list of values if
+          attributes is not specified.
+
+          If an output is not specified, but attributes is, then stdout is
+          assumed. If attributes is not specified the values ONLY go to an
+          output file or the calling process (e.g. send_xwaves). The output
+          name can include UNIX environment variables (e.g., $HOME).
+     aname
+          a quoted string list of xwaves globals to output, in the case
+          where global is specified for attributes. If aname is omitted, but
+          attributes global is specified, all global values are output. If
+          attributes is not specified, aname (and an associated list of
+          symbols) must be specified.
+
+     Note that the keywords return_id, file and function are recognized by
+     the get command, but are for xwaves-internal use only. See also the get
+     command in the section 26.4.
+
+key_map
+     BIND A KEYBOARD CHARACTER TO AN OPERATOR
+
+     op
+          a quoted string value that is the exact name of the operator to be
+          called when the key is struck. This operator name may be drawn
+          from any of the built-in menu operations (see the chapter ``Data
+          Window Menu Items'' of the full manual) or may be any operator
+          defined with the add_op command. The keyword command is an exact
+          synonym for op.
+     menu
+          the display window type for which the mapping is to be effective.
+          Typical values for menu would be wave, spect or all, but any menu
+          list created with the add_op command may be accessed. If no menu
+          is specified, all lists (including new lists created by the add_op
+          command) will be searched and the first operator with the
+          requested name will be applied to all display window types.
+          However, add_ops and built-ins specifically designated as wave or
+          spect operator will not cross over and be mappable to other than
+          this designated view type.
+     key
+          The single character that is to be mapped to the operator. All
+          alphanumeric keys and control keys are acceptable values. Control
+          qualification is indicated by preceding the key with the caret (^)
+          symbol. The space bar is represented by the underline character
+          (_). If desired, the same key can be made to have different
+          semantics in the different display window types through use of the
+          menu specification.
+
+     As an example, suppose you wanted the space bar to play between marks
+     in the spectrogram windows, but apply marks in the waveform window. The
+     following key_map and add_op commands would do the trick:
+
+          add_op name mark menu wave op # _name mark \
+             time _cursor_time
+          key_map key _ menu spect op play between marks
+          key_map key _ menu wave op mark
+
+
+key_unmap
+     REMOVE A KEY-TO-OPERATOR BINDING
+
+     menu
+          the name of the display window type (spect, wave or all) from
+          which the key-mapping is to be deleted. If unspecified, all is
+          assumed. Note that menu is a bit of a misnomer, it should probably
+          be called something like view_type.
+     key
+          The character that is to be unmapped. This is specified the same
+          as for the key_map command.
+
+     Note the key_unmap command does not affect the definition of the
+     operator, only its binding to a key. If a key is to be remapped to
+     another operator it is not necessary to perform a key_unmap first.
+
+kill
+     DESTROY ONE OR MORE DATA DISPLAY WINDOWS
+
+     <none>
+          implies that all display objects are to be killed.
+     name
+          name of the display object with a display window to be killed.
+     file
+          the specific data display window to be killed. If file is
+          specified, name must be specified. If name is specified and file
+          omitted, all objects in the named display object will be killed.
+          Note that the file name specified must match the name by which the
+          display window was created (which may not be the name displayed in
+          the display window's frame if the global shorten_header is
+          enabled).
+
+kill_panel
+     KILL AUXILIARY CONTROL PANEL
+
+     name
+          contiguous string of non-blank characters that has been used in
+          creating an auxiliary control panel with the make_panel command.
+          The named panel ceases to exist.
+
+make
+     CREATE A DATA DISPLAY WINDOW AND/OR DISPLAY OBJECT
+
+     name
+          any contiguous string to be used as an object name. If omitted,
+          the current object name is used.
+     file
+          the filename of some data to be displayed. If name is omitted and
+          file is specified, the simplified base name of the first file will
+          become the object name.
+     identifiers
+          a quoted string of vector elements to display by name (see also
+          activate in section 26.4).
+     numbers
+          a quoted string of vector elements to display by number (from
+          zero) (see also activate in the section 26.4).
+     <any xwaves global symbol>
+          as described for the xwaves set command (including new
+          definitions). The effect (with an exception noted below) is to set
+          the named global. The globals that pertain to display window
+          attributes will be used with any new values assigned in the
+          current and all subsequent display window creations, unless they
+          are otherwise modified. A few of the more commonly used variables
+          have been given aliases for convenience:
+     duration
+          (alias for ref_size).
+     start
+          (alias for ref_start).
+     loc_x
+          (alias for first_x).
+     loc_y
+          (alias for first_y).
+     width
+          Using this keyword sets the width of the new display window (for
+          both waveforms and spectrograms). The keyword is not an alias, so
+          no corresponding global is set. In the case of waveform windows,
+          using wave_width has the same effect but also sets the
+          corresponding global and hence affects subsequently created
+          display windows.
+     height
+          Using this keyword sets the height of the new display window (for
+          both waveforms and spectrograms). The keyword is not an alias, so
+          no corresponding globals is set. In the case of waveform windows,
+          using wave_height has the same effect, but also sets the
+          corresponding global.
+     def_header
+          See the description of the the global symbol def_header. This sets
+          the global variable.
+
+     The make command is the primary means for other programs to create data
+     display windows in xwaves. It permits simultaneous specification of all
+     major display window attributes and the naming of display object. For
+     example, if a UNIX shell script is to display some data using xwaves,
+     it could use the program send_xwaves like this:
+
+          send_xwaves make name myview file my_data.sd \
+             loc_x 0 loc_y 200 ...
+
+
+     where ``...'' indicates any additional display window attributes you
+     may need to specify as keyword-value pairs on the same command line.
+     Later, you may want to send commands to this object. Suppose you wanted
+     to iconize (close) the display window containing my_data.sd:
+
+          send_xwaves myview close file my_data.sd
+
+
+make_panel
+     CREATE AUXILIARY CONTROL PANEL
+
+     loc_x
+          integer. Distance in pixels of the left edge of the panel from the
+          left edge of the screen.
+     loc_y
+          integer. Distance in pixels of the top of the panel from the top
+          of the screen.
+     title
+          identifying quoted string to be displayed in the panel frame.
+     icon_title
+          identifying quoted string to be displayed as the title of the
+          iconized panel.
+     columns
+          the number of buttons in each row of the panel (default is 10).
+     quit_button
+          if non-zero, causes a QUIT button to be included as the first
+          button in the panel. The default is 0 (no quit button). If the
+          UNIX environment variable BBOX_QUIT_BUTTON  is defined, this
+          results in a QUIT button being added even if quit_button is 0. The
+          resulting behavior is somewhat different from the case where
+          quit_button is non-zero, however, in that the QUIT button is
+          created in a row by itself at the top of the panel and is not
+          counted with the other buttons when determining where to break the
+          first row. The reason for this is to avoid disturbing the geometry
+          that may have been selected carefully by the application calling
+          make_panel. The main reason for providing global control via
+          BBOX_QUIT_BUTTON is to facilitate usage on systems with window
+          managers that do not provide an independent means for killing
+          windows.
+     name
+          contiguous string of non-blank characters. This string is used
+          internally by other xwaves commands in referring to the panel.
+          (Cf. close_panel, open_panel, kill_panel.) If the name is in use,
+          the existing panel is destroyed.
+     file
+          contiguous string of non-blank characters forming a valid
+          filename. This names an olwm -format ASCII menu file that defines
+          the layout of the panel, the names of its buttons and the xwaves
+          commands they perform. By default, xwaves looks for the named file
+          first in the current directory and then in
+          $ESPS_BASE/lib/waves/menus. This default path can be overridden by
+          setting the UNIX environment variable WAVES_MENU_PATH . For a
+          discussion of the format of the menu files see mbuttons  and
+          exv_bbox . For examples, look at the files
+          $ESPS_BASE/lib/waves/commands/*.WC.
+     panel_choice
+          a boolean that, when enabled, causes the items comprising the
+          menus under the panel buttons to be expanded as exclusive
+          pushbuttons on the panel, rather than as pull-down menus, which is
+          the default.
+     choice_horiz
+          if panel_choice is enabled, choice_horiz is a boolean that
+          determines the orientation of the button layout, which is vertical
+          by default.
+
+open_ctlwin
+     OPEN MAIN CONTROL PANEL
+
+     If it is currently iconized, the main xwaves control panel is opened.
+     Otherwise, there is no effect.
+
+open_panel
+     OPEN AUXILIARY CONTROL PANEL
+
+     name
+          contiguous string of non-blank characters that has been used in
+          creating an auxiliary control panel with the make_panel  command.
+          The named panel, if closed (that is, iconized) is opened.
+
+print_setup
+     START PRINT GRAPHIC SETUP PANEL
+
+     This command invokes a panel that can be used to set the various
+     globals that affect printing and saving of graphic images. See the
+     chapter ``Printing Graphics'' of the full manual.
+
+quit
+     CAUSES xwaves TO QUIT AND RETURN TO UNIX
+
+     This commands stops xwaves. Any modified signals will be saved. All
+     attachments will be stopped. The xwaves license will be released before
+     xwaves exits.
+
+return
+     RETURN TO THE CALLING WAVES COMMAND FILE
+
+     In addition to its use as a means for returning from subroutines, the
+     return command may be placed at the end of any command file to force
+     the removal of the file's name from the COMMAND (or @file): main
+     control panel line on completion of the file.
+
+     The call, branch, and return xwaves commands are only used in xwaves
+     command files. They are of no use as direct commands. Before writing a
+     new xwaves command file, consider using a UNIX shell script with
+     send_xwaves , instead.
+
+save_add_ops
+     SAVE ALL CURRENT CUSTOM OPERATOR DEFINITIONS
+
+     output
+          the name of a file into which the add_op and add_waves definitions
+          should be written.
+
+     save_add_ops writes a series of add_op commands to the output file that
+     may be executed as an xwaves command file to reconstruct the current
+     custom-made operator set. The last line in the file is the xwaves
+     return command, so the file can be call ed as part of an initialization
+     script. All operators created with add_op, add_espsf, add_espsn,
+     add_espst and add_waves are saved.
+
+save_keymaps
+     SAVE ALL CURRENT KEY-TO-OPERATOR BINDINGS
+
+     output
+          the name of a file into which the key bindings should be written.
+
+     save_key_map writes a series of key_map commands to the output file
+     that may be executed as an xwaves command file to reconstruct all of
+     the current key-to-operator bindings. The last line in the file is the
+     xwaves return command, so the file can be call ed as part of an
+     initialization script. Note that the operators referred to by the
+     key_map command must actually exist at the time the mapping is per
+     formed. Thus, the saved operators should be restored before executing
+     the key-map save file.
+
+save_menus
+     SAVE THE CURRENT DISPLAY WINDOW MENU CONFIGURATION
+
+     output
+          the name of a file into which the menu definitions should be
+          written.
+     menu
+          the display window type of the menu that is to be saved.
+          Acceptable values are spect, wave and all. If unspecified, all is
+          assumed.
+
+     save_menus writes a series of add_waves  commands to the output file
+     that may be executed as an xwaves command file to reconstruct the
+     current menu configuration that might have been established by a series
+     of add_op, add_waves, delete_item and other commands. Note that the
+     first line in the output file is a delete_all_items command that clears
+     all menus before building those specified in the balance of the file.
+     Thus, if the union of multiple save_menus commands is required, the
+     first line in all but the first one executed should be deleted. The
+     last line in the file is the xwaves return command, so the file can be
+     call ed as part of an initialization script.
+
+save_panels
+     SAVE ALL AUXILIARY PANEL SPECIFICATIONS
+
+     output
+          the name of a file into which the panel configuration information
+          should be written.
+
+     save_panels writes a series of make_panel  commands to the output file
+     that may be executed as an xwaves command file to reconstruct all of
+     the xwaves auxiliary button panels. The last line in the file is the
+     xwaves return command, so the file can be call ed as part of an
+     initialization script.
+
+send
+     SEND A MESSAGE TO THE FUNCTION(S) ATTACHED TO xwaves
+
+     function
+          The name of the attachment to receive the message. This should
+          correspond to the name used to start the attachment, either via
+          one of the main control panel Attach: buttons, or some other
+          means. This MUST be the first keyword.
+     registry
+          The name that the attachment has registered with the X server for
+          communications as. In most cases, this is simply the name of the
+          program, but it might have been changed to be unique. When an
+          attachment registeres with xwaves it sends its registry name.
+     op
+          a quoted string which is the actual string that is to be sent to
+          the attachment, including the command receiver (the program name
+          or a display object name) as the first item. The syntax of these
+          send commands is the same as that for xwaves commands:
+
+               object command [keyword value] [keyword value] ...
+
+
+          For details of the available commands, see the manual sections for
+          the individual attachments.
+
+     As an example, suppose only the attachment xlabel were attached and you
+     wanted to create a new label file attached to the xwaves display object
+     named buddy, with a signal named buddy.sd. The following two commands
+     would accomplish the same thing:
+
+          send make name buddy signal buddy.sd \
+             file buddy.lab color 125
+          send function xlabel op xlabel make name buddy \
+             signal buddy.sd  file buddy.lab color 125
+
+
+     If several attachments were active, the second form could still be used
+     meaningfully, but the first form could not. The first form is supported
+     to retain compatibility with old waves+ scripts and to provide simple
+     syntax for simple cases.
+
+set
+     ASSIGN VALUES TO GLOBAL SYMBOLS
+
+     <any global variable name>
+          arguments to the set command are always symbols and values to be
+          assigned to them. Any of the built-in symbols (e.g. those defined
+          in the master profile file in $ESPS_BASE/lib/waves/.wave_pro) may
+          be assigned values. Refer to the master profile file or to chapter
+          27 for a description of the built-in symbols, their meaning and
+          their value type. Several assignments may be made per set command.
+          The overall length of the set command and its assignment list
+          should be limited to 500 characters.
+
+          A feature new to the set command with version 5.0 is its ability
+          to CREATE new symbols. Symbol creation uses exactly the same
+          syntax as assignment of values to existing symbols:
+
+               set new_symbol <any value>
+
+
+          where new_symbol is any name you choose that does not conflict
+          with existing symbol names and <any value> is a simple quoted
+          string type (i.e. any string, either enclosed in quotes or not).
+          Note that xwaves doesn't attach any meaning to the new symbol, but
+          does provide access to it via the get command and through symbol
+          substitution in add_op commands. New symbols may also be defined
+          at will in the xwaves profile file.
+
+          The meaning of many of the global variables is changed as of
+          xwaves Version 5.0. This is due to the introduction of data
+          display window specific attribute setting (see the set command in
+          section 26.4.) Most global attributes that might reasonably be
+          varied on a window-by-window basis, can now, in fact, be set
+          specific to a display window. The ``global'' counterparts, usually
+          with the same or similar name, are now used to establish default
+          values for the creation of new display windows. Thus, setting
+          these globals will usually result in no change in existing display
+          windows.
+     all
+          any non-null string with no embedded spaces. The all symbol
+          provides a means for globally setting variables that may now be
+          assigned on a window-by-window basis. If all is assigned a value
+          (any value), the symbols that are set with the current set command
+          will be changed or set in all display windows (existing and
+          future). For example, if the command:
+
+               set middle_op blow up time
+
+
+          were given as shown, the xwaves global would be set as directed,
+          but existing display windows would not have their middle button
+          operation changed. Any subsequently created display windows would,
+          however, assume the new setting for middle_op. On the other hand,
+          if the command were given as:
+
+               set all t middle_op blow up time
+
+
+          Then all existing and future waveform display windows would have
+          the new value for middle_op.
+
+setenv
+     SET OR CREATE AN ENVIRONMENT VARIABLE
+
+     variable
+          The name of an environment variable to be set of created.
+     value
+          Value of the variable, which is a quoted string.
+
+     This variable definition will be put into xwaves's UNIX environment so
+     that any sub processes will inherit the new setting.
+
+shell
+     SEND COMMANDS TO A UNIX SHELL
+
+     <any UNIX command line>
+          command to be executed as a Bourne shell command under UNIX.
+
+sleep
+     SLEEP WHILE BACKGROUND PROCESS OCCURS
+
+     seconds
+          number of seconds xwaves is to sleep (0.2 sec resolution).
+
+     When the results of display-setup operations in a xwaves command file
+     are to be used (e.g. for screendumps), it may be necessary to issue at
+     least a brief sleep command to allow the window system to actually
+     execute the plot. This was necessary in xwaves prior to version 5.0,
+     but is now rarely needed. When commands are sent to xwaves from
+     send_xwaves , process synchronization is automatically taken care of,
+     so no sleeps are necessary, unless it is convenient for some human
+     factors reason, such as allowing a D/A operation to complete.
+
+----------------------------------------------------------------------------
+
+26.3  Obsolete global commands
+
+The following four commands, listed with their keywords, are now considered
+obsolete. They are still implemented in xwaves version 5.0, but may be
+eliminated in future releases. Their function has been subsumed by the
+add_op command. If you have scripts, etc. that use these commands, you can
+see the mapping between them and add_op by simply issuing a save_add_ops
+command after you run your script. xwaves will translate your commands to
+add_op commands.
+
+add_espsf
+     ADD EXTERNAL ESPS-TO-FILE CALL TO xwaves MENUS
+
+     out_ext
+     display
+     outputs
+     name
+     op
+     command
+     menu
+
+add_espst
+     ADD EXTERNAL ESPS -TO-TEXT CALL TO xwaves MENUS
+
+     name
+     op
+     command
+     menu
+
+add_espsn
+     ADD EXTERNAL ESPS (NO OUTPUT) CALL TO xwaves MENUS
+
+     name
+     op
+     command
+     menu
+
+auto_plot_limits
+     SET AUTOMATIC PLOT LIMITS
+
+     This command just sets the xwaves globals plot_max and plot_min to 0.
+     Thus, it provides a convenient means of returning to automatic plot
+     scaling. It is considered obsolete, since individual control of plot
+     scaling on a per-window basis is now available. It is still supported,
+     but will probably be dropped in future releases. It is exactly
+     equivalent to
+
+          set all t plot_max 0 plot_min 0
+
+
+----------------------------------------------------------------------------
+
+26.4  xwaves object commands
+
+The following commands and keyword/arguments may be sent to display objects
+(as named in the make command). These are referred to variously as object
+commands and object commands. The primary thing to keep in mind is that some
+display window must already have been created before these can be sent and
+that they are sent to a display object, rather than to the distinguished
+object waves, the object name for the xwaves program.
+
+Please note the definitions of quoted string and simple quoted string in
+chapter 27. These two argument types are used heavily in the command
+descriptions below.
+
+activate
+     ENABLE/DISABLE PLOTTING OF SELECTED ELEMENTS
+
+     file
+          full name of displayed signal (mandatory).
+     op
+          operation to be performed (set, clear or add; set is default). set
+          means to display only those items specified by numbers or
+          identifiers, clear means to remove the items (possibly leaving
+          others shown), and add means to display the items (in addition to
+          those already shown).
+     numbers
+          a quoted string list of integers: the element numbers to be
+          effected.
+     identifiers
+          a quoted string list of FEA field names (or channel identifiers in
+          the case of SIGnal files). Note: numbers or identifiers are
+          mutually exclusive keywords.
+
+     Channels that are activated are the channels returned by the display
+     window symbol view_channels (see section 27.3). Note that activate may
+     also be used to enable or disable traces overlaid on other display
+     windows.
+
+align
+     ALIGN ALL DISPLAY WINDOWS IN A DISPLAY OBJECT
+
+     file
+          full name of the signal whose display is to serve as the model for
+          other displays. If omitted, the most recently created display
+          window is used as a model. Note that display windows will only
+          rescale the time base if the attribute h_rescale is enabled. See
+          h_rescale and h_spect_rescale in section 27.2.
+
+bracket
+     CHANGE DISPLAY WINDOW STARTING TIME AND TIME SCALE
+
+     file
+          full path name of signal whose display window is to be changed.
+          (default is current INPUT file:)
+     start
+          time to correspond to left window edge (sec; defaults to left
+          marker).
+     end
+          time to correspond to right window edge (sec; defaults to right
+          marker).
+
+     This command corresponds to the bracket markers waveform menu item. It
+     has the side effect of placing the marker at the brackets limits.
+
+close
+     CLOSE A DATA DISPLAY WINDOW AND TURN INTO AN ICON
+
+     file
+          full name of the displayed signal to be closed. If two display
+          windows of the same file are opened in the selected object, only
+          the last opened display window can be iconized. Performs the same
+          operation as the window system's close.
+     invisible
+          This boolean if set to 1 makes the view completely invisible. So
+          there is no icon left on the screen.
+
+colormap
+     CHANGE THE COLORMAP USED FOR SPECTROGRAMS
+
+     file
+          the name of the display to be modified. This keyword and its
+          argument have no effect. It is obsolete.
+     threshold
+          level (dB) below which spectral densities are white (see
+          image_clip) in halftone plotting.
+     range
+          dB from start to end of current colormap or from saturated black
+          to saturated white in dithered, monochrome images (dynamic range;
+          see image_range).
+     image_clip
+          An alternative way to specify the clipping limit. Either threshold
+          or image_clip may be specified. They are related by the equation:
+          threshold = 105 - image_clip - image_range.
+     image_range
+          same as range. Note that the colormap command actually affects the
+          global colormap of xwaves and is not specifiable on a
+          window-by-window basis. This really should be a waves command.
+
+cursor
+     MOVE THE TIME/FREQUENCY CURSOR
+
+     time
+          the desired time location for the cursor (sec).
+     yval
+          the desired ordinal location for the cursor. In a spectrogram
+          display window, this would correspond to the frequency in Hz.
+          frequency is an exact synonym for yval in this context.
+
+     See also the display window set command and the cursor_time  and
+     cursor_yval  object symbols.
+
+get
+     GET ANY ATTRIBUTES FROM xwaves
+
+     attributes
+          Currently recognized arguments are global  and view . These
+          determine the mode in which get, as an object command, functions.
+          If global is specified, the get command operates exactly as
+          described under get in section 26.2. (Note that in this mode, the
+          results are represented as keyword-value pairs and are ONLY output
+          to a specified output file or to xwaves' standard output.)
+
+          If view is specified (the default case), the attribute names
+          specified (see aname below) are first interpreted as display
+          window-specific attributes. If a name match is not found in the
+          display window-specific list, the global symbol list is then
+          searched. If any match is found, the value is returned as a quoted
+          string (quotes are only used if the value has embedded spaces or
+          quotes). In this view mode, the value is ONLY sent to a specified
+          output file or returned to the calling program (such as
+          send_xwaves). In this mode, output is NOT sent to xwaves' standard
+          output.
+     file
+          the file name of a specific display window for which attribute
+          values are to be obtained. If file is omitted, the most recently
+          created display window is assumed.
+     output
+          the name of an output file to receive keyword-value pairs (in a
+          format suitable for a .wave_pro file), in the case where global is
+          specified for attributes, or an unadorned list of space-separated
+          values if attributes is view or is not specified. If an output
+          file is not specified, and attributes is view, then only the
+          requesting client (e.g. the send_xwaves program or a program using
+          SendXwavesReply() (3-ESPS)) will receive the value(s). The output
+          name can include UNIX environment variables (for example $HOME).
+     aname
+          a quoted string list of the name(s) of the symbols whose values
+          are to be retrieved. If aname is omitted in the attributes view
+          mode, nothing is returned. If omitted in the attributes global
+          mode, all currently defined global symbols are returned as
+          keyword-value pairs. The value(s) of the aname item may be any of
+          the symbol names listed in chapter 27 and any new symbols you may
+          have defined.
+
+     The primary utility of get as an object command is to permit other
+     programs to retrieve display window-specific information from xwaves
+     via the send_xwaves  program. For example, suppose a program called
+     from a UNIX script wanted to know the exact segment of a signal on
+     display in xwaves. Assuming the program name was foobar, a command like
+     the following might be used:
+
+          foobar `send_xwaves dat get file dat.sd aname \
+             view_start_time view_end_time`
+
+
+     where dat is the display object name and dat.sd
+
+     is the display window of interest. foobar would then get two
+     command-line arguments, namely the time, in seconds, corresponding to
+     the left and right edges of the display window on dat.sd.
+
+     Another example (use with caution!) could be used to eliminate any
+     files that have been created by xwaves operations:
+
+          rm -f `send_xwaves get aname new_files`
+
+
+insert
+     INSERT FILE INTO SIGNAL IN WINDOW
+
+     file
+          The name of the signal in which something is to be inserted. This
+          attribute is mandatory.
+     source
+          The name of any existing (but not necessarily displayed) file that
+          is to be inserted. This attribute is mandatory.
+     time
+          The time in file at which source is to be inserted. This attribute
+          is mandatory.
+     output
+          The name of the resulting output file. This attribute is optional.
+          If output is omitted, the current outputname will be used (as
+          entered in the OUTPUT file: control panel item) or or a filename
+          will be constructed (see the section ``The Main Control Panel'' of
+          the full manual at the description of OUTPUT file:). Output may be
+          the same as file.
+
+mark
+     APPLY TIME MARKS TO ALL DISPLAY WINDOWS IN THE OBJECT
+
+     time
+          time point (sec) at which to apply the mark.
+     color
+          colormap entry number (0-127); sets marker color. If omitted, the
+          default color that is assigned to markers is assumed (see the
+          table ``Meaning of the high-numbered color values'' in the full
+          manual).
+
+     Historically, these marks were only used in conjunction with the
+     attachments. As of waves+ version 5.0, you may access these mark
+     locations directly with xwaves. For example, suppose you wanted to
+     cause the keyboard space-bar to play the segment between the two marks
+     on either side of the current cursor position. These marks might have
+     been applied by any means, including by the programs xlabel or xmarks.
+     The following two commands would set up the mapping:
+
+          add_op name play_m op # _name play start \
+             _l_mark_time  end _r_mark_time
+          key_map key _ op play_m
+
+
+     Note that this is something different than play between marks! In this
+     example it is assumed that mark_reference is cursor_time. See the entry
+     for mark_reference in chapter 27.3
+
+marker
+     MOVE THE RIGHT OR LEFT TIME MARKER
+
+     time
+          the desired time location of the marker (sec).
+     do_left
+          logical (0 or 1) determines if right or left mark.
+
+     See also the display window set command and the l_marker_time  and
+     r_marker_time  object symbols.
+
+op
+     CALL ANY OPERATOR AS AN OBJECT COMMAND
+
+     file
+          the name of the file whose display window is to be manipulated.
+          This is the name used in the make command or other specification
+          that created the display window. If omitted, the most recently
+          created display window is assumed.
+     c_chan
+          the channel over which you wish to simulate the cursor location.
+          This optional specification is only relevant if the operation to
+          be performed needs the channel information (e.g. to select a
+          particular vector element from a vector signal). If omitted, the
+          channel last accessed (e.g. via mouse pointer movement) will be
+          used.
+     c_yval
+          the simulated value of the cursor in ordinal data coordinates.
+          Thus, if the vertical limits of a data display window were -10000
+          to 10000, a c_yval of 5000 would simulate a cursor position 1/4 of
+          the display window height from the top. If omitted, the last
+          actual cursor position is assumed.
+     c_time
+          the simulated time (in seconds) at which the cursor is located. If
+          omitted, the current cursor location will be used.
+     op
+          a quoted string containing the exact name of the operator to be
+          invoked. This is the name specified when the operator was created
+          with the add_op or add_waves command, or the exact name appearing
+          in one of the xwaves data display window menus. In this context
+          command is an exact synonym for op if you find the latter
+          confusing. NOTE: the op command does not discriminate among the
+          menu-operator lists. It uses the first operator it finds while
+          scanning ALL operator lists. It starts with the wave list, then
+          the spect list, then other lists in the order in which you created
+          them.
+
+     The op command is designed as a convenience for instances when it is
+     desirable to simulate some display window-oriented operation. The
+     operators that are accessed via op are usually designed to be invoked
+     from display window menus or keyboard bindings (see the add_op and
+     key_map commands in section 26.2). As such, these operators are called
+     as methods of the display window in question. op permits simulation of
+     this behavior.
+
+     For example, suppose you designed an operator that echoed the value of
+     the spectral amplitude under the cursor in a spectrogram display window
+     with an add_op command like this:
+
+          add_op name S-value menu spect op \
+             echo _cursor_value
+
+
+     This operator will appear in the spectrogram display window menu and,
+     when selected, will cause the data value under the cursor to be printed
+     out. Now, an external program can access this operator to get the data
+     value corresponding to 1000Hz and .5 seconds in the data object named
+     dt and file named dt.hp.fspec
+
+     with the command:
+
+          send_xwaves dt op file dt.hp.fspec c_yval 1000 \
+             c_time .5 op S-value
+
+
+     N.B.: All calls to the built-in menu items can be made in this way.
+
+open
+     OPEN A DATA DISPLAY WINDOW THAT IS CLOSED (ICONIZED)
+
+     file
+          full name of the ``iconized'' signal to be opened. Performs the
+          same operation as the window system's open or restore.
+
+overlay
+     OVERLAY A SIGNAL ON AN EXISTING DISPLAY WINDOW
+
+     file
+          the filename of the overlay data. This can be any ESPS FEA file
+          except a FEA_SPEC file. NIST  Sphere-format files or AT&T SIGnal
+          files are also acceptable. The overlay does not need to be the
+          same data type or sample rate as the file to be overlaid. It's
+          always handy if there is some meaningful relation between the
+          overlay and its host display window, but this is not enforced. The
+          time interval that is common to both the host and its overlays
+          will be the region overlaid. (i.e. the start times and durations
+          of the signals are observed correctly).
+     on_file
+          the name of the display to be overlaid. This is the name of any
+          existing xwaves data display window of any type. If omitted the
+          overlay will be put on the most recently created spectrogram, if
+          one exists, else the most recently created display window of any
+          kind.
+
+     On color systems, overlays are plotted in colors distinct from the host
+     display window. Colors of overlays start at entry number 117 in the
+     colormap table. This entry is labeled "YA2" in the system colormap
+     table in $ESPS_BASE/lib/waves/colormaps/COLOR_MAP. You can make a copy
+     of this and modify it to your liking. See the section ``Colormaps'' of
+     the full manual and xcmap    for more details. Successive overlays on
+     the same display window use successive table entries.
+
+     Multiple overlays on the same host display window are performed by
+     issuing multiple overlay commands. Overlays may be removed from display
+     windows with the kill command. Note however, the kill command will
+     remove all displays of a given file name from the named display object.
+     So if it is necessary to distinguish between a host view and an
+     overlay, they should have different names.
+
+page
+     PAGE SIGNAL IN WINDOW
+
+     file
+          the name of the signal to be paged forward or back. If omitted,
+          the name from INPUT file: in the command window is used.
+     step
+          If positive, the number of seconds to page forward; if negative,
+          the number of seconds to page backwards. If omitted, the value of
+          the global ref_step  is used.
+     ref_step
+          optional new value for the global ref_step.
+
+play
+     D/A CONVERT DATA IN A SAMPLED-DATA DISPLAY WINDOW
+
+     file
+          data display window name to be played. If omitted a ``playable''
+          file is sought by xwaves using various heuristics. This search
+          includes backtracking through the header of the loaded signals for
+          the source data from which it was computed. This often works
+          correctly! So, if you ask to play a spectrogram, you will usually
+          hear the file from which it was generated.
+     start
+          starting time (sec) for D/A conversion.
+     end
+          end time.
+
+     If times are omitted, file limits are used.
+
+play_wind
+     PLAY WINDOW
+
+     file
+          the data shown in the displayed window for this file are played.
+          If file is not given, some heuristics are used to find a window to
+          play.
+
+print_ensemble
+     PRINT GRAPHICS IN WINDOWS OF OBJECT
+
+     The graphic images in the display windows of the object are rendered in
+     PostScript. Attachment windows may be included. The output is either
+     saved in a file or sent to a UNIX command. The actions of this command
+     are controlled by a set of globals. See the chapter ``Printing
+     Graphics'' of the full manual.
+
+print_graphic
+     PRINT GRAPHIC IN WINDOW
+
+     file
+          the full name of the signal in the display window to be printed.
+          If the signal is displayed in more than one window of the object,
+          one window is chosen.
+
+     The graphics image in this window is rendered in either PostScript or
+     PCL. It is either saved into a file or sent to a UNIX command. The
+     actions of this command are controlled by a set of globals. See the
+     chapter ``Printing Graphics'' of the full manual.
+
+save
+     SAVE SEGMENT IN OUTPUT FILE
+
+     file
+          the name of the signal file containing the segment to be saved.
+          The name of the file into which the segment is saved is determined
+          by the OUTPUT file:  item in the xwaves control panel (see
+          description of the OUTPUT file: item in the section ``The Main
+          Control Panel'' of the full manual).
+     outputname
+          the name for the output file. This changes the global value of
+          outputname and the saved segment uses this new specification. See
+          section 27.2 for more details.
+     start
+          the start time of the segment to be saved.
+     end
+          the end time of the segment to be saved.
+
+     Note that, by default, xwaves applies certain file name extensions
+     following the name specified by outputname, depending on the type of
+     data in the file. You may disable this behavior by setting the global
+     apply_extensions  to zero.
+
+set
+     SET THE VALUE OF ONE OR MORE DISPLAY WINDOW ATTRIBUTES (OBJECT SYMBOLS)
+
+     <any display window attribute name>
+          See section 27.3 for a complete listing of the built-in symbols.
+     file
+          the name of the file in the display window whose attributes are to
+          be varied. This is the same name used in the creation of the file
+          with the make command or entered in the INPUT file: item of the
+          main control panel. The name of the file MUST precede the
+          attributes that are to be varied. If attributes for more than one
+          file are to be set with a single set command, multiple file
+          specifications and attribute lists may be interleaved.
+     channels
+          A simple quoted string containing a space-separated list of
+          channels to be accessed. These channels correspond to the vector
+          element numbers in the signal, starting with channel 0. If the
+          channels specification is absent, all channels in the display
+          window will be affected. If different attributes are to be varied
+          over different channels in the same set command, any number of
+          channels and attribute specifications may be interleaved.
+
+     The object set command permits individual attribute settings in any
+     xwaves display window, either by external programs, via the send_xwaves
+     facility, or internally, via add_op operator definitions. A simple
+     example that turns the reticle off in display window speech.sd of
+     display object speech might look like this:
+
+          speech set file speech.sd reticle_on 0
+
+
+     Or, suppose you wanted to create an operator bound to the left mouse
+     button that changed the waveform color of any element trace to colormap
+     entry 117. These two commands would do the trick:
+
+          add_op name HILIGHT menu wave op # _name set \
+             file _file channels _cursor_channel \
+             line_color 117
+          set left_op HILIGHT
+
+
+     The next waveform display window(s) you created would have this
+     feature.
+
+     If you wanted an existing waveform display window to immediately assume
+     the new left mouse button definition, the second command above could be
+     changed to:
+
+          speech set file speech.sd left_op HILIGHT
+
+
+     where speech and speech.sd are the object and display window names,
+     respectively. This would cause ONLY that display window to assume the
+     new characteristic. If you wanted all current and subsequently created
+     display windows to have the feature:
+
+          set all t left_op HILIGHT
+
+
+     Note that in the first and third example of mouse button binding, we
+     used the global set command, to set the variable, rather than the
+     object set command. Full syntax for these would have been:
+
+          waves set left_op HILIGHT
+
+
+     and
+
+          waves set all t left_op HILIGHT
+
+
+spectrogram
+     MAKE A SPECTROGRAM OF DISPLAYED SAMPLED DATA
+
+     file
+          name of sampled data display window. If omitted xwaves looks for
+          first file with a .sd or .d extension. Failing this, it tries to
+          find a reasonable file from which to compute a spectrogram.
+     loc_x
+          x coord. of upper left corner for spectrogram window.
+     loc_y
+          y coord. of upper left corner for spectrogram window.
+     type
+          allowed arguments are wideband  and narrowband .
+     start
+          starting time (sec.) for spectrogram computation.
+     end
+          end time. If either times are omitted, display window limits are
+          used.
+     height
+          height in pixels of spectrogram display. If v_spect_rescale is
+          enabled, the spectrogram will be scaled to fit this size. If not,
+          the window may be partly empty or the top of the spectrogram image
+          may be truncated. If height is not specified explicitly the window
+          will be sized to fit the spectrogram: one pixel per frequency
+          point.
+     width
+          width in pixels of spectrogram display. If h_spect_rescale is
+          enabled, the spectrogram will be scaled down, if necessary, to fit
+          this size. If horizontal scaling is not enabled, the window may be
+          partly empty or the scrollbar may be used to access the off-screen
+          parts of the spectrogram. If width is not specified explicitly the
+          window will be sized to fit the spectrogram: one pixel per time
+          point.
+     threshold
+          level (dB) below which spectral densities are white. See
+          discussion under the colormap command.
+     range
+          dB from start to end of current colormap (dynamic range).
+     image_clip
+          an alternate way to specify intensity mapping clipping limits
+          (image_clip = 105 - threshold - range).
+     image_range
+          same as range.
+     output
+          the name of a file to store the spectrogram data in in cases where
+          an external process must be called to compute the spectrogram. If
+          output is omitted, .fspec is appended to the input filename and
+          possibly an additional number to make the name unique. Files
+          generated by the spectrogram command are added to the new_files
+          list. See section 27.2.
+
+unmark
+     REMOVE TIME MARKS FROM THE OBJECT
+
+     all
+          If argument is t or T all marks of any color will be removed.
+     time
+          remove mark only at the specified time. If omitted and all not
+          specified, nothing happens.
+     color
+          color of the mark at time to be removed. If omitted, the color in
+          the color table that is assigned to markers is assumed (see the
+          table ``Meaning of the high-numbered color values'' in the full
+          manual). If the color of the mark and that specified to the unmark
+          do not match, the mark is not removed.
+
+----------------------------------------------------------------------------
+
+Chapter 27
+
+xwaves symbols reference
+
+This section lists and explains all built-in symbols used in xwaves. There
+are two major categories of symbols that are used:
+
+global
+     The values of these tend to have a global effect on xwaves'
+     performance.
+object
+     These tend to convey or determine the condition of data display windows
+     on a window-by-window basis.
+
+----------------------------------------------------------------------------
+
+   27.1  Introduction
+   27.2  Global symbols
+   27.3  View-specific symbols
+         27.3.1  Read-only (get only) object symbols
+         27.3.2  Write-only (set only) View Symbols
+         27.3.3  Read-Write (get or set) View Symbols
+         27.3.4  Notes for display window specific symbols
+
+----------------------------------------------------------------------------
+
+27.1  Introduction
+
+The state of the globals may be accessed by the xwaves (global) commands
+get  and set . The initial condition of these may be set by entries in your
+startup xwaves profile file (normally $HOME/.wave_pro  if it exists, and
+$ESPS_BASE/lib/waves/.wave_pro otherwise). Both global and the gettable
+object symbol values may be used in add_op  commands as described under
+add_op in the section ``Using Symbols in the add_op Command'' of the full
+manual and in section 26.2. These are also accessible using the object get
+command via the program send_xwaves.
+
+You may create your own global variables just by assigning values to symbols
+of your own choosing. Internally, xwaves always stores these as simple
+quoted strings, but in other respects they behave exactly like any other
+global and may be accessed with get commands and used as variable symbols in
+add_op commands. A possibly-confusing side effect of this feature is that no
+global set commands will produce error messages if there is a typo in the
+symbol name. A new global will simply be created, so be careful!
+
+As of waves+ 5.1 symbols may contain commands as their value and\ can thus
+be executed. Look at the description of add_op in section 26.2.
+
+The state of the object symbols may be accessed using the object commands
+get and set (see section 26.4). Many object symbols are read-only or
+write-only. This distinction will be pointed out below.
+
+In many cases the state of a global symbol is used to initialize an object
+symbol when the display window is created. Prior to xwaves version 5.0,
+there was no clear distinction between this initialization function and the
+operation of changing display window states after the display window was
+created. This is now explicitly implemented. For example, prior to xwaves
+5.0, setting the global symbol middle_op caused all existing and new display
+windows to assume that middle mouse button binding. It is now possible to
+specify different a middle_op for each display window, if desired, using the
+object set command without affecting the state of either the global symbol
+or the bindings in other display windows.
+
+The code in table 27.1 below will be used to indicate the type of the
+symbols. This is usually only of concern when their values are being set,
+since the values are always encoded as ASCII strings when returned by
+xwaves. When xwaves returns items that are strings with embedded spaces or
+double quotes, these items are delimited by double quotes. The type key will
+precede the description of each settable variable.
+
+  Table 27.1: List of types for the settable symbols
+----------------------------------------------------------------------------
+
+D
+     double-precision scalar numeric (any numeric format is OK)
+
+I
+     32-bit integer numeric (any integer is acceptable)
+
+B
+     Boolean (0 is FALSE any non-zero integer is TRUE)
+
+Q
+     A quoted string as defined in the GLOSSARY section
+
+SQ
+     A simple quoted string as defined in the GLOSSARY section
+
+S
+     a string with no embedded spaces or quotes; usually a name
+
+----------------------------------------------------------------------------
+
+Here are a few examples that summarize the access mechanisms available for
+the various symbol types. In the following we will assume the existence of a
+display object named dis and a data display window in the file dis.sd.
+
+To assign global values:
+
+     waves set play_prog sgplay
+
+or
+
+     set play_prog sgplay
+
+or to set two items
+
+     set middle_op "play between marks" play_prog sgplay
+
+To create new globals:
+
+     set my_sym "my arbitrarily complex value with \
+        less than 500 characters"
+
+To set object symbol values:
+
+     dis set file dis.sd reticle_on 0 line_color 117
+
+or if only channels (vector elements) 0 and 3 are to be set
+
+     dis set file dis.sd channels "0 3" reticle_on 0 \
+        line_color 117
+
+To access gettables in add_op commands:
+
+     add_op name "what channel?" op echo _cursor_channel
+
+(Note the underline character preceding cursor_channel.)
+
+----------------------------------------------------------------------------
+
+27.2  Global symbols
+
+We start out with the global symbols. The following items may all be
+initialized in your xwaves profile file. Some of them ONLY affect the state
+of xwaves at startup time.
+
+The value of global symbols marked with a (+) is used to initialize the
+corresponding display window-specific value when a new display window is
+created. After a display window is created, setting this global will only
+effect the display window if the all switch is set in the global set
+command. See set in section 26.2.
+
+append_extensions
+     B
+
+     When enabled, the save  command and the save segment in file  menu
+     operator will append extensions to the saved file's name that are
+     related to the file type. Else, the extensions are not appended.
+
+attachments
+     Q
+
+     A list of items to appear as pushbutton alternatives for the Attach:
+     main control panel item (see also the section ``The Main Control
+     Panel'' of the full manual). Startup only.
+
+blowup_op
+     Q
+
+     The operator to be invoked after the menu item blow up; function  is
+     executed. Attachments typically bind their own mark operation to
+     blowup_op , but you can bind any existing operator to it. (+)
+
+colormap
+     S
+
+     File name of an RGB color map (see the section ``Colormaps'' of the
+     full manual). The default search path for colormap file names is
+
+          .:$ESPS_BASE/lib/waves/colormaps
+
+
+     To use a different path, set the UNIX environment variable
+     WAVES_COLORMAP_PATH  before starting xwaves.
+
+command_step
+     B
+
+     Allows the user to single-step through command files. When command_step
+     is non-zero, xwaves prints each command before executing it and pauses
+     after its execution (except for sleep  commands). The next command can
+     then be read and executed by mousing CONTINUE  in the xwaves main
+     control panel. sleep commands are not affected by command_step. If
+     command_step is non-zero and CONTINUE is moused when the next command
+     is sleep, xwaves executes the sleep and then goes on directly to
+     execute the subsequent command. If that command is not a sleep, xwaves
+     will pause after its execution.
+
+     Note that command_step does enable command echoing when used with
+     send_xwaves, but does not impose a pause between commands in this case.
+     Command stepping does not work correctly if an attachment is active.
+
+commandname
+     S
+
+     This can be used to determine the name of the current waves command
+     file (if any) that is executing.
+
+cross_level
+     D
+
+     The level used to establish the cursor positions when find_crossing is
+     set to 1.
+
+ctlwin_iconized
+     B
+
+     If this is non-zero, the xwaves control window is iconized on startup.
+     Otherwise the control window is displayed on startup. The default for
+     ctlwin_iconized is 0. Note the standard xview command line options -Wi
+     (iconic) and +Wi (open) can also be used to determined the initial
+     iconization state. Also, the position of the icon can be determined by
+     the standard xview command line option -WP <x> <y>.
+
+ctlwin_x
+     I
+
+     x coordinate of upper left of control window.
+
+ctlwin_y
+     I
+
+     y coordinate of upper left of control window.
+
+da_position
+     I
+
+     If set, it should be given the sample around which xwaves needs to
+     focus its window when D/A output is interrupted with the left mouse
+     button. This is the only moment at which xwaves looks at this value.
+     The internal D/A software and the ESPS play programs set this value.
+     For examples to use it yourself, see the chapter ``Using Audio'' of the
+     full manual. If gotten with the get command during playback, it gives
+     the value of the sample that is currently played. If you do two gets in
+     sequence and this value does not change you may be sure that the xwaves
+     has stopped the playback operation.
+
+debug_level
+     I
+
+     Values greater 0 causes debug messages to be printed. The default value
+     is 0.
+
+def_header
+     S
+
+     Filename of a header for use with headerless data. The default startup
+     profile, $ESPS_BASE/lib/waves/.wave_pro, initializes this to
+     $ESPS_BASE/lib/waves/files/def_head.feasd, which is an ESPS FEA_SD
+     header for single-channel, SHORT, sampled-data, with sampling rate 8000
+     Hz. A default SIGnal header is in
+     $ESPS_BASE/lib/waves/files/def_head.sig. The default search path used
+     for default header file names is
+
+          .:$ESPS_BASE/lib/waves/files
+
+
+     This path can be overridden by setting the UNIX environment variable
+     WAVES_INPUT_PATH  before starting xwaves. If the environment variable
+     DEF_HEADER  is defined when xwaves starts up, its value takes
+     precedence over def_header. Thus, if you want def_header to change for
+     different input files while xwaves is running, then DEF_HEADER should
+     not be defined.
+
+     Note that def_header can be included in the attribute list of the waves
+     make command. As soon as the variable is set all processes under xwaves
+     have the environment variable DEF_HEADER set to the value of
+     def_header.
+
+do_color
+     B
+
+     0 or 1 to enable B&W or color operation. This global is set
+     automatically on startup prior to reading the startup profile, so you
+     should set it in the profile only if you don't want the automatic
+     setting. Setting it to zero on a color machine will force monochrome
+     display windows and dithered spectrograms. Setting it non-zero on
+     monochrome systems will usually cause core dumps.
+
+dont_save_sgrams
+     B
+
+     This disables the saving of spectrogram data files on most contexts
+     where signal files would normally be saved. If you really need to do
+     operations like save segment in file  on spectrograms, be sure this
+     boolean is 0.
+
+edit_ganged
+     B
+
+     1 to simultaneously edit all signals in object, 0 for just one. This
+     concerns deletions of segment from files and saving segments.
+
+ens_print_atts
+     Q
+
+     A list of attachments to which xwaves will send requests for graphics
+     when executing a print_ensemble command (or print ensemble menu
+     operation). The items are separated by blanks--for example ``xlabel
+     xchart''. The attachments on the list need not actually be attached
+     when print_ensemble is run; however, any that are attached will receive
+     a request for graphics and must respond as described in the
+     section``The Print Command'' of the full manual. At present the
+     attachments that are able to respond properly are xspectrum, xlabel and
+     xchart.
+
+fea_sd_special
+     B
+
+     1 to treat ESPS FEA_SD files as a special case, 0 to treat in standard
+     FEA manner. If fea_sd_special == 1, the sampled data from ESPS FEA_SD
+     files are read in as SHORTs (regardless of their external
+     representation) so that the DSP board can be used for spectrograms. In
+     this case, values outside of the range (-32768, +32767) are clipped to
+     the extremes of the range. If fea_sd_special == 0, no such conversions
+     are performed and the external program sgram_prog  will be used for
+     spectrograms. fea_sd_special is set on startup to 1 or 0 depending
+     respectively on whether or not the DSP board (or native system DSP
+     hardware) is present. OBSOLETE ON MOST SYSTEMS
+
+find_crossing
+     B
+
+     When find_crossing is enabled, the cursor will only move to points on
+     the waveform that are just over the cross_level. That is, on the first
+     sample above the cross_level on the positive slope of the waveform. Of
+     course, this means that when the mode is on, the markers can only be
+     positioned on these positive level crossings, making it possible to
+     very quickly cut out signals that should splice together with minimal
+     clicks.
+
+     Note that there is some peril in setting this symbol, since it is
+     possible to set the level out of the range of any actual data values.
+     This causes xwaves to hunt over the whole view for a crossing. If one
+     is not found, the cursor does not move, but the computation does eat a
+     lot of CPU cycles! Default is 0.
+
+first_x
+     I
+
+     x coordinate of upper left of first data window created. This is then
+     automatically incremented by x_increment  with each subsequent display
+     window created.
+
+first_y
+     I
+
+     y coordinate of upper left of first data window created. This is then
+     automatically incremented by y_increment  with each subsequent display
+     window created.
+
+funcname
+     S
+
+     An attached function (like xlabel or xspectrum). On startup this causes
+     the indicated function to be attached automatically. After startup, it
+     reflects the most-recently started attachment.
+
+f0_min
+     D
+
+     Minimum frequency to display for F0 files. (+)
+
+f0_plot_specs
+     Q
+
+     Plotting method and optional ASCII symbol to use. Argument syntax is: N
+     s xd yd, where N is 0 or 1, s is the plotting character to use (if N is
+     1), xd and yd are the x and y displacements (in pixels) required to
+     center the character. If N is 0, F0 is plotted using the usual
+     connect-the-dots paradigm. f0_plot_specs must be the last variable set
+     on a command line. Currently only the N option is in function. It
+     toggles between line and box plot. The other options have no effect.
+
+f0_range
+     D
+
+     Range in Hz to display for F0 files. (+)
+
+f0_size
+     D
+
+     Fraction of the vertical axis of the F0 display window used for F0
+     plotting. 0.0 < f0_size < 1.0.
+
+image_clip
+     D
+
+     This determines the limiting levels for translating spectrogram/image
+     data to display colormap values. When used by the digital halftone
+     algorithm it is assumed that the maximum displayed value, MAX, is 127.
+     Values between MAX and (MAX - image_clip) are displayed in black. The
+     default value is 7 (i.e., in spectrogram terms, everything above 119dB
+     is shown in black). For color/greyscale mappings, the interpretation is
+     slightly different (though the effect is qualitatively the same). In
+     this case, all data values above (105 - image_clip) are represented by
+     the same (high) colormap entry. The available colormap table is then
+     interpolated linearly between (105 - image_clip) and (105 - image_clip
+     - image_range).
+
+image_range
+     D
+
+     This is also used by both the color/greyscale intensity mapper and the
+     digital halftone algorithm. Everything below (MAX - image_clip -
+     image_range) is shown in white on monochrome displays, or as the lowest
+     spectrogram colormap entry on color/greyscale displays. The default is
+     40 (i.e., in spectrogram terms, assuming 7 as the value of image_clip,
+     everything more than 47db down from the maximum possible value is shown
+     in white).
+
+init_file
+     S
+
+     The name of a command file to be executed on startup. Execution takes
+     place after all the other variable initializations in the profile are
+     done, regardless of where in that file the definition of init_file
+     occurs. After the profile has been processed, redefining the value of
+     init_file has no effect other than changing the output value for the
+     command get attributes global . By default, xwaves looks for init_file
+     along the path
+
+          .:$ESPS_BASE/lib/waves/commands
+
+
+     The search path used can be overridden by setting the UNIX environment
+     variable WAVES_COMMAND_PATH  before starting xwaves. STARTUP ONLY.
+
+inputname
+     S
+
+     Default pathname to appear at INPUT file:  prompt. When accessed as a
+     symbol, it returns the name of the most recently created data display
+     window. Setting this symbol does nothing by itself.
+
+invert_dither
+     B
+
+     If set to non-zero, this causes the display of digital-halftone images
+     to appear with black and white pixels reversed ("inverse video").
+     Spectrograms are displayed in digital halftone form on all monitors or
+     when do_color  is set to 0. (+)
+
+left_op
+     Q
+
+     Text corresponding to desired left button operation for new waveform
+     windows. This may be the exact name of any xwaves operator, including
+     those created with the add_op or add_waves commands. (+)
+
+line_type
+     I
+
+     Plotting algorithm to use for plotting generic vector signals. See
+     line_type in section 27.3. (+)
+
+max_buff_size
+     I
+
+     Determines a limit on the number of bytes of storage that xwaves will
+     attempt to allocate for in-memory data storage for any one signal. The
+     value is 2,000,000 by default, but of course can be changed via the
+     startup profile or a set command. If this limit is set high enough for
+     a signal to be contained entirely in memory, operations such as
+     scrolling through the signal will be faster than they would be
+     otherwise, since xwaves will not have to reread data repeatedly from a
+     disk file. Smaller values of the limit may be necessary to prevent
+     xwaves from failing by running out of memory.
+
+middle_op
+     Q
+
+     Text corresponding to desired middle button operation for new waveform
+     windows. This may be the exact name of any xwaves operator, including
+     those created with the add_op or add_waves commands. (+)
+
+min_spec_height
+     I
+
+     Minimum height in pixels of spectrogram windows. If there are more
+     spectral values per record than min_spec_height, the initial window
+     size is set at one pixel per spectral value.
+
+min_spec_width
+     I
+
+     Minimum width in pixels of spectrogram windows.
+
+nb_spect_params
+     S
+
+     File with parameters for narrowband spectrograms (see also
+     wb_spect_params). The default filename is nb_params, and the default
+     search path used is
+
+          .:$ESPS_BASE/lib/waves/files
+
+
+     This path can be overridden by setting the UNIX environment variable
+     WAVES_INPUT_PATH  before starting xwaves.
+
+objectname
+     S
+
+     Default name to appear at OBJECT name:  prompt. When used as a symbol,
+     it indicates the most recently created object.
+
+objects
+
+     The value of objects is a space-separated list of all the display
+     objects.
+
+output_dir
+     S
+
+     The name of a writable directory to be used for all xwaves output files
+     specified as a simple basename or files with names generated
+     automatically by xwaves. If output_dir is not defined, output files are
+     written in the same directory as whatever file they were derived from
+     (or in the current working directory if there is no source file). Do
+     not define this global unless you want it used and make sure that the
+     named directory exists and is writable. If output_dir is defined, all
+     output files from xwaves, xspectrum and xlabel will go into this
+     directory (including edited files, saved file segments, spectrogram
+     output files, outputs from add_op, etc.).
+
+     It is OK to include environment variables in the path. In the case of
+     external function calls (spectrogram calls via sgram_prog , D/A calls
+     via play_prog , as well as calls produced by add_op, etc.), output_dir
+     can be overridden by the value of remote_path  or remote_output_path .
+     To ``unset'' output_dir (so that none is used) do:
+
+          set output_dir
+
+
+outputname
+     S
+
+     Default pathname to appear at OUTPUT file:  prompt. This may be reset
+     at any time to establish a new output name for save segment in file
+     and other editing operations. Setting this symbol does nothing by
+     itself.
+
+overlay_as_number
+     B
+
+     See overlay_as_number in section 27.3. (+)
+
+overlayname
+     S
+
+     Pathname to a file to be overlaid on another data display window. When
+     accessed as a symbol, this returns the name of the most recent overlay
+     signal. Setting this symbol does nothing by itself.
+
+play_prog
+     Q
+
+     The name of the xwaves -external D/A play program to use. This program
+     should at least allow for the arguments: -r<start>:<end> <file>, which
+     are the standard options with which play_prog is called. The default is
+     s16play  on Suns, sgplay  on SGI and hpplay  on HP. play_prog can have
+     blanks in it, so it can include the specification of standard options.
+     See also the discussion in the chapter ``Using Audio'' of the full
+     manual.
+
+     As of waves+ 5.1 D/A may be performed using functions internal to
+     xwaves for many workstation types. To enable this, DO NOT define either
+     use_dsp32 or play_prog in .wave_pro.
+
+plot_max
+     I
+
+plot_min
+     I
+
+     See plot_max and plot_min in section 27.3. (+)
+
+print_graphic_command
+     S
+
+     If print_graphic_printer == 1 then graphics is sent to stdin of this
+     command. This is usually the spool command. Default value is lpr.
+
+print_graphic_file
+     S
+
+     The filename to write the graphic output to if the value of
+     print_graphic_printer is zero. Default value is waves.prt. Of course,
+     this and all the other print specifications can be changed while xwaves
+     is running.
+
+print_graphic_printer
+     I
+
+     A value of 1 causes the output graphic to be sent to the UNIX command
+     in print_graphic_command. A value of zero causes the output graphic to
+     be written into the filename in print_graphic_file. The default value
+     is 1.
+
+print_graphic_resolution
+     I
+
+     The resolution of the output device. The default value is 300.
+
+print_graphic_orientation
+     S
+
+     The orientation of the graphic on the ``page'': either LandScape  or
+     Portrait . Default value is Portrait.
+
+print_graphic_scale
+     Q
+
+     This is a floating value. A value other than 1.0 causes the image to be
+     scaled up or down. Since the printer has a higher resolution than the
+     display it is often desirable to scale the image up by a factor of 2.5
+     to 3.0. The default value is is 1.0.
+
+print_graphic_type
+     S
+
+     The format of the image: either PostScript  or PCL . Default value is
+     PostScript. The strings are not case sensitive.
+
+print_only_plot
+     I
+
+     If 0 then the saved graphic is as shown on screen. If 1 then most
+     labels shown on screen do not go out in saved graphic. In particular,
+     this inhibits the printing of cursors and markers. The default value is
+     0.
+
+print_ps_level
+     I
+
+     This specifies the PostScript  language level: either 1 or 2.
+     PostScript Level 1 does not support color spectrograms. PostScript
+     Level 2 does, but it might not work on all PostScript devices.
+
+readout_bar_height
+     I
+
+     Height in pixels of the readout bar, which contains various digital
+     readouts. The bar is located below the title bar and above the
+     scrollbar. (+)
+
+redraw_on_release
+     B
+
+     See redraw_on_release in section 27.3. (+)
+
+ref_size
+     D
+
+     Initial size of the display buffer (sec.). Don't make this bigger than
+     necessary, because it may cause memory fragmentation for multi-channel
+     files. (+)
+
+ref_start
+     D
+
+     Initial default starting time for file display (sec.).
+
+ref_step
+     D
+
+     Page step size for page ahead/back  (sec.). (+)
+
+remote_input_path
+     S
+
+     If remote_input_path is defined, it is prefixed to the basename of all
+     input file names in external calls. It overrides any definition of
+     remote_path.
+
+remote_output_path
+     S
+
+     If remote_output_path is defined, it is prefixed to the basename of all
+     output file names in external calls. It overrides any definitions of
+     remote_path and output_dir.
+
+remote_path
+     S
+
+     If this string is defined (and not overridden by either
+     remote_input_path or remote_output_path as described above), it is
+     prefixed to the basename of all input and output file names in external
+     calls (play operations, spectrogram operations, operations from
+     add_op). This is useful for operation in an NFS directory with rsh . If
+     remote_path is defined, it overrides output_dir  in the case of
+     external calls. See the discussion in the section ``ESPS commands as
+     UNIX extensions'' of the full manual.
+
+reticle_grid
+     B
+
+     Determines whether (1) or not (0) the reticle is displayed on
+     newly-created display windows. See reticle_on  in section 27.3. (+)
+
+rewrite_after_edit
+     B
+
+     See rewrite_after_edit in section 27.3. (+)
+
+s_range_offset
+     I
+
+     The internal convention in xwaves is to represent samples in a file
+     starting the count at 0. Other programs (including most ESPS programs)
+     start counting at 1. s_range_offset is a means to adjust this
+     discrepancy or to allow you to define built-in offsets for some other
+     purpose (perhaps to compensate for a system delay, etc.). This offset
+     is added to all ``sample number'' display window-specific variables.
+     Its default value is 1. It has no other impact on xwaves operation.
+
+samp_range_prefix
+     Q
+
+     The string contained in this variable is prepended to all sample
+     ranges, of the form M:N, returned by the display window-specific
+     symbols range_samp  and mark_range_samp . By default it is -r which
+     meshes well with ESPS programs that have a command-line range option.
+     You may specify a null prefix with "".
+
+scrollbar_height
+     I
+
+     Height of the scrollbar in new windows (pixels). (+)
+
+scroll_ganged
+     B
+
+     1 to scroll all signals in object, 0 for just one (see also
+     zoom_ganged ).
+
+sgram_prog
+     S
+
+     The name of the external spectrogram program to use. The default is
+     sgram . sgram_prog can have blanks in it, so it can include the
+     specification of standard options. The default is nil. See the
+     discussion in the section ``ESPS commands as UNIX extensions'' of the
+     full manual. (See also play_prog.)
+
+shorten_header
+     B
+
+     If enabled, this boolean causes the file name displayed in the
+     upper-left corner of each data display window to be simplified to its
+     base name with any path prefix removed. (+)
+
+show_labels
+     B
+
+     1 to display FEA field names at the left of the corresponding parameter
+     track in waveform windows, 0 to inhibit the display of names. (+)
+
+show_processes
+     B
+
+     If 1 a ``process pending'' indication is displayed in xwaves. The GUI
+     appears when any processes started from xwaves are pending. The simple
+     display shows the list of PID's of all top-level processes pending.
+     Left mousing any list member produces a message panel showing the full
+     command line being executed under that PID. The message panel has two
+     buttons OK and Kill This Process. OK just dismisses the command
+     display. Kill This Process issues two kill() calls, one for the
+     top-level PID (the shell that was forked) and one for the presumed
+     sub-process. After the kill, the internal state of xwaves is
+     reconfigured appropriately to clear up any pending actions that would
+     have occurred on normal process completion. Default value is 1.
+
+show_vals
+     B
+
+     1 to display numerical values at the left lower corner of every
+     parameter track in waveform windows, 0 to inhibit the display of
+     values. The values displayed are the parameter values at the cursor,
+     and they change dynamically as the cursor is moved. If there are a
+     large number of FEA fields being displayed, the constant update of the
+     parameter values can be time consuming. (+)
+
+sig_max_override
+     D
+
+     Maximum to be assumed for all internal D/A  operations. xwaves
+     amplifies this value to the maximum level of the D/A device. Large
+     numbers cause more scaling down, small numbers cause less scaling down.
+     0 means autoscale.
+
+socket_port
+     I
+
+     This is the INET domain socket port number to be used when xwaves is
+     operating as a display server (as the result of the -s option or the
+     enable_server  command). If set, socket_port overrides the WAVES_PORT
+     environment variable or the value given by the -p option. Note that
+     this port number is no longer relevant for the send_xwaves  program. It
+     is, however, still used when communicating with the send_xwaves library
+     calls and with the program plot3D . This inconsistency will be removed
+     in a future release.
+
+spec_left_op
+     Q
+
+     Text corresponding to desired left button operation for new spectrogram
+     windows. This may be the exact name of any xwaves operator, including
+     those created with the add_op or add_waves commands. (+)
+
+spec_middle_op
+     Q
+
+     Text corresponding to desired middle button operation for new
+     spectrogram windows. This may be the exact name of any xwaves operator,
+     including those created with the add_op or add_waves commands. (+)
+
+spect_interp
+     B
+
+     1 to cause linear interpolation in rescaled spectrogram displays; 0 to
+     disable interpolation so that each discrete value is shown as a uniform
+     rectangle. If data are interpolated then the range of the interpolated
+     data computed together is determined by spect_rescale_scope . (+)
+
+h_spect_rescale
+     B
+
+     1 to cause horizontal rescaling of spectrogram displays; 0 to cause
+     fixed displays with 1-pixel per data record. See h_rescale  in the
+     ``View-Specific Symbols'' section. (+)
+
+v_spect_rescale
+     B
+
+     1 to cause vertical rescaling of spectrogram displays; 0 to cause fixed
+     displays with 1-pixel per data record. See v_rescale  in section 27.3.
+     (+)
+
+spect_rescale_scope
+     S
+
+     Determines whether horizontal rescaling of interpolated data is
+     computed for the entire xwaves buffer (value is buffer ) or for just
+     the current window width (value is view ). Rescaling for the entire
+     buffer can be quite slow if the ratio of the current display window to
+     the entire buffer is large, but has the advantage that horizontal
+     scrolling is very fast once the new image is computed (since it is
+     stored). Rescaling just the current display window is faster (and is
+     the default), but has the disadvantage that the rescaling takes place
+     every time the viewpoint is moved (i.e., scrolling is slower). In later
+     releases, this global will also affect the rescaling of
+     non-interpolated data. See rescale_scope  in section 27.3. (+)
+
+temp_path
+     S
+
+     Determines the directory in which xwaves will write temporary files
+     (e.g., files generated by external ESPS calls that result from xwaves
+     command add_op). The default for temp_path is ``.'' (i.e., current
+     working directory).
+
+time_range_prefix
+     Q
+
+     The string contained in this variable is prepended to all time ranges,
+     of the form A:B, returned by the display window-specific symbols
+     range_time  and mark_range_time . By default it is -s. You may specify
+     any prefix, including a null prefix with "".
+
+use_dsp32
+     B
+
+     1 to use dsp board, 0 to ignore dsp board. This is normally set by
+     xwaves on startup depending on whether or not certain boards are
+     detected. On most machines use_dsp32 really means ``use compiled-in D/A
+     routines rather than external programs''. In that case, if use_dsp32 is
+     zero, all D/A will happen using an external play program, which is
+     probably a bad idea unless you have a good reason to do it. On all
+     machines, the ``right thing'' usually happens if you DO NOT define
+     use_dsp32 in your profile file,
+
+verbose
+     I
+
+     Values > 0 cause various feedback messages to be printed. When verbose
+     > 0, xwaves prints a startup message indicating the identity of the
+     .wave_pro file that was read and it prints copies of the shell command
+     lines used to invoke external ESPS functions as well as all shell
+     commands that result from calling the xwaves command shell. When the
+     shell commands have completed, a completion message is printed.
+     Unrecognized xwaves commands are reported as such (for verbose > 0).
+     When verbose > 1, xwaves prints detailed feedback about command
+     parsing. The default value of verbose is 1.
+
+wave_height
+     I
+
+     Height of new waveform windows (pixels). (+)
+
+wave_width
+     I
+
+     Width of new waveform windows (pixels). (+)
+
+wb_spect_params
+     S
+
+     File with parameters for wideband spectrograms (see also
+     nb_spect_params). The default filename is wb_params, and the default
+     search path used is
+
+          .:$ESPS_BASE/lib/waves/files
+
+
+     This path can be overridden by setting the UNIX environment variable
+     WAVES_INPUT_PATH  before starting xwaves.
+
+write_common
+     B
+
+     If write_common is 1, each time the mouse is used to change the
+     position of segment markers, the file name (``filename''), starting
+     record (``start''), and number of records (``nan'') are written to the
+     ESPS Common file; if write_common is 0, Common is not written. For more
+     information about ESPS Common processing, see various ESPS manual pages
+     (e.g., getparam (1-ESPS) and read_params (3-ESPS)). We DO NOT recommend
+     using common for anything. It is an ``evolutionary artifact''.
+
+x_increment
+     I
+
+     Horizontal displacement between successive windows (pixels).
+
+y_increment
+     I
+
+     Vertical displacement between successive windows (pixels).
+
+zoom_ratio
+     D
+
+     Fractional change caused by zoom operations. (+)
+
+zoom_ganged
+     B
+
+     1 to zoom all signals in object, 0 for just one (see also
+     scroll_ganged).
+
+P8574_type
+     B
+
+     1 (default) means correct P8574 version part is on the Ariel analog
+     module for the AT&T Surf-board. If you get a message like:
+
+          iicack: bus error, sta=0x8, flag=0x0
+
+
+     when trying to do analog output, then you might have an Ariel board
+     with the wrong version P8574P on it. Some have been shipped with the A
+     version, which has different addresses. If you get this message, then
+     set this global to 0. OBSOLETE
+
+ARIEL_16
+     B
+
+     This global is used to tell xwaves that the Ariel analog module (for
+     the AT&T or Heurikon Surfboard) has a 16 Mhz crystal, rather than the
+     standard 24 Mhz. A value of 0 indicates the 24 Mhz crystal and a value
+     of 1 indicates the 16 Mhz crystal. OBSOLETE
+
+ARIEL_HK
+     B
+
+     This is only relevant for Sun VME systems with a Heurikon board and
+     Ariel ProPort combination. Enabling this causes the correct microcode
+     to be used on that hardware. OBSOLETE
+
+dsp32_wait
+     I
+
+     Specifies the number of attempts (at one second intervals) that xwaves
+     will make to use an installed DSP board before giving up. The default
+     is 5. The purpose of this global is to make the temporary use of the
+     board by other programs (v32play, v32record, dspsgram ) less intrusive
+     to the xwaves user. OBSOLETE.
+
+----------------------------------------------------------------------------
+
+27.3  View-specific symbols
+
+The display window-specific symbols are broken up into three groups:
+
+  1. Those that are only ``settable''.
+  2. Those that are only ``gettable''.
+  3. Those that are both settable and gettable.
+
+Note that when any display window-specific attribute is set, the display
+window will be redrawn. If the need arises as xwaves evolves, there may be
+considerably more parity between the gettables and settables in future
+versions.
+
+See section 27.3.4 for the notes on symbols marked with (1)-(7).
+
+----------------------------------------------------------------------------
+
+   27.3.1  Read-only (get only) object symbols
+   27.3.2  Write-only (set only) View Symbols
+   27.3.3  Read-Write (get or set) View Symbols
+   27.3.4  Notes for display window specific symbols
+
+----------------------------------------------------------------------------
+
+27.3.1  Read-only (get only) object symbols
+
+cursor_channels
+
+     The numbers of the channels (vector elements) delimited by the top and
+     bottom (horizontal) markers. Numbering starts at 0. (1)
+
+cursor_label
+
+     Contains the field label of the channel closest to the mouse cursor.
+
+cursor_samp
+
+     The sample number (record number) corresponding to the current time
+     cursor position. (2)
+
+cursor_value
+
+     The numerical value of the datum which is ``closest'' to the cursor
+     position as viewed on the screen.
+
+cursor_values
+
+     The value of all vector elements in the signal at the time
+     corresponding to the cursor position. (3)
+
+dur_samp
+
+     Duration in samples of the interval between the left and right markers.
+     Corresponds to range_samp.
+
+dur_seconds
+
+     Same as dur_time.
+
+dur_time
+
+     Duration in seconds of the interval between the left and right markers.
+     Corresponds to range_time.
+
+files
+
+     All files that are currently members of the object in which the
+     selected display window resides.
+
+height
+
+     The display height, in pixels, of the display window.
+
+is_iconized
+
+     This value is 0 if the display window is closed; 1 if it is open.
+
+l_mark_samp
+
+     The sample number corresponding to the mark closest to the left of the
+     mark_reference position. (2)
+
+l_mark_time
+
+     The time corresponding to the mark closest to the left of the
+     mark_reference position.
+
+l_marker_samp
+
+     The sample number corresponding to the left marker position. (2)
+
+l_marker_samp_from_start
+
+     The sample number corresponding to the left marker position. This
+     symbol assumes that record counting starts at zero. This differs from
+     l_marker_samp in that that symbol returns the record number incremented
+     by s_range_offset. lmsfs is an alias for this symbol.
+
+lmsfs
+
+     Alias for l_marker_samp_from_start.
+
+loc_x
+
+     The x pixel coordinate of the upper-left corner of the display window.
+
+loc_y
+
+     The y pixel coordinate of the upper-left corner of the display window.
+
+mark_range_samp
+
+     The sample range delimited by the marks closest to the left and right
+     of the current mark_reference position. (4)
+
+mark_range_time
+
+     The time range delimited by the marks closest to the left and right of
+     the current mark_reference position. (5)
+
+name
+
+     The name of the object of which the display window is a member.
+
+new_files
+
+     All new files created in the current run of xwaves, regardless of their
+     object membership or current display status. This includes files
+     created as the result of save segment in file , files created by
+     spectrogram commands, and files created as out. items in add_op
+     commands. A useful UNIX command while xwaves is running is rm -f
+     `send_xwaves get aname new_files | grep '.fspec'`. It removes all the
+     new spectrogram files created by xwaves.
+
+object_commands
+
+     A list of all commands that may be directed at a display object. These
+     are explained in section 26.4.
+
+objects
+
+     The value of objects is a space-separated list of all the display
+     objects.
+
+operators
+
+     A list of all operators currently available. This is a compendium of
+     all operator types and does not distinguish between display window
+     types for which they are relevant, or what menu-operator list they are
+     on.
+
+overlays
+
+     A list of file names of all signals that are overlaid on the current
+     display window.
+
+r_mark_samp
+
+     The sample number corresponding to the mark closest to the right of the
+     mark_reference position. (2)
+
+r_mark_time
+
+     The time, in seconds, corresponding to the mark closest to the right of
+     the mark_reference position.
+
+r_marker_samp
+
+     The sample number corresponding to the right marker position. (2)
+
+range_chan
+
+     The vector element numbers corresponding to the positions of the top
+     and bottom markers. These are presented as M:N, where M and N
+     correspond to the bottom and top markers, respectively. (1)
+
+range_samp
+
+     The sample range delimited by the left and right markers. (4)
+
+range_time
+
+     The time range delimited by the left and right markers. (5)
+
+range_yval
+
+     The range in ordinal data space delimited by the top and bottom
+     markers. The value is returned as A:B, where A is the value
+     corresponding to the position of the bottom horizontal marker and B
+     corresponds to the top marker position. Note, that if the top and
+     bottom markers are ``closest'' to different vector elements, the values
+     returned will be in the domain of the respective elements. (7)
+
+sec/cm
+
+     This is the ``seconds per centimeter'' time scaling used to plot the
+     display window. It is a misnomer, since the computation assumes a
+     certain number of pixels/cm (32.582), which will be the wrong constant
+     for most display devices in the universe! This deficiency will be fixed
+     in a future version.
+
+settables
+
+     This is the list of all display window-specific symbols that may be set
+     with the set object command.
+
+val/cm
+
+     This is the ``data value per centimeter'' vertical scaling used to plot
+     the display window. It is independently determined for each vector
+     element in a multi-dimensional signal. It is a misnomer, since the
+     computation assumes a certain number of pixels/cm (32.582), which will
+     be the wrong constant for most display devices in the universe! This
+     deficiency will be fixed in a future version.
+
+variables
+
+     This is a list of all display window-specific variables. It does not
+     include the global symbols or the set-only object symbols.
+
+view_channels
+
+     The channels (vector) elements that are actually on display. These
+     correspond to the channels that may have been selected with the
+     activate  object command. (1)
+
+view_end_time
+
+     The time in seconds corresponding to the right edge of the display
+     window.
+
+view_end_yval
+
+     For a spectrogram view, the upper ordinate (frequency) limit of the
+     view. For a waveform view, the maximum ordinate value. (Not generally
+     useful for multichannel waveform views, where it is the maximum
+     ordinate value over all channels.)
+
+view_start_time
+
+     The time in seconds corresponding to the left edge of the display
+     window.
+
+view_start_yval
+
+     For a spectrogram view, lower ordinate (frequency) limit of the view.
+     For a waveform view, the minimum ordinate value. (Not generally useful
+     for multichannel waveform views, where it is the minimum ordinate value
+     over all channels.)
+
+waves_commands
+
+     A list of all commands described in chapter 26.
+
+width
+
+     The display width, in pixels, of the data display window.
+
+----------------------------------------------------------------------------
+
+27.3.2  Write-only (set only) View Symbols
+
+See table 27.1 for an explanation of the type indicators for each symbol.
+
+See section 27.3.4 for the notes on symbols marked with (1)-(7).
+
+background
+     I
+
+     The color to use as the display window background.
+
+channels
+     SQ
+
+     The space-separated list of channel numbers to be affected by any
+     subsequent channel-specific attributes (e.g. line_color, line_type,
+     reticle_on, ...). Multiple channel specifications are permitted in a
+     single set command.
+
+edit_ganged
+     B
+
+     Not currently implemented as a display window-specific item (currently
+     has no effect).
+
+h_rescale
+     B
+
+     Determines whether the time base should stretch and shrink so that the
+     duration of the signal shown in the display window remains constant
+     regardless of display window width. (Currently this is fully
+     implemented only for spectrogram views.)
+
+invert_dither
+     B
+
+     For black-and-white spectrograms, this determines whether the plot is
+     white on black or black on white.
+
+left_op
+     Q
+
+     The menu operator to be invoked when the left mouse button is pressed
+     in the data display window. This can be any of the built-in operations
+     shipped with xwaves or any new operators you have defined for the
+     display window type using the add_op command. The operator must have
+     been defined before the left_op assignment is made.
+
+line_color
+     I
+
+     The color of the line to be used when plotting the data for the
+     specified channels. (6)
+
+line_type
+     I
+
+     A code number in the range 1-4 that indicates the style of plotting in
+     waveform display windows. The currently-available styles are:
+     1
+          connect the data points with straight-line segments.
+     2
+          same as 1, but draw a vertical line from the data point to the
+          minimum value plotted in the specific channel.
+     3
+          ``DSP style'' This draws vertical lines from the data point to the
+          zero line.
+     4
+          same as 3 and 1 combined.
+
+middle_op
+     Q
+
+     The menu operator to be invoked when the middle mouse button is pressed
+     in the data display window. This can be any of the built in operations
+     shipped with xwaves or any new operators you have defined for the
+     display window type using the add_op command. The operator must have
+     been defined before the middle_op assignment is made.
+
+move_op
+     Q
+
+     The menu operator to be invoked when the cursor is moved in a waveform
+     or spectrogram display window. The operator is invoked for every pixel
+     that the cursor moves. It could for instance be bound to a call to
+     xspectrum, which would result in the calculation of a new spectrum for
+     each pixel that the mouse cursor moves. Processor speech will however
+     mostly limit the use of this command.
+
+     This can be any of the built-in operations shipped with xwaves or any
+     new operators you have defined for the display window type using the
+     add_op command. The operator must have been defined before the move_op
+     assignment is made.
+
+overlay_as_number
+     B
+
+     When vector signals are overlaid on spectrograms (e.g. ``formant
+     trajectories''), the overlay positions can be indicated as numerals,
+     rather than as colored dots. Enabling this boolean causes numbers to be
+     used. This can be helpful when preparing monochrome hardcopy or when
+     working on monochrome monitors.
+
+page_step
+     D
+
+     The number of seconds to advance the view into the signal file with
+     each invocation of the page ahead  or page back  menu items.
+
+plot_max
+     D
+
+plot_min
+     D
+
+     These are the maximum and minimum values to be represented in the
+     specified display window channel(s). Setting these such that plot_max
+     is strictly greater than plot_min will automatically cause the
+     specified channels to disable v_rescale. I.e., the channels will be
+     plotted with the vertical limits specified regardless of the data
+     values. If plot_min is greater than or equal to plot_max, auto
+     rescaling will resume.
+
+readout_bar_height
+     I
+
+     The space, in pixels, between the top of the data plotting area and the
+     top of the window. This region contains the scrollbar and several
+     numeric printouts, depending on the display window type. When in this
+     region, the scrollbar operating mode of the mouse is active.
+
+redraw_on_release
+     B
+
+     When editing data by ``drawing'' on the display window with a mouse
+     button, redraw_on_release causes the display window to be redrawn each
+     time the drawing button is released. For some display window types,
+     this might be painfully slow, so you may prefer to disable this
+     behavior.
+
+rescale_scope
+     S
+
+     This applies only to spectrogram display windows. It can have two
+     values: buffer  or view . It determines whether horizontal rescaling of
+     interpolated data is computed for the entire xwaves buffer (value is
+     buffer) or for just the current window width (value is view). Rescaling
+     for the entire buffer can be quite slow if the ratio of the current
+     display window to the entire buffer is large, but has the advantage
+     that horizontal scrolling is very fast once the new image is computed
+     (since it is stored). Rescaling just the current display window is
+     faster (and is the default), but has the disadvantage that the
+     rescaling takes place every time the viewpoint is moved (i.e.,
+     scrolling is slower). In later releases, this global will also affect
+     the rescaling of non-interpolated data.
+
+reticle_on
+     B
+
+     Determines if the specified channel(s) should be plotted with reticles.
+
+rewrite_after_edit
+     B
+
+     When editing waveforms by ``drawing'' on the display window with a
+     mouse button, this boolean causes the data values to be written to file
+     immediately after the drawing button is released. Otherwise the data is
+     not written until the display window is destroyed or xwaves exits.
+
+scroll_ganged
+     B
+
+     This display window-specific attribute has no effect at the present
+     time.
+
+scrollbar_height
+     I
+
+     The height, in pixels, of the region bar plotted in the scrollbar
+     region.
+
+shorten_header
+     B
+
+     If enabled, shorten_header causes the file name displayed in the
+     display window frame header to be simplified to its basename. This may
+     be convenient if path names are very long or display windows are very
+     narrow.
+
+show_labels
+     B
+
+     If enabled, this causes the channel identification labels to be plotted
+     in the specified channel(s).
+
+show_vals
+     B
+
+     If enabled, this causes the data element corresponding to the time
+     location of the cursor to be represented numerically in the lower left
+     corner of the channel plotting region.
+
+spect_interp
+     B
+
+     When there is a many-to-one relationship between the pixel area of a
+     spectrogram display window and the underlying data, this boolean
+     determines whether the pixel values should be interpolated linearly
+     between data points or represented as blocks with constant value
+     throughout. The latter plotting mode is considerably slower in many
+     cases.
+
+v_rescale
+     B
+
+     For waveform display windows, this determines if the specified
+     channel(s) should scale so that the maximum and minimum values present
+     in the data should be used as the channel display window maximum and
+     minimum. It is automatically disabled whenever plot_max  is set greater
+     than plot_min . Resetting it will cause the ``auto-rescale'' behavior
+     to be reinstated.
+
+     For spectrogram display windows, v_rescale determines whether the
+     spectrogram will be scaled in the vertical direction as the display
+     window dimensions are changed.
+
+value_offset
+     D
+
+     The sole purpose of this variable is to offset the numeric values
+     displayed in the xwaves value printout fields. You can find these
+     values above the display in spectrograms and in the bottom left corner
+     of each channel in vector displays. The y-axes values are not changed.
+     Note that all other types of access to the data values will retrieve
+     the values as stored in the file. Default value is 0.0.
+
+value_scale
+     D
+
+     The sole purpose of this variable is to scale the numeric values
+     displayed in the xwaves value printout fields. You can find these
+     values above the display in spectrograms and in the bottom left corner
+     of each channel in vector displays. The y-axes values are not changed.
+     Note that all other types of access to the data values will retrieve
+     the values as stored in the file. Default value is 1.0.
+
+zoom_ganged
+     B
+
+     This display window-specific variable has no effect at the current
+     time.
+
+zoom_ratio
+     D
+
+     The time ratio by which the display window will zoom in and out when
+     the zoom in  or zoom out  menu items are selected.
+
+----------------------------------------------------------------------------
+
+27.3.3  Read-Write (get or set) View Symbols
+
+See table 27.1 for an explanation of the type indicators for each symbol.
+
+See section 27.3.4 for the notes on symbols marked with (1)-(7).
+
+b_marker_chan
+     I
+
+     The channel number over which the the bottom marker exists (or should
+     be placed). (1), (7)
+
+b_marker_yval
+     D
+
+     The ordinal value in data space corresponding to the bottom marker (or
+     where it should be placed). (1), (7)
+
+cursor_channel
+     I
+
+     The channel over which the the cursor exists (or where it should be
+     placed). (1), (7)
+
+cursor_time
+     D
+
+     The time, in seconds, corresponding to the horizontal location of the
+     cursor (or the time to which it should be assigned).
+
+cursor_yval
+     D
+
+     The ordinal data value corresponding to the vertical location of the
+     cursor in the current channel (or where it should be placed). (7)
+
+file
+     S
+
+     The filename of the current display window. For set operations, this is
+     required to determine to which display window attribute changes should
+     be directed. In the context of get commands, the inverse is true. In
+     add_op commands, this is the name of the file under the cursor.
+
+mark_reference
+     S
+
+     This variable determines the time reference for finding time marks on
+     objects. Before waves+ 5.1, it was always assumed that the mark
+     variables (l_mark_time, l_mark_samp, r_mark_time, ...) were found in
+     relation to the time location of the cursor (i.e. in relation to
+     cursor_time). Now, this is determined by mark_reference. It may take on
+     the value of any defined global or view-specific symbol name. The value
+     that is assigned to mark_reference is the name of a variable (without a
+     leading _ !!!). N.B.: it may not be given a value directly!!! Its
+     default value is cursor_time. Of course, it can also assume the name of
+     user-defined symbols. Thus, one way to get the time locations of the
+     marks immediately to the left and right of, say .34 seconds from a
+     display object named bob1 would be:
+
+          send_xwaves set mark_reference my_time \
+                my_time .34:: \
+             bob1 get aname l_mark_time r_mark_time
+
+
+     Of course, if you don't mind moving the cursor, the same operation
+     could be performed without redefining mark_reference, thus:
+
+          send_xwaves bob1 set cursor_time .34:: \
+             bob1 get aname l_mark_time r_mark_time
+
+
+l_marker_time
+     D
+
+     The time, in seconds, corresponding to the left marker position (or
+     where it should be placed).
+
+r_marker_time
+     D
+
+     The time, in seconds, corresponding to the right marker position (or
+     where it should be placed).
+
+t_marker_chan
+     I
+
+     The channel number over which the the top marker exists (or should be
+     placed). (1), (7)
+
+t_marker_yval
+     D
+
+     The ordinal value in data space corresponding to the top marker (or
+     where it should be placed). (7)
+
+----------------------------------------------------------------------------
+
+27.3.4  Notes for display window specific symbols
+
+(1)
+     Each number returned is the sum of the element number and
+     c_range_offset  (which is 0 by default).
+
+(2)
+     Each number returned is the sum of the sample (record) number and the
+     current value of s_range_offset  (which is 1 by default).
+
+(3)
+     A space-delimited list of values with no delimiting quotes.
+
+(4)
+     The sample range is presented as <samp_range_prefix>M:N where the
+     string <samp_range_prefix> is the exact value of the global symbol
+     samp_range_prefix . This defaults to -r, but can have any value
+     including null. M and N are the starting and ending sample numbers,
+     each of which will have s_range_offset added. The default values for
+     samp_range_prefix and s_range_offset are compatible with ESPS programs
+     that take range arguments.
+
+(5)
+     The time range is presented as <time_range_prefix>A:B where the string
+     <time_range_prefix> is the exact value of the global symbol
+     time_range_prefix . This defaults to -s, but can have any value
+     including null. A and B are the starting and ending times in seconds.
+
+(6)
+     This is a colormap table entry in the range 0-127. See example
+     colormaps in $ESPS_BASE/lib/waves/colormaps and the man page for
+     xcmap .
+
+(7)
+     Note that there is an interdependence between the channel specification
+     and the ordinal data specification. For multi-element vector signals
+     (multi-channel signals), the channel number and ordinal value need to
+     be interpreted together.
+
+----------------------------------------------------------------------------
+
+Chapter 28
+
+xlabel reference
+
+This chapter contains only a description of commands and symbols for xlabel.
+For a full description of file formats and menu items see the chapter
+``xlabel'' of the full manual.
+
+----------------------------------------------------------------------------
+
+   28.1  xlabel commands
+   28.2  xlabel symbols
+
+----------------------------------------------------------------------------
+
+28.1  xlabel commands
+
+xwaves can be controlled by a command file or by commands from the
+send_xwaves facility. Commands from these sources may be passed through to
+xlabel via the xwaves send  command (see the chapter``The waves+ Command
+Language'' in the full manual and section 26.2).
+
+The syntax of the sending commands is:
+
+     waves send function xlabel op <command for xlabel>
+
+The syntax of the received commands is:
+
+     receiver command [keyword value] [keyword value] ...
+
+The first item, receiver, is either the attachment name xlabel or the name
+of a display object. The second item, command, is the actual command name.
+Just as for xwaves there is a distinction between global xlabel commands and
+object commands. The global commands always specify as receiver the word
+xlabel. The other commands specify as receiver the name of the object to
+which the label window is attached. This is the name of the xwaves object.
+The following commands are recognized by xlabel. We start with the commands
+that should be sent to a specific display object:
+
+activate
+     SET ACTIVE LABEL DISPLAY FIELDS
+
+     file
+          label file whose display is to be changed. If file is omitted, the
+          Label File:  from the labeler panel will be used.
+     fields
+          one or more blank-separated numbers specifying the display fields
+          to be enabled. This must be the last attribute on the command
+          line.
+
+mark
+     INSERT OR REPLACE A LABEL
+
+     color
+          index of the colormap entry to be used for the boundary mark of an
+          inserted label.
+     file
+          name of label file to be affected.
+     label
+          text of a label or one of the special strings *INSERT*, *DEL*,
+          etc. (see the section``Label Menus'' of the full manual and the
+          key-mapping example in the chapter ``xlabel'' of the full manual.
+          The program uses this string instead of putting up the menu and
+          getting a selection from the user. This permits full specification
+          of a label to be supplied via a send command. If the label string
+          is multi-word and is followed by other keyword-value pairs it
+          should be enclosed in double quotes. If this keyword is not
+          supplied, the labelmenu is popped up.
+     replace_field
+          number of the field in a multiple-field label to be replaced, when
+          the labeler is in replace mode.
+     time
+          in INSERT mode, the time coordinate at which to insert the label.
+          In REPLACE mode, the time relative to which the closest label is
+          determined for replacement. This keyword is mandatory.
+
+N.B.: The following commands should be sent to the object xlabel:
+
+kill
+     REMOVE ALL OR PART OF A LABEL DISPLAY OBJECT
+
+     name
+          name of an existing xlabel display object that is to be partly or
+          completely destroyed.
+     file
+          file name of a particular xlabel display to be destroyed. The
+          actual label file is updated to reflect the state of the display
+          before the display is removed. If file is omitted, all of object
+          name will be removed.
+
+labelfile
+     MAKE A NEW OR LOAD AN EXISTING LABEL FILE
+     (This is an exact synonym for make.)
+
+labelmenu
+     CHANGE TO NEW MENU FILE
+
+     menufile
+          same as Label Menu File:  in the control panel.
+     name
+          name of an existing xlabel display object to which the label menu
+          is to be added.
+     file
+          label file name of a particular xlabel display to which the label
+          menu is to be added.
+
+make
+     MAKE A NEW OR LOAD AN EXISTING LABEL FILE
+
+     color
+          colormap entry to use for the segment boundary marks (new label
+          files only). Numbers in the range of 115-125 are best.
+
+     fields or active_fields
+          same as fields under activate and Active fields:  in control
+          panel.
+
+     labelfile or file
+          label file pathname to be displayed or created.
+
+     font
+          the font to be used when displaying the labels in the data window.
+          Any of the fonts from the listing generated by xlsfonts are
+          acceptable. Note that if the font is also specified in the
+          labelmenu file, the latter overrides any other font specification.
+          Therefore, for maximum flexibility in changing fonts, use label
+          menu files without a font specification. Also if you open a
+          labelfile that already has a font specified, that specification
+          will override this argument to make.
+
+     label_height
+          height in pixels of the display area for each label file in the
+          display window. Note that this is not settable on a per labelfile
+          basis. The setting propagates to all label tiers on display
+          window.
+
+     menufile
+          UNIX path name of the menu to be associated with the label file
+          display. This may bee changed at any time while labeling. Also set
+          using Label Menu File:  in control panel. xwaves searches the path
+          defined by WAVES_MENU_PATH . The default is
+
+               .:$ESPS_BASE/lib/waves/menus
+
+
+     name
+          Name of the display object to which the label display window is to
+          be related.
+
+     separator
+          The character used to separate the label fields.
+
+     signal
+          a particular signal in the display object. If omitted, the label
+          window will always attach to the most recently displayed signal.
+          If included, the label window will remain stuck to the specified
+          xwaves signal display.
+
+     xlabel_frame_hoff
+          See section 28.2.
+
+     xlabel_frame_voff
+          See section 28.2.
+
+print
+     PRINT GRAPHICS
+
+     This outputs the contents of the label display window as PostScript or
+     PCL to a file to line printer. The output attributes may be established
+     using the xwaves print setup widget as explained in the xwaves manual
+     sections.
+
+quit
+     CLOSE ALL LABEL FILES AND EXIT XLABEL
+
+     The alterations to the labels are saved in the file(s) before xlabel is
+     stopped.
+
+save_globals
+     OUTPUT VALUES OF GLOBAL VARIABLES
+
+     output
+          name of a file to receive the values of the global variables.
+          Output is a list of keyword-value pairs in a format suitable for a
+          .wave_pro. If output is not specified, stdout is used.
+
+set
+     SET GLOBALS FOR USE BY LABEL
+
+     <any xlabel variable>
+          variables from the list in section 28.2 .
+
+     Initial values for the symbols described below may also be established
+     in the startup profile (.wave_pro). For compatibility with previous
+     versions of xlabel, some of these variables are accepted without the
+     xlabel_ prefix. However, use of the shorter forms in .wave_pro files is
+     not recommended, as it is likely to lead to confusion in the long run.
+     For the possible variables see the section below.
+
+unload
+     CLOSE, UNLOAD AND REMOVE DISPLAY OF A LABEL FILE
+
+     name
+          name of display object containing label file.
+     file
+          name of the label file to be closed.
+
+----------------------------------------------------------------------------
+
+28.2  xlabel symbols
+
+The symbols that are available for xlabel are:
+
+xlabel_ctlwin_x
+     I
+
+     Initial x coordinate of upper left corner of the xlabel control window.
+     This variable and xlabel_ctlwin_y are accepted by the set command and
+     the altered values will be reflected in the output from save_globals.
+     However, the control window will not move. Its position is affected
+     only by the values at startup time, as read from the startup profile.
+
+xlabel_ctlwin_y
+     I
+
+     Initial y coordinate of upper left corner of the control window. See
+     the remarks on xlabel_ctlwin_x.
+
+xlabel_fields
+     I
+
+     Same as fields under activate and Active fields: in the control panel.
+
+xlabel_font
+     S
+
+     Same as font under make. This may be changed dynamically after a label
+     file is on display window if and only if a font IS NOT specified in the
+     label menu file.
+
+xlabel_frame_hoff
+
+     Vertical offset in pixels when xlabel positions its label panel
+     relative to the parent data display. This permits compensation for the
+     vagaries of various window managers.
+
+xlabel_frame_voff
+
+     Horizontal offset in pixels when xlabel positions its label panel
+     relative to the parent data display. This permits compensation for the
+     vagaries of various window managers.
+
+xlabel_insert_mode
+     I
+
+     Numeric code with three possible values:
+     0
+          for REPLACE ;
+     1
+          for INSERT ;
+     2
+          for MOVE .
+
+     This makes it possible to initialize the xlabel mode in the .wave_pro
+
+     file or change it via the set command.
+
+xlabel_labelfile
+     S
+
+     Same as file under make and Label file: in control panel.
+
+xlabel_label_height
+     I
+
+     Same as label_height under make. This height setting propagates to all
+     label display windows.
+
+xlabel_menufile
+     S
+
+     UNIX path name of the desired menu. This may be changed at any time
+     while labeling. Each labelfile in a multiple-label display may have its
+     own separate menufile. This may also be set using Label Menu File: in
+     the control panel.
+
+xlabel_name
+     S
+
+     Same as name under make and Object: in control panel. This is the name
+     of a xwaves display object to use for time-synchronizing the labels.
+
+----------------------------------------------------------------------------
+
+Chapter 29
+
+xspectrum reference
+
+This chapter contains a only description of commands and symbols for
+xspectrum. For a full description of file formats and menu items see the
+chapter ``xspectrum'' of the full manual.
+
+----------------------------------------------------------------------------
+
+   29.1  xspectrum commands
+   29.2  xspectrum symbols
+
+----------------------------------------------------------------------------
+
+29.1  xspectrum commands
+
+xwaves can be controlled by manually entered commands, commands in a command
+file or by commands from the send_xwaves facility Commands from these
+sources may be passed through to xspectrum via the xwaves send command (see
+the chapter ``The waves+ Command Language'' of the full manual and section
+26.2).
+
+The syntax of the sending commands is:
+
+     waves send function xspectrum op <command for xspectrum>
+
+The syntax of the received commands is:
+
+     receiver command [keyword value] [keyword value] ...
+
+The first item, receiver, is either the attachment name xspectrum or the
+name of a display object. The second item, command, is the actual command
+name. Just as for xwaves there is a distinction between global xspectrum
+commands and object commands. The global commands always specify as receiver
+the word xspectrum. The other commands specify as receiver the name of the
+object to which the spectrum window is attached. This is the name of the
+xwaves object.
+
+N.B.: The following commands are recognized by display objects: i.e., a
+display object is the receiver.
+
+kill
+     REMOVE XSPECTRUM DISPLAY
+
+     This removes the indicated xspectrum display object and frees all
+     resources associated with it.
+
+mark
+     COMPUTE A NEW SPECTRUM
+
+     file
+          the file name (loaded in xwaves) to be analyzed.
+     time
+          The center of the analysis window. This causes xspectrum to
+          generate a spectrum based on a window centered at time with window
+          size given by the current setting of size (sec):  in the control
+          panel, if xspectrum is operating in the Cursor +- size/2 Window
+          Limits  mode. When operating in the Markers mode, the time
+          parameter is ignored.
+     rstart
+          The start of an analysis window (must be accompanied by a setting
+          for rend). Only valid in Markers Window Limits mode of xspectrum.
+     rend
+          The end of an analysis window (must be accompanied by a setting
+          for rstart). When operating in the Markers Window Limits mode
+          (this equals setting xspectrum_window_limits to 1) xspectrum
+          generates a spectrum starting at rstart and ending at rend. Then
+          the value specified for time, if any, is ignored. When operating
+          in the Cursor +- size/2 mode, rstart and rend are ignored.
+
+     Regardless of the Window Limits mode, xspectrum sends a message back to
+     xwaves setting the markers to show the window limits used to compute
+     the spectrum.
+
+save_spectrum
+     OUTPUT SPECTRAL VALUES
+
+     output
+          Name of a file to receive the computed spectral values. Output is
+          an ASCII file containing header information followed by
+          frequency-value pairs, one to a line.
+
+     Only the most recently created ``master'' spectrum can be saved using
+     this command. In future releases the spectrum output function will be
+     enhanced.
+
+print
+     PRINT GRAPHICS
+
+     This outputs the contents of the label display window as PostScript  or
+     PCL  to a file or the line printer. The output attributes may be
+     established using the xwaves print setup widget as explained in the
+     chapter ``Printing Graphics'' of the full manual. The print attributes
+     described in ``Printing Graphics'' may also be set as xspectrum
+     variables via send commands.
+
+N.B.: The following commands are recognized by the object xspectrum: i.e.
+xspectrum is the receiver in the send command.
+
+make
+     CREATE A DISPLAY AND/OR GENERATE A SPECTRUM
+
+     name
+          name of an xwaves display object to synchronize the displays with.
+     file
+          the file name (loaded in xwaves) to be analyzed.
+     time
+          The center of the analysis window. This causes xspectrum to
+          generate a spectrum based on a window centered at time with window
+          size given by the current setting of size (sec):  in the control
+          panel, if rstart and rend are NOT specified. xspectrum sends a
+          message back to xwaves setting the markers to show the window
+          limits.
+     rstart
+          The start of an analysis window (must be accompanied by a setting
+          for rend).
+     rend
+          The end of an analysis window (must be accompanied by a setting
+          for rstart). When rstart and rend are set in the make command,
+          xspectrum_window_limits is automatically set to 1 (Markers).
+          xspectrum generates a spectrum based on the data starting at
+          rstart and ending at rend. The value specified for time, if any,
+          is ignored. xspectrum sends a message back to xwaves setting the
+          markers to show the window limits.
+
+     If the display object already exists, then the make command simply
+     computes a new spectrum with the indicated parameters.
+
+quit
+     EXIT XSPECTRUM
+
+     xspectrum detaches itself from xwaves and removes all of its displays.
+     No data is automatically saved.
+
+save_globals
+     OUTPUT VALUES OF GLOBAL VARIABLES
+
+     output
+          Name of a file to receive the values of the global variables.
+          Output is a list of keyword-value pairs in a format suitable for a
+          .wave_pro . If output is not specified, stdout is used. The
+          current settings of all control panel items are reflected in the
+          saved values.
+
+set
+     SET GLOBALS FOR USE BY XSPECTRUM
+
+     <any xspectrum variable>
+          variables from the list in section 29.2 .
+
+     Multiple items can be set with a single command. Spectra are recomputed
+     and the display is updated after any set command. All these items can
+     be initialized in the .wave_pro file. For compatibility with previous
+     versions of xspectrum, some of these variables are accepted without the
+     xspectrum_ prefix. However, use of the shorter forms in .wave_pro files
+     is not recommended, as it likely to lead to confusion in the long run.
+
+----------------------------------------------------------------------------
+
+29.2  xspectrum symbols
+
+The following symbols are available for xspectrum. For an explanation of the
+type specifiers after the symbols, see table 27.1.
+
+debug_level
+     I
+
+     Sets the verbosity of debugging messages.
+
+xspectrum_a_autozoom
+     B
+
+     If the value of xspectrum_a_autozoom is nonzero, the display is
+     automatically zoomed in amplitude when the horizontal markers are
+     moved. Zero disables automatic amplitude zooming.
+
+xspectrum_analysis_type
+     I
+
+     Specifies the analysis method as follows:
+     0:
+          DFT
+
+     1:
+          DFTR
+
+     2:
+          AUTOC
+
+     3:
+          COV
+
+     4:
+          BURG
+
+     5:
+          MBURG
+
+     6:
+          FBURG
+
+     7:
+          VBURG
+
+     8:
+          STRCOV
+
+     9:
+          STRCOV1
+
+     10:
+          CEPST
+
+xspectrum_cep_cutoff
+     D
+
+     Gives the nominal cutoff frequency (in seconds) for the CEPST analysis
+     type.
+
+xspectrum_cep_liftering
+     I
+
+     Selects liftering operation for the CEPST analysis type:
+     0:
+          None
+     1:
+          Lowpass
+     2:
+          Highpass
+
+     When none is selected, the CEPST method is equivalent to the DFT
+     method.
+
+xspectrum_cep_trans
+     D
+
+     Gives the duration of the frequency transition region (in seconds) for
+     the CEPST analysis type.
+
+xspectrum_ctlwin_x
+     I
+
+     The x position of the xspectrum control window.
+
+xspectrum_ctlwin_y
+     I
+
+     The y position of the xspectrum control window.
+
+xspectrum_datwin_forward
+     I
+
+     If non-zero (default), the xspectrum plot window will be brought to the
+     foreground every time a new spectrum is computed.
+
+xspectrum_datwin_height
+     I
+
+     The height of the xspectrum data plot window (pixels). If this value is
+     greater than or equal to 0, upon resize of a spectrum display window
+     the new height will become the value of this symbol. This has the
+     effect that if a spectrum display window opened for a new display
+     object is opened, it will automatically take the height of the last
+     resized spectrum display window.
+
+xspectrum_datwin_width
+     I
+
+     The width of the xspectrum data plot window (pixels). If this value is
+     greater than or equal to 0, upon resize of a spectrum display window
+     the new width will become the value of this symbol. This has the effect
+     that if a spectrum display window opened for a new display object is
+     opened, it will automatically take the width of the last resized
+     spectrum display window.
+
+xspectrum_datwin_x
+     I
+
+xspectrum_datwin_y
+     I
+
+     If there is only one display object, these two globals control the
+     initial position of the xspectrum data plot window. Positive values for
+     xspectrum_datwin_x or xspectrum_datwin_y specify respectively the X and
+     Y position of the xspectrum plot window. If there is more than one
+     display object, the xspectrum plot window is aligned with the first
+     display window of the corresponding xwaves display object, with the
+     xspectrum display directly underneath the left side of the xwaves
+     window. If xspectrum_datwin_x is negative, the tops of all xspectrum
+     plot windows are positioned directly underneath the first xwaves
+     display window of the corresponding object. If xspectrum_datwin_y is
+     negative, the left side of all xspectrum windows are lined up
+     (vertically) with the left side of the first xwaves display of the
+     corresponding object.
+
+xspectrum_f_autozoom
+     B
+
+     If nonzero, the display is automatically zoomed in frequency when the
+     vertical markers are moved. Zero disables automatic frequency zooming.
+
+xspectrum_formants
+     I
+
+     Toggles printing of formant estimates (for LPC-based analysis types):
+     0:
+          off
+     1:
+          on
+
+xspectrum_harmonic_cursors
+     I
+
+     Toggles whether harmonic cursors are used:
+     0:
+          off
+     1:
+          on
+
+xspectrum_horiz_cursors
+     I
+
+     Toggles the plotting of horizontal lines at the level corresponding to
+     the current frequency selected by the cursor:
+     0:
+          off
+     1:
+          on
+
+xspectrum_inv_filt_dur
+     D
+
+     Gives the size of the region over which to perform inverse filtering.
+
+xspectrum_inv_filt_integ
+     D
+
+     Gives the integration coefficient for inverse filtering.
+
+xspectrum_lpc_order
+     I
+
+     Gives the order for LPC-based (maximum entropy) analysis types.
+
+xspectrum_max_fft_size
+     I
+
+     Maximum allowable FFT size for use by the DFT and CEPST Analysis type
+     item. This has no effect on the DFTR item. Any positive integer greater
+     than 512 is acceptable, but it may be possible to exceed the UNIX
+     system swap space (or the life of your computer) if unreasonably large
+     values are used.
+
+xspectrum_max_lpc_order
+     I
+
+     This is the maximum LPC (maximum entropy) order that xspectrum is
+     allowed to use when computing reflection coefficients. The limit is
+     enforced on the xspectrum control panel. The value must be less than or
+     equal to 200.
+
+xspectrum_plot_scale
+     I
+
+     Specifies the plotting scale as follows:
+     0:
+          log pwr (dB)
+     1:
+          magnitude
+     2:
+          power (sq. mag.)
+
+xspectrum_preemp
+     D
+
+     Gives the preemphasis coefficient.
+
+xspectrum_range_db
+     I
+
+     Specifies the extent, in dB, of the vertical axis when the plot scale
+     is log pwr (dB) and automatic zooming in amplitude is not in effect.
+
+xspectrum_reference_level
+     D
+
+     This is taken to be the 0 dB level when displaying spectra. The
+     spectrum dB reticle and numeric cursor readout values are adjusted
+     accordingly. It is only effective for the ``log pwr (dB)'' scale mode.
+     This variable can be set either explicitly or via the menu option in
+     the xspectrum display window.
+
+xspectrum_reticle
+     I
+
+     Turns the reticle on or off, with:
+     0:
+          off
+     1:
+          on
+
+xspectrum_window_limits
+     I
+
+     Determines whether window limits are determined by the size (sec):
+     entry in the control panel centered on the cursor Cursor +- size/2 (if
+     0) or by the current xwaves left and right marker positions (Marker; if
+     1).
+
+xspectrum_window_size
+     D
+
+     Gives the size of the analysis window (when in Cursor +- size/2 mode,
+     not Marker mode).
+
+xspectrum_window_type
+     I
+
+     Gives the type of shaping window to be applied to the analysis data,
+     with:
+     0:
+          rectangular
+     1:
+          Hamming
+     2:
+          Cos^4
+     3:
+          Hanning
+
+----------------------------------------------------------------------------
+
+Chapter 30
+
+xmarks reference
+
+This chapter contains only a description of commands for xmarks. xmarks does
+not have a symbol set of its own. For a full description of file formats and
+menu items see the chapter ``xmarks'' of the full manual.
+
+xwaves can be controlled by a command file or by commands from the
+send_xwaves facility. Commands from these sources may be passed through to
+xmarks via the xwaves send  command (see the chapter ``The waves+ Command
+Language'' of the full manual and section 26.2).
+
+The syntax of the sending commands is:
+
+     waves send function xmarks op <command for xmarks>
+
+The syntax of the received commands is:
+
+     receiver command [keyword value] [keyword value] ...
+
+(the same as for xwaves commands). Except where otherwise noted, the first
+item, receiver, should be the attachment name xmarks. The second item,
+command, is the actual command name.
+
+The following commands are recognized by xmarks:
+
+make
+     CREATE AN OBJECT FOR XMARKS
+
+read
+     READ LABELS FROM FILE
+
+     file
+          name of the file from which the labels are to be read.
+
+write
+     WRITE LABELS TO FILE
+
+     file
+          name of the file to which the labels are to be written.
+
+N.B.: The following command is recognized by the display object; i.e. the
+receiver has the name of the object being marked.
+
+mark
+     APPLY OR REPOSITION A TIME LABEL
+
+     time
+          the time (in seconds) at which to apply the label.
+
+----------------------------------------------------------------------------
+
+Chapter 31
+
+xchart reference
+
+This chapter contains only a description of commands for xchart. xchart does
+not have a set of specific symbols that are not common to xlabel symbols.
+For a full description of file formats and menu items see the chapters
+``xlabel'' and ``xchart'' of the full manual.
+
+xwaves can be controlled by manually entered commands, commands in a command
+file or, when running in the server mode, by commands from the send_xwaves
+facility. Commands from these sources may be passed through to xchart via
+the xwaves send  command (see the chapter ``The waves+ Command Language'' of
+the full manual and section 26.2). The syntax of the sending commands is:
+
+     waves send function xchart op <command for xchart>
+
+The syntax of the received commands is:
+
+     receiver command [keyword value] [keyword value] ...
+
+(the same as for xwaves commands). The first item, receiver, is either the
+attachment name xchart or the name of a display object. The second item,
+command, is the actual command name.
+
+xchart is an extension of the xwaves attachment xlabel . It is a proper
+superset of xlabel, in that it offers all of the features of xlabel and
+provides an additional display mode. Please refer to the chapters ``xlabel''
+and ``xchart'' of the full manual for a complete description of using xchart
+and xlabel under control of command files and shell scripts. The two
+commands specific to xchart should be sent to the object xchart.
+
+kill
+     REMOVE ALL OR PART OF A DISPLAY OBJECT
+
+     name
+          (see the xlabel kill command).
+     file
+          (see the xlabel kill command).
+     chartfile
+          the name of the chart-file to be removed from the display. Only
+          one file or chartfile can be specified for each kill invocation.
+
+     This command does not allow you to select chart displays to be
+     destroyed. If file is not specified, all the display windows in the
+     object, including the chart file display windows, will be removed.
+     Otherwise just the selected label file display window will be removed.
+     The only way to selectively unload chart files is via the menu item
+     that corresponds to *UNLOAD*.
+
+make
+     MAKE A NEW FILE, OR LOAD AN EXISTING FILE
+
+     file or labelfile
+          label file pathname to be displayed or created.
+     chartfile
+          the pathname of an existing chart file to be displayed.
+     color
+          colormap entry to use for the segment boundary marks (new label
+          files only). Numbers in the range of 115-125 are best.
+     name
+          name of an xwaves display object with which to time synchronize.
+     signal
+          a particular signal in the display object. If signal is omitted,
+          the chart/label window will always attach to the most recently
+          displayed signal. If it is included, the chart/label window will
+          remain stuck to the specified xwaves signal display.
+     menufile
+          UNIX path name of the menu to be associated with the label file
+          display. This may be changed at any time while labeling. Also set
+          using Label Menu File:  in control panel.
+     chartmenu
+          UNIX path name of the menu to be associated with the chart file
+          display. This must be set when a chartfile is loaded, or, via the
+          set command, before chart files are loaded.
+     label_height
+          height in pixels of the display area for each label file in the
+          display window.
+     font
+          the font to be used when displaying the labels in the data window.
+          Any of the fonts from the listing generated by xlsfonts are
+          acceptable. Note that if the font is also specified in the
+          labelmenu file, the latter overrides.
+     fields or active_fields
+          same as fields under activate and Active fields:  in control panel
+          (see the xlabel manual sections).
+
+----------------------------------------------------------------------------
+
+Chapter 32
+
+xwaves quick reference
+
+This chapter lists all the xwaves commands and their parameters and the
+xwaves symbols. For more information refer to the chapter ``The waves+
+command language'' of the full manual and to the chapters 26 and 27.
+
+The basic syntax for invoking simple xwaves commands is:
+
+     object command [keyword value] [keyword value] ...
+
+object
+     name of the object to which the command is directed
+command
+     name of the command to be executed
+keyword
+     name of some argument that the command recognizes
+value
+     value of the corresponding argument
+
+----------------------------------------------------------------------------
+
+   32.1  xwaves commands
+         32.1.1  xwaves global commands
+         32.1.2  xwaves object commands
+         32.1.3  xwaves built-in commands
+   32.2  xwaves symbols
+         32.2.1  Global symbols
+         32.2.2  Objebct symbols
+
+----------------------------------------------------------------------------
+
+32.1  xwaves commands
+
+----------------------------------------------------------------------------
+
+   32.1.1  xwaves global commands
+   32.1.2  xwaves object commands
+   32.1.3  xwaves built-in commands
+
+----------------------------------------------------------------------------
+
+32.1.1  xwaves global commands
+
+For xwaves global commands, the syntax is the following, with the object
+waves being optional:
+
+     waves command [keyword value] [keyword value] ...
+
+List of Global commands and their parameters
+
+add_espsf
+     out_ext display outputs name op command
+add_espsn
+     name op command menu
+add_espst
+     name op command menu
+add_op
+     name op command menu
+add_op_panel
+     help_file loc_x loc_y show_vars show_ops
+add_waves
+     name op command menu builtin submenu
+attach
+     function
+auto_plot_limits
+
+branch
+     commandname
+call
+     commandname
+cd
+     path
+close_ctlwin
+     invisible
+close_panel
+     name invisble
+delete_all_items
+     menu
+delete_item
+     name menu
+detach
+     function
+disable_rpc
+
+disable_server
+
+enable_rpc
+
+enable_server
+
+get
+     return_id file function attributes aname output
+key_map
+     command op menu key
+key_unmap
+     command op menu key
+kill
+     file name
+kill_panel
+     name
+make
+     file name loc_x loc_y height width (and all global variables)
+make_panel
+     file name panel_choice choice_horiz title icon_title columns
+     quit_button
+open_ctlwin
+
+open_panel
+     name
+print_setup
+
+quit
+
+return
+
+save_add_ops
+     output
+save_keymaps
+     output
+save_menus
+     output menu
+save_panels
+     output
+send
+     versnum prognum function op command
+set
+     all da_location (and all global variables)
+setenv
+     variable value
+shell
+
+sleep
+     seconds
+
+----------------------------------------------------------------------------
+
+32.1.2  xwaves object commands
+
+For xwaves object commands, the syntax is the following, with the object
+being the name of the current object or ``.'':
+
+     object command [keyword value] [keyword value] ...
+
+List of Object commands and their parameters
+
+activate
+     identifiers numbers file op
+align
+     file
+bracket
+     end start file
+close
+     file invisible
+colormap
+     range threshold image_range image_clip file
+cursor
+     frequency yval time
+get
+     return_id file function attributes aname output
+mark
+     color time
+marker
+     do_left time
+op
+     file command op c_chan c_yval c_time
+open
+     file
+overlay
+     file on_file
+page
+     ref_step step file
+play
+     end start file
+play_wind
+     file
+print_ensemble
+
+print_graphic
+     file
+save
+     end outputname start file
+set
+     (all global symbols and all object symbols that are settable)
+spectrogram
+     end start output type loc_x loc_y image_range image_clip
+unmark
+     color time all
+
+----------------------------------------------------------------------------
+
+32.1.3  xwaves built-in commands
+
+Builtin commands are a special case of xwaves object commands and cannot be
+used in the ``normal'' way with the send_xwaves (1-ESPS) command or issued
+from the COMMAND (or @file) field or an xwaves command file. In order to use
+these commands from outside the menu you have to use the object command op .
+See section 26.4 for further details. The basic syntax you need to use to
+invoke the builtin commands is:
+
+     object op file filename op built-in-command-name
+
+List of Builtin Object commands
+
+   * play between marks
+   * play window contents
+   * play entire file
+   * play to end of file
+   * page ahead
+   * page back
+   * window ahead
+   * window back
+   * align&rescale
+   * bracket markers
+   * zoom in
+   * zoom out
+   * zoom full out
+   * spectrogram (W.B.)
+   * spectrogram (N.B.)
+   * save segment in file
+   * delete segment
+   * insert file
+   * button modes
+   * kill window
+   * print graphic
+   * print ensemble
+
+----------------------------------------------------------------------------
+
+32.2  xwaves symbols
+
+----------------------------------------------------------------------------
+
+   32.2.1  Global symbols
+   32.2.2  Objebct symbols
+
+----------------------------------------------------------------------------
+
+32.2.1  Global symbols
+
+This list is in alphabetical order, except that globals now considered
+obsolete or quite arcane are listed in a group at the end.
+
+List of Global symbols for xwaves
+
+   * append_extensions
+   * attachments
+   * blowup_op
+   * c_range_offset
+   * colormap
+   * command_step
+   * commandname
+   * ctlwin_iconized
+   * ctlwin_x
+   * ctlwin_y
+   * cross_level
+   * debug_level
+   * def_header
+   * do_color
+   * dont_save_sgrams
+   * edit_ganged
+   * ens_print_atts
+   * f0_min
+   * f0_plot_specs
+   * f0_range
+   * f0_size
+   * first_x
+   * find_crossing
+   * first_y
+   * funcname
+   * h_spect_rescale
+   * image_clip
+   * image_range
+   * init_file
+   * inputname
+   * invert_dither
+   * left_op
+   * line_type
+   * max_buff_size
+   * middle_op
+   * min_spec_height
+   * min_spec_width
+   * nb_spect_params
+   * objectname
+   * objects
+   * output_dir
+   * outputname
+   * overlay_as_number
+   * overlayname
+   * play_prog
+   * plot_max
+   * plot_min
+   * print_graphic_command
+   * print_graphic_file
+   * print_graphic_orientation
+   * print_graphic_printer
+   * print_graphic_resolution
+   * print_graphic_scale
+   * print_graphic_type
+   * print_only_plot
+   * readout_bar_height
+   * redraw_on_release
+   * ref_size
+   * ref_start
+   * ref_step
+   * remote_input_path
+   * remote_output_path
+   * remote_path
+   * reticle_grid
+   * rewrite_after_edit
+   * s_range_offset
+   * samp_range_prefix
+   * scroll_ganged
+   * scrollbar_height
+   * sgram_prog
+   * shorten_header
+   * show_labels
+   * show_processes
+   * show_vals
+   * sig_max_override
+   * socket_port
+   * spec_left_op
+   * spec_middle_op
+   * spect_interp
+   * spect_rescale_scope
+   * temp_path
+   * time_range_prefix
+   * use_dsp32
+   * v_spect_rescale
+   * verbose
+   * wave_height
+   * wave_width
+   * wb_spect_params
+   * x_increment
+   * y_increment
+   * zoom_ganged
+   * zoom_ratio
+   * ARIEL_16
+   * ARIEL_HK
+   * dsp32_wait
+   * fea_sd_special
+   * options
+   * P8574_type
+   * write_common
+
+----------------------------------------------------------------------------
+
+32.2.2  Object symbols
+
+----------------------------------------------------------------------------
+
+Gettables
+
+List of gettable view-specific symbols
+
+   * b_marker_chan
+   * b_marker_yval
+   * cursor_channel
+   * cursor_channels
+   * cursor_samp
+   * cursor_label
+   * cursor_time
+   * cursor_value
+   * cursor_values
+   * cursor_yval
+   * dur_samp
+   * dur_seconds
+   * dur_time
+   * file
+   * files
+   * height
+   * is_iconized
+   * l_mark_samp
+   * l_mark_time
+   * l_marker_samp
+   * l_marker_samp_from_start
+   * l_marker_time
+   * lmsfs
+   * loc_x
+   * loc_y
+   * mark_range_samp
+   * mark_range_time
+   * mark_reference
+   * name
+   * new_files
+   * object_commands
+   * objects
+   * operators
+   * overlays
+   * r_mark_samp
+   * r_mark_time
+   * r_marker_samp
+   * r_marker_time
+   * range_chan
+   * range_samp
+   * range_time
+   * range_yval
+   * sec/cm
+   * settables
+   * t_marker_chan
+   * t_marker_yval
+   * val/cm
+   * variables
+   * view_channels
+   * view_end_time
+   * view_end_yval
+   * view_start_time
+   * view_start_yval
+   * waves_commands
+   * width
+
+----------------------------------------------------------------------------
+
+Settables
+
+List of settable view-specific symbols
+
+   * b_marker_chan
+   * b_marker_yval
+   * background
+   * channels
+   * cursor_channel
+   * cursor_time
+   * cursor_yval
+   * edit_ganged
+   * file
+   * h_rescale
+   * invert_dither
+   * l_marker_time
+   * left_op
+   * line_color
+   * line_type
+   * mark_reference
+   * middle_op
+   * move_op
+   * overlay_as_number
+   * page_step
+   * plot_max
+   * plot_min
+   * r_marker_time
+   * readout_bar_height
+   * redraw_on_release
+   * rescale_scope
+   * reticle_on
+   * rewrite_after_edit
+   * scroll_ganged
+   * scrollbar_height
+   * shorten_header
+   * show_labels
+   * show_vals
+   * spect_interp
+   * t_marker_chan
+   * t_marker_yval
+   * v_rescale
+   * value_offset
+   * value_scale
+   * zoom_ganged
+   * zoom_ratio
+
+----------------------------------------------------------------------------
+
+Chapter 33
+
+xlabel quick reference
+
+This chapter lists all the commands and symbols for xlabel. No further
+explanation is given. For more information see the comprehensive reference
+part of the full manual, or the introductory chapters. See chapter 28.
+
+----------------------------------------------------------------------------
+
+   33.1  xlabel command reference
+   33.2  xlabel symbols
+
+----------------------------------------------------------------------------
+
+33.1  xlabel command reference
+
+The following commands may be sent to xlabel via the xwaves send  command.
+The basic syntax is:
+
+     waves send function xlabel op <command for xlabel>
+
+The format for commands to xlabel is:
+
+     xlabel command [keyword value] [keyword value] ...
+
+List of commands for xlabel
+
+activate
+     file name fields
+kill
+     name file
+labelfile
+     (see make)
+labelmenu
+     menufile name file
+make
+     labelfile file color name signal menufile label_height font fields
+mark
+     color file label replace_field time
+print
+
+quit
+
+save_globals
+     output
+set
+     (any xlabel variable)
+unload
+     name file
+
+----------------------------------------------------------------------------
+
+33.2  xlabel symbols
+
+The following symbols are available to control the behavior of xlabel.
+
+List of symbols for xlabel
+
+   * xlabel_ctlwin_x
+   * xlabel_ctlwin_y
+   * xlabel_fields
+   * xlabel_font
+   * xlabel_frame_hoff
+   * xlabel_frame_voff
+   * xlabel_insert_mode
+   * xlabel_labelfile
+   * xlabel_label_height
+   * xlabel_menufile
+   * xlabel_name
+
+----------------------------------------------------------------------------
+
+Chapter 34
+
+xspectrum quick reference
+
+This chapter lists all the commands and symbols for xspectrum. No further
+explanation is given. For more information see the comprehensive reference
+part of the full manual, or the introductory chapters. See chapter 29.
+
+----------------------------------------------------------------------------
+
+   34.1  xspectrum command reference
+   34.2  xspectrum symbols
+
+----------------------------------------------------------------------------
+
+34.1  xspectrum command reference
+
+The following commands may be sent to xspectrum via the xwaves send
+command. The basic syntax is:
+
+     waves send function xspectrum op <command for xspectrum>
+
+The format for commands to xspectrum is:
+
+     xspectrum command [keyword value] [keyword value] ...
+
+List of commands for xspectrum
+
+kill
+
+mark
+     file time rstart rend
+save_spectrum
+     output
+print
+
+make
+     name file time rstart rend
+quit
+
+save_globals
+     output
+set
+     (any xspectrum variable)
+
+----------------------------------------------------------------------------
+
+34.2  xspectrum symbols
+
+The following symbols are available to control the behavior of xspectrum.
+
+List of symbols for xspectrum
+
+   * debug_level
+   * xspectrum_a_autozoom
+   * xspectrum_analysis_type
+   * xspectrum_cep_cutoff
+   * xspectrum_cep_liftering
+   * xspectrum_cep_trans
+   * xspectrum_ctlwin_x
+   * xspectrum_ctlwin_y
+   * xspectrum_datwin_forward
+   * xspectrum_datwin_height
+   * xspectrum_datwin_width
+   * xspectrum_datwin_x
+   * xspectrum_datwin_y
+   * xspectrum_f_autozoom
+   * xspectrum_formants
+   * xspectrum_harmonic_cursors
+   * xspectrum_horiz_cursors
+   * xspectrum_inv_filt_dur
+   * xspectrum_inv_filt_integ
+   * xspectrum_lpc_order
+   * xspectrum_max_fft_size
+   * xspectrum_max_lpc_order
+   * xspectrum_plot_scale
+   * xspectrum_preemp
+   * xspectrum_range_db
+   * xspectrum_reference_level
+   * xspectrum_reticle
+   * xspectrum_window_limits
+   * xspectrum_window_size
+   * xspectrum_window_type
+
+----------------------------------------------------------------------------
+
+Chapter 35
+
+xmarks quick reference
+
+This chapter lists all the commands for xmarks. No further explanation is
+given. For more information see the comprehensive reference part of the full
+manual, or the introductory chapters. See chapter 30.
+
+The basic syntax is:
+
+     waves send function xmarks op <command for xmarks>
+
+The format for commands to xmarks is:
+
+     xmarks command [keyword value] [keyword value] ...
+
+List of commands for xmarks
+
+make
+     name
+read
+     file
+write
+     file
+mark
+     time
+
+----------------------------------------------------------------------------
+
+Chapter 36
+
+xchart quick reference
+
+This chapter lists the commands and symbols for xchart that are new in
+comparison to xlabel. No further explanation is given. For more information
+see the comprehensive reference part of the full manual, or the introductory
+chapters. See chapter 31.
+
+----------------------------------------------------------------------------
+
+   36.1  xchart command reference
+   36.2  xchart symbol reference
+
+----------------------------------------------------------------------------
+
+36.1  xchart command reference
+
+The commands for xchart are a superset of the commands for xlabel. This
+chapter gives only the new commands. The following commands may be sent to
+xchart via the xwaves send  command in addition to the commands for xlabel.
+The basic syntax is:
+
+     waves send function xchart op <command for xchart>
+
+The format for commands to xchart is:
+
+     xchart command [keyword value] [keyword value] ...
+
+List of commands for xchart
+
+kill
+     name file chartfile
+make
+     file chartfile color name signal menufile chartmenu label_height font
+     fields
+
+For the other commands see chapter 33.
+
+----------------------------------------------------------------------------
+
+36.2  xchart symbol reference
+
+See chapter 33.
+
+----------------------------------------------------------------------------
+
+Chapter 37
+
+Glossary
+
+This chapter describes the terminology used in the xwaves manual (and this
+reference guide).
+
+attachments :
+     A program that communicates with xwaves to perform specific tasks.
+     These programs are separate UNIX programs, but they cannot be run
+     without xwaves running. Currently there are 4 attachments: xlabel,
+     xspectrum, xmarks, and xchart. The attachments have a command language
+     of their own. Commands can be sent to them via the xwaves send command.
+boolean :
+     In the context of xwaves variable assignments, a boolean is FALSE  if
+     it has the value 0 and TRUE  if it has any non-zero value.
+commands :
+     Commands are members of a distinguished, permanent set of character
+     strings (with no embedded spaces) that provides a means for controlling
+     xwaves from other programs, or via typed lines in the xwaves main
+     control panel. These commands may also be associated with buttons on
+     xwaves button panels. xwaves commands are divided into two categories:
+     ``global'' or ``waves'' commands and ``object'' commands. waves
+     commands are sent to the program xwaves itself and cause some
+     program-wide impact. View or object commands are sent to a particular
+     display window of a display object and usually perform operations that
+     have impact only on the display window or its object. The op command
+     provides command-type access to operators (see below). See chapter 26
+     for further details. See also below under object commands and waves
+     commands.
+cursors :
+     These are the lines on data display windows that move when the mouse
+     pointer is inside of the frame of a display window. For a given display
+     object, the cursor representations in all display window are linked so
+     that moving the pointer in one display window, causes all data cursors
+     to move in step in both time and amplitude (frequency) domains.
+     Cursors, marks and markers may be positioned independently in each data
+     object.
+display object, data object (or object) :
+     Set of display windows opened under the same ``object'' name. The
+     object name is specified in the waves+ commands that are used to create
+     display windows. The object name defaults to the name in the OBJECT
+     name: field in the Main Control Panel if not explicitly specified when
+     creating the display window.
+
+     All windows in a display object share the same set of marks and markers
+     and have their time/frequency/amplitude cursors synchronized.
+display window :
+     A single window which is either an image or a waveform window.
+external process (or program) :
+     This term refers to any program that works in conjunction with xwaves
+     to accomplish your goal. A major mode for functional extension of
+     xwaves is calling other programs from xwaves menus, button panels, etc.
+     to compute some result that itself may then become an xwaves data
+     display window. Many ESPS programs can serve in this capacity, but also
+     programs and shell scripts written by yourself or others.
+image window :
+     A window that displays spectrogram-like plots. Records are displayed
+     horizontally, and tracks(channels) are displayed vertically. Color is
+     used to differentiate between amplitude values in the tracks of the
+     signal displayed.
+markers :
+     Each data display window has four markers, referred to as top, bottom,
+     left and right. These may be moved in the display window by a variety
+     of means, including using the mouse pointer and buttons. The marker
+     positions in a display window are indicated by dashed lines extending
+     all of the way across the display window. The left and right markers
+     are often referred to as the vertical markers. The top and bottom ones
+     are the horizontal markers. Many xwaves operators perform their
+     functions on the region of data delimited by the markers. Marker
+     positions are displayed consistently in all display windows comprising
+     a data object. See the section ``Marking Segments'' of the full manual.
+marks :
+     Each display object may have a collection of time ``marks'' on the
+     displays. These may be placed anywhere in time and may have any color
+     you choose. They have no ``built-in'' meaning to xwaves, but you have
+     access to their attributes via symbols in the add_op command. Thus, you
+     may construct custom operators based on the locations of these marks.
+     Attachments, like xlabel, xchart and xmarks, use xwaves' mark facility
+     to represent the segment boundaries which these attachments manage. You
+     can place marks using the mark  command. See section 26.4 or 27.3. Note
+     the difference between markers and marks.
+menu-operator lists :
+     These are named lists, maintained by xwaves and possibly augmented by
+     you, that associate names with operations. xwaves comes with some menu
+     operators defined. These are the default data display window menus you
+     see when xwaves runs with no customization. The add_op  command,
+     described in detail in section 26.2, permits definition of custom
+     operators. There are three distinguished list names: wave, for
+     operators that may appear on menus of waveform data display windows,
+     spect, for operators that may appear on spectrogram display window
+     menus, and all, for operators that can appear on all data display
+     window menus. The add_op command allows generation of other named lists
+     (with the menu specification). Operators defined on any of these other
+     lists are accessible for many purposes, but will never appear on any
+     data display window menu.
+object :
+     See under display object.
+object commands :
+     These commands are always explicitly directed to an existing display
+     object by having the object name be the first word on the command line.
+     View commands cannot be issued if no display object exists. See the
+     chapter ``The waves+ Command Language'' of the full manual.
+operators :
+     Operators are the functions xwaves knows of. xwaves knows about
+     functions either because they are built-in or because they have been
+     defined through the add_op  command. Operators implement the functions
+     invoked when menu items are selected from data display window menus.
+     They also implement functions that may be directly bound to keys on the
+     keyboard. Many operators perform their function on the region of a
+     signal delimited by the left, right, top and bottom data display window
+     markers. Internal to xwaves, operators exist on menu-operator lists
+     that may be augmented or modified by using the add_op command. New
+     operator definitions can be comprised of xwaves commands,
+     externally-called programs, or both. See the add_op command in section
+     26.2.
+pointer :
+     This refers to the arrow, or similar figure used to indicate the active
+     position of the mouse on the window display screen. When this pointer
+     enters an xwaves data display window, it begins to move the xwaves
+     cursors. In general this also fronts the window (unless you changed
+     specific X resources).
+quoted string :
+     In several contexts this term comes up to describe the type of
+     character string that may be used (e.g. as the name of a menu item). A
+     quoted string may simply be written verbatim if:
+       1. it contains no blanks,
+       2. it does not start with a double quote ",
+       3. it contains blanks (embedded spaces), but is the last item on a
+          command line.
+     Otherwise, enclose the string in double quotes. Between the delimiting
+     double quotes, use the pair reverse-slash double-quote (to denote a
+     double quote character that is to be part of the string). In the same
+     context, use a pair of reverse slashes (\\) to denote a single reverse
+     slash character.
+reticle :
+     This refers to the tic-marks, grid lines, borders and numeration that
+     are optional decoration on xwaves' data display windows. The resolution
+     of the reticles adjusts as the display window is resized or zoomed so
+     as to maintain a reasonable density of marks and numbers.
+scrollbars :
+     At the top of each xwaves data display window is a horizontal region we
+     refer to as the scrollbar. It is mouse sensitive and may be moved in
+     various ways by pressing the left, middle and right mouse buttons.
+     (Strictly speaking, these operations are ``jumping'' rather than
+     ``scrolling'', but the used paradigm is the same as the ``scrollbars''
+     typical of text displays in various other X applications).
+simple quoted string :
+     A simple quoted string is similar to a quoted string with one
+     exception: In the case where multiple space-separated items are present
+     without an open double quotes, the simple quoted string type assumes
+     that only the first item is the argument, whereas the quoted string
+     type assumes the remainder of the line is the argument. Simple quoted
+     strings are used to represent, among other things, menu item names
+     which may consist of single or multiple words.
+view :
+     Word used in commands to refer to display window.
+waveform window :
+     A window that displays two-dimensional signals, possibly with multiple
+     channels. The horizontal axis represents time, the vertical a scalar
+     value.
+waves commands :
+     These are commands directed at the program xwaves itself. Formally,
+     such commands should always begin with the word waves. However, this
+     requirement is relaxed for convenience, so that if the xwaves' command
+     interpreter is sent a string that does not begin with the name of any
+     object known to it (these include waves and any current display
+     object), it assumes the command was destined for the object waves, i.e.
+     the program itself. See the chapter ``The waves+ Command Language'' of
+     the full manual.
+
+----------------------------------------------------------------------------

@@ -1,0 +1,291 @@
+.\" Copyright (c) 1990 Entropic Speech, Inc. All rights reserved.
+.\" @(#)dtw.1	1.3 4/2/97 ERL
+.TH DTW 1\-ESPS 12/21/90
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+dtw \- Dynamic time warping comparison of two sequences.
+.sp
+.SH "SYNOPSIS"
+.B dtw
+[
+.BI \-P " param"
+] [
+.BI \-f " sequence_field"
+][
+.BI \-b " best_so_far"
+][
+.BI \-d " delta"
+][
+.BI \-c " distance_table_file"
+][
+.BI \-t " distance_table_field"
+][
+.BI \-r " distance_table_recno"
+][
+.BI \-x " debug_level"
+]
+.I reference.fea
+.I test.fea
+.I results.fea
+.sp
+.SH "DESCRIPTION"
+The program \fIdtw\fP reads a test and a reference sequence from two 
+FEA (5-ESPS) files and
+uses dynamic time warping to find a distance between them.
+A constrained reordering of the reference sequence is performed
+to find the smallest distance between the 
+sequences. This distance is found using the functions
+\fIdtw_l2\fP(3-ESPS) or \fIdtw_tl\fP(3-ESPS) and the numerical result
+(a positive number) is echoed to standard output. 
+.PP
+The sequences are read from the field \fIsequence_field\fP from
+both \fItest.fea\fP and \fIreference.fea\fP.  
+The elements in the sequences can be positive integer codeword 
+indicess or 
+vectors of real numbers.  By default, \fIdtw\fP assumes
+that \fIsequence_field\fP is a vector of real numbers of data type
+FLOAT.  The routine \fIdtw_l2\fP (3\-\s-1ESPS\s+1) is used
+to find the time warping distance 
+based on the euclidean distance between the vectors in the
+sequences. In this case, \fIsequence_field\fP must
+have the same dimension in each file.
+.PP
+When the \fB\-c\fP option is specified, \fIdtw\fP assumes
+that \fIsequence_field\fP is a one dimensional field of data type
+LONG.  This field is read from both files to form 
+sequences of positive integers.
+The field \fIdistance_table_field\fP is read from record
+\fIdistance_table_recno\fP of the FEA_VQ (5-ESPS) file
+\fIdistance_table_file\fP to obtain a table of    
+distances between elements in the sequence. The dynamic time
+warping distance between the sequences is based
+on distances between integers in the sequences  as found from
+the distance table.  An intended application
+of this is the comparison of vector quantized sequences obtained
+by \fIvq\fP (1\-\s-1ESPS\s+1).  
+The  program \fIcbkd\fP (1\-\s-1ESPS\s+1)
+can be used to generate \fIdistance_table_file\fP from the codebook
+used by \fIvq\fP.
+.PP
+The file \fIresults.fea\fP is optional.
+If it is specified, \fIdtw\fP 
+creates a tagged FEA file of that name and fills it with information
+about the dynamic time warping comparison.  This information
+is found by backtracking after the dynamic programing 
+comparison is complete, so 
+\fIdtw\fP finishes quicker if \fIresults.fea\fP is not created.
+.PP
+If backtracking information is to be written to \fIresults.fea\fP,
+the best alignment of the reference sequence with the test
+sequence is found from information stored during 
+the dynamic programming distance computation.
+The records of \fIreference.fea\fP are copied to \fIresults.fea\fP 
+in the order specified by this alignment, and the 
+field \fImapping\fP in the output record points back to 
+the source reference record.
+A new field, \fIdtw_distance\fP, of data type DOUBLE
+is added which contains the distance from
+the vector \fIsequence_field\fP in the current vector to the
+vector \fIsequence_field\fP in the corresponding record of \fItest.fea\fP.
+.PP
+The option \fIbest_so_far\fP is used when comparing \fItest.fea\fP
+to many reference files.  If 
+intermediate values of the dynamic time warping distance exceed 
+\fIbest_so_far\fP during computation, the dynamic programmming 
+comparision halts. \fIDtw\fP then echos \fIbest_so_far\fP to 
+standard out, and the file \fIresults.fea\fP is not created.  
+.PP
+The parameter \fIdelta\fP allows the time warping comparison to 
+begin elsewhere than the initial points in each sequence and end
+at points other than the last in the sequences (see the function
+\fIdtw\fP (3-ESPS) for a complete description).  If \fIdelta\fP=0
+(default), the time warping comparison forces the endpoints
+to be aligned.  By allowing \fIdelta\fP to be non-zero, it is possible
+to account for errors in the detection of the end points of sequences.
+.PP
+Not all sequences of arbitrary lengths can be compared
+(see \fIdtw\fP (3-ESPS) and [2]). If the record lengths of \fItest.fea\fP
+and \fIreference.fea\fP are such that dynamic time warping cannot
+be performed, \fIdtw\fP echos to standard out the value 
+\fIbest_so_far\fP, if it is provided, 
+or DBL_MAX (see the include file <esps/limits.h>), if it is not.  If
+\fIdebug_level\fP is greater than 0, a warning is also issued.
+.PP
+The files \fItest.fea\fP and \fIreference.fea\fP must be specified,
+and standard input is not allowed. \fIDtw\fP will write the backtracking
+information to standard output if "-" is used for \fIresults.fea\fP. 
+.sp
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP
+.BI \-P " param"
+Uses the parameter file \fIparam\fP, rather than the default, which is \fIparams\fP.
+.TP
+.BI \-f " sequence_field" 
+Name of field in \fItest.fea\fP and \fIreference.fea\fP from which test and
+reference sequences are read.  If \fB\-c\fP option is specified, the field
+must contain a single integer of type LONG; the default field name is
+\fIspec_param_cwndx\fP and the dynamic time warping comparison is performed by
+\fIdtw_tl\fP (3\-\s-1ESPS\s+1).  If \fB\-c\fP is not specified, the field
+must be of data type FLOAT and have the same dimension in
+each file; the default field name is \fIspec_param\fP and the dynamic time
+warping comparison is performed by \fIdtw_l2\fP (3\-\s-1ESPS\s+1).
+.TP
+.BI \-b " best_so_far"
+If set, \fIdtw\fP monitors the dynamic programing distance comparison
+to see if the distance exceeds this value during computation.  If it does, 
+the comparison stops, and \fIdtw\fP returns this value.
+.TP
+.BI \-d " delta" 
+If set, the comparison algorithm may ignore the first and last 
+\fIdelta\fP vectors in the reference sequence when finding the closest
+distance to the test sequence.  For a full explanation,
+see \fIdtw\fP (3-ESPS).
+.TP
+.BI \-c " distance_table_file"
+The FEA_VQ file \fIdistance_table_file\fP
+should contain a two dimensional, 
+square, field \fIdistance_table_field\fP of data type DOUBLE.
+This field is read from record \fIdistance_recno\fP to form a 
+\fBdim\fP x \fBdim\fP array of distances,
+where the  value \fBdim\fP is taken from the FEA_VQ defined item 
+\fIcurrent_size\fP in the same record.
+The dimension \fBdim\fP is used to check the labels read from
+the field \fIsequence_field\fP.  If the labels fall outside the
+range [0,\fBdim\fP-1], \fIdtw\fP warns and exits.  The file
+\fIdistance_table_file\fP can be created from a FEA_VQ codebook file 
+using \fIcbkd\fP (1-ESPS).  
+.TP
+.BI \-t " distance_table_field"
+If the \fB-t\fP option is specified, the table of distances is read
+from field \fIdistance_table_field\fP in record \fIdistance_recno\fP of
+file \fIdistance_table_file\fP.  The default name of the file read is 
+"distance_table". 
+.TP
+.BI \-r " distance_table_recno"
+If the \fB-c\fP option is specified, the table of distances is read
+from field \fIdistance_table_field\fP in record 
+\fIdistance_table_recno\fP of file \fIdistance_table_file\fP.  
+By default, the last record of \fIdistance_table_file\fP is read.
+.TP
+.BI \-x " debug_level"
+A positive value causes debugging output to be printed on the standard
+error output. Larger values give more output.  The default is 0, for
+no output.
+.sp
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not required to be present; there are default
+values which will apply.  If the parameter file does exist, the following
+parameters are read:
+.TP
+.I sequence_field
+.IP
+Name of field from which test and reference sequences are read; see
+the description of the \fB\-f\fP option. This
+parameter is not read if the \fB\-f\fP option is used.
+.TP
+.I best_so_far
+.IP
+Specifies a threshold value for the dynamic time warping distance. See
+the description of the \fB\-b\fP option.  This parameter is not read if
+the \fB\-b\fP option is used.
+.TP
+.I delta
+.IP
+Allows the comparison algorithm to ignore the first and last \fIdelta\fP
+points of the reference sequence in finding the closest distance to the
+test sequence. See the description of the \fB\-d\fP option.
+This parameter is not read if the \fB\-d\fP option is used.
+.TP
+.I distance_table_file
+Name of FEA_VQ file from which distance table is read to perform dynamic
+time warping comparison between sequences of indices.  This parameter is
+not read if the \fB\-c\fP option is used.  If this parameter is used, \fIdtw\fP
+acts as if the file name was obtained with the \fB\-c\fP option; see
+the \fB\-c\fP option description.
+.TP
+.I distance_table_field
+If either the \fB\f-c\fP option or the \fIdistance_table_file\fP
+parameter is used, the distance table is read from the field
+\fIdistance_table_field\fP.  This parameter is not read if the
+\fB\-t\fP option is used.
+.TP
+.I distance_table_recno
+If either the \fB\-c\fP option or the \fIdistance_table_file\fP
+parameter is used, the distance table is read from record
+\fIdistance_table_recno\fP of the specified file.  This parameter is not
+read if the \fB\-r\fP option is used.
+.TP
+.I debug_level
+.IP
+A positive value causes debugging output to be printed on the standard
+error output. Larger values give more output.  This parameter is not read
+if the \fB\-x\fP option is used.
+.sp
+.SH "ESPS COMMON"
+ESPS Common is not read or written.
+.sp
+.SH ESPS HEADER
+If \fIresults.fea\fP is specified, the FEA file header of \fIreference.fea\fP 
+is used as its header. The headers of \fIreference.fea\fP and
+\fItest.fea\fP are added as source file headers,
+and the input line is added as a comment.
+.PP
+\fIDtw\fP writes the following values into the specified generic header items
+in the output FEA file:
+.nf
+.sp
+\fIdtw_best_so_far\fP = best_so_far
+\fIdtw_delta\fP = delta
+\fIdtw_result\fP 
+\fIdtw_sequence_field\fP = sequence_field
+\fIdtw_distance_file\fP = distance_table_file
+\fIdtw_distance_field\fP = distance_table_field
+\fIdtw_distance_recno\fP = distance_table_recno
+.sp
+.fi
+The fields \fIdtw_sequence_field\fP and \fIdtw_distance_file\fP,
+\fIdtw_distance_field\fP, 
+are data type STRING, 
+\fIdtw_delta\fP, \fImapping\fP, and \fIdtw_distance_recno\fP are data type LONG, 
+and \fIdtw_best_so_far\fP is data 
+type DOUBLE, as is \fIdtw_result\fP, which contains the numerical 
+result of the dynamic time warping comparison.  The fields
+\fIdtw_distance_file\fP, \fIdtw_distance_field\fP and
+\fIdtw_distance_recno\fP  
+are added only if the \fB\-c\fP option 
+or the \fIdistance_table_file\fP parameter is used.
+.sp
+.SH "SEE ALSO"
+.PP
+.nf
+\fIcbkd\fP(1\-\s-1ESPS\s+1), \fIvq\fP(1\-\s-1ESPS\s+1), \fIdtw_l2\fP(3\-\s-1ESPS\s+1), \fIdtw_tl\fP(3\-\s-1ESPS\s+1), 
+FEA(5\-\s-1ESPS\s+1), FEA_VQ(5\-\s-1ESPS\s+1)
+.fi
+.sp
+.SH BUGS
+None known.
+.sp
+.PP
+.SH FUTURE CHANGES
+.sp
+.PP
+.SH REFERENCES
+[1] L.R. Rabiner, A.E. Rosenberg, S.E. Levinson 
+"Considerations in Dynamic Time Warping Algorithms for
+Discrete Word Recognition," I.E.E.E. Transactions on Acoustics,
+Speech, and Signal Processing, Vol. 26, No. 6, December 1978, 
+pp 575-582
+.sp
+[2] S.E. Levinson, "Structural Methods in Automatic Speech Recognition,"
+Proceedings of the I.E.E.E., Vol. 73, No. 11, November 1985, pp 1625-1650
+.sp
+.SH AUTHOR
+Program and manual pages by Bill Byrne.
+
+
+
+
+

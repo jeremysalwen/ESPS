@@ -1,0 +1,84 @@
+.lo
+.ce 2
+.b
+Using the ESPS Source
+.sp
+Document version: 1.3 6/6/90
+.sh 1 "Introduction"
+.pp
+This document describes the ESPS source directory and how to make use of
+it.   The enclosed source tape contains the complete source for ESPS,
+except for the utility function library.    In order to compile from
+this distribution, you must already have a binary ESPS installed (to
+pick up the portions of the library supplied in binary form).
+.pp
+Using this distribution, you can modify and recompile any ESPS user
+level program.  You can either install it into your existing ESPS
+installation overwriting the original version, or you can put the binary
+in some other location to preserve the original binary.
+.pp
+It is also possible to modify the signal processing library and
+recompile all user level programs using your modified library.
+.pp
+The most common use of source, however, is probably to find a program
+close to a new one you need to write and to use it as a starting point.
+.sh 1 "Reading the Tape"
+.pp
+The source tape is simply a Unix \fItar\fR tape containing a directory
+named \fIesps.src\fR.   You can read this into your system anywhere.
+Please remember that the source is protected by a license agreement
+executed by your organization and you should take reasonable steps to
+ensure that it is not available to people not covered by the license
+agreement.   
+.sh 1 "Source Directories"
+.pp
+With a few exceptions, each user level program is in a source directory
+of its own, along with a makefile and the manual page.    To compile this
+program, you simply change into this directory and do \fBemake\fR.   (Of
+course, \fI/usr/esps/bin\fR must be on your path.)   For example, to
+recompile \fIfft\fR do:
+.nf
+.ft CW
+% cd esps.src/fft
+% emake
+.ft R
+.fi
+.pp
+This command will recompile the \fIfft\fR program and leave the binary
+in the source directory.    To install the new \fIfft\fR binary into
+\fI/usr/esps/bin\fR do:
+.nf
+.ft CW
+% emake install
+.ft R
+.fi
+.pp
+If you want to remake one of our programs, but also save the original
+version, it might be best to copy the needed source directory and
+then rename the program.
+.pp
+The signal processing library is in a directory named \fIlib_sp\fR.  To
+modify this library, edit the desired C files in \fIlib_sp\fR and simply run
+\fBemake\fR in this directory.   This will compile the C files and
+update the library archive file, \fI/usr/esps/lib/libespsg.a\fR.   It
+might be a good idea to make a copy of the original
+\fI/usr/esps/lib/libespsg.a\fR.
+.pp
+After you modify the library, it might be desired to recompile all
+programs.   This is easily done, simply by running \fBemake install\fR
+while in \fIesps.src\fR, rather than one of the directories below this.
+You can also do \fBemake clean\fR to clean the source directories of
+object files.
+.sh 1 "Additional Information"
+.pp
+For additional information about compiling ESPS programs, see the
+document \fIEntropic Signal Processing System (ESPS) Programming
+Guidelines\fR, supplied with your ESPS manuals.
+.sp
+.TS
+box,center,tab(;);
+l | l.
+Entropic Research Laboratory, Inc.;Voice: 202 547-1420
+600 Pa. Ave. SE, Suite 202;FAX: 202 546-6648
+Washington, DC. 20003 USA;Email: esps@wrl.epi.com (uunet!epiwrl!esps)
+.TE

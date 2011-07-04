@@ -1,0 +1,238 @@
+.\" Copyright (c) 1987, 1989 Entropic Speech, Inc. All rights reserved.
+.\" @(#)addgenhd.3	1.12	29 Apr 1997	ESI
+.TH "ADD_GENHD" 3\-ESPSu 29 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+.nf
+add_genhd_d \- add a new generic header item of type double
+add_genhd_f \- add a new generic header item of type float
+add_genhd_l \- add a new generic header item of type long
+add_genhd_s \- add a new generic header item of type short
+add_genhd_c \- add a new generic header item of type char
+add_genhd_e \- add a new generic header item of type enumerated (coded)
+add_genhd_efile \- add a new generic header item of type EFILE (external ESPS file)
+add_genhd_afile \- add a new generic header item of type AFILE (external ASCII file) 
+.SH "SYNOPSIS"
+.ft B
+#include <esps/esps.h>
+.sp
+.nf
+double *
+add_genhd_d(name,ptr,size,hd)
+char *name;
+double *ptr;
+int size;
+struct header *hd;
+.sp
+float *
+add_genhd_f(name,ptr,size,hd)
+char *name;
+float *ptr;
+int size;
+struct header *hd;
+.sp
+long *
+add_genhd_l(name,ptr,size,hd)
+char *name;
+long *ptr;
+int size;
+struct header *hd;
+.sp
+short *
+add_genhd_s(name,ptr,size,hd)
+char *name;
+short *ptr;
+int size;
+struct header *hd;
+.sp
+char *
+add_genhd_c(name,ptr,size,hd)
+char *name;
+char *ptr;
+int size;
+struct header *hd;
+.sp
+short *
+add_genhd_e(name,ptr,size,codes,hd)
+char *name;
+short *ptr;
+int size;
+char **codes;
+struct header *hd;
+.sp
+char *
+add_genhd_efile(item_name,file_name,hd)
+char *item_name;
+char *file_name;
+struct header *hd;
+.sp
+char *
+add_genhd_afile(item_name,file_name,hd)
+char *item_name;
+char *file_name;
+struct header *hd;
+.fi
+.ft R
+.SH "DESCRIPTION"
+These functions
+create a new header item in the generic header item space of the ESPS
+file header pointed to by \fIhd\fR and 
+return a pointer to it.   
+.PP
+The following description applies to all of these functions, except 
+\fIadd_genhd_efile\fR and \fIadd_genhd_afile\fR.  For those functions, 
+see below.
+.PP
+If \fIptr\fR is NULL, then memory is allocated for the data.   If 
+\fIptr\fR is not NULL, then no memory is allocated and \fIptr\fR is
+taken as a pointer to the data area to use for the header item.  In
+either case, a pointer to the data area is returned by the function.
+Note that in the case of \fIptr\fR != NULL, it is not the \fIvalue\fR
+of the data at \fIptr\fR that is put into the header item, but its
+address is used as the data area.  So the value at the
+location pointed to by \fIptr\fR at the time of the \fIwrite_header\fR call
+will be the one saved in the header.  The size of the data area (number
+of elements in a vector, for example) must be given by \fIsize\fR.
+.PP
+If
+.I name
+is already defined as a generic header item in
+.I *hd,
+the existing definition is lost and replaced by a new definition.
+Data storage for the existing definition is not freed by
+.I add_genhd,
+so it is possible for storage allocated by
+.IR malloc (3C)
+or
+.IR calloc (3C)
+to be left unfreed but inaccessible.
+.PP
+If it is important to know whether
+.I name
+is already defined, use
+.IR genhd_type (3-ESPSu).
+For example, to conserve storage, one might want to use
+.I genhd_type
+and, if the result is not HD_UNDEF,
+apply
+.IR free (3C)
+to the pointer returned by
+.IR get_genhd (3-ESPS)
+befor calling
+.I add_genhd.
+This procedure is safe if the existing data storage was allocated by
+.IR read_header (3-ESPS),
+by
+.IR copy_header (3-ESPS),
+or by
+.I add_genhd
+with a NULL value for the argument
+.I ptr.
+It must not be followed
+if the existing data storage was explicitly supplied to a previous call of
+.I add_genhd
+and was not obtained from
+.I malloc
+or
+.I calloc.
+.PP
+In the case of \fIadd_genhd_c\fR, if the \fIsize\fR argument is zero,
+then \fIptr\fR is assumed to be a NULL-terminated character string and
+its length is used.   
+.PP
+\fIadd_genhd_e\fR is used to create a header field of type CODED.
+It must be passed a pointer to an array of character strings giving
+the possible values for the field (\fIcodes\fR).    
+This array, in a form required
+by \fIlin_search\fR(3\-ESPSu), is a NULL terminated array 
+of character strings (NULL terminated as usual).   A pointer to the
+user supplied data is stored in the header until the header it written
+out, so \fIcodes\fR should not be altered until after the
+\fIwrite_header\fR(3\-ESPSu) has been done.
+Note that when the value of a coded generic is obtained,
+the value is a short (i.e., use \fIget_genhd_s\fR);
+for the string representation,
+use \fIget_genhd_coded\fR.
+.PP
+.I Add_genhd_efile
+is used to create a generic header item of type EFILE (external ESPS file).  
+The
+name of an ESPS data file is stored by the header item.   By using
+\fIget_genhd_efile\fR, a pointer to the header of this file can be
+accessed.    Just the name can be returned with \fIget_genhd_efile_name\fR.   
+.PP
+.I Add_genhd_afile
+is used to create a generic header item of type AFILE (ascii file).  
+This file is normally an ascii data file that contains some additional 
+reference information associated with the ESPS data file.  A \fIget\fR
+function is available that attempts to open the file and returns a file
+stream pointer.
+.PP
+.I Add_genhd_efile
+and
+.I add_genhd_afile
+require three arguments.  \fIItem_name\fR, is the name of the header item to
+create, \fIfile_name\fR is the name of the ESPS data file to become an
+external ESPS file, and \fIhd\fR is a pointer to the header to
+put this generic header into.  
+The filename stored in the header item
+must be a full path.  If the character string pointed to by
+\fIfile_name\fR does not begin with a "/", then \fIadd_genhd_efile\fR
+prepends the current working directory onto the front of the supplied
+character string to form a full path.
+The function returns a pointer to the name of the external ESPS file
+(full path name).
+.PP
+The external filename can also be in the form of \fIhost:path\fR, where
+\fIhost\fR is the hostname of a node on a network and \fIpath\fR is a
+full path filename relative to that host.   When a hostname is used, the
+filename given must be a full path.
+.PP
+These functions should only be used on a header that is to be written out.
+In particular, they must be called after the creation of the header,
+either by \fInew_header\fR(3\-ESPSu), \fIcopy_header\fR(3\-ESPSu),
+or
+.IR read_header (3\-ESPSu),
+but before \fIwrite_header\fR(3\-ESPSu) is called.
+.SH "EXAMPLE"
+.nf
+\fI/* Create header */\fR
+double *p_zeta;
+float beta;
+char *mycodes[] = {"AD", "FILE", "DISK", NULL);
+short source;
+hd = new_header(FT_SD);
+\fI/* Add a header item called "zeta" that is a single (double *)/\fR
+\fI/* In this case, have the function allocate memory */\fR
+p_zeta = add_genhd_d("zeta",NULL,1,hd);
+\fI/* store some stuff into zeta */\fR
+*p_zeta = 56.4;
+\fI/* In another case, use beta, which is already allocated */\fR
+\fI/* beta may be given a value before or after the call */\fR
+(void)add_genhd_f("beta",&beta,1,hd);
+(void)add_genhd_e("source",&source,1,mycodes,hd);
+\fI/* create an item with an external ESPS file */\fR
+(void)add_genhd_efile("ext_file1","/usr/esps/data/file1",hd);
+\fI/* write the header out (after doing some other stuff, of course) */\fR
+write_header(hd,file);
+.fi
+.SH DIAGNOSTICS
+.PP
+An assertion failure occurs (see
+.IR spsassert (3-ESPSu)),
+and a message is printed,
+if \fIhd\fR or \fIname\fR is
+equal to NULL, or if \fIsize\fR is less than 1.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIgenhd_list\fR(3\-ESPSu), \fIgenhd_type\fR(3\-ESPSu), \fIget_genhd\fR(3\-ESPSu), 
+\fIgenhd_codes\fR(3\-ESPSu), \fIget_genhd_efile\fR(3\-ESPSu), 
+\fIget_genhd_efile_name\fR(3\-ESPSu), \fIget_genhd_afile\fR(3\-ESPSu), 
+\fIget_genhd_afile_name\fR(3\-ESPSu), \fIcopy_genhd\fR(3\-ESPSu),
+\fInew_header\fR(3\-ESPSu), \fIcopy_header\fR(3\-ESPSu), \fIread_header\fR(3\-ESPSu), 
+\fIspsassert\fR(3-ESPSu), calloc(3C), malloc(3C), free(3C)
+.fi
+.SH "AUTHOR"
+.PP
+Alan Parker

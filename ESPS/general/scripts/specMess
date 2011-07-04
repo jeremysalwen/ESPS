@@ -1,0 +1,12 @@
+#!/bin/sh
+tmp=$HOME/waves/tmp
+tex=$tmp/tex
+sig=$tmp/sig
+
+echo " " $* > $tex
+
+ebanner $tex $sig
+xwaves $sig &
+send_xwaves sig spectrogram file $sig height 300 width 1200
+rm -f $tex
+chmod a+w $sig

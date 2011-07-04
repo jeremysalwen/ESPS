@@ -1,0 +1,60 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of
+# Entropic Research Laboratory, Inc. Any reproduction, distribution,
+# or publication of this work must be authorized in writing by Entropic
+# Research Laboratory, Inc., and must bear the notice:
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc.
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc.
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended
+# publication of this source code.
+#
+# @(#)Sunmakeplots	1.8   6/24/91     ESI/ERL
+#
+# Written by:
+# Checked by:
+# Revised by: David Burton
+#
+# Brief description:  Sunview windows script for putting up plot windows
+# This demo requires the following demos to be run in advance if all 
+# of the plots are to come up: createfiles, specdemo, mlplotdemo, 
+# lpcdemo, filtdemo.
+
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+EPLOTDEV=suntools
+export EPLOTDEV
+
+if test `mach_type` = CONVEX
+ then
+  echo This script will fail if you do not have write permission on this directory.
+ else
+  if test ! -w . 
+    then
+	echo "You do not have write permission in this directory."
+	exit 1
+  fi
+fi
+echo "doing mlplot"
+mcd plot/page1 &
+echo "doing genplot"
+genplot -e0,15,2,10 -mv -X8 speech.fana
+echo "doing histogram"
+pplain -e5 speech.lsf | his -n64 -r100:600 - - | aplot -z -  &
+echo "doing plotspecs"
+plotspec signal.spec
+me_spec -n2049 signal.rc dsignal.spec
+plotspec -d dsignal.spec
+plotspec bandpass.spec
+echo "running select for scatplot files"
+rm -f sel1 sel2
+select -o sel1 -q"spec_param[2] + spec_param[3] > 0.2" speech.rc
+select -o sel2 -q"spec_param[2] + spec_param[3] < -0.2" speech.rc
+echo "doing scatplot"
+scatplot -e7,8 -X-1:1 -Y-1:1 sel1 sel2
+echo "doing plotsd"
+plotsd -P speech.sd
+echo "doing plotsgram, if you are on a color device then try the -M option"
+plotsgram speech.sgram &

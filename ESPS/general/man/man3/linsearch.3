@@ -1,0 +1,109 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)linsearch.3	1.6 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH LIN_SEARCH 3\-ESPSu 18 Apr 1997
+.SH NAME
+.nf
+lin_search \- case-insensitive search on a NULL-terminated array of strings
+lin_search2 \- case-sensitive search on a NULL-terminated array of strings
+.SH SYNOPSIS
+.ft B
+int
+.br
+lin_search(array, text)
+.br
+char *text, *array[];
+
+.br
+int
+.br
+lin_search2(array, text)
+.br
+char *text, *array[];
+.ft
+.SH DESCRIPTION
+.I lin_search
+and
+.I lin_search2
+search
+.I array,
+which is assumed to be a NULL-terminated array of character pointers.
+The functions return the index of the string in
+.I array
+that matches the string
+.I text.
+If there is no match, \-1 is returned.
+.I lin_search
+ignores the case of letters in
+.I text,
+but the strings in
+.I array
+must all be upper-case.
+.I lin_search2
+requires the string in
+.I array
+to match
+.I text
+exactly.
+.PP
+.I lin_search
+is intended to be used to get the numeric values
+associated with compile time
+.BR #define s
+used for analysis methods and codes.
+For each header item defined in \fI<esps/header.h>\fR that 
+takes a numeric value associated with a compile time \fB#define\fR,
+there is a NULL terminated array of strings that contains the string
+representations of those compile time values.   This array provides a
+run-time mapping between the \fB#define\fR names and the values.
+.PP
+.I lin_search2
+is suitable for searching for field names in the array
+.IR hd.fea \-> names
+in a FEA-file header,
+searching for CODED values in the arrays
+.IR hd.fea \-> enums [ i ]
+in a FEA-file header,
+and searching for CODED values in the array
+.I codes
+in a generic-header
+.RI ( gen_hd )
+structure.
+.SH EXAMPLE
+For the header item \fIequip\fR the possible values are (from
+\fI<esps/header.h>\fR):
+.nf
+\fB#define\fR EF12M	1
+\fB#define\fR AD12F	2
+\fB#define\fR DSC		3
+\fB#define\fR LPA11	4
+.fi
+.PP
+The following statement in the library defines the array
+\fIequip_codes\fR:
+.nf
+\fBstatic char\fR *equip_codes[] = {"NONE", "EF12M", "AD12F", "DSC", "LPA11", NULL};
+.fi
+.PP
+If the application program reads a string into \fItext\fR that should contain
+an equipment type, the the program can get the numeric code by:
+.nf
+\fI/* say text is "EF12M" */\fR
+equip_type = lin_search(equip_codes,text);
+\fI/* the function will return 1 */\fR
+.fi
+.PP
+The programmer must consult \fI<esps/header.h>\fR to get the valid
+values and the name of the array associated with each header item.
+The required \fBextern\fR declarations are in \fI<esps/header.h>\fR.
+.SH DIAGNOSTICS
+None.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+ESPS(5\-ESPS), FEA(5\-ESPS)
+.fi
+.SH AUTHOR
+Alan Parker

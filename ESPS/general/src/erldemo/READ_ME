@@ -1,0 +1,141 @@
+                Entropic Research Laboratory, Inc. 
+
+          Unix Signal Processing Software Demonstration
+
+
+This demonstration software provides a brief introduction to
+Entropic's signal processing software -- the Entropic Signal
+Processing System (ESPS), and the waves+ graphics interface.
+
+The tape contains a single tar image: the directory "entropic".  This
+can be loaded anywhere; root privileges are not required.  Extract the
+directory with "tar xvf /dev/rst8". Set your umask to 022 ("umask
+022") before reading the tar tape so that anyone can execute the demo.
+More restrictive umasks may break the demo for certain groups of
+users.  The demo only requires write permission in the directory /tmp,
+so changing the modes on the files to global read and execute
+permission only ("chmod -R 555 entropic") will not break the demo.
+
+Requirements and recommendations are as follows:
+
+	1) SPARC CPU running at least Sun OS 4.0.3 (must) 
+
+	2) color display (highly desirable, as many things will
+                          not work without one) 
+
+	3) 27 MB disk space (must) 
+
+	4) 8 MB memory (must), with 16 MB highly desirable
+
+	5) X Windows (Sun OpenWindows 1.0.1 or 2.0B are preferred, 
+           but vanilla X11-R4 should work)
+
+	6) swap space of at least 20 MB, preferably 30MB
+
+If Sun OpenWindows is installed, start the demo by executing the file
+ENTROPIC.  This will put up a command window from which the user can
+operate the demo.  Users can select various demo and voice output
+alternatives, and they can bring up some additional information about
+the software and the demo.
+
+If Sun OpenWindows is not installed, start the demo by executing 
+the file ENTROPIC.gen.  This has the additional effect of installing
+the XView fonts.  
+
+If you are using a SPARCstation I, the demo will sound much better if
+you go to the trouble to hook up an external speaker, instead of using
+the internal speaker.
+
+For more information about the demo, see the file "edemo.about" (this 
+file is one of those that can be viewed via the demo command window).  
+
+This demo has been tested on a Sun 4/110 and a SPARCstation I running
+Sun OS 4.0.3 and OpenWindows 1.0.1 or 2.0B.  Ideally, the CPU should
+have 16 MB of memory and 25-30 MB of swap space.  The demo will run 
+on some systems with as little as 8 MB of memory, but it can be 
+quite slow (particularly under OpenWindows 1.0.1).  
+
+The demo has been tested with the olwm window manager (both 1.0.1 and
+2.0B).  It should run with any ICCCM compliant window manager, but we 
+have not tested others.  
+
+In general, the performance of the demo varies as a function of the
+system configuration and load (CPU speed, disk speed, available
+memory, role of NFS, network traffic, swap space, other processes,
+etc.).  Since there is no foolproof method of synchronizing speech
+output with the actual appearance of particular windows, inadequate
+system resources may result not just in a slower demo, but in a
+confusing demo.
+
+If the demo is not smooth, try running it without speech output, as it
+is most reliable in this mode (it is also faster).  If there is
+considerable trouble, some system adjustments may be necessary; 
+see the recommendations below.
+
+After the final screen image is displayed, the demo attempts to
+refresh the entire screen (by a shell call to xrefresh).  On some
+systems, this will leave everything visible, but with a weird
+colormap.  In this case, just refresh manually from the root window.
+
+If additional swap space is needed, the following procedure can be
+used (by a super-user): First, create a swap file with mkfile(1).  For
+example, to create a 25MB swap file called "swapfile" in /home:
+
+	%mkfile -v 25M /home/swapfile
+
+Then, add an entry in /etc/fstab:
+
+	/home/swapfile  swap  swap rw  0 0 
+
+Then reboot the system.  
+
+On occasion, especially after frequent use, the demo may fail with
+various X Errors being reported in the console or other windows.  When
+this happens, it is best to exit the window manager and restart.  You
+may also need to install the revised cgsix segment driver installed
+(from /home/openwin/sys); this seems to be needed on certain
+SPARCstation models, but not others; without it, there can be many X
+errors.
+
+We have seen situations where clicking on the manual page button in
+the "Try waves+" demo hangs the window system. This is always cleared
+up by rebooting the machine, and it appears that the problem can be
+solved by increasing the number of allowed processes (increase
+"maxusers" in the kernel configuration file).
+
+For each loop through the demo, a log file is written in
+/tmp/erldemo.log.  Problems can often be tracked down by looking at
+this file.
+
+A single run of the demo takes between 5 and 8 minutes, depending
+on the system.  
+
+For more information or for help, please contact us:
+
+  Entropic Research Laboratory    Voice:     202-547-1420
+  600 Pennsylvania Ave., S.E. 	  VAX:       202-546-6648
+  Suite 202                       Internet:  esps@wrl.epi.com
+  Washington, D.C. 20003          uucp:	     ...uunet!epiwrl!esps
+  USA
+
+Particular contacts are:
+
+	John Shore (shore@wrl.epi.com)         [first choice]
+	Alan Parker (parker@wrl.epi.com)
+	David Burton (burton@wrl.epi.com)
+
+
+COPYRIGHT NOTICE
+================
+
+The programs, data files, and text files in this demo directory (and
+subdirectories) are the property of Entropic Research Laboratory, Inc.
+(Copyright (c) 1986-1990, Entropic Speech, Inc. and Entropic Research
+Laboratory, Inc.; All rights reserved).  The fonts are copyright Sun
+Microsystems.  The demo may be freely distributed and used by
+prospective customers to evaluate Entropic Software products or by Sun
+Microsystems employees to demonstrate the capabilities of workstations
+and windowing software.
+
+---
+1.11 6/19/90

@@ -1,0 +1,35 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)setsdtype.3	1.4 22 Oct 1987 ESI
+.TH SET_SD_TYPE 3\-ESPSu 22 Oct 1987
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+set_sd_type \- set the type codes in a ESPS sampled data file header
+.SH SYNOPSIS
+.ft B
+#include <esps/esps.h>
+.br
+void
+.br
+set_sd_type(hd,type)
+.br
+struct header *hd;
+.br
+int type;
+.ft
+.SH DESCRIPTION
+.I set_sd_type
+sets the type codes in the ESPS sampled data file header.   This
+determines the type representation used when the data is written and
+read from the SD file.
+The type is
+one of FLOAT, DOUBLE, LONG, SHORT, CHAR.   These values are defined in
+.I <esps/esps.h>.   
+.SH DIAGNOSTICS
+If \fIhd\fR does not point to a sampled data file header, then an
+error message is printed and the program is terminated with exit 1.
+.SH BUGS
+None known.
+.SH SEE ALSO
+ESPS(5\-ESPS), SD(5\-ESPS), get_sd_type(3\-ESPSu)
+.SH AUTHOR
+Alan Parker

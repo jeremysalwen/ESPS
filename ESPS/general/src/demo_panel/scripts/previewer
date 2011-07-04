@@ -1,0 +1,3 @@
+#!/bin/sh
+# @(#)previewer	1.1 6/18/91 ERL - script for previewer demo
+fbuttons -w "Data Previewer" -i preview -b5 -X300 -Y715 -Spreview.menu files/??.sd files/speech.sd files/*.sgram $*

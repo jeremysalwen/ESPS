@@ -1,0 +1,249 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)mbuttons.1	1.11 6/18/93 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  MBUTTONS 1\-ESPS 6/18/93
+.SH NAME
+.nf
+mbuttons \- create arbitrary screen buttons from menu file
+.fi
+.SH SYNOPSIS
+.B
+mbuttons
+[
+.BI \-b " but_per_row"
+] [
+.B \-c
+] [
+.B \-h
+] [
+.BI \-w " window_title"
+] [ 
+.BI \-i " icon_title"
+] [ 
+.BI \-q " quit_button"
+] [ 
+.BI \-Q " quit_label"
+] [ 
+.BI \-l " quit_command"
+] [ 
+.BI \-X " x_pos"
+] [ 
+.BI \-Y " y_pos"
+] [ 
+.BI \-x " debug_level"
+] [
+\fImenu_file\fP
+.SH DESCRIPTION
+.PP
+\fImbuttons\fP ("menu buttons") pops up an X window with screen
+buttons for invoking arbitrary Unix commands.  Specifications for the
+button names and associated commands are given in an ASCII file
+\fImenu_file\fP using the same format as menu files for the OPEN LOOK
+window manager \fIolwm\fP (same as \fIsunview\fP menu files).  If
+submenus are specified, they result in menu buttons with pull-down
+menus, or (if \-\fBc\fP is used) in a set of exclusive push-buttons 
+choices.  
+.PP
+The simplest case for \fImenu_file\fP is a file with two columns \-
+the button labels are taken from the first column and the
+corresponding commands are taken from the second column.  If blanks
+are needed in the button labels, use quotes to surround the string in
+the first column (e.g., "Display Header").  Do not use quotes in the
+command string unless they are part of the command (you may have to
+escape them).  More complicated cases can be created using the full
+syntax of \fIolwm\fP(1) menu files.  The only restriction is that
+there can only be one level of submenus \- i.e., each entry in the
+\fImenu_file\fP can itself specify a menu (either directly or by
+giving the full path to another menu file), but the specified submenu
+cannot have additional submenus.  Also, while the \fIolwm\fP command
+keyword DEFAULT is handled, others (PROPERTIES, REFRESH, FLIPDRAG,
+etc.)  are treated as ordinary strings by \fImbuttons\fP.  For details
+about the format of menu files, see \fIolwm\fP(1) \- the manual page
+is included in the ESPS distribution.  Also, see the section EXAMPLES.
+.PP
+By default, submenus yield menu buttons with pull-down menus (if a
+DEFAULT is specified, it becomes the default selection in the
+pull-down menu).  If the \-\fBc\fP option is used, sets of
+exclusive choice buttons are used instead of pull-down menus (if a
+DEFAULT is specified, the corresponding button comes up depressed); by
+default, the buttons are displayed vertically, but they will be
+displayed horizontally if the \-\fBh\fP is used.  Note that each set
+of exclusive choice buttons (corresponding to a submenu in the
+\fIolwm\fP menu file) is counted as one "button" in laying out the
+panel (see \-\fBb\fP).
+.PP
+\fImbuttons\fP looks for the named \fImenu_file\fP first in the
+current directory and then in $ESPS_BASE/lib/menus.  This default
+search path can be overriden by setting the \fIunix\fP environment
+variable ESPS_MENU_PATH. Since \fIfind_esps_file\fP (3\-\s-1ESPS\s+1)
+is used in implementing this behavior, environment variables
+(preceeded by the character $) can be embedded within the
+\fImenu_file\fP string.  
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-b " but_per_row \fR[10]\fP"
+Specifies the number of file buttons per row.  For example, if
+\fIbut_per_row\fP is set to 1, a single column of buttons will result.
+The optional quit button (\fB-q\fP) is not included in the count; if
+it is specified via \fB-q\fP or the environment variable
+BBOX_QUIT_BUTTON, it appears on a row by itself at the top of the
+panel.  Thus, a quit button may be added or removed without affecting
+the layout of the other buttons (see \fB-q\fP).
+.TP
+.B \-c
+Use a set of exclusive panel choice buttons for each \fIolwm\fP
+submenu instead of a menu button with a pull-down menu.  
+.TP
+.B \-h
+Lay out each set of panel choice buttons horizontally instead of
+vertically (this option has no effect unless \-\fBc\fP is used). 
+.TP 
+\fB\-w\fI window_title \fR["ESPS Button Panel"]
+Specifes a title for the \fImbuttons\fP window.  
+.TP 
+.BI \-i " icon_title \fR[mbuttons]"
+Specifies a title for the \fImbuttons\fP icon.  
+.TP
+.BI \-q " quit_button \fR[0]\fP"
+If non-zero, specifies that a "QUIT" button be included in the panel.
+If the \fIunix\fP environment variable BBOX_QUIT_BUTTON is defined,
+this results in a "QUIT" button being added even if \fIquit_button\fP
+is 0.  The main reason for providing global control via
+BBOX_QUIT_BUTTON is to facilitate usage on systems with window
+managers that do not provide an independent means for killing windows.
+.TP
+.BI \-Q " quit_label" \fR[QUIT]\fP"
+If a "QUIT" button is included (see \-\fBq\fP), the \fIQ\fP option
+specifies the label shown on the button.  This option has no effect if
+there there is not a quit button.
+.TP
+.BI \-l " quit_command"
+If a "QUIT" button is included, this option may be used to provide a
+command that is to be executed prior to quitting.  Any Unix command
+can be given as the argument of the \-\fBl\fP option.  This option has
+no effect if there there is not a quit button.  
+.TP 
+.BI \-X " x_pos"
+Specifies the x-position (in the root window) of the frame displayed
+by \fImbuttons\fP.  Both \fIx_pos\fP and \fIy_pos\fP must be specified
+and be non-negative; otherwise, the positioning will be left up to the
+window manager.  The standard XView \fB-Wp\fP and standard X11
+\fB-geometry\fP options can also be used to position the window.  
+.TP 
+.BI \-Y " y_pos"
+Specifies the y-position (in the root window) of the frame displayed
+by \fImbuttons\fP.  Both \fIx_pos\fP and \fIy_pos\fP must be specified
+and be non-negative; otherwise, the positioning will be left up to the
+window manager.  The standard XView \fB-Wp\fP and standard X11
+\fB-geometry\fP options can also be used to position the window.  
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If 
+.I debug_level
+is positive,
+.I mbuttons
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the  
+.I debug_level
+increases.  If \fIdebug_level\fP is 0 (the default), no messages are
+printed.  
+.SH ESPS PARAMETERS
+.PP
+ESPS parameter files are not used by the current version of
+\fImbuttons\fP.  
+.SH ESPS COMMON
+.PP
+ESPS Common is not processed by \fImbuttons\fP.  
+.SH FUTURE CHANGES
+.PP
+Add parameter file processing.  
+.SH EXAMPLES
+.PP
+Suppose one defines the simple script \fIxtestsd\fP as follows:
+.nf
+
+.ta .5i
+	#!/bin/sh
+	exprompt -P $ESPS_BASE/lib/Ptestsd tparams
+	testsd -Ptparams $1
+
+.fi
+This script creates a test signal in the file test.sd after the 
+user fills out a form generated by \fIexprompt\fP (1\-\s-1ESPS\s+1).  
+Now consider the following simple example of a menu file:
+.nf
+
+   "Make test signal"	exec xtestsd test.sd
+   "Play test signal"	exec splay test.sd
+   "xwaves+ on test signal"     exec xwaves+ test.sd
+
+.fi
+With this menu file as input, \fImbuttons\fP will pop up a window
+with three buttons (plus optional Quit button).  The first will 
+provide an interactive means for creating a test signal, the
+second will play the signal, and the third will run \fIxwaves\fP+ 
+on the signal.  
+.PP
+Here's a more elaborate example:  
+.nf
+.ta .25i 3.0i
+
+  "make play buttons"	exec fbuttons 
+  "test signal" MENU
+	"Play test signal" 	exec splay test.sd
+	"Make test signal" DEFAULT	exec xtestsd test.sd
+	"xwaves+ on test signal"	exec xwaves+ test.sd
+  "test signal" END
+  "plot3d example"	exec plot3d -r1:100 /usr/esps/demo/speech.sgram
+  "waves+ demo"		cd "/usr/esps/demo; ENTROPIC
+
+.fi
+Here, we've made the three buttons from the first example into a 
+submenu.  This causes the second button to have the label "test
+signal"; right-mousing it brings up a pull-down menu with the three
+entries from the previous example.  The second item of the three is 
+the default (i.e., it's what you get if you just left-mouse the "test
+signal" button.  An alternative would be to introduce the sumenu 
+indirectly, as follows: 
+.nf
+.ta .25i 3.0i
+
+   "make play buttons"	exec fbuttons 
+   "test signal" MENU	/h1/shore/demo/testsig.men
+   "plot3d example"	exec plot3d -r1:100 /usr/esps/demo/speech.sgram
+   "waves+ demo"		cd "/usr/esps/demo; ENTROPIC
+
+.fi
+.SH ERRORS AND DIAGNOSTICS
+.PP
+\fImbuttons\fP will exit with an error message if it can't connect 
+to the specified X server (DISPLAY variable or standard -display
+option).  
+.PP
+\fImbuttons\fP will exit with error messages if it can't create the 
+button window for various reasons (e.g., no valid list of files, 
+invalid or empty file given to \fB-E\fP or \fB-M\fP, etc.)  
+.PP
+If, after pressing a button, \fImbuttons\fP (or /bin/sh) claims
+that the command is not found, you may have some extraneous quote
+characters in the menu file (remember to not surround the command
+string with quotes).  
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+\fIfbuttons\fP (1\-\s-1ESPS\s+1), \fIxtext\fP (1\-\s-1ESPS\s+1),
+\fIexprompt\fP (1\-\s-1ESPS\s+1), \fIexv_bbox\fP (3\-\s-1ESPSxu\s+1), 
+\fIespsenv\fP (1\-\s-1ESPS\s+1)
+.SH AUTHOR
+Program and man page by John Shore
+
+
+
+
+

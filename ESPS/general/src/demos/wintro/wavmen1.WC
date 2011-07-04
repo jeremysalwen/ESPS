@@ -1,0 +1,28 @@
+delete_all_items menu wave
+add_waves menu wave builtin "bracket markers"
+add_waves menu wave name "zoom in" builtin "zoom in"
+add_waves menu wave name "zoom out" builtin "zoom out"
+add_waves menu wave name "zoom full out" builtin "zoom full out"
+add_waves menu wave name "  --->>  " builtin "window ahead"
+add_waves menu wave name "  <<---  " builtin "window back"
+add_waves menu wave builtin "align & rescale"
+add_espst menu wave name "Show segment data" command epsps -H
+add_espst menu wave name "Show header (brief) and segment" command epsps -l 
+add_espst menu wave name "Show header (full) and segment" command epsps -a
+
+add_waves menu wave builtin "kill window"
+return
+
+# @(#)wavmen1.WC	1.2 2/5/92 ERL 
+
+
+
+
+
+
+
+
+
+
+
+

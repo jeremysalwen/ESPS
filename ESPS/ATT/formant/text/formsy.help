@@ -1,0 +1,47 @@
+formsy [-bn.m][-rn][-an][-vn][-ln][-nn][-sn][-hn][-fn][-gn][-ef] f0 fb syn
+
+Where "f0" is a file containing F0, VUV, and amplitude data, and "fb" contains
+the formant frequencies and bandwidths.  The program "formant" produces
+files of the required format.  These may be used as templates for
+hand-generated or modified parameter files.  The "syn" file contains the
+synthesis output.  The options are:
+ -bn.m
+   Instead of using the bandwidths from the "fb" file, bandwidths are
+	synthesized from formant frequencies by the formula
+		bandwidth = n + ( .m * frequency) [null].
+ -vn
+   The probability of voicing in the .f0 file is ignored and the value
+	of n is used throughout the synthesis instead (0 <= n <= 1) [null].
+ -ln
+   The bandwidths from the "fb" file are constrained to be >= n.  The
+	-b and -l options are mutually exclusive [null].
+ -nn
+   Only the first n formants in the "fb" file are used [null].
+ -sn
+   The synthesis frequency is set to nHz [10kHz].
+ -hn
+   n constant "higher-pole" formants are synthesized  [0].
+ -an
+   n is the factor by which formant frequencies are to be scaled [1.0]
+ -fn
+   The fundamental frequency from the "f0" file is multiplied by n [1.0].
+ -rn
+   The frame rate of both the "f0" and "fb" files are multiplied by n [1.0].
+ -gn
+   n is a boolean (1 or 0) which determines whether amplitude correction
+	is applied after synthesis.  This tends to improve the quality
+	in the voiced regions and degrade quality in unvoiced regions [0].
+ -ef
+   f is the name of a signal file to use for excitation [null].  If f is
+	specified, the .f0 file must NOT be specified and the v, s, f, r and
+	g options are not available; the synthesis frequency will be that
+	of the excitation file.
+
+Formsy is a simple n-formant synthesizer designed to help assess the
+validity of formant and F0 estimates obtained from the program
+"formant."  "Formsy" is not a serious attempt at quality synthesis and
+should be used accordingly.  In particular, the voiced and unvoiced
+excitation functions can be substantially improved and the amplitude
+balance between voiced and unvoiced segments is not quite correct.
+These problems, and the very poor voiced/unvoiced estimates obtained
+from "formant" are being worked on.

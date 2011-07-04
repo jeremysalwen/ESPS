@@ -1,0 +1,5 @@
+# @(#)Ptoep_solv	1.1	6/20/88	EPI
+# default parameter file for toep_solv
+string	crsfield ?= "cross_cor":    "Cross-correlaton field name";
+string	autfield ?= "spec_param":   "Autocorrelation field name";
+string	pwrfield ?= "raw_power":    "Power field name";

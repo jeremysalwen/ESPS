@@ -1,0 +1,13 @@
+add_op name playKill op killall audioM
+key_map key m op play between marks
+key_map key _ op play window contents
+key_map key p op play entire file
+key_map key Q op playKill
+key_map key b op bracket markers
+key_map key a op align & rescale
+key_map key = op zoom in
+key_map key - op zoom out
+key_map key o op zoom full out
+key_map key q op kill window
+set middle_op play between marks
+return

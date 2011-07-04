@@ -1,0 +1,10 @@
+#! /bin/sh
+IFS=:
+for i in .:/usr/esps/bin:.:/export/usr/parker/bin:/usr/esps/bin:/usr/local:/usr/local/bin:/usr/sony/bin/X11:/usr/ucb:/usr/bin:/usr/sony/bin:/bin
+	do
+		if test -x $i/$1 -a ! -d $i/$1
+			then
+			exit 1
+		fi
+	done
+exit 0

@@ -1,0 +1,44 @@
+.\" Copyright (c) 1987, 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)reverse.3	1.6 02 May 1997 ESI
+.TH REVERSE 3\-ESPSu 02 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+long_reverse \- reverse the bytes in a long integer.
+.sp .25
+short_reverse \- reverse the bytes in a short integer.
+.SH SYNOPSIS
+.ft B
+.br
+long long_reverse (l);
+.br
+long l;
+.br
+short short_reverse (s);
+.br
+short s;
+.ft
+.SH DESCRIPTION
+.I long_reverse
+returns the value which results from reversing the order of the bytes in 
+.I l.
+.I short_reverse
+returns the value which results from reversing the order of the bytes
+in 
+.I s.
+These functions are useful in converting between machine dependent data formats.
+.SH EXAMPLE
+.nf
+
+long l; lswap;
+short s, sswap;
+
+lswap = long_reverse (l);
+sswap = short_reverse (s);
+
+.fi
+.SH DIAGNOSTICS
+None.
+.SH BUGS
+None known.
+.SH AUTHOR
+Brian Sublett

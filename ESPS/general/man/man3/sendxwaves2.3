@@ -1,0 +1,165 @@
+.\" Copyright (c) 1995, Entropic Research Lab, Inc.
+.\" @(#)SendXwaves.3	1.1 16 Nov 1995 ERL
+.TH "SEND_XWAVES" 3\-ESPSu 16 Nov 1995
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+OpenXwaves \- open a connection to an \fIxwaves+\fR server
+.br
+SendXwavesNoReply \- send a command to an \fIxwaves+\fR server and do not wait for reply
+.br
+SendXwavesReply \- send a command to an \fIxwaves+\fR server and  wait for reply
+.br
+CloseXwaves \- close a connection to an \fIxwaves+\fR server
+.SH "SYNOPSIS"
+.ft B
+.nf
+#include <esps/esps.h>
+#include <esps/xwaves_ipc.h>
+.sp
+Sxptr *
+OpenXwaves(display_name, destination, my_name)
+char *display_name;
+char *destination;
+char *my_name;
+.sp
+int
+SendXwavesNoReply(display_name, destination, sxarg, message)
+char *display_name;
+char *destination;
+Sxptr *sxarg;
+char *message;
+.sp
+char *
+SendXwavesReply(display_name, destination, sxarg, message, timeout)
+char *display_name;
+char *destination;
+Sxptr *sxarg;
+char *message;
+unsigned int timeout;
+.sp
+void
+CloseXwaves(sxarg)
+Sxptr *sxarg;
+.fi
+.ft R
+.sp
+.SH "DESCRIPTION"
+.PP
+.PP
+.I Xwaves
+has an interprocess communications capability, based on 
+communicating through the X server.  This communications method is compatible 
+with Tcl/Tk (version 4).   When \fIxwaves\fR starts, it registers itself 
+with the X server that it is using for display.   Programs using these 
+functions can send commands to \fIxwaves\fR and get the results of those 
+commands back.
+.PP
+In addition to this man page, see the Application Note, "Communicating with 
+.I xwaves 
+from Tcl/Tk, C, and the Unix shell".   
+This application note gives details about how this communications works.
+The function 
+.I SendXwavesReply 
+cannot be used from within an X program.  See the above 
+mentioned application note for an example of how to work around this 
+limitation.
+.PP
+.I OpenXwaves
+attempts to setup a communications path to the \fIxwaves\fR that has 
+previously registered itself under the name \fIdest\fR, on either the 
+default X server, or one specified by \fIdisplay_name\fR.   The argument
+\fImy_name\fR can be set to the name that the calling application is to 
+be registered as, or it can be NULL and a default name will be supplied.
+If successful, then the function returns a pointer to a structure of type 
+\fBSxptr\fR, which contains information needed by subsequent calls to 
+\fISendXwavesReply\fR and \fISendXwavesNoReply\fR.  If the function fails,
+then NULL is returned.   
+The name that the application registers as 
+must be unique to all applications registered for communications,
+so the actual name used might be different than the name supplied through
+\fImy_name\fR.  The actual name used is stored in the \fISxptr\fR structure
+returned as \fISxptr.my_name\fR.
+.PP
+In most cases, the registered name of an \fIxwaves\fR application is 
+\fIxwaves\fR, but it might be different if it had to be changed in order to 
+be unique.   This is rarely the case, however, since it would be unusual to 
+run two or more \fIxwaves\fR on the same X display.  However, you might
+need to provide a way for an application program to be given the name of
+the correct \fIxwaves\fR.
+Note that the registered name of an \fIxwaves\fR is given 
+in parenthesis in the title bar of the control panel and is exported into
+the environment under the variable name \fBXWAVES_NAME\fR.
+This environment variable can be used by an application that is launched
+by \fIxwaves\fR (from a menu addop for example).
+.PP
+If \fIdisplay_name\fR is NULL, then the default X server is used (the one 
+specified by the environment variable \fBDISPLAY\fR.   If \fIdisplay_name\fR 
+is not NULL, then it should point to a character string that specifies an
+X server in the usual format, \fIhost:display.screen\fR.   Of course, the 
+application using this function must have access permission to the X
+server.
+.PP
+.I SendXwavesNoReply
+attempts to send a message to an \fIxwaves\fR application and does not wait 
+for a reply.
+There are two forms of usage of this function.  One is to use \fIOpenXwaves\fR
+first, and pass its return value in as \fIsxarg\fR.
+This form should be used when frequent messages are
+sent to \fIxwaves\fR.  Since the communications is setup only once, overhead
+is kept to a minimum.  The other form of usage, is to specify the 
+destination \fIxwaves\fR with \fIdisplay_name\fR and \fIdest\fR, just as
+is done with \fIOpenXwaves\fR, but in this case the communications is setup
+inside of \fISendXwavesNoReply\fR and is closed after the message is sent.
+In this case, the argument \fIsxarg\fR must be NULL.  This form is simply 
+provided for convenience and eliminates two additional calls (\fIOpenXwaves\fR
+and \fICloseXwaves\fR).
+This function returns zero if an error occurred and the message was not sent.  
+Otherwise, the return value is non-zero.   However, a non-zero return value
+does not guarantee that the message was received by \fIxwaves\fR or
+correctly processed by it.
+.PP
+.I SendXwavesReply
+attempts to send a message to an \fIxwaves\fR application and waits for a
+response.   The return is a character pointer to the response, or NULL if the
+function was not able to send the message.    A timeout in milliseconds
+is specified by the \fItimeout\fR argument.  If this timeout expires before
+a response is received, then NULL is returned.   The minimum timeout (if zero
+is specified) is 1 ms.   An appropriate timeout is much larger, usually  
+tens of seconds, but it could be more depending upon the nature of the
+data and the operations being performed. 
+A typical use of this function would be to return the value of an \fIxwaves\fR
+global, or to return attributes of views.
+.PP
+.I CloseXwaves
+is used to close a connection to an \fIxwaves\fR.  It is only used when
+a connection has been opened with \fIOpenXwaves\fR.  The function removes
+the calling application from the communications registry and frees memory
+associated with the connection.
+.fi
+.SH DIAGNOSTICS
+.PP
+.I OpenXwaves
+returns NULL if it fails.  The reasons for failure include, failure to 
+connect to the X server, failure to create a simple window to be used for
+communications, failure to allocate memory when required,
+and failure to find the application specified by \fIdest\fR.
+.PP
+.I SendXwavesNoReply
+returns 0 if it fails and non-zero upon success.   Reasons for failure are
+the same as above.
+.PP
+.I SendXwavesNoReply
+returns 0 if it fails and non-zero upon success.   In addition to the above
+reasons why it might fail, it will return 0 if the timeout expires before
+a response is received from \fIxwaves\fR.
+.PP
+.I CloseXwaves
+does not return a value.   It quietly does nothing if \fIsxarg\fR is NULL.
+If passed garbage it (and most other Unix functions) could cause a 
+program failure (core dump).
+.SH "SEE ALSO"
+.PP
+send_xwaves(1\-\s-1ESPS\s+1)
+.SH "AUTHOR"
+.PP
+Alan Parker, based on the idea and some code from Tk by John Ousterhout.

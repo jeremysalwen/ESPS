@@ -1,0 +1,282 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)eopen.3	1.6 06 May 1997 ESI
+.TH EOPEN 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+eopen \- open ESPS file, read header, and check type
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/header.h>
+#include <esps/ftypes.h>
+#include <esps/fea.h>
+#include <stdio.h>
+
+char *
+eopen(prog_name, file_name, mode, type, subtype, header, stream)
+char	*prog_name, *file_name, *mode;
+int	type, subtype;
+struct header	**header;
+FILE	**stream;
+
+eopen2(prog_name, file_name, mode, type, subtype, header, stream)
+char	*prog_name, *file_name, *mode;
+int	type, subtype;
+struct header	**header;
+FILE	**stream;
+
+.fi
+.ft
+.SH DESCRIPTION
+.PP
+The following are input parameters:
+.TP
+.I prog_name
+the name of the calling program or other string to be put at the
+beginning of error messages.
+.TP
+.I file_name
+the name of the file to be opened or "\-" for standard input or
+output.
+.TP
+.I mode
+the string "r" for
+.I read,
+"w" for
+.I write,
+or any other string acceptable as the second argument of
+.IR fopen (3S).
+.TP
+.I type
+one of the file-type codes, such as FT_SD and FT_SPEC, defined in
+.I <esps/ftypes.h>,
+or NONE.
+.TP
+.I subtype
+one of the feature-file subtype codes, such as \fIFEA_ANA\fP(5-ESPS) and \fIFEA_STAT\fP(5-ESPS),
+defined in
+.I <esps/fea.h>,
+or NONE; ignored unless
+.I type
+is FT_FEA.
+.PP
+The following are output parameters.
+.TP
+.I header
+points to a variable in which a pointer to the file header is stored.
+.TP
+.I stream
+points to a variable in which a file pointer for the opened file is
+stored.
+.PP
+The function value returned by
+.I eopen
+is ordinarily just
+.I file_name;
+but if
+.I file_name
+is "\-", the returned value is "<stdin>" or "<stdout>".
+.PP
+If the first letter of
+.I mode
+is 'r',
+.I eopen
+opens the file for reading.
+The function is most useful in that case,
+as it takes care of reading the header and checking the ESPS file type.
+However,
+.I eopen
+can also open a file for writing or appending,
+and that simpler case is described first.
+.PP
+If
+.I mode
+begins with any letter but 'r', and
+.I file_name
+is "\-", \fIeopen\fP just assigns the value
+.I stdout
+to
+.RI * stream
+and returns the string "<stdout>".
+.PP
+If
+.I mode
+begins with a letter other than 'r', and
+.I file_name
+is an ordinary file name,
+\fIeopen\fP attempts to open the file by executing
+.IR fopen ( file_name ", " mode ).
+Upon success, it assigns the resulting value to
+.RI * stream
+and returns
+.I file_name;
+upon failure, \fIeopen\fP exits with an error message.
+.PP
+If
+.I mode
+begins with 'r', and
+.I file_name
+is "\-", \fIeopen\fP assigns the value
+.I stdin
+to
+.RI * stream
+and attempts to read the header and (if required) check the file type,
+as described below.
+Upon successful completion,
+\fIeopen\fP returns the string "<stdin>".
+.PP
+If
+.I mode
+begins with 'r', and
+.I file_name
+is an ordinary file name,
+\fIeopen\fP attempts to open the file by executing
+.IR fopen ( file_name ", " mode ).
+Upon failure, the program exits with an error message;
+upon success, \fIeopen\fP assigns the resulting value to
+.RI * stream
+and attempts to read the header and (if required) check the file type,
+as described below.
+Upon successful completion,
+\fIeopen\fP returns
+.I file-name.
+.PP
+\fIEopen\fP uses \fIread_header\fP(3-ESPS) to attempt to read the file header. 
+If it fails, the program exits with a message;
+otherwise \fIeopen\fP assigns the resulting value of
+.I read_header
+to
+.RI * header.
+.PP
+Then, if
+.I type
+is NONE,
+type checking is skipped, and \fIeopen\fP returns.
+Otherwise, if
+.I common.type
+in the header has a different value from
+.I type,
+the program exits with a message, except for the case where
+\fIcommon.type\fR == FT_SD, \fItype\fR == FT_FEA, and \fIsubtype\fR ==
+FEA_SD.
+If the type is correct and is not FT_FEA,
+there is no further checking to be done, and \fIeopen\fP returns.
+Also, if
+.I subtype
+is NONE, further checking is skipped.
+However, if
+.I type
+is FT_FEA and
+.I subtype
+is not NONE, the value of 
+.IR hd.fea \-> fea_type
+is checked; if the value of
+.I subtype
+is different, the program exits with a message.
+Otherwise \fIeopen\fP returns.
+.PP
+If the file to be opened is an old format SD file (FT_SD), and
+\fIeopen\fR is called with \fItype\fR == FT_FEA and \fIsubtype\fR ==
+FEA_SD, then the SD header is converted to a FEA_SD header and
+returned.   This is to allow a program designed to handle FEA_SD files
+to read old SD files also.
+.PP
+The alternate function \fIeopen2\fP is identical to \fIeopen\fP except
+that \fIeopen2\fP does not exit after detecting a problem.  Instead,
+after detecting a problem, it sets *header to NULL, outputs an error
+message, and returns the appropriate file name (\fIfile_name\fP,
+"<stdout>", or "<stdin>").  It is the responsibility of the caller to
+check the \fIheader\fP after \fIeopen2\fP returns.
+.SH EXAMPLE
+.PP
+A program that reads a sampled-data file and a statistics feature file
+and writes one output file might contain the following code.  Assume that
+at this point in the program the value of the variable
+.I optind
+is one greater than the index of the last optional argument in the program's
+argument vector.
+.sp
+.nf
+if (optind < argc)
+    input_sd = eopen(ProgName, argv[optind++], "r", FT_FEA, FEA_SD,
+		&sd_ihd, &inputsd_strm);
+else
+{
+    Fprintf(stderr, "%s: no input SD file specified.\\n", ProgName);
+    SYNTAX;
+}
+
+if (optind < argc)
+    input_stat = eopen(ProgName, argv[optind++], "r", FT_FEA, FEA_STAT,
+		&stat_ihd, &inputstat_strm);
+else
+{
+    Fprintf(stderr, "%s: no input FEA_STAT file specified.\\n", ProgName);
+    SYNTAX;
+}
+
+if (inputsd_strm == stdin && inputstat_strm == stdin)
+{
+    Fprintf(stderr, "%s: input files can't both be <stdin>.\\n", ProgName);
+    exit(1);
+}
+
+if (optind < argc)
+    out_fea = eopen(ProgName, argv[optind++], "w", NONE, NONE,
+		(struct header **) NULL, &outfea_strm);
+else
+{
+    Fprintf(stderr, "%s: no output file specified.\\n", ProgName);
+    SYNTAX;
+}
+
+if (optind < argc)
+{
+    Fprintf(stderr, "%s: too many files specified.\\n", ProgName);
+    SYNTAX;
+}
+.fi
+.sp
+.SH DIAGNOSTICS
+.PP
+The invocation of
+.IR read_header (3\-ESPSu)
+may produce various diagnostic messages.
+The following are generated directly by
+.I eopen.
+.nf
+.PP
+\fIprog_name\fP: can't open \fIfile_name\fP: \fIreason\fP
+\fIprog_name\fP: \fIfilename\fP is not an ESPS file
+\fIprog_name\fP: \fIfilename\fP is not an ESPS \fIfiletype\fP file
+.fi
+.SH WARNING
+.PP
+To prevent
+.I stream
+from becoming
+.I stdin
+or
+.I stdout,
+the program should either check that
+.IR strcmp ( file_name,
+"\-") != 0 before
+.I eopen
+is called or check that
+.I stream
+!=
+.I stdin
+or
+.I stream
+!=
+.I stdout
+after
+.I eopen
+is called.
+.SH BUGS
+None known.
+.SH "SEE ALSO"
+.PP
+fopen(3S), read_header(3\-ESPSu), ESPS(5\-ESPS), FEA(5\-ESPS)
+.SH AUTHOR
+Rodney Johnson

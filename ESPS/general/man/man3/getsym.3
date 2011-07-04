@@ -1,0 +1,154 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getsym.3	1.9 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GETSYM 3\-ESPSu 18 Apr 1997
+.SH "NAME"
+getsym_c, getsym_d, getsym_i, getsym_s, getsym_ia, getsym_da, getsym_fa  - get a parameter value from the symbol table created by read_params
+.SH "SYNOPSIS"
+.B #include <stdio.h>
+.br
+.B #include <esps/param.h>
+.PP
+.B char getsym_c (symbol)
+.br
+.B char	*symbol;
+.PP
+.B double getsym_d (symbol)
+.br
+.B char	*symbol;
+.PP
+.B int getsym_i (symbol)
+.br
+.B char	*symbol;
+.PP
+.B char *getsym_s (symbol)
+.br
+.B char	*symbol;
+.PP
+.B int getsym_ia (symbol, arr, maxval)
+.br
+.B char	*symbol;
+.br
+.B int arr[];
+.br
+.B int maxval;
+.PP
+.B int getsym_da (symbol, arr, maxval)
+.br
+.B char	*symbol;
+.br
+.B double arr[];
+.br
+.B int maxval;
+.PP
+.B int getsym_fa (symbol, arr, maxval)
+.br
+.B char	*symbol;
+.br
+.B float arr[];
+.br
+.B int maxval;
+.SH "DESCRIPTION"
+.PP
+The  functions all  read the  specified \fIsymbol\fP  from the symbol
+table  created  by  \fIread_params\fP and  return its  value, either a
+character, double, integer, string, pointer  to an  array of integers
+or a pointer to an array of doubles.  
+.PP
+If the corresponding parameter is indefinite (i.e., if it was defined
+in the parameter file with either of the assignments "=?" or "?=", 
+and if terminal input is possible (i.e., program not reading stdin), 
+then the user is prompted for the value.  In this case, if they 
+were present in the parameter file, the prompt string, default value,
+and parameter choices or limits are displayed. 
+.PP
+.I getsym_c
+returns  a character  if and  only if  \fIsymbol\fP exists in the
+symbol table and the symbol is a character.  Otherwise, it returns
+a zero.
+.PP
+.I getsym_d
+returns  a double if and  only if  \fIsymbol\fP exists in the
+symbol table and the symbol is a float or a double.  Otherwise, it returns
+a zero.
+.PP
+.I getsym_i
+returns  an integer  if and  only if  \fIsymbol\fP exists in the
+symbol table and the symbol is an integer.  Otherwise, it returns
+a zero.
+.PP
+.I getsym_s
+returns  a string if and  only if  \fIsymbol\fP exists in the
+symbol table and the symbol is a string.  Otherwise, it returns
+NULL.
+.PP
+.I getsym_ia, getsym_da,
+and
+.I getsym_fa
+all read the specified \fIsymbol\fP from the symbol table and return
+the  length  of  the  array  \fIarr\fP.    \fImaxval\fP  is  an input
+parameter specifying the maximum  length of  the array  \fIarr\fP.  If
+\fIsymbol\fP does not exist in the symbol table,  then these functions
+return a -1.  If the length of \fIarr\fP is greater than \fImaxval\fP,
+then  these  functions  return  a  zero and  they print  a message on
+stderr.  
+A pointer to the data from the symbol table is passed through
+\fIarr\fR.
+.PP
+.I getsym_da
+and
+.I getsym_fa
+return entries from the parameter file that are declared as type float.
+The values returned are the same; the only difference is that one
+returns an array of floats and the other returns doubles.
+.PP
+User feedback of common and parameter file processing is determined by
+the environment variable ESPS_VERBOSE, with 0 causing no feedback and
+increasing levels causing increasingly detailed feedback.  At level 2,
+the \fIgetsym\fR functions print a message to stderr when a value
+taken from the symbol table originated from the ESPS Common file.  At
+level 3, the \fIgetsym\fR functions print a message to stderr when a
+value taken from the symbol table originated from either the ESPS
+Common file or the parameter file.  For symbols defined to prompt the
+user (by using =? in the parameter file), these message are not
+printed.
+.SH "EXAMPLE"
+.nf
+
+/*  read in the values of the parameters from the symbol table */
+start = getsym_i ("start");
+nan = getsym_i ("nan");
+decrem = getsym_s ("decrem");
+harmonic_mult = getsym_d ("harmonic_mult");
+
+if (getsym_da ("lpf_num", lpf_num, 3) == -1)
+   (void) fprintf (stderr, "undefined symbol or bad type\n");
+
+.fi
+.SH DIAGNOSTICS
+.PP
+Undefined Symbol:  \fIsymbol\fP
+.br
+Not a valid real value
+.br
+Not a valid integer
+.br
+Symbol \fIsymbol\fP is not (symbol-type)
+.br
+Array \fIsymbol\fP is too long to fit into supplied buffer
+.SH "BUGS"
+.PP
+.SH "SEE ALSO"
+.PP
+.nf
+\fIread_params\fP(3\-\s-1ESPS\s+1), \fIgetsymdef\fP(3\-\s-1ESPS\s+1), \fIsymerr_exit\fP(3\-\s-1ESPS\s+1),
+\fIputsym\fP(3\-\s-1ESPS\s+1), \fIfputsym\fP(3\-\s-1ESPS\s+1), \fIsymtype\fP(3\-\s-1ESPS\s+1),
+\fIsymsize\fP(3\-\s-1ESPS\s+1), \fIsymlist\fP(3\-\s-1ESPS\s+1), \fIsymdefinite\fP(3\-\s-1ESPS\s+1),
+\fIsymchoices\fP(3\-\s-1ESPS\s+1), \fIsymrange\fP(3\-\s-1ESPS\s+1), \fIsymprompt\fP(3\-\s-1ESPS\s+1)
+.fi
+.SH "REFERENCES"
+[1] ETM-S-86-12:jtb, Parameter Files in the Speech Processing System
+.SH "AUTHOR"
+Joe Buck, Man page by Ajaipal S. Virdy; modifications by John Shore
+and Alan Parker

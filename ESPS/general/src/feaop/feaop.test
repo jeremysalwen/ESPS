@@ -1,0 +1,662 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1993  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)feaop.test	1.1	7/1/93	ERL
+# 
+# Written by:  Rod Johnson
+# Checked by:
+# Revised by:
+# 
+# Brief description:  Test script for feaop program.
+#
+
+######  TESTING ON SAMPLED-DATA FILES.
+
+rm -f test1.sd test2.sd test3.sd tst.sd alt1.sd alt2.sd tst.asc
+
+echo "Testing on sampled-data files."
+
+testsd -Tsine -l100 -p100 test1.sd
+cp test1.sd test2.sd
+
+######  TEST -g AND -r OPTIONS.
+
+echo "Test -g and -r options."
+echo "  Differences should be insignificant."
+
+feaop -r1:10 -g0 test1.sd test2.sd tst.sd
+psps tst.sd \
+    | egrep -v \
+	'^File header date:|^Produced by:|^Hostname:path:|^Machine type:' \
+    > tst.asc
+diff tst.asc - << aArDvArK
+File: tst.sd
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 10
+Data is not tagged.
+comment text:
+ feaop -r1:10 -g0 test1.sd test2.sd tst.sd 
+ field samples_ADD_samples added by feaop
+Source files: test1.sd
+              test2.sd
+There is no reference header.
+
+Record 1: 
+samples:  0 
+samples_ADD_samples:  0 
+
+Record 2: 
+samples:  38.268343 
+samples_ADD_samples:  38.268343 
+
+Record 3: 
+samples:  70.710678 
+samples_ADD_samples:  70.710678 
+
+Record 4: 
+samples:  92.387953 
+samples_ADD_samples:  92.387953 
+
+Record 5: 
+samples:  100 
+samples_ADD_samples:  100 
+
+Record 6: 
+samples:  92.387953 
+samples_ADD_samples:  92.387953 
+
+Record 7: 
+samples:  70.710678 
+samples_ADD_samples:  70.710678 
+
+Record 8: 
+samples:  38.268343 
+samples_ADD_samples:  38.268343 
+
+Record 9: 
+samples:  0 
+samples_ADD_samples:  0 
+
+Record 10: 
+samples:  -38.268343 
+samples_ADD_samples:  -38.268343 
+
+aArDvArK
+
+######  TEST WITH STANDARD INPUT FOR FIRST INPUT.
+
+echo "Test with standard input for first input."
+
+feaop -r1:10 -g-1 - test2.sd tst.sd < test1.sd
+psps -H -fsamples_ADD_samples tst.sd >tst.asc
+diff tst.asc - << aArDvArK
+Record 1: 
+samples_ADD_samples:  0 
+
+Record 2: 
+samples_ADD_samples:  0 
+
+Record 3: 
+samples_ADD_samples:  0 
+
+Record 4: 
+samples_ADD_samples:  0 
+
+Record 5: 
+samples_ADD_samples:  0 
+
+Record 6: 
+samples_ADD_samples:  0 
+
+Record 7: 
+samples_ADD_samples:  0 
+
+Record 8: 
+samples_ADD_samples:  0 
+
+Record 9: 
+samples_ADD_samples:  0 
+
+Record 10: 
+samples_ADD_samples:  0 
+
+aArDvArK
+
+######  TEST WITH STANDARD INPUT FOR SECOND INPUT.
+
+echo "Test with standard input for second input."
+
+feaop -r1:10 -g-1 test1.sd - tst.sd < test1.sd
+psps -H tst.sd >tst.asc
+diff tst.asc - << aArDvArK
+Record 1: 
+samples:  0 
+samples_ADD_samples:  0 
+
+Record 2: 
+samples:  38.268345 
+samples_ADD_samples:  0 
+
+Record 3: 
+samples:  70.710678 
+samples_ADD_samples:  0 
+
+Record 4: 
+samples:  92.387955 
+samples_ADD_samples:  0 
+
+Record 5: 
+samples:  100 
+samples_ADD_samples:  0 
+
+Record 6: 
+samples:  92.387955 
+samples_ADD_samples:  0 
+
+Record 7: 
+samples:  70.710678 
+samples_ADD_samples:  0 
+
+Record 8: 
+samples:  38.268345 
+samples_ADD_samples:  0 
+
+Record 9: 
+samples:  1.2246064e-14 
+samples_ADD_samples:  0 
+
+Record 10: 
+samples:  -38.268345 
+samples_ADD_samples:  0 
+
+aArDvArK
+
+######  TEST TRUNCATION OF LONG FIRST INPUT.
+
+echo "Test truncation of long first input."
+
+echo "1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1" | testsd -a- alt1.sd
+echo "-1 1 -1 1 -1 1" | testsd -a- alt2.sd
+feaop alt1.sd alt2.sd test3.sd
+psps -H test3.sd > tst.asc
+diff tst.asc - << aArDvArK
+Record 1: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 2: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 3: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 4: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 5: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 6: 
+samples:  1 
+samples_ADD_samples:  0 
+
+aArDvArK
+
+######  TEST TRUNCATION OF LONG SECOND INPUT.
+
+echo "Test truncation of long second input."
+
+feaop alt2.sd alt1.sd test3.sd
+psps -H test3.sd > tst.asc
+diff tst.asc - << aArDvArK
+Record 1: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 2: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 3: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 4: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 5: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 6: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+aArDvArK
+
+######  TEST -R OPTION (REUSE).
+
+echo "Test -R option (reuse)."
+
+feaop -R alt2.sd alt1.sd test3.sd
+psps -H test3.sd >tst.asc
+diff tst.asc - << aArDvArK
+Record 1: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 2: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 3: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 4: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 5: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 6: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 7: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 8: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 9: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 10: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 11: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 12: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 13: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 14: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 15: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 16: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 17: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 18: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+Record 19: 
+samples:  1 
+samples_ADD_samples:  0 
+
+Record 20: 
+samples:  -1 
+samples_ADD_samples:  0 
+
+aArDvArK
+
+######  TEST ON STANDARD OUTPUT.
+
+echo "Test on standard output."
+
+feaop -r1:10 -g-1 test1.sd test2.sd - > tst.sd
+psps -H tst.sd >tst.asc
+diff tst.asc - << aArDvArK
+Record 1: 
+samples:  0 
+samples_ADD_samples:  0 
+
+Record 2: 
+samples:  38.268345 
+samples_ADD_samples:  0 
+
+Record 3: 
+samples:  70.710678 
+samples_ADD_samples:  0 
+
+Record 4: 
+samples:  92.387955 
+samples_ADD_samples:  0 
+
+Record 5: 
+samples:  100 
+samples_ADD_samples:  0 
+
+Record 6: 
+samples:  92.387955 
+samples_ADD_samples:  0 
+
+Record 7: 
+samples:  70.710678 
+samples_ADD_samples:  0 
+
+Record 8: 
+samples:  38.268345 
+samples_ADD_samples:  0 
+
+Record 9: 
+samples:  1.2246064e-14 
+samples_ADD_samples:  0 
+
+Record 10: 
+samples:  -38.268345 
+samples_ADD_samples:  0 
+
+aArDvArK
+
+######  TEST ON PLAIN FEA FILES
+
+rm -f test1.fea test2.fea
+
+echo "Testing on plain FEA files."
+
+echo "Making test file test1.fea."
+
+addfea -f double -t double -s3 -c"double" - test1.fea << aArDvArK
+  -39.0    -0.3     0.3
+    1.8  6900.0    -0.017
+    0.68   -0.46  -17.0
+aArDvArK
+
+addfea -f long -t long -s3 -c"long" - test1.fea << aArDvArK
+    7  -6 -42
+  -64 -69  14
+   60 -93   7
+aArDvArK
+
+addfea -f byte -t byte -s3 -c"byte" - test1.fea << aArDvArK
+    0  91  49
+   11  78  25
+   68 -68 -57
+aArDvArK
+
+addfea -f float_cplx -t float_cplx -s3 -c"float_cplx" - test1.fea << aArDvArK
+    0.043 -960.0       -7.4     77.0       -0.81     0.05
+   -0.045   -0.07    -990.0     -0.087     -1.7      4.2
+   -9.4   -200.0        4.2   3300.0      870.0      3.6
+aArDvArK
+
+addfea -f short_cplx -t short_cplx -s3 -c"short_cplx" - test1.fea << aArDvArK
+  -52 -60   -64  83   -36  73
+   77  78    30   9   -70 -72
+   36 -10   -23  97   -22 -57
+aArDvArK
+
+echo "Making test file test2.fea."
+
+addfea -f float -t float -s3 -c"float" - test2.fea << aArDvArK
+   6700.0    0.05     0.043
+    -18.0    0.078    6.6
+    400.0 -950.0    150.0
+  -4800.0   -0.058  600.0
+    200.0   -0.089    0.59
+aArDvArK
+
+addfea -f short -t short -s3 -c"short" - test2.fea << aArDvArK
+   64 -49 -84
+   -4  90 -75
+  -66 -32 -75
+  -11   6 -83
+   63  67  50
+aArDvArK
+
+addfea -f double_cplx -t double_cplx -s3 -c"double_cplx" - test2.fea << aArDvArK
+    -4.8     70.0     600.0     -71.0     8     -930.0
+  3000.0     -0.92   -100.0       0.15    8.1     -0.9
+    -0.34    88.0    9900.0      -0.04    0.098    0.6
+     4.1    -23.0      -0.066    -0.17    0.47  -860.0
+     0.011 -400.0    -980.0    6200.0   -62       -2.1
+aArDvArK
+
+addfea -f long_cplx -t long_cplx -s3 -c"long_cplx" - test2.fea << aArDvArK
+  -48 -32   37   4   92  90
+  -17   5   10 -67   10   2
+   53 -53  -83  91    5 -72
+  -26  21  -96 -97   79  19
+   -8  11   85 -19  -65  58
+aArDvArK
+
+addfea -f byte_cplx -t byte_cplx -s3 -c"byte_cplx" - test2.fea << aArDvArK
+   -6 -75  -38 -27  -16 -15
+  -20  30   54  -8  -10  60
+  -84  20  -67 -43   61 -17
+   -6 -67   45  44   68  67
+    1 -61   23 -98   21 -15
+aArDvArK
+
+######  TEST ADD OPERATION
+
+echo "Test ADD operation."
+echo "  Differences should be insignificant."
+
+feaop -fdouble -ffloat -tdouble test1.fea test2.fea tst.fea
+psps tst.fea \
+    | egrep -v \
+	'^File header date:|^Produced by:|^Hostname:path:|^Machine type:' \
+    >tst.asc
+diff tst.asc - << aArDvArK
+File: tst.fea
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: 3
+Data is not tagged.
+comment text:
+ feaop -fdouble -ffloat -tdouble test1.fea test2.fea tst.fea 
+ field double_ADD_float added by feaop
+Source files: test1.fea
+              test2.fea
+There is no reference header.
+
+Record 1: 
+float:  
+  0:          6700          0.05         0.043 
+short:  
+  0: 64 -49 -84 
+double_cplx:  
+  0: [-4.8, 70] [600, -71] [8, -930] 
+long_cplx:  
+  0: [-48, -32] [37, 4] [92, 90] 
+byte_cplx:  
+  0: [-6, -75] [-38, -27] [-16, -15] 
+double_ADD_float:  
+  0:          6661         -0.25         0.343 
+
+Record 2: 
+float:  
+  0:           -18         0.078           6.6 
+short:  
+  0: -4 90 -75 
+double_cplx:  
+  0: [3000, -0.92] [-100, 0.15] [8.1, -0.9] 
+long_cplx:  
+  0: [-17, 5] [10, -67] [10, 2] 
+byte_cplx:  
+  0: [-20, 30] [54, -8] [-10, 60] 
+double_ADD_float:  
+  0:         -16.2      6900.078         6.583 
+
+Record 3: 
+float:  
+  0:           400          -950           150 
+short:  
+  0: -66 -32 -75 
+double_cplx:  
+  0: [-0.34, 88] [9900, -0.04] [0.098, 0.6] 
+long_cplx:  
+  0: [53, -53] [-83, 91] [5, -72] 
+byte_cplx:  
+  0: [-84, 20] [-67, -43] [61, -17] 
+double_ADD_float:  
+  0:        400.68       -950.46           133 
+
+aArDvArK
+
+######  TEST SUB OPERATION
+
+echo "Test SUB operation."
+echo "  Differences should be insignificant."
+
+feaop -r: -r2:4 -flong -fdouble_cplx -tfloat -OSUB test1.fea test2.fea tst.fea
+psps -H -f long_SUB_double_cplx tst.fea >tst.asc
+diff tst.asc - << aArDvArK
+Record 1: 
+long_SUB_double_cplx:  
+  0:         -2993            94         -50.1 
+
+Record 2: 
+long_SUB_double_cplx:  
+  0:        -63.66         -9969        13.902 
+
+Record 3: 
+long_SUB_double_cplx:  
+  0:          55.9       -92.934          6.53 
+
+aArDvArK
+
+######  TEST MUL OPERATION
+
+echo "Test MUL operation."
+echo "  There should be no differences."
+
+feaop -fbyte -fbyte_cplx -tshort_cplx -OMUL test1.fea test2.fea tst.fea
+psps -H -f byte_MUL_byte_cplx tst.fea >tst.asc
+diff tst.asc - << aArDvArK
+Record 1: 
+byte_MUL_byte_cplx:  
+  0: [0, 0] [-3458, -2457] [-784, -735] 
+
+Record 2: 
+byte_MUL_byte_cplx:  
+  0: [-220, 330] [4212, -624] [-250, 1500] 
+
+Record 3: 
+byte_MUL_byte_cplx:  
+  0: [-5712, 1360] [4556, 2924] [-3477, 969] 
+
+aArDvArK
+
+######  TEST DIV OPERATION
+
+echo "Test DIV operation."
+echo "  Differences should be insignificant."
+
+feaop -ffloat_cplx -fshort -tdouble_cplx -ODIV test1.fea test2.fea tst.fea
+psps -H -f float_cplx_DIV_short tst.fea >tst.asc
+diff tst.asc - << aArDvArK
+Record 1: 
+float_cplx_DIV_short:  
+  0: [0.000671875, -15] [0.15102, -1.57143] [0.00964286, -0.000595238] 
+
+Record 2: 
+float_cplx_DIV_short:  
+  0: [0.01125, 0.0175] [-11, -0.000966667] [0.0226667, -0.056] 
+
+Record 3: 
+float_cplx_DIV_short:  
+  0: [0.142424, 3.0303] [-0.13125, -103.125] [-11.6, -0.048] 
+
+aArDvArK
+
+######  TEST CPLX OPERATION
+
+echo "Test CPLX operation."
+echo "  There should be no differences."
+
+feaop -fshort -flong -tbyte_cplx -OCPLX test2.fea test1.fea tst.fea
+psps -H -f short_CPLX_long tst.fea >tst.asc
+diff tst.asc - << aArDvArK
+Record 1: 
+short_CPLX_long:  
+  0: [64, 7] [-49, -6] [-84, -42] 
+
+Record 2: 
+short_CPLX_long:  
+  0: [-4, -64] [90, -69] [-75, 14] 
+
+Record 3: 
+short_CPLX_long:  
+  0: [-66, 60] [-32, -93] [-75, 7] 
+
+aArDvArK
+
+######  TEST PWR OPERATION, -I OPTION
+
+echo "Test PWR operation, -I option."
+
+feafunc -FLOG -fdouble -fLOG_double -tdouble_cplx test1.fea test1L.fea
+feafunc -r1:3 -FLOG -ffloat -fLOG_float -tdouble_cplx test2.fea test2L.fea
+
+echo "  Differences should be insignificant."
+
+feaop -fdouble -fLOG_float -tdouble_cplx -OPWR test1.fea test2L.fea tstL.fea
+feaop -fLOG_double -ffloat -tdouble_cplx -OPWR -I test1L.fea tstL.fea tst.fea
+
+psps -H -f double_PWR_LOG_float -f float_PWR_LOG_double tst.fea >tst.asc
+diff tst.asc - << aArDvArK
+Record 1: 
+double_PWR_LOG_float:  
+  0: [-8.59966e+13, 5.84975e+13] [-36.8439, -0.494013] [44.1842, 0] 
+float_PWR_LOG_double:  
+  0: [-8.59966e+13, 5.84975e+13] [-36.8439, -0.494013] [44.1842, 0] 
+
+Record 2: 
+double_PWR_LOG_float:  
+  0: [-1.48899, 5.26141] [1.61034e-10, 0] [0.000429347, -0.000159054] 
+float_PWR_LOG_double:  
+  0: [-1.48899, 5.26141] [1.61034e-10, 0] [0.000429347, -0.000159054] 
+
+Record 3: 
+double_PWR_LOG_float:  
+  0: [0.0991935, 0] [2.44094e-07, 6.26181e-08] [-1.46247e+06, -48882] 
+float_PWR_LOG_double:  
+  0: [0.0991935, 0] [2.44094e-07, 6.26181e-08] [-1.46247e+06, -48882] 
+
+aArDvArK
+
+# rm test1.sd test2.sd test3.sd tst.sd alt1.sd alt2.sd tst.asc
+# rm test1.fea test2.fea tst.fea test1L.fea test2L.fea tstL.fea

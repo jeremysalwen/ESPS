@@ -1,0 +1,43 @@
+#!/bin/sh
+# @(#)cepdemo	1.3 10/10/97 ERL - cepstral analysis demo
+     ESPS_VERBOSE=0;export ESPS_VERBOSE
+     spfile=`get_esps_base`/demo/speech.sd
+     sf=`hditem -i record_freq $spfile`
+     #
+     echo " "
+     echo "CEPDEMO: Plot 1024 points from speech file (shown in upper left)"
+     plotsd -r1000:2023  -W"=550x350+0+0" $spfile &
+     sleep 5
+     #
+     fft -r1000:2023 -o10 -l1024 -wHAMMING $spfile - |\
+     plotspec -W"=350x350+0-0" -&
+     echo  " "
+     echo "CEPDEMO: Compute fft on points shown and plot spectrum (shown in lower left)"
+
+     #
+     fftcep -r1000:2023 -o10  -l1024  -wHAMMING  -F  -R  -z23:1000 \
+	$spfile speech.cep 
+     echo " "
+     echo "CEPDEMO: Compute the cepstrum and zero out the high order terms -"
+     echo "CEPDEMO: this removes the periodic excitation from the data"
+     echo " "
+     echo 'CEPDEMO: fftcep -r1000:2023 -o10  -l1024  -wHAMMING  -F  -R\'
+     echo "         -z23:1000 speech.sd speech.cep "
+     echo " "
+     make_sd -r1: -fcepstrum_0 -S$sf speech.cep speech.cepsd
+     echo " "
+     fft -p1:1024 -o10 -l1024 speech.cepsd - | plotspec -W"=350x350-0+0" -&
+     echo "CEPDEMO: Plot the frequency response of the"
+     echo "CEPDEMO: liftered cepstral sequence (shown in upper right)"
+     #
+     sleep 5
+     echo " "
+     echo "CEPDEMO: Compare autoregressive spectral estimator with"
+     echo "CEPDEMO: liftered cepstral estimator (shown in lower right)"
+     refcof -l1024 -r1000:2023 -o15 $spfile - | \
+     me_spec - - | plotspec -W"=350x350-0-0" - &
+     echo " "
+     rm -f speech.cep speech.cepsd 
+
+
+

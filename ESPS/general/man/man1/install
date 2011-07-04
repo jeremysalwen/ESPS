@@ -1,0 +1,56 @@
+#! /bin/sh
+#
+#  This material contains proprietary software of Entropic Speech, Inc.   
+#  Any reproduction, distribution, or publication without the prior	   
+#  written permission of Entropic Speech, Inc. is strictly prohibited.
+#  Any public distribution of copies of this work authorized in writing by
+#  Entropic Speech, Inc. must bear the notice			
+# 								
+#      "Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved"
+# 				
+#
+#  @(#)install	1.1 6/16/87 ESI
+# 	
+# Install the section 1 manual pages
+#
+
+if test x$MANDIR = x
+ then
+  echo MANDIR macro not defined, check install scripts or seek help
+  exit 1
+fi
+
+if test ! -d $MANDIR
+ then
+  echo $MANDIR does not exist, check install scripts or seek help
+  exit 1
+fi
+
+if test ! -d $MANDIR/man1
+ then
+  echo $MANDIR/man1 does not exist, check install scripts or seek help
+  exit 1
+fi
+
+if test x$MANMOD = x
+ then
+  MANMOD=0640
+fi
+
+echo Comparing dates of .1 files here and in $MANDIR/man1
+echo This might take a while....
+
+for name in *.1 *.1t
+ do
+  if $BINDIR/newer $name $MANDIR/man1/$name
+   then
+    echo Updating $name...
+    set -x
+    rm -f $MANDIR/man1/$name
+    sed "s;\\\$MANDIR\\\$;$MANDIR;" $name >$MANDIR/man1/$name
+    chmod $MANMOD $MANDIR/man1/$name
+    set +x
+  fi
+done
+
+exit 0

@@ -1,0 +1,7 @@
+#@(#)color.bmenu	1.1 6/18/91 ERL - Color button menu
+grey	set colormap greymap
+Color	set colormap Colormap
+color	set colormap colormap
+COLOR	set colormap COLORMAP
+COLOR_	set colormap COLOR_MAP
+TImap	set colormap TImap

@@ -1,0 +1,38 @@
+				Filters Demo
+
+This demo shows one way in which ESPS filter design and filtering programs 
+can be integrated with waves+. After pushing the demo button, two control 
+panels and a time series display pop up. 
+
+The little control panel allows you to quit the demo, see this file, configure
+audio output, or view the files and scripts that comprise the demo. 
+
+The longer control panel provides buttons for previewing filter responses 
+(top row), adding filters to the waves+ menu (second row), and deleting 
+filters (third row). The fourth row has buttons for modifying the mouse 
+bindings and image presentations, running an interactive filter design
+program to build a filter to apply to the data, and displaying the  sampled 
+data file.
+
+To use a filter on the sampled data, add it to the waves+ menus by pushing
+the "Add ..." button for the filter you want (more than one can be added to 
+the menu), move the mouse cursor into the data display, hold down the right 
+mouse button, and release it on the item you added. Note the other items on 
+the menu. You can move about in the data display by using the "zoom" items 
+and the "window ahead" and "window back" items, play the data segment 
+(if you have I/O), and do spectral analysis. To mark a sub-region of the 
+display, hold the left mouse button down, drag it through the region of 
+interest, and then release the mouse button.
+
+You can custom design a filter to be used on the displayed signal.
+By pressing the "Interactive Pole/Zero Filter Design" button, you can play with
+a filter design program that allows you to place poles and zeros in the complex
+Z-plane. A window for viewing spectral magnitude, spectral phase, impulse
+response, etc. is present, and a window for editing an ascii version of the 
+coefficients is available. Once a filter is designed, you can use it by 
+selecting the "custom filter" item on the waves+ pull-down menu.
+
+@(#)README	1.6 1/18/93 ERL
+
+
+

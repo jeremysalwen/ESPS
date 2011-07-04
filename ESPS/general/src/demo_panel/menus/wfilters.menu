@@ -1,0 +1,64 @@
+#@(#)wfilters.menu	1.1 6/18/91 ERL - waves+button panel for filter demo
+# View transfer functions
+
+"View 600 lowpass"	shell plotspec -y-60:5 -W"=200x200+690+10" files/600lp.filt.spec
+
+"View 17500 bandpass"   shell plotspec -y-60:5 -W"=200x200+900+10" files/1750bp.filt.spec
+
+"View 3000 highpass"	shell plotspec -y-60:5 -W"=200x200+690+225" files/3000hp.filt.spec
+
+"View 180 notch"	shell plotspec -y-60:5 -W"=200x200+900+673" files/notch.filt.spec
+
+"View Butterworth"	shell plotspec -y-60:5 -W"=200x200+900+225" files/butter.filt.spec
+
+"View Chebyshev"	shell plotspec -y-60:5 -W"=200x200+690+450" files/cheby.filt.spec
+
+"View Multiband2"	shell plotspec -y-60:5 -W"=200x200+900+450" files/multiband.filt.spec
+
+"View Multiband3"	shell plotspec -y-60:5 -W"=200x200+690+675" files/multiband2.filt.spec
+
+#add filters
+
+"Add 600 lowpass"	add_espsf name "600 Hz. lowpass" out_ext 600lp command filter  -F filters/600lp.filt
+
+"Add 17500 bandpass"    add_espsf name "1750 Hz. Bandpass" out_ext 1750bp command filter -F filters/1750bp.filt
+
+"Add 3000 highpass"     add_espsf name "3000 Hz. Highpass" out_ext 3000hp command filter -F filters/3000hp.filt
+
+"Add 180 notch"	        add_espsf name "180 Hz. notch" out_ext notch command filter -F filters/notch.filt
+
+"Add Butterworth"	add_espsf name "Butterworth" out_ext butter command filter -F filters/butter.filt
+
+"Add Chebyshev"	        add_espsf name "Chebyshev" out_ext cheby command filter -F filters/cheby.filt
+
+"Add Multiband2"        add_espsf name "Multiband (2 bands)" out_ext mb2 command filter -F filters/multiband.filt
+
+"Add Multiband3"        add_espsf name "Multiband (3 bands)" out_ext mb3 command filter -F filters/multiband2.filt
+
+#Remove filter from menu
+
+"Zap 600 lowpass" 	delete_item name  "600 Hz. lowpass" 
+
+"Zap 17500 bandpass" 	delete_item  name "1750 Hz. Bandpass" 
+
+"Zap 3000 highpass" 	delete_item name "3000 Hz. Highpass"
+
+"Zap 180 notch"		delete_item name "180 Hz. notch"
+
+"Zap Butterworth" 	delete_item name "Butterworth" 
+
+"Zap Chebyshev"		delete_item name "Chebyshev" 
+
+"Zap Multiband2" 	delete_item name "Multiband (2 bands)"
+
+"Zap Multiband3" 	delete_item name "Multiband (3 bands)"
+
+#Show menu file
+
+"See Button Configuration File"	shell xtext -F menus/wfilters.menu
+
+"See waves+ Initialization Script" shell xtext -F commands/filter.com
+
+#Modify spectrogram display attributes
+
+"Image Display Control"  make_panel name scont file image.control.menu columns 3 icon_title scontrol title "Image Display Controls"

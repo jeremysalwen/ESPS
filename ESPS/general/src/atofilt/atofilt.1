@@ -1,0 +1,123 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)atofilt.1	3.7	4/2/97 ESI
+.TH ATOFILT 1\-ESPS 4/2/97
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+atofilt \- create filter by converting ascii files to an ESPS FEAFILT file.
+.SH SYNOPSIS
+.B atofilt
+[
+.BI \-x " debug_level"
+]
+[
+.BI \-c " comment"
+]
+.I num_file
+[
+.I den_file
+]
+.I feafilt_file
+.SH DESCRIPTION
+.PP
+The program
+.I atofilt
+reads numerator filter coefficients from the file
+.I num_file
+and (optionally) denominator coefficients from the file
+.I den_file
+and prints them to the output FEAFILT file
+.I feafilt_file.
+Both input files are in ascii format.
+The 
+.I num_file
+and the
+.I den_file
+may be the same file, in which case the numerator coefficients should appear first.
+In both
+.I num_file
+and
+.I den_file
+the first number should be an integer which tells how many filter coefficients are in the
+file.  The filter coefficients follow.  Data can be separated by any combination of spaces and newline
+characters.
+.PP
+The program prompts the user for comments to be added to the comment field of
+.I feafilt_file
+unless the \-c option is used or unless any coefficients are being read from the
+standard input.  The user should type in his comments and terminate
+them with a ^D on a line by itself.  In either case the user added comment is limited to 2047
+characters.  In addition to any user specified comments, the program automatically
+specifies the source of the numerator and (if appropriate) the denominator coefficients
+in the comment field.
+.PP
+If
+.I feafilt_file
+is "\-", the output goes to the standard output.  If
+.I num_file
+is "\-", the numerator coefficients are read from standard input.  If
+.I den_file
+is "\-", the denominator coefficients are read from standard input also.
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-x " debug_level"
+A value of 0 (the default value) will cause
+.I atofilt
+to do its work silently, unless there is an error.
+A nonzero value will cause various parameters to be printed out
+during program initialization.
+.br
+.TP
+.BI \-c " comment"
+The character string
+.I comment
+is added to the comment field of the output file header.  If this option is not used,
+the program prompts the user for a comment string, which he should terminate with
+a ^D.  
+.SH ESPS PARAMETERS
+The parameter file is not accessed.
+.SH ESPS COMMON
+The Common file is not used.
+.SH ESPS HEADER
+A new header is created for the output FEAFILT file.
+The program fills in appropriate values in the common part of the header.
+The generic header items 
+.I max_num
+and
+.I max_denom.
+are set to the number of items in 
+.I num_file
+and 
+.I denom_file,
+respectively;
+.I define_pz 
+and
+.I complex_filter
+are set to NO; 
+.I type 
+is set to FILT_ARB and
+.I method
+is set to PZ_PLACE.  All other items take their null values.
+The program enters the names of the input coefficient files in the comment field of
+the header.
+.PP
+A new command line option will be added that allows specification of the
+\fIdelay_samples\fP generic header item value. This should contain the delay
+in samples of the input signal that results from using the filter. For now,
+\fIaddgen\fP (1\-\s-1ESPS\s+1) can be used to add this item.
+.SH DIAGNOSTICS
+The program prints a warning to the standard error output if the total comment
+field of the output file exceeds MAX_STRING.
+.SH SEE ALSO
+.nf
+notch_filt(1\-ESPS), wmse_filt(1\-ESPS), iir_filt(1\-ESPS), 
+fea2filt(1\-ESPS), filter (1-ESPS), init_feafilt_hd(3\-ESPSu), 
+allo_feafilt_rec(3\-ESPSu), get_feafilt_rec(3\-ESPSu), 
+put_feafilt_rec(3\-ESPSu), ESPS(5\-ESPS), FEA(5\-ESPS), 
+FEA_FILT(5\-ESPS)
+.fi
+.SH AUTHOR
+Brian Sublett. Modified for ESPS 3.0 by David Burton. Modified to
+produce FEAFILT files by Bill Byrne.
+
+

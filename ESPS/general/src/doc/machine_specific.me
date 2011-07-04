@@ -1,0 +1,49 @@
+.lo
+.de SM          \"macro to shrink left margin
+.br
+.nr $i \\n($i+\\$1i
+..
+.de RM          \"macro to restore original left margin
+.br
+.nr $i 0
+..
+.he 'ESPS/Waves 4.2/3.1 Machine Specific Notes''page %'
+.ce 3
+.b
+ESPS/Waves 5.0 Machine Specific Notes
+.sp
+Document version: 1.9 12/23/93
+.sh 1 "INTRODUCTION"
+.lp
+This document provides information specific to each architecture
+implementation of ESPS and \fIwaves+\fR.   This information is in
+addition to that found in the release notes.  The ESPS and \fIwaves+\fR
+release notes should be read before reading this document.
+.sh 1 "Sun/Sparc Release for Sun OS4.x"
+.lp
+Except for \fIs16play\fR and \fIs16record\fR, the Sparc version was 
+compiled under Sun OS 4.1.1 using the production Sun C 
+Compiler 1.1.    It was linked under OpenWindows 3.0.   
+The programs \fIs16play\fR and \fIs16record\fR were compiled and linked under 
+Sun OS 4.1.3.  
+.sh 1 "Sun/Sparc Release for Solaris 2.x (Sun OS5.x)"
+.lp
+The Solaris version of ESPS/waves was compiled and linked under Solaris 2.1
+on a Sparc/LX.   
+.sh 1 "SGI Indigo (IRIS) Release"
+.lp
+The Indigo Iris release was compiled on an SGI Personal IRIS running IRIX
+version 4.0.5F. For X window related details, please refer to the README
+file in directory $ESPS_BASE/xview.
+.sh 1 "HP 700 Release"
+.lp
+The HP 700 version of ESPS/waves was compiled and linked under HPUX 9.01A.
+.sh 1 "DS3100/5000 Ultrix Release"
+.lp
+The DecStation Ultrix release was compiled and linked under Ultrix 
+V4.2 (UWS V4.2, Rev 272) on a DecStation 3100.
+.sh 1 "DEC Alpha Release"
+.lp
+The DEC Alpha release was compiled and linked under OSF/1 1.2, and was tested 
+under both 1.2 and 1.3 on both an Alpha PC and a Alpha Workstation.  The GNU C
+compiler (gcc) was used for the compilation.

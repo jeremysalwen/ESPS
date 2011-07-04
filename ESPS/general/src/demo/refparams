@@ -1,0 +1,6 @@
+# @(#)refparams	1.2 6/12/91 ESI - params file for ESPS demo script
+int start = 1;
+int nan = 8000;
+int frame_len = 200;
+int order = 10;
+string method = "autoc";

@@ -1,0 +1,282 @@
+#! /bin/csh -f
+#
+#-	gsglib - GSG library on-line query
+#-
+#	Author:		Paul Lew, General Systems Group, Inc.
+#	Created at:	08/15/86  04:18 PM
+#	Last update:	01/26/88  12:31 PM  (Edition: 8)
+#
+#-	Usage:		gsglib <CR>
+#
+#---------------------------------------------------------------#
+#	      Display help if requested by user			#
+#---------------------------------------------------------------#
+switch ( "$1" )
+	case -H[xX]:
+		set echo; set verbose; shift
+		breaksw
+	case -H*:
+		show_help `which $0` $1
+		goto end
+	default:
+	endsw
+#---------------------------------------------------------------#
+#			Process Arguments			#
+#---------------------------------------------------------------#
+set libfile = '/gsg/lew/dat/gsglib.dat'
+set tmpfile = "/tmp/gsglib.$$"
+unsetenv LESS
+#---------------------------------------------------------------#
+#	Display main menu and get user input (use sf)		#
+#---------------------------------------------------------------#
+loop:
+set srcfile = "/tmp/gsglib$$"
+sf -o ${srcfile} -u << sf_eof
+	General Systems Group Library Directory
+
+     Operation: ~~~~~~~	[choice: find add new print keyword help quit]
+
+
+     Book number:   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     ~~~  Keyword:	  ~~~~~~~~~~~~~~~
+     ~~~  Author:	  ~~~~~~~~~~~~~~~~~~~~~~~~
+     ~~~  Title:	  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     ~~~  Date published: ~~~~~~~~~~~~~
+     ~~~  Publisher:	  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     ~~~  Book id:	  ~~~~~~~~~~~~~~~~~~~~~~~
+     ~~~  Number of pages:~~~~~
+
+     ^
+     +------ enter "y" to include in the output list
+
+	[Press TAB to move to next field, RETURN to execute]
+
+.v=opcode.s=/find/add/new/print/keyword/help/quit.
+.h=find out what books has the data we want.
+.h=add new books to library.
+.h=see what are the new books since last use.
+.h=print out previous output to printer.
+.h=display all the predefined keywords that are valid for keyword search field.
+.h=display help message about how to use this program.
+.h=quit, exit back to Unix.
+.v=bookno.
+.v=selkw.s=/No/Yes.v=keyword.
+.v=selau.s=/Yes/No.v=author.
+.v=selti.s=/Yes/No.v=title.
+.v=selpd.s=/Yes/No.v=pdate.
+.v=selpu.s=/Yes/No.v=pub.
+.v=selbi.s=/No/Yes.v=bookid.
+.v=selsz.s=/No/Yes.v=size.
+sf_eof
+#---------------------------------------------------------------#
+#	Get symbol defined for the current process		#
+#---------------------------------------------------------------#
+if ( ! -e ${srcfile} ) goto end
+source ${srcfile}
+/bin/rm -f ${srcfile}
+#---------------------------------------------------------------#
+#		    Execute user request			#
+#---------------------------------------------------------------#
+#echo "author=[${author}] output select=[${selau}]"
+#echo "keyword=[${keyword}] output select=[${selkw}]"
+#echo "title=[${title}] output select=[${selti}]"
+#echo "pdate=[${pdate}] output select=[${selpd}]"
+#echo "pub=[${pub}] output select=[${selpu}]"
+#echo "press return: "
+#set yon = "$<"
+if ( "${bookno}" == "vi" ) then
+	goto libvi
+	endif
+switch ( "${opcode}" )
+	case "find":
+		goto libfind
+	case "add":
+		goto libadd
+	case "new":
+		goto libnew
+	case "print":
+		goto libprint
+	case "keyword":
+		goto libkeyword
+	case "help":
+		goto libhelp
+	case "quit":
+		goto end
+	default:
+		echo "Unknown command: ${opcode}"
+		sleep 2
+		goto loop
+		breaksw
+	endsw
+#---------------------------------------------------------------#
+#		add a new record to library file		#
+#---------------------------------------------------------------#
+libfind:
+	cat /dev/null > ${tmpfile}
+	set outsel
+	if ( "${selkw}" == "Yes" ) set outsel = "${outsel}K"
+	if ( "${selau}" == "Yes" ) set outsel = "${outsel}A"
+	if ( "${selti}" == "Yes" ) set outsel = "${outsel}T"
+	if ( "${selpd}" == "Yes" ) set outsel = "${outsel}D"
+	if ( "${selpu}" == "Yes" ) set outsel = "${outsel}P"
+	if ( "${selbi}" == "Yes" ) set outsel = "${outsel}N"
+	if ( "${selsz}" == "Yes" ) set outsel = "${outsel}S"
+	if ( "${outsel}" == "" ) then
+		echo -n "No output selection"
+		goto getret
+		endif
+	if ( "${bookno}" != "" ) then
+		set recno = (${bookno})
+		goto grepno
+		endif
+	if ( "${keyword}" != "" ) then
+		grep '^#K' ${libfile} | grep -i "${keyword}" >> ${tmpfile}
+		endif
+	if ( "${author}" != "" ) then
+		grep '^#A' ${libfile} | grep -i "${author}" >> ${tmpfile}
+		endif
+	if ( "${title}" != "" ) then
+		grep '^#T' ${libfile} | grep -i "${title}" >> ${tmpfile}
+		endif
+	if ( "${pdate}" != "" ) then
+		grep '^#D' ${libfile} | grep -i "${pdate}" >> ${tmpfile}
+		endif
+	if ( "${pub}" != "" ) then
+		grep '^#P' ${libfile} | grep -i "${pub}" >> ${tmpfile}
+		endif
+	if ( "${bookid}" != "" ) then
+		grep '^#N' ${libfile} | grep -i "${bookid}" >> ${tmpfile}
+		endif
+	if ( "${size}" != "" ) then
+		grep '^#S' ${libfile} | grep -i "${size}" >> ${tmpfile}
+		endif
+	if ( -z ${tmpfile} ) then
+		echo -n "No related information"
+		goto getret
+	else
+		set recno = `awk '{ print $2 }' ${tmpfile} | sort -u`
+		cat /dev/null > ${tmpfile}
+grepno:
+		foreach rec (${recno})
+			bm "${rec}" ${libfile} | awk 'NF>2' | \
+			grep "^#[${outsel}]" >> ${tmpfile}
+			echo "---------------------------" >> ${tmpfile}
+			end
+		less -pcu ${tmpfile}
+		endif
+	goto loop
+#---------------------------------------------------------------#
+#		add a new record to library file		#
+#---------------------------------------------------------------#
+libadd:
+	if ( "${user}" != "secrtary" && "${user}" != "chicca" && ${user} != "lew" ) then
+err:
+		echo -n '...Sorry, only secretary can update library info'
+		goto getret
+		breaksw
+		endif
+	if ( "${title}" == "" ) then
+		echo "...You can not add a record without title..."
+		sleep 1
+		goto loop
+		endif
+	@ rec = `tail -1 ${libfile} | awk '{print $2}'`
+	@ rec ++
+	set recno = "${rec}"
+	if ( $rec < 1000 ) set recno = "0${recno}"
+	if ( $rec < 100 ) set recno = "0${recno}"
+	if ( $rec < 10 ) set recno = "0${recno}"
+	cat >> ${libfile} << cat_eof
+
+#K ${recno}	${keyword}
+#A ${recno}	${author}
+#P ${recno}	${pub}
+#T ${recno}	${title}
+#N ${recno}	${bookid}
+#D ${recno}	${pdate}
+#S ${recno}	${size}
+#R ${recno}	`date`
+cat_eof
+	echo "Record ${recno} has been added successfully"
+	sleep 1
+	goto loop
+#---------------------------------------------------------------#
+#	    show all new books since last check			#
+#---------------------------------------------------------------#
+libnew:
+	if ( ! -e ~/.gsgbook ) then
+		@ old = 0
+	else
+		@ old = `cat ~/.gsgbook`
+		endif
+	grep '^#T' ${libfile} | awk		\
+	'BEGIN			{ p = 0 }	\
+	 p == 1			{ print }	\
+	 $2 ~ /'"${old}"'/	{ p = 1 }' | less -pcu
+	tail -1 ${libfile} | awk '{ print $2 }' > ~/.gsgbook
+	goto loop
+#---------------------------------------------------------------#
+#	   display all possible keyword defined			#
+#---------------------------------------------------------------#
+libkeyword:
+	(echo "...Possible Keywords List in Library...";	\
+	 grep '^#K' ${libfile} | awk				\
+	 '{ for (i=3; i<=NF; i++) {				\
+		print $i;					\
+		}						\
+	  }') | sort -u | awk					\
+	'NR == 1 { print }					\
+	 NR > 1	{						\
+		printf "%-18s", $0;				\
+		if (++i % 4 == 0) printf "\n";			\
+		}						\
+	 END	{ if (i % 4 != 0) printf "\n"; }' | less -pcu
+	goto loop
+#---------------------------------------------------------------#
+#	    print previous located collection of data		#
+#---------------------------------------------------------------#
+libprint:
+	if ( -e ${tmpfile} && ! -z ${tmpfile} ) then
+		print ${tmpfile}
+	else
+		echo -n "Nothing to print"
+getret:
+		echo -n ", press RETURN to continue: "
+		set yon = "$<"
+		endif
+	goto loop
+#---------------------------------------------------------------#
+#      run vi on the library file (undocumented feature)	#
+#---------------------------------------------------------------#
+libvi:
+	vi ${libfile}
+	goto loop
+#---------------------------------------------------------------#
+#	   display usage guide for inexperience users		#
+#---------------------------------------------------------------#
+libhelp:
+	cat << cat_eof
+add	add a new record into library database, privilege required
+new	display what new books has arrived since last use
+find	search for proper information
+help	display this usage guide
+keyword	show all current available keywords
+print	print the result from the last find command
+quit	exit
+
+You may enter search string in any of the fields (grep -i will be used
+in each occassion). If you specify book numbers, all the other fields
+will be ignored.
+
+The one character fields at the beginning of each field is output
+select, if it is 'y', it will be included in the output.
+
+cat_eof
+	echo -n "End of help info"
+	goto getret
+#---------------------------------------------------------------#
+#		Clean up and exit here...			#
+#---------------------------------------------------------------#
+end:
+	/bin/rm -f ${tmpfile}
+	unset fnames fname srcfile tmpfile

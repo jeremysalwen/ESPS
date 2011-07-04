@@ -1,0 +1,49 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)pctolsf.3	1.5 29 Jul 1991 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.if n .ds - ---
+.if t .ds - \(em\h'-0.2m'\(em
+.TH PC_TO_LSF \3-ESPSsp 29 Jul 1991
+.SH NAME
+
+pc_to_lsf \- convert linear prediction coefficients to line spectral frequencies
+.SH SYNOPSIS
+.ft B
+int
+pc_to_lsf(pc, lsf, order, bandwidth, freq_res)
+.br
+float   pc[], bandwidth, lsf[], freq_res;
+.br
+int     order;
+.SH DESCRIPTION
+This routine computes the line spectral frequencies
+.I lsf
+(see [1]) that correspond to the input vector
+.I pc
+of linear prediction coefficients,
+also known as autoregressive filter coefficients
+or prediction-error filter coefficients.
+The convention adopted is that the first such coefficient is \-1,
+and it does not appear in the input vector.
+The argument
+.I order
+is the analysis filter order\*-i.e. the number of explicitly given input
+.I pc
+parameters and output 
+.I lsf
+parameters\*-and
+.I bandwidth
+should equal one-half the sampling frequency of the original sampled data.
+The function uses a search with a frequency spacing
+.I freq_res.
+Legitimate values for
+.I freq_res
+range between 1 and 100 Hz for a signal bandwidth of 4000 Hz.
+.SH REFERENCES
+[1] G. S. Kang and L. J. Fransen,
+.I
+Low-Bit Rate Speech Encoders Based on Line-Spectrum Frequencies (LSFs),
+NRL Report 8857, Naval Research Laboratory, Washington, D.C., January, 1985.
+.SH AUTHOR
+Manual page D. Burton

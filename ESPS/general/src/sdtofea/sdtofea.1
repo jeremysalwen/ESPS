@@ -1,0 +1,115 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc. All rights reserved.
+.\" @(#)sdtofea.1	1.2	03 Apr 1997	ESI
+.TH SDTOFEA 1\-ESPS 03 Apr 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.if t .ds - \(em\h'-0.2m'\(em
+.if n .ds - ---
+.SH "NAME"
+sdtofea \- convert sampled-data file to FEA_SD file
+.SH "SYNOPSIS"
+.B sdtofea
+[
+.BI \-x " debug_level"
+]
+.I input.sd output.fea
+.SH "DESCRIPTION"
+.PP
+This program accepts an ESPS SD(5\-ESPS) file
+.I input.sd
+and writes an ESPS FEA_SD(5\-ESPS) file
+.I output.fea
+containing the same sampled data.
+If the value of
+.I hd.sd\->nchan
+in the type-specific part of the input header is 1 or greater,
+it gives the number of channels\*-\c
+each output record consists of that number of consecutive samples
+from the input file.
+A value of either 0 or 1 indicates a single-channel file.
+The output data type is the same
+(DOUBLE, FLOAT, LONG, SHORT, or BYTE)
+as the input data type.
+.PP
+If
+.I input.spec
+is "\-", standard input is used for the input file.
+If
+.I output.fea
+is "\-", standard output is used for the output file.
+.SH "OPTIONS"
+.PP
+The following option is supported:
+.TP 
+.BI \-x " debug_level"
+Positive values of
+.I debug_level
+cause debugging information to be printed.
+The default value is 0, which suppresses the messages.
+.SH "ESPS PARAMETERS"
+.PP
+No parameter file is read.
+.SH "ESPS COMMON"
+.PP
+The ESPS common file is not accessed.
+.SH ESPS HEADERS
+The output header is a new FEA_SD file header,
+with appropriate items copied from the input header.
+The value of the item
+.I sf
+in the type-specific part of the input header
+is recorded in a generic header item
+.I record_freq
+in the output.
+The type-specific input header items
+.I equip, max_value, src_sf, synt_method, scale,
+.I dcrem, q_method, v_excit_method, uv_excit_method, synt_interp,
+.I synt_pwr, synt_rc, synt_order, start,
+and
+.I nan,
+except those with null values,
+are saved as like-named generic header items in the output file.
+(A ``null'' value is a value, such as zero, NONE, or NULL, that indicates
+that an item is inapplicable.)
+If
+.I preemphasis
+in the input header is non-NULL,
+it gives rise to 3 generic header items in the output:
+.I preemphasis_siz, preemphasis_zeros,
+and
+.I preemphasis_poles
+(see
+.IR add_genzfunc (3-ESPSu)).
+Similarly
+.I de_emp,
+if non-NULL, gives rise to
+.I de_emp_size, de_emp_zeros,
+and
+.I de_emp_poles
+in the output.
+Generic header items in the input file header are copied to the output header
+after being renamed, if necessary, to avoid name conflicts.
+As usual, the command line is added as a comment, and the header of 
+.I input.sd 
+is added as a source file to 
+.I output.fea.
+.SH "FUTURE CHANGES"
+.PP
+None planned.
+.SH "SEE ALSO"
+.IR SD (5-ESPS),
+.IR FEA (5-ESPS),
+.IR FEA_SD (5-ESPS),
+.br
+.IR add_genzfunc (3-ESPSu),
+.IR featosd (3-ESPSu).
+.SH "WARNINGS AND DIAGNOSTICS"
+.PP
+The program exits with an error message
+if the command line contains unrecognized options or too many or too
+few file names.
+.SH "BUGS"
+.PP
+None known.  
+.SH "AUTHOR"
+.PP
+Manual page and program by Rodney Johnson. 

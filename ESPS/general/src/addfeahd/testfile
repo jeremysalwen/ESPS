@@ -1,0 +1,470 @@
+#
+# testfile for addfeahd @(#)testfile	1.4 1/15/92 ESI
+#
+atosps - speech.fana <<ZAP
+{
+01 d
+02 6a1a
+03 Fri May  6 16:16:30 1988 
+04 1.56
+05 fea_edit
+06 3.2
+07 11/30/87
+53 parker
+08 113
+09 1
+0b e
+0c 2
+0d 1
+10 speech.fana
+12 fea_edit speech.fana  Converted from speech.fana by spstoa.
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@nan LONG 1 13280 
+@dcrem CHAR 4 yes 
+@src_sf FLOAT 1 8000 
+@frmlen LONG 1 160 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 10 
+@p_offset SHORT 1 3 
+@maxraw LONG 1 1 
+@start LONG 1 1 
+@psynch CHAR 4 yes 
+@filters CODED 1 [ NO YES ] NO 
+@matsiz SHORT 1 11 
+@order_unvcd LONG 1 10 
+@maxpulses LONG 1 1 
+
+{
+01 d
+02 6a1a
+03 Fri May  6 16:07:39 1988 
+04 1.56
+05 lpcana
+06 3.7
+07 4/19/88
+53 parker
+08 113
+09 1
+0b e
+0c 2
+0d 1
+10 speech.sd
+12 lpcana -Plpcparams speech.sd speech.fana 
+13 speech.sd
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@nan LONG 1 13280 
+@dcrem CHAR 4 yes 
+@src_sf FLOAT 1 8000 
+@frmlen LONG 1 160 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 10 
+@p_offset SHORT 1 3 
+@maxraw LONG 1 1 
+@start LONG 1 1 
+@psynch CHAR 4 yes 
+@filters CODED 1 [ NO YES ] NO 
+@matsiz SHORT 1 11 
+@order_unvcd LONG 1 10 
+@maxpulses LONG 1 1 
+
+{
+01 9
+02 6a1a
+03 Fri May  6 16:07:34 1988 
+04 1.56
+05 copysd
+06 3.3
+07 11/2/87
+53 parker
+08 346d
+0d 1
+10 eg.sd
+11 comment added: Fri Nov 13 15:46:35 1987text: "There's ususally a valve"
+12 copysd -ds speech.sd   Copied from eg.sd, records 2054 to 15474 Converted from speech.sd by spstoa.
+42 0
+43 0
+44 8000
+20 0
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+{
+01 9
+02 6a1a
+03 Wed Jun 25 09:28:46 1986 
+04 1.56
+05 copysd
+06 1.7
+07 6/10/86
+08 41a0
+0b 1
+10 rudy2dec.sps
+12 Converted from sds file rudy2dec.sd by sdssdtoa.copysd -r63201:80000 rudy2dec.sps /usr/speech_data/pure_speech/dsc/male/phoneme/voiced_fric1/erpdec.sd Copied from rudy2dec.sps, samples 63201 to 80000; by copysd.
+42 0
+43 0
+44 8000
+20 32000
+45 0
+46 0
+22 -5
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+{
+01 9
+02 6a1a
+03 Wed Jun 25 09:28:46 1986 
+04 1.56
+05 decimate
+06 0.1
+08 1d345
+0b 1
+10 rudy2ros.sd
+12 Converted from sds file rudy2dec.sd by sdssdtoa.
+42 0
+43 0
+44 8000
+20 32000
+45 0
+46 0
+22 -5
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+{
+01 9
+02 6a1a
+03 Wed Jun 25 09:28:46 1986 
+04 1.56
+05 doslacfil
+06 0.1
+08 74d14
+0b 1
+10 rudy2trp.sd
+42 0
+43 0
+44 32000
+20 32000
+45 0
+46 0
+22 -5
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+{
+01 9
+02 6a1a
+03 Wed Jun 25 09:28:46 1986 
+04 1.56
+05 interpol
+06 0.1
+08 74d5c
+0b 1
+10 rudy2lpf.sd
+42 0
+43 0
+44 32000
+20 48000
+45 0
+46 0
+22 -5
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+{
+01 9
+02 6a1a
+03 Wed Jun 25 09:28:46 1986 
+04 1.56
+05 lopasfil
+06 0.1
+08 af430
+0b 1
+10 rudy2sta.sd
+42 0
+43 0
+44 48000
+20 48000
+45 0
+46 0
+22 -5
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+{
+01 9
+02 6a1a
+03 Wed Jun 25 09:28:46 1986 
+04 1.56
+05 dcnstat
+06 0.1
+08 afc00
+0b 1
+10 rudy2.sd
+42 0
+43 0
+44 48000
+20 48000
+45 0
+46 0
+22 -5
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+{
+01 9
+02 6a1a
+03 Wed Jun 25 09:28:46 1986 
+04 1.56
+05 ilssds
+06 1.2
+08 afc00
+0d 1
+10 rudy2.org
+42 0
+43 0
+44 48000
+20 48000
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+
+#Tag 1
+#frame_len	1 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	2.18107 
+#lpc_power	1 
+#p_pulse_len	1 
+#spec_param	-0.00192121 0.0376765 0.672668 0.0911743 0.0746799 -0.289703 -0.0346888 -0.196822 
+	-0.115932 -0.141364 
+
+#Tag 2
+#frame_len	76 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	59.656 
+#lpc_power	27.3517 
+#p_pulse_len	76 
+#spec_param	-0.00192121 0.0376765 0.672668 0.0911743 0.0746799 -0.289703 -0.0346888 -0.196822 
+	-0.115932 -0.141364 
+
+#Tag 78
+#frame_len	52 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	478.236 
+#lpc_power	219.267 
+#p_pulse_len	52 
+#spec_param	-0.00192121 0.0376765 0.672668 0.0911743 0.0746799 -0.289703 -0.0346888 -0.196822 
+	-0.115932 -0.141364 
+
+#Tag 130
+#frame_len	52 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	23.9882 
+#lpc_power	10.9984 
+#p_pulse_len	52 
+#spec_param	-0.00192121 0.0376765 0.672668 0.0911743 0.0746799 -0.289703 -0.0346888 -0.196822 
+	-0.115932 -0.141364 
+
+#Tag 182
+#frame_len	51 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	76.3287 
+#lpc_power	8.45597 
+#p_pulse_len	51 
+#spec_param	0.924128 0.109791 0.0309842 -0.366188 -0.125484 -0.166503 -0.178624 -0.0709674 
+	-0.0220528 -0.190411 
+
+#Tag 233
+#frame_len	44 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	51.0767 
+#lpc_power	5.65846 
+#p_pulse_len	44 
+#spec_param	0.924128 0.109791 0.0309842 -0.366188 -0.125484 -0.166503 -0.178624 -0.0709674 
+	-0.0220528 -0.190411 
+
+#Tag 277
+#frame_len	37 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	57.5118 
+#lpc_power	6.37136 
+#p_pulse_len	37 
+#spec_param	0.924128 0.109791 0.0309842 -0.366188 -0.125484 -0.166503 -0.178624 -0.0709674 
+	-0.0220528 -0.190411 
+
+#Tag 314
+#frame_len	37 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	64.4927 
+#lpc_power	6.36924 
+#p_pulse_len	37 
+#spec_param	0.924836 0.137476 0.090049 -0.355702 -0.183256 -0.291521 -0.0357407 -0.289422 
+	-0.070973 -0.0504359 
+
+#Tag 351
+#frame_len	26 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	52.7811 
+#lpc_power	5.21262 
+#p_pulse_len	26 
+#spec_param	0.924836 0.137476 0.090049 -0.355702 -0.183256 -0.291521 -0.0357407 -0.289422 
+	-0.070973 -0.0504359 
+
+#Tag 377
+#frame_len	30 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	55.7068 
+#lpc_power	5.50155 
+#p_pulse_len	30 
+#spec_param	0.924836 0.137476 0.090049 -0.355702 -0.183256 -0.291521 -0.0357407 -0.289422 
+	-0.070973 -0.0504359 
+
+#Tag 407
+#frame_len	121 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	506.98 
+#lpc_power	50.0689 
+#p_pulse_len	121 
+#spec_param	0.924836 0.137476 0.090049 -0.355702 -0.183256 -0.291521 -0.0357407 -0.289422 
+	-0.070973 -0.0504359 
+
+#Tag 528
+#frame_len	70 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	154.469 
+#lpc_power	102.365 
+#p_pulse_len	70 
+#spec_param	0.310167 -0.10738 0.204137 -0.271004 0.0658002 -0.216299 -0.0485325 -0.188068 
+	-0.224777 -0.191566 
+
+#Tag 598
+#frame_len	32 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	9143.28 
+#lpc_power	6059.15 
+#p_pulse_len	32 
+#spec_param	0.310167 -0.10738 0.204137 -0.271004 0.0658002 -0.216299 -0.0485325 -0.188068 
+	-0.224777 -0.191566 
+ZAP
+set -x
+bhd speech.fana > speech.bhd
+fea_element -n speech.fana >speech.for
+addfeahd  -ctestdata -t FEA_ANA speech.for speech.bhd speech.fea
+echo for now the differences with frame_type are ok
+pspsdiff speech.fana speech.fea | more

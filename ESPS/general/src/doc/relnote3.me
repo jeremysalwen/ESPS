@@ -1,0 +1,202 @@
+.lo
+.ce 2
+.b
+ESPS 3.0 Release Notes
+.sp
+12/22/87 1.4
+.sh 1 "Introduction"
+.lp
+This documents provides notes relevant to release 3.0 of \s-1ESPS\s+1.  Please
+read this document and the Installation Instructions completely before
+installing this release of \s-1ESPS\s+1.
+.sh 1 "Contents of this Kit"
+.lp
+The ESPS 3.0 installation kit contains magnetic media of the ESPS 3.0
+distribution.
+For Masscomp systems the magnetic media is
+either a set of diskettes or one 9 track tape.  For Sun systems the
+media is either a cartridge tape or one 9 track tape.   In any of these
+cases, the media contains the source distribution in Unix \fItar91)\fR
+format.  
+.lp
+The kit also contains a User's Manual, containing documents describing
+the use of the system and manual pages for all programs, library
+functions and file types.   The documents provided are important, and
+should be read by all users of the system.   The provide essential
+information about using and programming with \s-1ESPS\s+1.
+.sh 1 "A Comment About Masscomp Universes"
+.lp
+Masscomp provides a dual universe environment on their systems.  By
+using the \fIuniverse\fR command, a user can set his compilation
+environment to be either ATT System V, or Berkeley 4.2.   ESPS is to be
+installed under the UCB universe (command: \fIuniverse ucb\fR).  In most
+cases, since the library is created under ucb, user programs must also
+be compiled and linked under ucb.    You will notice one exception, our
+scripts and makefiles use the \fIlint\fR under att.  This is because lint has
+some problems under ucb.
+.sh 1 "Differences Between the Beta Release and 3.0"
+.lp
+If you already have a version of \s-1ESPS\s+1 installed, then it is a beta
+release.  If you do not have a version installed, then you can skip this
+section.
+.lp
+Here is a list of changes in \s-1ESPS\s+1 Version 3.0 from the beta release.  
+Please duplicate this section and make it available to all users of
+\s-1ESPS\s+1.  This information is needed by others than just the \s-1ESPS\s+1
+installer.
+.ip 1.
+The header field common.ndrec is no longer written by programs.
+The field common.ndrec is filled in automatically by \fIread_header\fR(3\-\s-1ESPS\s+1)
+and
+ignored by \fIwrite_header\fR(3\-\s-1ESPS\s+1).  
+This change was introduced so that programs would
+not have to know how many records are to be written before they write out
+the \s-1ESPS\s+1 header (this is in keeping with the "\s-1UNIX\s+1 philosophy" of files).
+If the input file to an \s-1ESPS\s+1 program is a pipe, so that the number of
+records can not be known in advance, \fIread_header\fR sets common.ndrec to -1.
+See the discussion of ndrec in \s-1ESPS\s+1(5-\s-1ESPS\s+1).  Existing programs can 
+continue to write ndrec when converted to \s-1ESPS\s+1 3.0, and they can count
+on ndrec being correct for disk files, but writes to ndrec when the 
+output is a pipe will have no effect.  
+.ip 2.
+SD files now have start and nan.
+These fields allow programs like \fIfilter\fR(1\-\s-1ESPS\s+1) and \fIcopysd\fR(1\-\s-1ESPS\s+1)
+to record the
+range of the input file.  Start and nan are starting point and
+intended number of points analyzed.  Values are set to zero if they
+are not meaningful.  Otherwise, start and nan usually refer to the
+file named by variable.refer.  They may also refer to a relevant
+source file (variable.refer is also likely to be a source file).  If
+the file has many source files \- as is the case for \fIcopysd\fR \-
+then start and nan usually refer to all the source files.  Often,
+start and nan will be determined by a command-line range option or by
+values in the \s-1ESPS\s+1 Parameter or Common file.  In cases where an
+entire file is to be analyzed and the file is processed by means of
+standard input, nan will be set to LONG_MAX (2147483648 on 68000
+class machines); if a disk file is used, then nan can be set to the
+actual number of points in the file since common.ndrec is filled in
+by \fIread_header\fR.  In deciding what to do about nan, remember
+that common.ndrec == -1 is a reliable indicator that a pipe was used.
+.sp
+Note that nan is the \fIintended\fR number of points analyzed.
+Regardless of whether standard input is used, nan won't reflect the
+actual number of points analyzed if an input file is exhausted before
+the intended range is covered.  This is because the header is written
+before the data.  To require nan always to be the actual number of
+points analyzed would require that programs use a temporary file and
+therefore that they write the data twice.  If it is crucial to record
+in nan the actual number of points processed, this can be
+accomplished by using such a temporary file.
+.ip 3.
+SPEC files still have start and nan.
+The use of these fields is analogous to the discussion above
+for SD.  
+.ip 4.
+FEA_ANA has new generic fields.
+Start, nan, and frmlen have been added as standard generics for
+FEA_ANA.  Start and nan are used as discussed above.  Frmlen should
+be used when a fixed frame length is used in the analysis.  
+.ip 5.
+SPEC now has tot_power field in each record.
+This stores total power, and will be used in plotspec -d to properly
+normalize the distribution function.  
+.ip 6.
+\fIget_sd_recX\fR(3\-\s-1ESPS\s+1) returns number of points read.
+This is important since it makes it possible to keep track of
+the actual number of points processed before the end is reached.  
+This way the actual nan can be written to Common -- see copysd 
+for examples.  These functions now return 0 on end of file and on
+each call after that.  They no longer return EOF.  
+.ip 7.
+\fIread_params\fR(3\-\s-1ESPS\s+1) no longer quits if it can't read the parameter file.
+It returns -1 if it can't open the params file and it was asked
+to read a params file.  It returns -2 if it cannot open a common and it
+was asked to.  It returns -3 if cannot open both and it was asked to
+open both.  These return values are rarely needed.  
+.ip 8.
+Definitions of src_sf and variable.refer clarified.
+See the revised descriptions for SD src_sf and variable.refer in SD(5\-\s-1ESPS\s+1) 
+and \s-1ESPS\s+1(5\-\s-1ESPS\s+1).
+.ip 9.
+\fIadd_comment\fR(3\-\s-1ESPS\s+1) is now void.
+It prints a warning if there's insufficient space for the comment (instead
+of returning an error code).
+.ip 10.
+The field user_path has been added to universal section of file headers.
+This is the \s-1UNIX\s+2 path to the directory in which the program writing the 
+header was run.  
+.ip 11.
+Most programs that process multiple files have been modified to
+ignore \s-1ESPS\s+1 Common if more than one input file is specified (e.g.,
+\fIcopysps\fR, \fIplay\fR); this is because \s-1ESPS\s+1 Common entries (typically start
+and nan) usually make sense for a single file only.
+.ip 12.
+FM_VARIABLE added as framing type for SPEC files. 
+.ip 13.
+The default Common file is now .espscom instead of .spscom and
+the Common environment variable is now ESPSCOM instead of SPSCOM.  
+Another environment variable USE_ESPS_COMMON determines whether
+or not common is processed -- it is processed unless 
+USE_ESPS_COMMON=off.  Feedback concerning the processing of
+\s-1ESPS\s+1 parameter and common files is provided, depending on the 
+value of the environment variable ESPS_VERBOSE -- see the discussion
+in most \s-1ESPS\s+1 Section 1 man pages.  
+.ip 14.
+\fIspstoa\fR(1\-\s-1ESPS\s+1) and \fIatosps\fR(1\-\s-1ESPS\s+1) now work for FEA files
+as well as SD files.  
+.ip 15.
+Option letters for various user-level programs have been changed 
+to match \s-1ESPS\s+1 standards.  
+\fIpsps\fR(1\-\s-1ESPS\s+1) is one program whose options changed a lot.  
+.ip 16.
+\fIrefcof\fR(1\-\s-1ESPS\s+1) now processes \s-1ESPS\s+1 Common; \fIrefcof\fR 
+now offers covariance, Burg,
+and modified Burg methods in addition to autocorrelation.  The pre-emphasis
+option has been removed, but \fIfilter\fR(1\-\s-1ESPS\s+1) can be used to filter data in
+a pipe before \fIrefcof\fR is used.
+.ip 17.
+Formatting of \fIpsps\fR output has been improved.  Quite a few options
+have been renamed.  
+.ip 18.
+The names for FEA file fields are now required to satisfy the 
+same rules as C variables.  
+.ip 19.
+Default parameter files have been provided for all programs 
+that process parameter files.  \fIEparam\fP (1\-\s-1ESPS\s+1) 
+invokes a given \s-1ESPS\s+1 program and prompts users for parameter 
+values.  See the \fIeparam\fP man page; try 
+.sp
+.nf
+    %eparam testsd foo.sd
+.fi
+.ip 20.
+The return types of numerous library functions have been changed.  
+.ip 21.
+The lint library has been cleaned up considerably.  
+.ip 22.
+Lots of bug fixes.  
+.ip 23.
+\fIaplot\fR(1\-\s-1ESPS\s+1) has been added for plotting ascii data.  
+.ip 24.
+All of the plot programs have a uniform interface.  By default they
+plot on the user's screen.  The -T option allows specifying the 
+imagen, tektronix output, or gps output.  
+.ip 25.
+\fIplotfield\fR has been added for plotting feature file fields.
+.ip 26.
+\fIfind_ep\fR has been added.  It is a general end point detector for
+sampled data files.
+.sh 1 "Installing 3.0"
+.lp
+If you already have the beta \s-1ESPS\s+1 installed, there are several options
+about how to install 3.0.   We suggest that you install the 3.0 target
+directory into \fI/usr/esps\fR.   In the beta installation instructions we
+suggested that \fI/usr/esps\fR be a symbolic link to the real location of the
+target directory.   If this is your setup, then you can simply remove
+this symbolic link (after warning users!) and install \s-1ESPS\s+1 has described
+in the Installation instructions.   
+.lp
+If you have the target directory for the beta at /usr/esps, you must
+delete it before installing 3.0.
+.lp
+Be sure to delete the old sources to the beta.

@@ -1,0 +1,43 @@
+"Select Waveform Menu" MENU
+	"Default menu" DEFAULT @defwavmen.WC
+	"Style 1" @wavmen1.WC
+	"Clear menu" delete_all_items menu wave
+"Select Waveform Menu" END
+
+"Select Image Menu" MENU
+	"Default menu" DEFAULT @defimgmen.WC
+	"Style 1" @imagmen2.WC
+	"Clear menu" delete_all_items menu spect
+"Select Image Menu" END
+
+"Add Menu Function" MENU
+   "window ahead" add_waves builtin "window ahead" 
+   "window back" add_waves builtin "window back"
+   "align & rescale" add_waves builtin "align & rescale" 
+   "bracket markers" add_waves builtin "bracket markers" 
+   "zoom in" add_waves builtin "zoom in" 
+   "zoom out" add_waves builtin "zoom out" 
+   "zoom full out" add_waves builtin "zoom full out" 
+   "kill window" add_waves builtin "kill window" 
+#   "play between marks" add_waves menu wave builtin "play between marks"
+#   "play entire file" add_waves menu wave builtin "play entire file"
+#   "play window contents" add_waves menu wave builtin "play window contents"
+#   "play to end of file" add_waves menu wave builtin "play to end of file"
+   "Show segment data" add_espst name "Show segment data" command epsps -H
+   "Show header (brief) and segment" add_espst name "Show header (brief) and segment" command epsps -l 
+   "Show header (full) and segment" add_espst name "Show header (full) and segment" command epsps -a
+   "Segment statistics" add_espst name "Segment statistics" command fea_stats
+#   "spectrogram (W.B.)" add_waves menu wave builtin "spectrogram (W.B.)"
+#   "spectrogram (N.B.)" add_waves menu waves builtin "spectrogram (N.B.)"
+   "Custom FFT Analysis" add_espsf menu wave name "Custom FFT Analysis" command expromptrun -n -h fft -PPfft fft
+#   "Custom ME Analysis" add_espsf menu wave name "Custom ME Analysis" command do_Xrefcof
+"Add Menu Function" END
+
+
+"Add Image Menu Function" MENU
+   "3D Plot" add_espsn menu spect name "3D Plot" command plot3d -o R -w
+"Add Image Menu Function" END
+
+# @(#)menus.WM	1.3 11/16/92 ERL 
+
+

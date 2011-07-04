@@ -1,0 +1,46 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)determ.3	1.4 05 Jan 1993 ESI
+.TH DETERM 3\-ESPSsp 05 Jan 1993
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+determ \- determinant of a matrix in single precision
+
+determ_d \- determinant of a matrix in double precision
+.SH SYNOPSIS
+.ft B
+.nf
+double
+determ(mat, order)
+float	**mat;
+int	order;
+
+double
+determ_d(mat, order)
+double  **mat;
+int     order;
+.fi
+.ft
+.SH DESCRIPTION
+.PP
+The return value of
+.I determ
+is the determinant of an
+.IR order -by- order
+matrix.
+.PP
+The parameter
+.I mat
+should point to the first element of an array of
+.I order
+pointers, each of which points to the first element of a row of the
+matrix.
+.PP
+.I determ_d
+is the double precision version of 
+.I determ.
+.SH BUGS
+None known.
+.SH "SEE ALSO"
+arr_alloc(3\-ESPSu), f_mat_alloc(3\-ESPSu)
+.SH AUTHOR
+Rodney Johnson

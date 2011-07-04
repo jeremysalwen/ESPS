@@ -1,0 +1,49 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)demos.1	1.5 6/24/91 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH DEMOS 1\-ESPS 1.5
+.SH NAME
+DEMOS - put up the button control panel for the demos
+.SH SYNOPSIS
+.B DEMOS
+.SH DESCRIPTION
+.PP
+\fIDEMOS\fP assumes that you are standing in a copy of the 
+"`get_esps_base`/demo" directory, and all the subdirectories of that
+directory exist and are readable. The \fIfiles\fP, \fIcommands\fP and
+\fIparam_files\fP 
+subdirectories must 
+be writable, and the files in the \fIscripts\fP directory must be
+exectuable.
+All other subdirectories must be searchable by you and the files in
+the subdirectories must be readable.
+\fIDEMOS\fP also assumes that you are running X windows; nothing will
+work, if you are not.
+.PP
+.I DEMOS
+is a shell script that runs \fImbuttons\fP (1\-\s-1ESPS\s+1) and
+presents a button panel for viewing several combination ESPS and
+waves+ demos. If you do not have both ESPS and \fIwaves+\fP,
+most of the demos will not work.
+See the README in the "`get_esps_base`/demo" directory 
+for additional information.
+.SH OPTIONS
+.PP
+There are none.
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.SH ESPS COMMON
+.PP
+The common file is not used.
+.SH BUGS
+None known.
+.SH EXPECTED CHANGES
+.PP
+.SH "SEE ALSO"
+.PP
+.SH AUTHOR
+.PP
+David Burton.
+
+

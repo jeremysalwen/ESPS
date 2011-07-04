@@ -1,0 +1,21 @@
+README for gpstohp   2/2/90
+
+This is a hacked up gpstohp laserjet filter made from parts of
+Entropic's mcd and image.    To compile just say "emake" in this
+directory.   To test, do:
+
+gpstohp <a.gps >a.hp
+
+Then send a.hp to your HP laserjet.  You should get a box with little
+boxes in the corners and the words "MCD OK" in the middle.
+
+
+To use with the ESPS plot programs  use the -Tgps option and then pipe
+the plot program through gpstohp to the printer.  For example:
+
+
+plotsd -Tgps foo.sd | gpstohp > foo.hp
+
+
+foo.hp contains a bitmap file ready to print on the HP.   
+

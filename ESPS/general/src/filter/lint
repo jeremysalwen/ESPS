@@ -1,0 +1,65 @@
+"filter.c", line 70: warning: old style argument declaration
+"filter.c", line 127: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 129: warning: long in case or switch statement may be truncated in non-ansi compilers
+"filter.c", line 270: warning: function prototype not in scope
+"filter.c", line 345: warning: function prototype not in scope
+"filter.c", line 391: warning: conversion from long may lose accuracy
+"filter.c", line 411: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 420: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 463: warning: possible pointer alignment problem, op CAST
+"filter.c", line 466: warning: possible pointer alignment problem, op CAST
+"filter.c", line 469: warning: possible pointer alignment problem, op CAST
+"filter.c", line 472: warning: possible pointer alignment problem, op CAST
+"filter.c", line 514: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 519: warning: function prototype not in scope
+"filter.c", line 519: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 543: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 543: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 545: warning: possible pointer alignment problem, op CAST
+"filter.c", line 545: warning: conversion from long may lose accuracy
+"filter.c", line 548: warning: possible pointer alignment problem, op CAST
+"filter.c", line 548: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 548: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 548: warning: conversion from long may lose accuracy
+"filter.c", line 552: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 553: warning: possible pointer alignment problem, op CAST
+"filter.c", line 557: warning: possible pointer alignment problem, op CAST
+"filter.c", line 557: warning: conversion from long may lose accuracy
+"filter.c", line 560: warning: possible pointer alignment problem, op CAST
+"filter.c", line 560: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 560: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 560: warning: conversion from long may lose accuracy
+"filter.c", line 563: warning: possible pointer alignment problem, op CAST
+"filter.c", line 571: warning: possible pointer alignment problem, op CAST
+"filter.c", line 576: warning: possible pointer alignment problem, op CAST
+"filter.c", line 582: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 582: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 584: warning: possible pointer alignment problem, op CAST
+"filter.c", line 587: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 587: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 589: warning: possible pointer alignment problem, op CAST
+"filter.c", line 596: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 601: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 602: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 615: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 638: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 696: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 719: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 720: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 730: warning: function prototype not in scope
+"filter.c", line 730: warning: conversion from long may lose accuracy
+"filter.c", line 733: warning: function prototype not in scope
+"filter.c", line 733: warning: conversion from long may lose accuracy
+"filter.c", line 735: warning: function prototype not in scope
+"filter.c", line 735: warning: conversion from long may lose accuracy
+"filter.c", line 737: warning: function prototype not in scope
+"filter.c", line 737: warning: conversion from long may lose accuracy
+"filter.c", line 738: warning: conversion from long may lose accuracy
+"filter.c", line 745: warning: function prototype not in scope
+"filter.c", line 752: warning: function prototype not in scope
+"filter.c", line 769: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 771: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 771: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 771: warning: conversion from long may lose accuracy
+"filter.c", line 773: warning: conversion to long may sign-extend incorrectly
+"filter.c", line 28: warning: static variable sccs_id unused

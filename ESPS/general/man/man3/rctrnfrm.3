@@ -1,0 +1,108 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)rctrnfrm.3	1.8 01 May 1997 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH RC_TRNFRM 3\-ESPSsp 01 May 1997
+.SH NAME
+
+rc_reps \- transform reflection coefficients into other spectral parameter sets
+.br
+reps_rc \- transform spectral parameter sets into reflection coefficients
+.SH SYNOPSIS
+.ft B
+#include <esps/anafea.h>
+.sp
+.br
+int 
+.br
+rc_reps(rc, output, output_type, size, bwidth, frq_res)
+.br
+int size, output_type;
+.br
+float *rc, *output, bwidth, frq_res;
+.sp
+.br
+int
+.br
+reps_rc(input, input_type, rc, size, bwidth)
+.br
+int size, input_type;
+.br
+float *input, *rc, bwidth;
+.SH DESCRIPTION
+Each function transforms a set of coefficients that contain spectral
+information into another equivalent set of coefficients. 
+Valid spectral types are defined in \fIanafea.h\fR under \fIspec_reps[]\fR, 
+but they include
+reflection coefficients (RC), log area ratios (LAR), normalized
+autocorrelations (AUTO), autoregressive filter coefficients (AFC),
+cepstrum coefficients (CEP), and line spectral frequencies (LSF).
+\fIrc_reps\fR starts with RCs and 
+converts them into LARs, AFCs, AUTOs, CEPs, or LSFs; 
+\fIreps_rc\fR transforms LARs, AFCs, AUTOs, CEPs, or
+LSFs into RCs.
+.PP
+.I rc_reps
+transforms the input \fIrc\fRs into the parameter type \fIoutput_type\fR
+and returns them in \fIoutput\fR. \fISize\fR is the number of input
+and output parameters. \fIBwidth\fR and \fIfrq_res\fR are parameters
+that are only used when transforming to LSFs. \fIBwidth\fR should
+equal the bandwidth (Nyquist frequency) 
+of the data that was used in estimating the RCs.
+\fIFrq_res\fR specifies the resolution of the search grid that
+is used in finding the LSFs.
+For signal bandwidths of 4000 Hz., \fIfrq_res\fR between 2 and 50 Hz.
+are reasonable.
+.PP
+.I reps_rc
+transforms the \fIinput\fR from \fIinput_type\fR parameters into
+RCs and returns them in \fIrc\fR.
+\fISize\fR is the number of input and output parameters.
+\fIBwidth\fR is the Nyquist frequency of the source sampled data
+and is only used when converting from LSFs.
+.SH WARNINGS
+.PP
+The leading \-1 for AFCs and the leading 1 for normalized AUTOs
+are not included in the input or output vectors.
+Neither is the first term = ln{sqrt[residual power]} for CEPs.
+.SH DIAGNOSTICS
+.PP
+Both functions return 0 for normal completion, and they return \-1 if
+they encounter invalid spectral types.
+If input and output parameters are both RCs, a warning is issued,
+but RCs are returned in the output array.
+.SH EXAMPLES
+.nf
+    /*
+     * Convert RCs to LARs
+     */
+	#include <esps/anafea.h>
+	int size = 3, output_type = LAR, input_type = LAR;
+	static float rc[] = {.9, .5, .1};
+	float lar[3], bwidth, frq_res;
+
+	/* Ready to Convert */
+
+	if((rc_reps(rc, lar, output_type, size, bwidth, frq_res)) == \-1) {
+	    TROUBLE WITH CONVERSION
+	}
+
+
+    /*
+     * Convert back to RCs
+     */
+
+	if((reps_rc(lar, input_type, rc, size, bwidth) == \-1){
+	    TROUBLE WITH CONVERSION
+	}
+.fi
+.SH BUGS
+None known.
+.SH SEE ALSO
+auto_pefrc(3-ESPSsp), pc_to_lsf(3-ESPSsp), 
+.br
+lsf_to_pc(3-ESPSsp)
+.SH FUTURE CHANGES
+Add cepstrum and area functions to the allowable spectral types.
+.SH AUTHOR
+Manual page and code by David Burton

@@ -1,0 +1,499 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     refcof - computes LPC reflection coefficients via various spectrum analysis methods
+
+     xrefcof- run <EM>refcof</EM> with X Windows interactions and displays
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>refcof</STRONG> [ <STRONG>-P</STRONG> <EM>param</EM> ] [ <STRONG>-p</STRONG> <EM>range</EM> ] [ <STRONG>-r</STRONG> <EM>range</EM> ] [ <STRONG>-l</STRONG> <EM>frame</EM>_<EM>len</EM>
+     ]  [ <STRONG>-S</STRONG> <EM>step</EM> ] [ <STRONG>-w</STRONG> <EM>window</EM>_<EM>type</EM> ] [ <STRONG>-m</STRONG> <EM>method</EM> ] [ <STRONG>-o</STRONG> <EM>order</EM> ]
+     [ <STRONG>-e</STRONG> <EM>preemphasis</EM> ] [ <STRONG>-c</STRONG> <EM>conv</EM>_<EM>test</EM> ] [ <STRONG>-i</STRONG> <EM>max</EM>_<EM>iter</EM> ]  [   <STRONG>-</STRONG> <STRONG>s</STRONG>
+     <EM>sinc</EM>_<EM>n</EM>  ]  [   <STRONG>-d</STRONG> ] [ <STRONG>-Z</STRONG> ] [ <STRONG>-z</STRONG> ] [ <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> ] <EM>file</EM>.<EM>sd</EM>
+     <EM>file</EM>.<EM>rc</EM>
+
+     <STRONG>xrefcof</STRONG> [ <STRONG>-{rp}</STRONG> <EM>range</EM> ] <EM>sd</EM>_<EM>file</EM>
+
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     <EM>refcof</EM> takes an ESPS sampled data file,  <EM>file</EM>.<EM>sd</EM>,  and  pro-
+     duces  an  ESPS FEA_ANA analysis file <EM>file</EM>.<EM>rc</EM> containing the
+     reflection coefficients corresponding to one or more  fixed-
+     length sampled-data frames.
+
+     All input frames have the same length  <EM>frame</EM>_<EM>len</EM>  (see   <STRONG>-</STRONG> <STRONG>l</STRONG>
+     option).  The initial point of the first frame is determined
+     by the <STRONG>-p</STRONG> option or by <EM>start</EM> in the parameter file.  Initial
+     points  of  any  subsequent frames follow at equal intervals
+     <EM>step</EM> (see <STRONG>-S</STRONG> option).  Thus the 3 cases  <EM>step</EM>  &lt;  <EM>frame</EM>_<EM>len</EM>,
+     <EM>step</EM>  = <EM>frame</EM>_<EM>len</EM>, and <EM>step</EM> &gt; <EM>frame</EM>_<EM>len</EM>, correspond to over-
+     lapping frames, exactly abutted frames, and frames separated
+     by gaps.
+
+     The number of frames is the minimum sufficient  to  cover  a
+     specified range of <EM>nan</EM> points (see <STRONG>-p</STRONG> and <STRONG>-Z</STRONG> options), given
+     <EM>frame</EM>_<EM>len</EM> and <EM>step</EM>.  The last frame in each file may overrun
+     the  range,  in which case a warning is printed.  If a frame
+     overruns the end of a file, it is normally filled  out  with
+     zeros (but see <STRONG>-Z</STRONG>).
+
+     The reflection coefficients, along with the computed  values
+     for  <EM>raw</EM>_<EM>power</EM>  and  <EM>lpc</EM>_<EM>power</EM>,  are  then stored in FEA_ANA
+     records.  No pitch pulse information is written to the file.
+
+     If <EM>file</EM>.<EM>sd</EM> is "-" then the input is read from  the  standard
+     input  and  if <EM>file</EM>.<EM>rc</EM> is "-" then the output is directed to
+     the standard output.
+
+     The following spectrum analysis methods are available:
+9         Autocorrelation Method (AUTOC) - see <STRONG><A HREF="../man3.html/get_auto.3.html">get_auto (3-ESPS)</A></STRONG>
+9         Covariance Method (COV) - see <STRONG><A HREF="../man3.html/covar.3.html">covar (3-ESPS)</A></STRONG>
+9         Burg Method (BURG) - see <STRONG><A HREF="../man3.html/get_burg.3.html">get_burg (3-ESPS)</A></STRONG>
+9         Modified Burg Method (MBURG) - see <STRONG><A HREF="../man3.html/get_burg.3.html">get_burg (3-ESPS)</A></STRONG>
+
+
+         <STRONG><A HREF="../man3.html/struct_cov.3.html">struct_cov (3-ESPS)</A></STRONG>, and <STRONG><A HREF="../man3.html/genburg.3.html">genburg (3-ESPS)</A></STRONG>
+9         Vector Burg Method (VBURG) (fast approximation to structured
+         covariance)  - see <STRONG><A HREF="../man3.html/get_vburg.3.html">get_vburg (3-ESPS)</A></STRONG>
+9
+     By default, the program  uses  the  autocorrelation  method,
+     which  applies  the  standard  method of computing the auto-
+     correlation function and the Levinson algorithm for  comput-
+     ing  the  reflection  coefficients  from the autocorrelation
+     values.  Note that the standard autocorrelation  method  may
+     yield poor results when using a small number (i.e. &lt; 100) of
+     data samples.  The other methods can be specified  by  using
+     the  <STRONG>-</STRONG> <STRONG>m</STRONG> option.  The most accurate usually is STRCOV, espe-
+     cially for small frame lengths.
+
+     The methods AUTOC, STRCOV, and STRCOV1 operate by estimating
+     the   autocorrelation  function  and  then  transforming  to
+     reflection coefficients.  In these cases,  the  program  can
+     also  optionally  multiply the autocorrelation function by a
+     sinc function (<STRONG>-s</STRONG> option) prior to computing the  reflection
+     coefficients.  This  has the effect of reducing the spectral
+     resolution if the spectrum of these coefficients is plotted.
+
+     Of the two structured  covariance  methods  [2],  STRCOV  is
+     consderably  faster  and  better  behaved  than STRCOV1.  We
+     include STRCOV1 as  it  may  be  useful  in  certain  cases.
+     STRCOV  uses a fast, single channel algorithm <EM>struct</EM>_<EM>cov</EM> (3-
+     ESPS) developed by  John  Burg  and  programmed  by  Bernard
+     Fraenkel.   STRCOV2  uses  an older (but more general) algo-
+     rithm <STRONG><A HREF="../man3.html/genburg.3.html">genburg (3-ESPS)</A></STRONG> that was programmed by Daniel Wenger.
+     Note that the <STRONG>-c</STRONG> and <STRONG>-i</STRONG> options are relevant for controlling
+     the convergence of STRCOV.   The  VBURG  method  is  a  fast
+     approximation  to  structured  covariance that was developed
+     and programmed by John Burg and Shankar Narayan [3].
+
+     If spectral representations other  than  reflection  coeffi-
+     cients  are  desired, use <STRONG><A HREF="../man1.html/transpec.1.html">transpec (1-ESPS)</A></STRONG> or <EM>spectrans</EM> (1-
+     ESPS) on the output of <EM>refcof</EM>. If you want the actual  spec-
+     trum, use <STRONG><A HREF="../man1.html/me_spec.1.html">me_spec (1-ESPS)</A></STRONG> on the output of <EM>refcof</EM>.
+
+     <EM>xrefcof</EM> is a script that runs <EM>refcof</EM> on a  single  frame  of
+     data  that is specified by the range option (<STRONG>-r</STRONG> or <STRONG>-p</STRONG>) or by
+     means of ESPS Common.  A pop-up window is used to prompt the
+     user   for   <EM>window</EM>_<EM>type</EM>,   <EM>method</EM>,  <EM>order</EM>,  <EM>conv</EM>_<EM>test</EM>,  and
+     <EM>max</EM>_<EM>iter</EM>.  The results of the <EM>analysis</EM> are displayed in  two
+     pop-up  windows - one containing the reflection coefficents,
+     and one containing a maximum-entropy power spectrum computed
+     from  these reflection coeffiecients.  <EM>xrefcof</EM> makes used of
+     <STRONG><A HREF="../man1.html/exprompt.1.html">exprompt (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/me_spec.1.html">me_spec (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/plotspec.1.html">plotspec (1-ESPS)</A></STRONG>,  and
+     <STRONG><A HREF="../man1.html/xtext.1.html">xtext (1-ESPS)</A></STRONG>.
+
+
+
+     the environment variable ESPS_PARAMS_PATH  and  put  one  on
+     that path), it will be used instead.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following options are supported (only <STRONG>-r</STRONG> or  <STRONG>-p</STRONG>  can  be
+     given for <EM>xrefcof</EM>):
+
+     <STRONG>-P</STRONG> <EM>param</EM>
+          uses the parameter file <EM>param</EM> rather than the  default,
+          which is <EM>params</EM>.
+
+     <STRONG>-p</STRONG> <EM>first</EM><STRONG>:</STRONG><EM>last</EM>
+
+     <STRONG>-p</STRONG> <EM>first</EM>-<EM>last</EM>
+
+     <STRONG>-p</STRONG> <EM>first</EM><STRONG>:+</STRONG><EM>incr</EM> [1:+999]
+          In the first two forms, a  pair  of  unsigned  integers
+          specifies  the  range  of  sampled data to analyze.  If
+          <EM>last</EM> = <EM>first</EM> + <EM>incr</EM>, the  third  form  (with  the  plus
+          sign)  specifies the same range as the first two forms.
+          If <EM>first</EM> is omitted, the default value of  1  is  used.
+          If <EM>last</EM> is omitted, then a default frame length of 1000
+          results.  If the specified range contains points not in
+          the file, the last frame is truncated to fit the actual
+          data.  Both forms of the option override the values  of
+          <EM>start</EM>  and  <EM>nan</EM>  in  the  parameter file or ESPS Common
+          file.  If the <STRONG>-p</STRONG> option  is  not  used,  the  range  is
+          determined  from  the  ESPS Parameter or Common file if
+          the appropriate parameters are present.  Note that  the
+          default frame length of 1000 also results if <EM>nan</EM> is not
+          in the parameter or Common file and if no <STRONG>-p</STRONG> is used.
+
+     <STRONG>-r</STRONG> <EM>range</EM>
+          <STRONG>-r</STRONG> is a synonym for <STRONG>-p</STRONG>.
+
+     <STRONG>-l</STRONG> <EM>frame</EM>_<EM>len</EM> [0]
+          Specifies the length of each frame.  If the  option  is
+          omitted, the parameter file is consulted.  A value of 0
+          (from either the option or the  parameter  file)  indi-
+          cates  that  a  single  frame of length <EM>nan</EM> (see <STRONG>-p</STRONG>) is
+          processed; this is  also  the  default  value  in  case
+          <EM>frame</EM>_<EM>len</EM> is not specified either with the <STRONG>-l</STRONG> option or
+          in the parameter file.
+
+     <STRONG>-S</STRONG> <EM>step</EM> [<EM>frame</EM>_<EM>len</EM>]
+          Initial points of consecutive  frames  differ  by  this
+          number  of  samples.   If  the  option  is omitted, the
+          parameter file is consulted, and if no value  is  found
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+     <STRONG>-w</STRONG> <EM>window</EM>_<EM>type</EM>[RECT]
+          The name of the data window to apply  to  the  data  in
+          each  frame  before  computing reflection coefficients.
+          If the option is omitted, the parameter  file  is  con-
+          sulted,  and  if  no  value is found there, the default
+          used is a rectangular window with amplitude one.   Pos-
+          sible  window  types include rectangular ("RECT"), Ham-
+          ming ("HAMMING"), Hanning ("HANNING"),  cosine  (COS4),
+          and  triangular  ("TRIANG");  see  the <STRONG><A HREF="../man3.html/window.3.html">window(3-ESPSsp)</A></STRONG>
+          manual page.  If the last frame is truncated, the  win-
+          dow  is applied to the truncated data (e.g., a triangu-
+          lar window is zero at the start and end  of  the  trun-
+          cated data).
+
+     <STRONG>-m</STRONG> <EM>method</EM>[autoc]
+          Specifies the spectrum analysis method.  The default is
+          the  autocorrelation  method.   Also  available are the
+          covariance method ("cov"), Burg method ("burg"),  modi-
+          fied  Burg  method ("mburg"), fast modified Burg method
+          ("fburg"),   stuctured   covariance    ("strcov"    and
+          "strcov1"),  and  vector Burg ("vburg", fast approxima-
+          tion to structured covariance.  Of the  two  structured
+          covariance methods, the first ("strcov" is considerably
+          faster and  better  behaved;  "strcov1"  is  older  but
+          included  as  it  may  prove  useful  on  occasion.  If
+          "strcov"  is  used,  the  <STRONG>-c</STRONG>  and  <STRONG>-i</STRONG>  options   become
+          relevant.   The  <STRONG>-m</STRONG> option overrides the value that may
+          be in the parameter file.  The default applies only  if
+          there is no value in the parameter file.
+
+     <STRONG>-e</STRONG> <EM>preemphasis</EM>[0.0]
+          Specifies a preemphasis factor to apply  to  the  input
+          signal.
+
+     <STRONG>-c</STRONG> <EM>conv</EM>_<EM>test</EM>[1e-5]
+          Specifies, for the STRCOV method  only  (not  including
+          STRCOV1),  a  convergence  test  value.   The lower the
+          value, the smaller the change required on  each  itera-
+          tion  before  the  estimator  terminates,  and the more
+          iterations that normally will result.
+
+     <STRONG>-i</STRONG> <EM>max</EM>_<EM>iter</EM>[20]
+          Specifies, for the STRCOV method  only  (not  including
+          STRCOV1),  the  maximum  number  of iterations that the
+          estimator will run through before terminating.  A warn-
+          ing  will  indicate if the estimator terminates because
+          max_iter has been exceeded.
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 4G4        4
+          no value in the parameter file.
+
+     <STRONG>-s</STRONG> <EM>sinc</EM>_<EM>n</EM>
+          For the AUTOC, STRCOV, and STRCOV1 methods,  the  auto-
+          correlation  the autocorrelation function is multiplied
+          by the function <EM>sin</EM> (<EM>x</EM> / <EM>sinc</EM>_<EM>n</EM>) before  computing  the
+          reflection  coefficients.  In the frequency domain this
+          has the effect of convolving the spectrum with a boxcar
+          function  of  width <EM>f</EM> / <EM>sinc</EM>_<EM>n</EM>, where <EM>f</EM> is the sampling
+          frequency.  The value of <EM>sinc</EM>_<EM>n</EM> is recorded in  a  gen-
+          eric header item.
+
+     <STRONG>-d</STRONG>    Specifies that the  dc  component  of  each  frame  is
+          removed  before the analysis is performed.  DC revmoval
+          takes place before windowing.
+
+     <STRONG>-Z</STRONG>    If the last frame normally would  overrun  the  stated
+          range,  <EM>refcof</EM> reads past the range to fill up the last
+          frame; if the the last would go past the file end,  the
+          frame  is  filled  with  zoes. Use of <STRONG>-Z</STRONG>, inhibits this
+          behavior by processing one less frame.  The  result  is
+          that  the  end  of  the  last  frame falls short of the
+          stated range.  A common use of <STRONG>-Z</STRONG> is to  avoid  getting
+          unwanted zeros in training sequences.
+
+     <STRONG>-z</STRONG>    Specifies that /fIrefcof/fP operate silently,  without
+          issuing various warnings.
+
+     <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> [0]
+          A positive value specifies  that  debugging  output  be
+          printed  on  the  standard error output.  Larger values
+          result in more output.  The default is 0, for  no  out-
+          put.
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     The parameter file is not required to be present,  as  there
+     are  default  parameter values that apply.  If the parameter
+     file does exist, the following parameters are read:
+
+     <EM>start</EM> - <EM>integer</EM>
+
+          The first point in the input sampled data file that  is
+          processed.   A  value  of 1 denotes the first sample in
+          the file.  This is only read if the <STRONG>-p</STRONG>  option  is  not
+          used.   If it is not in the parameter (or Common) file,
+          the default value of 1 is used.
+
+     <EM>nan</EM> - <EM>integer</EM>
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 5G5        5
+
+     <EM>frame</EM>_<EM>len</EM> - <EM>integer</EM>
+
+          The number of points in each frame.  This parameter  is
+          not  read  if the <STRONG>-l</STRONG> option is specified.  A value of 0
+          indicates that a single frame of  length  <EM>nan</EM>  is  pro-
+          cessed;   this  is  also  the  default  value  in  case
+          <EM>frame</EM>_<EM>len</EM> is specified neither with the <STRONG>-l</STRONG>  option  nor
+          in the parameter file.
+
+     <EM>step</EM> - <EM>integer</EM>
+          Initial points of consecutive  frames  differ  by  this
+          number of samples.  This parameter is not read if the <STRONG>-</STRONG>
+          <STRONG>S</STRONG> option is specified.  If the option is omitted and no
+          value  is  found in the parameter file, a default equal
+          to <EM>frame</EM>_<EM>len</EM> is  used  (resulting  in  exactly  abutted
+          frames).
+
+     <EM>window</EM>_<EM>type</EM> - <EM>string</EM>
+          The data window to apply to the data.   This  parameter
+          is not read if the command-line option <STRONG>-w</STRONG> is specified.
+          If the option is omitted and if no value  is  found  in
+          the  parameter  file, the default used is "RECT", for a
+          rectangular window with amplitude one.   Other  accept-
+          able  values  include "HAMMING", for Hamming, and "TRI-
+          ANG", for triangular; see the  <STRONG><A HREF="../man3.html/window.3.html">window(3-ESPSsp)</A></STRONG>  manual
+          page for the complete list.
+
+     <EM>order</EM> - <EM>integer</EM>
+
+          The number of reflection coefficients computed for each
+          frame of input data.  If no value is given in the file,
+          a default value of 15 is used.  This value is not  read
+          if the command line option <STRONG>-o</STRONG> is used.
+
+     <EM>method</EM> - <EM>string</EM>
+
+          The spectrum analysis method  to  use.   The  available
+          methods   are   autocorrelation   ("auto"),  covariance
+          ("covar"), Burg ("burg"), modified Burg ("mburg"), fast
+          modified  Burg  method  ("fburg"), stuctured covariance
+          ("strcov" and "strcov1"), and vector Burg  ("vburg",  a
+          fast  approximation  to  structured  covariance.  If no
+          value is given in the file, the autocorrelation  method
+          is  used  by  default.  The <EM>method</EM> is not read from the
+          parameter file if the command line option <STRONG>-m</STRONG> is used.
+
+     <EM>preemphasis</EM> - <EM>float</EM>
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 6G6        6
+          If STRCOV is used, this is the convergence  test  value
+          (the lower the value, the smaller the change per itera-
+          tion before termination). This is not  read  if  <STRONG>-c</STRONG>  is
+          used.
+
+     <EM>strcov</EM>_<EM>maxiter</EM> - <EM>int</EM>
+
+          If STRCOV is used, this is the maximum number of itera-
+          tions allowed before the estimator terminates.  This is
+          not read if <STRONG>-i</STRONG> is used.
+
+     The values of parameters obtained from  the  parameter  file
+     are printed if the environment variable ESPS_VERBOSE is 3 or
+     greater.  The default value is 3.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     ESPS Common is  read  provided  that  Common  processing  is
+     enabled  and  that  the  <EM>filename</EM>  entry  in  Common matches
+     <EM>file</EM>.<EM>sd</EM>, in which case parameters present in Common override
+     values from the parameter file, which in turn may be overri-
+     den by command line options  (see  the  discussion  in  ESPS
+     PARAMETERS  and  under  each option).   Common processing is
+     useful when <STRONG><A HREF="../man1.html/range.1.html">range (1-ESPS)</A></STRONG> is used to select a segment  from
+     <EM>file</EM>.<EM>sd</EM>. Common is not read if <EM>file</EM>.<EM>sd</EM> is standard input. If
+     <EM>file</EM>.<EM>rc</EM> is not standard output and <EM>file</EM>.<EM>sd</EM> is  not  standard
+     input,  the  Common parameters <EM>filename</EM> (= file.sd), <EM>prog</EM> (=
+     refcof), <EM>start</EM>, and <EM>nan</EM> are written to ESPS Common.
+
+     ESPS Common  processing  may  be  disabled  by  setting  the
+     environment  variable USE_ESPS_COMMON to "off".  The default
+     ESPS Common file is .espscom in the user's  home  directory.
+     This  may  be  overidden by setting the environment variable
+     ESPSCOM to the desired path.  User feedback of  Common  pro-
+     cessing   is   determined   by   the   environment  variable
+     ESPS_VERBOSE, with 0 causing no feedback and increasing lev-
+     els causing increasingly detailed feedback.  If ESPS_VERBOSE
+     is not defined, a default value of 3 is assumed.
+
+
+</PRE>
+<H2>ESPS HEADER</H2><PRE>
+     A new file header is created for the FEA_ANA file.  The sam-
+     pled  data header from the input header is added as a source
+     in the output file header, and the command line is added  as
+     a  comment.   The input file <EM>file</EM>.<EM>sd</EM> is set as the reference
+     header for tags.
+
+     The program writes the usual values into the common part  of
+     the  output  header. <EM>Refcof</EM> writes the following values into
+     the specified generic header items  in  the  output  FEA_ANA
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 7G7        7
+
+     <EM>maxpulses</EM> = 1
+     <EM>maxraw</EM> = 1
+     <EM>maxlpc</EM> = 1
+     <EM>spec</EM>_<EM>rep</EM> = RC
+     <EM>start</EM> = start
+     <EM>nan</EM> = nan;
+     <EM>frmlen</EM> = frame_len;
+     <EM>src</EM>_<EM>sf</EM> = sample frequency of file.sd
+
+     In addition, the following generic header items are  created
+     and  filled with values used by <EM>refcof</EM>: <EM>method</EM>, <EM>window</EM>_<EM>type</EM>,
+     <EM>DC</EM>_<EM>removed</EM>, <EM>step</EM>.  All of these are CODED types, except  for
+     <EM>step</EM>,  which  is  LONG.  If a non-zero preemphasis factor is
+     used, then the header item <EM>preemphasis</EM> of FLOAT type is also
+     written.
+
+     The generic header item <EM>start</EM>_<EM>time</EM> (type DOUBLE) is  written
+     in the output file.  The value written is computed by taking
+     the <EM>start</EM>_<EM>time</EM> value from the header of the input  file  (or
+     zero,  if such a header item doesn't exist) and adding to it
+     the offset time (from the beginning of the  input  file)  of
+     the  first point processed plus one half of <EM>frame</EM>_<EM>len</EM> (thus,
+     <EM>start</EM>_<EM>time</EM> is middle of the first frame, which is  appropri-
+     ate  since  the  output  data  represent  the  entire frame;
+     without this adjustment for <EM>frame</EM>_<EM>len</EM>, <EM>waves</EM>+ displays would
+     not line up properly.
+
+     The generic header item <EM>record</EM>_<EM>freq</EM> (type DOUBLE) is written
+     in  the  output  file.   The  value  is the number of output
+     records per second of input data.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man1.html/get_resid.1.html">get_resid (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/mask.1.html">mask (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/get_f0.1.html">get_f0 (1-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man1.html/ps_ana.1.html">ps_ana (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/transpec.1.html">transpec (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/spectrans.1.html">spectrans (1-ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man1.html/me_spec.1.html">me_spec (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/plotspec.1.html">plotspec (1- ESPS)</A></STRONG>,  <STRONG><A HREF="../man1.html/exprompt.1.html">exprompt  (1 - ESPS)</A></STRONG>,
+     <STRONG><A HREF="../man1.html/expromptrun.1.html">expromptrun (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/fft.1.html">fft (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man3.html/compute_rc.3.html">compute_rc (3-ESPSsp)</A></STRONG>,
+     <STRONG><A HREF="../man5.html/FEA_ANA.5.html">FEA_ANA (5-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA.5.html">FEA (5-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/FEA_SD.5.html">FEA_SD (5-ESPS)</A></STRONG>,
+
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     The program will not yet compute reflection coefficients  of
+     complex  signals;  if  presented with complex input data, it
+     will silently discard the imaginary part and compute reflec-
+     tion coefficients of the real part of the input.
+
+
+</PRE>
+<H2>FUTURE CHANGES</H2><PRE>
+     The program will be expanded to include  other  methods  for
+     calculating  the autocorrelation function and the reflection
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 8G8        8
+          <EM>Speech</EM> <EM>Signals</EM>, Prentice Hall, NJ. 1978.
+
+     [2]  J.P.Burg, D.G.Luenberger,  D.L.Wenger,  "Estimation  of
+          Structured  Covariance  Matrices"  <EM>Proceedings</EM>  <EM>of</EM>  <EM>the</EM>
+          <EM>IEEE</EM>, Vol. 70, No. 9 September 1982
+
+     [3]  Shankar Narayan and J.P. Burg, "Spectral Estimation  of
+          Quasi-Periodic  Data",  <EM>Proceedings</EM> <EM>ICASSP</EM> <EM>87</EM>, pp. 944-
+          947.
+
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Original program by Brian Sublett.
+
+     Modified extensively by John Shore.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 9G9        9
+</PRE>
+</BODY>
+</HTML>

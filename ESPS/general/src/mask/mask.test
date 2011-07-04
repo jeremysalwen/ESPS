@@ -1,0 +1,111 @@
+#!/bin/csh -f
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1996  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)mask.test	1.2	1/23/97	ERL
+# 
+# Written by:  Derek Lin
+# Checked by:
+# Revised by:
+# 
+# Brief description:  test script for mask
+# 
+
+setenv USE_ESPS_COMMON off
+setenv ESPS_VERBOSE 0
+
+cat > asc1 <<EOD
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+EOD
+
+testsd -r2 -t SHORT -a asc1 s.d
+addgen -g start_time -t DOUBLE -v -0.5 -F s.d
+
+cat > asc2 <<EOD
+0
+1
+1
+1
+1
+1
+0
+0
+EOD
+
+testsd -r1 -t FLOAT -a asc2 m.d
+addgen -g start_time -t DOUBLE -v 0.4 -F m.d
+
+cat > asc3 <<EOF
+20
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+EOF
+
+testsd -r2 -t SHORT -a asc3 b.d
+addgen -g start_time -t DOUBLE -v 0.4 -F b.d
+
+mask -f samples -s b.d m.d s.d o.d
+
+cat > ref <<EOF
+20 
+2 
+5 
+6 
+7 
+8 
+9 
+10 
+11 
+12 
+13 
+7 
+0 
+0 
+0 
+0 
+EOF
+
+pplain o.d > test
+
+echo "diff output - you should not see any"
+diff ref test

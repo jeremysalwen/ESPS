@@ -1,0 +1,4 @@
+# @(#)Pmbs_dist	1.1 9/10/98 ERL
+# default parameter file for mbs_dist
+int	start ?= {1, 1}: "First record to process from input file";
+int	nan ?= 0: "Number of records to process; 0 means till EOF";

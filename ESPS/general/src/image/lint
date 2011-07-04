@@ -1,0 +1,273 @@
+image.c:
+
+image.c
+==============
+Warning: (959)  startrec redefinition hides earlier one
+Warning: (959)  endrec redefinition hides earlier one
+Warning: (1369)  y redefinition hides earlier one
+Warning: (1369)  nelem redefinition hides earlier one
+Warning: (1369)  ncols redefinition hides earlier one
+Warning: (1406)  y redefinition hides earlier one
+Warning: (1406)  nelem redefinition hides earlier one
+Warning: (1406)  ncols redefinition hides earlier one
+Warning: (1642)  text redefinition hides earlier one
+warning: possible pointer alignment problem
+    (232)  	    (726)  	    (728)  
+    (729)  	    (940)  	    (1072)  
+    (1080)  	    (1100)  	    (1152)  
+    (1202)  	    (1206)  	    (1207)  
+    (1242)  	    (1244)  	    (1246)  
+    (1455)  	    (1465)  	    (1477)  
+    (1518)  	
+imagedot.c:
+
+imagedot.c
+==============
+warning: possible pointer alignment problem
+    (72)  	
+imagedev.c:
+chrs.c:
+text.c:
+imagedraw.c:
+imagescale.c:
+imdevmcd.c:
+imdevsun.c:
+imdevnull.c:
+
+imdevnull.c
+==============
+warning: argument unused in function:
+    (45)  h in mcd_default_size
+    (45)  w in mcd_default_size
+imdevtyp.c:
+
+imdevtyp.c
+==============
+(50)  static variable rownum unused
+warning: argument unused in function:
+    (105)  v in typ_plotline
+    (105)  h in typ_plotline
+    (104)  n in typ_plotline
+imdevimp.c:
+
+imdevimp.c
+==============
+warning: possible pointer alignment problem
+    (98)  	
+imdevras.c:
+
+imdevras.c
+==============
+warning: possible pointer alignment problem
+    (100)  	
+imdevx11.c:
+
+imdevx11.c
+==============
+Warning: (496)  struct/union _XrmHashBucketRec never defined
+Warning: (496)  struct/union XKeytrans never defined
+Warning: (496)  struct/union _XRegion never defined
+make_icon.c:
+
+make_icon.c
+==============
+Warning: (110)  struct/union _XrmHashBucketRec never defined
+Warning: (110)  struct/union XKeytrans never defined
+Warning: (110)  struct/union _XRegion never defined
+imdevps.c:
+
+imdevps.c
+==============
+Warning: (63)  v unused in function ps_init
+Warning: (63)  u unused in function ps_init
+Warning: (149)  u unused in function ps_row
+imdevhp.c:
+
+imdevhp.c
+==============
+warning: possible pointer alignment problem
+    (110)  	
+
+
+==============
+name used but not defined
+    XGetIconSizes   	make_icon.c(99)
+    XCreateSimpleWindow   	make_icon.c?(1063)
+    XSetStandardProperties   	imdevx11.c(140)
+    XCreateGC   	make_icon.c?(1059)
+    XSelectInput   	imdevx11.c(145)
+    XMapWindow   	imdevx11.c(147)
+    XSetForeground   	imdevx11.c(171)
+    XDrawPoint   	imdevx11.c(173)
+    XCopyArea   	imdevx11.c(191)
+    XOpenDisplay   	make_icon.c?(1044)
+    XDrawLines   	imdevx11.c(290)
+    XAllocColor   	imdevx11.c(311)
+    XNextEvent   	imdevx11.c(390)
+    XGetGeometry   	imdevx11.c(395)
+    XFreePixmap   	imdevx11.c(403)
+    XCreatePixmap   	make_icon.c?(1061)
+    XFillRectangle   	imdevx11.c(407)
+    XCreateBitmapFromData   	imdevx11.c?(1062)
+name defined but never used
+    Version   	image.c(95)
+    Date   	image.c(96)
+    rownum   	imdevtyp.c(50)
+    greek   	chrs.c(153)
+name declared but never used or defined
+    XAllocIconSize   	imdevx11.c?(309)
+    XGetWMSizeHints   	imdevx11.c?(312)
+    XGetWMNormalHints   	imdevx11.c?(312)
+    XGetRGBColormaps   	imdevx11.c?(313)
+    XGetTextProperty   	imdevx11.c?(314)
+    XGetWMName   	imdevx11.c?(314)
+    XGetWMIconName   	imdevx11.c?(314)
+    XGetWMClientMachine   	imdevx11.c?(315)
+    XGetWMCommand   	imdevx11.c?(315)
+    XGetWMColormapWindows   	imdevx11.c?(316)
+    XSetWMColormapWindows   	imdevx11.c?(316)
+    XSetWMProperties   	imdevx11.c?(317)
+    XSetWMSizeHints   	imdevx11.c?(317)
+    XSetWMNormalHints   	imdevx11.c?(317)
+    XSetRGBColormaps   	imdevx11.c?(318)
+    XSetTextProperty   	imdevx11.c?(319)
+    XSetWMName   	imdevx11.c?(319)
+    XSetWMIconName   	imdevx11.c?(319)
+    XSetWMClientMachine   	imdevx11.c?(320)
+    XSetWMCommand   	imdevx11.c?(320)
+    XStringListToTextProperty   	imdevx11.c?(321)
+    XTextPropertyToStringList   	imdevx11.c?(321)
+    XFreeStringList   	imdevx11.c?(322)
+    XNewModifiermap   	imdevx11.c?(423)
+    XGetModifierMapping   	imdevx11.c?(424)
+    XDeleteModifiermapEntry   	imdevx11.c?(425)
+    XInsertModifiermapEntry   	imdevx11.c?(426)
+    XESetCloseDisplay   	imdevx11.c?(1083)
+    XESetError   	imdevx11.c?(1084)
+    XESetErrorString   	imdevx11.c?(1084)
+    XESetWireToEvent   	imdevx11.c?(1085)
+    XESetEventToWire   	imdevx11.c?(1086)
+    XAddExtension   	imdevx11.c?(1087)
+    XLoadQueryFont   	imdevx11.c?(1030)
+    XFindOnExtensionList   	imdevx11.c?(1088)
+    XQueryFont   	imdevx11.c?(1030)
+    XEHeadOfExtensionList   	imdevx11.c?(1089)
+    XGetMotionEvents   	imdevx11.c?(1032)
+    XRootWindow   	imdevx11.c?(1092)
+    XDefaultRootWindow   	imdevx11.c?(1092)
+    XFetchBytes   	imdevx11.c?(1046)
+    XRootWindowOfScreen   	imdevx11.c?(1092)
+    XFetchBuffer   	imdevx11.c?(1047)
+    XGetAtomName   	imdevx11.c?(1048)
+    XDefaultVisual   	imdevx11.c?(1093)
+    XGetDefault   	imdevx11.c?(1049)
+    XDefaultVisualOfScreen   	imdevx11.c?(1093)
+    XDisplayName   	imdevx11.c?(1050)
+    XKeysymToString   	imdevx11.c?(1051)
+    XDefaultGC   	imdevx11.c?(1094)
+    XDefaultGCOfScreen   	imdevx11.c?(1094)
+    XSynchronize   	imdevx11.c?(1053)
+    XSetAfterFunction   	imdevx11.c?(1054)
+    XBlackPixel   	imdevx11.c?(1095)
+    XWhitePixel   	imdevx11.c?(1095)
+    XInternAtom   	imdevx11.c?(1055)
+    XAllPlanes   	imdevx11.c?(1095)
+    XCopyColormapAndFree   	imdevx11.c?(1056)
+    XBlackPixelOfScreen   	imdevx11.c?(1096)
+    XCreateColormap   	imdevx11.c?(1056)
+    XWhitePixelOfScreen   	imdevx11.c?(1096)
+    XCreatePixmapCursor   	imdevx11.c?(1057)
+    XNextRequest   	imdevx11.c?(1097)
+    XCreateGlyphCursor   	imdevx11.c?(1057)
+    XLastKnownRequestProcessed   	imdevx11.c?(1097)
+    XCreateFontCursor   	imdevx11.c?(1057)
+    XServerVendor   	imdevx11.c?(1098)
+    XLoadFont   	imdevx11.c?(1058)
+    XDisplayString   	imdevx11.c?(1098)
+    XGContextFromGC   	imdevx11.c?(1060)
+    XDefaultColormap   	imdevx11.c?(1099)
+    XDefaultColormapOfScreen   	imdevx11.c?(1099)
+    XDisplayOfScreen   	imdevx11.c?(1100)
+    XCreatePixmapFromBitmapData   	imdevx11.c?(1062)
+    XScreenOfDisplay   	imdevx11.c?(1101)
+    XDefaultScreenOfDisplay   	imdevx11.c?(1101)
+    XGetSelectionOwner   	imdevx11.c?(1063)
+    XEventMaskOfScreen   	imdevx11.c?(1102)
+    XCreateWindow   	imdevx11.c?(1064)
+    XScreenNumberOfScreen   	imdevx11.c?(1104)
+    XListInstalledColormaps   	imdevx11.c?(1065)
+    XSetErrorHandler   	imdevx11.c?(1105)
+    XListFonts   	imdevx11.c?(1066)
+    XSetIOErrorHandler   	imdevx11.c?(1105)
+    XListFontsWithInfo   	imdevx11.c?(1066)
+    XListPixmapFormats   	imdevx11.c?(1106)
+    XGetFontPath   	imdevx11.c?(1066)
+    XReconfigureWMWindow   	imdevx11.c?(1110)
+    XListExtensions   	imdevx11.c?(1067)
+    XListProperties   	imdevx11.c?(1068)
+    XWMGeometry   	imdevx11.c?(1111)
+    XGetWMProtocols   	imdevx11.c?(1112)
+    XCreateImage   	imdevx11.c?(1069)
+    XGetImage   	imdevx11.c?(1069)
+    XSetWMProtocols   	imdevx11.c?(1112)
+    XGetSubImage   	imdevx11.c?(1069)
+    XIconifyWindow   	imdevx11.c?(1113)
+    XListHosts   	imdevx11.c?(1070)
+    XWithdrawWindow   	imdevx11.c?(1113)
+    XKeycodeToKeysym   	imdevx11.c?(1071)
+    XGetCommand   	imdevx11.c?(1114)
+    XLookupKeysym   	imdevx11.c?(1071)
+    XGetKeyboardMapping   	imdevx11.c?(1071)
+    XStringToKeysym   	imdevx11.c?(1072)
+    XMaxRequestSize   	imdevx11.c?(1073)
+    XResourceManagerString   	imdevx11.c?(1074)
+    XDisplayMotionBufferSize   	imdevx11.c?(1075)
+    XVisualIDFromVisual   	imdevx11.c?(1076)
+    XGetSizeHints   	imdevx11.c?(1077)
+    XInitExtension   	imdevx11.c?(1080)
+    XESetCreateGC   	imdevx11.c?(1081)
+    XESetCopyGC   	imdevx11.c?(1081)
+    XESetFlushGC   	imdevx11.c?(1081)
+    XESetFreeGC   	imdevx11.c?(1082)
+    XESetCreateFont   	imdevx11.c?(1082)
+    XESetFreeFont   	imdevx11.c?(1082)
+    XSaveContext   	imdevx11.c?(282)
+    XFindContext   	imdevx11.c?(287)
+    XDeleteContext   	imdevx11.c?(293)
+    XGetWMHints   	imdevx11.c?(298)
+    XCreateRegion   	imdevx11.c?(299)
+    XPolygonRegion   	imdevx11.c?(299)
+    XGetVisualInfo   	imdevx11.c?(302)
+    XAllocSizeHints   	imdevx11.c?(305)
+    XAllocStandardColormap   	imdevx11.c?(306)
+    XAllocWMHints   	imdevx11.c?(307)
+    XAllocClassHint   	imdevx11.c?(308)
+value type declared inconsistently
+    exit   	llib-lc.brl(50) :: image.c(1208)
+    free   	llib-lc.brl(354) :: image.c(1512)
+    exit   	llib-lc.brl(50) :: imagedot.c(89)
+    exit   	llib-lc.brl(50) :: imagedev.c(215)
+    exit   	llib-lc.brl(50) :: imdevtyp.c(64)
+    exit   	llib-lc.brl(50) :: imdevimp.c(123)
+    free   	llib-lc.brl(354) :: imdevimp.c(216)
+    exit   	llib-lc.brl(50) :: imdevras.c(83)
+    exit   	llib-lc.brl(50) :: imdevx11.c(108)
+    exit   	llib-lc.brl(50) :: imdevps.c(73)
+    exit   	llib-lc.brl(50) :: imdevhp.c(103)
+function argument ( number ) used inconsistently
+    isalpha( arg 1 )   	llib-lc.brl(225) :: image.c(242)
+    pr_larray( arg 2 )   	image.c(1646) :: image.c(464)
+    putchar( arg 1 )   	llib-lc.brl(395) :: imdevimp.c(161)
+    putchar( arg 1 )   	llib-lc.brl(395) :: imdevimp.c(162)
+    putchar( arg 1 )   	llib-lc.brl(395) :: imdevimp.c(173)
+    putchar( arg 1 )   	llib-lc.brl(395) :: imdevimp.c(173)
+    putchar( arg 1 )   	llib-lc.brl(395) :: imdevimp.c(206)
+    putchar( arg 1 )   	llib-lc.brl(395) :: imdevps.c(163)
+    putchar( arg 1 )   	llib-lc.brl(395) :: imdevps.c(170)
+    putchar( arg 1 )   	llib-lc.brl(395) :: imdevps.c(173)
+    putchar( arg 1 )   	llib-lc.brl(395) :: imdevps.c(176)
+function value is used, but none returned
+    mcd_depth	
+function returns value which is always ignored
+    fprintf	    sscanf	    fwrite
+    printf	    putchar	

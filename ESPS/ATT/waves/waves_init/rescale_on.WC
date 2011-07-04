@@ -1,0 +1,4 @@
+set all 1 v_spect_rescale 1
+set all 1 h_spect_rescale 1
+
+# @(#)rescale_on.WC	1.3 6/5/93

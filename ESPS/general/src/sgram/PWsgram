@@ -1,0 +1,13 @@
+# @(#)PWsgram	1.6 7/5/91
+# default waves parameter file for sgram
+# sets all but start and nan (left for -r option) 
+int start = 1: "Number of first point in input file to process.";
+int nan = 0: "Number of points to process; if 0, continue through end of file.";
+string method = "other": "Method (other parameters have no effect unless 'other' is chosen)"  : {"wb", "nb", "other"};
+string data_window ?= "HANNING": "Window to apply ": {"RECT", "HAMMING", "TRIANG", "HANNING", "COS4"};
+int fft_order ?= 8: "Fourier transform length is 2 to this power" : [2,30];
+float window_len ?= 8.0: "Duration of each frame in milliseconds";
+float pre_emphasis ?= 0.94: "Coefficient in preemphasis filter";
+int desired_frames ?= 0: "Forced number of frames; if zero, determine number of frames from other parameters";
+float step_size ?= 2.0: "Initial points of consecutive frames differ by this number of milliseconds";
+

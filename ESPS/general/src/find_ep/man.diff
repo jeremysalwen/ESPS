@@ -1,0 +1,246 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1996 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)find_ep.1	1.12 4/1/97 ERL
+.ds ]W (c) 1996 Entropic Research Laboratory, Inc.
+.TH FIND_EP 1\-ESPS 4/1/97
+.SH "NAME"
+find_ep \- analysis to locate endpoints of a speech segment in a waveform file
+.SH "SYNOPSIS"
+.B find_ep 
+[
+.BI \-b " adbits"
+] [
+.BI \-c " context"
+] [
+.B \-e
+] [
+.BI \-f " final_thresh"
+] [
+.BI \-h " high_thresh"
+] [
+.BI \-l " low_thresh"
+] [
+.B \-n 
+] [
+.BI \-p " start_point"
+] [
+.BI \-r " start_point"
+] [
+.BI \-s " silence_req"
+] [
+.BI \-t " time"
+] [
+.B \-w 
+] [
+.BI \-x " debug_level"
+] [
+.I " infile.sd"
+] [
+.I " outfile.sd"
+]
+.SH "DESCRIPTION"
+.PP
+\fIFind_ep\fR uses thresholds to find isolated words
+or connected segments of speech
+in a sampled-data file (FEA_SD(5\-\s-1ESPS\s+1))
+and sets \fIstart\fR and \fInan\fR in ESPS Common to
+point to the beginning and end of the selected utterance. 
+These thresholds may be set by the user
+(via the \fB\-l\fR, \fB\-h\fR, and \fB\-f\fR options), or
+default values may be computed by the program. If
+neither \fB\-p\fR (or \fB\-r\fP) nor \fB\-n\fR is given,
+\fIfind_ep\fR starts computing statistics 
+at the beginning of the sampled-data file.
+If a \fIstart_point\fR is given, \fIfind_ep\fR starts there
+for determining thresholds, but starts looking for words \fIsilence_req\fR
+milliseconds later in the file.
+If the \fB\-n\fR option is set,
+\fIfind_ep\fR looks in ESPS Common for \fIstart\fR and \fInan\fR
+and starts processing the input file (computing thresholds)
+50 milliseconds
+beyond the point \fIstart + nan\fR.
+.PP
+In brief, \fIfind_ep\fR determines the endpoints of an utterance
+by moving through the file in \fIcontext\fR millisecond chunks
+of speech. In each \fIcontext\fR chunk, \fIfind_ep\fR compares
+the average adjusted magnitude (AAM) with one of the three thresholds.
+(See [1] for a definition of AAM.) Once the AAM has exceeded
+the \fIlow_thresh\fR and then the \fIhigh_thresh\fR, and it has
+subsequently fallen below the \fIfinal_thresh\fR and remains below
+the \fIlow_thresh\fR for \fItime\fR milliseconds,
+\fIfind_ep\fR declares that
+a utterance has been detected.
+.PP
+\fIFind_ep\fR implements a heuristic 
+method for detecting the beginning and ending points
+of speech in low to moderate background noise environments.
+It is not perfect, but it is often useful for finding
+isolated words or segments of continuous speech.
+.PP
+By default, \fIfind_ep\fR writes no output file; it simply
+updates \fIstart\fR and \fInan\fR in common. If a sampled-data file
+containing only the selected points is desired,
+the \fB\-w\fR should be used and an output sampled-data file name 
+(\fIoutfile.sd\fR) should
+be specified on the command line. This will result in a new file that
+contains only the points between \fIstart\fR and 
+\fIstart\fR + \fInan\fR \-1 
+from the input sampled-data file (\fIi.e.\fR 
+the points selected by \fIfind_ep\fR).
+.PP
+If
+.I infile.fea
+is equal to "\-" and the \fB\-n\fR option is not used, 
+then standard input is used. 
+.SH OPTIONS
+.PP
+.TP
+.BI \-b " adbits" " \fR[12]\fP"
+Set the number of bits that were used by the A/D converter to
+record the data. It is important to do this correctly. This number
+is used to scale all the thresholds.
+If the data was not taken directly from an A/D converter,
+try setting this value to the number of bits used in the original
+A/D conversion. You may have to adjust this value in order to
+get \fIfind_ep\fR to work reliably, however.
+.TP
+.BI \-c " context" " \fR[10]\fP"
+The time interval in milliseconds that is used for computing AAM.
+Note: \fIsilence_req\fR and \fItime\fR will be rounded to an even
+multiple of \fIcontext\fR.
+.TP
+.B \-e 
+If this option is set,
+\fIPossible word at end of file\fR is not considered an error.
+A warning message is written to \fIstderr\fR, but \fIstart\fR and \fInan\fR
+are set to the start of the word and the end of file respectively.
+.TP
+.BI \-f " final_thresh"
+Average magnitude threshold for the end of a word. The default value
+is .8*\fIlow_thresh\fR. Note \fIfinal_thresh\fR must be less than
+\fIlow_thresh\fR.
+.TP
+.BI \-h " high_thresh"
+The second threshold that the potential speech utterance must exceed
+before a speech utterance is detected. The default value is 
+4*\fIlow_thresh\fR.
+.TP
+.BI \-l " low_thresh"
+Initial average magnitude threshold for detecting the start of an
+utterance. A default value may be computed by the program from the
+statistics of the first \fItime\fR milliseconds of data.
+.TP
+.B \-n 
+Get the next speech utterance after the current range as specified
+in ESPS Common.
+If \fB\-n\fR is given, \fB\-p\fR and \fB\-r\fR are ignored.
+.TP
+.BI \-p " start_point" " \fR[1]\fP"
+\fB\-p\fP is a synonym for \fB\-r\fP.
+.TP
+.BI \-r " start_point" " \fR[1]\fP"
+The starting point in the sampled-data file may be specified.
+Note that this starting point is for computing statistics for threshold 
+computation. If \fIlow_thresh\fR is manually set (\fB\-l\fR),
+then the starting point is for finding speech \- that is, no data is
+used for computing thresholds.
+.TP
+.BI \-s " silence_req" " \fR[200]\fP\"
+This is the time in milliseconds required to mark the end of an utterance,
+and it is the time period required between adjacent utterances in a single
+sampled-data file.
+Values below 150 milliseconds are not recommended,
+but the only enforced lower bound is
+.I context.
+.TP
+.BI \-t " time" " \fR[\fIsilence_req\fR \- 50]"
+The number of milliseconds of data used to compute thresholds.
+This is ignored if \fIlow_thresh\fR is supplied.
+.TP
+.B \-w 
+Write the selected segment of speech to the output sampled-data file
+(\fIoutfile.sd\fR).
+An output file name needs to be specified only if this option
+is set.
+.TP
+.BI \-x " debug_level" " \fR[0]\fP"
+Values greater than 0 cause messages to print to stderr.
+.SH "ESPS PARAMETERS"
+.PP
+The PARAMS file is not processed.
+.SH ESPS COMMON
+.PP
+If no input file name is supplied,
+\fIfind_ep\fR looks in ESPS Common for the input file name.
+If \fB\-n\fR is specified,
+\fIfind_ep\fR checks the input file name with that in Common,
+and if they are consistent, \fIfind_ep\fR 
+determines the starting point by using the Common values
+for \fIstart\fR and \fInan\fR. 
+Finally,
+the Common values for \fIstart\fR and \fInan\fR are always updated
+by \fIfind_ep\fR.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.SH ESPS HEADERS
+.PP
+If the \fB\-w\fP option is specified,
+values in the header of 
+.I outfile.sd
+are copied from  the values in the header of 
+.I infile.sd.
+In addition,
+the generic header item \fIstart_time\fP (type DOUBLE)
+is written in the output file.  
+The value written is computed by taking the \fIstart_time\fP value from
+the header of the input file (or zero, if such a header item doesn't
+exist) and adding to it the offset time (from the
+beginning of the input file) of the starting point of the word boundry.
+.SH "FUTURE CHANGES"
+.PP
+Have parameters read from a parameter file.
+.SH WARNINGS
+.PP
+\fIFind_ep\fR warns and exits if the input file is not a FEA_SD 
+(or old style SD) file, 
+if the starting point is not in the file, or if the end of file is 
+encountered.
+.SH EXAMPLE
+.PP
+This example uses the defaults and writes out a file \fIutterance.sd\fP
+which contains the utterance extracted from the file \fIfile.sd\fP.
+File \fIfile.sd\fP contains the utterance and surrounding silence,
+while \fIutterance.sd\fP contains only the utterance. The flag -b 
+signifies that the file was digitized with 16-bit resolution.  
+.nf
+
+         %find_ep -b 16 -w file.sd utterance.sd
+
+.fi
+.SH "SEE ALSO"
+.PP
+copysd(1\-ESPS)
+.SH "BUGS"
+.PP
+None known.
+.SH REFERENCES
+.PP
+[1] L. Rabiner and M. Sambur, "An Algorithm for Determining the Endpoints
+of Isolated Utterances," \fIBell. Syst. Tech. J.\fR, Vol. 54, pp. 297-315,
+Feb. 1975
+.PP
+[2] L. Lamel \fIet. al.\fR, "An Improved Endpoint Detector for Isolated Word
+Recognition," \fIIEEE Trans. Acoustics, Speech, and Signal Processing\fR,
+vol. ASSP-29, pp. 777-785, Aug. 1981
+.SH "AUTHOR"
+.PP
+Manual page by David Burton; code by David Burton.
+
+

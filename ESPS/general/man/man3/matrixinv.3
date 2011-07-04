@@ -1,0 +1,95 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)matrixinv.3	1.9 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH MATRIX_INV 3\-ESPSsp 18 Apr 1997
+.SH "NAME"
+matrix_inv \- invert a matrix with single precision
+.br
+matrix_inv_d \- invert a matrix with double precision
+.SH "SYNOPSIS"
+.B #include <stdio.h>
+.br
+.B double matrix_inv (mat_in, inv_out, order)
+.br
+.B float **mat_in;
+.br
+.B float **inv_out;
+.br
+.B int order;
+
+.br
+.B double matrix_inv_d (mat_in, inv_out, order)
+.br
+.B double **mat_in;
+.br
+.B double **inv_out;
+.br
+.B int order;
+.SH "DESCRIPTION"
+.PP
+.I matrix_inv
+inverts an input matrix
+.I mat_in
+of order
+.I order
+and stores the result in
+.I inv_out.
+If the input matrix is singular to working precision, then the output
+matrix
+.I inv_out
+is left unchanged.
+.PP
+The two parameters, \fImat_in\fP and \fIinv_out\fP, are interpreted as
+pointers to matrices of floats (or doubles)
+containing \fIorder\fP rows and \fIorder\fP columns.  Space
+for these matrices must be allocated by the calling program \- such a
+pointer can be assigned by means of \fIarr_alloc\fP(3\-ESPSu).
+.PP
+.I matrix_inv
+returns the condition number of the matrix.  If the condition number
+is greater than 1e6 for
+.I matrix_inv,
+or greater than 1e14 for
+.I matrix_inv_d,
+then the matrix is considered singular and \-1.0
+is returned.
+.PP
+.I matrix_inv_d
+is the double precision version of
+.I matrix_inv.
+.SH "EXAMPLE"
+.PP
+int	order = 4;	/* order of matrix to invert */
+.br
+float	**matrix;	/* input matrix to invert */
+.br
+float	**inv_matrix;	/* inverse matrix */
+
+/* allocate memory and initialize matrices */
+.sp
+if (matrix_inv (matrix, inv_matrix, order) == \-1.0)
+.br
+   /* input matrix is singular to working precision */
+.br
+else
+.br
+   /* inv_matrix contains the inverse of input matrix */
+.br
+.SH DIAGNOSTICS
+.PP
+.SH "BUGS"
+.PP
+None Known.
+.SH "SEE ALSO"
+.PP
+.nf
+\fIarr_alloc\fP(3-\ESPSu)
+.fi
+.SH REFERENCES
+[1] Forsythe, G. E., M. A. Malcolm, C. B. Moler (1977), \fIComputer Methods for
+Mathematical Computations\fP. New Jersey:  Prentice-Hall, Inc.,
+51\-55.
+.SH "AUTHOR"
+.PP
+Ajaipal S. Virdy.

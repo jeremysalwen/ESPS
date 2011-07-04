@@ -1,0 +1,60 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)buildfilen.3	1.7 12 May 1997 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH  BUILD_FILENAME 3\-ESPSu 12 May 1997
+.SH NAME
+.nf
+build_filename \- expands environment variables into path name
+.fi
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+
+char *build_filename(into_string,filename,dirname)
+char *into_string;
+char *filename;
+char *dirname;
+.ft
+.SH DESCRIPTION
+.PP
+Function \fIbuild_filename\fR builds a complete path to a filename.  
+The first
+argument, \fIinto_string\fR, is a string that holds the resulting full path.
+It should be large enough to hold the largest path your system supports. This
+argument is also returned as the function result. NULL is not a valid argument.
+.pp
+The second argument, \fIfilename\fR, contains the basename of the file path.
+Environment variables are not expanded in this component, so do not use them.
+(See Future Changes.)
+.pp
+The third, argument, \fIdirname\fR, holds the directory name that is
+to be expanded and concatenated with \fIfilename\fR to form the full
+path. Environment variables will be expanded. You do not need to place 
+a / at the end of \fIdirname\fR; it will be provided.
+.SH EXAMPLES
+.PP
+.nf
+
+ build_filename(expandedFilename,"","/usr/bin/$ARCH");
+
+.fi
+.SH ERRORS AND DIAGNOSTICS
+.PP
+None.
+.SH FUTURE CHANGES
+.PP
+Add environment variable expansion to the basename (filename) argument.
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.nf
+\fIfind_esps_file\fR(3\-ESPS), \fIbuild_esps_path\fR(3\-ESPS), \fIget_esps_base\fR(3\-ESPS)
+.fi
+.PP
+.SH AUTHOR
+.PP
+Ken Nelson wrote the routine and the man page.

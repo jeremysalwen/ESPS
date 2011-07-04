@@ -1,0 +1,34 @@
+ESPS is an extension of unix for signal processing.  It provides a
+well-engineered environment for end-users and algorithm developers.
+Features include more than 130 user-level programs, more than 250 C
+library functions, automatic record-keeping, machine-independent file
+interchange, on-line manual pages, and a self-describing,
+object-oriented file system.
+
+waves+ provides an interactive graphics interface coordinating
+multiple window presentations for viewing, editing, segmenting,
+labeling, and processing ESPS signal files.  ESPS programs can be
+called from within waves+.
+
+ESPS and waves+ are based on accepted standards: UNIX, C, NFS, and X
+Windows.
+
+Both ESPS and waves+ operate under a floating license manager that
+permits distribution of copies over a network of workstations.
+
+Third-party signal processing and I/O boards are available for use
+with ESPS and waves+ on Sun 3 (VME-bus), Sun 4/SPARCstation (VME-bus)
+and Sun 386i (AT-bus).  An S-bus card with signal I/O support will be
+available later this year.
+
+For more information, please contact us:
+
+  Entropic Research Laboratory    Voice:     202-547-1420
+  600 Pennsylvania Ave., S.E. 	  FAX:       202-546-6648
+  Suite 202                       Internet:  esps-info@wrl.epi.com
+  Washington, D.C. 20003          uucp:	   ...uunet!epiwrl!esps-info
+  USA
+
+Thank you for your interest.  
+
+1.2 6/11/90

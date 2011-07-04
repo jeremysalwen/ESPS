@@ -1,0 +1,4 @@
+#!/bin/sh
+#@(#)xsgram	1.1 6/18/91 ERL - FFT prompter
+xprompt -Pxsgram.defaults param_files/xsgram.params
+sgram -Pxsgram.params $1 $2 $3

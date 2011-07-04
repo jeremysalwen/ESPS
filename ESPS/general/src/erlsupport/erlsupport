@@ -1,0 +1,275 @@
+#!/bin/sh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)erlsupport	1.4	11/11/91	ERL
+# 
+# Written by:  Ken Nelson
+# Checked by:
+# Revised by:
+# 
+# Brief description: email or print an ERL bug report
+# 
+
+# First test to see if critical stuff is here
+#
+
+if test ! -r `get_esps_base`/bin/sf
+then
+   clear
+   echo "Sorry: erlsupport forms editor is not supported on this architecture."
+   echo "	For support, please contact Entropic Research Laboratory by:"
+   echo "       "
+   echo "       emailing  to erl-support@wrl.epi.com"
+   echo "       phoning  (202) 547-1420"
+   echo "       faxing   (202) 546-6648"
+   echo ""
+   echo "Please include or have ready this information:"
+   echo ""
+   
+   echo "ESPS/Waves Version  (eversion will tell you)"
+   echo Programs causing problem 
+   echo "A description of the problem"
+   echo "Your Name "
+   echo "     Company   "
+   echo "     Phone "
+   echo "     Sales Order"
+   echo 
+   echo "Description of problem (be specific, include error messages)"
+   echo "Seriousness [/NonCritical/Critical/ShowStopper]"
+   echo "DSP Board [None/Ariel/AT&T FAB2/AT&T Surfboard/LSI]" 
+   echo ""
+   exit 1
+fi
+
+action='nope'
+srcfile=erlsupport.defs
+erlversion="`eversion`"
+if test -r `get_esps_base`/lib/$srcfile
+then
+   . `get_esps_base`/lib/${srcfile}
+else
+  erlemail='erl-support@wrl.epi.com'
+  erleditor='vi'
+  erlccto=$USER
+fi
+fullname=`grep $USER /etc/passwd | cut -d: -f5`
+
+until test $action = 'Cancel'
+do
+
+if test -r $srcfile
+then
+ . $srcfile
+fi
+
+`get_esps_base`/bin/sf -b -m -o ${srcfile} -u << EOF
+			Entropic Bug Report/Support Request
+
+	     Control-C aborts,  Control-X executes Control-? for help
+	     Return, Tab and Arrow Keys move about fields.
+
+ERL Email Address        : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ESPS/Waves Version       : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Programs causing problem : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Your Name  : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Company    : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Phone      : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   Sales Order: ~~~~~~~~~~~~
+
+Description of problem (be specific, include error messages)
+
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Seriousness: ~~~~~~~~~~~       DSP Board     : ~~~~~~~~~~~~~~~~~~~~
+Edit using editor: ~~~         Editor to Use : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+Action           : ~~~~~~      Print Command : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+CC to            : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
++v=erlemail+d=$erlemail+
+@v=erlver@d=$erlversion@
++v=erlprogs+d=$erlprogs+
++v=fullname+d=${fullname}+
++v=company+d=$company+
++v=phone+d=$phone+
++v=salesorder+d=$salesorder+
++v=erldesc1+d=$erldesc1+
++v=erldesc2+d=$erldesc2+
++v=erldesc3+d=$erldesc3+
++v=urgency+s=/NonCritical/Critical/ShowStopper+
++h=Irritant, but you can still work+
++h=Serious, but you have a work around, or something else to do+
++h=You are dead in the water, HELP!!!!+
+.v=dspboard.s=/None/Ariel/AT&T FAB2/AT&T Surfboard/LSI.
+.h=You don't have a DSP board, or the problem is clearly not related.
+.h=Ariel DSP32C SBus board.
+.h=AT&T Fab2 (VME).
+.h=AT&T Surfboard (VME).
+.h=LSI SBus board.
++v=erleditmore+s=/Yes/No+
+.h=Edit this report with an editor, after Control-D is typed.
+.h=What's on this form is fine.
++v=erleditor+d=$erleditor+
++v=action+s=/Email/Print/Both/Cancel+
++h=Email this report to Entropic, do this only if you are on the Internet+
++h=Print this report, using the printer specified to the right+
++h=Print and Email this report+
++h=Terminate and don't send+
++v=erlprinter+d=$erlprinterr+
++v=erlccto+d=$erlccto+
+EOF
+
+# Clean up handler
+#
+if test -r ${srcfile}
+then
+  . ${srcfile}
+
+
+bugform=/tmp/erlsupport.form.$$
+
+if test x$action != xCancel
+then
+
+
+  cat << EOF > $bugform
+
+			**** ERL BUG REPORT ****
+
+Username   : $fullname
+Company    : $company
+Phone      : $phone
+Salesorder : $salesorder
+
+Urgency    : $urgency
+Version    : $erlversion
+Programs   : $erlprogs
+
+DSP Board  : $dspboard
+
+Description: 
+
+  $erldesc1
+  $erldesc2
+  $erldesc3
+ 
+EOF
+
+  okay_to_proceed=Yep
+
+  if test x"$fullname" = "x" -o "x$company" = "x" -o "x$phone" = "x"
+  then
+   echo ""
+   echo " Please fill out your name, company and phonenumber."
+   echo " It will speed things up, hit return to edit the form again..."
+   read answer
+   okay_to_proceed=Nope
+  fi
+
+  if test $action = 'Print' -o $action = 'Both' 
+  then
+   if test  'x$erlprinter' = 'x'
+   then
+     echo ""
+     echo " Error:  If you want to print, specify a print command."
+     echo ""
+     okay_to_proceed=Nope
+     echo "hit return to continue..."; read answer
+    fi
+  fi
+
+  if test $action = 'Email' -o $action = 'Both' 
+  then
+   if test  "x$erlemail" = "x"
+   then
+     echo ""
+     echo " Error:  If you want to email, specify the email address."
+     echo ""
+     okay_to_proceed=Nope
+     echo "hit return to continue..."; read answer
+    fi
+  fi
+
+  if test $okay_to_proceed = 'Yep'
+  then
+
+  if test $erleditmore = 'Yes'
+  then
+    if $erleditor $bugform
+    then  
+      echo ""
+    else
+      echo ""
+      echo "Error invoking editor."
+      echo "Hit return to go back to Bug form editor..."; read answer
+      exec erlsupport
+    fi
+  fi
+
+  echo "Are you sure you want to send this request? [y] "
+  read answer
+
+  case $answer in
+    [nN]) echo "Okay, terminating..." 
+	  break;;
+       *) echo ""  
+	  case $action in
+
+	     Email)
+	       echo "	      cat $bugform | mail $erlemail"
+	       cat $bugform | mail $erlemail $erlccto 2> /dev/null
+	       echo "Bug emailed."
+	       action=Cancel 
+	       ;;
+	     Print)	
+	       $erlprinter $bugform 2> /dev/null
+	       echo "Bug printed."
+	       action=Cancel
+	       ;;
+	     Both)
+	        echo "	      cat $bugform | mail $erlemail"
+	        cat $bugform | mail $erlemail 2> /dev/null
+	        $erlprinter $bugform &> /dev/null
+	        action=Cancel
+	        ;;
+	       *)
+		  echo "No action taken. Bug not reported." ;;
+	  esac
+	  if test x$erlccto != x
+	  then
+	     cat $bugform | mail $erlccto 2> /dev/null
+	     echo "Bug cc'd to $erlccto"
+ 	  fi
+  esac
+
+   fi
+
+  fi
+
+fi
+
+done
+
+if test -r ${srcfile}
+then
+ rm $srcfile
+fi
+
+if test -r $bugform 
+then
+  rm $bugform
+fi
+
+
+
+

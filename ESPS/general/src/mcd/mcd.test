@@ -1,0 +1,6 @@
+#! /bin/sh
+# test script for mcd
+# @(#)mcd.test	3.1	10/7/87	ESI
+#
+echo Testing mcd.
+tstmcd | mcd

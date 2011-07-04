@@ -1,0 +1,258 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)arrop.3t	1.4 23 Sep 1997 ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.TH ARR_OP 3\-ESPSsp 23 Sep 1997
+.SH NAME
+
+arr_op \- element-by-element binary operations on numeric arrays
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/op.h>
+
+char *
+arr_op(op, num, src1, src1_type, src2, src2_type, dest, dest_type)
+int	op;
+long	num;
+char	*src1;
+int	src1_type;
+char    *src2;
+int	src2_type;
+char    *dest;
+int	dest_type;
+.ft
+.fi
+.SH DESCRIPTION
+.PP
+The function
+.I arr_op
+takes
+.I num
+numeric values of type
+.I src_type1
+starting at the location
+.I src1
+and
+.I num
+corresponding numeric values of type
+.I src_type2
+starting at the location
+.I src2
+and applies to each pair of corresponding values a binary operation,
+such as addition or multiplication, selected by the argument
+.I op.
+It stores the results, converted to
+.I dest_type,
+starting at the location
+.I dest
+if
+.I dest
+is non-NULL;
+otherwise it allocates space and stores the results there.
+In either case
+the returned value of the function is the starting location of the results.
+.PP
+The types are indicated by numeric codes
+that have symbolic names defined in the include file
+.I esps/esps.h.
+The following table shows the data type for each code.
+.PP
+.TS
+center, box, tab(;);
+c | c
+l | l
+l | l.
+code;type
+=
+BYTE;signed char
+SHORT;short
+LONG;long
+FLOAT;float
+DOUBLE;double
+BYTE_CPLX;byte_cplx
+SHORT_CPLX;short_cplx
+LONG_CPLX;long_cplx
+FLOAT_CPLX;float_cplx
+DOUBLE_CPLX;double_cplx
+.TE
+.DT
+.PP
+The result is as though the input values were converted to
+the ``largest'' type appropriate to the operation,
+the computations done with arithmetic appropriate to that type,
+and the result converted to the output type.
+Typically that is DOUBLE_CPLX arithmetic;
+any exceptions are noted in the discussions of the individual functions.
+However, a more direct method is actually used internally
+when the input and output types permit;
+for example, if these are all real, real arithmetic is used.
+Type conversions are done by
+.IR type_convert (3-ESPS).
+Briefly, conversion from complex to real discards the imaginary part,
+conversion from float or double to an integral type
+rounds rather than truncating,
+and conversion from one type to another type with a narrower numerical range
+may entail clipping; in the latter case a warning message is printed.
+See the
+.I type_convert
+manual page for more details on type conversions.
+.PP
+The arguments
+.I src1
+and
+.I src2
+should each point
+to a scalar or array element of the type indicated by
+.I src_type1
+or
+.I src_type2,
+respectively.
+The pointers must be cast to
+.RI ( "char *" )
+when passed as arguments to the function.
+Likewise,
+.I dest
+should be the result of casting a pointer to
+.RI ( "char *" ):
+either NULL or a pointer to the type indicated by
+.I dest_type.
+.PP
+The destination storage area, if supplied by the user,
+should not overlap the source storage areas;
+otherwise storing to the destination may destroy a part of a source
+that has not yet been processed.
+The sources may overlap.
+.PP
+The returned value of the function
+should be cast to a pointer to the destination type.
+.PP
+The operation to be applied is indicated by an integer code
+.I op.
+The possible values of
+.I op
+have symbolic names defined in the include file
+.I esps/op.h.
+These are
+.PP
+.TS
+center, tab(;);
+l l l l l.
+OP_ADD;OP_SUB;OP_MUL;OP_DIV
+OP_PWR;OP_CPLX;;
+.TE
+.DT
+.LP
+There is available a NULL-terminated string array
+.I operation_names
+that contains the Ascii names of these symbols, minus the prefix "OP_".
+This is useful for getting a printable operation name,
+given the integer code, or vice versa.
+For example
+.IR operation_names [ OP_MUL ]
+is the string "MUL", and
+.IR lin_search ( "operation_names,
+"MUL") is the integer
+.I OP_MUL.
+(See
+.IR lin_search (3-ESPSu),
+.IR lin_search2 (3-ESPSu).)
+The array is declared for the user as
+.LP
+.IR "extern char " * "operation_names" [];
+.LP
+in the include file
+.I esps/op.h,
+and there is an initialized definition in
+.I arr_op.c,
+the ESPS library module that contains the function
+.I arr_op.
+.PP
+Notes on the individual operations follow.
+In the formulas,
+.I x
+and
+.I y
+denote the first and second operands of the operation.
+.TP
+ADD
+Sum:
+.RI ( x " + " y ).
+.TP
+SUB
+Difference:
+.RI ( x " \- " y ).
+.TP
+MUL
+Product:
+.RI ( xy ).
+.TP
+DIV
+Quotient:
+.RI ( x "/" y ).
+The result may be a non-integer even when the operands are integers.
+For example, the quotient of 2 and 3 is 0.666..., not 0,
+which would be obtained by C fixed-point arithmetic.
+If the result type is specified as an integer type,
+this result is converted, by rounding, to 1.
+.TP
+PWR
+The result of raising
+.I x
+to the power
+.IR y :
+.if n .RI ( x "^" y ).
+.if t .RI ( "\x'0'x\v'-24u'\s-3\|y\s+3\|\v'24u'" ).
+If
+.I x
+is 0, the result is 1 if
+.I y
+is 0, 0 if
+.I y
+has a positive real part, and undefined otherwise.
+If
+.I x
+is not 0, the result is mathematically defined by
+.RI "exp (" y " log " x ).
+The result may be complex, even for real operands.
+For example,  \-4 to the power 0.25 yields the result
+.RI "1 + " i.
+If the result type is specified as a real type,
+this result is converted, by discarding the imaginary part, to 1.
+.TP
+CPLX
+The result is given by
+.RI ( x " + " iy ).
+This operation is mainly intended for forming a complex number
+from its real and imaginary parts, given separately as real numbers.
+However, the result is that given by the formula,
+even for complex operands.
+.SH EXAMPLES
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+.SH FUTURE CHANGES
+.PP
+Possible additional operations, such as integer quotients,
+remainder and residue
+.RI ( mod ),
+.I max
+and
+.I min,
+comparisons, or Boolean operations.
+Possible version with an interface permitting operands to be
+scalars or arrays with non-unit strides.
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+.nf
+\fIfeaop\fR(1-ESPS), \fIfeafunc\fR(1-ESPS), \fIarr_func\fR(3-ESPSsp),
+\fItype_convert\fR(3-ESPSsp), \fIlin_search\fR(3-ESPSu),
+\fIlin_search2\fR(3-ESPSu)
+.fi
+.SH AUTHOR
+Rodney Johnson, ERL.

@@ -1,0 +1,344 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     me_spec - Generate maximum-entropy  spectra  from  parameter
+     vectors.
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>me_spec</STRONG> [ <STRONG>-n</STRONG> <EM>num</EM>_<EM>freqs</EM> ] [ <STRONG>-o</STRONG> <EM>max</EM>_<EM>order</EM> ] [ <STRONG>-r</STRONG> <EM>range</EM> ] [ <STRONG>-</STRONG> <STRONG>x</STRONG>
+     <EM>debug</EM>_<EM>level</EM> ] [ <STRONG>-G</STRONG> ]
+     [ <STRONG>-P</STRONG> <EM>params</EM> ] <EM>input</EM> <EM>output</EM>.<EM>spec</EM>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     <EM>Me</EM>_<EM>spec</EM> reads spectral parameters and other information from
+     the input file and generates a corresponding spectral record
+     file containing  logarithmically  scaled  (in  dB)  maximum-
+     entropy spectral power densities.
+
+     The spectral  parameters  may  be  reflection  coefficients,
+     autoregressive-filter  coefficients, or any of several other
+     types of parameters; see <EM>spec</EM>_<EM>rep</EM> in the Parameters  section
+     and the documentation for <STRONG><A HREF="../man3.html/reps_rc.3.html">reps_rc(3-ESPS)</A></STRONG> for a list.  Other
+     required information includes the total power, the order  of
+     the  spectrum,  and  the  sampling  frequency.  These may be
+     obtained from the input file, or defaults may be  used;  see
+     the    descriptions    of    the    parameters    <EM>max</EM>_<EM>order</EM>,
+     <EM>samp</EM>_<EM>freq</EM>_<EM>name</EM>, <EM>samp</EM>_<EM>freq</EM>, <EM>power</EM>_<EM>field</EM>, and <EM>power</EM>. FEA_ANA(5
+     - ESPS)  files  are suitable as input and are specially pro-
+     vided for, but any vector field of type  <EM>float</EM>  in  any  FEA
+     file  may be treated as a vector of spectral parameters; see
+     <EM>spec</EM>_<EM>param</EM>_<EM>field</EM> and <EM>spec</EM>_<EM>rep</EM> in the Parameters section.
+
+     The spectral values are computed for the specified number of
+     frequencies,  which must be at least 2.  The frequencies are
+     equispaced from 0 to half the sampling frequency.  There  is
+     an  option to compute the spectrum to a lower order than the
+     number of coefficients present in the analysis records.
+
+     One output record is written for each input  record  in  the
+     specified  range.  If ``-'' is given for the input file, the
+     standard input is read.  If ``-'' is given  for  the  output
+     file,  the  standard  output is written to.  The output file
+     can be plotted using the <STRONG><A HREF="../man1.html/plotspec.1.html">plotspec(1-ESPS)</A></STRONG> command.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following options are supported.  Values in brackets are
+     defaults.
+
+     <STRONG>-n</STRONG> <EM>num</EM>_<EM>freqs</EM> [513]
+          Compute spectral values for this number of frequencies,
+          equispaced from 0 to half the sampling frequency.  Must
+          be at least 2.
+
+     <STRONG>-o</STRONG> <EM>max</EM>_<EM>order</EM>
+          Maximum-entropy spectra of at most this order  will  be
+          computed,  even when more coefficients are available in
+          the analysis records.  The program converts  the  spec-
+          tral  parameters  to  reflection coefficients, carrying
+          the computation out to the actual order of the  parame-
+          ter  set  contained  in  the record.  In FEA_ANA files,
+          when <STRONG>-G</STRONG> has not been specified,  the  actual  order  is
+          given  by  the  header  item  <EM>order</EM>_<EM>vcd</EM>, for records in
+          which the <EM>frame</EM>_<EM>type</EM> field is VOICED or TRANSITION, and
+          by  <EM>order</EM>_<EM>unvcd</EM>  in  other records.  In other files, or
+          when <STRONG>-G</STRONG> has been specified, the actual order is assumed
+          to  be  the  length  of  the field (or subsequence of a
+          field) named by the parameter  <EM>spec</EM>_<EM>param</EM>_<EM>field</EM>.  After
+          converting  the  parameters,  the program truncates the
+          sequence of reflection coefficients to length <EM>max</EM>_<EM>order</EM>
+          and  computes a maximum_entropy spectrum from the trun-
+          cated sequence.
+
+          This procedure is <EM>not</EM> equivalent to  simply  truncating
+          the  original parameter set, for example by specifing a
+          shorter field with <EM>spec</EM>_<EM>param</EM>_<EM>field</EM>.  The  latter  pro-
+          cedure  may  give  incorrect  results, depending on the
+          spectral representation (see <EM>spec</EM>_<EM>rep</EM> in the Parameters
+          section).   For  example,  the  <EM>m</EM> autoregressive filter
+          coefficients of order <EM>m</EM> are not in general the same  as
+          the first <EM>m</EM> autoregressive filter coefficients of order
+          <EM>n</EM> (where <EM>n</EM>&gt;<EM>m</EM>).
+
+     <STRONG>-r</STRONG> <EM>first</EM><STRONG>:</STRONG><EM>last</EM> [(first in file):(last in file)]
+
+     <STRONG>-r</STRONG> <EM>first</EM><STRONG>:+</STRONG><EM>incr</EM>
+          In the first form, a pair of unsigned  integers  speci-
+          fies  the  range  of  records  to be processed.  Either
+          <EM>first</EM> or <EM>last</EM> may be omitted; then the default value is
+          used.   If  <EM>last</EM>  = <EM>first</EM> + <EM>incr</EM>, the second form (with
+          the plus sign) specifies the same range as  the  first.
+          If  the  specified  range  contains  records not in the
+          file, <EM>me</EM>_<EM>spec</EM> complains and quits.
+
+     <STRONG>-x</STRONG> <EM>debug</EM>_<EM>level</EM> [0]
+          If <EM>debug</EM>_<EM>level</EM> is non-zero,  <EM>me</EM>_<EM>spec</EM>  prints  debugging
+          messages  and  other  information on the standard error
+          output.
+
+     <STRONG>-G</STRONG>    Even if the input  file  is  a  FEA_ANA  file,  it  is
+          treated  like  any  other FEA file.  Special processing
+          does not take place for determining filter  order  from
+          voicing  or  computing  average  power  from individual
+          pulse powers and durations in multipulse FEA_ANA files.
+          The  parameter  file must supply values for the parame-
+          ters <EM>spec</EM>_<EM>param</EM>_<EM>field</EM>, <EM>spec</EM>_<EM>rep</EM>, <EM>power</EM>_<EM>field</EM> or  <EM>power</EM>,
+          and  <EM>samp</EM>_<EM>freq</EM>_<EM>name</EM>  or <EM>samp</EM>_<EM>freq</EM>.  The filter order is
+          taken to be  the  length  of  the  field  specified  by
+          <EM>spec</EM>_<EM>param</EM>_<EM>field</EM>;  but  see  the  discussion  of the <STRONG>-o</STRONG>
+          option.
+
+     <STRONG>-P</STRONG> <EM>params</EM>[params]
+          The name of the parameter file.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     The ESPS common file is not referred to.
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     The following parameters are read as required.
+
+     <EM>num</EM>_<EM>freqs</EM> - <EM>integer</EM>
+          The number of frequencies for which spectral values are
+          computed.   The value in the parameter file is not used
+          if a value is specified with the command-line option  <STRONG>-</STRONG>
+          <STRONG>n.</STRONG>  The  default  value and restrictions are as for the
+          argument of the option.
+
+     <EM>max</EM>_<EM>order</EM> - <EM>integer</EM>
+          An upper bound on  the  order  of  the  maximum-entropy
+          spectra that will be computed.  The value in the param-
+          eter file is not used if a value is specified with  the
+          command-line option <STRONG>-o.</STRONG> See the discussion of <STRONG>-o</STRONG> in the
+          Options section for the detailed interpretation of this
+          parameter.
+
+     <EM>start</EM> - <EM>integer</EM>
+          The number of the first record to be processed,  count-
+          ing the first in the input file as number 1.  The value
+          in the parameter file is not used if a  starting  value
+          is given with the <STRONG>-r</STRONG> option.  The default value is 1.
+
+     <EM>nan</EM> - <EM>integer</EM>
+          The number of records to be processed.   The  value  in
+          the  parameter  file  is  not  used if the <STRONG>-r</STRONG> option is
+          specified.  By convention, a value of 0 means that  all
+          records from the starting record through the end of the
+          file are processed.  This also the default behavior  in
+          case  no  value is specified either on the command line
+          or in the parameter file.
+
+     <EM>spec</EM>_<EM>param</EM>_<EM>field</EM> - <EM>string</EM>
+          The field containing  the  spectral  parameters.   This
+          must  be  explicitly  specified  in  the parameter file
+          unless the input file is a FEA_ANA file  and  the   <STRONG>-</STRONG> <STRONG>G</STRONG>
+          option  is  not specified.  The default in that case is
+          "spec_param".  This parameter may  be  simply  a  field
+          name, or it may be of the form
+
+          <EM>field</EM>-<EM>name</EM><STRONG>[</STRONG><EM>grange</EM><STRONG>]</STRONG>,
+
+          where <EM>grange</EM> is a general range  specification  accept-
+          able  to  <STRONG><A HREF="../man3.html/grange_switch.3.html">grange_switch(3 -ESPSu)</A></STRONG>.  The bracketed range
+          specification specifies the indices of a subsequence of
+          the  elements of the named field that are to be used as
+          the spectral parameters.
+
+     <EM>spec</EM>_<EM>rep</EM> - <EM>string</EM>
+          A name or abbreviation for the type of spectral parame-
+          ters.  Acceptable values include "RC" (reflection coef-
+          ficients), "LAR" (log area ratios), "AUTO"  (normalized
+          autocorrelation  coefficients),  "AFC"  (autoregressive
+          filter coefficients),  "CEP"  (cepstrum  coefficients),
+          and  "LSF"  (line spectral frequencies).  See the docu-
+          mentation for reps_rc(<EM>3</EM>-<EM>ESPSsp</EM>).  This  parameter  must
+          be  explicitly  specified  in the parameter file unless
+          the input file is a FEA_ANA file and the <STRONG>-G</STRONG>  option  is
+          not  specified.   The  default in that case is the con-
+          tents of the generic header item <EM>spec</EM>_<EM>rep</EM>.
+
+     <EM>power</EM>_<EM>field</EM> - <EM>string</EM>
+          A field containing the total  power  of  the  spectrum.
+          Either  this  parameter  or  <EM>power</EM>  must  be explicitly
+          specified in the parameter file unless the  input  file
+          is  a  FEA_ANA file and the <STRONG>-G</STRONG> option is not specified.
+          The default in that case is "raw_power".
+
+     <EM>power</EM> - <EM>float</EM>
+          A numerical value for the total power of the  spectrum.
+          This  value is used, and applies to all records, unless
+          the parameter <EM>power</EM>_<EM>field</EM> is defined and names a  field
+          that  exists in the input file.  In that case, the con-
+          tents of the named field are used instead.
+
+     <EM>samp</EM>_<EM>freq</EM>_<EM>name</EM> - <EM>string</EM>
+          The name of a generic header  item  that  contains  the
+          sampling frequency.  Either this parameter or <EM>samp</EM>_<EM>freq</EM>
+          must be explicitly  specified  in  the  parameter  file
+          unless  the  input  file  is  a FEA_ANA file and the <STRONG>-G</STRONG>
+          option is not specified.  The default in that  case  is
+          "src_sf".
+
+     <EM>samp</EM>_<EM>freq</EM> - <EM>float</EM>
+          A numerical value for  the  sampling  frequency.   This
+          values  is  used unless the parameter <EM>samp</EM>_<EM>freq</EM>_<EM>name</EM> is
+          defined and names a generic header item that exists  in
+          the  input file.  In that case, the value of the header
+          item takes precedence.
+
+
+</PRE>
+<H2>ESPS HEADERS</H2><PRE>
+     The values <EM>common</EM>.<EM>type</EM>, <EM>variable</EM>.<EM>refer</EM>, and <EM>hd</EM>.<EM>fea</EM>-&gt;<EM>fea</EM>_<EM>type</EM>
+     are  read  from the header of the input file.  The following
+     generic header items may also read if the input is a FEA_ANA
+     file:   <EM>order</EM>_<EM>vcd</EM>,  <EM>order</EM>_<EM>unvcd</EM>,  <EM>src</EM>_<EM>sf</EM>,  <EM>spec</EM>_<EM>rep</EM>  <EM>frmlen</EM>,
+     <EM>start</EM>, <EM>nan</EM>, and <EM>maxpulses</EM>.
+
+     The following parameters are written to the  header  of  the
+     FEA_SPEC   file:    <EM>common</EM>.<EM>tag</EM>,   <EM>common</EM>.<EM>prog</EM>,  <EM>common</EM>.<EM>vers</EM>,
+     <EM>common</EM>.<EM>progdate</EM>, <EM>variable</EM>.<EM>refer</EM>, <EM>frmlen</EM> (long), <EM>sf</EM>  (float),
+     <EM>frame</EM>_<EM>meth</EM>  (CODED), <EM>freq</EM>_<EM>format</EM> (CODED), <EM>spec</EM>_<EM>type</EM> (CODED),
+     <EM>contin</EM> (CODED), <EM>num</EM>_<EM>freqs</EM> (LONG).  For  input  FEA_ANA  (5 -
+     ESPS)  files,  <EM>order</EM>_<EM>vcd</EM>  (LONG)  and <EM>order</EM>_<EM>unvcd</EM> (LONG) are
+     added to the output file header.   In  addition,  the  input
+     file is added as the source of the output file, and the com-
+     mand line is added as a comment.
+
+     The generic header item <EM>start</EM>_<EM>time</EM> is written in the  output
+     file.    The   value  written  is  computed  by  taking  the
+     <EM>start</EM>_<EM>time</EM> value from the header of the input file (or zero,
+     if  such  a  header item doesn't exist) and adding to it the
+     offset time (from the beginning of the input  file)  of  the
+     first  point  or  record  processed.  If <EM>record</EM>_<EM>freq</EM> doesn't
+     exist in the input file, it defaults to 1.  Otherwise, it is
+     copied  to  the  output  file  header.   This item gives the
+     number of records per second of original data analyzed.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man1.html/refcof.1.html">refcof (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/plotspec.1.html">plotspec (1- ESPS)</A></STRONG>,  <STRONG><A HREF="../man3.html/reps_rc.3.html">reps_rc  (3 - ESPSsp)</A></STRONG>,
+     <STRONG><A HREF="../man5.html/FEA_SPEC.5.html">FEA_SPEC (5-ESPS)</A></STRONG>, <STRONG><A HREF="../man5.html/ESPS.5.html">ESPS (5-ESPS)</A></STRONG>,
+
+
+</PRE>
+<H2>DIAGNOSTICS</H2><PRE>
+     me_spec: unknown option: -<EM>letter</EM>
+     Usage: me_spec [-n num_freqs][ - o  order][ - r  range][ - x
+     debug_level][-G][-P params] ana_file spec_file
+     me_spec: too many file names specified.
+     me_spec: too few file names specified.
+     me_spec: number of frequencies <EM>n</EM> is less than 2.
+     me_spec: can't open <EM>filename</EM>: <EM>reason</EM>
+     me_spec: <EM>filename</EM> is not an ESPS file
+     me_spec: Can't start before beginning of file.
+     me_spec: Last record precedes first.
+     me_spec: Name of spec_param field not specified.
+     me_spec: Unrecognized spectral representation.
+     me_spec: Spectral representation not specified.
+     me_spec: Field <EM>name</EM> and  symbol  "power"  undefined  or  not
+     float.
+     me_spec: Neither field nor default value  for  power  speci-
+     fied.
+     me_spec: Header item <EM>name</EM> and symbol  "samp_freq"  undefined
+     or not float.
+     me_spec: No header-item name or default value  for  sampling
+     frequency.
+     me_spec: Input field <EM>name</EM> undefined.
+     me_spec: Input field <EM>name</EM> undefined or not float.
+     me_spec: Input field length <EM>n</EM> too small.
+     me_spec: can't allocate memory--input spectral parameters
+     me_spec: can't allocate memory--lpc filter
+     me_spec: can't allocate memory--reflection coefficients
+     me_spec: unknown spectral parameter type
+
+     When <EM>debug</EM>_<EM>level</EM>!=0, the  reflection  coefficients,  average
+     raw power, location tag, and inverse filter coefficients are
+     listed for each record.
+
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     The <EM>frame</EM>_<EM>len</EM> field in an input FEA_ANA record,  defined  as
+     ``number of samples to synthesize from frame,'' is copied to
+     the  <EM>frame</EM>_<EM>len</EM>  field  in  a  spectral  record,  defined  as
+     ``number  of  samples in analysis window.''  This is invalid
+     if the FEA_ANA file was produced by a program for which  the
+     two are different.
+
+
+</PRE>
+<H2>WARNINGS</H2><PRE>
+     In order to produce <STRONG><A HREF="../man5.html/FEA_SPEC.5.html">FEA_SPEC (5-ESPS)</A></STRONG> that can  be  overlaid
+     on  <STRONG><A HREF="../man5.html/FEA_SPEC.5.html">FEA_SPEC (5-ESPS)</A></STRONG> files produced by <STRONG><A HREF="../man1.html/fft.1.html">fft (1-ESPS)</A></STRONG>, the <STRONG>-G</STRONG>
+     option should be used. This produces a generic FEA_SPEC (5 -
+     ESPS) file without the voicing information.
+
+
+</PRE>
+<H2>FUTURE CHANGES</H2><PRE>
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     S. Shankar Narayan.  Made SDS compatible by Joe Buck.   Ori-
+     ginally called <EM>pltspc</EM>, later <EM>fanaspec</EM>. Modified for ESPS and
+     number of frequencies made variable by Rod Johnson, Entropic
+     Speech,  Inc.   Modified  for  FEA_ANA  files by John Shore.
+     Additions by Rod Johnson  to  accept  spec_reps  other  than
+     reflection  coefficients  and  to  accept  files  other than
+     FEA_ANA files.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

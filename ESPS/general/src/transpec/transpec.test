@@ -1,0 +1,51 @@
+#!/bin/sh
+#
+#  This material contains proprietary software of Entropic Speech, Inc.   
+#  Any reproduction, distribution, or publication without the prior	   
+#  written permission of Entropic Speech, Inc. is strictly prohibited.
+#  Any public distribution of copies of this work authorized in writing by
+#  Entropic Speech, Inc. must bear the notice			
+# 								
+#  "Copyright (c) 1988 Entropic Speech, Inc. All rights reserved."
+# 				
+#
+# test file for transpec @(#)transpec.test	1.1  6/7/88  ESI
+
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+
+echo "Testing transpec."
+
+echo "Creating SD file of alternating one and minus one"
+echo "echo ""1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1"" | testsd -a- alt.sd"
+echo "1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1 1 -1" | testsd -a- alt.sd
+echo "Compute reflection coefficients then back to normalized autocorrelations"
+echo "refcof -o5 -p1:+9 -d alt.sd - | transpec -m auto - alt.auto"
+refcof -o5 -p1:+9 -d alt.sd - | transpec -m auto - alt.auto
+echo "spec_params of alt.auto should be -.9, .8, -.7, .6, -.5"
+echo "psps alt.auto"
+psps alt.auto
+echo "performing loop tests -- see test script for information"
+transpec -mrc alt.auto org.rc
+echo "All loops should yield the following results"
+psps -H org.rc
+echo " "
+echo "transpec -mafc org.rc - | transpec -mrc - - | psps -H -"
+transpec -mafc org.rc - | transpec -mrc - - | psps -H -
+echo "transpec -mauto org.rc - | transpec -mrc - - | psps -H -"
+transpec -mauto org.rc - | transpec -mrc - - | psps -H -
+echo "transpec -mcep org.rc - | transpec -mrc - - | psps -H -"
+transpec -mcep org.rc - | transpec -mrc - - | psps -H -
+echo "transpec -mlar org.rc - | transpec -mrc - - | psps -H -"
+transpec -mlar org.rc - | transpec -mrc - - | psps -H -
+echo "transpec -mlsf org.rc - | transpec -mrc - - | psps -H -"
+transpec -mlsf org.rc - | transpec -mrc - - | psps -H -
+echo " "
+echo "One Final Loop Test"
+echo "transpec -mlar org.rc - | transpec -mcep - - | transpec -mlsf - - | \\"
+echo "        transpec -mauto - - | transpec -mrc - - | psps -H -"
+transpec -mlar org.rc - | transpec -mcep - - | transpec -mlsf - - | \
+	transpec -mauto - - | transpec -mrc - - | psps -H -
+
+rm alt.sd alt.auto org.rc
+echo "Done testing transpec."

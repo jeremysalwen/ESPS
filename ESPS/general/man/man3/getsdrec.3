@@ -1,0 +1,106 @@
+.\" Copyright (c) 1987-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)getsdrec.3	1.3 18 Apr 1997 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH GET_SD_REC 3\-ESPSu 18 Apr 1997
+.SH NAME
+.nf
+get_sd_recd \- get data from an ESPS sampled-data file in DOUBLE format
+get_sd_recf \- get data from an ESPS sampled-data file in FLOAT format
+get_sd_recs \- get data from an ESPS sampled-data file in SHORT format
+.SH SYNOPSIS
+.ft B
+#include <esps/esps.h>
+.sp
+int
+.br
+get_sd_recd(dbuf, nsmpls, hd, file)
+.br
+double *dbuf;
+.br
+int nsmpls;
+.br
+struct header *hd;
+.br
+FILE *file;
+.sp
+int
+.br
+get_sd_recf(fbuf, nsmpls, hd, file)
+.br
+float *fbuf;
+.br
+int nsmpls;
+.br
+struct header *hd;
+.br
+FILE *file;
+.sp
+int
+.br
+get_sd_recs(sbuf, nsmpls, hd, file)
+.br
+short *sbuf;
+.br
+int nsmpls;
+.br
+struct header *hd;
+.br
+FILE *file;
+.ft
+.SH DESCRIPTION
+.PP
+The
+.I get_sd_rec
+functions attempt to read the next \fInsmpls\fP ESPS sampled-data records 
+from stream \fIfile\fP
+into the buffer pointed to by \fIdbuf\fP, \fIfbuf\fP, or \fIsbuf\fP,
+and they return the actual number of samples read.
+If no samples are read (end of file), zero is returned.
+The ESPS file header pointed to by \fIhd\fR is consulted for the type
+of data in the file. The data is converted to double, float, or
+short if necessary.
+If fewer than the requested \fInsmpls\fR points are read (because
+end of file is reached), \fIdbuf\fR, \fIfbuf\fR, or \fIsbuf\fR
+is zero-filled.
+.PP
+The file may be either an SD file (see
+.IR SD (5\-ESPS))
+or a
+.I single-channel
+FEA_SD file (see
+.IR FEA_SD (5\-ESPS)).
+These functions were originally written for use with the SD file type,
+which is being replaced with FEA_SD.
+Limited FEA_SD support is provided in these functions
+to help in converting existing programs
+from using SD files to using FEA_SD files.
+More complete FEA_SD support is provided by the function
+.IR get_feasd_recs (3\-ESPSu),
+which should be used in all new programs.
+.SH EXAMPLE
+double data[100];		/* room for 100 samples */
+.br
+hd = read_header(file);	/* read header */
+.br
+if ((get_sd_recd(data,100,hd,file) == 0) \fIeof or problem ... \fR
+.br
+.SH DIAGNOSTICS
+If \fIhd\fR does not point to the header
+of an SD file or a single-channel FEA_SD file,
+then an error message is printed on stderr,
+and the program is terminated with exit status 1.
+In an SD file, if the header type information is not set,
+then an error message is printed on stderr,
+and the program is terminated with exit status 1.
+.SH BUGS
+None known.
+.SH SEE ALSO
+.nf
+ESPS(5\-ESPS), SD(5\-ESPS), FEA_SD(5\-ESPS),
+\fIget_sd_orecf\fP(3\-ESPSu), \fIget_sd_orecs\fP(3\-ESPSu),
+\fIget_sd_orecd\fP(3\-ESPSu), \fIget_feasd_recs\fP(3\-ESPS),
+\fIget_feasd_orecs\fP(3\-ESPS)
+.fi
+.SH AUTHOR
+Alan Parker

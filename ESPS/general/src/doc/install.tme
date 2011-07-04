@@ -1,0 +1,751 @@
+.lo
+.SJ "Installation Instructions for the ESPS Source Release"
+.AU "Alan Parker"
+.TM ETM-S-87-29 1.25 11/29/89
+.*R 
+ETM-S-86-14, Entropic Signal Processing System (ESPS) Programming Guidelines
+.sh 1 Introduction
+.pp
+This document describes the installation procedure for ESPS Version 3.
+Please read this document completely before attempting the
+installation.    This release is intended for use on Masscomp
+5000 or 6000 series computers running RTU 3.0 or greater,
+Sun\-3, Sun\-4 or Sun\-386i workstations running Sun OS 3.2 or greater,
+HP 800 and 300 series computers, DEC DecStation 3100 (called the
+DS3100 here) workstations, and Convex computers.   The installation
+script requires that a number of standard \s-1UNIX\s+1 utilities be
+available and on the standard execution path, such as \fIgrep\fR,
+\fIcc\fR, \fInroff\fR, \fIsed\fR, \fImake\fR, \fIdiffmk\fR and \fItest\fR.   
+.pp
+Earlier versions of ESPS required Fortran, but this release does not.
+.pp
+In the case of Sun386i some optional clusters are required to build
+ESPS from this source kit.  You must have the development cluster
+installed (both the base_devel and the sunview_devel part) and the
+doc_prep cluster.
+.sh 1 "Overview of Installation Process"
+.pp
+The installation is simple.   The tape or diskettes are read into a
+clean directory (suggested name is esps).  This directory will become
+the \fIsource\fR directory and can by located anywhere on the file
+system, but it is suggested that it be in the login directory of the
+local ESPS maintainer.
+.pp
+The installer may adjust a few installation variables in the script to
+alter the default choices.   The installation script creates a
+\fItarget\fR directory and installs all ESPS programs and related files
+there.   If your system is low on file space, then the \fIsource\fR
+directory can be removed.  However, if you can afford the space, having
+the sources online is helpful, since they serve as example programs.
+For convenience, the \fItarget\fR directory contains a symbolic link back
+to the \fIsource\fR directory.  No ESPS programs require any of the
+files under the \fIsource\fR directory after the installation script has
+been properly run.
+.sh 2 "ESPS's Place in the File System"
+.pp
+It is not necessary to be super-user while installing ESPS.  It is not
+necessary (but it is possible) to put ESPS files into the standard
+\s-1UNIX\s+1 directories such as /usr/lib, /usr/bin/, and /usr/include.
+Whether you must have super-user access depends on where you want to
+install ESPS.   The typical location for the \fItarget\fR directory is
+/usr/esps.   There are two different ways to accomplish this.  One
+is to have a super-user create the directory /usr/esps and then
+change the owner of it to the user-id of the ESPS maintainer (the one
+who read in the tape and is going to run the install script).  
+The better option is to have the super-user create a symbolic link
+\fI/usr/esps\fR which points to the true target directory location
+(for example /home/esps), create this directory (make sure it is
+writtable by the user-id running the install script), and then set the
+target directory in the ESPS install script to \fI/usr/esps\fR.
+.pp
+If you have one of the \fIwaves+\fR products (other than for the
+Sun386i) then you must have ESPS
+rooted at \fI/usr/esps\fR.  
+This will be requirement relaxed in a future release.
+If you do not have \fIwaves+\fR then 
+/usr/esps is only a convention and you can install ESPS anywhere
+in your file system you desire.   All file paths are determined by the
+installation script.
+.pp
+On a Sun386i, ESPS with \fIwaves+\fR must be rooted at \fI/files/esps\fR.   
+Note that
+it doesn't have to be directly installed there; it can be anywhere and
+connected to \fI/files/esps\fR with a symbolic link.
+.sh 2 "A Word About Access Modes"
+.pp
+There are installation parameters that determine the access modes of the files
+when they are installed.    
+The default is write access by owner (should
+be the local ESPS maintainer) and read access by others.
+If you desire to limit access to ESPS to a particular group, you can
+reset the access mode installation variables accordingly.
+There are installation parameters for the mode of the programs, manual
+pages, and library files.
+.sh 2 "File Space Required"
+.pp
+This release of ESPS requires about 9 Megabytes of file space to read in
+the distribution media.   
+This is 18,000 blocks on the Masscomp, HP, and DS3100, 
+and 9,000 blocks on a Sun.
+The target directory requires about 17 Megabytes 
+on a Masscomp, about 26 Megabytes on a Sun3, HP or DS3100,
+and about 19 Megabytes on a Sun4 (Sparc) after all programs are installed.
+During installation, the \fIsource\fR directory will grow by about 
+10 Megabytes
+owing to the .o files being created during compilation.
+After the installation script
+has completed correctly, you can remove the 
+.o files by doing \fIinstall -c\fR.  You can also remove the entire
+\fIsource\fR directory if
+you are low on file space and do not need easy access to the sources.
+.sh 1 "Optional WAVES+ software"
+.pp
+The following section only applies to Sun systems (since the optional
+\fIwaves+\fR software only runs on Suns at present).   
+If you ordered \fIwaves+\fR
+with ESPS, then it is included on the tape 
+after the two ESPS directories (\fIgeneral\fR and \fIlocal.skel\fR).
+The following table shows the directory names for the different
+\fiwaves+\fR products, depending on the system type.
+.TS
+box,center,tab(;);
+c c c
+l l l.
+Machine;Product Code;Directory on Tape
+_
+Sun 3;w+S3;waves.sun3_68881
+;;waves.sun3_fpa
+Sun 4;w+S4;waves.sun4
+Sun 386i;w+S386i;waves.sun386
+Any Sun;w+SRC;waves.src
+.TE
+.pp
+Note that for Sun3, there may be two versions of the binary; one compiled
+for the 68881 floating point chip and the other for the Sun3 FPA board.  Use
+the one (or both) that is appropriate for your configuration.   (For
+example, if you have a server with the floating point board (FPA), but
+diskless nodes on it without FPAs, then you might want to build ESPS
+twice, once with the FPA option on, and once with it off and install the
+correct \fIwaves+\fR binary into them.  Then set up the paths on the
+various machines, using symbolic links, so that each machine sees the
+correct type of code.
+If you ordered multiple types of \fIwaves+\fR, then all will be on the 
+distribution media.   
+.pp
+Except for \fIwaves.src\fR, the \fIwaves+\fR distributions are in binary form, so 
+they do not require compilation.  The
+distribution directory contains a makefile that copies the files to the
+correct locations within ESPS and sets the modes of the files.   The
+\fIwaves+\fR binaries are put into the ESPS \fIbin\fR directory.   The 
+\fIwaves+\fR
+man pages are put into the ESPS \fIman/man1\fR directory.   Some other
+related \fIwaves+\fR files, such as sample parameter files and colormaps, are
+put into the ESPS directory \fIlib/waves\fR.
+.pp
+A variable in the install script, \fBWAVES\fR is set to y (for yes) or n
+(for no) depending on whether \fIwaves+\fR is to be installed with ESPS.
+If you ordered \fIwaves+\fR with ESPS and it is on the tape, then this
+variable will be set for you.  (But you should check us!).   The
+variable \fBWAVES_TYPE\fR is set to the name of the \fIwaves+\fR directory, as
+described above.   For example, if your system type is a Sun4,
+then you should set \fBWAVES\fR
+to \fIy\fR and \fBWAVES_TYPE\fR to \fIwaves.sun4\fR.  
+If you have the \fIwaves+\fR source directory, then set \fBWAVES\fR to y and
+\fBWAVES_TYPE\fR to \fIwaves.src\fR.
+.sh 1 "Window Systems"
+.pp
+ESPS supports three different windowing systems, Masscomp SP-40 graphics
+(MC Windows), Sunview (also known as Suntools), and the X Window
+System.   Masscomp systems can have either or both SP-40 and X
+Windows.  In this version of ESPS Sun systems can only have Suntools.
+HP systems are assumed to have X Windows.   If you are building ESPS
+from source on a Masscomp, check the section of the install script where
+the Masscomp defines are located and set the variables \fBSP40\fR and \fBXWIN\fR
+correctly.
+.sh 1 "Reading In The Distribution"
+.pp
+This first section is for
+Masscomp systems.  If you are installing ESPS on a Sun or HP skip ahead to 
+the appropriate section.
+.sh 2 "Masscomp (Concurrent)"
+.pp
+There are two cases here.  One for an installation from 9 track tape and 
+the other case for diskettes.   Follow the instructions in the next section 
+for 9 track tape.  The following instructions assume that you want to 
+read the distribution
+into a new directory named \fIesps\fR in your home directory.   If you 
+desire to read it into another directory, them modify these instructions
+accordingly.
+.pp
+.pp
+Skip ahead to "Reading a Set of Diskettes" if your 
+installation is from diskettes.
+.sh 3 "Reading a 9 Track Tape"
+.pp
+The tape drive is assigned and the tape (in tar format) is read in. 
+Be sure you are in your home directory, create a directory named
+\fIesps\fR and then change to it.  The tape will be read into this
+directory.  The following commands do the trick:
+.br
+.ta 4i
+.ft CW
+.nf
+% assign 1600	
+% cd
+% mkdir esps
+% cd esps
+% tar xvf /dev/rmt0 
+.ft LR
+.fi
+.pp
+After doing this you should have a directory named \fIesps\fR under your home
+directory.   This directory should contain another directory named
+\fIgeneral\fR and a file named \fIREADME\fR.   Check this \fIREADME\fR
+file for any information that did not get put into this note.
+.pp
+Skip to the section titled "Editing the Install Script".
+.sh 3 "Reading a Set of Diskettes"
+.pp
+Insert the first diskette into the diskette drive.  Be sure you are in
+your home directory, create a directory named \fIesps\fR and then change
+to it.  The diskettes will be read into this directory.  The following
+commands do the trick:
+.ft CW
+.br
+.nf
+% cd
+% mkdir esps
+% cd esps
+% tar xvf /dev/rflp
+.ft LR
+.fi
+.pp
+After \fItar\fR reads a complete diskette, it will print a message like:
+.br
+.ft CW
+.nf
+tar: errno returned 2, Cannot read input
+tar: If you want to go on, type "yes" or a new pathname of a device/file
+name when you are ready
+.fi
+.ft LR
+.pp
+When you get this message, remove the diskette and insert the next in
+the set and type 
+.ft CW
+yes
+.ft LR 
+(followed by a return).   
+You should not get this message when reading the last
+diskette in the set.
+.pp
+After reading the diskettes you should have a 
+directory named \fIesps\fR under your home
+directory.   This directory should contain another directory named
+\fIgeneral\fR and a file named \fIREADME\fR.   Check this \fIREADME\fR
+file for any information that did not get put into this note.
+.pp
+If you have a problem reading the diskette, check the access mode of
+/dev/rflp (the diskette drive).   You might need to have a super-user change the access mode
+of /dev/rflp.
+.pp
+Skip to the section titled "Editing the Install Script".
+.sh 2 "Sun with Cartridge Tape or 9 Track Tape"
+.pp
+The following instructions assume that you want to read the distribution
+into a new directory named \fIesps\fR in your home directory.   If you 
+desire to read it into another directory, them modify these instructions
+accordingly.
+.sh 3 "Reading a 9 Track Tape or Cartridge Tape"
+.pp
+The tape (in tar format) is read in. 
+If the media is a 9 track tape, then 1600 bpi is used (unless you
+requested something else).   If a cartridge is used, then the media is
+written in high density mode (/dev/rst8 on many Suns).
+Be sure you are in your home directory, create a directory named
+\fIesps\fR and then change to it.  The tape will be read into this
+directory.  
+These instructions do not include the correct name for your tape drive,
+since that varies from one Sun configuration to another.
+The following commands do the trick:
+.br
+.ta 4i
+.ft CW
+.nf
+% cd
+% mkdir esps
+% cd esps
+% tar xvf /dev/XXXX (where XXXX is the name of your tape drive)
+.ft LR
+.fi
+.pp
+After doing this you should have a directory named \fIesps\fR under your home
+directory.   This directory should contain another directory named
+\fIgeneral\fR and a file named \fIREADME\fR.   Check this \fIREADME\fR
+file for any information that did not get put into this note.
+.pp
+Skip to the section titled "Editing the Install Script".
+.sh 2 "Sun 386i"
+.pp
+If the media is either 9 track tape or cartridge tape, follow the
+instructions above for a Sun with Cartridge Tape or 9 Track Tape.
+.pp
+Otherwise the media will be high density 3.5 inch diskettes.   The Sun
+\fIbar\fR utility is used to read the diskettes.  The ESPS source is on
+one set of diskettes (about 5 diskettes) and any \fIwaves+\fR related
+products will be separate \fIbar\fR files on their own sets of
+diskettes.
+.pp
+To read in an ESPS distribution on diskettes, 
+be sure you are in your home directory, create a directory named
+\fIesps\fR and then change to it.  The diskettes will be read into this
+directory.  
+The following commands do the trick:
+.br
+.ta 4i
+.ft CW
+.nf
+% cd
+% mkdir esps
+% cd esps
+% bar xvf /dev/rfd0a 
+.ft LR
+.fi
+.pp
+After reading the first diskette, the program will prompt you to insert
+the next diskette and type \fBy\fR.  Simply read in all diskettes in the
+order that they are numbered on the label.  Be sure to keep the
+individual products together.
+.pp
+After doing this you should have a directory named \fIesps\fR under your home
+directory.   This directory should contain another directory named
+\fIgeneral\fR and a file named \fIREADME\fR.   Check this \fIREADME\fR
+file for any information that did not get put into this note.
+.pp
+If you ordered additional products, such as \fIwaves+\fR (in binary or
+source), read them into this same directory using the same steps shown
+above.
+.pp
+Skip to the section titled "Editing the Install Script".
+.sh 2 "HP 300 or HP 800"
+.pp
+The following instructions assume that you want to read the distribution
+into a new directory named \fIesps\fR in your home directory.   If you 
+desire to read it into another directory, them modify these instructions
+accordingly.
+.sh 3 "Reading a 9 Track Tape"
+.pp
+The tape (in tar format) is read in. 
+Be sure you are in your home directory, create a directory named
+\fIesps\fR and then change to it.  The tape will be read into this
+directory.  
+Assuming that \fItar\fR uses the default tape drive,
+(you might have to use the \fI-f\fR option on \fItar\fR)
+the following commands do the trick:  
+.br
+.ta 4i
+.ft CW
+.nf
+% cd
+% mkdir esps
+% cd esps
+% tar xv
+.ft LR
+.fi
+.pp
+After doing this you should have a directory named \fIesps\fR under your home
+directory.   This directory should contain another directory named
+\fIgeneral\fR and a file named \fIREADME\fR.   Check this \fIREADME\fR
+file for any information that did not get put into this note.
+.pp
+.sh 3 "Reading HP Cartridges"
+.pp
+If the distribution is supplied on 1/4 inch cartridges, then we have
+used the HP utility \fItcio\fR to properly block the tape.  To read it
+back in do:
+.br
+.ta 4i
+.ft CW
+.nf
+% cd
+% mkdir esps
+% cd esps
+% tcio -i /dev/XXXX | tar xvf -
+.ft LR
+.fi
+.pp
+.pp
+Where XXXX is the name of your tape device.
+.pp
+After doing this you should have a directory named \fIesps\fR under your home
+directory.   This directory should contain another directory named
+\fIgeneral\fR and a file named \fIREADME\fR.   Check this \fIREADME\fR
+file for any information that did not get put into this note.
+.sh 2 "DS3100"
+.pp
+The following instructions assume that you want to read the distribution
+into a new directory named \fIesps\fR in your home directory.   If you 
+desire to read it into another directory, them modify these instructions
+accordingly.
+.sh 3 "Reading a TK50 Tape Cartridge"
+.pp
+The tape (in tar format) is read in. 
+Be sure you are in your home directory, create a directory named
+\fIesps\fR and then change to it.  The tape will be read into this
+directory.  
+Assuming that \fItar\fR uses the default tape drive,
+(you might have to use the \fI-f\fR option on \fItar\fR)
+the following commands do the trick:  
+.br
+.ta 4i
+.ft CW
+.nf
+% cd
+% mkdir esps
+% cd esps
+% tar xv
+.ft LR
+.fi
+.pp
+After doing this you should have a directory named \fIesps\fR under your home
+directory.   This directory should contain another directory named
+\fIgeneral\fR and a file named \fIREADME\fR.   Check this \fIREADME\fR
+file for any information that did not get put into this note.
+.sh 2 "Convex"
+.pp
+The following instructions assume that you want to read the distribution
+into a new directory named \fIesps\fR in your home directory.   If you 
+desire to read it into another directory, them modify these instructions
+accordingly.
+.sh 3 "Reading a 9 Track Tape"
+.pp
+The tape (in tar format) is read in. 
+Be sure you are in your home directory, create a directory named
+\fIesps\fR and then change to it.  The tape will be read into this
+directory.  
+Assuming that \fItar\fR uses the default tape drive,
+(you might have to use the \fI-f\fR option on \fItar\fR)
+the following commands do the trick:  
+.br
+.ta 4i
+.ft CW
+.nf
+% cd
+% mkdir esps
+% cd esps
+% tar xv
+.ft LR
+.fi
+.pp
+After doing this you should have a directory named \fIesps\fR under your home
+directory.   This directory should contain another directory named
+\fIgeneral\fR and a file named \fIREADME\fR.   Check this \fIREADME\fR
+file for any information that did not get put into this note.
+.sh 1 "Editing the Install Script"
+.pp
+There are several variable assignments that must be checked by the installer.
+They are the system type, the location of the \fItarget\fR directory, and
+the data acquisition device names.
+.pp
+The variable \fBMACH\fR should be set to indicate the machine type.  It
+is either M5500 for a 68010 Masscomp, M5600 for a 68020 Masscomp,
+SUN3 for a Sun\-3, SUN4 for a Sun\-4, SUN386i for a Sun\-386i, 
+HP for an HP 300 or HP 800 series,
+CONVEX for a Convex C-1 or C-2, or DS3100 for a DecStation 3100.  
+No other machine types are supported by this release.
+The default value should be the same as the tape is labeled for, but if
+you ordered for several machine types, it won't be right for all of
+them.
+In any event, check the \fBMACH\fR variable in the
+install script.
+.pp
+The variable \fBSPSDIR\fR
+is the location of the \fItarget\fR directory.   It is set to the full path
+of the desired \fItarget\fR directory.   The default value (as shipped) is
+\fI/usr/esps\fR.  The install script will try to create this directory if it
+does not exist.  Be sure that the user-id running the install script
+can write into the directory in which the \fItarget\fR directory will be
+created.  If not (for example if it is /usr) have the super-user create
+it first and then \fIchown\fR of it to the ESPS installer's user-id.
+.pp 
+The other installation variables that might need adjustment are the file access modes.   
+These default to access by everyone on the system.  
+If you desire to limit access to to a particular group you can set the 
+access mode as desired.   The group used will be that of the installer.  
+(For full access, the last digit of the mode should be the same as the 
+next to last digit (eg. 0755 or 0644).  To limit access to the group,
+the last digit should be zero (eg. 0750 or 0640).
+.pp
+The install script contains a listing at the beginning of all
+variables that can be defined and their default values.
+Note that the install script is a \fIsh\fR(1) script, and there can be
+no spaces around the equal sign (=) in variable assignment statements.
+.sh 2 "Data Acquisition Devices on Masscomp (Concurrent)"
+.pp
+The variables \fBDADEV\fR, \fBADDEV\fR, and \fBCLKDEV\fR are set to the
+name of the digital-to-analog converter, the analog-to-digital converter,
+and the clock device.   The d/a and a/d device are the full path
+names of the device.  For example \fI/dev/dacp0/daf0\fR.
+The clock device is the full path of the clock, excluding the trailing
+device number.  For example \fI/dev/dacp0/clk\fR.
+The default values are \fI/dev/dacp0/daf0\fR for \fBDADEV\fR, 
+\fI/dev/dacp0/adf0\fR for \fBADDEV\fR, and \fI/dev/dacp0/clk\fR for 
+\fBCLKDEV\fR.   
+.pp
+\fBMAXDA\fR and \fBMAXAD\fR are set to the maximum (absolute) value
+obtained from your analog-to-digital equipment, or that can be sent to
+your digital-to-analog equipment.  The default value is for a 12 bit
+twos-compliment device (2047).   This value affects scaling that is done
+within the \fIplay\fR program.   It is not used by any of the signal
+processing programs.
+.sh 2 "Specifying Window Systems"
+.pp
+If you are on a Masscomp system, you have three options: SP-40 Graphics,
+X Windows, or both.  All Masscomp systems with graphics terminals have
+at least one of these window systems.  Determine which you have and set
+the variables \fBXWIN\fR and \fBSP40\fR to yes or no depending on
+whether you have these.  If you do not have Masscomp graphics terminals,
+we suggest that you set \fBSP40\fR to \fIYES\fR and \fBXWIN\fR to
+\fINO\fR.
+.pp
+For HP and DS3100 systems, we assume that X windows is present.   
+.pp
+For Sun systems, this version of the kit only supports building ESPS for
+the Sunview window system.  A patch kit is available to convert the
+installed ESPS (or a binary distribution) to X windows.   If it was not
+on your distribution media and you need it, contact Entropic.
+.sh 1 "ATT vs UCB Universe for Masscomp (Concurrent)"
+.pp
+ESPS is to be compiled under the \fIucb\fR universe.  Since the library
+will be built under \fIucb\fR in most cases, user programs will also
+have to be compiled under \fIucb\fR.  Please be sure that your user's
+understand this.   Before running the install script, be sure you are in
+the \fIucb\fR universe by giving the command:
+.br
+.ta 4i
+.ft CW
+.nf
+% universe ucb
+.ft LR
+.fi
+.sh 1 "Run the Install Script"
+.pp
+After you have checked and reset any installation variables you simply
+run the script.   It is a good idea to capture the standard error and
+standard output from the install script into a log file.
+The following example assumes that you are using the cshell( \fIcsh\fR).
+.br
+.ft CW
+.nf
+% cd
+% cd esps/general
+% install  >& log &
+.fi
+.ft LR
+.pp
+To watch the log file during while the install script runs do:
+.br
+.nf
+.ft CW
+% tail -f log
+.fi
+.ft LR
+.pp
+This will run the install script and save all output in the file named
+\fIlog\fR.   You can monitor the progress of the install by using
+\fItail -f\fR.  (\fITail\fR shows the last few lines of a file.  The -f
+option causes it to print additional lines as they are added to the
+file.  Note that \fItail\fR with the -f option does not ever exit.  It
+has no way of knowing that the file being watched will not have any
+additional text added to it.   If you are watching the install with
+\fItail\fR, you must kill it with control-C, or whatever your
+\s-1UNIX\s+1 interrupt character is, when you see the message indicating
+the end of the ESPS install script.)   When the install script completes
+it will print the message:
+.ft CW
+ESPS general part of installation done (followed by the data/time).
+.ft LR
+.pp
+If something goes wrong and you need to stop the installation process,
+just use the \s-1UNIX\s+1 \fIkill\fR command to kill the process.  You
+can supply the process number(s) printed after the install command, or
+the \fIcsh\fR job number supplied by the \fIjob\fR command.
+.br
+.nf
+.ft CW
+% jobs
+ [1]  +Running   install  >& log
+% kill %1
+.fi
+.ft LR
+.sh 1 "Checking the Results"
+.pp
+The install script produces a large amount of output (the log file will
+be about 100K bytes).   Many of the messages from \fImake\fR might look
+like errors, but they are normal.   Each error message from \fImake\fR in the
+install log, should be followed by a message from \fImake\fR saying that
+it is ignoring the error.   All of these are expected.   Any unexpected
+errors will not be ignored and will cause the \fImake\fR to stop.
+A few C programs produce warnings about
+unreachable statements, depending on some installation variables.  These
+can be ignored.
+.pp
+There might be a few messages at the end from \fIawk\fR that look like
+errors, but they aren't.   They are from a script that builds the
+database for \fIeman -k\fR.  If some optional components are not there,
+then some messages like the following will be produced: \fIcan't open mana/*.*\fR.
+Ignore these.  
+.pp
+To quickly check the log file do:
+.br
+.nf
+.ft CW
+% egrep rror log | egrep -v ignored
+.ft LR
+.fi
+.pp
+There should be no errors that are not \fIignored\fR.
+.br
+.nf
+.ft CW
+% grep rror log
+.ft LR
+.fi
+.pp
+There will be several screens of error messages, but all should be
+followed by the phrase 
+.ft CW
+(ignored).
+.ft LR
+.pp
+Due to a some very long lines in the \fImake\fR output, the log file 
+might not be acceptable input to a text editor such as \fIvi\fR.
+.pp
+The \fItarget\fR directory (/usr/esps by default) should look like
+this: (this example assumes the default name)
+.ft CW
+.br
+.nf
+% cd /usr/esps
+% ls -F
+.TS
+tab(;);
+l l l l.
+bin/;demo/;doc/;general@
+lib/;man/;include/
+.TE
+.pp
+The bin directory should contain about 110 programs.   The doc directory
+will contain about 5 documents (all of which you have in
+hardcopy form).  The lib directory will contain about 30 files,
+including the ESPS library, \fIlibespsg.a\fR, the ESPS lint library,
+some plot programs (that are called by other programs), default
+parameter files, and an example
+makefile, \fImakefile.ex\fR.  The symbolic link, \fIgeneral\fR, is a
+link back to the \fIgeneral\fR directory in the \fIsource\fR directory.
+.pp
+There is also a demo directory.  This directory contains several
+demo scripts.  There is a README file in that directory.  We strongly
+suggest that you take the time to try these examples.  Not only do they
+provide an introduction to some ESPS commands, but they serve as a check
+on the installation.
+.pp
+We also suggest that you use \fIeman -k\fR (followed by a keyword to
+search for) to familiarize yourself with the system.  See the \fIeman\fR
+manual page for details.  
+.sh 1 "Setting Up the ESPS User Environment"
+.pp
+If you did not install ESPS into /usr/esps, it is a good idea to have
+the super user install a link from its actual location to /usr/esps.
+For example, if you installed ESPS in
+your directory \fIespsB\fR, you could have a super-user do the
+following:  (lets assume your home directory is \fI/u/smith\fR)
+.br
+.ft CW
+.nf
+# cd /usr
+# ln -s /u/smith/espsB esps
+.fi
+.ft LR
+.pp
+After this is done, all users on the system can find ESPS files under
+/usr/esps.  This has the advantage, that a new version of ESPS can be
+installed and tested without disturbing other users on the system.  When
+the ESPS maintainer is ready to switch his users over to the new
+version, he simply redefines the /usr/esps symbolic link.   See the
+\fIln\fR(1) man page for more information on symbolic links.
+.sh 2 "Search Paths"
+.pp
+In order to execute ESPS programs users must place the ESPS binary
+directory on their default search path.   If ESPS is installed as
+described above, that path would be /usr/esps/bin.  Make sure that all
+of your potential users have this on their path.
+.sh 2 "ESPS Compilation Environment"
+.pp
+The ESPS install script creates several programs to aid users who write
+their own programs using the ESPS library.   \fIecc\fR invokes the C
+compiler with the correct options to cause the ESPS include files and
+library to be searched.  It can be used in cases where you would
+normally use the \fIcc\fR command.  Additional \fIcc\fR options can be
+specified with \fIecc\fR.   The program \fIemake\fR calls the Unix 
+\fImake\fR command with the
+correct environment defined.  For more information on this, see
+reference [1] and the \fIemake\fR manual page.  A prototype makefile
+suitable for use with \fIemake\fR is in the ESPS \fIlib\fR directory.
+For Masscomp systems, be sure you are in the UCB universe when compiling
+ESPS programs.
+.sh 1 "Installing Individual Programs"
+.pp
+The install script, by default, changes to each ESPS source directory
+and runs \fIemake\fR.  
+If a list of source
+directories are given on the \fIinstall\fR command line, then only these
+will be made.   The names given, must be exactly the directory name
+under esps/general/src.  Note that this is not always exactly the
+same as the installed name of the program.   
+.pp
+You can also compile (or recompile if you've made some change) a
+particular ESPS program by changing to its source directory and running
+\fIemake install\fR.  For example to recompile and install \fIfft\fR you
+would do:
+.nf
+.ft CW
+% cd /usr/esps/general/src/fft
+% emake install
+.ft R
+.fi
+.pp
+This will result in the makefile in that directory being run using the
+environment saved in the \fIemake\fR script by the main installation
+script.   For more about using \fIemake\fR and compiling ESPS programs
+see reference [1].
+.sh 1 "Machine Dependent Programs"
+.pp
+Almost all of the programs in this distribution work on all supported 
+machines.  There are, however, a few cases where completely different
+versions of programs are required on different machine types.  The correct
+program will be compiled and installed depending on the value of the 
+machine type variable \fBMACH\fR.   An example of such a program is
+\fIrange\fR.
+.sh 1 "A Word about the Speech I/O Programs"
+.pp
+The speech input and output programs, \fImcplay\fR and \fImcrecord\fR
+use the C defines \fBADDEV\fR, \fBDADEV\fR, and \fBCLKDEV\fR to determine
+the analog-to-digital device, the digital-to-analog device, and the data
+acquisition clock.  These symbols are defined in the install script.
+These programs are linked to \fIplay\fR and \fIrecord\fR.
+.pp
+If you have trouble with \fIplay\fR or \fIrecord\fR call Entropic for
+help.
+.sh 1 "In Case of Difficulty"
+.pp
+If you have questions about the installation process, or have
+difficultly running the script please call Entropic for help.
+.sp
+.TS
+center, tab(;);
+L L.
+Entropic Speech, Inc.
+(202) 547-1420;esps@wrl.epi.com (uunet!epiwrl!esps)
+Washington, DC.
+.TE

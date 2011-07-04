@@ -1,0 +1,23 @@
+#!/bin/sh
+# test script for e2sphere
+# Author:                      John Shore
+# Currently Maintained by:     John Shore
+# SCCS info:                   @(#)e2sphere.test	1.3 1/4/93 ERL
+
+rm -f e2.fsd e2.sph
+
+echo "Generating FEA_SD sine wave and converting to sphere."
+
+testsd -T sine -t short e2.fsd
+e2sphere e2.fsd e2.sph
+
+echo "pspdiff output should show only header and generic item differences..."
+
+pspsdiff -l e2.fsd e2.sph
+
+echo "Now doing the same test with pipes (and byte-reverse) ..."
+
+cat e2.fsd | e2sphere -b 01 - - > e2.sph
+
+pspsdiff -l e2.fsd e2.sph
+

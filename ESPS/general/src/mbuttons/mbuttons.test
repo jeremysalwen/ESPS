@@ -1,0 +1,22 @@
+#! /bin/sh
+# test script for mbuttons 
+#
+# @(#)mbuttons.test	1.4 6/18/93 ERL
+
+set -x 
+
+mbuttons -q1 menu1.test
+
+mbuttons -q1 -Q LEAVE -l "echo leaving now!" -c menu1.test
+
+BBOX_QUIT_BUTTON=yes
+export BBOX_QUIT_BUTTON
+
+mbuttons -Q LEAVE -l "echo I'm leaving!" -c -h menu1.test
+
+mbuttons -q0 menu1.test
+
+unset BBOX_QUIT_BUTTON
+
+mbuttons -q0 menu1.test
+

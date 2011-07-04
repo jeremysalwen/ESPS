@@ -1,0 +1,154 @@
+.TH PSPS 1\-ESPS 02 Apr 1997
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)psps.1	3.13 02 Apr 1997 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.SH NAME
+psps \- print headers and data from an ESPS file in pretty ASCII form
+.sp 1
+epsps \- print headers and data from an ESPS file in pretty ASCII form
+.SH SYNOPSIS
+.B psps 
+[
+.B \-aDghHlvxe
+] [
+.BI \-r range
+] [
+.BI \-t range
+.I "(of tags)"
+] [
+.BI \-f field_name
+]
+.I file
+.SH DESCRIPTION
+.I Psps
+pretty-prints header information and data from an ESPS file. If no
+options are given, the common part of the header (see ESPS(5\-ESPS))
+is printed followed by the data records.  By default all data records
+are printed.
+.PP
+An alternate name for 
+.I psps
+is 
+.I epsps.
+Use 
+.I epsps
+to avoid a naming conflict with the Sun OpenLook program psps.
+.PP
+The format of the output depends on the ESPS file type.    If the file
+type is not known to this version of \fIpsps\fR it prints the data in a
+general format.  If unformatted, unlabelled, pure ASCII output is 
+wanted, use \fIpplain\fP (1\-\s-1ESPS\s+1) instead.  
+.PP
+If 
+.I file
+is "\-", then standard input is used.  
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not used.
+.SH ESPS COMMON
+.PP
+The ESPS Common file is neither read nor written.  
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.B \-a
+Print headers recursively for all source files.  Headers 
+are printed in long format with both common and type 
+specific portions of each header. (i.e., as for \fB\-l\fP option).  
+If the \fB-v\fP is used in addition, it is applied to each header.  
+If the \fB-e\fP is used in addition, it is applied to each header.  
+.TP
+.B \-D
+Suppress printing of data records.
+.TP
+.B \-g
+Print data records in a generic format, independent of 
+file type.
+.TP
+.B \-h
+Recursively prints the common part of all embedded source file headers.  If
+the full headers are wanted, use the \fB\-a\fP option.  
+.TP
+.B \-H
+Suppress printing of headers.  
+.TP
+.B \-l
+Print the type-specific portion of the header and also generic header
+items.  This does not apply to embedded headers.  If similar behavior
+is wanted for embedded headers, use \fB\-a\fP.  For EFILE (external
+ESPS file) and AFILE (external ASCII file) generic header items, just
+the filename is printed (full path with possible leading hostname).
+If you want to follow the pointer, use \fB-e\fP.
+.TP
+.B \-e
+Follow references to external files.  If any generic header items are
+of type EFILE (external ESPS file), the header of that file is
+printed.  If any of the generic header items are of type AFILE
+(external ASCII file), the contents of that file are printed.  This
+option implies \fB-l\fP (i.e., if you give \fB-e\fP, you don't need to
+give \fB-l\fP).  This option does not apply to embedded source file
+headers.  If similar behavior is wanted for embedded headers, use
+\fB\-a\fP.
+.IP
+For EFILE and AFILE items that refer to a file on a different host 
+(the hostname followed by a colon precedes the full path of the 
+file), \fIpsps\fP will copy the file from the remote host
+and print it.  Depending on network configuration, this can cause 
+\fIpsps\fP to run slowly.  
+.TP
+.B \-v
+Verbose printing of FEA headers and generic header items.  This option
+causes printing of all \fB-l\fP information, plus the following:
+Generic header types (along with their values), FEA field definitions,
+field derivations (if relevant \- see \fIfea_deriv\fP
+(1\-\s-1ESPS\s+1)), and the reference header (if present \- see, for
+example, the discussion of variable.refhd in \fIfea_stats\fP
+(1\-\s-1ESPS\s+1).  If \fB-e\fP is specified together with \fB-v\fP, 
+verbose printing also applies to external EFILE headers.  
+.TP
+.B \-x
+Enable debug output.  
+.TP
+.BI \-r " start:end"
+.TP
+.BI \-r " start:+incr
+Determines the range of data records to print.  In the first form, a
+pair of unsigned integers gives the first and last points of the range.  
+If 
+.I start
+is omitted, 1 is used.  If 
+.I end
+is omitted, the last point in the file is used.  The second form is
+equivalent to the first with 
+.I "end = start + incr".
+.TP
+.BI \-t " range"
+Only print the data record with a tag value within the specified range.
+A warning message is printed if this option is specified and the data
+is not tagged.  
+.TP
+.BI \-f " field_name"
+Print only the feature file field that matches the given field name.
+A warning is printed on stderr if the requested field name does not
+exist.  This option may be specified as often as desired.
+.SH DIAGNOSTICS
+An error message is printed if the specified file does not exist, or if
+the file is not an ESPS file.
+.SH "SEE ALSO"
+.nf
+\fIfea_print\fP (1\-\s-1ESPS\s+1), \fIpplain\fP (1\-\s-1ESPS\s+1), \fIcomment\fP (1\-\s-1ESPS\s+1), 
+\fIaddfea\fP (1\-\s-1ESPS\s+1), \fIaddgen\fP (1\-\s-1ESPS\s+1), \fIbhd\fP (1\-\s-1ESPS\s+1)
+.fi
+.SH BUGS
+Multichannel FEA_SD files print as generic feature files.   More
+specialized FEA_SD printing will be added later.
+.SH AUTHOR
+Original version by Joe Buck,
+.br
+Modified for ESPS by Alan Parker,
+.br
+\fB\-t\fP, \fB\-v\fP, and \fB\-f\fP options by Ajaipal S. Virdy,
+.br
+Modified (with improvements) for ESPS 3.0 by John Shore.

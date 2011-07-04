@@ -1,0 +1,193 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)filt.5t	1.6 25 Sep 1997 ESI
+.TH FILT 5\-ESPS 25 Sep 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+ESPS FILT Filter Coefficient File \- (.filt)
+.SH SYNOPSIS
+.B #include <sps/esps.h>
+.br
+.B #include <sps/filt.h>
+.SH DESCRIPTION
+A FILT data file consists of a header followed by one or more data records. 
+Each record consists of a position tag followed by
+a zfunc as described in 
+.I "ESPS (5-ESPS)".
+.PP
+The header has the following layout as defined by
+.I <sps/header.h>
+The data items common to all ESPS data files are described in
+\fIESPS\fR(5\-ESPS).   The type specific header structure for FILT files
+is shown below.
+.PP
+.nf
+.br
+/* FILT Filter Coefficient File specific header */
+.br
+.sp
+struct filt_header {
+.TS
+l1 l1 l1 l.
+	short	max_num;	/\(** maximum number of numerator coefficients. \(**/
+	short	max_den;	/\(** maximum number of denominator coefficients. \(**/
+	short	func_spec;	/\(** desired response function specification \(**/
+	short	nbands;	/\(** number of frequency bands \(**/
+	short	npoints;	/\(** number of points  \(**/
+	short	g_size;	/\(** grid size parameter \(**/
+	short	nbits;	/\(** number of bits      \(**/
+	short	type;	/\(** type of filter  \(**/
+	short	method;	/\(** filter design method  \(**/
+	short	spares[FILT_SPARES];	/\(** spares \(**/
+	float	*bandedges;	/\(** array of band edges \(**/
+	float	*points;	/\(** array of or points \(**/
+	float	*gains;	/\(** array of gain values  \(**/
+	float	*wts;	/\(** array of weighting values \(**/
+.TE
+};
+.fi
+.sp
+.PP
+The header indicates that the filter design program may have its desired
+gain function and its desired weighting function specified in two different
+ways.
+The "band" specification method indicates that the user specifies a series
+of non-overlapping frequency bands.  One gain value and one weighting value
+are entered for each band and the desired gain function and weighting function
+are assumed constant over each band. Those functions are undefined in the transition regions
+between the bands.
+.PP
+The "pointwise" specification method indicates that the user entered points
+on a desired gain function and on a desired weighting function directly.
+No assumptions are made about the behavior of either function
+between the points.
+.PP
+The following items are all in the FILT file specific header structure.
+.IP max_num
+Maximum number of numerator coefficients in any filter function in the file.
+.IP max_den
+Maximum number of denominator coefficients in any filter function in the file.
+.IP func_spec
+This indicates whether the desired frequency response function was entered into
+the filter design program using the band method or the pointwise method.
+Currently supported values include BAND, POINT, and NONE.
+.IP nbands
+The number of frequency bands used to define the desired frequency response when
+the specification method is by bands.
+.IP npoints
+The number of points used to define the desired frequency response in a pointwise
+specification.
+.IP g_size
+This is the grid size, which influences the resolution of the filter
+design algorithm.
+.IP nbits
+This gives the number of bits to which the coefficients have been quantized.
+A value of zero indicates that no quantization has taken place.
+.IP type
+This is a classification of the shape of the filter response.  Possible values for
+this variable are defined in header.h.  They are currently FILT_LP (low pass),
+FILT_HP (high pass), FILT_BP (band pass), FILT_BS (band stop), and FILT_ARB (arbitrarily
+shaped).  
+.IP method
+This variable describes the filter design method used to calculate the coefficients.  Possible
+values for this variable are defined in header.h.  They are currently PZ_PLACE (arbitrary
+pole-zero placement), PARKS_MC (Parks-McClellen method), and WMSE (weighted mean square error method).
+.IP bandedges
+This is a pointer to an array of band edges used in the specification of the
+desired gain and weighting functions when the specification method is by bands.
+The number of points in the array will be
+.I 2*nbands.
+The points are given as a fraction of the
+sampling frequency, and will therefore always range from 0.0 to 0.5.
+.IP points
+This is a pointer to an array of points used in the pointwise specification
+of the desired gain and weighting functions.
+The gain values and weighting values given in the
+.I gains
+and
+.I wts
+arrays are defined at these points.
+The number of points in the array will be 
+.I npoints.
+The points are given as a fraction of the
+sampling frequency, and will therefore always range from 0.0 to 0.5.
+.IP gains
+This is a pointer to an array of gain values.  If the specification
+method is by bands then the number of gain values will be equal to 
+.I nbands.
+If the specification method is pointwise, the number of gain values
+will be equal to
+.I npoints.
+.IP wts
+This is a pointer to an array of weighting values.  If the specification
+method is by bands then the number of weighting values will be equal to 
+.I nbands.
+If the specification method is pointwise, the number of weighting values
+will be equal to
+.I npoints.
+.IP spares
+There are FILT_SPARES spare shorts.
+.PP
+The data follows the header.   
+The data structure in the file is shown below in C syntax.
+.PP
+This data structure is defined in \fI<sps/filt.h>\fR.   
+A function is available to allocate memory for
+this data structure, based on a particular header, and to fill in the
+type fields in the common part of the header.
+.nf
+.sp
+.if n .ta 37
+.if t .ta 3i
+struct filt_data {
+       long  tag;	/\(** position tag \(**/ 
+       short spares[FDSPARES];	/\(** spares in the filter record \(**/
+       struct zfunc filt_func;	/\(** zfunc for the coefficients \(**/
+};
+.fi
+.PP
+Spares are include in the data record definition to allow for future
+generalization of programs accessing the FILT file type.
+The 
+.I zfunc
+definition can be found in 
+.I "ESPS (5-ESPS)."
+.PP
+.SH RECORD ELEMENT FILE STRUCTURE
+.PP
+The order of record elements is not the same in the file itself as it is
+in the structure defined above.    The mapping is given by the table
+below.  This information should not be used by programs that use the
+data record access functions.  This information is provided for use only
+with generic ESPS programs (see \fIstats\fR(1\-ESPS) or \fIgenplot\fR(1\-ESPS),
+for example).
+.sp
+.TS
+center,tab(;),box;
+c | c | c
+l | l | l.
+Record Item;Starting Element Number;Number of Elements
+_
+Tag;0;1
+filt_func->zeros;1;\fImax_num\fR
+filt_func->poles;\fImax_num\fR+1;\fImax_den\fR
+filt_func->nsiz;\fImax_num+max_den\fR+1;1
+filt_func->dsiz;\fImax_num+max_den\fR+2;1
+spares;\fImax_num+max_den\fR+3;\fIFDSPARES\fR
+.TE
+.SH FILES
+.nf
+/usr/include/sps/header.h
+/usr/include/sps/filt.h
+.fi
+.SH SEE ALSO
+.IR allo_filt_rec (3\-ESPSu),
+.IR get_filt_rec (3\-ESPSu),
+.br
+.IR put_filt_rec (3\-ESPSu),
+.IR read_header (3\-ESPSu),
+.br
+.IR write_header (3\-ESPSu), 
+.IR new_zfunc (3\-ESPSu),
+.IR ESPS (5\-ESPS)
+.SH AUTHOR
+Brian Sublett

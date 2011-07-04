@@ -1,0 +1,12 @@
+#! /bin/sh
+# @(#)call_xpz	1.5 11/10/92 ERL
+#re-design the xpz filter
+
+echo "Running xpz..."
+
+send_xwaves add_espsf menu wave out_ext fpz name \"custom filter \(xpz designed\)\" command filter -F $EDEMO_TEMP/xpz.filt
+
+xpz -g1 -c.2 -I$EDEMO_TEMP/xpz.filt $EDEMO_TEMP/xpz.filt
+
+
+

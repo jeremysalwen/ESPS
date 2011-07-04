@@ -1,0 +1,436 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc. All rights reserved.
+.\" @(#)demux.1	1.4	4/2/97	 ESI
+.TH DEMUX 1\-ESPS 4/2/97
+.ds ]W (c) 1991 ERL, Inc.
+.if t .ds - \(em\h'-0.2m'\(em
+.if n .ds - ---
+.SH NAME
+demux \- (demultiplex) extract real or complex channels from a sampled-data file
+.SH SYNOPSIS
+.B demux
+[
+.BI \-e " grange"
+] [
+.BI \-o " prototype"
+] [
+.BR \- { prs } " \fIrange\fP"
+] [
+.BI \-x " debug_level"
+] [
+.B \-S
+] [
+.BI \-P " param_file"
+]
+.I input.fsd
+[
+.I output1.fsd
+[
+.I output2.fsd
+] .\ .\ . ]
+.SH DESCRIPTION
+.PP
+The
+.I demux
+(``demultiplex'') program extracts the information
+from selected channels of its input sampled-data (FEA_SD) file
+and writes the information in either one multichannel output FEA_SD file
+or a set of single-channel output files, one for each selected channel.
+(Channels can be selected with the
+.B \-e
+option).
+Optionally,
+.I demux
+may also split complex input channels
+into pairs of real output channels.
+(See
+.BR \-S .)
+Any fields other than
+.I samples
+in the input file are ignored.
+.PP
+If a single output filename is specified,
+a single multichannel file with that name is created, and all output
+goes to that file.
+If more than one output filename is specified, the number of names
+must equal the number of selected channels, and a single-channel
+output file is created for each selected channel.
+A single-channel output file for each selected channel is also created
+if no output filename is specified.
+In that case the program generates output filenames automatically
+from a prototype, which must be given with the
+.B \-o
+option
+.RI ( q.v. )
+or as the value of the ESPS parameter
+.I prototype.
+.PP
+If ``\-'' is written for the input file, the standard input is used.
+If ``\-'' is written for an output file, the standard output is used.
+At most one output file may be standard output.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-e " grange"
+The argument should be a general range specification acceptable to
+.IR grange_switch (3-ESPSu).
+The format of the argument is that of a comma-separated list of
+integers and pairs
+.IB a : b,
+where
+.I a
+and
+.I b
+are integers.
+This specifies a set of integers that indicate the channel numbers of the
+channels that are selected for output.
+For example,
+.I 2,5:8,12
+specifies channel 2, channels 5 through 8, and channel 12.
+Additionally, an expression
+.IB a :+ c
+may be written instead of
+.IB a : b,
+where
+.I c
+is an integer such that
+.IR a + c = b.
+Thus
+.I 5:8
+could be replaced with
+.I 5:+3
+in the example.
+.IP
+The numbering of channels begins with 0.
+The channel numbers must be specified in increasing order without repetitions.
+If this option is not specified, the value of the parameter
+.I channels
+is used,
+and if the parameter is not defined,
+the default is to output all the channels in the input file.
+Note that the channel numbers can be affected by the use of the \fB-S\fR
+option described below.
+.TP
+.BI \-o " prototype"
+This option is ignored if any explicit output filename is given.
+If no output file is named explicitly, and this option is specified,
+then each output channel is written to a separate, single-channel file,
+and the program creates output file names by modifying the option argument
+.I prototype.
+This must be a filename base.
+Each output file name is obtained by appending the corresponding
+channel number to prototype string.
+(The numbering of the channels may be affected by the
+.B \-S
+option; see the description of
+.BR \-S .)
+If this option is not selected,
+and no explicit output filenames are specified,
+the parameter
+.I prototype
+must be defined.
+.TP
+.BI \-p " range"
+For this program,
+.B \-p
+is a synonym for
+.BR \-r .
+See
+.B \-r
+for the interpretation and the format of the argument.
+.TP
+.BI \-r " first" : last
+.TP
+.BI \-r " first" :+ incr
+Determines the range of records to be taken from an input file.
+In the first form, a pair of unsigned integers
+gives the numbers of the first and last records of the range.
+(Counting starts with 1 for the first record in the file.)
+If
+.I first
+is omitted, 1 is used.
+If
+.I last 
+is omitted, the last record in the file is used.
+The second form is equivalent to the first with 
+.I "last = first + incr."
+If the specified starting record does not exist in the input file,
+the program exits with an error message.
+If the end of the input file is reached before the specified last record,
+processing stops with a warning message.
+.TP
+.BI \-s " start" : end
+.TP
+.BI \-s " start" :+ incr
+Determines the range in seconds of the data to be taken from the input file.
+In the first form, a pair of floating-point numbers give
+the beginning time and ending time of the range.
+The second form is equivalent to the first with 
+.I "last = first + incr."
+Each sample has a time given by
+.IR s " + (" r "\-1)/" f,
+where
+.I s
+is the value of the generic header item "start_time",
+.I r
+is the record number, and
+.I f
+is the sampling frequency, given by the generic header item "record_freq".
+This time may depend on the channel number,
+since the "start_time" item may be a vector with a component per channel;
+for present purposes the value for channel 0 is used.
+The range selected by the
+.B \-s
+option consists of the records for which the time is less than
+.I end
+but not less than
+.I start.
+.TP
+.BI \-x " debug_level"
+If
+.I debug_level
+is positive, the program prints debugging messages as it progresses\*-\c
+the higher the number, the more messages.
+The default level is 0, for no debugging output.
+.TP
+.B \-S
+Split complex input channels into pairs of real channels.
+The input file must have one of the complex data types:
+DOUBLE_CPLX, FLOAT_CPLX, LONG_CPLX, SHORT_CPLX, or BYTE_CPLX.
+(See
+.IR FEA (5-ESPS)
+for an explanation of these type codes.)
+The output file or files have the corresponding real data type:
+DOUBLE, FLOAT, LONG, SHORT, or BYTE.
+This option affects the numbering of channels used by the
+.B \-e
+and
+.B \-o
+options.
+The real and imaginary parts of the channel that normally is numbered
+.I c
+become channels number
+.RI 2 c
+and
+.RI 2 c +1,
+respectively, for purposes of the
+.B \-e
+and
+.B \-o
+options.
+(Channel numbers start from 0.)
+.TP
+.BI \-P " param_file"
+The name of the parameter file.
+The default name is ``params''.
+.SH "ESPS PARAMETERS"
+.PP
+The parameter file is not required to be present, as there are default
+values for all parameters.
+(But if no parameter
+.I prototype
+is defined, the output file(s) must either be named explicitly or with
+.BR \-o .)
+If the file exists, the following parameters may be read
+if they are not determined by command-line options.
+.TP
+.I "channels \- integer array"
+Channel numbers selected for output.
+This parameter is not read if the
+.B \-e
+option is selected.
+The numbers must be in increasing order without duplications.
+The default is all channels in the input file.
+.TP
+.I "prototype \- string"
+Prototype for output file names.
+This parameter is not read if the
+.B \-o
+option is specified, or if the output file or files are named explicitly.
+Each channel selected for output is written to a file whose name
+is the result of appending the channel number to the 
+prototype.
+(See the Options section for the effect of
+.B \-S
+on channel numbering.)
+.TP
+.I "start \- integer"
+The starting record number in the input file.
+This parameter is not read if the
+.BR \-p ,
+.BR \-r ,
+or
+.B \-s
+option is specified.
+The default is 1, meaning the beginning of the input file.
+.TP
+.I "nan \- integer"
+The number of records to process in the input file.
+A value of 0 (the default) means
+continue processing until the end of the input file is reached.
+This parameter is not read if the
+.BR \-p ,
+.BR \-r ,
+or
+.B \-s
+option is specified.
+.TP
+.I "make_real \- string"
+A value of "YES" or "yes" means split complex input channels into pairs
+of real channels as if the
+.B \-S
+option is in force.
+A value of "NO" or "no" indicates normal processing:
+the output data type is the same as the input type,
+and channels are not split when the type is complex.
+No other values are allowed.
+This parameter is not read if the
+.B \-S
+option is specified.
+The default value is "NO".
+.SH "ESPS COMMON"
+.PP
+The parameters
+.I start
+and
+.I nan
+are read from the ESPS Common file
+and take precedence over the values in the Parameter file
+provided that
+Common processing is enabled, 
+the input file is not standard in,
+the Common file is newer than the parameter file,
+and the parameter
+.I filename
+in the Common file matches the name of the input file.
+These values do not take precedence
+over values established on the command line with
+.BR \-p ,
+.BR \-r ,
+or
+.BR \-s .
+.PP
+This program does not write the Common file.
+.PP
+ESPS Common processing may be disabled
+by setting the environment variable USE_ESPS_COMMON to
+.I off.
+The default ESPS Common file is
+.I espscom
+in the user's home directory.
+This may be overidden
+by setting the environment variable ESPSCOM to the desired path.
+User feedback of Common processing is determined
+by the environment variable ESPS_VERBOSE, with 0 causing no feedback
+and increasing levels causing increasingly detailed feedback.
+If ESPS_VERBOSE is not defined, a default value of 3 is assumed.
+.SH "ESPS HEADERS"
+.PP
+Each output header is a new FEA_SD file header,
+with appropriate items copied from the input header.
+.PP
+The generic header item "record_freq" from the input
+is copied into the output headers.
+.PP
+The generic header item "start_time" is included in every output file.
+It is a single number for a single-channel output file
+or a multichannel output file
+in which all channels have the same starting time;
+otherwise it is a vector with one element for each channel in the output file.
+The starting time for a channel is its starting time in the input file
+plus an offset in case the data taken from the input file
+do not start with the first record.
+The offset is given by
+.RI ( r \-1)/ f
+where
+.I r
+is the starting record number in the input file and
+.I f
+is the sampling frequency given by the "record_freq" header item.
+.PP
+If the input file has a "max_value" header item,
+then so do the output files.
+.SH EXAMPLES
+.PP
+Copy data from channel 3 of a multichannel FEA_SD input file
+.I aaa.fsd
+to make one single_chanel output file
+.I xxx.fsd.
+.IP
+.I "demux \-e3 aaa.fsd xxx.fsd"
+.PP
+Copy data from channels 0, 2 through 5, and 7 of an input FEA_SD file
+.I aaa.fsd
+to make a 6-channel output FEA_SD file
+.I xyz.fsd.
+.IP
+.I "demux \-e 1,2:5,7 aaa.fsd xyz.fsd"
+.PP
+Copy data from channels 0, 1, and 2 of input file
+.I bbb.fsd
+to make single-channel output files
+.I xxx.fsd,
+.I yyy.fsd,
+and
+.I zzz.fsd,
+respectively.  The input file must have exactly 3 channels.
+.IP
+.I "demux bbb.fsd xxx.fsd yyy.fsd zzz.fsd"
+.PP
+Copy data from channels 2, 3, and 4 of
+.I aaa.fsd
+to make 3 single-channel FEA_SD output files
+.I sig002
+.I sig003
+and
+.I sig004
+.IP
+.I "demux \-e2:4 \-o sig aaa.fsd"
+.PP
+Copy the data from a single-channel complex input file
+.I ccc.fsd
+to make a 2-channel real output file
+.I rst.fsd
+.IP
+.I "demux \-S ccc.fsd rst.fsd"
+.PP
+Copy the data from the imaginary part of channel 3
+of a multichannel complex input file
+.I cde.fsd
+to make one single-channel real output file
+.I r007
+(7 = 2\(mu3 + 1.)
+.IP
+.I "demux \-S \-e7 \-o r cde.fsd"
+.SH "SEE ALSO"
+.PP
+.nf
+\fImux\fR(1-ESPS), \fIcopysps\fR(1-ESPS), \fIaddgen\fR(1-ESPS), 
+FEA_SD(5-ESPS), FEA(5-ESPS)
+.fi
+.SH DIAGNOSTICS
+.PP
+The program exits with an error message if any of the following occur.
+  The command line cannot be parsed.
+  More than one output file name is ``\-''.
+  The input file cannot be opened or is not an ESPS sampled-data file.
+  The number of explicit output filenames is greater than 1 and not equal to
+the number of selected channels.
+  A selected channel does not exist.
+  \-S is specified and the input data type is real.
+  Channel numbers are duplicated or not specified in increasing order
+  There is no explicit output file name and no prototype
+.PP
+The program issues a warning message if the end of a range specified by a
+.BR \-p ,
+.BR \-r ,
+or
+.B \-s
+option is not reached.
+.SH "BUGS"
+.PP
+The \fB-s\fR option is not implemented in this version.
+.SH "AUTHOR"
+.PP
+Manual page by Rodney Johnson.
+Program by Alan Parker.

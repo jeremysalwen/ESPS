@@ -1,0 +1,11 @@
+
+find_ep.c
+==============
+(23)  static variable sccs_id unused
+warning: possible pointer alignment problem
+    (427)  	    (801)  	
+
+
+==============
+name defined but never used
+    sccs_id   	find_ep.c(23)

@@ -1,0 +1,1479 @@
+#!/bin/sh
+#
+#  This material contains proprietary software of Entropic Speech, Inc.   
+#  Any reproduction, distribution, or publication without the prior	   
+#  written permission of Entropic Speech, Inc. is strictly prohibited.
+#  Any public distribution of copies of this work authorized in writing by
+#  Entropic Speech, Inc. must bear the notice			
+# 								
+#      "Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved."
+# 				
+#
+# test file for classify @(#)testfile	3.4 10/27/89 ESI
+
+echo "Testing classify."
+echo "There should be no diff output."
+#
+# MAKE TEST FILE test.fana.
+#
+atosps - test.fana <<aArDvArK1
+{
+01 d
+02 6a1a
+03 Tue Nov 10 04:43:14 1987 
+04 1.51
+05 fea_edit
+06 3.1
+07 10/16/87
+53 johnson
+08 1c
+09 1
+0b 17
+0c 2
+0d 1
+12 fea_edit -n -g tst.fana  Converted from tmp.fana by spstoa.
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+gain_fe FLOAT 1 0 
+zcros_fe FLOAT 1 0 
+pk_fe FLOAT 1 0 
+rc1_fe FLOAT 1 0 
+prev_voi_fe FLOAT 1 0 
+rawcoh_fe FLOAT 1 0 
+rescoh_fe FLOAT 1 0 
+posteriors FLOAT 2 1 
+
+@nan LONG 1 19844 
+@src_sf FLOAT 1 8000 
+@frmlen LONG 1 80 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 10 
+@maxraw LONG 1 1 
+@start LONG 1 2000 
+@filters CODED 1 [ NO YES ] NO 
+@filt_dsiz SHORT 1 0 
+@filt_nsiz SHORT 1 0 
+@order_unvcd LONG 1 10 
+@maxpulses LONG 1 1 
+
+}
+
+#Tag 2000
+#frame_len	109 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	120.414 
+#lpc_power	92.8749 
+#p_pulse_len	0 
+#spec_param	-0.173938 -0.167808 0.172863 -0.246606 0.0481652 -0.0907735 -0.0155158 -0.120409 
+	0.0946739 0.088587 
+#gain_fe	0.823091 
+#zcros_fe	0.120805 
+#pk_fe	2.45424 
+#rc1_fe	-0.173938 
+#prev_voi_fe	0 
+#rawcoh_fe	0.22507 
+#rescoh_fe	0.237881 
+#posteriors	1 4.39766e-09 
+
+#Tag 2109
+#frame_len	119 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	16419.8 
+#lpc_power	4920.63 
+#p_pulse_len	0 
+#spec_param	-0.0249399 -0.775319 -0.458943 -0.537902 -0.288418 -0.383512 0.338818 -0.235247 
+	0.232941 -0.065154 
+#gain_fe	0.137704 
+#zcros_fe	0.139785 
+#pk_fe	3.63553 
+#rc1_fe	-0.0249399 
+#prev_voi_fe	-19.2422 
+#rawcoh_fe	0.264936 
+#rescoh_fe	0.155835 
+#posteriors	0.69189 0.30811 
+
+#Tag 2228
+#frame_len	94 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	4121.14 
+#lpc_power	1469.25 
+#p_pulse_len	0 
+#spec_param	-0.292098 -0.298969 0.323262 -0.0612006 0.277252 0.0787364 0.364373 -0.56861 
+	-0.233072 0.035572 
+#gain_fe	0.377849 
+#zcros_fe	0.155556 
+#pk_fe	3.03131 
+#rc1_fe	-0.292098 
+#prev_voi_fe	-0.808971 
+#rawcoh_fe	0.310338 
+#rescoh_fe	0.16968 
+#posteriors	0.995394 0.00460642 
+
+#Tag 2322
+#frame_len	95 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	4203.07 
+#lpc_power	1714.07 
+#p_pulse_len	0 
+#spec_param	-0.213654 0.186388 0.576162 0.0225771 0.107913 -0.496049 0.177855 -0.117199 
+	-0.182791 0.0624613 
+#gain_fe	0.42146 
+#zcros_fe	0.16129 
+#pk_fe	2.87374 
+#rc1_fe	-0.213654 
+#prev_voi_fe	-5.37569 
+#rawcoh_fe	0.342876 
+#rescoh_fe	0.166224 
+#posteriors	0.999031 0.000969078 
+
+#Tag 2417
+#frame_len	121 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	70098 
+#lpc_power	9055.81 
+#p_pulse_len	0 
+#spec_param	0.55787 0.477446 0.318796 -0.60381 -0.205224 -0.367484 0.402703 -0.0654303 
+	-0.0154146 -0.0551806 
+#gain_fe	0.209125 
+#zcros_fe	0.146199 
+#pk_fe	2.61191 
+#rc1_fe	0.55787 
+#prev_voi_fe	-6.9382 
+#rawcoh_fe	0.419255 
+#rescoh_fe	0.258032 
+#posteriors	0.959713 0.0402875 
+
+#Tag 2538
+#frame_len	42 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	150774 
+#lpc_power	25697.9 
+#p_pulse_len	42 
+#spec_param	0.726207 0.147957 0.327006 -0.46618 -0.270727 -0.431461 0.329803 -0.208016 
+	0.0719919 0.257642 
+#gain_fe	0.192994 
+#zcros_fe	0.0609756 
+#pk_fe	5.03555 
+#rc1_fe	0.726207 
+#prev_voi_fe	-3.17059 
+#rawcoh_fe	0.968555 
+#rescoh_fe	0.911519 
+#posteriors	1.9563e-20 1 
+
+#Tag 2580
+#frame_len	41 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	160991 
+#lpc_power	32801.7 
+#p_pulse_len	41 
+#spec_param	0.702384 0.116342 0.397695 -0.425113 -0.320013 -0.425645 0.262859 -0.239007 
+	0.135216 0.256404 
+#gain_fe	0.203957 
+#zcros_fe	0.0484848 
+#pk_fe	5.10968 
+#rc1_fe	0.702384 
+#prev_voi_fe	45.3806 
+#rawcoh_fe	0.968503 
+#rescoh_fe	0.83896 
+#posteriors	3.33708e-33 1 
+
+#Tag 2621
+#frame_len	42 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	199365 
+#lpc_power	37834 
+#p_pulse_len	42 
+#spec_param	0.569035 0.139456 0.512413 -0.270713 -0.393006 -0.606315 0.359485 -0.252619 
+	0.171029 0.0996394 
+#gain_fe	0.189832 
+#zcros_fe	0.0843373 
+#pk_fe	5.16518 
+#rc1_fe	0.569035 
+#prev_voi_fe	74.7802 
+#rawcoh_fe	0.971446 
+#rescoh_fe	0.906209 
+#posteriors	0 1 
+
+#Tag 2663
+#frame_len	42 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	178510 
+#lpc_power	27245.5 
+#p_pulse_len	42 
+#spec_param	0.69078 0.0478071 0.518383 -0.460497 -0.479081 -0.44292 0.372593 -0.186837 
+	0.109146 0.0412015 
+#gain_fe	0.152608 
+#zcros_fe	0.0833333 
+#pk_fe	5.19817 
+#rc1_fe	0.69078 
+#prev_voi_fe	69.0776 
+#rawcoh_fe	0.972369 
+#rescoh_fe	0.9347 
+#posteriors	0 1 
+
+#Tag 2705
+#frame_len	43 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	155065 
+#lpc_power	23185.3 
+#p_pulse_len	43 
+#spec_param	0.72564 0.152366 0.34414 -0.396409 -0.341467 -0.61063 0.410667 -0.201948 
+	0.101164 0.064569 
+#gain_fe	0.149629 
+#zcros_fe	0.0823529 
+#pk_fe	5.45622 
+#rc1_fe	0.72564 
+#prev_voi_fe	69.0776 
+#rawcoh_fe	0.952465 
+#rescoh_fe	0.845644 
+#posteriors	0 1 
+
+#Tag 2748
+#frame_len	43 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	120377 
+#lpc_power	13373.4 
+#p_pulse_len	43 
+#spec_param	0.820514 -0.030066 0.406913 -0.514609 -0.428643 -0.429233 0.312545 -0.218796 
+	0.171386 0.0281019 
+#gain_fe	0.111113 
+#zcros_fe	0.0701754 
+#pk_fe	5.06754 
+#rc1_fe	0.820514 
+#prev_voi_fe	69.0776 
+#rawcoh_fe	0.982684 
+#rescoh_fe	0.797974 
+#posteriors	5.60519e-45 1 
+
+#Tag 2791
+#frame_len	44 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	89820.7 
+#lpc_power	9302.32 
+#p_pulse_len	44 
+#spec_param	0.838881 -0.0608609 0.41355 -0.535426 -0.356639 -0.492911 0.22551 -0.126601 
+	0.156544 0.13907 
+#gain_fe	0.103041 
+#zcros_fe	0.0457143 
+#pk_fe	5.64961 
+#rc1_fe	0.838881 
+#prev_voi_fe	101.893 
+#rawcoh_fe	0.978144 
+#rescoh_fe	0.603111 
+#posteriors	0 1 
+
+#Tag 2835
+#frame_len	44 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	68207.2 
+#lpc_power	6344.4 
+#p_pulse_len	44 
+#spec_param	0.838993 0.0356284 0.322863 -0.407839 -0.382428 -0.597952 0.296366 -0.169133 
+	0.0217366 0.364494 
+#gain_fe	0.093022 
+#zcros_fe	0.0451977 
+#pk_fe	4.74272 
+#rc1_fe	0.838993 
+#prev_voi_fe	69.0776 
+#rawcoh_fe	0.961417 
+#rescoh_fe	0.693795 
+#posteriors	4.84252e-39 1 
+
+#Tag 2879
+#frame_len	45 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	49397.6 
+#lpc_power	3026.68 
+#p_pulse_len	45 
+#spec_param	0.86461 -0.116098 0.452864 -0.575271 -0.473214 -0.466726 0.399475 0.00377631 
+	-0.0346792 0.313648 
+#gain_fe	0.06085 
+#zcros_fe	0.05 
+#pk_fe	4.53181 
+#rc1_fe	0.86461 
+#prev_voi_fe	88.2234 
+#rawcoh_fe	0.982805 
+#rescoh_fe	0.678667 
+#posteriors	0 1 
+
+#Tag 2924
+#frame_len	46 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	34166.2 
+#lpc_power	1858.57 
+#p_pulse_len	46 
+#spec_param	0.892335 -0.149001 0.367024 -0.557333 -0.460749 -0.439792 0.505751 -0.155693 
+	0.138328 0.170217 
+#gain_fe	0.0522205 
+#zcros_fe	0.0434783 
+#pk_fe	4.66481 
+#rc1_fe	0.892335 
+#prev_voi_fe	69.0776 
+#rawcoh_fe	0.94163 
+#rescoh_fe	0.209416 
+#posteriors	4.74112e-28 1 
+
+#Tag 2970
+#frame_len	47 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	22613.3 
+#lpc_power	2426.11 
+#p_pulse_len	47 
+#spec_param	0.802398 0.130319 0.371467 -0.3371 -0.300183 -0.691816 0.148998 0.395798 
+	0.026138 0.0355919 
+#gain_fe	0.104445 
+#zcros_fe	0.0641711 
+#pk_fe	3.66753 
+#rc1_fe	0.802398 
+#prev_voi_fe	62.9161 
+#rawcoh_fe	0.927302 
+#rescoh_fe	0.640972 
+#posteriors	1.01029e-29 1 
+
+#Tag 3017
+#frame_len	48 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	15290.1 
+#lpc_power	1708.37 
+#p_pulse_len	48 
+#spec_param	0.864549 0.155411 0.0735719 -0.375822 -0.136549 -0.64466 0.222538 0.167232 
+	-0.0256729 0.0564674 
+#gain_fe	0.111108 
+#zcros_fe	0.0526316 
+#pk_fe	3.84633 
+#rc1_fe	0.864549 
+#prev_voi_fe	66.7647 
+#rawcoh_fe	0.891792 
+#rescoh_fe	0.226517 
+#posteriors	2.34984e-24 1 
+
+#Tag 3065
+#frame_len	48 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	11748.2 
+#lpc_power	1524.8 
+#p_pulse_len	48 
+#spec_param	0.865816 0.0655123 0.241937 -0.440815 -0.40196 -0.376337 -0.0271718 0.0427679 
+	0.207974 0.0698497 
+#gain_fe	0.129231 
+#zcros_fe	0.0418848 
+#pk_fe	3.5967 
+#rc1_fe	0.865816 
+#prev_voi_fe	54.4077 
+#rawcoh_fe	0.931688 
+#rescoh_fe	0.50375 
+#posteriors	1.23398e-21 1 
+
+#Tag 3113
+#frame_len	47 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	9551.21 
+#lpc_power	974.813 
+#p_pulse_len	47 
+#spec_param	0.903949 0.0233811 -0.0504581 -0.430423 -0.189523 -0.450379 0.125199 -0.0585242 
+	-0.0156003 0.295137 
+#gain_fe	0.1022 
+#zcros_fe	0.042328 
+#pk_fe	2.26078 
+#rc1_fe	0.903949 
+#prev_voi_fe	48.144 
+#rawcoh_fe	0.887598 
+#rescoh_fe	0.152571 
+#posteriors	5.84066e-13 1 
+
+#Tag 3160
+#frame_len	47 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	8057.02 
+#lpc_power	1082.61 
+#p_pulse_len	47 
+#spec_param	0.869388 0.24864 -0.0286347 -0.39786 -0.342942 -0.371627 -0.131381 0.258021 
+	-0.0340266 -0.0339558 
+#gain_fe	0.134091 
+#zcros_fe	0.076087 
+#pk_fe	3.55374 
+#rc1_fe	0.869388 
+#prev_voi_fe	28.1688 
+#rawcoh_fe	0.8892 
+#rescoh_fe	0.385822 
+#posteriors	3.25893e-09 1 
+
+#Tag 3207
+#frame_len	49 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	7564.65 
+#lpc_power	951.137 
+#p_pulse_len	49 
+#spec_param	0.862981 0.104895 0.216569 -0.37563 -0.46216 -0.420662 -0.000675351 0.365489 
+	0.075978 -0.0461588 
+#gain_fe	0.11498 
+#zcros_fe	0.0609137 
+#pk_fe	3.45653 
+#rc1_fe	0.862981 
+#prev_voi_fe	19.5419 
+#rawcoh_fe	0.852167 
+#rescoh_fe	0.187676 
+#posteriors	2.04685e-06 0.999998 
+
+#Tag 3256
+#frame_len	51 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	8560.61 
+#lpc_power	1319.55 
+#p_pulse_len	51 
+#spec_param	0.832144 0.102321 0.3376 -0.297802 -0.445761 -0.434376 0.0109843 0.0551382 
+	-0.106319 0.169339 
+#gain_fe	0.152925 
+#zcros_fe	0.0394089 
+#pk_fe	2.30526 
+#rc1_fe	0.832144 
+#prev_voi_fe	13.0992 
+#rawcoh_fe	0.784669 
+#rescoh_fe	0.137145 
+#posteriors	0.000104317 0.999896 
+
+#Tag 3307
+#frame_len	48 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	9412.56 
+#lpc_power	1474.01 
+#p_pulse_len	48 
+#spec_param	0.761752 0.409258 0.147137 -0.0706866 -0.471779 -0.526904 -0.251146 0.285776 
+	0.204349 -0.0694411 
+#gain_fe	0.156741 
+#zcros_fe	0.0833333 
+#pk_fe	3.44504 
+#rc1_fe	0.761752 
+#prev_voi_fe	9.16797 
+#rawcoh_fe	0.827425 
+#rescoh_fe	0.255574 
+#posteriors	0.00040167 0.999598 
+
+#Tag 3355
+#frame_len	48 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	10060.4 
+#lpc_power	1930.21 
+#p_pulse_len	48 
+#spec_param	0.672351 0.464093 0.306325 -0.190643 -0.385005 -0.384507 -0.412855 0.323791 
+	0.122574 0.0949751 
+#gain_fe	0.197514 
+#zcros_fe	0.0837696 
+#pk_fe	2.05399 
+#rc1_fe	0.672351 
+#prev_voi_fe	7.81948 
+#rawcoh_fe	0.533419 
+#rescoh_fe	0.109853 
+#posteriors	0.0513239 0.948676 
+
+#Tag 3403
+#frame_len	50 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	5600.99 
+#lpc_power	1090.95 
+#p_pulse_len	50 
+#spec_param	0.580475 0.161008 0.552447 -0.104362 0.0358513 -0.666262 -0.362406 0.255395 
+	-0.0465898 0.136296 
+#gain_fe	0.196021 
+#zcros_fe	0.0597015 
+#pk_fe	3.18812 
+#rc1_fe	0.580475 
+#prev_voi_fe	2.91691 
+#rawcoh_fe	0.467818 
+#rescoh_fe	0.260224 
+#posteriors	0.112393 0.887607 
+
+#Tag 3453
+#frame_len	51 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	2162.64 
+#lpc_power	402.709 
+#p_pulse_len	51 
+#spec_param	0.628168 0.292705 0.48036 0.0141472 -0.270946 -0.47254 -0.438839 0.227133 
+	-0.252853 0.398553 
+#gain_fe	0.184736 
+#zcros_fe	0.0682927 
+#pk_fe	2.25411 
+#rc1_fe	0.628168 
+#prev_voi_fe	2.06653 
+#rawcoh_fe	0.662999 
+#rescoh_fe	0.095147 
+#posteriors	0.0104203 0.98958 
+
+#Tag 3504
+#frame_len	52 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	1324.67 
+#lpc_power	352.984 
+#p_pulse_len	52 
+#spec_param	0.683736 0.374503 0.373065 -0.271246 0.044169 -0.234342 -0.373139 -0.17436 
+	-0.210044 -0.155201 
+#gain_fe	0.268123 
+#zcros_fe	0.076555 
+#pk_fe	2.8421 
+#rc1_fe	0.683736 
+#prev_voi_fe	4.55352 
+#rawcoh_fe	0.5763 
+#rescoh_fe	0.206314 
+#posteriors	0.158885 0.841115 
+
+#Tag 3556
+#frame_len	76 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	721.758 
+#lpc_power	349.39 
+#p_pulse_len	0 
+#spec_param	0.352735 0.407185 0.479237 0.073595 0.0716432 -0.418251 -0.256088 -0.110916 
+	-0.214593 -0.139869 
+#gain_fe	0.396505 
+#zcros_fe	0.119403 
+#pk_fe	2.52304 
+#rc1_fe	0.352735 
+#prev_voi_fe	1.66655 
+#rawcoh_fe	0.452394 
+#rescoh_fe	0.368319 
+#posteriors	0.917243 0.0827569 
+aArDvArK1
+#
+# END OF TEST FILE test.fana.
+# MAKE TEST FILE test.stat.
+#
+atosps - test.stat <<aArDvArK2
+{
+01 d
+02 6a1a
+03 Sat May 16 18:30:03 1987 
+04 1.38
+05 fea_stats
+06 @(#)fea_
+07 3/6/87
+53 johnson
+08 2
+0b 69
+0d 1
+12 fea_stats -C -I -f feavec -n UNVOICED unv.seld optout.statd fea_stats -C -I -f feavec -n VOICED voi.seld optout.statd  Converted from tmp.stat by spstoa.
+52
+0 3 0
+class CODED 1 0 
+ UNVOICED
+ VOICED
+mean FLOAT 7 1 
+covar FLOAT 49 2 7 7 
+invcovar FLOAT 49 2 7 7 
+
+@statfield CHAR 7 feavec 
+@statsize LONG 1 7 
+
+{{
+01 d
+02 6a1a
+03 Sat May 16 18:25:31 1987 
+04 1.38
+05 fea_deriv
+06 1.1
+07 5/1/87
+53 johnson
+08 956
+0b 7
+12 fea_deriv fldfile ../optrack/ptrackout/voi.sel2 voi.seld Derived fields from input file ../optrack/ptrackout/voi.sel2
+52
+0 0 0
+feavec FLOAT 7 1 
+	gain_fe[0]
+	zcros_fe[0]
+	pk_fe[0]
+	rc1_fe[0]
+	prev_voi_fe[0]
+	rawcoh_fe[0]
+	rescoh_fe[0]
+
+@sdout_offset SHORT 1 -100 
+@white2_flg CHAR 3 NO 
+@init_pulse_locn LONG 1 101 
+@end LONG 1 10000000 
+@nan LONG 1 22432 
+@clasfea LONG 6 0 1 2 3 5 6 
+@coh_lag_end SHORT 1 500 
+@pre_den FLOAT 3 1 0 0 
+@sdout_npoints LONG 1 800 
+@gain_halt FLOAT 1 0.01 
+@sinc_flg CHAR 3 NO 
+@res_lag_end SHORT 1 250 
+@src_sf FLOAT 1 8000 
+@trk_data LONG 2 1 2 
+@min_pp SHORT 1 80 
+@max_pp SHORT 1 500 
+@bp_order SHORT 1 0 
+@maxlpc LONG 1 1 
+@cm_width SHORT 1 40 
+@min_coh_len SHORT 1 80 
+@bp_shift SHORT 1 0 
+@max_coh_len SHORT 1 1000 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@coh_method CHAR 9 AUTO_COH 
+@pef_order SHORT 1 10 
+@pef_method CHAR 10 MBURG_SAM 
+@order_vcd LONG 1 10 
+@ac_coh_thresh FLOAT 1 0.3 
+@coh_offset SHORT 1 -31 
+@uv_anal_len LONG 1 360 
+@maxraw LONG 1 1 
+@pre_num FLOAT 3 1 -0.875 0 
+@start LONG 1 26 
+@filters CODED 1 [ NO YES ] NO 
+@coh_comb_method CHAR 10 ADD_COH_C 
+@coh_len_method CHAR 11 DSPA_COH_L 
+@pre_siz SHORT 2 3 3 
+@coh_len_ratio FLOAT 1 0.6 
+@follow_in_ana CHAR 4 YES 
+@pre_poles FLOAT 3 1 0 0 
+@coh_lag_start SHORT 1 80 
+@samp_ratio SHORT 1 4 
+@order_unvcd LONG 1 10 
+@synch_method CHAR 5 NONE 
+@coh_trk_width SHORT 1 45 
+@pre_zeros FLOAT 3 1 -0.875 0 
+@res_lag_start SHORT 1 80 
+@synch_ratio FLOAT 1 0.1 
+@tr_coh_thresh FLOAT 1 0.3 
+@analwin_offset SHORT 1 -71 
+@synch_offset SHORT 1 10 
+@maxpulses LONG 1 1 
+@voi_class_method CHAR 9 ML_VCLAS 
+
+}
+}
+
+#class	UNVOICED 
+#mean	0.591302 0.145114 2.79925 -0.0858683 -12.2605 0.341817 0.219411 
+#covar	0.0676862 -0.00183442 -0.000740481 0.0325231 -1.14037 -0.0246622 6.43938e-05 -0.00183442 
+	0.0011846 -0.000728098 -0.00955864 -0.0304596 0.00056872 1.26149e-05 -0.000740481 -0.000728098 
+	0.288593 0.00223526 -0.0641435 -0.00734769 -0.00225417 0.0325231 -0.00955864 0.00223526 
+	0.118414 0.0595375 -0.0110859 -0.000215644 -1.14037 -0.0304596 -0.0641435 0.0595375 
+	62.5034 0.429232 -0.0124479 -0.0246622 0.00056872 -0.00734769 -0.0110859 0.429232 
+	0.0222601 0.00334793 6.43938e-05 1.26149e-05 -0.00225417 -0.000215644 -0.0124479 0.00334793 
+	0.00605151 
+#invcovar	38.6684 -17.6323 0.920724 -9.31505 0.481788 32.2559 -17.2179 -17.6323 
+	2509.04 5.05188 207.797 0.646955 8.94683 0.624932 0.920724 5.05188 
+	3.53236 0.269696 0.00905953 1.98248 0.226931 -9.31505 207.797 0.269696 
+	27.8286 -0.0953647 0.0799363 0.517685 0.481788 0.646953 0.00905953 -0.0953649 
+	0.0253951 -0.0259779 0.0601106 32.2559 8.94685 1.98248 0.0799377 -0.025978 
+	88.9816 -48.9021 -17.2179 0.624915 0.226931 0.517683 0.0601106 -48.9021 
+	192.711 
+
+#class	VOICED 
+#mean	0.14413 0.0766241 4.42037 0.5131 32.1247 0.806709 0.613002 
+#covar	0.0148344 0.00272539 0.0226587 -0.0242048 -0.0985871 -0.00910415 0.00139211 0.00272539 
+	0.00177736 0.0144543 -0.0158073 0.130383 -0.00164544 0.00328455 0.0226587 0.0144543 
+	1.23013 -0.159879 14.7853 0.0721433 0.198639 -0.0242048 -0.0158073 -0.159879 
+	0.170189 -1.63833 0.011364 -0.0365233 -0.0985871 0.130383 14.7853 -1.63833 
+	429.934 2.7807 5.01714 -0.00910415 -0.00164544 0.0721433 0.011364 2.7807 
+	0.0623037 0.0547859 0.00139211 0.00328455 0.198639 -0.0365233 5.01714 0.0547859 
+	0.0997231 
+#invcovar	104.092 -125.379 -1.1343 -0.165805 0.102687 17.2484 -9.767 -125.379 
+	3519.17 2.09603 300.145 0.172133 47.9261 -43.3972 -1.1343 2.096 
+	1.58384 0.7628 -0.0444084 0.985037 -1.23562 -0.16581 300.145 0.762805 
+	34.9583 -0.000867121 -1.13766 2.0691 0.102687 0.172135 -0.0444084 -0.000867058 
+	0.00696499 -0.00552015 -0.266344 17.2483 47.9261 0.985036 -1.13766 -0.00552027 
+	43.7158 -27.9369 -9.76699 -43.3973 -1.23562 2.0691 -0.266344 -27.937 
+	43.5605 
+aArDvArK2
+#
+# END OF TEST FILE test.stat
+# MAKE COMPARISON FILE test.asc.
+#
+cat > test.asc <<aArDvArK3
+File: <stdin>
+
+---Universal Part of Header---
+File type: FEA (Feature File)
+Number of data records: unknown (input is pipe)
+Data is  tagged.
+comment text:
+ classify -Lpost test.stat test.fana - 
+Source files: test.stat
+              test.fana
+There is no reference header.
+
+Record 1: 
+Tag: 2000
+frame_len:  109 
+num_pulses:  1 
+frame_type:  UNVOICED 
+voiced_fraction:  0 
+raw_power:  120.414 
+lpc_power:  92.874901 
+p_pulse_len:  0 
+spec_param:  
+  0:   -0.17393801     -0.167808    0.17286301   -0.24660601   0.048165198 
+  5:  -0.090773501    -0.0155158     -0.120409   0.094673902   0.088587001 
+gain_fe:  0.82309097 
+zcros_fe:  0.120805 
+pk_fe:  2.4542401 
+rc1_fe:  -0.17393801 
+prev_voi_fe:  0 
+rawcoh_fe:  0.22507 
+rescoh_fe:  0.237881 
+posteriors:  
+  0:             1   4.39766e-09 
+class:  UNVOICED 
+post:  
+  0:             1  4.397767e-09 
+
+Record 2: 
+Tag: 2109
+frame_len:  119 
+num_pulses:  1 
+frame_type:  UNVOICED 
+voiced_fraction:  0 
+raw_power:  16419.801 
+lpc_power:  4920.6299 
+p_pulse_len:  0 
+spec_param:  
+  0:    -0.0249399   -0.77531898   -0.45894301     -0.537902   -0.28841799 
+  5:   -0.38351199    0.33881801     -0.235247      0.232941  -0.065154001 
+gain_fe:  0.137704 
+zcros_fe:  0.13978501 
+pk_fe:  3.63553 
+rc1_fe:  -0.0249399 
+prev_voi_fe:  -19.242201 
+rawcoh_fe:  0.264936 
+rescoh_fe:  0.155835 
+posteriors:  
+  0:       0.69189       0.30811 
+class:  UNVOICED 
+post:  
+  0:    0.69188881    0.30811119 
+
+Record 3: 
+Tag: 2228
+frame_len:  94 
+num_pulses:  1 
+frame_type:  UNVOICED 
+voiced_fraction:  0 
+raw_power:  4121.1401 
+lpc_power:  1469.25 
+p_pulse_len:  0 
+spec_param:  
+  0:   -0.29209799     -0.298969    0.32326201    -0.0612006    0.27725199 
+  5:   0.078736402      0.364373   -0.56861001     -0.233072      0.035572 
+gain_fe:  0.37784901 
+zcros_fe:  0.15555599 
+pk_fe:  3.0313101 
+rc1_fe:  -0.29209799 
+prev_voi_fe:  -0.80897099 
+rawcoh_fe:  0.31033799 
+rescoh_fe:  0.16968 
+posteriors:  
+  0:    0.99539399  0.0046064202 
+class:  UNVOICED 
+post:  
+  0:    0.99539357  0.0046064355 
+
+Record 4: 
+Tag: 2322
+frame_len:  95 
+num_pulses:  1 
+frame_type:  UNVOICED 
+voiced_fraction:  0 
+raw_power:  4203.0698 
+lpc_power:  1714.0699 
+p_pulse_len:  0 
+spec_param:  
+  0:     -0.213654      0.186388    0.57616198     0.0225771      0.107913 
+  5:   -0.49604899      0.177855     -0.117199   -0.18279099   0.062461302 
+gain_fe:  0.42146 
+zcros_fe:  0.16129 
+pk_fe:  2.87374 
+rc1_fe:  -0.213654 
+prev_voi_fe:  -5.37569 
+rawcoh_fe:  0.34287599 
+rescoh_fe:  0.166224 
+posteriors:  
+  0:    0.99903101 0.00096907798 
+class:  UNVOICED 
+post:  
+  0:    0.99903089 0.00096909818 
+
+Record 5: 
+Tag: 2417
+frame_len:  121 
+num_pulses:  1 
+frame_type:  UNVOICED 
+voiced_fraction:  0 
+raw_power:  70098 
+lpc_power:  9055.8096 
+p_pulse_len:  0 
+spec_param:  
+  0:    0.55786997    0.47744599    0.31879601   -0.60381001   -0.20522401 
+  5:     -0.367484    0.40270299  -0.065430298    -0.0154146  -0.055180602 
+gain_fe:  0.209125 
+zcros_fe:  0.146199 
+pk_fe:  2.6119101 
+rc1_fe:  0.55786997 
+prev_voi_fe:  -6.9382 
+rawcoh_fe:  0.41925499 
+rescoh_fe:  0.25803199 
+posteriors:  
+  0:    0.95971298   0.040287498 
+class:  UNVOICED 
+post:  
+  0:    0.95971078   0.040289197 
+
+Record 6: 
+Tag: 2538
+frame_len:  42 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  150774 
+lpc_power:  25697.9 
+p_pulse_len:  42 
+spec_param:  
+  0:    0.72620702      0.147957    0.32700601      -0.46618   -0.27072701 
+  5:   -0.43146101    0.32980299   -0.20801599   0.071991898      0.257642 
+gain_fe:  0.192994 
+zcros_fe:  0.0609756 
+pk_fe:  5.0355501 
+rc1_fe:  0.72620702 
+prev_voi_fe:  -3.1705899 
+rawcoh_fe:  0.96855497 
+rescoh_fe:  0.91151899 
+posteriors:  
+  0: 1.9562999e-20             1 
+class:  VOICED 
+post:  
+  0: 1.9563822e-20             1 
+
+Record 7: 
+Tag: 2580
+frame_len:  41 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  160991 
+lpc_power:  32801.699 
+p_pulse_len:  41 
+spec_param:  
+  0:      0.702384      0.116342      0.397695   -0.42511299   -0.32001299 
+  5:   -0.42564499    0.26285899     -0.239007      0.135216    0.25640401 
+gain_fe:  0.20395701 
+zcros_fe:  0.048484799 
+pk_fe:  5.1096802 
+rc1_fe:  0.702384 
+prev_voi_fe:  45.3806 
+rawcoh_fe:  0.968503 
+rescoh_fe:  0.83895999 
+posteriors:  
+  0: 3.3370801e-33             1 
+class:  VOICED 
+post:  
+  0: 3.3374522e-33             1 
+
+Record 8: 
+Tag: 2621
+frame_len:  42 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  199365 
+lpc_power:  37834 
+p_pulse_len:  42 
+spec_param:  
+  0:    0.56903499      0.139456    0.51241302     -0.270713     -0.393006 
+  5:   -0.60631502      0.359485     -0.252619      0.171029   0.099639401 
+gain_fe:  0.189832 
+zcros_fe:  0.084337302 
+pk_fe:  5.1651802 
+rc1_fe:  0.56903499 
+prev_voi_fe:  74.780197 
+rawcoh_fe:  0.97144598 
+rescoh_fe:  0.90620899 
+posteriors:  
+  0:             0             1 
+class:  VOICED 
+post:  
+  0:             0             1 
+
+Record 9: 
+Tag: 2663
+frame_len:  42 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  178510 
+lpc_power:  27245.5 
+p_pulse_len:  42 
+spec_param:  
+  0:    0.69077998   0.047807101    0.51838303   -0.46049699     -0.479081 
+  5:      -0.44292    0.37259299     -0.186837      0.109146   0.041201498 
+gain_fe:  0.15260801 
+zcros_fe:  0.083333299 
+pk_fe:  5.1981702 
+rc1_fe:  0.69077998 
+prev_voi_fe:  69.077599 
+rawcoh_fe:  0.97236902 
+rescoh_fe:  0.93470001 
+posteriors:  
+  0:             0             1 
+class:  VOICED 
+post:  
+  0:             0             1 
+
+Record 10: 
+Tag: 2705
+frame_len:  43 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  155065 
+lpc_power:  23185.301 
+p_pulse_len:  43 
+spec_param:  
+  0:       0.72564      0.152366    0.34413999     -0.396409   -0.34146699 
+  5:   -0.61062998      0.410667     -0.201948      0.101164   0.064568996 
+gain_fe:  0.149629 
+zcros_fe:  0.082352899 
+pk_fe:  5.4562201 
+rc1_fe:  0.72564 
+prev_voi_fe:  69.077599 
+rawcoh_fe:  0.952465 
+rescoh_fe:  0.845644 
+posteriors:  
+  0:             0             1 
+class:  VOICED 
+post:  
+  0:             0             1 
+
+Record 11: 
+Tag: 2748
+frame_len:  43 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  120377 
+lpc_power:  13373.4 
+p_pulse_len:  43 
+spec_param:  
+  0:    0.82051402     -0.030066    0.40691301   -0.51460898   -0.42864299 
+  5:   -0.42923301      0.312545     -0.218796      0.171386   0.028101901 
+gain_fe:  0.111113 
+zcros_fe:  0.070175402 
+pk_fe:  5.0675402 
+rc1_fe:  0.82051402 
+prev_voi_fe:  69.077599 
+rawcoh_fe:  0.98268402 
+rescoh_fe:  0.79797399 
+posteriors:  
+  0: 5.6051939e-45             1 
+class:  VOICED 
+post:  
+  0: 5.6051939e-45             1 
+
+Record 12: 
+Tag: 2791
+frame_len:  44 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  89820.703 
+lpc_power:  9302.3203 
+p_pulse_len:  44 
+spec_param:  
+  0:    0.83888102  -0.060860898    0.41354999   -0.53542602     -0.356639 
+  5:   -0.49291101       0.22551     -0.126601      0.156544       0.13907 
+gain_fe:  0.103041 
+zcros_fe:  0.0457143 
+pk_fe:  5.64961 
+rc1_fe:  0.83888102 
+prev_voi_fe:  101.893 
+rawcoh_fe:  0.97814399 
+rescoh_fe:  0.60311103 
+posteriors:  
+  0:             0             1 
+class:  VOICED 
+post:  
+  0:             0             1 
+
+Record 13: 
+Tag: 2835
+frame_len:  44 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  68207.203 
+lpc_power:  6344.3999 
+p_pulse_len:  44 
+spec_param:  
+  0:    0.83899301   0.035628401    0.32286301     -0.407839   -0.38242799 
+  5:   -0.59795201    0.29636601   -0.16913299     0.0217366      0.364494 
+gain_fe:  0.093021996 
+zcros_fe:  0.045197699 
+pk_fe:  4.7427201 
+rc1_fe:  0.83899301 
+prev_voi_fe:  69.077599 
+rawcoh_fe:  0.96141702 
+rescoh_fe:  0.69379503 
+posteriors:  
+  0: 4.8425204e-39             1 
+class:  VOICED 
+post:  
+  0: 4.8426437e-39             1 
+
+Record 14: 
+Tag: 2879
+frame_len:  45 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  49397.602 
+lpc_power:  3026.6799 
+p_pulse_len:  45 
+spec_param:  
+  0:    0.86461002     -0.116098    0.45286399   -0.57527101     -0.473214 
+  5:   -0.46672601    0.39947501    0.00377631  -0.034679201    0.31364799 
+gain_fe:  0.060849998 
+zcros_fe:  0.050000001 
+pk_fe:  4.5318098 
+rc1_fe:  0.86461002 
+prev_voi_fe:  88.223396 
+rawcoh_fe:  0.98280501 
+rescoh_fe:  0.67866701 
+posteriors:  
+  0:             0             1 
+class:  VOICED 
+post:  
+  0:             0             1 
+
+Record 15: 
+Tag: 2924
+frame_len:  46 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  34166.199 
+lpc_power:  1858.5699 
+p_pulse_len:  46 
+spec_param:  
+  0:      0.892335     -0.149001      0.367024   -0.55733299     -0.460749 
+  5:   -0.43979201    0.50575101   -0.15569299      0.138328    0.17021701 
+gain_fe:  0.052220501 
+zcros_fe:  0.043478299 
+pk_fe:  4.6648102 
+rc1_fe:  0.892335 
+prev_voi_fe:  69.077599 
+rawcoh_fe:  0.94163001 
+rescoh_fe:  0.209416 
+posteriors:  
+  0:   4.74112e-28             1 
+class:  VOICED 
+post:  
+  0:  4.740965e-28             1 
+
+Record 16: 
+Tag: 2970
+frame_len:  47 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  22613.301 
+lpc_power:  2426.1101 
+p_pulse_len:  47 
+spec_param:  
+  0:    0.80239803      0.130319    0.37146699       -0.3371     -0.300183 
+  5:   -0.69181597    0.14899801      0.395798      0.026138     0.0355919 
+gain_fe:  0.104445 
+zcros_fe:  0.064171098 
+pk_fe:  3.6675301 
+rc1_fe:  0.80239803 
+prev_voi_fe:  62.9161 
+rawcoh_fe:  0.927302 
+rescoh_fe:  0.64097202 
+posteriors:  
+  0:   1.01029e-29             1 
+class:  VOICED 
+post:  
+  0: 1.0103538e-29             1 
+
+Record 17: 
+Tag: 3017
+frame_len:  48 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  15290.1 
+lpc_power:  1708.37 
+p_pulse_len:  48 
+spec_param:  
+  0:    0.86454898    0.15541101   0.073571898   -0.37582201     -0.136549 
+  5:      -0.64466    0.22253799    0.16723201    -0.0256729   0.056467399 
+gain_fe:  0.111108 
+zcros_fe:  0.052631602 
+pk_fe:  3.8463299 
+rc1_fe:  0.86454898 
+prev_voi_fe:  66.764702 
+rawcoh_fe:  0.891792 
+rescoh_fe:  0.22651701 
+posteriors:  
+  0: 2.3498399e-24             1 
+class:  VOICED 
+post:  
+  0: 2.3500032e-24             1 
+
+Record 18: 
+Tag: 3065
+frame_len:  48 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  11748.2 
+lpc_power:  1524.8 
+p_pulse_len:  48 
+spec_param:  
+  0:      0.865816     0.0655123      0.241937     -0.440815   -0.40195999 
+  5:   -0.37633699    -0.0271718   0.042767901      0.207974     0.0698497 
+gain_fe:  0.12923101 
+zcros_fe:  0.041884799 
+pk_fe:  3.5967 
+rc1_fe:  0.865816 
+prev_voi_fe:  54.4077 
+rawcoh_fe:  0.93168801 
+rescoh_fe:  0.50375003 
+posteriors:  
+  0:   1.23398e-21             1 
+class:  VOICED 
+post:  
+  0: 1.2340217e-21             1 
+
+Record 19: 
+Tag: 3113
+frame_len:  47 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  9551.21 
+lpc_power:  974.81299 
+p_pulse_len:  47 
+spec_param:  
+  0:    0.90394902   0.023381099    -0.0504581   -0.43042299     -0.189523 
+  5:   -0.45037901    0.12519901  -0.058524199    -0.0156003    0.29513699 
+gain_fe:  0.1022 
+zcros_fe:  0.042328 
+pk_fe:  2.2607801 
+rc1_fe:  0.90394902 
+prev_voi_fe:  48.144001 
+rawcoh_fe:  0.88759798 
+rescoh_fe:  0.15257099 
+posteriors:  
+  0:   5.84066e-13             1 
+class:  VOICED 
+post:  
+  0: 5.8410709e-13             1 
+
+Record 20: 
+Tag: 3160
+frame_len:  47 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  8057.02 
+lpc_power:  1082.61 
+p_pulse_len:  47 
+spec_param:  
+  0:    0.86938798       0.24864  -0.028634701   -0.39785999     -0.342942 
+  5:     -0.371627   -0.13138101      0.258021    -0.0340266  -0.033955801 
+gain_fe:  0.134091 
+zcros_fe:  0.076086998 
+pk_fe:  3.55374 
+rc1_fe:  0.86938798 
+prev_voi_fe:  28.1688 
+rawcoh_fe:  0.88919997 
+rescoh_fe:  0.385822 
+posteriors:  
+  0:   3.25893e-09             1 
+class:  VOICED 
+post:  
+  0: 3.2588787e-09             1 
+
+Record 21: 
+Tag: 3207
+frame_len:  49 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  7564.6499 
+lpc_power:  951.13702 
+p_pulse_len:  49 
+spec_param:  
+  0:    0.86298102      0.104895    0.21656901   -0.37562999   -0.46215999 
+  5:   -0.42066199 -0.00067535101    0.36548901   0.075978003  -0.046158802 
+gain_fe:  0.11498 
+zcros_fe:  0.060913701 
+pk_fe:  3.4565301 
+rc1_fe:  0.86298102 
+prev_voi_fe:  19.541901 
+rawcoh_fe:  0.85216701 
+rescoh_fe:  0.187676 
+posteriors:  
+  0: 2.0468501e-06    0.99999797 
+class:  VOICED 
+post:  
+  0: 2.0467953e-06    0.99999797 
+
+Record 22: 
+Tag: 3256
+frame_len:  51 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  8560.6104 
+lpc_power:  1319.55 
+p_pulse_len:  51 
+spec_param:  
+  0:    0.83214402      0.102321    0.33759999     -0.297802     -0.445761 
+  5:     -0.434376     0.0109843   0.055138201     -0.106319      0.169339 
+gain_fe:  0.152925 
+zcros_fe:  0.0394089 
+pk_fe:  2.3052599 
+rc1_fe:  0.83214402 
+prev_voi_fe:  13.0992 
+rawcoh_fe:  0.78466898 
+rescoh_fe:  0.137145 
+posteriors:  
+  0:   0.000104317    0.99989599 
+class:  VOICED 
+post:  
+  0: 0.00010431736    0.99989569 
+
+Record 23: 
+Tag: 3307
+frame_len:  48 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  9412.5596 
+lpc_power:  1474.01 
+p_pulse_len:  48 
+spec_param:  
+  0:    0.76175201    0.40925801      0.147137  -0.070686601   -0.47177899 
+  5:   -0.52690399   -0.25114599    0.28577599      0.204349  -0.069441102 
+gain_fe:  0.15674099 
+zcros_fe:  0.083333299 
+pk_fe:  3.44504 
+rc1_fe:  0.76175201 
+prev_voi_fe:  9.1679697 
+rawcoh_fe:  0.827425 
+rescoh_fe:  0.25557399 
+posteriors:  
+  0:    0.00040167    0.99959803 
+class:  VOICED 
+post:  
+  0: 0.00040165373    0.99959832 
+
+Record 24: 
+Tag: 3355
+frame_len:  48 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  10060.4 
+lpc_power:  1930.21 
+p_pulse_len:  48 
+spec_param:  
+  0:      0.672351      0.464093    0.30632499     -0.190643     -0.385005 
+  5:     -0.384507     -0.412855      0.323791      0.122574   0.094975099 
+gain_fe:  0.197514 
+zcros_fe:  0.083769597 
+pk_fe:  2.0539899 
+rc1_fe:  0.672351 
+prev_voi_fe:  7.8194799 
+rawcoh_fe:  0.53341901 
+rescoh_fe:  0.109853 
+posteriors:  
+  0:   0.051323902    0.94867599 
+class:  VOICED 
+post:  
+  0:   0.051323518    0.94867647 
+
+Record 25: 
+Tag: 3403
+frame_len:  50 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  5600.9902 
+lpc_power:  1090.95 
+p_pulse_len:  50 
+spec_param:  
+  0:    0.58047497      0.161008    0.55244702     -0.104362     0.0358513 
+  5:   -0.66626197   -0.36240599      0.255395  -0.046589799      0.136296 
+gain_fe:  0.19602101 
+zcros_fe:  0.059701499 
+pk_fe:  3.1881199 
+rc1_fe:  0.58047497 
+prev_voi_fe:  2.9169099 
+rawcoh_fe:  0.46781799 
+rescoh_fe:  0.26022401 
+posteriors:  
+  0:      0.112393    0.88760698 
+class:  VOICED 
+post:  
+  0:    0.11239415    0.88760585 
+
+Record 26: 
+Tag: 3453
+frame_len:  51 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  2162.6399 
+lpc_power:  402.70901 
+p_pulse_len:  51 
+spec_param:  
+  0:    0.62816799      0.292705       0.48036     0.0141472     -0.270946 
+  5:   -0.47253999   -0.43883899    0.22713301   -0.25285301    0.39855301 
+gain_fe:  0.184736 
+zcros_fe:  0.0682927 
+pk_fe:  2.2541101 
+rc1_fe:  0.62816799 
+prev_voi_fe:  2.06653 
+rawcoh_fe:  0.66299897 
+rescoh_fe:  0.095146999 
+posteriors:  
+  0:     0.0104203    0.98957998 
+class:  VOICED 
+post:  
+  0:   0.010420438    0.98957956 
+
+Record 27: 
+Tag: 3504
+frame_len:  52 
+num_pulses:  1 
+frame_type:  VOICED 
+voiced_fraction:  1 
+raw_power:  1324.67 
+lpc_power:  352.98401 
+p_pulse_len:  52 
+spec_param:  
+  0:    0.68373603    0.37450299    0.37306499   -0.27124599   0.044169001 
+  5:   -0.23434199   -0.37313899   -0.17436001     -0.210044     -0.155201 
+gain_fe:  0.268123 
+zcros_fe:  0.076554999 
+pk_fe:  2.8420999 
+rc1_fe:  0.68373603 
+prev_voi_fe:  4.5535202 
+rawcoh_fe:  0.57630002 
+rescoh_fe:  0.206314 
+posteriors:  
+  0:      0.158885      0.841115 
+class:  VOICED 
+post:  
+  0:    0.15888502      0.841115 
+
+Record 28: 
+Tag: 3556
+frame_len:  76 
+num_pulses:  1 
+frame_type:  UNVOICED 
+voiced_fraction:  0 
+raw_power:  721.758 
+lpc_power:  349.39001 
+p_pulse_len:  0 
+spec_param:  
+  0:    0.35273501    0.40718499    0.47923699   0.073595002   0.071643203 
+  5:   -0.41825101   -0.25608799     -0.110916   -0.21459299     -0.139869 
+gain_fe:  0.396505 
+zcros_fe:  0.119403 
+pk_fe:  2.5230401 
+rc1_fe:  0.35273501 
+prev_voi_fe:  1.66655 
+rawcoh_fe:  0.45239401 
+rescoh_fe:  0.368319 
+posteriors:  
+  0:      0.917243   0.082756899 
+class:  UNVOICED 
+post:  
+  0:    0.91723996   0.082760058 
+
+aArDvArK3
+#
+# END OF COMPARISON FILE test.asc.
+# RUN classify, CHECK OUTPUT, AND CLEAN UP.
+#
+classify -Lpost test.stat test.fana - \
+	| psps - \
+	| egrep -v "^File header date:|^Produced by:|^Hostname:|^Machine type:" \
+	| diff test.asc -
+rm test.stat test.fana test.asc
+echo "Done testing classify."

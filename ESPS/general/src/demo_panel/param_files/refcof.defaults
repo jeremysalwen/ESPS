@@ -1,0 +1,10 @@
+# @(#)refcof.defaults	1.1 6/18/91 ERL - default parameter file for maximum entropy analyzer
+
+
+int frame_len ?= 64: "Number of points per analysis frame; 0 means nan";
+int step ?= 16: "Number or points between start of successive frames; 0 means frame_len";
+string window_type ?= "RECT": "Window to apply to data": {"RECT", "HAMMING", "TRIANG", "HANNING", "COS4"};
+int order ?= 10: "Number of reflection coefficients to compute per frame)";
+string method ?= "AUTOC": "Analysis": {"AUTOC", "COV", "BURG", "MBURG", "FBURG", "STRCOV", "STRCOV1", "VBURG"};
+
+

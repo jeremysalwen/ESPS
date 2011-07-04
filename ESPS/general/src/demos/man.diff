@@ -1,0 +1,78 @@
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)edemos.1	1.5 3/16/92 ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH EDEMOS 1\-ESPS 1.5
+.SH NAME
+edemos \- put up a button control panel for various Entropic demos
+.SH SYNOPSIS
+.B edemos
+[
+.I " tmp_directory"
+]
+.SH DESCRIPTION
+.PP
+\fIedemos\fP (1\-\s-1ESPS\s+1) pops up a push-button control panel
+containing a \fIQUIT\fP button and pull-down menu buttons for each
+demo.  The various demos may create temporary output files.  By
+default, \fIedemos\fP creates a temporary directory for these on
+/usr/tmp.  The optional argument \fItmp_directory\fP may be used to
+override the default and specify a directory for temporary files.  If
+it exists, this directory must be writable by the demo user; if not,
+\fIedemos\fP will try to create it.  Pressing the QUIT button on the
+\fIedemos\fP control panel.  If a temp directory was selected by
+\fIedemos\fP (i.e., if \fItmp_directory\fP was not specified),
+\fIedemos\fP will remove the temporary directory provided that none of
+the demos is running. If a demo is running, a pop-up window appears
+with a message stating that the temporary directory was not removed.
+If \fItmp_directory\fP was specified, no such removal or notice takes
+place.
+.PP
+A crude locking scheme is implemented to stop individual demos from
+interfering with each other, and to indicate whether it is safe to
+remove the temporary directory.  You may need to manually remove a
+lock file and start again under some circumstances.  A pop-up window
+will report the location of the lock file.  
+.PP
+\fIedemos\fP (1\-\s-1ESPS\s+1) is intended to present some interesting
+displays, show some applications of ESPS and
+\fIwaves\fP+(1\-\s-1ESPS\s+1), and provide examples of how to
+configured ESPS and \fIwaves\fP+ (1\-\s-1ESPS\s+1) for different
+tasks.
+.PP
+\fIedemos\fP (1\-\s-1ESPS\s+1) invokes a shell script that runs
+\fImbuttons\fP (1\-\s-1ESPS\s+1) and presents a button panel. Under
+each button is a shell script. These shell scripts run ESPS and
+\fIwaves\fP+ (1\-\s-1ESPS\s+1) commands.  If you do not have both ESPS
+and \fIwaves+\fP, \fIedemos\fP (1\-\s-1ESPS\s+1) will not work.
+.PP
+If an ESPS license is not checked out to the current host, \fIedemos\fP
+will check one out.  No direct indication is given if the checkout fails 
+(but various programs will report that a license has not been checkout out).  
+.PP
+Some of the demos provide audio output, if available, and try detect
+and setup for support options (SPARCStation codec, AT&T Fab2 board, 
+Ariel S-32C/Proport).  In these cases, a "Setup Audio" button-menu is 
+provided to permit manual selection.  One of the choices is always 
+"generic audio"; this is the option to choose if there is a program
+called "play" somewhere on your path that "does the right thing"
+(accepts an ESPS range option and file and plays the data). 
+.SH OPTIONS
+.PP
+There are none.
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.SH ESPS COMMON
+.PP
+The common file is not used.
+.SH BUGS
+None known.
+.SH EXPECTED CHANGES
+.PP
+.SH "SEE ALSO"
+.PP
+.SH AUTHOR
+.PP
+Shore and Burton.
+
+

@@ -1,0 +1,70 @@
+#!/bin/csh -f
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1996  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)get_resid.test	1.2	11/7/96	ERL
+# 
+# Written by:  Derek Lin
+# Checked by:
+# Revised by:
+# 
+# Brief description: test script for get_resid
+# 
+
+setenv USE_ESPS_COMMON off
+setenv ESPS_VERBOSE 0
+
+copysd $ESPS_BASE/demo/speech.sd s.d
+refcof -wHANNING -l160 -S80 -o 10 -e0 -p1:2000 -z -Z s.d s.cof
+echo "First test of get_resid."
+get_resid -s0.03:0.2 -a1 -i0.95 s.d s.cof s.if
+
+cat > ref << EOD
+-3754 
+-3010 
+-1765 
+-838 
+-244 
+1334 
+2296 
+2537 
+4223 
+3959 
+2421 
+1759 
+784 
+70 
+-768 
+68 
+346 
+503 
+304 
+-240 
+-266 
+EOD
+
+pplain -r1000:1020 s.if > test
+diff test ref
+echo "diff output for 20 numbers.  You should see little or no difference."
+echo " "
+echo "Second test: sampled-data input piped into standard input."
+cat s.d | get_resid -s0.03:0.2 -a1 -i0.95 - s.cof s.if
+pplain -r1000:1020 s.if > test
+diff test ref
+echo "diff output for 20 numbers.  You should see little or no difference."
+echo " "
+echo "Third test: filter-coefficient input piped into standard input."
+cat s.cof | get_resid -s0.03:0.2 -a1 -i0.95 s.d - s.if
+pplain -r1000:1020 s.if > test
+diff test ref
+echo "diff output for 20 numbers.  You should see little or no difference."
+
+rm s.d s.cof s.if test ref

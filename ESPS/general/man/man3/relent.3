@@ -1,0 +1,69 @@
+.\" Copyright (c) 1988 Entropic Speech, Inc. All rights reserved.
+.\"@(#)relent.3	1.1	31 Aug 1989	ESI
+.TH REL_ENT 3\-ESPSsp 31 Aug 1989
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.if t .ds S \(*S
+.if n .ds S \fRSUM\fP
+.if t .ds f \fI
+.if n .ds f \fR
+.SH NAME
+rel_ent \- compute relative entropy of two probability distributions
+.SH SYNOPSIS
+.ft B
+.nf
+double
+rel_ent(q, p, n)
+    double  *q, *p;
+    int	    n;
+.SH DESCRIPTION
+.PP
+Given two probability distributions
+.I p
+and
+.I q,
+this function returns the
+.I relative entropy
+.IP
+\*f\*S\d\s-3j\s+3\u q\d\s-3j\s+3\u \fRlog\fP q\d\s-3j\s+3\u/p\d\s-3j\s+3\u\fR
+.LP
+of
+.I q
+with respect to
+.I p.
+Terms of the form 0 log 0 or 0 log 0/0 in this formula are taken to be 0 by
+convention.
+.PP
+The arguments
+.I q
+and
+.I p
+should each be an array of
+.I n
+nonnegative numbers that sum to 1.
+The argument
+.I n
+gives the array lengths.
+.SH DIAGNOSTICS
+The function does no error checking.
+If
+.I p
+or 
+.I q
+is not a probability distribution \- that is,
+if it has a negative element or if the sum of its elements is not 1,
+.I rel_ent
+simply applies the formula.
+A floating exception will occur if
+.IR log (3M)
+is given a negative argument,
+or if there is an index
+.I j
+for which
+\*fp\d\s-3j\s+3\u\fR
+is 0 but
+\*fq\d\s-3j\s+3\u\fR
+is not.
+.SH SEE ALSO
+min_rel_ent(3-ESPSsp)
+.AUTHOR
+Rodney W. Johnson, ESI

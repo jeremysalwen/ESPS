@@ -1,0 +1,152 @@
+.lo
+.ce 2
+.b
+Installation Instructions for Standalone Waves+
+.sp
+Document Version: 1.7 11/17/89
+.sh 1 "Tape Contents"
+.pp
+The enclosed tape (or diskettes) contains the \fIwaves+\fR binary
+directory (or directories) and one to three demo directories.
+.pp
+Standalone \fIwaves+\fR consists of a binary subset of the Entropic
+Signal Processing System (ESPS) and the \fIwaves+\fR programs, including
+\fIwaves+\fR, \fIspectrum\fR, and \fIlabel\fR.   The directory 
+on the tape contains a standard ESPS directory
+structure with the \fIwaves+\fR programs and ESPS programs in
+place.   
+.pp
+The name of the \fIwaves+\fR binary directory depends on the target machine
+type.   If you ordered \fIwaves+\fR for more than one
+machine type, then all of those directories will be on the tape.  The
+following table shows the directory names of the various \fIwaves+\fR
+products as they might appear on the tape.
+.TS
+box, center, tab(;);
+c c c c
+l l l l.
+Machine;Product Code;Directory on Tape;Size (MB)
+_
+Sun 3;w+SA-S3;wsa.sun3_68881;8.3
+;;wsa.sun3_fpa;8.3
+Sun 4 (Sparc);w+SA-S4;wsa.sun4;5.7
+Sun 386i;w+SA-S386i;wsa.sun386;4.2
+.TE
+.pp
+Note that for Sun3, there may be two versions of the waves binary; one
+compiled for the 68881 floating point chip and one compiled for the Sun3
+FPA board.  Use the one that is appropriate for your configuration.
+.pp
+The demo directories are useful for checking out the installation and
+for an introduction into the capabilities of \fIwaves+\fR.  There may be
+three demo directories on the tape; \fIdemo.text\fR, \fIdemo.dsp\fR, and
+\fIdemo.sparc\fR.
+The first of these displays text as it runs describing the demo.  The
+second one is for systems with the AT&T VME DSP board.  
+The directory \fIdemo.sparc\fR is for Sparcstation I machines.  This demo
+uses the built in codec and speaker.
+\fIDemo.dsp\fR and \fIdemo.sparc\fR 
+directories contain speech files used to describe what is
+happening in the demo.    These two demo directories are each about 10
+megabytes due to the 
+speech files.  If present, they will be at the end of
+the tape; so if you do not
+want to read them in, kill the \fItar\fR when you
+see it starting to bring in \fIdemo.dsp\fR or \fIdemo.sparc\fR.
+The DSP demo is only included if you ordered the DSP driver kit.
+The \fIdemo.sparc\fR directory is only included if your order indicated
+a Sparcstation I.
+.pp
+If you also ordered the DSP32 support kit, then that product will be on
+this tape also.
+That directory will be either
+\fIdsp32.sun3_OS3\fR, \fIdsp32.sun3_OS4\fR, \fIdsp32.sun3x\fR, 
+or \fIdsp32.sun4\fR. 
+.pp
+This package also includes (along with these instructions) manual
+pages for all included programs and installation instructions for the
+DSP32 Support Kit, if you also ordered it.
+.sh 1 "Installing the Product"
+.pp
+To install this product, simply choose a location and read the tape
+contents in.   Except for a Sun386i, for \fIwaves+\fR to operate correctly, 
+the directory \fI/usr/esps\fR must
+point to the appropriate \fIwaves+\fR directory from this tape.  The
+best way to do this is to read in the directories and then put a
+symbolic link on \fI/usr\fR that points to the \fIwaves+\fR directory
+from the tape.   Or you can read the tape into \fI/usr\fR and then
+change the name of the \fIwaves+\fR directory to \fIesps\fR.
+.pp
+In the case of a Sun386i, the directory \fI/files/esps\fR must 
+point to the appropriate \fIwaves+\fR directory from this tape.  The
+best way to do this is to read in the directories and then put a
+symbolic link on \fI/files\fR that points to the \fIwaves+\fR directory
+from the tape.   Or you can read the tape into \fI/files\fR and then
+change the name of the \Iwaves+\fR directory to \fIesps\fR.
+.pp
+For example, if you want to put the tape contents in \fI/u2/fred\fR you
+would: (the name of your tape drive might not be /dev/rst8)
+.sp
+.br
+.ft CW
+.nf
+% cd /u2/fred
+% tar xpvf /dev/rst8 
+% cd /usr  \fI(or /files for a Sun386i)\fR
+.ft CW
+% su \fI(go super-user)
+.ft CW
+# ln -s /u2/fred/wsa.sun4 esps    
+.ft R
+.fi
+.pp
+This assumes that you have write permission on \fI/usr\fR.
+.pp
+Note the use of the \fB-p\fR option on \fItar\fR.   This is required to
+preserve the modes of the directories; in particular the \fIman/cat\fR
+directories must be writtable for \fIeman\fR to work correctly.
+.sh 1 "Getting Ready to use Waves+"
+.pp
+In the following discussion, the name \fIesps\fR means either
+\fI/usr/esps\fR for all machines other than Sun386i, and
+\fI/files/esps\fR for Sun386i.
+.pp
+Everyone that is going to use \fIwaves+\fR
+should copy the following three files from \fIesps/lib/waves\fR: 
+\fI.wave_pro\fR, 
+\fInb_params\fR, and \fIwb_params\fR to their home directory.
+These are parameter files for \fIwaves+\fR.   See the \fIwaves+\fR
+manual page for details.
+.pp
+Users should also edit their path assignment in their \fI.cshrc\fR (or
+whatever they use) to include \fIesps/bin\fR
+on their search path.
+.pp
+To aid in testing the installation and to help you learn to use
+\fIwaves+\fR (and related programs), some ESPS data files can be found
+in \fIesps/demo\fR.    
+This directory is in addition to the demo directories mentioned
+earlier.
+Each of these files can be input to
+\fIwaves+\fR for display.    You can also use the program \fIpsps\fR to
+look at these files and to examine their headers.   Notice the record
+keeping that is done in ESPS when you look at these files with
+\fIpsps\fR and \fIcomment -a\fR.   
+.pp
+Copy the files in \fIesps/demo\fR to your working directory before
+looking at them with \fIwaves+\fR.  
+This version of \fIwaves+\fR will try to write
+some temporary files to the directory that the input file comes from
+(\fIesps/demo\fR in this case) and you might not have write
+permission on this directory.   We consider this a bug, and this will be
+changed in the next version.
+.pp
+Also note that all of the manual pages are stored online and can be
+accessed by the command \fIeman\fR.
+.pp
+After you are satisfied that all is well, up to this point, you should
+install the device driver, if you ordered it.   You can delay this,
+however, if you want to, since \fIwaves+\fR will operate without the
+board.  Proceed to the instructions for installing the device driver.
+.pp
+If you have problems call Entropic Speech at 1 202 547-1420.

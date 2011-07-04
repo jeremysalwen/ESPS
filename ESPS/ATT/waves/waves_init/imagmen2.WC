@@ -1,0 +1,27 @@
+delete_all_items menu spect
+
+add_waves menu spect name "zoom in" builtin "zoom in"
+
+add_waves menu spect builtin "align & rescale" menu spect
+
+add_espst menu spect name "show segment data" command epsps -H
+
+add_espst menu spect name "segment statistics" command fea_stats
+
+add_espsn menu spect name "3D Plot" command plot3d -w -o R
+
+add_espsf menu spect name "spectral block average" command xspecav
+
+add_op menu spect name "formants (w/overlay)" command form_overlay.sh _objectname _l_marker_time _r_marker_time _file
+
+add_op menu spect name "create D/A toolbar" command make_toolbar.sh datoolbar _name _file _loc_x _loc_y "D/A toolbar" "play between marks" "play window contents" "play entire file" "play to end of file" 
+
+add_op menu spect name "create zoom/scroll toolbar" command make_toolbar2.sh ztoolbar _name _file _loc_x _loc_y "Zoom toolbar"  In "zoom in" Out "zoom out" "Full Out" "zoom full out" Bracket "bracket markers" \<\<\< "window back" \>\>\> "window ahead" 
+
+return
+
+# @(#)imagmen2.WC	1.10 10/26/93
+
+
+
+

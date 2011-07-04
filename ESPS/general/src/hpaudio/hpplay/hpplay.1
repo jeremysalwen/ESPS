@@ -1,0 +1,197 @@
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)hpplay.1	1.9 9/30/98 ERL/ATT
+.ds ]W (c) 1998 Entropic Research Laboratory, Inc.
+.TH HPPLAY 1\-ESPS 9/30/98
+.SH NAME
+hpplay - send sampled data (PCM) to HP audio
+.PP
+.SH SYNOPSIS
+.B hpplay
+[
+.BI \-r " range"
+] [
+.BI \-s " start time"
+] [
+.BI \-e " end time"
+] [
+.BI \-f " sample rate"
+] [
+.BI \-c " channel"
+] [
+.BI \-x " debug-level"
+] [
+.BI \-H
+] [[
+.BI \-i
+]
+.I file
+] [
+.I more-files
+]
+.PP
+.SH DESCRIPTION
+.PP
+.I Hpplay
+sends all or a portion of one or more ESPS, SIGnal, NIST or headerless
+sampled data files to a HP system using the Audio Application Program
+Interface (AAPI)
+.PP
+A subrange of data within the files may be chosen; this
+subrange may be specified in seconds or sample points.  Dual-channel
+(stereo) or single-channel (monaural) data may be converted.
+Single-channel input data may be directed to either or both output
+channels.
+.PP
+Playback may be stopped by sending the terminal's interrupt character
+(normally control-C) after playback has started.
+.PP
+.I Hpplay
+uses one of 
+the standard environment variables used by the AAPI library function:
+AUDIO.  
+\fIHpplay ignores the environment variable SPEAKER\fP, and it always sends
+the audio output to the headphone and line out jacks.
+Once audio is flowing to the output destination, HP's \fIAudioCP\fP
+program can toggle the output on and off. 
+.PP
+If "\-" is given for a filename, then the input is taken from standard
+input and must be an ESPS file or a headerless file (i.e., SIGnal, PC WAVE,
+Esignal, and NIST/Sphere files cannot be used with standard input).
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-r " range"
+Select a subrange of points to be played, using the format
+.I start\-end
+,
+.I start:end 
+or
+.IR start:+count .
+Either the start or the end may be omitted; the beginning or the end of the
+file are used if no alternative is specified. 
+.IP
+If multiple files were specified, the same range from each file is played.
+.TP
+.BI \-s " start time"
+Specify the start time in seconds.  Play will continue to the end of file or
+the end time specified with -e.  -s may not be used with -r.
+.TP
+.BI \-e " end time"
+Specify the playback end time in seconds.  Play will start at the
+beginning of file or the time specified by -s.  -e may not be used
+with -r.
+.TP
+.BI \-f " frequency"
+Specifies the sampling frequency.  The closest frequency to that
+requested will be selected from those available and the user will be notified
+if the selected value differs from that requested.  If -f is not
+specified, the sampling frequency in the header is used, else
+the default value for headerless files is 16kHz.
+.TP
+.BI \-c " channel"
+Select the output channel configuration.  For files with headers, the
+behavior is to play stereo if the file is stereo and to provide
+identical output on both channels if the file is single-channel.
+If the file has no header, the default is to assume single-channel
+data and provide identical output to both channels.  For headerless
+files, this may be changed with -\fIc\fP 2 (stereo data, stereo output).
+.TP
+.BI \-H
+Force \fIhpplay\fP to treat the input as a headerless file.  This is probably unwise
+to use unless the gain on your loudspeaker or earphones is way down, since
+a file that really does have a header, or a file composed of data types other
+than shorts (of the correct byte order!) will cause a terrible sound.
+.TP
+.BI \-i " input file"
+Specify a file to be D/A converted.  Use of -i before the file designation is optional
+if the filename is the last command-line component.  If no input file is
+specified, or if "-" is specified, input is taken from stdin.
+.TP
+.BI \-x " debug_level"
+Setting debug_level nonzero causes several messages to be printed as
+internal processing proceeds.  The default is level 0, which causes no debug
+output.
+.PP
+.SH "INTERACTION WITH XWAVES"
+.I Hpplay
+is designed to optionally use the server mode of \fIxwaves\fP(1\-\s-1ESPS\s+1).
+This is especially handy when
+.I hpplay
+is used as an \fIxwaves\fP external play
+command (e.g. by setting the \fIxwaves\fP global play_prog).  When the latter is the case,
+play commands initiated via \fIxwaves\fP' menu operations may be interrupted
+by pressing the left mouse button in the data view.  \fIXwaves\fP will send
+a signal (SIGUSR1) to the play program.  S16play responds to this
+by sending back to \fIxwaves\fP a command "set da_location xx", where xx is
+the sample that was being output when play was interrupted.  This
+setting, in conjunction with \fIxwaves\fP' built-in callback procedure for
+handling child-process exits, causes the \fIxwaves\fP signal display to
+center itself on the sample where play was halted.
+.PP
+The SIGUSR1 signal to terminate 
+.I hpplay
+may come from any source.  If
+it comes from sources other than \fIxwaves\fP, the environment variables
+WAVES_PORT and WAVES_HOST must be correctly defined (see
+\fIespsenv\fP(1-ESPS)), for correct functioning of the \fIxwaves\fP view
+positioning.  (Of course, \fIxwaves\fP must actually be displaying the
+signal in question at the time and \fIxwaves\fP must have initiated the
+play.)
+.PP
+.I Hpplay
+may also be interrupted with kill -2 (SIGINT) or kill -3
+(SIGQUIT).  These signals are caught gracefully and 
+.I hpplay
+halts immediately, but no message is sent to \fIxwaves\fP.  No message is sent if
+the play operation finishes without interruption.
+.PP
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.PP
+.SH ESPS COMMON
+.PP
+ESPS Common is not read or written.
+.PP
+.SH DIAGNOSTICS
+.PP
+.I hpplay
+informs the user if the input file does not exist, if inconsistent
+options are used, or if an unsupported sample rate is requested.
+Also see \fBWARNINGS\fP below.
+.PP
+If the starting point requested is greater than the last point in the
+file, then a message is printed.  If
+the ending point requested is greater than the last point in the file,
+it is reset to the last point and processing continues.
+.PP
+.SH WARNINGS
+.PP
+\fIhpplay\fP supports only the sampling rates supported by the hardware that the
+AAPI communicates with.  These cannot be guaranteed, but typically they are
+(in Hz): 48000 44100 32000 22050 16000 11025 8000.
+If you play a file that is sampled at
+an unsupported rate, \fIhpplay\fP plays the data at the closest
+supported rate and issues a warning.
+.PP
+.SH FILES
+.PP
+.SH BUGS
+.PP
+If readable header IS present, but -H is specified, the header is
+treated like sampled data -- usually resulting in very unpleasant
+sounds.
+.PP
+.SH SEE ALSO
+.PP
+.nf
+\fIFEA_SD\fP(5\-\s-1ESPS\s+1), \fItestsd\fP(1\-\s-1ESPS\s+1), \fIcopysd\fP(1\-\s-1ESPS\s+1), 
+\fIhprecord\fP(1\-\s-1ESPS\s+1), \fIsfconvert\fP(1\-\s-1ESPS\s+1), \fIsend_xwaves2\fP(3\-\s-1ESPS\s+1)
+.fi
+.PP
+.SH AUTHOR
+.PP
+Ken Hornstein at Entropic Research Laboratory.
+
+

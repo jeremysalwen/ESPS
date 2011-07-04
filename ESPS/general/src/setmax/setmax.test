@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1989-1990  Entropic Speech, Inc. 
+#    "Copyright (c) 1990-1996  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)setmax.test	1.2	1/27/97	ESI/ERL
+# 
+# Written by:  John Shore
+# Checked by:
+# Revised by:
+# 
+# Brief description:
+#  test script for setmax
+# 
+
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+USE_ESPS_COMMON=off
+export ESPS_VERBOSE
+# Make sampled data file
+testsd -a- test.sd <<EOD
+	-1500.  20000. -1000 10000  -33700. 180000
+EOD
+
+echo "should show max_value = 180000"
+setmax  test.sd out.sd
+psps -lD out.sd | grep max_value 
+echo "comparing output sample values"
+pspsdiff -H test.sd out.sd
+
+echo ""
+echo "should show max_value = 33700"
+copysd -p2:5 test.sd test1.sd
+cat test1.sd | setmax - out.sd
+psps -lD out.sd | grep max_value 
+echo "comparing output sample values"
+pspsdiff -H test1.sd out.sd
+
+echo ""
+echo "should show max_value = 20000"
+copysd -p1:3 test.sd test2.sd
+setmax test2.sd - | cat >out.sd
+psps -lD out.sd | grep max_value 
+echo "comparing output sample values"
+pspsdiff -H test2.sd out.sd
+
+echo "test script done"

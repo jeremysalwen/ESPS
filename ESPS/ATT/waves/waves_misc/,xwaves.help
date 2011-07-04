@@ -1,0 +1,991 @@
+This help file contains a brief introduction to xwaves+ operations and
+a list of xwaves+ global parameters and commands.  For more information, 
+see the full xwaves+ man page.  To do so, run "eman xwaves+" in a
+shelltool window or, if you are using X Windows, click on the "xwaves+ 
+manual" button in the control panel.
+
+XWAVES+ STARTUP
+==============
+
+Xwaves+ starts up with the following steps: 
+(1) It checks to see if any optional DSP board is installed (by trying
+to open /dev/dsp32).  If a board is found, xwaves+ will use it for
+spectrograms and speech output, and all FEA_SD files will be read in
+as SHORTs.  If no board is found, xwaves+ will use external ESPS
+programs for spectrogram computation and speech output, and it will
+not transform the type of FEA_SD files.  
+
+(2) It reads the \fIxwaves\fP+  profile, initializes 
+the \fIxwaves\fP+ globals accordingly, and processes an initialization
+command file if one is specified in the profile ("init_file").  The 
+profile is (in order of precedence) (a) whatever is specified by the -w
+option; (b) the file .wave_pro in your home directory; or (c)
+$ESPS_BASE/lib/waves/.wave_pro.  Any file specified by -w or in the
+profile is searched for on the path "$HOME:$ESPS_BASE/lib/waves".
+The search path used can be overriden by setting the unix environment variable
+WAVES_PROFILE_PATH before starting xwaves+.
+
+(3) It processes whatever signal or command files may be listed on the
+command line.
+
+XWAVES+ CONTROL PANEL
+====================
+
+The values of panel items ending with a colon may be modified by left
+mousing (to activate the item) followed by text or numeric input.  Use
+<delete> to delete the previous character entered and <CTRL-u> to
+remove the entire line.  Any new or changed value must be "entered"
+(while activated) by hitting the return key.  The "PAUSE", "CONTINUE,"
+"QUIT!," "HELP!", and "xwaves+ manual" items perform the corresponding
+functions immediately when moused.  Here are brief explanations of the
+panel items.  For details, see the man page.
+
+
+ INPUTfile:  
+      The relative or absolute pathname of a signal to be
+      displayed.  A search path ".:$ESPS_BASE/lib/waves/files" 
+      is used, but can be overriden with the environment variable 
+      WAVES_INPUT_PATH.  Multiple views on a given file may be 
+      established by entering the same file name several times.  
+      Files with ESPS headers, NIST (Sphere) headers, AT&T SIGnal 
+      headers, no headers, and foreign headers are handled.
+
+ OUTPUTfile:
+      Base name of files to be created by the "save
+      segment in file" function.  NO CHECK IS MADE FOR
+      OVERWRITING EXISTING FILES! A list of all files
+      generated during a given run of xwaves+ may be browsed
+      by right mousing the OUTPUTfile item.  
+
+ OBJECT name:
+     The name by which to refer to a display ensemble.  All
+     data views in an ensemble have their time cursors and
+     markers synchronized and are treated as a unit during
+     interaction and in other respects.  If a new object
+     name is specified, subsequently generated data views
+     become part of a logically distinct ensemble of signals
+     and displays.
+
+  COMMAND(or @file):
+     A direct command to the xwaves+ program or to an object
+     displayed by xwaves+, or the pathname of a text file
+     (preceded by the "@" character) containing commands.
+     This item may be changed at any time (even in the middle 
+     of execution of a command file).  The default search path
+     ".:$ESPS_BASE/lib/waves/commands" is used for command files,
+     but can be overriden with the environment variable 
+     WAVES_COMMAND_PATH.
+
+  PAUSE
+     Mousing this item while a command file is running causes the 
+     command file to suspend execution, much as though a "pause" 
+     command had been encountered in the file.
+
+  CONTINUE
+     Mousing this item causes xwaves+ to resume reading from
+     a command file after encountering a "pause" in that file (or
+     after the PAUSE button has been moused). 
+
+  Attach:
+     The name of a function to attach to xwaves+.  The users
+     PATH applies. 
+
+  Overlay name:
+     The relative or absolute name of a SIGnal formant-bandwidth 
+     file or any ESPS FEA file.  Each element of each FEA field is 
+     overlayed with a separate track labelled with the field name 
+     and element number.  By default, the overlay takes place on 
+     the most recently read or computed spectrogram display.  
+
+  HELP
+     Mousing this item displays this file. 
+
+  QUIT
+     Mousing this item causes xwaves+ to clean up (saving files), 
+     return the license, and exit.  
+
+XWAVES+ GLOBALS 
+==============
+
+The xwaves+ global parameters can all be initialized at startup from
+the .wave_pro file in your home directory.  To change them after 
+xwaves+ starts, enter
+
+          set <global name> <global value>
+
+in the space after the "COMMAND(or @file):" prompt in the control
+panel, or enter the name of a command file containing a sequence of 
+"set" commands.  Here is a list of the current globals, with brief 
+descriptions.  For details, see the man page. 
+
+       bg_color
+            background color for window frames (6 digits; 2
+            each for red, green, blue) (see also fg_color)
+
+       colormap
+            file name of an RGB color map (see "COLORMAPS"
+            below).  The default search path for colormap
+            file names is
+            ".:$ESPS_BASE/lib/waves/colormaps".  To use a
+            different path, set the unix environment vari-
+            able WAVES_COLORMAP_PATH before starting
+            xwaves+.
+
+       command_step
+            Allows the user to single-step through command
+            files.  When command_step is non-zero, xwaves+
+            prints each command before executing it and
+            pauses after its execution (except for "sleep"
+            commands).  The next command can then be read
+            and executed by mousing CONTINUE in the xwaves+
+            control panel.  "Sleep" commands are not
+            affected by command_step.  If command_step is
+            non-zero and CONTINUE is moused when the next
+            command is "sleep", xwaves+ executes the "sleep"
+            and then goes on directly to execute the subse-
+            quent command; if that command is not a "sleep",
+            xwaves+ will pause after its execution.
+
+       ctlwin_iconized
+            If this is non-zero, the xwaves+ control window
+            is iconized on startup; otherwise the control
+            window is displayed on startup.  The default for
+            ctlwin_iconized is 0.  Note the standard xview
+            command line options -Wi (iconic) and +Wi (open)
+            can also be used to determined the initial icon-
+            ization state.  Also, the position of the icon
+            can be determined by the standard xview command
+            line option "-WP <x> <y>".
+
+       ctlwin_x
+            x coordinate of upper left of control window
+
+       ctlwin_y
+            y coordinate of upper left of control window
+
+       debug_level
+            > 0 causes debug messages to be printed.  The
+            default value is 0.
+
+       def_header
+            filename of a header for use with headerless
+            data; the default startup profile
+            ($ESPS_BASE/lib/waves/.wave_pro) sets this to
+            $ESPS_BASE/lib/waves/files/def_head.feasd, which
+            is an ESPS FEA_SD header for single-channel,
+            SHORT, sampled-data, with sampling rate 8000 Hz.
+            A default SIGnal header is in
+            $ESPS_BASE/lib/waves/files/def_head.sig.  The
+            default search path used for default header file
+            names is ".:$ESPS_BASE/lib/waves/files"; this
+            can be overriden by setting the unix environment
+            variable WAVES_INPUT_PATH before starting
+            xwaves+.  If the environment variable DEF_HEADER
+            is defined when xwaves+ starts up, its value
+            takes precedence over def_header.  Thus, if you
+            want def_header to change for different input
+            files while xwaves+ is running, then DEF_HEADER
+            should not be defined.
+
+       do_color
+            0 or 1 to enable B&W or color operation; This
+            global is set automatically on startup prior to
+            reading the startup profile, so you should set
+            it in the profile only if you don't want the
+            automatic setting.
+
+       dsp32_wait
+            Specifies the number of attempts (at one second
+            intervals) that xwaves+ will make to use an
+            installed DSP board before giving up.  The
+            default is 5.  The purpose of this global is to
+            make the temporary use of the board by other
+            programs (wplay, wrecord, dspsgram) less
+            intrusive to the xwaves+ user.
+
+       edit_ganged
+            1 to edit all signals in object, 0 for just one
+
+       fea_sd_special
+            1 to treat ESPS FEA_SD files as a special case,
+            0 to treat in standard FEA manner.  If
+            fea_sd_special == 1, the sampled data from ESPS
+            FEA_SD files are read in as SHORTs (regardless
+            of their external representation) so that the
+            DSP board can be used for spectrograms and D/A.
+            In this case, values outside of the range (-
+            32768,+32768) are clipped to the extremes of the
+            range.  If fea_sd_special == 0, no such conver-
+            sions are performed, and the external programs
+            sgram_prog and play_prog will be used for spec-
+            trograms and D/A.  Fea_sd_special is set on
+            startup to 1 or 0 depending respectively on
+            whether or not the DSP board is present.
+
+       fg_color
+            foreground color for window frames (6 digits; 2
+            each for red, green, blue) (see also bg_color)
+
+       first_x
+            x coordinate of upper left of first window
+            created
+
+       first_y
+            y coordinate of upper left of first window
+            created
+
+       funcname
+            an attached function (like "xlabel" or "xspec-
+            trum")
+
+       f0_min
+            minimum frequency to display for F0 files
+
+       f0_plot_specs
+            plotting method and optional ASCII symbol to
+            use.  Argument syntax is: N s xd yd, where N is
+            0 or 1, s is the plotting character to use (if N
+            is 1), xd and yd are the x and y displacements
+            (in pixels) required to center the character.
+            If N is 0, F0 is plotted using the usual
+            connect-the-dots paradigm.  F0_plot_specs must
+            be the last variable set on a command line.
+
+       f0_range
+            range in Hz to display for F0 files
+
+       f0_size
+            fraction of canvas for plotting F0 for F0 files
+
+       image_clip
+            This is used by the digital halftone algorithm
+            when spectrograms are displayed on a monochrome
+            monitor.  The display algorithm assumes that the
+            maximum displayed value MAX is 127.  Values
+            between MAX and (MAX -image_clip) are displayed
+            in black. The default value is 7 (i.e., in spec-
+            trogram terms, everything 7db down from the max-
+            imum possible value is shown in black).
+
+       image_range
+            This is also used by the digital halftone algo-
+            rithm when spectrograms are displayed on a mono-
+            chrome monitor.  Everything below (MAX -
+            image_clip - image_range) is shown in white.
+            The default is 40 (i.e., in spectrogram terms,
+            assuming 7 as the value of image_clip, every-
+            thing more than 47db down from the maximum pos-
+            sible value is shown in white.
+
+       init_file
+            The name of a command file to be executed on
+            startup.  Execution takes place after all the
+            other variable initializations in the profile
+            are done, regardless of where in that file the
+            definition of init_file occurs.  After the pro-
+            file has been processed, redefining the value of
+            init_file has no effect other than changing the
+            output value for the command "get attributes
+            global".  By default, xwaves+ looks for
+            init_file along the path
+            ".:$ESPS_BASE/lib/waves/commands".  The search
+            path used can be overriden by setting the unix
+            environment variable WAVES_COMMAND_PATH before
+            starting xwaves+.
+
+       inputname
+            default pathname to appear at "INPUT file"
+            prompt
+
+       invert_dither
+            If set to non-zero, this causes the display of
+            digital-halftone images to appear with black and
+            white pixels reversed ("inverse video"). Spec-
+            trograms are displayed in digital halftone form
+            on monochrome monitors or when do_color is set
+            to 0.
+
+       line_type
+            plotting algorithm to use for plotting generic
+            vector signals.  Default is 1 (line segments
+            connect sample points); 2 causes additional
+            lines to be drawn from the sample point to the
+            minimum value, resulting in a histogram-like
+            display).
+
+       left_op
+            text corresponding to desired left button opera-
+            tion for waveform menus; must be one of:
+                               up/down move
+                               move closest
+                               modify signal
+                               repeat previous
+
+       max_buff_size
+            determines a limit on the number of bytes of
+            storage that xwaves+ will attempt to allocate
+            for in-memory data storage for any one signal.
+            The value is 2000000 by default, but of course
+            can be changed via the startup profile or a set
+            command.  If this limit is set high enough for a
+            signal to be contained entirely in memory,
+            operations such as scrolling through the signal
+            will be faster than they would be otherwise,
+            since xwaves+ will not have to reread data
+            repeatedly from a disk file.  Smaller values of
+            the limit may be necessary to prevent xwaves+
+            from failing by running out of memory.
+
+       middle_op
+            text string corresponding to desired middle but-
+            ton operation for waveform menus.  must be one
+            of:
+                               play between marks
+                               up/down move
+                               blow up time
+                               blow up; function
+                               repeat previous
+              Note: left_op or middle_op must be the last
+              keywords on a command line (only a newline
+              should follow their arguments).
+
+       min_spec_height
+            minimum height in pixels of spectrogram windows;
+            if there are more spectral values per record
+            than min_spec_height, the initial window size is
+            set at one pixel per spectral value up to a
+            pre-defined maximum.
+
+       min_spec_width
+            minimum width in pixels of spectrogram windows;
+            regardless of window width, spectrograms are
+            painted as one record per pixel column.
+
+       nb_spect_params
+            file with parameters for "narrowband" spectro-
+            grams (see also wb_spect_params).  The default
+            search path used is
+            ".:$ESPS_BASE/lib/waves/files"; this can be
+            overriden by setting the unix environment vari-
+            able WAVES_INPUT_PATH before starting xwaves+.
+
+       objectname
+            default name to appear at "OBJECT name" prompt
+
+       options
+            hexadecimal magic number; this is an expedient
+            for setting various one-bit flags in xwaves+ to
+            control debug printouts, data editing and
+            display features.  The various functions are
+            enabled by the following bits in (hexadecimal)
+            options argument:
+
+
+              0x01 Sets up a special (KLUGE) mode to permit
+                   B&W plots suitable for screendump and
+                   xeroxing [clear].
+
+              0x04 When editing data (overlaid on spectro-
+                   grams, or on time-series plots) the view
+                   is always redrawn upon release of the
+                   left button following an edit operation.
+                   Otherwise the display is only redrawn by
+                   explicitly selecting the "redisplay" item
+                   in the view's frame menu [set].
+
+              0x08 Disables the saving of spectrogram frag-
+                   ments during editing operations [set]
+
+                       release of the
+              0x10 Enables immediate writeout of edited data upon
+                   left button when editing has been per-
+                   formed, provided that the file size is
+                   the same as the buffer size [set].
+                   (warning: if you clear this, or if you
+                   operate on large files, there's a bug
+                   that can prevent writing out of edited
+                   data even on exit if the input file name
+                   has an ".ed" in it).
+
+              0x40 Enables various unpleasant debug prin-
+                   touts [clear].
+
+       output_dir
+            The name of a writable directory to used for all
+            xwaves+ output files.  If output_dir is not
+            defined, output files are written in the same
+            directory as whatever file they were derived
+            from (or in the current working directory if
+            there is no source file).  Do not define this
+            global unless you want it used, and make sure
+            that the named directory exists and is writable.
+            If output_dir is defined, all output files from
+            xwaves+, xspectrum, and xlabel will go into this
+            directory (including edited files, saved file
+            segments, spectrogram output files, outputs from
+            add_espsf, etc.).  It is OK to include environ-
+            ment variables in the path.  In the case of
+            external function calls (spectrogram calls via
+            sgram_prog, D/A calls via play_prog, as well as
+            calls produced by add_espsf, etc.), output_dir
+            can be overriden by the value of remote_path or
+            remote_output_path.  To "unset" output_dir (so
+            that none is used,
+
+              set output_dir ""
+
+       outputname
+            default pathname to appear at "OUTPUTfile"
+            prompt
+
+       overlayname
+            pathname to file which can be overlaid on a
+            spectrogram (Note that simply "set"ting this
+            name or the three preceding ones does NOT impli-
+            citly execute any associated functions; e.g.,
+            setting a default inputname does not cause
+            xwaves+ to read in the file).
+
+       play_prog
+            The name of the D/A play program to use when the
+            DSP board is not present or disabled (use_dsp32
+            == 0).  The default is "play".  Play_prog can
+            have blanks in it, so it can include the specif-
+            ication of standard options.  See the discussion
+            in "RUNNING ESPS PROGRAMS FROM xwaves+". (see
+            also sgram_prog)
+
+       plot_max
+
+       plot_min
+            The globals plot_max and plot_min provide a lim-
+            ited means of overriding the automatic vertical
+            scaling of plot data.  If they are zero (the
+            default), for each trace xwaves+ finds the max
+            and min in the entire buffer, and scales the
+            plot so that the max and min appear at the top
+            and bottom of the window (or window region, if
+            there are multiple traces).  If plot_max
+            (plot_min) is non-zero, xwaves+ will scale every
+            new or refreshed plot so that the top (bottom)
+            of the window or region corresponds to the fixed
+            value.  Values outside of the range are simply
+            clipped by the top of the bottom of the display
+            window (extending into the scrollbar).  (That
+            is, the plots for multiple traces are not lim-
+            ited to a region of the window as they are in
+            the case of auto-scaling.  Yes, it can get very
+            ugly!  Use with care!  Note that the command
+            auto_plot_limits provides a convenient means for
+            resetting both values to zero.  Note that a 
+            different approach to plot scaling is to attach
+            the ESPS program \fIclip\fP to the menu via add_espsf, 
+            which makes it easy to re-display a segment at full 
+            amplitude.  
+
+       readout_bar_height
+            height in pixels of the readout bar, which con-
+            tains (under X Windows) various digital
+            readouts.  The bar is located below the title
+            bar and above the scrollbar.  Under Sunview, the
+            readout bar is not used, since the readouts are
+            inserted into the title bar.
+
+       ref_size
+            initial size of the display buffer (seconds)
+
+       ref_start
+            default starting time for file display (sec)
+
+       ref_step
+            page step size for "page ahead/back" (seconds)
+
+       remote_path
+            If this string is defined (and not overriden by
+            either remote_input_path or remote_output_path
+            as described below), it is prefixed to the
+            basename of all input and output file names in
+            external calls (play operations, spectrogram
+            operations, operations from add_espsX).  This is
+            useful for operation in an NFS directory with
+            rsh.  If remote_path is defined, it overrides
+            output_dir in the case of external calls. See
+            the discussion in "RUNNING ESPS PROGRAMS FROM
+            xwaves+".
+
+       remote_input_path
+            If if remote_input_path is defined, it is pre-
+            fixed to the basename of all input file names in
+            external calls.  It overrides any definition of
+            remote_path.
+
+       remote_output_path
+            If remote_output_path is defined, it is prefixed
+            to the basename of all output file names in
+            external calls.  It overrides definitions of
+            remote_path and output_dir
+
+       reticle_grid
+            determines whether (1) or not (0) the reticle is
+            displayed on spectrogram displays.
+
+       socket_port
+            This is the INET domain socket port number to be
+            used when xwaves+ is operating as a display
+            server (as the result of the -s option or the
+            enable_server command).  If set, socket_port
+            overrides the WAVES_PORT environment variable or
+            the value given by the -p option.
+
+       scrollbar_height
+            height of the scrollbar in new windows (pixels)
+
+       scroll_ganged
+            1 to scroll all signals in object, 0 for just
+            one (see also zoom_ganged)
+
+       sgram_prog
+            The name of the spectrogram program to use when
+            the DSP board is not present or disabled.  The
+            default is "sgram".  Sgram_prog can have blanks
+            in it, so it can include the specification of
+            standard options.  The default is nil.  See the
+            discussion in "RUNNING ESPS PROGRAMS FROM
+            xwaves+". (see also play_prog)
+
+       show_labels
+            1 to display FEA field names at the left of the
+            corresponding parameter track in waveform win-
+            dows, 0 to inhibit the display of names.
+
+       show_vals
+            1 to display numerical values at the left of
+            every parameter track in waveform windows, 0 to
+            inhibit the display of values.  The values
+            displayed are the parameter values at the cur-
+            sor, and they change dynamically as the cursor
+            is moved.  If there are a large number of FEA
+            fields being displayed, the constant update of
+            the parameter values can be time consuming.
+
+       spec_middle_op
+            middle_op text string corresponding to desired
+            middle button operation for spectrogram menus.
+            must be one of:
+                               up/down move
+                               move contour
+                               modify intensity
+                               play between marks
+                               repeat previous
+              Note: spec_left_op or spec_middle_op must be
+              the last keywords on a command line (only a
+              newline should follow their arguments).
+
+       spec_left_op
+            text corresponding to desired left button opera-
+            tion for spectrogram menus; must be one of:
+                               up/down move
+                               move closest
+                               mark formants
+                               repeat previous
+
+       spect_interp
+            1 to cause linear interpolation in rescaled
+            spectrogram displays; 0 to disable interpolation
+            so that each discreet value is shown as a uni-
+            form rectangle; if data are interpolated then
+            the range of the interpolated data computed
+            together is determined by spect_rescale_scope.
+
+       h_spect_rescale
+            1 to cause horizontal rescaling of spectrogram
+            displays; 0 to cause fixed displays with 1-pixel
+            per data record.
+
+       v_spect_rescale
+            1 to cause vertical rescaling of spectrogram
+            displays; 0 to cause fixed displays with 1-pixel
+            per data record.
+
+       spect_rescale_scope
+            determines whether horizontal rescaling of
+            interpolated data is computed for the entire
+            xwaves+ buffer (value is "buffer") or for just
+            the current window width (value is "view").
+            Rescaling for the entire buffer can be quite
+            slow if the ratio of the current view to the
+            entire buffer is large, but has the advantage
+            that horizontal scrolling is very fast once the
+            new image is computed (since it is stored).
+            Rescaling just the current view is faster (and
+            is the default), but has the disadvantage that
+            the rescaling tapes place every time the
+            viewpoint is moved (i.e., scrolling is slower).
+            In later releases, this global will also affect
+            the rescaling of non-interpolated data.
+
+       temp_path
+            determines the directory in which xwaves+ will
+            write temporary files (e.g., files generated by
+            external ESPS calls that result from xwaves+
+            commands add_espsf or add_espst).  The default
+            for temp_path is "." (i.e., current working
+            directory).
+
+       use_dsp32
+            1 to use dsp board, 0 to ignore dsp board; this
+            is normally set by xwaves+ on startup depending
+            on whether or not the board is detected.
+
+       verbose
+            Values > 0 cause various feedback messages to be
+            printed.  When verbose > 0, xwaves+ prints a
+            startup message indicating the identity of the
+            .wave_pro file that was read, and it prints
+            copies of the shell command lines used to invoke
+            external ESPS functions as well as all shell
+            commands that result from calling the xwaves+
+            command "shell".  When the shell commands have
+            completed, a completion message is printed.
+            Unrecognized xwaves+ commands are reported as
+            such (for verbose > 0).  When verbose > 1,
+            xwaves+ prints detailed feedback about command
+            parsing.  The default value of verbose is 1.
+
+       wave_height
+            height of new waveform windows
+
+       wave_width
+            width of new waveform windows
+
+       wb_spect_params
+            file with parameters for "wideband" spectrograms
+            (see also nb_spect_params).  The default search
+            path used is ".:$ESPS_BASE/lib/waves/files";
+            this can be overriden by setting the unix
+            environment variable WAVES_INPUT_PATH before
+            starting xwaves+.
+
+       write_common
+            If write_common is 1, each time the mouse is
+            used to change the position of segment markers,
+            the file name ("filename"), starting record
+            ("start"), and number of records ("nan") are
+            written to ESPS Common; if write_common is 0,
+            Common is not written.  For more information
+            about ESPS Common processing, see various ESPS
+            manual pages (e.g., getparam (1-ESPS) and
+            read_params (3-ESPS)).
+
+       x_increment
+            horizontal displacement between successive win-
+            dows
+
+       y_increment
+            vertical displacement between successive windows
+
+       xlabel_ctlwin_x
+            The X position of the xlabel (attachment) con-
+            trol window.
+
+       xlabel_ctlwin_y
+            The Y position of the xlabel (attachment) con-
+            trol window.
+
+       xspectrum_ctlwin_x
+            The X position of the xspectrum (attachment)
+            control window.
+
+       xspectrum_ctlwin_y
+            The Y position of the xspectrum (attachment)
+            control window.
+
+       xspectrum_datwin_forward
+
+            Whether (1) or not (0) the xspectrum data (plot)
+            window is brought forward every time a new plot
+            is displayed.  The default is 1.
+
+       xspectrum_datwin_height
+            The height of xspectrum data (plot) windows.
+
+       xspectrum_datwin_width
+            The height of xspectrum data (plot) windows.
+
+       xspectrum_datwin_x
+
+       xspectrum_datwin_y
+            These two globals control the initial position
+            of the xspectrum data (plot window) if there is
+            only one display object.  Positive values for
+            xspectrum_datwin_x or xspectrum_datwin_y specify
+            respectively the X and Y position of the xspec-
+            trum plot window if there is only one display
+            object at the time the plot window is displayed.
+            If there is more than one display object, the
+            xspectrum plot window is aligned with the first
+            display window of the corresponding xwaves+
+            display object, with the xspectrum display
+            directly underneath the left side of the xwaves+
+            window.  If xspectrum_data_win_x is negative,
+            the top of all xspectrum plot windows is posi-
+            tioned directly underneath the first xwaves+
+            display window of the corresponding object.  If
+            xspectrum_data_win_y is negative, the left side
+            of all xspectrum plot windows is lined up (vert-
+            ically) with the left side of the first waves+
+            display window of the corresponding object.
+            This is only effective on startup of xspectrum.
+
+       xspectrum_max_lpc_order
+            The maximum order for LPC (maximum entropy)
+            spectral estimates in xspectrum.  This item is
+            only effective on startup of xspectrum.
+
+       zoom_ratio
+            fractional change caused by "zoom" operations
+
+       zoom_ganged
+            1 to zoom all signals in object, 0 for just one
+            (see also scroll_ganged)
+
+       P8574_type
+            1 (default) means correct P8574 version part is
+            on the Ariel analog board.    If you get a mes-
+            sage like:
+
+            iicack: bus error, sta=0x8, flag=0x0, goodbye!
+
+            when trying to do analog output, then you might
+            have an Ariel board with the wrong version
+            P8574P on it.  Some have been shipped with the A
+            version, which has different addresses.  If you
+            get this message, then set this global to 0.
+
+       ARIEL_16
+            Specifies which crystal is on the Ariel VME-16 ProPort
+            Ariel analog module for the AT&T Surfboard.  Set to 0 (the 
+            default), to specify the standard 24 Mhz crystel; set to 1 
+            to specify the 16 Mhz crystal. 
+
+XWAVES+ COMMANDS
+===============
+
+Xwaves+ commands may be executed by entering them manually in the 
+control panel, or by running a command file containing a sequence of 
+commands.  The available commands are listed below.  The command name 
+is shown on the left followed by a short description enclosed in ">>" 
+and "<<" brackets.  Most commands have one or more optional 
+attribute-value pairs that follow the command name.  The available
+attributes are listed, one-per-line, right after the command.  For
+explanations, see the man page.  The following should be used as 
+reminders about the commands, not as a means for learning them.  
+
+  set          >> SET GLOBAL PARAMETERS FOR THE PROGRAM <<
+         <global name>
+
+  add_espsf    >> ADD EXTERNAL ESPS-TO-FILE CALL TO XWAVES+ MENU <<
+         name 
+         out_ext
+         display
+	 outputs
+	 menu
+         command
+
+  add_espst    >> ADD EXTERNAL ESPS-TO-TEXT CALL TO XWAVES+ MENU <<
+         name 
+	 menu
+         command
+
+  add_espsn    >> ADD EXTERNAL ESPS (NO OUTPUT) CALL TO XWAVES+ MENU <<
+         name 
+	 menu
+         command
+
+  delete_item    >> REMOVE ITEM FROM xwaves+ MENUS <<
+	 name
+	 menu
+
+  delete_all_items   >> REMOVE EVERYTHING FROM xwaves+ MENUS <<
+	 menu
+
+  add_waves  >>  ADD WAVES+ COMMAND TO WAVES+ MENU <<
+	 name
+	 menu
+	 command
+	 builtin
+	 submenu
+
+  make_panel     >> CREATE AUXILIARY CONTROL PANEL <<
+	 loc_x
+	 loc_y
+	 title
+	 icon_title
+	 columns
+	 quit_button
+	 name
+	 file
+
+
+  close_panel     >> CLOSE AUXILIARY CONTROL PANEL <<
+	 name
+
+  open_panel     >> OPEN AUXILIARY CONTROL PANEL <<
+	 name
+
+  kill_panel     >> KILL AUXILIARY CONTROL PANEL <<
+	 name
+
+  close_ctlwin    >> CLOSE (ICONIZE) MAIN CONTROL PANEL <<
+
+
+  open_ctlwin     >> OPEN MAIN CONTROL PANEL <<
+
+
+  cd           >> CHANGE WORKING DIRECTORY <<
+         path 
+
+  detach       >> DETACH ANY FUNCTION CURRENTLY ATTACHED TO xwaves+ <<
+
+  attach       >> ATTACH A FUNCTION (LIKE label (1-ESPS)) <<
+         function
+
+  send         >> SEND A MESSAGE TO THE FUNCTION ATTACHED TO xwaves+ <<
+         <any string>
+
+  auto_plot_limits     >> SET AUTOMATIC PLOT LIMITS <<
+
+  pause        >> PAUSE READING FROM COMMAND FILE FOR INTERACTION <<
+
+  kill         >> DESTROY ONE OR MORE DATA VIEWS <<
+         <none>
+         name 
+         file 
+
+  make         >> CREATE A DATA VIEW AND/OR DISPLAY ENSEMBLE <<
+         name 
+         file 
+         identifiers
+         numbers
+         <any 'set' keyword>
+              as described above for the "set" command.  A few
+              of the more commonly used variables have been
+              given aliases for convenience:
+                 duration
+                 start
+                 width
+                 height
+                 loc_x
+                 loc_y
+
+  enable_server   >> START LISTENING FOR COMMMANDS ON SOCKET  <<
+
+  disable_server   >> STOP LISTENING FOR COMMMANDS ON SOCKET  <<
+
+  quit         >> CAUSES xwaves+ TO QUIT AND RETURN TO UNIX <<
+
+  sleep        >> SLEEP WHILE BACKGROUND PROCESS OCCURS (e.g. D/A) <<
+         seconds
+
+  shell        >> SEND COMMANDS TO A UNIX SHELL <<
+     <unix command line>
+
+  branch       >> TRANSFER CONTROL TO ANOTHER WAVES COMMAND FILE <<
+         commandname
+
+  call         >> CALL A WAVES COMMAND FILE AS A SUBROUTINE <<
+         commandname
+
+  return       >> RETURN TO THE CALLING WAVES COMMAND FILE <<
+
+  ----------------------------------------------------------
+
+  The following commands and keyword/arguments may be sent to
+  display ensembles (named as in the "make" command above):
+
+  ----------------------------------------------------------
+
+  align        >> ALIGN ALL VIEWS IN A DISPLAY ENSEMBLE <<
+         file   
+
+  activate     >> ENABLE/DISABLE PLOTTING OF SELECTED VECTOR ELEMENTS <<
+         file         
+         op           
+         numbers      
+         identifiers
+ 
+  close        >> CLOSE A DATA VIEW AND TURN INTO AN ICON<<
+         file 
+
+  open         >> OPEN A DATA VIEW THAT IS CLOSED (ICONIZED) <<
+         file 
+
+  bracket      >> CHANGE VIEW STARTING TIME AND TIME SCALE <<
+         file 
+         start
+         end  
+
+  overlay      >> OVERLAY PARAMETER TRACKS ON SPECTROGRAMS <<
+         file 
+         on_file
+      
+  page         >> PAGE SIGNAL IN WINDOW<<
+         file 
+         step 
+         ref_step
+
+  play_wind    >> PLAY WINDOW <<
+         file 
+
+  save         >> SAVE SEGMENT IN OUTPUT FILE<<
+         file 
+         start
+	 end
+	 get
+
+  get          >> GET INFO. FROM xwaves+ <<
+         attributes
+         file 
+	 output
+	 aname
+
+  cursor       >> MOVE THE TIME/FREQUENCY CURSOR <<
+         time 
+         frequency
+
+  marker       >> MOVE THE RIGHT OR LEFT TIME MARKER <<
+         time 
+         do_left
+
+  colormap     >> CHANGE THE COLORMAP USED FOR SPECTROGRAMS <<
+         file 
+         threshold
+         range
+
+  spectrogram  >> MAKE A SPECTROGRAM OF DISPLAYED PCM DATA <<
+         file 
+         loc_x
+         loc_y
+         type 
+         start
+         end  
+
+  play         >> D/A CONVERT DATA IN A PCM VIEW <<
+         file 
+         start
+         end  
+
+  set      >> SAME AS 'SET' DIRECTED TO xwaves+ <<
+
+  mark         >> APPLY TIME MARKS TO ALL VIEWS IN THE ENSEMBLE <<
+         time 
+         color
+
+  unmark        >> REMOVE TIME MARKS FROM THE ENSEMBLE <<
+         all   
+         time 
+         color
+
+-----
+%W% %G% ERL/AT&T
+Copyright (c) 1988, 1989, 1989, 1990, 1991 ESI/AT&T

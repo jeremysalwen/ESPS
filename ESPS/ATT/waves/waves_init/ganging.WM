@@ -1,0 +1,54 @@
+"Scroll Ganging" MENU
+	"ON " set scroll_ganged 1 all 1
+	"OFF" set scroll_ganged 0 all 1
+"Scroll Ganging" END
+
+"Zoom Ganging" MENU
+	"ON " set zoom_ganged 1 all 1
+	"OFF" set zoom_ganged 0 all 1
+"Zoom Ganging" END
+
+"Edit Ganging" MENU
+	"ON " set edit_ganged 1 all 1
+	"OFF" set edit_ganged 0 all 1
+"Edit Ganging" END
+# @(#)ganging.WM	1.3 4/23/93
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

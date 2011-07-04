@@ -1,0 +1,11 @@
+# @(#)Pclip	1.1	7/31/91	ERL
+# default parameter file for clip
+string input_field ?= "samples": "Field in input file to clip";
+string output_field ?= "[input_name]_CLIP": "Output field (`-' means replace input field)";
+int start ?= 1: "First point from input file to process";
+int nan ?= 0: "Number of points to process (0 means continue to end of file)";
+float ctr_min ?= 1.79e308: "Lower limit for center-clipping";
+float ctr_max ?= -1.79e308: "Upper limit for center-clipping";
+float const_value ?= 0.0: "Replacement value for center-clipping";
+float clip_min ?= -1.79e308: "Lower limit for clipping";
+float clip_max ?= 1.79e308: "Upper limit for clipping";

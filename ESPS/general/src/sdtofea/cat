@@ -1,0 +1,132 @@
+
+
+
+SDTOFEA(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     sdtofea - convert sampled-data file to FEA_SD file
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     ssssddddttttooooffffeeeeaaaa [ ----xxxx _d_e_b_u_g__l_e_v_e_l ] _i_n_p_u_t._s_d _o_u_t_p_u_t._f_e_a
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     This program accepts an ESPS SD(5-ESPS)  file  _i_n_p_u_t._s_d  and
+     writes an ESPS FEA_SD(5-ESPS) file _o_u_t_p_u_t._f_e_a containing the
+     same sampled data.  If the value of  _h_d._s_d - >_n_c_h_a_n  in  the
+     type-specific  part  of the input header is 1 or greater, it
+     gives the number of channels---each output  record  consists
+     of  that  number of consecutive samples from the input file.
+     A value of either 0 or 1 indicates  a  single-channel  file.
+     The  output  data  type  is  the  same (DOUBLE, FLOAT, LONG,
+     SHORT, or BYTE) as the input data type.
+
+     If _i_n_p_u_t._s_p_e_c is "-", standard input is used for  the  input
+     file.  If _o_u_t_p_u_t._f_e_a is "-", standard output is used for the
+     output file.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following option is supported:
+
+     ----xxxx _d_e_b_u_g__l_e_v_e_l
+          Positive values of _d_e_b_u_g__l_e_v_e_l cause debugging informa-
+          tion  to  be  printed.   The  default value is 0, which
+          suppresses the messages.
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     No parameter file is read.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     The ESPS common file is not accessed.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+     The  output  header  is  a  new  FEA_SD  file  header,  with
+     appropriate  items  copied from the input header.  The value
+     of the item _s_f in the type-specific part of the input header
+     is recorded in a generic header item _r_e_c_o_r_d__f_r_e_q in the out-
+     put.  The type-specific input header items _e_q_u_i_p, _m_a_x__v_a_l_u_e,
+     _s_r_c__s_f, _s_y_n_t__m_e_t_h_o_d, _s_c_a_l_e, _d_c_r_e_m, _q__m_e_t_h_o_d, _v__e_x_c_i_t__m_e_t_h_o_d,
+     _u_v__e_x_c_i_t__m_e_t_h_o_d, _s_y_n_t__i_n_t_e_r_p, _s_y_n_t__p_w_r, _s_y_n_t__r_c, _s_y_n_t__o_r_d_e_r,
+     _s_t_a_r_t,  and _n_a_n, except those with null values, are saved as
+     like-named generic header items  in  the  output  file.   (A
+     ``null'' value is a value, such as zero, NONE, or NULL, that
+     indicates that an item is inapplicable.)  If _p_r_e_e_m_p_h_a_s_i_s  in
+     the  input  header  is  non-NULL, it gives rise to 3 generic
+     header    items    in    the    output:     _p_r_e_e_m_p_h_a_s_i_s__s_i_z,
+     _p_r_e_e_m_p_h_a_s_i_s__z_e_r_o_s,      and      _p_r_e_e_m_p_h_a_s_i_s__p_o_l_e_s      (see
+     _a_d_d__g_e_n_z_f_u_n_c(3-ESPSu)).   Similarly  _d_e__e_m_p,  if   non-NULL,
+     gives rise to _d_e__e_m_p__s_i_z_e, _d_e__e_m_p__z_e_r_o_s, and _d_e__e_m_p__p_o_l_e_s in
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+SDTOFEA(1-ESPS)                             ENTROPIC RESEARCH LAB
+
+
+
+     the output.  Generic header items in the input  file  header
+     are  copied  to  the  output  header after being renamed, if
+     necessary, to avoid name conflicts.  As usual,  the  command
+     line  is  added  as a comment, and the header of _i_n_p_u_t._s_d is
+     added as a source file to _o_u_t_p_u_t._f_e_a.
+
+FFFFUUUUTTTTUUUURRRREEEE CCCCHHHHAAAANNNNGGGGEEEESSSS
+     None planned.
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     _S_D(5-ESPS), _F_E_A(5-ESPS), _F_E_A__S_D(5-ESPS),
+     _a_d_d__g_e_n_z_f_u_n_c(3-ESPSu), _f_e_a_t_o_s_d(3-ESPSu).
+
+WWWWAAAARRRRNNNNIIIINNNNGGGGSSSS AAAANNNNDDDD DDDDIIIIAAAAGGGGNNNNOOOOSSSSTTTTIIIICCCCSSSS
+     The program exits with an error message if the command  line
+     contains  unrecognized  options  or too many or too few file
+     names.
+
+BBBBUUUUGGGGSSSS
+     None known.
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Manual page and program by Rodney Johnson.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+

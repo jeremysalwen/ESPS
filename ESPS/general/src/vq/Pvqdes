@@ -1,0 +1,13 @@
+# @(#)Pvqdes	3.1 10/8/87 ESI
+# default parameter file for vqdes
+string fea_field ?= "spec_param";
+int fea_dim ?= 10;
+float conv_ratio ?= .05;
+int vq_size ?= 32;
+int max_iter ?= 100;
+string dist_type ?= "MSE";
+string cbk_struct ?= "FULL_SEARCH";
+string cbk_type ?= "MISC";
+string init_file ?= "vqdes.chk";
+int init_rec ?= 1;
+string init_behav ?= "INIT_CLUSTER";

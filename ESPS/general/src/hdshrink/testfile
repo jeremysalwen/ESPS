@@ -1,0 +1,22 @@
+#
+# test file for hdshrink
+# @(#)testfile	3.1 9/30/87 ESI
+#
+echo Make a test file
+echo % testsd -p100 a.sd
+testsd -p100 a.sd
+echo This should result in error message about input and output being the same
+echo % hdshrink a.sd a.sd
+hdshrink a.sd a.sd
+#
+# 
+echo Make a testfile with embedded headers
+echo % copysd a.sd a.sd b.sd
+copysd a.sd a.sd b.sd
+echo % hdshrink b.sd c.sd
+hdshrink b.sd c.sd
+echo The following diff should show the two dropped headers.
+echo The data records should be the same.
+echo % pspsdiff -h b.sd c.sd
+pspsdiff -h b.sd c.sd
+rm a.sd b.sd c.sd

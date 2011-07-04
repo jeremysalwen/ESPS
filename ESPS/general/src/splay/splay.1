@@ -1,0 +1,263 @@
+.\" Copyright (c) 1992 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)splay.1	1.4 3/28/97 ERL
+.ds ]W (c) 1992 Entropic Research Laboratory, Inc.
+.TH SPLAY 1\-ESPS 9/11/91
+.SH NAME
+splay - send ESPS sampled data to the SPARCstation codec output.
+.SH SYNOPSIS
+.B splay
+[
+.BI \-x " debug-level"
+] [
+.BI \-{ps} " range"
+] [
+.BI \-g " gain"
+] 
+[
+.BI \-R " nrepeat"
+] [
+.BI \-b " shift-value"
+] [
+.B \-a
+] [
+.B \-e
+] [
+.B \-q
+]
+.I file
+[
+.I more-files
+]
+.SH DESCRIPTION
+.PP
+.I Splay
+does a mu-law encoding of the data in one or more ESPS, SIGnal, NIST
+or headerless type SHORT sampled data
+files and sends the data to the SPARCstation 1 digital-to-analog
+converter.  A subrange of data within the files may be chosen; this
+subrange may be specified in seconds or points. Furthermore, a repeat
+count, a scaling factor (gain), and a shift factor may be specified.
+.PP
+The mu-encoding algorithm expects data in the range +/- 8059.  The
+scaling, shifting, or automatic (see \fB\-a\fP) option can be used to
+change the data values before mu encoding. If after all shifting or
+scaling of the data is completed, there are still data values greater
+than 8059, these values are set to 8059 and mu encoding is carried
+out.
+.PP
+The SPARCstation supports only one sampling rate: 8000
+samples/second.  \fISplay\fP checks the sampling rate of the input
+file.  If it is different than 8000, it sends a warning to standard
+error, resamples the data using a relatively crude but fast algorithm,
+and plays the resampled data.  
+.PP
+Playback may be aborted by 
+sending the terminal's interrupt character (normally control-C)
+after playback has started. 
+.PP
+If "-" is given for a filename, then the input is taken from standard
+input and must be an ESPS FEA_SD file (ie., SIGnal or NIST/Sphere
+files cannot be used with standard input).  
+
+.SH ENVIRONMENT
+.PP
+\fBSPLAY_GAIN\fP - audio chip playback volume level: from 0 to 100.
+.br
+.PP
+\fBSPLAY_X\fP - if set to a non-zero value, use external speaker jack. If not set, use internal speaker. This is overrriden by the \fB\-e\fP option.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-x " debug"
+Only debug level 1 is defined in this version.   This causes several
+messages to be printed as internal processing proceeds.   The default
+is level 0, which causes no debug output.
+.TP
+.BI \-p " range"
+Select a subrange of points to be played, using the format
+.I start\-end
+,
+.I start:end 
+or
+.IR start:+count .
+Either the start or the end may be omitted; the beginning or the end of the
+file are used if no alternate is specified. 
+.IP
+If multiple files were specified, the same range from each file is played.
+.TP
+.BI \-r " range"
+\fB\-r\fP is a synonym for \fB\-p\fP.
+.TP
+.BI \-s " range"
+Select a subrange of speech, specified in seconds. 
+The beginning of the file is 0.  The format for a subrange
+is the same as the \fB\-p\fR option.  The arguments to the \fB-s\fR
+option can be decimal numbers (e.g. 1.5).
+.TP
+.BI \-R " count"
+Repeat count. The selected speech is played
+.I count
+times.  Playback from standard 
+input can not be repeated.
+If multiple files were specified, the files are played in order, and
+the order is repeated
+.I count
+times.
+.TP
+.BI \-g " gain"
+Speech samples are multiplied by
+.I gain
+before being mu-law encoded and played back.  Gain is a floating point value.
+.TP
+.BI \-b " shift-value"
+If this option is given and \fIshift-value\fR is positive, then each
+sample (after it is converted to integer format) is shifted to the right
+by \fIshift-value\fR bits.   \fIShift-value\fR being negative causes a
+left shift.   
+The shifting takes place before the mu-law conversion.
+This
+is preferred to using the \fB-g\fR option because
+the shift is faster than a floating multiply.   This difference is most
+noticeable on large files.
+.TP
+.B \-a
+If set and the generic header item \fImax_value\fP is set in the input
+file header, automatic scaling is done.
+This multiplies each data value by 8059/\fImax_value\fP before
+mu encoding.
+.TP
+.B \-e
+If set, the external output jack is used.
+.TP
+.B \-q
+Suppresses various warnings and information messages (quiet mode). 
+.PP
+.SH "INTERACTION WITH XWAVES"
+.I Splay
+is designed to optionally use the server mode of \fIxwaves\fP(1\-\s-1ESPS\s+1).
+This
+is especially handy when
+.I splay
+is used as an \fIxwaves\fP external play
+command (e.g. by setting the \fIxwaves\fP global play_prog).  When the latter 
+is the case,
+play commands initiated via \fIxwaves\fP' menu operations may be interrupted
+by pressing the left mouse button in the data view.  \fIXwaves\fP will send
+a signal 30 (SIGUSR1) to the play program.  Splay responds to this
+by sending back to \fIxwaves\fP a command "set da_location xx", where xx is
+the sample that was being output when play was interrupted.  This
+setting, in conjunction with \fIxwaves\fP' built-in callback procedure for
+handling child-process exits, causes the \fIxwaves\fP signal display to
+center itself on the sample where play was halted.
+.PP
+The SIGUSR1 signal to terminate
+.I splay
+may come from any source.  If
+it comes from sources other than \fIxwaves\fP, the environment variables
+WAVES_PORT and WAVES_HOST must be correctly defined (see
+\fIespsenv\fP(1-ESPS)), for correct functioning of the \fIxwaves\fP view
+positioning.  (Of course, \fIxwaves\fP must actually be displaying the
+signal in question at the time and \fIxwaves\fP must have initiated the
+play.)
+.PP
+.I Splay
+may also be interrupted with kill -2 (SIGINT) or kill -3
+(SIGQUIT).  These signals are caught gracefully and
+.I splay
+halts immediately, but no message is sent to \fIxwaves\fP.  No message is sent
+if the play operation finishes without interruption.
+.PP
+.SH ESPS PARAMETERS
+.PP
+The parameter file is not read.  
+.SH ESPS COMMON
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overridden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+If Common file processing is enabled 
+the following are read from the Common file.
+.IP
+.I "filename - string"
+.IP
+This is the name of the input file.  If no input file is 
+specified on the command line, \fIfilename\fP is taken to be the
+input file.  If an input file is specified on the command line, 
+that input file name must match \fIfilename\fP or the other 
+items (below) are not read from Common. 
+.IP
+.I "start - integer"
+.IP
+This is the starting point in the input file to begin output.  It 
+is not read if the \fB\-p\fP or \fB-s\fR option is used.  
+.sp
+.I "nan - integer"
+.IP
+This is the number of points to output from the input file.  It is not
+read if the \fB\-p\fP or \fB-s\fR option is used.  A value of zero means the last
+point in the file.
+.sp
+.PP
+Again, the values of \fIstart\fR and \fInan\fR are only used if the
+input file on the command line is the same as \fIfilename\fP in the
+common file, or if no input file was given on the command line.  If
+\fIstart\fR and/or \fInan\fR are not given in the common file, or if
+the common file can't be opened for reading, then \fIstart\fR
+defaults to the beginning of the file and \fInan\fR defaults to the
+number of points in the file.
+.PP
+The following items are written into the ESPS Common file:
+.IP
+.I "start - integer"
+.IP
+The starting point from the input file.
+.sp
+.I "nan - integer"
+.IP
+The number of points in the selected range.
+.sp
+.I "prog - string"
+.IP
+This is the name of the program (\fIsplay\fP in this case).
+.sp
+.I "filename - string"
+.IP
+The name of the last input file.  
+.PP
+These items are not written to ESPS COMMON if the input file is <stdin>.
+.SH ESPS HEADER
+.PP
+The generic header items \fImax_value\fP and \fIrecord_freq\fP are
+read, if they exist. If the \fB\-a\fP is specified and \fImax_value\fP
+exists, the value of the \fImax_value\fP header item is used
+to automatically scale the data for full scale output. The \fIrecord_freq\fP
+header item is checked to see if it equals 8000, if it doesn't,
+a warning is issued.
+.SH DIAGNOSTICS
+.PP
+.I Splay
+informs the user if the input file does not exist, it is not an ESPS sampled
+data file, the sampling frequency of the input file(s) != 8000, or if inconsistent options are used.
+.PP
+If the starting point requested is greater than the last point in the
+file, then a message is printed and the program exits with status 1.  If
+the ending point requested is greater than the last point in the file,
+it is reset to the last point, a warning is printed and processing
+continues.
+.SH SEE ALSO
+.nf
+\fIesps2mu\fP(1\-\s-1ESPS\s+1), \fItofeasd\fP(1\-\s-1ESPS\s+1)
+.fi
+.SH AUTHOR
+.PP
+Program by Derek Lin.  Manual page by David Burton, modified by Derek Lin.
+The program used a resampling funcion from Tom Veatch, Department
+of Linguistics, University of Pennsylvania.  Thanks to Tom for
+permission to use the resampling function. 

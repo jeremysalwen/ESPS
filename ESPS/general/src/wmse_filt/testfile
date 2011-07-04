@@ -1,0 +1,36 @@
+#!/bin/sh
+#@(#)testfile	3.4	6/23/98 ESI
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+echo "create parameter file: test.param"
+cat > test.param << EOD
+float samp_freq = 8000;
+int filt_length = 9;
+int nbands = 2;
+float band_edge1 = 0;
+float band_edge2 = 2000;
+float band_edge3 = 4000;
+float band1_des = 1;
+float band2_des = 0;
+float band1_wt = 1;
+float band2_wt = 1;
+EOD
+echo design low pass filter with 2000 Hz cutoff
+echo "wmse_filt -P test.param test.filt"
+wmse_filt -P test.param test.filt 2>/dev/null
+echo print result to file: filter.test
+psps -H test.filt > filter.test
+echo "diff filter.ref filter.test; there should be no differences"
+cat > filter.ref << EOD
+Record 1: num_size: 9, denom_size: 0
+
+re_num_coeff:
+  0:          0    -0.1061          0    0.31831        0.5 
+  5:    0.31831          0    -0.1061          0 
+
+
+EOD
+diff filter.test filter.ref
+echo " "
+echo To clean up, remove test.param test.filt filter.test filter.ref
+

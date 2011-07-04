@@ -1,0 +1,140 @@
+.\" Copyright (c) 1990 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)skipheader.3	1.2	02 May 1997	ERL
+.TH SKIP_HEADER 3\-ESPSu 02 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Research Laboratory, Inc.
+.if t .ds - \(em\h'-0.2m'\(em
+.if n .ds - ---
+.SH NAME
+skip_header \- skip over an ESPS file header in an input stream without reading it into memory.
+.SH SYNOPSIS
+.ft B
+int
+.br
+skip_header(strm)
+.br
+FILE *strm;
+.ft
+.SH DESCRIPTION
+If
+.I strm
+is open for reading and positioned at the beginning of an ESPS file,
+.I skip_header
+attempts to skip over the header.
+Upon success, the file is positioned after the header,
+at the beginning of the data records.
+The function returns the value 1
+.RI ( YES )
+upon success;
+upon failure, it prints an error message to
+.I stdout
+and returns 0
+.RI ( NO ).
+.PP
+The function fails when it detects certain forms of bad input
+or errors of other kinds (see ``Diagnostics'' below).
+This version of
+.I skip_header
+will also fail on files that have been created by writing to a pipe
+rather than to a regular disk file (see ``Bugs'' below).
+Finally, it will fail on files created by versions of ESPS
+that predate roughly August, 1987 (see ``Bugs'').
+More precisely,
+.I hdvers
+in the header (see
+.IR ESPS (5-ESPS))
+must be 1.47 or higher;
+this is shown in
+.IR psps (1-ESPS)
+printouts as ``header version: 1.47'' or higher.
+.SH EXAMPLE
+The code
+
+int     ch;
+
+if (skip_header(stdin) == NO)
+{
+    Fprintf(stderr, "skip_header failed.\n");
+    exit(1);
+}
+while ((ch = getchar()) != EOF) putchar(ch);
+
+acts like a rudimentary version of
+.IR bhd (1-ESPS):
+it skips the header of a file on standard input
+and copies the data records to standard output.
+.SH DIAGNOSTICS
+The following two messages indicate errors that cause the calling program
+to exit with an assertion failure.
+.PP
+``file is NULL''\*-function argument
+.I strm
+is a NULL pointer.
+.br
+``couldn't alloc preamble''\*-memory allocation failure.
+.PP
+The following messages indicate errors that cause the function
+to return the value 0 to indicate failure.
+.PP
+``couldn't read preamble''\*-read failure.
+.br
+``no preamble''\*-input not an ESPS file at all, or created by a version
+of the ESPS header library earlier than
+.I hdvers
+= "1.47".
+.br
+``no data offset in preamble''\*-probably an ESPS file written to a pipe;
+possibly just garbage input.
+.br
+``premature end of file''\*-means just what it says.
+.br
+``fseek error''\*-failure in the standard C I/O library function
+.IR fseek (3).
+.PP
+The ``preamble'' mentioned in some of the messages is explained in the
+next section, ``Bugs''.
+.SH BUGS
+To position the file to the end of the header,
+.I skip_header
+relies on an offset value in the
+.I preamble,
+which is a sort of mini-header that comes before the ESPS header proper.
+Consequently
+.I skip_header
+may fail on a well formed input in two cases.
+The first is an ESPS file written to a pipe.
+When it first writes out the preamble,
+.IR write_header (3-ESPSu)
+has not yet determined the space the header will occupy in the file
+and so cannot put the correct offset value in the preamble.
+Later, after writing the entire header,
+.I write_header
+goes back, if possible, and fills in the right value.
+It is possible to go back in an ordinary disk file, but not in a pipe.
+An ESPS file written to a pipe, therefore,
+has an invalid offset value in its preamble, and
+.I skip_header
+will fail on such a file.
+The second case is an ESPS file that lacks a preamble.
+Preambles were introduced with the version of the ESPS header library
+with
+.I hdvers
+= "1.47" (see
+.IR ESPS (5-ESPS));
+.I skip_header
+will fail on files written by earlier versions of the header library.
+(An up-to-date version of
+.IR copysps (1-ESPS)
+will read an ESPS file without a preamble
+and write a copy of it with a preamble.)
+.SH SEE ALSO
+bhd(1\-ESPS), copysps(1\-ESPS) psps(1\-ESPS),
+.br
+copy_header(3\-ESPSu), free_header(3\-ESPSu), 
+.br
+new_header(3\-ESPSu),
+read_header(3\-ESPSu), 
+.br
+write_header(3\-ESPSu),
+ESPS(5\-ESPS)
+.SH AUTHOR
+Rodney Johnson.

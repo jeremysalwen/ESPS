@@ -1,0 +1,670 @@
+#! /bin/sh
+# @(#)testfile	3.3 1/27/97 ESI
+#
+#  This shell script checks to see if distort(1-ESPS) works properly or not.
+#  The input test file is just a ESPS FEA_ANA file; other file types are NOT
+#  checked.  Only small segments of the code are checked.
+
+FEA_FILE1=/tmp/fea1dist$$
+ASC_FILE1=/tmp/ascii1$$
+FEA_FILE2=/tmp/fea2dist$$
+ASC_FILE2=/tmp/ascii2$$
+ANSWER1=/tmp/answer1$$
+ANSWER2=/tmp/answer2$$
+
+ALL_FILES="$FEA_FILE1 $FEA_FILE2 $ASC_FILE1 $ASC_FILE2 $ANSWER1 $ANSWER2"
+
+trap "echo removing temp files; /bin/rm -f $ALL_FILES; exit" 2
+
+# Read in the test FEA_ANA file here (here document):
+
+atosps - $FEA_FILE1 <<END_FEA1
+{
+01 d
+02 6a1a
+03 Fri Sep 11 23:39:43 1987 
+04 1.50
+05 ana2fea
+06 1.3
+07 5/22/87
+53 virdy
+08 1
+09 1
+0b e
+0c 2
+0d 1
+10 test.ana
+12 ana2fea test.ana file1.fana  Converted from file1.fana by spstoa.4 headers were deleted during conversion. Converted from /tmp/fana1 by spstoa.
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@nan LONG 1 57 
+@dcrem FLOAT 1 0 
+@a_method SHORT 1 6 
+@sinc_flg SHORT 1 1 
+@src_sf FLOAT 1 8000 
+@frmlen SHORT 1 180 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 10 
+@p_offset SHORT 1 13 
+@maxraw LONG 1 1 
+@start LONG 1 4811 
+@filters CODED 1 [ NO YES ] NO 
+@psynch SHORT 1 1 
+@rcq_method SHORT 1 5 
+@matsiz SHORT 1 11 
+@pre_siz SHORT 2 3 3 
+@piq_method SHORT 1 0 
+@lpq_method SHORT 1 0 
+@pre_poles FLOAT 3 1 0 0 
+@order_unvcd LONG 1 10 
+@win_type SHORT 1 0 
+@pwq_method SHORT 1 0 
+@pre_zeros FLOAT 3 1 -0.875 0 
+@rms_fullscale DOUBLE 1 8000 
+@maxpulses LONG 1 1 
+
+{
+01 9
+02 6a1a
+03 Fri Sep 19 08:32:09 1986 
+04 1.50
+05 copysd
+06 1.7
+07 6/10/86
+08 4fb1
+0b 1
+10 male6a.sp
+12 copysd -r412400:432800 male6a.sp rh9.sd Copied from male6a.sp, samples 412400 to 432800; by copysd.
+42 3
+43 0
+44 8000
+20 8000
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+{
+01 9
+02 6a1a
+03 Fri Aug 29 17:47:40 1986 
+04 1.50
+05 ils_sps
+06 0.1
+08 9c400
+0b 1
+10 male6a.nd
+42 3
+43 0
+44 8000
+20 8000
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+}
+}
+{
+01 9
+02 6a1a
+03 Fri Sep 19 08:32:09 1986 
+04 1.50
+05 copysd
+06 1.7
+07 6/10/86
+08 4fb1
+0b 1
+10 male6a.sp
+12 copysd -r412400:432800 male6a.sp rh9.sd Copied from male6a.sp, samples 412400 to 432800; by copysd.
+42 3
+43 0
+44 8000
+20 8000
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+{
+01 9
+02 6a1a
+03 Fri Aug 29 17:47:40 1986 
+04 1.50
+05 ils_sps
+06 0.1
+08 9c400
+0b 1
+10 male6a.nd
+42 3
+43 0
+44 8000
+20 8000
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+}
+}
+}
+
+#Tag 4811
+#frame_len	57 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	2.99308e+06 
+#lpc_power	115169 
+#p_pulse_len	57 
+#spec_param	0.67601 -0.76415 0.68632 -0.61594 0.13134 -0.23162 0.11275 -0.63826 
+	0.21181 -0.04283 
+END_FEA1
+
+# Read in the second FEA_ANA file here:
+
+atosps - $FEA_FILE2 <<END_FEA2
+{
+01 d
+02 6a1a
+03 Fri Sep 11 23:44:12 1987 
+04 1.50
+05 fea_edit
+06 @(#)fea_
+07 4/2/87
+53 virdy
+08 1
+09 1
+0b e
+0c 2
+0d 1
+10 file2.fana
+12 fea_edit -g file2.fana fea_edit -g file2.fana  Converted from file2.fana by spstoa.4 headers were deleted during conversion. Converted from /tmp/fana2 by spstoa.
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@nan LONG 1 57 
+@dcrem FLOAT 1 0 
+@a_method SHORT 1 6 
+@sinc_flg SHORT 1 1 
+@src_sf FLOAT 1 8000 
+@frmlen SHORT 1 180 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 10 
+@p_offset SHORT 1 13 
+@maxraw LONG 1 1 
+@start LONG 1 4811 
+@psynch SHORT 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@rcq_method SHORT 1 5 
+@pre_siz SHORT 2 3 3 
+@matsiz SHORT 1 11 
+@piq_method SHORT 1 0 
+@pre_poles FLOAT 3 1 0 0 
+@lpq_method SHORT 1 0 
+@win_type SHORT 1 0 
+@order_unvcd LONG 1 10 
+@pwq_method SHORT 1 0 
+@pre_zeros FLOAT 3 1 -0.875 0 
+@rms_fullscale DOUBLE 1 8000 
+@maxpulses LONG 1 1 
+
+{
+01 d
+02 6a1a
+03 Wed Jun 10 00:09:00 1987 
+04 1.50
+05 fea_edit
+06 @(#)fea_
+07 4/2/87
+53 virdy
+08 1
+09 1
+0b e
+0c 2
+0d 1
+10 file2.fana
+12 fea_edit -g file2.fana 
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@nan LONG 1 57 
+@dcrem FLOAT 1 0 
+@a_method SHORT 1 6 
+@sinc_flg SHORT 1 1 
+@src_sf FLOAT 1 5000 
+@frmlen SHORT 1 180 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 10 
+@p_offset SHORT 1 13 
+@maxraw LONG 1 1 
+@start LONG 1 4811 
+@filters CODED 1 [ NO YES ] NO 
+@psynch SHORT 1 1 
+@rcq_method SHORT 1 5 
+@matsiz SHORT 1 11 
+@pre_siz SHORT 2 3 3 
+@piq_method SHORT 1 0 
+@lpq_method SHORT 1 0 
+@pre_poles FLOAT 3 1 0 0 
+@order_unvcd LONG 1 10 
+@win_type SHORT 1 0 
+@pwq_method SHORT 1 0 
+@pre_zeros FLOAT 3 1 -0.875 0 
+@rms_fullscale DOUBLE 1 8000 
+@maxpulses LONG 1 1 
+
+{
+01 d
+02 6a1a
+03 Fri May 22 18:09:26 1987 
+04 1.50
+05 fea_edit
+06 @(#)fea_
+07 4/2/87
+53 virdy
+08 1
+09 1
+0b e
+0c 2
+0d 1
+10 file2.fana
+12 fea_edit file2.fana 
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@nan LONG 1 57 
+@dcrem FLOAT 1 0 
+@a_method SHORT 1 6 
+@sinc_flg SHORT 1 1 
+@src_sf FLOAT 1 8000 
+@frmlen SHORT 1 180 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 10 
+@p_offset SHORT 1 13 
+@maxraw LONG 1 1 
+@start LONG 1 4811 
+@psynch SHORT 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@rcq_method SHORT 1 5 
+@pre_siz SHORT 2 3 3 
+@matsiz SHORT 1 11 
+@piq_method SHORT 1 0 
+@pre_poles FLOAT 3 1 0 0 
+@lpq_method SHORT 1 0 
+@win_type SHORT 1 0 
+@order_unvcd LONG 1 10 
+@pwq_method SHORT 1 0 
+@pre_zeros FLOAT 3 1 -0.875 0 
+@rms_fullscale DOUBLE 1 8000 
+@maxpulses LONG 1 1 
+
+{
+01 d
+02 6a1a
+03 Fri May 22 17:35:16 1987 
+04 1.50
+05 ana2fea
+06 1.3
+07 5/22/87
+53 virdy
+09 1
+0b e
+0c 2
+0d 1
+10 test.ana
+12 ana2fea test.ana file1.fana 
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@nan LONG 1 57 
+@dcrem FLOAT 1 0 
+@a_method SHORT 1 6 
+@sinc_flg SHORT 1 1 
+@src_sf FLOAT 1 8000 
+@frmlen SHORT 1 180 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 10 
+@p_offset SHORT 1 13 
+@maxraw LONG 1 1 
+@start LONG 1 4811 
+@psynch SHORT 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@rcq_method SHORT 1 5 
+@pre_siz SHORT 2 3 3 
+@matsiz SHORT 1 11 
+@piq_method SHORT 1 0 
+@pre_poles FLOAT 3 1 0 0 
+@lpq_method SHORT 1 0 
+@win_type SHORT 1 0 
+@order_unvcd LONG 1 10 
+@pwq_method SHORT 1 0 
+@pre_zeros FLOAT 3 1 -0.875 0 
+@rms_fullscale DOUBLE 1 8000 
+@maxpulses LONG 1 1 
+
+{
+01 9
+02 6a1a
+03 Fri Sep 19 08:32:09 1986 
+04 1.50
+05 copysd
+06 1.7
+07 6/10/86
+08 4fb1
+0b 1
+10 male6a.sp
+12 copysd -r412400:432800 male6a.sp rh9.sd Copied from male6a.sp, samples 412400 to 432800; by copysd.
+42 3
+43 0
+44 8000
+20 8000
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+{
+01 9
+02 6a1a
+03 Fri Aug 29 17:47:40 1986 
+04 1.50
+05 ils_sps
+06 0.1
+08 9c400
+0b 1
+10 male6a.nd
+42 3
+43 0
+44 8000
+20 8000
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+}
+}
+{
+01 9
+02 6a1a
+03 Fri Sep 19 08:32:09 1986 
+04 1.50
+05 copysd
+06 1.7
+07 6/10/86
+08 4fb1
+0b 1
+10 male6a.sp
+12 copysd -r412400:432800 male6a.sp rh9.sd Copied from male6a.sp, samples 412400 to 432800; by copysd.
+42 3
+43 0
+44 8000
+20 8000
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+{
+01 9
+02 6a1a
+03 Fri Aug 29 17:47:40 1986 
+04 1.50
+05 ils_sps
+06 0.1
+08 9c400
+0b 1
+10 male6a.nd
+42 3
+43 0
+44 8000
+20 8000
+45 0
+46 0
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+}
+}
+}
+}
+}
+}
+
+#Tag 0
+#frame_len	57 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	2.99308e+06 
+#lpc_power	115169 
+#p_pulse_len	57 
+#spec_param	0.27601 -0.67415 0.61112 0.61594 -0.13134 -0.16233 0.27225 0.63826 
+	0.31181 -0.09283 
+END_FEA2
+
+cat >$ANSWER1 <<END_ANSWER1
+distort $FEA_FILE1 $FEA_FILE2
+
+
+      			        ELEMENT AVERAGE
+
+       		AVG            AVG           AVG          MAX         MAX
+Element		Diff           Mag           Squared      Mag         Squared
+-------		--------       -------       -------      -------     -------
+ref_coeff[0]	 4.000e-01     4.000e-01     1.600e-01    4.000e-01   1.600e-01
+ref_coeff[1]	-9.000e-02     9.000e-02     8.100e-03    9.000e-02   8.100e-03
+ref_coeff[2]	 7.520e-02     7.520e-02     5.655e-03    7.520e-02   5.655e-03
+ref_coeff[3]	-1.232e+00     1.232e+00     1.518e+00    1.232e+00   1.518e+00
+ref_coeff[4]	 2.627e-01     2.627e-01     6.900e-02    2.627e-01   6.900e-02
+ref_coeff[5]	-6.929e-02     6.929e-02     4.801e-03    6.929e-02   4.801e-03
+ref_coeff[6]	-1.595e-01     1.595e-01     2.544e-02    1.595e-01   2.544e-02
+ref_coeff[7]	-1.277e+00     1.277e+00     1.630e+00    1.277e+00   1.630e+00
+ref_coeff[8]	-1.000e-01     1.000e-01     1.000e-02    1.000e-01   1.000e-02
+ref_coeff[9]	 5.000e-02     5.000e-02     2.500e-03    5.000e-02   2.500e-03
+
+p_pulse_len[0]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+
+raw_power[0]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+
+lpc_power[0]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+
+      			       TOTAL FILE AVERAGE
+
+      	MEAN Diff		MEAN Diff Mag		MEAN Diff Squared
+      	---------		-------------		-----------------
+      	 -1.646e-01 		 2.858e-01 		 2.640e-01
+
+      			    SPECTRAL DISTORTIONS
+
+      Record		 IS 			GNIS			GOIS
+      ------		----			----			----
+      1 ( Voiced )	39.6186			39.6186			3.7042
+
+      			   TOTAL SPECTRAL DISTORTIONS
+
+      Frame 		 IS 			GNIS			GOIS
+      ------		----			----			----
+      Unvoiced		  *    			  *    			  *    
+       Voiced 		39.6186			39.6186			3.7042
+        ALL   		39.6186			39.6186			3.7042
+END_ANSWER1
+
+cat >$ANSWER2 <<END_ANSWER2
+distort $FEA_FILE1 $FEA_FILE1
+
+
+      			        ELEMENT AVERAGE
+
+       		AVG            AVG           AVG          MAX         MAX
+Element		Diff           Mag           Squared      Mag         Squared
+-------		--------       -------       -------      -------     -------
+ref_coeff[0]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+ref_coeff[1]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+ref_coeff[2]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+ref_coeff[3]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+ref_coeff[4]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+ref_coeff[5]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+ref_coeff[6]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+ref_coeff[7]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+ref_coeff[8]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+ref_coeff[9]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+
+p_pulse_len[0]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+
+raw_power[0]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+
+lpc_power[0]	0.000e+00     0.000e+00     0.000e+00    0.000e+00   0.000e+00
+
+      			       TOTAL FILE AVERAGE
+
+      	MEAN Diff		MEAN Diff Mag		MEAN Diff Squared
+      	---------		-------------		-----------------
+      	 0.000e+00 		 0.000e+00 		 0.000e+00
+
+      			    SPECTRAL DISTORTIONS
+
+      Record		 IS 			GNIS			GOIS
+      ------		----			----			----
+      1 ( Voiced )	0.0000			0.0000			0.0000
+
+      			   TOTAL SPECTRAL DISTORTIONS
+
+      Frame 		 IS 			GNIS			GOIS
+      ------		----			----			----
+      Unvoiced		  *    			  *    			  *    
+       Voiced 		0.0000			0.0000			0.0000
+        ALL   		0.0000			0.0000			0.0000
+END_ANSWER2
+
+# Now check various distortion measures with known results:
+
+distort $FEA_FILE1 $FEA_FILE2 | diff - $ANSWER1
+distort $FEA_FILE1 $FEA_FILE1 | diff - $ANSWER2
+
+/bin/rm -f $ALL_FILES

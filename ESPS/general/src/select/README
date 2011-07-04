@@ -1,0 +1,6 @@
+9/23/91 @(#)README	1.1
+I have found that lex on the IBM produces a lex file that doesn't seem
+to work properly.  It links but doesn't run.
+
+I have saved a copy of the lex output from a Sun4 under lexan.sav.c.  This
+is to be used on the IBM.   copy this file to lexan.c before running emake.

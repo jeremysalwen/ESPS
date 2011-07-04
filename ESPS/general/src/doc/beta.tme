@@ -1,0 +1,392 @@
+.lo
+.ce 2
+.b
+Installation Instructions for the Beta ESPS Binary Release
+.sp
+Document version: @(#)beta.tme	1.2 3/15/90 ESI
+.sh 1 "Introduction"
+.pp
+This document describes how to install the Entropic Signal Processing
+System (ESPS) beta binary distribution.  
+For Sun computers, \fIwaves+\fR is already 
+installed into this distribution.
+.sh 1 "Floating License System"
+.pp
+ESPS uses floating license technology, which allows you to install the
+actual files at any location on your network you choose.   A license
+manager daemon must be run on a particular host on your network, but
+ESPS and \fIwaves+\fR can be run on any machine (of the correct
+architecture type) on your network, as long as it can connect to the
+host with the daemon.   
+.pp
+After you have read in the tape contents and set up the links as
+described below, you will run a program on the host where
+the license daemon will be run; the program will 
+return a unique server code.   Call
+Entropic with this code and we will give you the license key.  
+.sh 1 "Tape Contents"
+.pp
+The enclosed tape is a Unix \fItar\fR tape with one or more tar files
+containing an ESPS binary directory tree.  The following table shows the
+directory names of the various products as they might appear on
+the tape.  The sizes given are approximate.
+.TS
+box, center, tab(;);
+c c c c
+l l l d.
+Machine;Product Code;Directory on Tape;Size (MB)
+_
+Sun 3;ESPS3b-S3;esps.sun3;26
+Sun 4 (Sparc);ESPS3b-S4;esps.sun4;19
+Sun 386i;ESPS3b-S386i;esps.sun386;16
+Masscomp;ESPS3b-M;esps.mcX;17
+;;esps.mcS;17
+Convex;ESPS3b-C;esps.cx;17
+DS3100;ESPS3b-DS3100;esps.ds3100;26
+HP300;ESPS3b-H300;esps.hp300;17
+HP800;ESPS3b-H800;esps.hp800;26
+.TE
+.pp
+For Masscomp systems, there will be two versions of the binary supplied.
+One is for systems with X windows (Masscomp X11) and the other is for
+systems with SP40 graphics.  Use the one that is correct for your
+configuration.
+.pp
+For Sun systems with \fIwaves+\fR, then there will be at least 
+one demo directory 
+on the tape;
+\fIdemo.text\fR and perhaps \fIdemo.dsp\fR and/or \fIdemo.sparc\fR.
+The demo directories are useful for checking out the installation and
+for an introduction into the capabilities of \fIwaves+\fR. 
+The first of these displays text as it runs describing the demo.  The
+other two are for systems with the AT&T VME DSP board or Sparcstation I
+machines with the built in codec and speaker.  These demos
+contain speech files and talk to describe what is
+happening in the demo.    These directories are quite large, due to the
+speech files.  They will be the last directories on the tape; so if you do not
+want to read them in (about 10 Megabytes each) then kill the \fItar\fR when you
+see it starting to bring in \fIdemo.dsp\fR or \fIdemo.sparc\fR.
+.sh 1 "Installation"
+.pp
+To install the
+product, simply read the tar tape into your system.   In order to
+operate correctly, ESPS must be rooted at \fI/usr/esps\fR.  This can be
+done by either reading the tape directly into \fI/usr\fR,  and changing
+the name of the appropriate ESPS directory to \fIesps\fR, or by reading
+the tape in somewhere else and putting a symbolic link from
+\fI/usr/esps\fR to the correct directory from the tape.   
+.sh 2 "Our Suggested Method"
+.pp
+Read the tape into a reasonable location, say \fI/home/esps\fR.  Then in
+there you will have the binary directories, the demo directories (if you
+have \fIwaves+\fR) and perhaps the DSP driver.
+For example:  (replace XXX with your tape name, e.g. rst8)
+.nf
+.ft CW
+% cd /home
+% mkdir esps
+% cd esps
+% tar xvpf /dev/XXX 
+% ln -s /home/esps/esps.sun4 /usr/esps
+% ln -s /home/esps/esps.sun4 /usr/esps3
+.ft R
+.fi
+.pp
+Please note that the link to \fI/usr/esps3\fR is only required for the beta
+release.
+.pp
+If you have an HP system, the tape as made using the HP blocking program
+\fItcio\fR. 
+Note also, that on HP systems, do not use the \fB-p\fR option on
+\fItar\fR.
+Replace the \fItar\fR command with the following:
+.nf
+.ft CW
+% tcio -i /dev/rct/XXX | tar xvf - 
+.ft R
+.fi
+.pp
+You might have to go super-user in order to put the link
+onto \fI/usr\fR.  Note the \fB-p\fR option on \fItar\fR.  This is needed
+to preserve the modes of some directories.   
+However, on some systems we have seen this cause problems (files could
+not be created).  If this happens to you, redo the \fItar\fR without the
+\fB-p\fR option, and after the tape has been read, do:
+.nf
+.ft CW
+% chmod 0777 esps.*/man/cat*
+.ft R
+.fi
+.pp
+This will set the mode of the manual page directories correctly.
+.sh 1 "Search Paths"
+.pp
+In order to execute ESPS programs users must place the ESPS binary
+directory on their default search path.   If ESPS is installed as
+described above, that path would be \fI/usr/esps/bin\fR.    
+Make sure that all potential users have this on their path.
+.pp
+Your search path is usually determined by a statement in your \fI.cshrc\fR 
+or \fI.profile\fR.   But your case might be different,
+depending on the shell that you use.   In any event, you must ensure
+that all ESPS and \fIwaves+\fR users have the ESPS \fIbin\fR directory
+on their path.
+.pp
+You can determine that the ESPS installation is correct up to this
+point, by running \fIeman\fR to view an ESPS manual page.  
+After you have changed your path try:
+.nf
+.ft CW
+% eman fft
+.ft R
+.fi
+.pp
+This should display the manual page for the fft program.  If this works,
+then all your paths are set up correctly  and you are ready to get a
+key.  If \fIeman\fR was not found, then check your path.
+If \fIeman\fR was found, but it failed to find the
+\fIfft\fR manual page, then check that the link to \fI/usr/esps\fR is
+correct.
+.sh 1 "Getting Your Key"
+.pp
+It would be best if you can call us while you are at a terminal.  That
+way we can give you the keys, wait while you enter them and be sure that
+everything is working correctly.   If that is not possible then you will
+have to carefully write down the server code that \fIelmadmin\fR
+produces.
+.pp
+If you can call when sitting at a terminal, 
+then do so when you are ready.   Call
+Entropic at  202 547-1420, and tell the person that answers that you are
+calling for a "license key".   If possible, you will be given to
+someone who can help you.  If that person is not available, then your
+number will be taken and we will call you back.
+.pp
+If you cannot call from a terminal, run the following command, write
+down the server code and then kill the command when it asks for the key.
+When you copy the server code, watch out for the letter l vs the digit
+1, etc.  Run the following command:
+.nf
+.ft CW
+% elmadmin -c
+Your server code is:   XXX   <- record this code
+Please enter your key: <control>C    <- kill the program now
+.ft R
+.fi
+.pp
+Call Entropic at the above number and request a "license key".  
+We will need that server code and your architecture type (Sun3, Sun4,
+etc), to give you a key.
+.pp
+When you call for the key, you will be assigned a contact at Entropic
+who will be available to answer your questions during your beta
+period.    If you wish, you can discuss your application with your
+contact, who might be able to suggest 
+ways that ESPS and \fIwaves+\fR can be used
+to solve your problems.
+.pp
+After you get your keys (two if you want to run \fIwaves+\fR and ESPS),
+you will use \fIelmadmin\fR to store them.  The command is:
+.nf
+.ft CW
+% elmadmin -c
+Your server code is:   XXX   <- this should be the same as earlier
+Please enter your key: XXX   <- enter the first key given to you
+\fI<some information will be printed about the key>
+.ft CW
+% elmadmin -c
+Your server code is:   XXX   <- this should be the same as earlier
+Please enter your key: XXX   <- enter the second key given to you
+\fI<some information will be printed about the key>
+.ft R
+.fi
+.sh 1 "Starting the License Manager"
+.pp
+Before you can run \fIwaves+\fR or any of the ESPS programs,
+you must start the license manager daemon and allow it time to
+initialize.    To start the daemon, simply type the command:
+.nf
+.ft CW
+% elmd
+.ft R
+.fi
+.pp
+This will spawn a background process and exit.   If you prefer, you can
+put this command in \fI/etc/rc.local\fR, so that it will be executed
+each time you machine boots.  (If you do this, you will have to give the
+full path as \fI/usr/esps/bin/elmd\fR).  
+For the beta license, it might be just as
+well to type the command once and leave it running.   You only need to
+start the daemon again if the machine it is running on is rebooted.
+.pp
+After you start the license manager daemon, you have to wait about four
+minutes before it will respond to a request for a license.
+.pp
+The license manager daemon makes entries in the file
+\fI/usr/esps/lib/elm.log\fR.    If you have trouble getting our programs
+to work correctly, we may ask you to look in this file and tell us what
+is in there.   This file will grow by a line each time a license is
+checked in and out.    If you want, you can zero the file with the
+command:
+.nf
+.ft CW
+% elmadmin -z
+.ft R
+.fi
+.pp
+This command must be run as super-user.
+As with \fIecheckout\fR and \fIwaves+\fR, the environment variable
+\fBELM_HOST\fR must be set to name of the host running the daemon,
+unless it is running on the same host that you run \fIelmadmin\fR on.
+.pp
+Note that truncating the log file by other means would be ineffectual, since
+\fIelmd\fR keeps the log file open at all times.  The next \fIelmd\fR
+log file write would simply use the old file pointer, filling the to the
+original length.   The \fB-z\fR option must be used to truncate the
+file.
+.pp
+A suggested method to clean up the log file every evening is to run the
+following by your \fIcrontab\fR system.   You will need your system
+administrator to set this up.
+.nf
+.ft CW
+cp elm.log elm.log.old
+elmadmin -z
+.ft R
+.fi
+.pp
+.sh 1 "Checking Out a License"
+.pp
+Before running any ESPS programs you must checkout an ESPS license.
+This allows any user on the machine with a checked out license to run
+ESPS programs.  
+.pp
+If you are running ESPS or \fIwaves+\fR on a different CPU than the
+license manager daemon is running on, you have to set the environment
+variable \fBELM_HOST\fR to identify the name of the host on which the 
+license manager
+daemon is running.  
+For example, if the license manager daemon is running on a CPU
+with hostname \fIfido\fR, you would do:
+.nf
+.ft CW
+% setenv ELM_HOST fido
+.ft R
+.fi
+.pp
+This environment variable tells ESPS programs where the daemon is
+running.   If you are running the ESPS program or \fIwaves+\fR on the
+same host as the daemon, then it is not necessary to set
+\fBELM_HOST\fR.  To checkout a license you do:
+.nf
+.ft CW
+% echeckout
+.ft R
+.fi
+.pp
+\fIEcheckout\fR will checkout a license, if possible, and then wait in
+the background.   It will tell you if it has succeeded and return a
+process ID number.   To free the license, you must kill this process.
+For example:
+.nf
+.ft CW
+% echeckout
+echeckout[20337]: ESPS License checked out OK.
+echeckout[20337]: Do "kill 20337" to free license.
+.ft R
+.fi
+.pp
+For purposes of the beta license, you can probably just run
+\fIecheckout\fR once and leave it running; unless you want to be able to
+free the license and pick it up on another CPU.    You will have to
+checkout the license again if the machine reboots (but first you must
+restart the license manager daemon and wait four minutes).
+To run \fIwaves+\fR, you do not have to checkout a license first.
+.pp
+To free the ESPS license so that it can be used on another CPU on the
+network you kill the process spawned by \fIecheckout\fR.  For example,
+given the process number in the above example, you would do:
+.ft CW
+.nf
+% kill 20337
+.ft R
+.fi
+.pp
+This method of freeing an ESPS license by using \fIkill\fR is only used
+with the beta license package.   The standard system includes a
+command to check in an ESPS license when it is no longer being used.
+.pp
+To run \fIwaves+\fR, you do not have to checkout a license first since
+\fIwaves+\fR does so when it starts up.   However, in order for other
+programs called by \fIwaves+\fR to work correctly, you have to have an
+ESPS license checked out while you run waves (for example to do a
+spectrogram).    Please note that this is a restriction of the beta
+license only.   In the standard product, you do not need to have an ESPS
+license checked out to run \fIwaves+\fR related programs such as
+\fIsgram\fR.
+.pp
+You can check on the status of your licenses by using the command:
+.ft CW
+.nf
+% elmadmin -l
+.ft R
+.fi
+.sh 1 "Getting Ready to use Waves+"
+.pp
+Everyone that is going to use \fIwaves+\fR
+should copy the following three files from \fI/usr/esps/lib/waves\fR 
+to their home directory: \fI.wave_pro\fR, 
+\fInb_params\fR, and \fIwb_params\fR.
+These are parameter files for \fIwaves+\fR.   See the \fIwaves+\fR
+manual page for details.
+.pp
+Users should also edit their path assignment in their \fI.cshrc\fR (or
+whatever they use) to include \fI/usr/esps/bin\fR on their search path.
+.pp
+Copy the files in \fI/usr/esps/demo\fR to your working directory before
+using them with \fIwaves+\fR.  
+This version of \fIwaves+\fR will try to write
+some temporary files to the dirctory that the input file comes from
+(\fI/usr/esps/demo\fR in this case) and you might not have write
+permission on this directory.   We consider this a bug, which will be
+fixed in the next version.
+.pp
+Also note that all of the manual pages are stored online and can be
+accessed by the command \fIeman\fR.
+.sh 1 "ESPS and Waves+ Demo Scripts"
+.pp
+The best way to check out the installation of
+the product is to change into the directory \fI/usr/esps/demo\fR and run
+the demo scripts in there.
+Before running any of the demo scripts, you must run the script
+\fIcreatefiles\fR that creates some ESPS data files used by the other
+demos.
+There is also a  README file in that directory.  We strongly
+suggest that you take the time to try these examples.  Not only do they
+provide an introduction to some ESPS commands, but they serve as a check
+on the installation.   Note that you must have write permission on this
+directory to run the demos.  The assumption is that these will be run by
+the ESPS installer/maintainer.  This is one reason why we prefer not to install
+ESPS as root, but as a regular user.
+.pp
+If you do not have write permission on the \fIdemo\fR directory, simply
+copy the contents to a directory that you can write into.
+.pp
+We also suggest that you use \fIeman -k\fR (followed by a keyword to
+search for) to familiarize yourself with the system.  See the \fIeman\fR
+manual page for details.  
+.pp
+Enclosed with this package is another document that describes the
+\fIwaves+\fR demo scripts.
+.sh 1 "In Case of Difficulty"
+.pp
+If you have questions about the installation process, or have
+difficultly running the script please call Entropic for help.
+.sp
+.TS
+box,center,tab(;);
+l | l.
+Entropic Speech, Inc.;Voice: 202 547-1420
+600 Pa. Ave. SE, Suite 202;FAX: 202 546-6648
+Washington, DC. 20003 USA;Email: esps@wrl.epi.com (uunet!epiwrl!esps)
+.TE

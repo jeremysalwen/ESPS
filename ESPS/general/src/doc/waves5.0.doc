@@ -1,0 +1,726 @@
+
+
+
+
+waves+ Version 5.0 Release Notes                      page 1
+
+
+              waves+ Version 5.0 Release Notes
+
+               Document Version: 1.9 9/10/93
+
+1.  INTRODUCTION
+
+This document described changes to xwaves since version  3.1
+(the version prior to 5.0).    For complete details refer to
+the xwaves manual.
+
+Extensive changes were made in the  previous  release  (ESPS
+Version  4.2;  waves+ Version 3.1).  These changes were pri-
+marily aimed at correcting errors and  numerous  operational
+deficiencies  in  the  software.  Please refer to either the
+printed copy of these earlier release notes, or see the  on-
+line     version     in     $ESPS_BASE/doc/rel4.2.doc    and
+$ESPS_BASE/doc/wrel3.1.doc.
+
+Many of the new features described  below  are  made  easily
+accessible  through  the  new  xwaves startup environment we
+provide.  To be certain  that  you  obtain  this  handy  new
+environment,  check that the global init_file is not defined
+in your .wave_pro startup profile file.  If you do not  have
+a  personal profile (in $HOME/.wave_pro), you will automati-
+cally get the new environment.
+
+2.  VERSION 5.0 RELEASE HIGHLIGHTS
+
+Major highlights include:
+
+   + High resolution PostScript and PCL output of all xwaves
+     graphics
+
+   + A  fully  general  operator-definition  mechanism   for
+     designing new xwaves commands
+
+   + Symbolic access by remote processes to xwaves  internal
+     state
+
+   + Improved user interface, including  customizable  tool-
+     bars
+
+   + Full xwaves access and synchronization via send_xwaves
+
+   + Unrestricted  waveform-on-waveform   and   waveform-on-
+     spectrogram overlays
+
+   + View-specific and view-element-specific display custom-
+     ization
+
+   + Flexible view- and element-specific control of vertical
+     display scale
+
+
+
+
+
+
+
+
+
+
+
+waves+ Version 5.0 Release Notes                      page 2
+
+
+   + All xwaves commands now mappable to the keyboard keys
+
+   + Reticles available for all view types
+
+   + Complete facilities for  saving  and  restoring  xwaves
+     customizations
+
+   + A new script, test_waves provides a test and xwaves use
+     examples.
+
+   + Multiple, simultaneous attachments
+
+   + Long-lines editing interface for xlabel
+
+   + Cepstral smoothed spectra in xspectrum
+
+   + Frequency and amplitude zooming in xspectrum
+
+   + Unlimited input array size for xspectrum
+
+3.  SUMMARY OF MAJOR CHANGES
+
+Version 5.0 of xwaves is compatible  with  scripts  and  use
+patterns  established  for earlier versions.  Note, however,
+that many new things are possible, and many of the old  res-
+trictions  have been removed.  Even experienced users should
+be sure to read the updated xwaves and  attachments  manuals
+before designing new control scripts or user interfaces.  In
+particular, study the new add_op  command  and  the  Symbols
+section of the xwaves manual.
+
+In most instances it is now  preferable  to  control  xwaves
+directly  from  the  shell  (or shell scripts) by way of the
+send_xwaves command-dispatching program.  In  previous  ver-
+sions,  the utility of send_xwaves was limited by failure of
+processes using it to synchronize properly with xwaves.  The
+program  send_xwaves can now optionally block for ALL xwaves
+commands, including sleep  and  pause.   This  permits  much
+greater flexibility in the design of shell scripts that con-
+trol xwaves running as a display  server.   Send_xwaves  can
+send  commands to xwaves running on any host in the internet
+namespace.  Send_xwaves now returns the result of xwaves get
+commands  to  it's  standard output.  It also returns a non-
+zero exit status on failure to  communicate  correctly  with
+xwaves.
+
+We now provide an xwaves test script.  In  addition  to  its
+use  in  verifying  the  soundness  of your installation, it
+includes numerous examples of new and old  xwaves  features.
+As  you  read the new manual, refer to the UNIX shell script
+in $ESPS_BASE/bin/test_waves.
+
+
+
+
+
+
+
+
+
+
+
+
+waves+ Version 5.0 Release Notes                      page 3
+
+
+3.1.  Fundamentally New Capabilities
+
+3.1.1.  Graphics Output
+
+Xwaves and its attachments now have the capability to export
+their graphics (all plots) in either embedded PostScript for
+PCL (HP LaserJet code).  This can be used  to  print  xwaves
+displays directly on the printer, or to generate graphics to
+be imported into a document with  a  suitable  text  editing
+program.  A new menu item has been added to the default menu
+on each xwaves data view:  print  graphic.   Selecting  this
+item  causes  the view to be redrawn at full printer resolu-
+tion using PostScript or PCL with the  results  going  to  a
+file or to the printer of your choice.
+
+3.1.2.  Multiple attachments
+
+Xwaves may now have any number of attachments active  simul-
+taneously,   including  multiple  invocations  of  the  same
+attachment.  The attachment  and  send_xwaves  facility  has
+been completely reimplemented using the standard unix remote
+procedure calls (RPC).  Attachments can either be started by
+xwaves, or run as programs in separate shells.
+
+3.1.3.  Overlays
+
+The signal-overlay  facility  has  been  fully  generalized.
+Signals  can  be overlaid on one another regardless of their
+respective data types  or  sampling  frequencies.   Multiple
+overlays  in distinctive colors are supported.  Overlays may
+be selectively removed from the view using the kill command.
+
+3.1.4.  View Customization
+
+Many operations formerly available only as global  operators
+for  all  xwaves  displays  can  now be performed on a view-
+specific and  view-element-specific  basis.   This  includes
+setting or changing any of the view display attributes.  The
+displays  are  now  updated  automatically  to  reflect  any
+changed  made  in their attributes.  Previously, an explicit
+refresh operation had to be performed.
+
+3.1.5.  Ordinate Markers
+
+Ordinate markers have been added to xwaves.  These  horizon-
+tal  dashed lines may be used to delimit y-coordinate infor-
+mation, select a channel index, or establish a  data  value,
+depending  on  the context.  The markers appear in all views
+and are moved synchronously when their meaning across  views
+is  coherent.  The same basic paradigms are used to move the
+horizontal and vertical markers with the mouse pointer.   To
+select horizontal cursor movement, depress the shift key.
+
+
+
+
+
+
+
+
+
+
+
+waves+ Version 5.0 Release Notes                      page 4
+
+
+3.1.6.  Keyboard Mapping
+
+We have implemented the mapping of xwaves operators to  key-
+board  keys.   Any  built-in menu operator or operator added
+with add_op may be bound to a  key.   There  are  three  new
+xwaves   commands   for   managing  this  mapping:  key_map,
+key_unmap and  save_keymaps.   See  the  xwaves  manual  for
+details.
+
+3.1.7.  Long-lines Editing
+
+We have added a text widget to permit long-lines editing  in
+xlabel.   The  editing  mode  is entered by left mousing the
+item to be changed  with  the  CTRL  key  depressed,  or  by
+selecting  the  *EDIT*  item  in the xlabel menu. This quick
+editor uses  exactly  the  same  application  rules  as  the
+REPLACE  mode.  (It is sensitive to the active items and the
+starred active item; it applies  to  the  label  closest  in
+time, etc.)
+
+3.1.8.  Cepstral Smoothing
+
+Cepstral smoothing has been added to the FFT-based  spectrum
+estimation  methods.   The  original code modifications pro-
+vided by the MIT-LCS group have  been  expanded  to  include
+control  over  the  lifter transition region.  Thus, one can
+choose highpass or lowpass; the nominal cutoff qufrency; and
+the qufrency transition duration.
+
+3.1.9.  Zooming in Xspectrum
+
+Zooming to markers  in  amplitude  and  frequency  has  been
+implemented  in xspectrum.  By default, if a non-null region
+is delimited with the horizontal  and/or  vertical  markers,
+zooming  takes place immediately to that region.  The right-
+button menu permits enabling/disabling this feature. Markers
+are  moved  using  the  up/down  move paradigm with the left
+mouse button.  Horizontal markers are moved with  the  shift
+key  depressed.  Since the left mouse button in xspectrum is
+now used to move  the  frequency/amplitude  cursors,  it  no
+longer automatically saves the current spectrum as an under-
+lay reference.  This can,  however,  still  be  accomplished
+using the right mouse-button menu.
+
+
+3.2.  Extensibility Features
+
+3.2.1.  Custom Operators
+
+A generalized mechanism for adding xwaves commands that pro-
+vides  external  processes  with  complete  access to xwaves
+internal state was added.  The command  that  accesses  this
+capability  is  called add_op.  It subsumes the functions of
+
+
+
+
+
+
+
+
+
+
+waves+ Version 5.0 Release Notes                      page 5
+
+
+add_espsf, add_espst, add_waves, and  add_espsn.   All  unix
+processes are now accessible via add_op, regardless of their
+command-line syntax or semantics.  All internal xwaves func-
+tions  may  also be used in add_op commands, including other
+add_op commands.  All operators  defined  using  add_op  may
+access  xwaves'  internal  state  and  the state of any view
+using symbolic reference.  Output  file  specifications  can
+appear  anywhere on the command line and can include, in one
+command, data destined for  text,  waveform  or  spectrogram
+displays, as well as viewless output files.  Add_esps{f,n,t}
+are now considered obsolescent. However, they are still emu-
+lated using the new add_op command..
+
+3.2.2.  Access to Time Marks
+
+Xwaves has always had commands to apply permanent  marks  to
+the  displays (the mark command).  These marks were formerly
+used primarily by the attachments, like xlabel  and  xmarks,
+to  indicate segment boundaries.  We now provide generalized
+access to these through symbols.  This permits the  develop-
+ment  of  very useful segment operators with the add_op com-
+mand.  It provides a means for very rapid random access  for
+comparison of segments in a given signal.
+
+3.2.3.  User-defined Symbols
+
+Xwaves now supports the  definition  of  arbitrary  symbols,
+much  like  the  UNIX  environment variable facility.  These
+definitions are accessed through exactly the same mechanisms
+used  for  managing  built-in globals (profile file; set and
+get commands; symbolic reference in add_op commands).
+
+3.2.4.  Arbitrary Button Bindings
+
+The Button Modes menu selection has been extended to include
+all active menu items.  Buttons may now be bound to any menu
+item and any operation defined with the add_op command on  a
+view-specific  basis.   Thus,  each data view in an ensemble
+can have its own button semantics individually defined.
+
+3.2.5.  External Access to Menus
+
+All xwaves  menu-driven  operations  and  other  operations,
+including  those created with add_op, may now be accessed by
+xwaves-external processes using the new command, op.  Op may
+be sent to any display ensemble.  It can be used to simulate
+any mouse or keyboard operation in any view.
+
+3.2.6.  Symbolic Access
+
+The xwaves get command has been expanded  to  access  essen-
+tially  all  of  xwaves'  internal state.  This includes the
+so-called global items, as well as attributes of all current
+
+
+
+
+
+
+
+
+
+
+waves+ Version 5.0 Release Notes                      page 6
+
+
+views,  and  lists of such things as current operators, com-
+mands and  files.   These  are  the  items  also  accessible
+through symbolic references in add_op commands.
+
+3.2.7.  Custom Blow-up Function
+
+We added blowup_op as a global settable to permit specifica-
+tion  of the operation to be performed when a button defined
+as blow_up;function is released.  This can be any  operation
+added  with  add_op,  or  any  built-in  menu operation.  By
+default, xspectrum, xlabel and xmarks all add themselves  as
+the blowup_op as part of their initialization to emulate the
+behavior of older xwaves versions.
+
+3.2.8.  Commands to Attachments
+
+Since multiple attachments are now possible, the xwaves send
+command has been augmented to permit messages to be directed
+to a particular  attachment.   If  only  one  attachment  is
+active,  the  older  form  of  the  send  command behaves as
+before, so that existing xwaves  scripts  will  continue  to
+work correctly.
+
+3.2.9.  Remote Xlabel Access
+
+There is now a label qualifier to the mark command  in  xla-
+bel.   This  permits  full  specification of the label to be
+applied via a send command.  Now, any external  process  can
+apply  labels  of  any content to the xlabel data view (e.g.
+via the send_xwaves program or library calls).
+
+3.2.10.  New Source Example
+
+A new example attachment has been provided in  source  form.
+xample.c is an RPC-based attachment for xwaves that does not
+use xview.  This can serve as a skeleton for developing your
+own,   custom  attachments.   This  file  can  be  found  in
+$ESPS_BASE/lib.
+
+3.2.11.  Custom Spectrum Estimation
+
+The new features in xwaves and xspectrum permit  implementa-
+tion  of  specialized  spectrum  estimation  techniques  and
+display of the results in the xspectrum display window.   An
+example script demonstrating this feature is provided in the
+xspectrum manual.
+
+
+3.3.  Ease of Use Features
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+waves+ Version 5.0 Release Notes                      page 7
+
+
+3.3.1.  Graphics Export Control
+
+There is a new xwaves command:  print_setup.   This  command
+invokes a setup window that allows the user to select output
+to a file or printer; name an output file; specify a command
+for  the  local  or  networked printer; choose PostScript or
+PCL; set the resolution of output device;  specify  a  scale
+factor; and choose PostScript Level 1 or 2.  This command is
+most easily invoked by the button  print  setup  on  in  the
+xwaves  startup  environment panel.  All of these parameters
+may also be set remotely by send_xwaves or an xwaves script.
+
+3.3.2.  Customizing Xwaves
+
+We provide a graphical interface to the new add_op  command-
+definition  facility  through the add_op_panel command.  The
+xwaves default startup environment that we now provide gives
+you  quick  access  to the add_op_panel with a single button
+press.  Add_op_panel not only helps you build custom  opera-
+tors,  it  also  provides  quick  reference access to xwaves
+variables, commands and keywords.
+
+3.3.3.  Help with Symbols
+
+We have implemented informational access to  argument  lists
+for  xwaves commands.  If any command is issued with a ques-
+tion mark (?) as the first non-white character in the  argu-
+ment  list,  xwaves returns the names of all acceptable key-
+words for the given command.  Thus the shell command
+
+        send_xwaves set ?
+
+will return the names of all xwaves globals.
+
+3.3.4.  Output File Management
+
+All displayable files created with add_op  operators,  spec-
+trogram  commands,  etc. now appear in the new files browser
+list accessible by right mousing the  OUTPUT  file  control-
+panel  item.   This  list  may  also be accessed via the new
+xwaves symbol new_files.  Thus, to remove all files  created
+during a given run of xwaves, you could issue the shell com-
+mand:
+
+        rm -f `send_xwaves get aname new_files`
+
+Of course, this would remove ALL new files, including  those
+saved  with save segment in file!  A safer strategy might be
+to just save the list for perusal later:
+
+        send_xwaves get aname new_files > misc_files_list
+
+
+
+
+
+
+
+
+
+
+
+
+waves+ Version 5.0 Release Notes                      page 8
+
+
+3.3.5.  Initializing Attachments
+
+The attachments can now be fully customized through  entries
+in your startup profile file (.wave_pro) or interactively by
+sending set commands to the attachments.  See the attachment
+manuals for listings of the relevant symbol names.
+
+3.3.6.  Saving Attachment Customizations
+
+All attachment-specific globals may now be  saved  with  the
+new  save_globals command that has been added to the attach-
+ments.  This saves the values in a form suitable for  inclu-
+sion  in  your  xwaves  startup  profile (.wave_pro), so the
+current configurations may be easily saved for  future  use.
+This is especially handy for xspectrum, since it has so many
+free parameters.
+
+3.3.7.  Speedups for Xlabel
+
+There are now keyboard qualifiers for the MOVE  and  REPLACE
+modes  of  xlabel.   If  SHIFT is depressed, xlabel switches
+into the MOVE mode (for middle button  operations)  as  long
+SHIFT  is  held.  If SHIFT is depressed, the REPLACE mode is
+in effect for label menu selections (but not for direct key-
+board  entry).   The  previous  mode  is reentered after the
+SHIFT key is released.
+
+3.3.8.  Et Cetera
+
+More state information is  shown  in  the  data-view  frame,
+including mouse button bindings and full path names.
+
+For brevity, and simplicity, the keyword op  has  been  made
+synonymous  with  command  in  all  xwaves commands that use
+these keywords.
+
+We have resolved all differences in  xwaves'  processing  of
+multi-word  text  arguments  (e.g.  for  op or command argu-
+ments).  These may now be either quoted strings or not.   If
+a  multi-word  argument  is the last item on a line, it need
+not be quoted, but can be quoted  if  it  is  to  appear  in
+another  position.  Formerly, items such as the middle_op or
+left_op button specification were required to  be  the  last
+item on a line.
+
+We added the append_extensions  boolean  global  to  xwaves.
+With  a  zero  value,  this  can switch off the appending of
+extensions in the save segment in  file  function  (and  the
+save  command).  This allows you to know exactly what output
+filename will be used so that references can be made  later,
+for example, in a shell script.
+
+
+
+
+
+
+
+
+
+
+
+
+waves+ Version 5.0 Release Notes                      page 9
+
+
+3.4.  General Enhancements
+
+3.4.1.  Saving Xwaves Configurations
+
+All operator definitions and menu items  created  using  the
+add_op  command  may now be saved for later use with the new
+save_add_ops and save_menus commands.  Thus, it is  possible
+to  incrementally tailor xwaves to your exact needs.  Opera-
+tors added with add_esps{f,t,n} are automatically  converted
+to   equivalent   add_op   commands   when  saved  with  the
+save_add_ops command.  The operator and menu definitions are
+saved in the form of xwaves commands that may be executed to
+reconstruct them.
+
+3.4.2.  Reticles
+
+Reticles with time scale and  ordinal  numbering  have  been
+added  to all waveform views.  These reticles may be enabled
+or disabled on a per-vector-element (per-channel)  basis  in
+vector-signal (multi-channel) views.
+
+3.4.3.  Improved Custom Control Panels
+
+In xwaves 2.1 we introduced the make_panel command that pro-
+vides  a simple means for developing your own custom control
+interfaces.  In version 5.0 we have added  new  input  modes
+and   better  state  feedback  to  the  panels  produced  by
+make_panel.  We have also added the save_panels  command  to
+save  the  current xwaves button panel configuration.  Thus,
+you can develop new panels interactively,  and  when  satis-
+fied, save the exact configuration for later use.
+
+3.4.4.  New Line Types
+
+Two new line types have been added to waveform plots; Type 3
+is the DSP style, where a single vertical line is drawn from
+the data value to the zero baseline  for  each  data  point.
+Type 4 is the same, except hat the data points are also con-
+nected with straight-line segments.  The line type  used  is
+established  by the line_type global or view-specific attri-
+bute.
+
+3.4.5.  Access to Attachments
+
+The attachments may now be started by a button press on  the
+main  xwaves  Control  Panel.   The  attachment options that
+appear are determined by the new symbol attachments that may
+be defined in your .wave_pro profile file.  For example, the
+entry
+
+        attachments xspectrum xlabel xchart
+
+would provide three options for selection.  Note that  these
+
+
+
+
+
+
+
+
+
+
+waves+ Version 5.0 Release Notes                     page 10
+
+
+are no longer mutually-exclusive. Several attachments can be
+active at once.  If attachments is set to the  distinguished
+value none, no attachment options will appear in the panel.
+
+3.4.6.  Spectra of Long Sequences
+
+Xspectrum can now perform spectrum estimation  on  sequences
+of any length.  There is a soft limit on the size of the FFT
+set by the  variable  xspectrum_max_fft_size  of  2  million
+points.   This  can  be  changed by an entry in your startup
+profile file (.wave_pro).
+
+3.4.7.  Output from Xspectrum
+
+Spectra created by xspectrum may now be saved  in  an  ASCII
+file.   The  xspectrum control parameters, the source signal
+file name,  and  the  spectrum,  as  frequency-log-magnitude
+tuples, are saved to a named
+
+3.4.8.  Et Cetera
+
+The xwaves options keyword is now considered obsolete.   The
+functional  bits  of this global have been expanded into the
+more easily understood  global  booleans:  dont_save_sgrams,
+redraw_on_release, rewrite_after_edit and overlay_as_number.
+These attributes are  now  settable  on  a  per-view  basis.
+Options is still recognized, but its use is discouraged.  It
+will be removed in later xwaves versions.
+
+The xwaves save and spectrogram commands now permit specifi-
+cation  of  the output file name.  This makes it much easier
+for external processes to keep track of the names  of  files
+created by these operations.
+
+Cross-view frequency  cursor  tracking  has  been  added  to
+xspectrum.   Moving  the  cursor in the spectrum window will
+cause the spectrogram cursors in  xwaves  to  track.   ASCII
+file with the new save_spectrum command.
+
+
+3.5.  Major Bug Fixes
+
+The display repaint procedures have  been  made  more  effi-
+cient.   Most  of  the  annoying  tendencies  for  xview  to
+unnecessarily refresh the screen have been eliminated.
+
+Due to a complete change in the xwaves to  attachments  com-
+munications, screen lockup is no longer possible.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+waves+ Version 5.0 Release Notes                     page 11
+
+
+4.  KNOWN PROBLEMS
+
+When xwaves starts, it attempts to register itself as an RPC
+server  using  a  default  program  and version number.   If
+another application happens to be using these same  numbers,
+then  the registration will fail and xwaves will not be able
+to act as an RPC server.  In this event, communications with
+its  attachments  will fail.   This is very unlikely, except
+in the case where another xwaves is  already  running  on  a
+given  CPU  when xwaves is started.   If this does happen, a
+message is printed on xwaves startup.     If  this  happens,
+the  user should exit xwaves and start it again using the -V
+option to specify some alternate version number.   In  prac-
+tice  almost  any value will work.   If no message is issued
+complaining that xwaves could not register as an RPC server,
+then  the  new  value  is  OK.   This  problem will be fixed
+shortly by having xwaves try alternate RPC addresses if  the
+default fails.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

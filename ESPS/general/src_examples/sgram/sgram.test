@@ -1,0 +1,60 @@
+#-----------------------------------------------------------------------+
+#									|
+#   This material contains proprietary software of Entropic Speech,	|
+#   Inc.  Any reproduction, distribution, or publication without the	|
+#   prior written permission of Entropic Speech, Inc. is strictly	|
+#   prohibited.  Any public distribution of copies of this work		|
+#   authorized in writing by Entropic Speech, Inc. must bear the	|
+#   notice								|
+#									|
+#    "Copyright (c) 1988 Entropic Speech, Inc. All rights reserved."	|
+#									|
+#-----------------------------------------------------------------------+
+#									|
+#  test script for speech spectrograms - runs both sgram and		|
+#  plotsgram								|
+#									|
+#  by David Burton, Entropic Speech, Inc.				|
+#									|
+#									|
+#-----------------------------------------------------------------------+
+# Sccs information: "@(#)sgram.test	1.1 2/15/89 ESI"
+
+# Make sampled data file
+testsd -a- test.sd <<EOD
+      0.0000  3813.2861 -1373.6545  2286.3997  -700.0021
+  -1956.2393  4626.3462  -429.3574     0.0030   429.3502
+  -4626.3447  1956.2473   699.9936 -2286.3955  1373.6533
+  -3813.2908     0.0110  3813.2813 -1373.6558  2286.4038
+   -700.0106 -1956.2317  4626.3472  -429.3647     0.0090
+    429.3433 -4626.3438  1956.2551   699.9851 -2286.3911
+   1373.6521 -3813.2959     0.0221  3813.2764 -1373.6570
+   2286.4080  -700.0192 -1956.2236  4626.3486  -429.3718
+      0.0150   429.3359 -4626.3423  1956.2629   699.9766
+  -2286.3872  1373.6509 -3813.3008     0.0331  3813.2715
+  -1373.6582  2286.4121  -700.0277 -1956.2158  4626.3496
+   -429.3790     0.0210   429.3287 -4626.3408  1956.2708
+    699.9681 -2286.3828  1373.6497 -3813.3054     0.0441
+   3813.2666 -1373.6595  2286.4163  -700.0362 -1956.2080
+   4626.3511  -429.3862     0.0270   429.3217 -4626.3398
+   1956.2787   699.9595 -2286.3784  1373.6484 -3813.3105
+      0.0551  3813.2617 -1373.6608  2286.4207  -700.0447
+  -1956.2002  4626.3521  -429.3933     0.0331   429.3143
+  -4626.3389  1956.2864   699.9510 -2286.3745  1373.6471
+  -3813.3154
+EOD
+
+# compute spec file and plot spectrogram
+
+echo " "
+echo " "
+echo "There should be three bands: a light one at 500 Hz,"
+echo "a medium one at 1500 Hz, and a dark one at 3000 Hz"
+
+sgram test.sd - | plotsgram -
+
+echo " "
+echo " "
+rm test.sd
+
+echo "test script done"

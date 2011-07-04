@@ -1,0 +1,72 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of
+# Entropic Research Laboratory, Inc. Any reproduction, distribution,
+# or publication of this work must be authorized in writing by Entropic
+# Research Laboratory, Inc., and must bear the notice:
+#
+#    "Copyright (c) 1986-1990  Entropic Speech, Inc.
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc.
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended
+# publication of this source code.
+#
+# @(#)lpcdemo	1.8   6/21/91     ESI/ERL
+#
+# Written by:
+# Checked by:
+# Revised by: David Burton
+#
+# Brief description:  Illustrates linear predictive analysis and synthesis
+#
+
+USE_ESPS_COMMON=off
+export USE_ESPS_COMMON
+ESPS_VERBOSE=0
+export ESPS_VERBOSE
+if test `mach_type` = CONVEX -o `mach_type` = SONY_RISC -o `mach_type` = SONY_68K
+ then
+  echo This script will fail if you do not have write permission on this directory.
+ else
+  if test ! -w . 
+    then
+	echo "You do not have write permission in this directory."
+	exit 1
+  fi
+fi
+echo " "
+echo "Doing single-pulse LPC analysis"
+echo "   %lpcana -Plpcparams speech.sd speech.fana"
+echo " "
+lpcana -Plpcparams speech.sd speech.fana
+echo "Synthesizing speech from analysis data"
+echo "   %lpcsynt -Psyntparams speech.fana speech.synt"
+echo " "
+lpcsynt -Psyntparams speech.fana speech.synt
+echo " "
+echo "Now design a size-16 VQ codebook from the analyzed speech,"
+echo "   quantize the spectra with the resulting codebook,"
+echo "   and then synthesize from the results."
+echo " "
+echo "   %vqdes -Pvqparams speech.fana speech.cbk"
+vqdes -Pvqparams speech.fana speech.cbk
+echo "   %vq speech.cbk speech.fana speech.qfana"
+vq speech.cbk speech.fana speech.qfana
+echo "   %lpcsynt -Psyntparams speech.qfana speech.qsynt"
+lpcsynt -Psyntparams speech.qfana speech.qsynt
+echo " "
+echo "Now compute and display spectrograms of the speech before and after processing"
+echo " "
+echo "   %sgram speech.sd speech.sgram"
+echo "   %plotsgram speech.sgram"
+sgram -z -m wb speech.sd - | plotsgram -t "Original Speech" -W"=700x220+0+0" -&
+echo " "
+
+echo "   %sgram speech.synt speech.s.sgram"
+echo "   %plotsgram speech.s.sgram"
+sgram -z -m wb speech.synt - | tee speech.s.sgram | plotsgram -t "LPC Synthesized" -W"=700x220+0+300" -&
+echo " "
+
+echo "   %sgram speech.qsynt speech.qs.sgram"
+echo "   %plotsgram speech.qs.sgram"
+sgram -z -m wb speech.qsynt - | tee speech.qs.sgram | plotsgram -t "VQ Synthesized" -W"=700x220+0+600" -&

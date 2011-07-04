@@ -1,0 +1,739 @@
+/*
+ * tpen	-  Interprets vplot language ('pen') onto the Graphon
+ *	   Tektronix 4100 plot language
+
+	tpen [options] < plotfile
+
+fully=6144			picture value which fills screen
+xscale=1.	yscale=1.	(x,y) origin at upper left corner
+scale=1.
+pause=-1			seconds to sleep after erase or break.
+				=-1 is no sleep, =0 calls for return to proceed
+
+All plotting devices are finite in one direction, which is usually taken to
+be the y-direction.  By tradition, this axis is taken to have a length of
+6144=2048*3 'universal' units.  Writing plots with this in mind ensures best
+device independence of plotfiles.  In universal units, the 'infinite' x-axis of
+the GIGI is taken to be the vertical axis, because of scrolling.
+So the coordinate origin is the upper left hand corner, and in universal units,
+the lower righthand corner is at (3840,6144). Note 6144=3840*8/5.
+For info on pen language:	% man 9 vplot	% man 9 pen       */
+/*
+ * tek.c -- modified for the Tek 4105
+ * tekenv.c -- modified for the Envision 215
+ * Those portions of code bracketed by TEK comments are updates -- thor
+ * tpen.c -- modified for TEK 4100 2/84
+ * tpen.c -- further changed by Rod Johnson, EPI, Feb '86, to work with
+ *      Tek 4014 and Imagen Tek emulation:
+ *      No longer generate escape-X sequence (meaningless to 4014) and
+ *      escape-n sequence (puts 4014 in "defocused" mode); both give
+ *      Imagen trouble.
+ *      Fix character-size problem.
+ *      Use full 12-bit resolution of 4014.
+ *      Replace escape characters in source code (!) with 4-character
+ *      sequence  \033 .
+ */
+/*
+ * converts standard vector plot data into AED interpreter language
+ * Author- Rob Clayton, Dept. of Geophysics, Stanford Univ.
+ * edit history
+ *	4-81	Clayton adapts 'pen' to 'gigi' then to 'aed'
+ *	7-28-81 Further developed by Chuck and Jon
+ *	8-23-81 Adapted by Chuck for output over parallel line to AED.
+ *	9-7-81	'T' text command has unlimited size and orient=degrees -mazama!jon
+ *	9-17-81	 'a' now does the external outline of the area  NO LONGER
+ *	3-3-81	'b' and 'e' dump screen into save file, used for pen movies
+ *		main,init, and vector modified by rick
+ *	10-27-82 'A' does AED 767 polygon fill; format:
+ *	A npts x1 y1 x2 y2 ... xn yn  ;  AED closes last point to first point
+ *	3-5-83  'a' does aed 767 Polygon fill; format :
+ *	a npts fat xmask ymask x1 y1 ... xn yn .
+ *		'A' does pen_new plygon fill with a specified fill pattern; format:
+ *	A npts pattern x1 y1 x2 y2 ... xn yn. (Untested by me). Modified by michel.
+ */
+#ifndef lint
+    static char *sccs_id = "@(#)tpen.c	3.3	7/8/96	ESI";
+#endif
+
+#include	<stdio.h>
+#include	<signal.h>
+#include	<esps/unix.h>
+#define XMAX	4095	/* maximum x value */
+#define YMAX	4095	/* maximum y value */
+
+#define ENDRAS	-1	/* end of raster data flag */
+
+#define NPAT	20	/* maxmium number of loaded patterns */
+int epause	= -1;	/* sleep time after erase or break */
+int newplot;		/* new plot flag */
+int fatbase,fat;	/* line thickness parameters */
+int xwmax	=XMAX;	/* plot window parameters defaulted */
+int xwmin	=0;	/* to maximum size		*/
+int ywmax	=YMAX;
+int ywmin	=0;
+int xnew,ynew;		/* new pen location */
+int xold,yold;		/* old pen location */
+int xorigin,yorigin;	/* origin for text mode */
+int xorig	= 0;
+int yorig	= 0;	/* global origin to be set by 'o' command */
+int erase;		/* erase flag */
+int kyll;		/* kill signal flag */
+int atbreak;		/* another flag */
+FILE *pltin;
+float scale	=1.0;	/* global default scale factor */
+float xscale	=1.0;	/* global x-scale factor */
+float yscale	=1.0;	/* global y-scale factor */
+float xdscale	=1.00001;	/* global x-scale factor */
+float ydscale	=1.00001;	/* global y-scale factor */
+int	fully=	6144;
+int	charsz= 10;
+int nh=768, nv=575, h0, v0, sfile, afile, block, nblock, iblock, block1;
+#if !defined(DEC_ALPHA) && !defined(HP700)
+char  *malloc();
+#endif
+char *savebuf;
+char *xypack(), *dpack();	/* TEK */
+
+#define GETX	(geth(pltin)-xorig)*xscale
+#define GETY	(geth(pltin)-yorig)*yscale
+
+#define WARN	0
+#define FATAL	1
+#define PENDING 2
+#define FINAL	3
+
+int doerase	=1;
+main()
+{
+	FILE *fopen();
+	extern int delaykill();
+
+	/* set kill trap */
+	signal (SIGQUIT,delaykill);
+	signal (SIGINT,delaykill);
+	atbreak = 0;
+	kyll = 0;
+
+	pltin= stdin;
+	charsz= 30 * (fully / 6144.0);
+	xscale *= scale*xdscale*(float)YMAX/(float)fully;
+	yscale *= scale*ydscale*(float)YMAX/(float)fully;
+	fat=fatbase;
+
+	erase= -1;
+	newplot= 1;
+	init();
+	do {
+		sector();
+	}
+	while(newplot);
+	finish();
+	exit(0);
+/*NOTREACHED*/
+}
+
+#define ESC	033
+init()
+{
+	char *xypack();
+
+	/* TEK 4100 */
+	fprintf(stdout, "%c1%c%c",ESC,ESC,014);
+}
+finish()
+{
+	fflush(stdout);
+	if (epause>0) {
+		sleep((unsigned) epause);
+	}
+	/* TEK 4100 */
+		/* move cursor to origin */
+	fprintf(stdout, "%c%c%c%c%c%c%c%c%c",035,040,0140,040,0100,040,0140,040,0100);
+		/* reset VT100 mode */
+	fprintf(stdout, "\n");
+}
+err(type,fmt,a1,a2,a3)
+int type;
+char *fmt;
+double a1,a2,a3;
+{
+	fprintf(stderr,"pen: ");
+	switch(type)
+	{
+	case WARN:
+		fprintf(stderr,"(warning) ");
+		fprintf(stderr,fmt,a1,a2,a3);
+		fprintf(stderr,"\n");
+		break;
+	case FATAL:
+	default:
+		fprintf(stderr,"(fatal) ");
+		fprintf(stderr,fmt,a1,a2,a3);
+		fprintf(stderr,"\n");
+		exit(-1);
+	case PENDING:
+		fprintf(stderr,"(fatal) ");
+		fprintf(stderr,fmt,a1,a2,a3);
+		break;
+	case FINAL:
+		fprintf(stderr,"\n");
+		exit(-1);
+	}
+}
+
+
+sector()
+/*
+ * read in plot commands and bitset them
+ */
+{
+	register int c;
+	char tempch;
+	FILE *fopen();
+	int  tempvar, key,size,orient;
+
+	while((c=getc(pltin))!= EOF)
+	{
+		if (kyll)
+		{
+			exit(1);
+		}
+		switch(c)		/* loop over plot commands */
+		{
+		case 'm':		/* move */
+			xold= xorigin= GETX;
+			yold= yorigin= GETY;
+			break;
+		case 'd':		/* draw */
+			xnew=GETX;
+			ynew=GETY;
+			vector(xold,yold,xnew,ynew,fat);
+			xold=xnew;
+			yold=ynew;
+			break;
+		case 'c':
+			(void) geth(pltin);
+			break;   /* TEK 4100 */
+		case 't':		/* text */
+			if( (key=geth(pltin)) <0)
+				err(FATAL,"invalid text key");
+			size= (key&037);
+			size *= ((float) charsz / 10.0);
+			if(size==0)
+				size=1;
+			orient= (key&0140)>>5;
+			text(size,orient);
+			break;
+		case 'T':/* new text size=unlimited orient=degrees */
+			size=geth(pltin);
+			size *= ((float) charsz / 10.0);
+			if(size==0)
+				size=1;
+			orient= geth(pltin)/90;
+			text(size,orient);
+			break;
+		case 'r':		/* raster */
+			break;   /* TEK 4100 */
+		case 'R':		/* raster file */
+			break;   /* TEK 4100 */
+		case 'e':		/* erase */
+		case 'b':		/* break */
+			if (sfile) {
+				for (iblock=0; iblock<=nblock; iblock++) {
+					if (iblock==nblock) block1 = nv - iblock * block;
+					else block1 = block;
+					fprintf (stdout,"Q%d.%d.r%d.%d.",h0,v0+nv-iblock*block-1,h0+nh-1,v0+nv-iblock*block-block1);
+					fflush(stdout);
+					read (afile,savebuf,nh*block1);
+					write (sfile,savebuf,nh*block1);
+				}
+			}
+			if(epause == 0) {
+				atbreak=1;
+				fprintf(stderr,"Type return");
+				tempvar= open("/dev/tty",0);
+				read(tempvar,&tempch,1);
+				close(tempvar);
+				atbreak= 0;
+				if(doerase)
+					/* TEK */
+					fprintf(stdout,"%c%c",ESC,014);
+			}
+			else {
+				fflush(stdout);
+				if (epause>0) sleep((unsigned) epause);
+				if(doerase) fprintf(stdout,"%c%c",ESC,014);
+			}
+			sleep(1);
+			break;
+
+		case 'f':		/* fat */
+			fat= fatbase+ geth(pltin);
+			break;
+		case 'o':		/* set origin */
+			xorig= geth(pltin);
+			yorig= geth(pltin);
+			xold=xorigin= xorig*xscale;
+			yold=yorigin= yorig*yscale;
+			break;
+		case 'w':		/* set plot window */
+			xwmin=GETX;
+			if(xwmin<0)	   xwmin=0;
+			ywmin=GETY;
+			if(ywmin<0)	   ywmin=0;
+			xwmax=GETX;
+			if(xwmax>XMAX) xwmax=XMAX;
+			ywmax=GETY;
+			if(ywmax>YMAX) ywmax=YMAX;
+			break;
+		case 'a':		/* polygon shade */
+			area();
+			break;
+		case 'A':		/* polygon fill */
+			fill();
+			break;
+		case 'I':
+		case 'i':	/* interior fill of polygon with current color */
+			break;   /* TEK 4100 */
+		case 'B':		/* Boundary fill */
+			break;   /* TEK 4100 */
+		case 'l':
+			break;   /* TEK 4100 */
+		case 'x':		/* display X-hairs */
+		case 'n':		/* no op */
+			break;   /* TEK 4100, note this terminal does have GIN mode */
+		default:		/* error */
+			err(PENDING,"invalid plot command %c",c);
+			err(FINAL,"cannot recover"); /* error is fatal */
+		}
+		erase = 0;
+	}
+	newplot=0;
+	erase=0;
+}
+
+
+vector(x1,y1,x2,y2,nfat)
+int x1,y1,x2,y2,nfat;
+/*
+ * Vector rasterizes the line defined by the endpoints (x1,y1) and (x2,y2).
+ * If 'nfat' is nonzero then draw parallel lines to fatten the line, by
+ * recursive calls to vector.
+ */
+{
+	register int test;
+	int i;
+	static int xstor, ystor;
+	char *xypack();
+
+	if(nfat)
+	{
+		test= ( abs(x2-x1) >= abs(y2-y1) );
+		for(i= -(nfat/2);i<=(nfat+1)/2;i++)
+		{
+			if(test)  vector(x1,y1+i,x2,y2+i,0);
+			else	  vector(x1+i,y1,x2+i,y2,0);
+		}
+		return;
+	}
+	if( clip(&x1,&y1,&x2,&y2) ) return;
+	if(x1 == x2 && y1 == y2 ) return;
+
+	if(x1 != xstor || y1 != ystor)
+		fprintf(stdout, "%c%s", 035, xypack((int)x1, (int)y1));
+	fprintf(stdout, "%s", xypack((int)x2, (int)y2));
+	xstor= x2;
+	ystor= y2;
+}
+
+
+
+
+/* code for clip */
+#define code(x,y) (x<xwmin?1:(x>xwmax?2:0))|(y<ywmin?4:(y>ywmax?8:0))
+
+clip(x1,y1,x2,y2)	/* window the plot */
+int *x1,*y1,*x2,*y2;
+{
+	register int c1,c2,temp;
+	int swap;
+	c1=code(*x1,*y1);
+	c2=code(*x2,*y2);
+	swap=0;
+	if(!(c1||c2)) return(0); /* line completely in bounds */
+	while(c1|c2)
+	{
+		if( c1&c2 ) return(1);	/* line completely out of bounds */
+		if(!c1) /* interchange endpoints */
+		{
+			temp= *x1;
+			*x1= *x2;
+			*x2=temp;
+			temp= *y1;
+			*y1= *y2;
+			*y2=temp;
+			temp=c1;
+			c1=c2;
+			c2=temp;
+			swap= ~swap;
+		}
+		if(c1<4)	/* move endpoint in x */
+		{
+			temp=(c1&2?xwmax:xwmin);
+			*y1= solve(temp,*x1,*y1,*x2,*y2);
+			*x1=temp;
+		}
+		else		/* move endpoint in y */
+		{
+			temp=(c1&8?ywmax:ywmin);
+			*x1= solve(temp,*y1,*x1,*y2,*x2);
+			*y1=temp;
+		}
+		c1=code(*x1,*y1);
+	}
+	if( swap )	/* put endpoints in order */
+	{
+		temp= *x1;
+		*x1= *x2;
+		*x2=temp;
+		temp= *y1;
+		*y1= *y2;
+		*y2=temp;
+	}
+	return(0);
+}
+
+
+
+
+solve(pnot,p1,q1,p2,q2)
+register int pnot,p1,q1,p2,q2;
+{
+	/* floating point version */
+	double invslope;
+	register int qnot;
+	if(pnot==p1) return(q1);
+	if(pnot==p2) return(q2);
+	if(q1==q2) return(q1);
+	invslope= (q1-q2)/( (double) (p1-p2));
+	qnot= (pnot-p1)*invslope + (double) q1 + 0.5;
+	return(qnot);
+}
+
+
+
+/************** TEXT - process text strings **********/
+#include	"chars.h"
+#define DROPBIT 02000
+#define BS	010
+#define TAB	011
+#define CR	015
+#define NL	012
+#define US	'U'
+#define DS	'D'
+#define USHALF	'u'
+#define DSHALF	'd'
+#define GREEK	'g'
+#define SIZEP	'S'
+#define SIZEM	's'
+#define FATP	'F'
+#define FATM	'f'
+#define BSPACE	'b'
+short *symadd;
+char *symbase;
+
+text(size,orient)
+int size,orient;
+/*
+ * interpret characters into vectors
+ */
+{
+	int tfat, move,vmove,add,drop,xp,yp,grkflag;
+	char sym,xyw,*symptr;
+	register int a,b;
+
+	symadd= ascii.saddr;
+	symbase= ascii.svec;
+	tfat= fat;
+	grkflag=0;
+	move= (6*size)*xscale;
+	vmove= (10*size)*yscale;
+
+	while((sym=getc(pltin)))
+	{
+		if(sym < 040)
+		{
+			switch (sym)	/* standard carriage controls */
+			{
+			case -1:
+				return;
+			case BS:
+				mov(-move,0,orient);
+				break;
+			case TAB:
+				switch (orient)
+				{
+				case 0:
+				case 2:
+					do mov(move, 0, orient);
+					while ((abs(xold - xorigin)/move)%8);
+					break;
+				case 1:
+				case 3:
+					do mov(move, 0, orient);
+					while ((abs(yold - yorigin)/move)%8);
+					break;
+				}
+				break;
+			case NL:
+				switch(orient)
+				{
+				case 0:
+					yorigin -= vmove;
+					break;
+				case 1:
+					xorigin += vmove;
+					break;
+				case 2:
+					yorigin += vmove;
+					break;
+				case 3:
+					xorigin -= vmove;
+					break;
+				}
+			case CR:
+				xold=	xorigin;
+				yold=	yorigin;
+				break;
+			case ESC:	/* special controls */
+				switch(sym=getc(pltin))
+				{
+				case -1:
+				case 0:
+					return;
+				case DS:	
+					mov(0,-vmove,orient);
+					break;
+				case DSHALF:	
+					mov(0,-(vmove/2),orient);
+					break;
+				case US:	
+					mov(0,vmove,orient);
+					break;
+				case USHALF:	
+					mov(0,vmove/2,orient);
+					break;
+				case BSPACE:	
+					mov(-move,0,orient);
+					break;
+				case GREEK:
+					symadd= greek.saddr;
+					symbase= greek.svec;
+					grkflag=1;
+					break;
+				case SIZEP:
+					size++;
+					move= (6*size)*xscale;
+					vmove= (10*size)*yscale;
+					break;
+				case SIZEM:
+					size--;
+					if(size<1) size=1;
+					move= (6*size)*xscale;
+					vmove= (10*size)*yscale;
+					break;
+				case FATP:
+					tfat++;
+					break;
+				case FATM:
+					tfat--;
+					if(tfat<0) tfat=0;
+					break;
+				}
+				break;
+			default:
+				goto	moveah;
+			}
+			continue;
+		}
+		if(sym == 040) goto moveah;
+		add= symadd[sym-040];
+		symptr= symbase +(add&01777);
+		drop= (add&DROPBIT ? 2 : 0);
+		xnew=xold;
+		ynew=yold;
+		do
+		    {
+			xyw= *symptr++;
+			a= (((xyw&0160)>>4)*size)*xscale;
+			b= (((xyw&07) - drop)*size)*yscale;
+			switch(orient)
+			{
+			case 0:
+				xp=xold+a;
+				yp=yold+b;
+				break;
+			case 1:
+				xp=xold-b;
+				yp=yold+a;
+				break;
+			case 2:
+				xp=xold-a;
+				yp=yold-b;
+				break;
+			case 3:
+				xp=xold+b;
+				yp=yold-a;
+				break;
+			}
+			if( !(xyw&0200) ) vector(xnew,ynew,xp,yp,tfat);
+			xnew=xp;
+			ynew=yp;
+		}
+		while( !(xyw&010) );
+moveah:
+		switch(orient)
+		{
+		case 0:
+			xold += move;
+			break;
+		case 1:
+			yold += move;
+			break;
+		case 2:
+			xold -= move;
+			break;
+		case 3:
+			yold -= move;
+			break;
+		}
+		if(grkflag)
+		{
+			symadd= ascii.saddr;
+			symbase= ascii.svec;
+			grkflag=0;
+		}
+	}
+}
+mov(hadd,vadd,orient)
+register int hadd,vadd,orient;
+{
+	switch(orient)
+	{
+	case 0:
+		xold += hadd;
+		yold += vadd;
+		break;
+	case 1:
+		xold -= vadd;
+		yold += hadd;
+		break;
+	case 2:
+		xold -= hadd;
+		yold -= vadd;
+		break;
+	case 3:
+		xold += vadd;
+		yold -= hadd;
+		break;
+	}
+}
+
+area()
+{
+	register int i;
+	int npts;
+	int xnew, ynew;
+	char *xypack();
+
+	npts= geth(pltin);
+	(void) geth(pltin);
+	(void) geth(pltin);
+	(void) geth(pltin);
+	if(npts < 3) err(FATAL,"polynomial with less than three vertices");
+
+	xnew= GETX;
+	ynew= GETY;
+	/* TEK */
+	fprintf(stdout, "\033OM%s", dpack((int)npts));
+	fprintf(stdout, "%s", xypack((int)xnew, (int)ynew));
+	xold=xnew;	
+	yold=ynew;
+
+	for(i=1; i<npts; i++)
+	{
+		xnew= GETX;
+		ynew= GETY;
+		fprintf(stdout, "%s", xypack((int)xnew, (int)ynew));
+		xold=xnew;	
+		yold=ynew;
+	}
+	fflush(stdout);
+}
+
+fill() {
+	register int i;
+	int npts;
+	int xnew, ynew;
+	char *xypack();
+
+	npts= geth(pltin);
+	if(npts < 3) err(FATAL,"polynomial with less than three vertices");
+
+	xnew= GETX;
+	ynew= GETY;
+	/* TEK */
+	fprintf(stdout, "\033OM%s", dpack((int)npts));
+	fprintf(stdout, "%s", xypack((int)xnew, (int)ynew));
+	xold=xnew;	
+	yold=ynew;
+
+	for(i=1; i<npts; i++)
+	{
+		xnew= GETX;
+		ynew= GETY;
+		fprintf(stdout, "%s", xypack((int)xnew, (int)ynew));
+		xold=xnew;	
+		yold=ynew;
+	}
+	/* TEK */
+	fflush(stdout);
+}
+
+delaykill()
+{
+	if (atbreak)
+	{
+		exit(1);
+	}
+	kyll = 1;
+}
+
+
+/*
+ * TEK packed integer, and packed coordinate pair
+ */
+char *dpack(i){
+	static char s[4];
+
+	s[0] = 040 + ((i & 030000) >> 12);
+	s[1] = 040 + ((i & 007700) >> 6);
+	s[2] = 040 +  (i & 000077);
+	s[3] = 0;
+	return(s);
+}
+
+char *xypack(y,x){
+	/* TEK 4100 mode */
+	static char s[6];
+	y = 3120 - y;
+	s[0] = 040 | ((y & 07600) >> 7);  /* high order y */
+	s[1] = 0140 | ((y & 03) << 2) | (x & 03);	/* "extra" byte:
+					    lowest-order 2 bits of x and y
+					    for 12-bit addressing */
+	s[2] = 0140 | ((y & 0174) >> 2);   /* low order y */
+	s[3] = 040 | ((x & 07600) >> 7);   /* high order x */
+	s[4] = 0100 | ((x & 0174) >> 2);   /* low order x */
+	s[5] = 0;   /* end of character string */
+	return(s);
+}

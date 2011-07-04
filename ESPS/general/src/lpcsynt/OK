@@ -1,0 +1,2675 @@
+{
+01 d
+02 6a1a
+03 Mon Oct 12 08:56:45 1987 
+04 1.50
+05 lpcana
+06 3.1
+07 10/7/87
+53 burton
+08 ec
+09 1
+0b e
+0c 2
+0d 1
+10 ok.sd
+12 lpcana -PPlpcana ok.sd ok.fana  Converted from ok.fana by spstoa.
+52
+1 2 0
+frame_len LONG 1 0 
+num_pulses LONG 1 0 
+frame_type CODED 1 0 
+ NONE
+ UNKNOWN
+ VOICED
+ UNVOICED
+ SILENCE
+ TRANSITION
+voiced_fraction FLOAT 1 0 
+raw_power FLOAT 1 1 
+lpc_power FLOAT 1 1 
+p_pulse_len FLOAT 1 1 
+spec_param FLOAT 10 1 
+
+@nan LONG 1 16000 
+@dcrem CHAR 4 yes 
+@src_sf FLOAT 1 8000 
+@frmlen LONG 1 0 
+@maxlpc LONG 1 1 
+@spec_rep CODED 1 [ NONE RC LAR LSF AUTO AFC CEP AF ] RC 
+@order_vcd LONG 1 10 
+@p_offset SHORT 1 3 
+@maxraw LONG 1 1 
+@start LONG 1 1 
+@filters CODED 1 [ NO YES ] NO 
+@psynch CHAR 4 yes 
+@matsiz SHORT 1 11 
+@order_unvcd LONG 1 10 
+@maxpulses LONG 1 1 
+@nominal_frame_size SHORT 1 160
+
+{
+01 9
+02 6a1a
+03 Mon Oct 12 08:56:20 1987 
+04 1.50
+05 record
+06 3.2
+07 10/2/87
+53 burton
+08 3e80
+0d 1
+12 analog data digitized by ESPS record
+42 ffffffff
+43 2047
+44 8000
+20 0
+45 0
+46 1
+22 0
+47 0
+48 0
+49 0
+4a 1
+4b 0
+4c 0
+4d 0
+4e 0
+}
+}
+
+#Tag 1
+#frame_len	1 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	0 
+#lpc_power	0 
+#p_pulse_len	1 
+#spec_param	0.806051 0.0139041 0.531676 0.248426 0.276181 0.00512404 0.138587 -0.294438 
+	0.0575066 0.139198 
+
+#Tag 2
+#frame_len	28 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	21.2812 
+#lpc_power	4.05663 
+#p_pulse_len	28 
+#spec_param	0.806051 0.0139041 0.531676 0.248426 0.276181 0.00512404 0.138587 -0.294438 
+	0.0575066 0.139198 
+
+#Tag 30
+#frame_len	37 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	19.7291 
+#lpc_power	3.76078 
+#p_pulse_len	37 
+#spec_param	0.806051 0.0139041 0.531676 0.248426 0.276181 0.00512404 0.138587 -0.294438 
+	0.0575066 0.139198 
+
+#Tag 67
+#frame_len	34 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	14.5599 
+#lpc_power	2.77542 
+#p_pulse_len	34 
+#spec_param	0.806051 0.0139041 0.531676 0.248426 0.276181 0.00512404 0.138587 -0.294438 
+	0.0575066 0.139198 
+
+#Tag 101
+#frame_len	74 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	11.3923 
+#lpc_power	2.17162 
+#p_pulse_len	74 
+#spec_param	0.806051 0.0139041 0.531676 0.248426 0.276181 0.00512404 0.138587 -0.294438 
+	0.0575066 0.139198 
+
+#Tag 175
+#frame_len	37 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	11.2888 
+#lpc_power	1.21042 
+#p_pulse_len	37 
+#spec_param	0.906735 0.190523 0.473101 0.196169 0.110633 -0.262126 -0.0329197 -0.272173 
+	-0.0284462 0.117801 
+
+#Tag 212
+#frame_len	82 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	10.7559 
+#lpc_power	1.15328 
+#p_pulse_len	82 
+#spec_param	0.906735 0.190523 0.473101 0.196169 0.110633 -0.262126 -0.0329197 -0.272173 
+	-0.0284462 0.117801 
+
+#Tag 294
+#frame_len	157 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	11.7706 
+#lpc_power	0.604835 
+#p_pulse_len	157 
+#spec_param	0.9665 0.128667 0.198616 0.234621 0.0540297 -0.253978 -0.132257 -0.113294 
+	-0.176245 -0.0560849 
+
+#Tag 451
+#frame_len	95 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	1.245 
+#lpc_power	0.881641 
+#p_pulse_len	95 
+#spec_param	0.199059 -0.128722 0.147404 0.285306 0.233663 0.121055 0.292201 0.129412 
+	0.0407012 0.0488433 
+
+#Tag 546
+#frame_len	116 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	116.143 
+#lpc_power	82.2462 
+#p_pulse_len	116 
+#spec_param	0.199059 -0.128722 0.147404 0.285306 0.233663 0.121055 0.292201 0.129412 
+	0.0407012 0.0488433 
+
+#Tag 662
+#frame_len	29 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	2179.41 
+#lpc_power	1618.86 
+#p_pulse_len	29 
+#spec_param	-0.147609 -0.33044 -0.26431 0.0128271 0.0780297 0.0546686 -0.12638 -0.217395 
+	0.025206 0.112954 
+
+#Tag 691
+#frame_len	56 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	689.859 
+#lpc_power	512.427 
+#p_pulse_len	56 
+#spec_param	-0.147609 -0.33044 -0.26431 0.0128271 0.0780297 0.0546686 -0.12638 -0.217395 
+	0.025206 0.112954 
+
+#Tag 747
+#frame_len	47 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	276.582 
+#lpc_power	205.445 
+#p_pulse_len	47 
+#spec_param	-0.147609 -0.33044 -0.26431 0.0128271 0.0780297 0.0546686 -0.12638 -0.217395 
+	0.025206 0.112954 
+
+#Tag 794
+#frame_len	21 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	175.801 
+#lpc_power	144.038 
+#p_pulse_len	21 
+#spec_param	0.0888896 0.176351 0.0520574 0.113843 0.171221 0.216553 -0.0941913 0.0501863 
+	0.23074 0.00784532 
+
+#Tag 815
+#frame_len	29 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	89.3373 
+#lpc_power	73.1961 
+#p_pulse_len	29 
+#spec_param	0.0888896 0.176351 0.0520574 0.113843 0.171221 0.216553 -0.0941913 0.0501863 
+	0.23074 0.00784532 
+
+#Tag 844
+#frame_len	21 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	59.6506 
+#lpc_power	48.8731 
+#p_pulse_len	21 
+#spec_param	0.0888896 0.176351 0.0520574 0.113843 0.171221 0.216553 -0.0941913 0.0501863 
+	0.23074 0.00784532 
+
+#Tag 865
+#frame_len	28 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	45.1334 
+#lpc_power	36.9789 
+#p_pulse_len	28 
+#spec_param	0.0888896 0.176351 0.0520574 0.113843 0.171221 0.216553 -0.0941913 0.0501863 
+	0.23074 0.00784532 
+
+#Tag 893
+#frame_len	29 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	35.3639 
+#lpc_power	28.9745 
+#p_pulse_len	29 
+#spec_param	0.0888896 0.176351 0.0520574 0.113843 0.171221 0.216553 -0.0941913 0.0501863 
+	0.23074 0.00784532 
+
+#Tag 922
+#frame_len	28 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	37.74 
+#lpc_power	30.9213 
+#p_pulse_len	28 
+#spec_param	0.0888896 0.176351 0.0520574 0.113843 0.171221 0.216553 -0.0941913 0.0501863 
+	0.23074 0.00784532 
+
+#Tag 950
+#frame_len	22 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	33.7728 
+#lpc_power	27.6708 
+#p_pulse_len	22 
+#spec_param	0.0888896 0.176351 0.0520574 0.113843 0.171221 0.216553 -0.0941913 0.0501863 
+	0.23074 0.00784532 
+
+#Tag 972
+#frame_len	35 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	19.3913 
+#lpc_power	9.51703 
+#p_pulse_len	35 
+#spec_param	0.542523 0.360457 0.0496442 0.363286 0.0669156 -0.0592318 -0.139856 0.146028 
+	0.110162 0.135127 
+
+#Tag 1007
+#frame_len	30 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	23.2311 
+#lpc_power	11.4016 
+#p_pulse_len	30 
+#spec_param	0.542523 0.360457 0.0496442 0.363286 0.0669156 -0.0592318 -0.139856 0.146028 
+	0.110162 0.135127 
+
+#Tag 1037
+#frame_len	24 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	30.3234 
+#lpc_power	14.8824 
+#p_pulse_len	24 
+#spec_param	0.542523 0.360457 0.0496442 0.363286 0.0669156 -0.0592318 -0.139856 0.146028 
+	0.110162 0.135127 
+
+#Tag 1061
+#frame_len	24 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	16.0267 
+#lpc_power	7.8657 
+#p_pulse_len	24 
+#spec_param	0.542523 0.360457 0.0496442 0.363286 0.0669156 -0.0592318 -0.139856 0.146028 
+	0.110162 0.135127 
+
+#Tag 1085
+#frame_len	30 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	7.97398 
+#lpc_power	3.91353 
+#p_pulse_len	30 
+#spec_param	0.542523 0.360457 0.0496442 0.363286 0.0669156 -0.0592318 -0.139856 0.146028 
+	0.110162 0.135127 
+
+#Tag 1115
+#frame_len	35 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	11.704 
+#lpc_power	3.70985 
+#p_pulse_len	35 
+#spec_param	0.742121 0.197778 0.10812 -0.170679 0.0135459 -0.180663 -0.215005 0.101396 
+	0.394917 0.0833254 
+
+#Tag 1150
+#frame_len	29 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	9.91973 
+#lpc_power	3.14429 
+#p_pulse_len	29 
+#spec_param	0.742121 0.197778 0.10812 -0.170679 0.0135459 -0.180663 -0.215005 0.101396 
+	0.394917 0.0833254 
+
+#Tag 1179
+#frame_len	22 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	8.37607 
+#lpc_power	2.65499 
+#p_pulse_len	22 
+#spec_param	0.742121 0.197778 0.10812 -0.170679 0.0135459 -0.180663 -0.215005 0.101396 
+	0.394917 0.0833254 
+
+#Tag 1201
+#frame_len	34 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	6.27842 
+#lpc_power	1.99009 
+#p_pulse_len	34 
+#spec_param	0.742121 0.197778 0.10812 -0.170679 0.0135459 -0.180663 -0.215005 0.101396 
+	0.394917 0.0833254 
+
+#Tag 1235
+#frame_len	44 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	5.33874 
+#lpc_power	1.69224 
+#p_pulse_len	44 
+#spec_param	0.742121 0.197778 0.10812 -0.170679 0.0135459 -0.180663 -0.215005 0.101396 
+	0.394917 0.0833254 
+
+#Tag 1279
+#frame_len	31 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	10.7138 
+#lpc_power	2.40671 
+#p_pulse_len	31 
+#spec_param	0.856246 0.210611 0.167808 0.204598 0.154346 -0.0162722 0.0394134 0.0743548 
+	0.135003 -0.0748233 
+
+#Tag 1310
+#frame_len	51 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	8.31645 
+#lpc_power	1.86817 
+#p_pulse_len	51 
+#spec_param	0.856246 0.210611 0.167808 0.204598 0.154346 -0.0162722 0.0394134 0.0743548 
+	0.135003 -0.0748233 
+
+#Tag 1361
+#frame_len	35 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	10.6217 
+#lpc_power	2.38601 
+#p_pulse_len	35 
+#spec_param	0.856246 0.210611 0.167808 0.204598 0.154346 -0.0162722 0.0394134 0.0743548 
+	0.135003 -0.0748233 
+
+#Tag 1396
+#frame_len	56 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	3.92219 
+#lpc_power	0.881062 
+#p_pulse_len	56 
+#spec_param	0.856246 0.210611 0.167808 0.204598 0.154346 -0.0162722 0.0394134 0.0743548 
+	0.135003 -0.0748233 
+
+#Tag 1452
+#frame_len	23 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	5.53341 
+#lpc_power	0.637056 
+#p_pulse_len	23 
+#spec_param	0.919795 0.351214 0.109703 -0.126676 0.118827 0.100145 0.0830336 -0.109189 
+	-0.0396556 -0.287115 
+
+#Tag 1475
+#frame_len	81 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	7.40475 
+#lpc_power	0.852502 
+#p_pulse_len	81 
+#spec_param	0.919795 0.351214 0.109703 -0.126676 0.118827 0.100145 0.0830336 -0.109189 
+	-0.0396556 -0.287115 
+
+#Tag 1556
+#frame_len	139 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	16.8227 
+#lpc_power	0.924721 
+#p_pulse_len	139 
+#spec_param	0.966914 0.283923 -0.0697205 -0.192825 0.134493 0.0259742 -0.0682649 0.0318263 
+	-0.0270922 -0.128497 
+
+#Tag 1695
+#frame_len	79 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	11.2072 
+#lpc_power	0.616044 
+#p_pulse_len	79 
+#spec_param	0.966914 0.283923 -0.0697205 -0.192825 0.134493 0.0259742 -0.0682649 0.0318263 
+	-0.0270922 -0.128497 
+
+#Tag 1774
+#frame_len	139 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	9.7336 
+#lpc_power	0.451461 
+#p_pulse_len	139 
+#spec_param	0.971523 0.314812 -0.0458333 -0.186509 -0.0560274 -0.107924 0.128428 -0.0865911 
+	0.0702131 -0.0717867 
+
+#Tag 1913
+#frame_len	200 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	16.3623 
+#lpc_power	0.618839 
+#p_pulse_len	200 
+#spec_param	0.977427 0.140899 0.177092 -0.16444 -0.180286 -0.160892 0.0293511 -0.052179 
+	-0.0784575 -0.131005 
+
+#Tag 2113
+#frame_len	114 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	8.93424 
+#lpc_power	0.452499 
+#p_pulse_len	114 
+#spec_param	0.969082 0.232832 -0.0819988 -0.00664473 -0.173391 -0.177435 0.189559 -0.0475168 
+	0.139967 0.017992 
+
+#Tag 2227
+#frame_len	129 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	14.7398 
+#lpc_power	0.468708 
+#p_pulse_len	129 
+#spec_param	0.981262 0.170307 -0.234081 -0.116628 -0.138562 -0.133453 -0.0328133 -0.0532564 
+	0.090655 0.0764895 
+
+#Tag 2356
+#frame_len	163 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	12.5565 
+#lpc_power	0.457018 
+#p_pulse_len	163 
+#spec_param	0.979126 0.185128 0.0293215 -0.179617 -0.0343359 -0.153557 -0.0895931 0.0698645 
+	-0.086146 -0.11234 
+
+#Tag 2519
+#frame_len	86 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	10.15 
+#lpc_power	0.738898 
+#p_pulse_len	86 
+#spec_param	0.957985 0.274604 0.150967 -0.00459549 -0.093247 -0.0508051 -0.0588803 -0.0760716 
+	0.00579599 -0.0122319 
+
+#Tag 2605
+#frame_len	81 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	5.65701 
+#lpc_power	0.411817 
+#p_pulse_len	81 
+#spec_param	0.957985 0.274604 0.150967 -0.00459549 -0.093247 -0.0508051 -0.0588803 -0.0760716 
+	0.00579599 -0.0122319 
+
+#Tag 2686
+#frame_len	30 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	4.51687 
+#lpc_power	0.328818 
+#p_pulse_len	30 
+#spec_param	0.957985 0.274604 0.150967 -0.00459549 -0.093247 -0.0508051 -0.0588803 -0.0760716 
+	0.00579599 -0.0122319 
+
+#Tag 2716
+#frame_len	235 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	11.3726 
+#lpc_power	0.284577 
+#p_pulse_len	235 
+#spec_param	0.985252 0.232916 0.0260734 -0.125106 -0.100413 -0.132876 -0.102424 -0.0630348 
+	-0.00616388 -0.203493 
+
+#Tag 2951
+#frame_len	97 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	12.1857 
+#lpc_power	0.350532 
+#p_pulse_len	97 
+#spec_param	0.980372 0.299762 -0.208828 -0.176169 -0.146947 -0.245592 0.0339917 0.0546314 
+	0.121995 -0.164954 
+
+#Tag 3048
+#frame_len	117 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	18.3188 
+#lpc_power	0.385326 
+#p_pulse_len	117 
+#spec_param	0.987667 0.097929 -0.137615 -0.151707 -0.0301211 -0.125697 -0.174257 -0.143294 
+	-0.177927 0.0205284 
+
+#Tag 3165
+#frame_len	39 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	16.946 
+#lpc_power	0.356449 
+#p_pulse_len	39 
+#spec_param	0.987667 0.097929 -0.137615 -0.151707 -0.0301211 -0.125697 -0.174257 -0.143294 
+	-0.177927 0.0205284 
+
+#Tag 3204
+#frame_len	125 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	10.8092 
+#lpc_power	0.408965 
+#p_pulse_len	125 
+#spec_param	0.974817 0.397501 -0.0899268 -0.0161103 -0.00825909 -0.150636 -0.189178 -0.110739 
+	-0.143921 0.0173292 
+
+#Tag 3329
+#frame_len	187 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	11.2214 
+#lpc_power	0.371925 
+#p_pulse_len	187 
+#spec_param	0.979972 0.330352 0.0157948 -0.00512822 -0.133491 -0.109744 -0.0529024 -0.0598144 
+	0.0334686 -0.159847 
+
+#Tag 3516
+#frame_len	134 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	22.561 
+#lpc_power	0.546236 
+#p_pulse_len	134 
+#spec_param	0.983239 0.345281 -0.0186518 -0.221135 -0.197711 -0.218839 -0.0324586 -0.156434 
+	-0.00859031 -0.156166 
+
+#Tag 3650
+#frame_len	218 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	16.3309 
+#lpc_power	0.520086 
+#p_pulse_len	218 
+#spec_param	0.978623 0.304816 0.191713 -0.127515 -0.19763 -0.162023 -0.115079 -0.210562 
+	-0.0547836 0.0653334 
+
+#Tag 3868
+#frame_len	36 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	28.8161 
+#lpc_power	0.800834 
+#p_pulse_len	36 
+#spec_param	0.981113 0.242655 0.166232 -0.0460035 -0.250104 -0.310872 -0.112126 -0.0488197 
+	0.00947141 -0.157918 
+
+#Tag 3904
+#frame_len	96 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	22.7756 
+#lpc_power	0.63296 
+#p_pulse_len	96 
+#spec_param	0.981113 0.242655 0.166232 -0.0460035 -0.250104 -0.310872 -0.112126 -0.0488197 
+	0.00947141 -0.157918 
+
+#Tag 4000
+#frame_len	80 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	30.1777 
+#lpc_power	1.34435 
+#p_pulse_len	80 
+#spec_param	0.958308 0.0424375 0.490174 0.348367 -0.172584 -0.236013 -0.199932 -0.152471 
+	-0.21244 -0.0423265 
+
+#Tag 4080
+#frame_len	117 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	23.524 
+#lpc_power	1.04794 
+#p_pulse_len	117 
+#spec_param	0.958308 0.0424375 0.490174 0.348367 -0.172584 -0.236013 -0.199932 -0.152471 
+	-0.21244 -0.0423265 
+
+#Tag 4197
+#frame_len	34 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	39.4287 
+#lpc_power	2.13223 
+#p_pulse_len	34 
+#spec_param	0.914775 -0.0152693 0.589754 0.371876 0.150641 -0.592449 -0.102197 0.12101 
+	0.105627 0.188645 
+
+#Tag 4231
+#frame_len	76 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	15.3861 
+#lpc_power	0.832052 
+#p_pulse_len	76 
+#spec_param	0.914775 -0.0152693 0.589754 0.371876 0.150641 -0.592449 -0.102197 0.12101 
+	0.105627 0.188645 
+
+#Tag 4307
+#frame_len	320 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	35.1076 
+#lpc_power	0.597563 
+#p_pulse_len	320 
+#spec_param	0.989439 0.207976 -0.0472575 -0.117741 -0.142621 -0.251855 -0.206894 -0.0782052 
+	0.0650802 -0.0997017 
+
+#Tag 4627
+#frame_len	46 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	36.3236 
+#lpc_power	10.6729 
+#p_pulse_len	46 
+#spec_param	0.519044 -0.0649766 0.383979 0.480019 0.585494 -0.154518 -0.0833025 -0.0929858 
+	-0.0544736 -0.149662 
+
+#Tag 4673
+#frame_len	160 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	28.7805 
+#lpc_power	0.740146 
+#p_pulse_len	160 
+#spec_param	0.980592 0.304738 0.115583 0.151447 -0.00452569 -0.371428 -0.317155 -0.0160608 
+	-0.0924032 -0.0669261 
+
+#Tag 4833
+#frame_len	94 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	11.2837 
+#lpc_power	0.689812 
+#p_pulse_len	94 
+#spec_param	0.958101 0.115136 0.274565 0.180219 -0.0268871 -0.29615 -0.23934 0.122751 
+	-0.0407583 -0.032964 
+
+#Tag 4927
+#frame_len	68 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	13.7819 
+#lpc_power	0.84254 
+#p_pulse_len	68 
+#spec_param	0.958101 0.115136 0.274565 0.180219 -0.0268871 -0.29615 -0.23934 0.122751 
+	-0.0407583 -0.032964 
+
+#Tag 4995
+#frame_len	111 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	25.973 
+#lpc_power	0.838345 
+#p_pulse_len	111 
+#spec_param	0.972226 0.210415 0.308512 0.270176 0.02145 -0.361217 -0.334492 -0.0190566 
+	0.0465686 -0.21276 
+
+#Tag 5106
+#frame_len	87 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	26.4931 
+#lpc_power	1.40996 
+#p_pulse_len	87 
+#spec_param	0.95539 0.0718043 0.454259 0.214949 0.106231 -0.40891 -0.10988 0.00816916 
+	0.0358852 -0.0519175 
+
+#Tag 5193
+#frame_len	122 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	27.9202 
+#lpc_power	1.48591 
+#p_pulse_len	122 
+#spec_param	0.95539 0.0718043 0.454259 0.214949 0.106231 -0.40891 -0.10988 0.00816916 
+	0.0358852 -0.0519175 
+
+#Tag 5315
+#frame_len	38 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	25.2797 
+#lpc_power	2.28669 
+#p_pulse_len	38 
+#spec_param	0.91004 0.115886 0.450562 0.274612 0.311082 -0.418907 -0.127591 -0.07327 
+	0.0531431 -0.058535 
+
+#Tag 5353
+#frame_len	42 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	25.0602 
+#lpc_power	2.26684 
+#p_pulse_len	42 
+#spec_param	0.91004 0.115886 0.450562 0.274612 0.311082 -0.418907 -0.127591 -0.07327 
+	0.0531431 -0.058535 
+
+#Tag 5395
+#frame_len	76 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	25.8972 
+#lpc_power	2.34255 
+#p_pulse_len	76 
+#spec_param	0.91004 0.115886 0.450562 0.274612 0.311082 -0.418907 -0.127591 -0.07327 
+	0.0531431 -0.058535 
+
+#Tag 5471
+#frame_len	99 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	34.3222 
+#lpc_power	2.97568 
+#p_pulse_len	99 
+#spec_param	0.904442 0.258934 0.352904 0.273673 0.436132 -0.289258 -0.221437 -0.308931 
+	0.0814679 -0.0748878 
+
+#Tag 5570
+#frame_len	71 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	14.1099 
+#lpc_power	2.64089 
+#p_pulse_len	71 
+#spec_param	0.821743 0.187702 0.360847 0.251665 0.495081 -0.13637 -0.0238244 -0.0904972 
+	0.030283 -0.0237465 
+
+#Tag 5641
+#frame_len	61 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	26.9468 
+#lpc_power	5.04353 
+#p_pulse_len	61 
+#spec_param	0.821743 0.187702 0.360847 0.251665 0.495081 -0.13637 -0.0238244 -0.0904972 
+	0.030283 -0.0237465 
+
+#Tag 5702
+#frame_len	38 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	26.1031 
+#lpc_power	4.88562 
+#p_pulse_len	38 
+#spec_param	0.821743 0.187702 0.360847 0.251665 0.495081 -0.13637 -0.0238244 -0.0904972 
+	0.030283 -0.0237465 
+
+#Tag 5740
+#frame_len	55 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	18.7961 
+#lpc_power	3.50818 
+#p_pulse_len	55 
+#spec_param	0.785598 0.0903737 0.299349 0.304277 0.584216 -0.151802 -0.143119 -0.155752 
+	0.13491 -0.12092 
+
+#Tag 5795
+#frame_len	46 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	19.8237 
+#lpc_power	3.69999 
+#p_pulse_len	46 
+#spec_param	0.785598 0.0903737 0.299349 0.304277 0.584216 -0.151802 -0.143119 -0.155752 
+	0.13491 -0.12092 
+
+#Tag 5841
+#frame_len	47 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	23.6844 
+#lpc_power	4.42057 
+#p_pulse_len	47 
+#spec_param	0.785598 0.0903737 0.299349 0.304277 0.584216 -0.151802 -0.143119 -0.155752 
+	0.13491 -0.12092 
+
+#Tag 5888
+#frame_len	110 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	27.3653 
+#lpc_power	4.56796 
+#p_pulse_len	110 
+#spec_param	0.861814 0.250117 0.166071 0.145304 0.422574 -0.280681 -0.0103934 -0.0651114 
+	0.186842 0.00688826 
+
+#Tag 5998
+#frame_len	21 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	13.3439 
+#lpc_power	2.22743 
+#p_pulse_len	21 
+#spec_param	0.861814 0.250117 0.166071 0.145304 0.422574 -0.280681 -0.0103934 -0.0651114 
+	0.186842 0.00688826 
+
+#Tag 6019
+#frame_len	44 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	13.0857 
+#lpc_power	2.18433 
+#p_pulse_len	44 
+#spec_param	0.861814 0.250117 0.166071 0.145304 0.422574 -0.280681 -0.0103934 -0.0651114 
+	0.186842 0.00688826 
+
+#Tag 6063
+#frame_len	69 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	14.8267 
+#lpc_power	2.50323 
+#p_pulse_len	69 
+#spec_param	0.84392 0.0509456 0.253121 0.111142 0.544375 -0.222974 -0.184732 0.0116355 
+	0.113315 -0.0432011 
+
+#Tag 6132
+#frame_len	23 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	19.2814 
+#lpc_power	3.25533 
+#p_pulse_len	23 
+#spec_param	0.84392 0.0509456 0.253121 0.111142 0.544375 -0.222974 -0.184732 0.0116355 
+	0.113315 -0.0432011 
+
+#Tag 6155
+#frame_len	51 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	16.8404 
+#lpc_power	2.8432 
+#p_pulse_len	51 
+#spec_param	0.84392 0.0509456 0.253121 0.111142 0.544375 -0.222974 -0.184732 0.0116355 
+	0.113315 -0.0432011 
+
+#Tag 6206
+#frame_len	72 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	13.1376 
+#lpc_power	2.39816 
+#p_pulse_len	72 
+#spec_param	0.834673 0.0654799 0.143906 0.0918547 0.525607 -0.28002 -0.185111 0.0818886 
+	0.16221 -0.0296673 
+
+#Tag 6278
+#frame_len	34 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	15.6663 
+#lpc_power	2.85975 
+#p_pulse_len	34 
+#spec_param	0.834673 0.0654799 0.143906 0.0918547 0.525607 -0.28002 -0.185111 0.0818886 
+	0.16221 -0.0296673 
+
+#Tag 6312
+#frame_len	31 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	17.8 
+#lpc_power	3.24923 
+#p_pulse_len	31 
+#spec_param	0.834673 0.0654799 0.143906 0.0918547 0.525607 -0.28002 -0.185111 0.0818886 
+	0.16221 -0.0296673 
+
+#Tag 6343
+#frame_len	52 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	21.7681 
+#lpc_power	3.97358 
+#p_pulse_len	52 
+#spec_param	0.834673 0.0654799 0.143906 0.0918547 0.525607 -0.28002 -0.185111 0.0818886 
+	0.16221 -0.0296673 
+
+#Tag 6395
+#frame_len	71 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	20.486 
+#lpc_power	3.1318 
+#p_pulse_len	71 
+#spec_param	0.843614 0.0731535 0.13437 0.214169 0.614807 -0.120066 -0.0976643 0.00373278 
+	0.146774 -0.205624 
+
+#Tag 6466
+#frame_len	72 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	25.4266 
+#lpc_power	3.8871 
+#p_pulse_len	72 
+#spec_param	0.843614 0.0731535 0.13437 0.214169 0.614807 -0.120066 -0.0976643 0.00373278 
+	0.146774 -0.205624 
+
+#Tag 6538
+#frame_len	54 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	22.1028 
+#lpc_power	3.19128 
+#p_pulse_len	54 
+#spec_param	0.846489 0.0661191 0.218067 0.23606 0.590132 -0.245629 -0.1561 -0.0860589 
+	0.186433 -0.0794359 
+
+#Tag 6592
+#frame_len	41 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	18.0117 
+#lpc_power	2.6006 
+#p_pulse_len	41 
+#spec_param	0.846489 0.0661191 0.218067 0.23606 0.590132 -0.245629 -0.1561 -0.0860589 
+	0.186433 -0.0794359 
+
+#Tag 6633
+#frame_len	21 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	25.5632 
+#lpc_power	3.69091 
+#p_pulse_len	21 
+#spec_param	0.846489 0.0661191 0.218067 0.23606 0.590132 -0.245629 -0.1561 -0.0860589 
+	0.186433 -0.0794359 
+
+#Tag 6654
+#frame_len	43 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	24.4031 
+#lpc_power	3.52341 
+#p_pulse_len	43 
+#spec_param	0.846489 0.0661191 0.218067 0.23606 0.590132 -0.245629 -0.1561 -0.0860589 
+	0.186433 -0.0794359 
+
+#Tag 6697
+#frame_len	24 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	27.2789 
+#lpc_power	3.93864 
+#p_pulse_len	24 
+#spec_param	0.846489 0.0661191 0.218067 0.23606 0.590132 -0.245629 -0.1561 -0.0860589 
+	0.186433 -0.0794359 
+
+#Tag 6721
+#frame_len	75 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	24.2013 
+#lpc_power	2.2423 
+#p_pulse_len	75 
+#spec_param	0.912055 -0.179645 0.232827 0.333755 0.494676 -0.231071 -0.210681 -0.0311285 
+	0.0637803 0.0586014 
+
+#Tag 6796
+#frame_len	27 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	34.657 
+#lpc_power	3.21104 
+#p_pulse_len	27 
+#spec_param	0.912055 -0.179645 0.232827 0.333755 0.494676 -0.231071 -0.210681 -0.0311285 
+	0.0637803 0.0586014 
+
+#Tag 6823
+#frame_len	22 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	16.024 
+#lpc_power	1.48466 
+#p_pulse_len	22 
+#spec_param	0.912055 -0.179645 0.232827 0.333755 0.494676 -0.231071 -0.210681 -0.0311285 
+	0.0637803 0.0586014 
+
+#Tag 6845
+#frame_len	24 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	25.4311 
+#lpc_power	2.35625 
+#p_pulse_len	24 
+#spec_param	0.912055 -0.179645 0.232827 0.333755 0.494676 -0.231071 -0.210681 -0.0311285 
+	0.0637803 0.0586014 
+
+#Tag 6869
+#frame_len	43 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	9.58534 
+#lpc_power	2.78853 
+#p_pulse_len	43 
+#spec_param	0.733156 -0.095498 0.134014 0.278373 0.495955 -0.219509 -0.061505 -0.0982273 
+	0.0753421 0.0687873 
+
+#Tag 6912
+#frame_len	43 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	4.9623 
+#lpc_power	1.44361 
+#p_pulse_len	43 
+#spec_param	0.733156 -0.095498 0.134014 0.278373 0.495955 -0.219509 -0.061505 -0.0982273 
+	0.0753421 0.0687873 
+
+#Tag 6955
+#frame_len	35 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	5.25037 
+#lpc_power	1.52742 
+#p_pulse_len	35 
+#spec_param	0.733156 -0.095498 0.134014 0.278373 0.495955 -0.219509 -0.061505 -0.0982273 
+	0.0753421 0.0687873 
+
+#Tag 6990
+#frame_len	35 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	4.73157 
+#lpc_power	1.37649 
+#p_pulse_len	35 
+#spec_param	0.733156 -0.095498 0.134014 0.278373 0.495955 -0.219509 -0.061505 -0.0982273 
+	0.0753421 0.0687873 
+
+#Tag 7025
+#frame_len	35 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	6.13265 
+#lpc_power	0.917838 
+#p_pulse_len	35 
+#spec_param	0.896204 0.0296951 0.0896391 0.0960249 0.339545 -0.0934314 -0.304936 -0.140824 
+	0.0702957 0.0426962 
+
+#Tag 7060
+#frame_len	57 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	5.4967 
+#lpc_power	0.822658 
+#p_pulse_len	57 
+#spec_param	0.896204 0.0296951 0.0896391 0.0960249 0.339545 -0.0934314 -0.304936 -0.140824 
+	0.0702957 0.0426962 
+
+#Tag 7117
+#frame_len	55 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	5.06561 
+#lpc_power	0.75814 
+#p_pulse_len	55 
+#spec_param	0.896204 0.0296951 0.0896391 0.0960249 0.339545 -0.0934314 -0.304936 -0.140824 
+	0.0702957 0.0426962 
+
+#Tag 7172
+#frame_len	46 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	5.58766 
+#lpc_power	0.836272 
+#p_pulse_len	46 
+#spec_param	0.896204 0.0296951 0.0896391 0.0960249 0.339545 -0.0934314 -0.304936 -0.140824 
+	0.0702957 0.0426962 
+
+#Tag 7218
+#frame_len	151 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	8.77649 
+#lpc_power	0.434878 
+#p_pulse_len	151 
+#spec_param	0.965872 -0.0764366 0.252961 0.245613 0.122437 -0.198253 -0.211753 -0.242205 
+	0.0379491 -0.0764982 
+
+#Tag 7369
+#frame_len	68 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	6.16203 
+#lpc_power	0.420694 
+#p_pulse_len	68 
+#spec_param	0.960648 0.0188384 0.0624827 0.112497 0.0207084 -0.168671 -0.15957 -0.177161 
+	-0.0854686 0.104633 
+
+#Tag 7437
+#frame_len	91 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	5.37305 
+#lpc_power	0.366828 
+#p_pulse_len	91 
+#spec_param	0.960648 0.0188384 0.0624827 0.112497 0.0207084 -0.168671 -0.15957 -0.177161 
+	-0.0854686 0.104633 
+
+#Tag 7528
+#frame_len	43 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	4.01785 
+#lpc_power	0.377924 
+#p_pulse_len	43 
+#spec_param	0.941185 0.288282 -0.0091697 -0.0300874 -0.117999 -0.15589 -0.130198 -0.190413 
+	0.113417 -0.0199607 
+
+#Tag 7571
+#frame_len	63 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	2.84619 
+#lpc_power	0.267716 
+#p_pulse_len	63 
+#spec_param	0.941185 0.288282 -0.0091697 -0.0300874 -0.117999 -0.15589 -0.130198 -0.190413 
+	0.113417 -0.0199607 
+
+#Tag 7634
+#frame_len	81 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	3.70741 
+#lpc_power	0.348724 
+#p_pulse_len	81 
+#spec_param	0.941185 0.288282 -0.0091697 -0.0300874 -0.117999 -0.15589 -0.130198 -0.190413 
+	0.113417 -0.0199607 
+
+#Tag 7715
+#frame_len	102 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	4.5222 
+#lpc_power	0.3273 
+#p_pulse_len	102 
+#spec_param	0.958241 0.209475 0.0242485 -0.0444493 -0.127259 -0.188969 -0.0139764 -0.0974551 
+	0.00826474 0.109915 
+
+#Tag 7817
+#frame_len	34 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	5.30386 
+#lpc_power	0.383874 
+#p_pulse_len	34 
+#spec_param	0.958241 0.209475 0.0242485 -0.0444493 -0.127259 -0.188969 -0.0139764 -0.0974551 
+	0.00826474 0.109915 
+
+#Tag 7851
+#frame_len	69 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	4.29834 
+#lpc_power	0.253975 
+#p_pulse_len	69 
+#spec_param	0.965845 0.195165 -0.0480599 0.0552703 -0.0193473 -0.221891 -0.105788 0.0707525 
+	-0.0314639 -0.12396 
+
+#Tag 7920
+#frame_len	82 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	5.00091 
+#lpc_power	0.295488 
+#p_pulse_len	82 
+#spec_param	0.965845 0.195165 -0.0480599 0.0552703 -0.0193473 -0.221891 -0.105788 0.0707525 
+	-0.0314639 -0.12396 
+
+#Tag 8002
+#frame_len	101 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	2.69336 
+#lpc_power	0.436297 
+#p_pulse_len	101 
+#spec_param	0.898388 0.359529 0.123464 0.020827 0.0610432 -0.090063 0.017741 -0.0766601 
+	-0.0335846 0.0348272 
+
+#Tag 8103
+#frame_len	44 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	1.86195 
+#lpc_power	0.301618 
+#p_pulse_len	44 
+#spec_param	0.898388 0.359529 0.123464 0.020827 0.0610432 -0.090063 0.017741 -0.0766601 
+	-0.0335846 0.0348272 
+
+#Tag 8147
+#frame_len	136 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	3.61792 
+#lpc_power	0.356954 
+#p_pulse_len	136 
+#spec_param	0.936109 0.327043 -0.00430146 0.247926 0.113104 -0.0924365 -0.010764 -0.154904 
+	-0.0286358 -0.0537854 
+
+#Tag 8283
+#frame_len	29 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	3.4771 
+#lpc_power	0.343061 
+#p_pulse_len	29 
+#spec_param	0.936109 0.327043 -0.00430146 0.247926 0.113104 -0.0924365 -0.010764 -0.154904 
+	-0.0286358 -0.0537854 
+
+#Tag 8312
+#frame_len	93 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	2.31791 
+#lpc_power	0.28846 
+#p_pulse_len	93 
+#spec_param	0.914477 0.399809 -0.022437 -0.000894732 0.019725 -0.19656 0.0245356 -0.202717 
+	0.0754211 -0.107413 
+
+#Tag 8405
+#frame_len	46 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	2.29618 
+#lpc_power	0.285756 
+#p_pulse_len	46 
+#spec_param	0.914477 0.399809 -0.022437 -0.000894732 0.019725 -0.19656 0.0245356 -0.202717 
+	0.0754211 -0.107413 
+
+#Tag 8451
+#frame_len	38 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	1.52647 
+#lpc_power	0.189967 
+#p_pulse_len	38 
+#spec_param	0.914477 0.399809 -0.022437 -0.000894732 0.019725 -0.19656 0.0245356 -0.202717 
+	0.0754211 -0.107413 
+
+#Tag 8489
+#frame_len	27 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	1.958 
+#lpc_power	0.323246 
+#p_pulse_len	27 
+#spec_param	0.882368 0.363526 0.171152 -0.059503 -0.192687 -0.168638 -0.0974182 -0.157121 
+	-0.038678 -0.125464 
+
+#Tag 8516
+#frame_len	25 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	1.17091 
+#lpc_power	0.193306 
+#p_pulse_len	25 
+#spec_param	0.882368 0.363526 0.171152 -0.059503 -0.192687 -0.168638 -0.0974182 -0.157121 
+	-0.038678 -0.125464 
+
+#Tag 8541
+#frame_len	77 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	1.19208 
+#lpc_power	0.1968 
+#p_pulse_len	77 
+#spec_param	0.882368 0.363526 0.171152 -0.059503 -0.192687 -0.168638 -0.0974182 -0.157121 
+	-0.038678 -0.125464 
+
+#Tag 8618
+#frame_len	22 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	2.16024 
+#lpc_power	0.356634 
+#p_pulse_len	22 
+#spec_param	0.882368 0.363526 0.171152 -0.059503 -0.192687 -0.168638 -0.0974182 -0.157121 
+	-0.038678 -0.125464 
+
+#Tag 8640
+#frame_len	46 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	1.14536 
+#lpc_power	0.226675 
+#p_pulse_len	46 
+#spec_param	0.868798 0.335406 0.140254 -0.0480998 -0.089572 -0.0339764 0.0772499 -0.167404 
+	0.0348038 -0.165827 
+
+#Tag 8686
+#frame_len	40 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	1.03719 
+#lpc_power	0.205266 
+#p_pulse_len	40 
+#spec_param	0.868798 0.335406 0.140254 -0.0480998 -0.089572 -0.0339764 0.0772499 -0.167404 
+	0.0348038 -0.165827 
+
+#Tag 8726
+#frame_len	143 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	1.13907 
+#lpc_power	0.22543 
+#p_pulse_len	143 
+#spec_param	0.868798 0.335406 0.140254 -0.0480998 -0.089572 -0.0339764 0.0772499 -0.167404 
+	0.0348038 -0.165827 
+
+#Tag 8869
+#frame_len	78 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	4.07045 
+#lpc_power	0.210796 
+#p_pulse_len	78 
+#spec_param	0.970872 0.164281 -0.0327346 -0.200701 -0.0165557 -0.0403895 -0.107697 -0.00197071 
+	-0.0376573 -0.135415 
+
+#Tag 8947
+#frame_len	80 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	5.73961 
+#lpc_power	0.264634 
+#p_pulse_len	80 
+#spec_param	0.972197 0.305695 0.040459 -0.0191389 -0.0978412 -0.165485 0.0171234 -0.146987 
+	0.0906832 -0.0737417 
+
+#Tag 9027
+#frame_len	139 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	4.49049 
+#lpc_power	0.207041 
+#p_pulse_len	139 
+#spec_param	0.972197 0.305695 0.040459 -0.0191389 -0.0978412 -0.165485 0.0171234 -0.146987 
+	0.0906832 -0.0737417 
+
+#Tag 9166
+#frame_len	66 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	6.87954 
+#lpc_power	0.336438 
+#p_pulse_len	66 
+#spec_param	0.970748 0.208965 -0.124189 -0.146262 -0.213667 -0.101888 -0.0609435 -0.0481254 
+	-0.063074 -0.123958 
+
+#Tag 9232
+#frame_len	80 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	3.69882 
+#lpc_power	0.180888 
+#p_pulse_len	80 
+#spec_param	0.970748 0.208965 -0.124189 -0.146262 -0.213667 -0.101888 -0.0609435 -0.0481254 
+	-0.063074 -0.123958 
+
+#Tag 9312
+#frame_len	55 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	3.18509 
+#lpc_power	0.27784 
+#p_pulse_len	55 
+#spec_param	0.929321 0.370454 0.0655667 0.134447 -0.1487 -0.230789 -0.31689 -0.140985 
+	0.265406 -0.0234158 
+
+#Tag 9367
+#frame_len	162 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	3.25003 
+#lpc_power	0.28891 
+#p_pulse_len	162 
+#spec_param	0.947087 0.234805 0.0585903 -0.0532385 -0.18403 -0.152914 -0.106542 -0.0956533 
+	0.0411112 -0.0642197 
+
+#Tag 9529
+#frame_len	57 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	4.57549 
+#lpc_power	0.406736 
+#p_pulse_len	57 
+#spec_param	0.947087 0.234805 0.0585903 -0.0532385 -0.18403 -0.152914 -0.106542 -0.0956533 
+	0.0411112 -0.0642197 
+
+#Tag 9586
+#frame_len	33 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	3.11887 
+#lpc_power	0.292967 
+#p_pulse_len	33 
+#spec_param	0.929202 0.488256 -0.0519042 -0.094289 -0.0589721 -0.143108 -0.153764 -0.0914677 
+	-0.0581451 -0.173324 
+
+#Tag 9619
+#frame_len	97 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	3.44558 
+#lpc_power	0.323656 
+#p_pulse_len	97 
+#spec_param	0.929202 0.488256 -0.0519042 -0.094289 -0.0589721 -0.143108 -0.153764 -0.0914677 
+	-0.0581451 -0.173324 
+
+#Tag 9716
+#frame_len	36 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	5.25551 
+#lpc_power	0.493669 
+#p_pulse_len	36 
+#spec_param	0.929202 0.488256 -0.0519042 -0.094289 -0.0589721 -0.143108 -0.153764 -0.0914677 
+	-0.0581451 -0.173324 
+
+#Tag 9752
+#frame_len	120 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	5.37223 
+#lpc_power	0.294964 
+#p_pulse_len	120 
+#spec_param	0.940599 0.63389 -0.226574 -0.146411 0.0704663 -0.16393 0.038838 -0.290158 
+	-0.0296295 -0.174481 
+
+#Tag 9872
+#frame_len	130 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	263.751 
+#lpc_power	7.42025 
+#p_pulse_len	130 
+#spec_param	0.944594 -0.468851 -0.699566 -0.129709 0.336009 0.197508 0.294537 -0.340105 
+	0.0884116 0.154986 
+
+#Tag 10002
+#frame_len	39 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	1217.75 
+#lpc_power	34.2597 
+#p_pulse_len	39 
+#spec_param	0.944594 -0.468851 -0.699566 -0.129709 0.336009 0.197508 0.294537 -0.340105 
+	0.0884116 0.154986 
+
+#Tag 10041
+#frame_len	82 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	10245.6 
+#lpc_power	142.035 
+#p_pulse_len	82 
+#spec_param	0.95194 -0.571711 -0.671656 0.0396939 0.380886 -0.0491243 0.0533125 -0.506976 
+	0.507746 0.381796 
+
+#Tag 10123
+#frame_len	38 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	13485.1 
+#lpc_power	186.945 
+#p_pulse_len	38 
+#spec_param	0.95194 -0.571711 -0.671656 0.0396939 0.380886 -0.0491243 0.0533125 -0.506976 
+	0.507746 0.381796 
+
+#Tag 10161
+#frame_len	50 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	8255.33 
+#lpc_power	114.444 
+#p_pulse_len	50 
+#spec_param	0.95194 -0.571711 -0.671656 0.0396939 0.380886 -0.0491243 0.0533125 -0.506976 
+	0.507746 0.381796 
+
+#Tag 10211
+#frame_len	87 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	18081.4 
+#lpc_power	355.32 
+#p_pulse_len	87 
+#spec_param	0.941808 -0.384035 -0.691855 0.0222627 0.461679 -0.19164 -0.108152 -0.367489 
+	0.21538 0.605306 
+
+#Tag 10298
+#frame_len	77 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	101473 
+#lpc_power	1994.06 
+#p_pulse_len	77 
+#spec_param	0.941808 -0.384035 -0.691855 0.0222627 0.461679 -0.19164 -0.108152 -0.367489 
+	0.21538 0.605306 
+
+#Tag 10375
+#frame_len	92 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	261353 
+#lpc_power	2941.12 
+#p_pulse_len	92 
+#spec_param	0.933272 -0.799479 -0.305387 0.334684 0.196144 -0.385924 -0.338153 -0.536438 
+	0.348735 0.581203 
+
+#Tag 10467
+#frame_len	90 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	112168 
+#lpc_power	1262.27 
+#p_pulse_len	90 
+#spec_param	0.933272 -0.799479 -0.305387 0.334684 0.196144 -0.385924 -0.338153 -0.536438 
+	0.348735 0.581203 
+
+#Tag 10557
+#frame_len	88 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	178926 
+#lpc_power	2190.11 
+#p_pulse_len	88 
+#spec_param	0.938384 -0.704037 -0.49422 0.318009 0.340786 -0.437846 -0.349526 -0.441111 
+	0.181604 0.622561 
+
+#Tag 10645
+#frame_len	54 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	231725 
+#lpc_power	2836.39 
+#p_pulse_len	54 
+#spec_param	0.938384 -0.704037 -0.49422 0.318009 0.340786 -0.437846 -0.349526 -0.441111 
+	0.181604 0.622561 
+
+#Tag 10699
+#frame_len	32 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	103902 
+#lpc_power	1271.79 
+#p_pulse_len	32 
+#spec_param	0.938384 -0.704037 -0.49422 0.318009 0.340786 -0.437846 -0.349526 -0.441111 
+	0.181604 0.622561 
+
+#Tag 10731
+#frame_len	87 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	183310 
+#lpc_power	3143.4 
+#p_pulse_len	87 
+#spec_param	0.938061 -0.457211 -0.72491 -0.0729583 0.411353 -0.126822 -0.232571 -0.475329 
+	-0.163669 0.585713 
+
+#Tag 10818
+#frame_len	87 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	191855 
+#lpc_power	3289.94 
+#p_pulse_len	87 
+#spec_param	0.938061 -0.457211 -0.72491 -0.0729583 0.411353 -0.126822 -0.232571 -0.475329 
+	-0.163669 0.585713 
+
+#Tag 10905
+#frame_len	44 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	348352 
+#lpc_power	5092.58 
+#p_pulse_len	44 
+#spec_param	0.942445 -0.513305 -0.7475 -0.0478641 0.424986 -0.159281 -0.314785 -0.426641 
+	-0.190078 0.537612 
+
+#Tag 10949
+#frame_len	44 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	56488.6 
+#lpc_power	825.811 
+#p_pulse_len	44 
+#spec_param	0.942445 -0.513305 -0.7475 -0.0478641 0.424986 -0.159281 -0.314785 -0.426641 
+	-0.190078 0.537612 
+
+#Tag 10993
+#frame_len	44 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	323248 
+#lpc_power	4725.58 
+#p_pulse_len	44 
+#spec_param	0.942445 -0.513305 -0.7475 -0.0478641 0.424986 -0.159281 -0.314785 -0.426641 
+	-0.190078 0.537612 
+
+#Tag 11037
+#frame_len	45 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	78000.6 
+#lpc_power	731.905 
+#p_pulse_len	45 
+#spec_param	0.950103 -0.615041 -0.705262 0.039242 0.451218 -0.228328 -0.203866 -0.536567 
+	-0.0127499 0.632451 
+
+#Tag 11082
+#frame_len	88 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	214051 
+#lpc_power	2008.51 
+#p_pulse_len	88 
+#spec_param	0.950103 -0.615041 -0.705262 0.039242 0.451218 -0.228328 -0.203866 -0.536567 
+	-0.0127499 0.632451 
+
+#Tag 11170
+#frame_len	90 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	217426 
+#lpc_power	1061.95 
+#p_pulse_len	90 
+#spec_param	0.955903 -0.819335 -0.51994 0.325191 0.410569 -0.521322 -0.327287 -0.468074 
+	0.135185 0.602434 
+
+#Tag 11260
+#frame_len	51 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	168658 
+#lpc_power	823.761 
+#p_pulse_len	51 
+#spec_param	0.955903 -0.819335 -0.51994 0.325191 0.410569 -0.521322 -0.327287 -0.468074 
+	0.135185 0.602434 
+
+#Tag 11311
+#frame_len	42 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	24777.3 
+#lpc_power	121.017 
+#p_pulse_len	42 
+#spec_param	0.955903 -0.819335 -0.51994 0.325191 0.410569 -0.521322 -0.327287 -0.468074 
+	0.135185 0.602434 
+
+#Tag 11353
+#frame_len	99 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	61514.6 
+#lpc_power	141.437 
+#p_pulse_len	99 
+#spec_param	0.971163 -0.890523 -0.538979 0.413874 0.458891 -0.477226 -0.364402 -0.231526 
+	0.102874 0.573211 
+
+#Tag 11452
+#frame_len	62 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	17728.3 
+#lpc_power	40.7617 
+#p_pulse_len	62 
+#spec_param	0.971163 -0.890523 -0.538979 0.413874 0.458891 -0.477226 -0.364402 -0.231526 
+	0.102874 0.573211 
+
+#Tag 11514
+#frame_len	76 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	1761.44 
+#lpc_power	3.53568 
+#p_pulse_len	76 
+#spec_param	0.991725 -0.86645 -0.0561326 0.614355 0.112322 -0.274657 -0.169416 -0.223838 
+	0.243658 0.0790372 
+
+#Tag 11590
+#frame_len	36 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	781.554 
+#lpc_power	1.56879 
+#p_pulse_len	36 
+#spec_param	0.991725 -0.86645 -0.0561326 0.614355 0.112322 -0.274657 -0.169416 -0.223838 
+	0.243658 0.0790372 
+
+#Tag 11626
+#frame_len	115 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	451.493 
+#lpc_power	1.28689 
+#p_pulse_len	115 
+#spec_param	0.995254 -0.759199 -0.409909 0.0185102 0.199095 0.0941527 0.0834364 -0.246951 
+	-0.0814994 -0.175976 
+
+#Tag 11741
+#frame_len	78 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	276.903 
+#lpc_power	0.789256 
+#p_pulse_len	78 
+#spec_param	0.995254 -0.759199 -0.409909 0.0185102 0.199095 0.0941527 0.0834364 -0.246951 
+	-0.0814994 -0.175976 
+
+#Tag 11819
+#frame_len	120 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	317.374 
+#lpc_power	1.0117 
+#p_pulse_len	120 
+#spec_param	0.995178 -0.753737 -0.387192 0.105175 0.255884 0.0673635 0.117571 -0.070118 
+	0.0168612 0.0125048 
+
+#Tag 11939
+#frame_len	34 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	235.013 
+#lpc_power	0.749155 
+#p_pulse_len	34 
+#spec_param	0.995178 -0.753737 -0.387192 0.105175 0.255884 0.0673635 0.117571 -0.070118 
+	0.0168612 0.0125048 
+
+#Tag 11973
+#frame_len	49 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	875.386 
+#lpc_power	2.79048 
+#p_pulse_len	49 
+#spec_param	0.995178 -0.753737 -0.387192 0.105175 0.255884 0.0673635 0.117571 -0.070118 
+	0.0168612 0.0125048 
+
+#Tag 12022
+#frame_len	60 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	65.5741 
+#lpc_power	23.3788 
+#p_pulse_len	60 
+#spec_param	0.261266 -0.328563 0.233084 -0.371144 0.546493 0.184012 0.417381 0.0263144 
+	0.0448025 -0.239421 
+
+#Tag 12082
+#frame_len	71 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	3.77956 
+#lpc_power	1.34751 
+#p_pulse_len	71 
+#spec_param	0.261266 -0.328563 0.233084 -0.371144 0.546493 0.184012 0.417381 0.0263144 
+	0.0448025 -0.239421 
+
+#Tag 12153
+#frame_len	38 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	34.4585 
+#lpc_power	1.28827 
+#p_pulse_len	38 
+#spec_param	0.976483 -0.0502301 -0.181334 -0.127729 -0.1304 -0.179041 -0.0475486 0.0372364 
+	0.211489 0.253091 
+
+#Tag 12191
+#frame_len	128 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	13.2884 
+#lpc_power	0.496798 
+#p_pulse_len	128 
+#spec_param	0.976483 -0.0502301 -0.181334 -0.127729 -0.1304 -0.179041 -0.0475486 0.0372364 
+	0.211489 0.253091 
+
+#Tag 12319
+#frame_len	153 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	15.8401 
+#lpc_power	0.446932 
+#p_pulse_len	153 
+#spec_param	0.98137 0.0749269 -0.149583 -0.370445 -0.163616 0.0574426 0.16031 0.0716023 
+	0.00676989 0.1752 
+
+#Tag 12472
+#frame_len	64 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	0.478541 
+#lpc_power	0.404948 
+#p_pulse_len	64 
+#spec_param	0.375841 0.0784883 0.0602851 0.0228706 0.0451814 0.0367857 0.0161257 0.0170454 
+	-0.00949832 0.0178127 
+
+#Tag 12536
+#frame_len	56 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	0.470056 
+#lpc_power	0.397767 
+#p_pulse_len	56 
+#spec_param	0.375841 0.0784883 0.0602851 0.0228706 0.0451814 0.0367857 0.0161257 0.0170454 
+	-0.00949832 0.0178127 
+
+#Tag 12592
+#frame_len	55 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	476.872 
+#lpc_power	403.535 
+#p_pulse_len	55 
+#spec_param	0.375841 0.0784883 0.0602851 0.0228706 0.0451814 0.0367857 0.0161257 0.0170454 
+	-0.00949832 0.0178127 
+
+#Tag 12647
+#frame_len	27 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	7467.41 
+#lpc_power	4598.21 
+#p_pulse_len	27 
+#spec_param	-0.232532 -0.265901 0.4982 0.0619975 -0.0446088 -0.107872 -0.0634817 -0.145335 
+	-0.147861 -0.074966 
+
+#Tag 12674
+#frame_len	28 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	4128.34 
+#lpc_power	2542.11 
+#p_pulse_len	28 
+#spec_param	-0.232532 -0.265901 0.4982 0.0619975 -0.0446088 -0.107872 -0.0634817 -0.145335 
+	-0.147861 -0.074966 
+
+#Tag 12702
+#frame_len	35 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	3205.89 
+#lpc_power	1974.09 
+#p_pulse_len	35 
+#spec_param	-0.232532 -0.265901 0.4982 0.0619975 -0.0446088 -0.107872 -0.0634817 -0.145335 
+	-0.147861 -0.074966 
+
+#Tag 12737
+#frame_len	25 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	2310.82 
+#lpc_power	1422.94 
+#p_pulse_len	25 
+#spec_param	-0.232532 -0.265901 0.4982 0.0619975 -0.0446088 -0.107872 -0.0634817 -0.145335 
+	-0.147861 -0.074966 
+
+#Tag 12762
+#frame_len	33 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	1380.48 
+#lpc_power	850.06 
+#p_pulse_len	33 
+#spec_param	-0.232532 -0.265901 0.4982 0.0619975 -0.0446088 -0.107872 -0.0634817 -0.145335 
+	-0.147861 -0.074966 
+
+#Tag 12795
+#frame_len	46 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	2600.09 
+#lpc_power	1019.12 
+#p_pulse_len	46 
+#spec_param	-0.0196599 0.0746691 0.752794 -0.0838933 -0.144035 -0.12252 -0.131861 0.0314035 
+	-0.0479503 0.172838 
+
+#Tag 12841
+#frame_len	21 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	2470.51 
+#lpc_power	968.327 
+#p_pulse_len	21 
+#spec_param	-0.0196599 0.0746691 0.752794 -0.0838933 -0.144035 -0.12252 -0.131861 0.0314035 
+	-0.0479503 0.172838 
+
+#Tag 12862
+#frame_len	55 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	1263.92 
+#lpc_power	495.4 
+#p_pulse_len	55 
+#spec_param	-0.0196599 0.0746691 0.752794 -0.0838933 -0.144035 -0.12252 -0.131861 0.0314035 
+	-0.0479503 0.172838 
+
+#Tag 12917
+#frame_len	110 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	7170.51 
+#lpc_power	940.421 
+#p_pulse_len	110 
+#spec_param	0.823754 0.31586 0.0582177 -0.243458 -0.418418 -0.405464 0.100414 0.0922704 
+	0.51731 0.155997 
+
+#Tag 13027
+#frame_len	58 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	141038 
+#lpc_power	18497.4 
+#p_pulse_len	58 
+#spec_param	0.823754 0.31586 0.0582177 -0.243458 -0.418418 -0.405464 0.100414 0.0922704 
+	0.51731 0.155997 
+
+#Tag 13085
+#frame_len	60 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	219087 
+#lpc_power	28733.6 
+#p_pulse_len	60 
+#spec_param	0.823754 0.31586 0.0582177 -0.243458 -0.418418 -0.405464 0.100414 0.0922704 
+	0.51731 0.155997 
+
+#Tag 13145
+#frame_len	62 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	171384 
+#lpc_power	43155.9 
+#p_pulse_len	62 
+#spec_param	0.712252 0.119431 0.216027 -0.128243 -0.397215 -0.371399 -0.094763 0.00227025 
+	0.476907 0.0725361 
+
+#Tag 13207
+#frame_len	63 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	142792 
+#lpc_power	35956 
+#p_pulse_len	63 
+#spec_param	0.712252 0.119431 0.216027 -0.128243 -0.397215 -0.371399 -0.094763 0.00227025 
+	0.476907 0.0725361 
+
+#Tag 13270
+#frame_len	62 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	160103 
+#lpc_power	43952 
+#p_pulse_len	62 
+#spec_param	0.694514 -0.0192683 0.14506 -0.187455 -0.36568 -0.342495 -0.0644199 -0.0434789 
+	0.502158 0.108828 
+
+#Tag 13332
+#frame_len	61 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	194861 
+#lpc_power	53493.5 
+#p_pulse_len	61 
+#spec_param	0.694514 -0.0192683 0.14506 -0.187455 -0.36568 -0.342495 -0.0644199 -0.0434789 
+	0.502158 0.108828 
+
+#Tag 13393
+#frame_len	62 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	273008 
+#lpc_power	74946.8 
+#p_pulse_len	62 
+#spec_param	0.694514 -0.0192683 0.14506 -0.187455 -0.36568 -0.342495 -0.0644199 -0.0434789 
+	0.502158 0.108828 
+
+#Tag 13455
+#frame_len	62 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	251503 
+#lpc_power	91524.1 
+#p_pulse_len	62 
+#spec_param	0.545091 -0.0163175 0.155718 -0.0688089 -0.292742 -0.404949 -0.137202 -0.210196 
+	0.474088 0.201007 
+
+#Tag 13517
+#frame_len	60 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	265501 
+#lpc_power	96618.1 
+#p_pulse_len	60 
+#spec_param	0.545091 -0.0163175 0.155718 -0.0688089 -0.292742 -0.404949 -0.137202 -0.210196 
+	0.474088 0.201007 
+
+#Tag 13577
+#frame_len	60 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	158487 
+#lpc_power	82310.3 
+#p_pulse_len	60 
+#spec_param	0.364975 0.00356576 0.209824 0.0789051 -0.100894 -0.298499 -0.073228 -0.120352 
+	0.514395 0.172121 
+
+#Tag 13637
+#frame_len	59 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	144656 
+#lpc_power	75126.9 
+#p_pulse_len	59 
+#spec_param	0.364975 0.00356576 0.209824 0.0789051 -0.100894 -0.298499 -0.073228 -0.120352 
+	0.514395 0.172121 
+
+#Tag 13696
+#frame_len	60 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	141201 
+#lpc_power	73332.9 
+#p_pulse_len	60 
+#spec_param	0.364975 0.00356576 0.209824 0.0789051 -0.100894 -0.298499 -0.073228 -0.120352 
+	0.514395 0.172121 
+
+#Tag 13756
+#frame_len	60 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	111587 
+#lpc_power	59618.4 
+#p_pulse_len	60 
+#spec_param	0.369365 0.0712851 0.202939 0.0919387 -0.0710795 -0.272442 -0.0634746 -0.0926412 
+	0.509413 0.169749 
+
+#Tag 13816
+#frame_len	60 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	101122 
+#lpc_power	54027.4 
+#p_pulse_len	60 
+#spec_param	0.369365 0.0712851 0.202939 0.0919387 -0.0710795 -0.272442 -0.0634746 -0.0926412 
+	0.509413 0.169749 
+
+#Tag 13876
+#frame_len	60 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	95098.3 
+#lpc_power	50809.1 
+#p_pulse_len	60 
+#spec_param	0.369365 0.0712851 0.202939 0.0919387 -0.0710795 -0.272442 -0.0634746 -0.0926412 
+	0.509413 0.169749 
+
+#Tag 13936
+#frame_len	61 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	106107 
+#lpc_power	54103.3 
+#p_pulse_len	61 
+#spec_param	0.38571 0.102923 0.200923 0.0943662 -0.0712393 -0.289921 -0.0682427 -0.0776496 
+	0.5154 0.196352 
+
+#Tag 13997
+#frame_len	62 
+#num_pulses	1 
+#frame_type	UNVOICED 
+#voiced_fraction	0 
+#raw_power	98018.8 
+#lpc_power	49979.4 
+#p_pulse_len	62 
+#spec_param	0.38571 0.102923 0.200923 0.0943662 -0.0712393 -0.289921 -0.0682427 -0.0776496 
+	0.5154 0.196352 
+
+#Tag 14059
+#frame_len	62 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	104043 
+#lpc_power	51560.2 
+#p_pulse_len	62 
+#spec_param	0.400937 0.189007 0.185171 0.0729031 -0.0886776 -0.312146 -0.0611354 -0.105891 
+	0.474955 0.258458 
+
+#Tag 14121
+#frame_len	63 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	114492 
+#lpc_power	56738.2 
+#p_pulse_len	63 
+#spec_param	0.400937 0.189007 0.185171 0.0729031 -0.0886776 -0.312146 -0.0611354 -0.105891 
+	0.474955 0.258458 
+
+#Tag 14184
+#frame_len	63 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	106300 
+#lpc_power	52678.6 
+#p_pulse_len	63 
+#spec_param	0.400937 0.189007 0.185171 0.0729031 -0.0886776 -0.312146 -0.0611354 -0.105891 
+	0.474955 0.258458 
+
+#Tag 14247
+#frame_len	64 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	114074 
+#lpc_power	48366.9 
+#p_pulse_len	64 
+#spec_param	0.444621 0.180828 0.267644 0.0859059 -0.102262 -0.3473 -0.09041 -0.141173 
+	0.507586 0.236353 
+
+#Tag 14311
+#frame_len	64 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	101263 
+#lpc_power	42935.1 
+#p_pulse_len	64 
+#spec_param	0.444621 0.180828 0.267644 0.0859059 -0.102262 -0.3473 -0.09041 -0.141173 
+	0.507586 0.236353 
+
+#Tag 14375
+#frame_len	65 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	110063 
+#lpc_power	37731.6 
+#p_pulse_len	65 
+#spec_param	0.528965 0.210759 0.262591 0.0364868 -0.189223 -0.369307 -0.112257 -0.154611 
+	0.533452 0.258694 
+
+#Tag 14440
+#frame_len	65 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	108693 
+#lpc_power	37261.9 
+#p_pulse_len	65 
+#spec_param	0.528965 0.210759 0.262591 0.0364868 -0.189223 -0.369307 -0.112257 -0.154611 
+	0.533452 0.258694 
+
+#Tag 14505
+#frame_len	67 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	91155.8 
+#lpc_power	31249.8 
+#p_pulse_len	67 
+#spec_param	0.528965 0.210759 0.262591 0.0364868 -0.189223 -0.369307 -0.112257 -0.154611 
+	0.533452 0.258694 
+
+#Tag 14572
+#frame_len	69 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	109376 
+#lpc_power	30085.4 
+#p_pulse_len	69 
+#spec_param	0.598726 0.293483 0.155788 -0.0173998 -0.25271 -0.459018 -0.059482 -0.127914 
+	0.507484 0.324795 
+
+#Tag 14641
+#frame_len	71 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	92745.6 
+#lpc_power	25510.9 
+#p_pulse_len	71 
+#spec_param	0.598726 0.293483 0.155788 -0.0173998 -0.25271 -0.459018 -0.059482 -0.127914 
+	0.507484 0.324795 
+
+#Tag 14712
+#frame_len	72 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	98400.1 
+#lpc_power	21555.2 
+#p_pulse_len	72 
+#spec_param	0.661164 0.274089 0.163305 -0.0631862 -0.309649 -0.472334 -0.0697578 -0.107694 
+	0.553676 0.306581 
+
+#Tag 14784
+#frame_len	72 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	81251.1 
+#lpc_power	17798.6 
+#p_pulse_len	72 
+#spec_param	0.661164 0.274089 0.163305 -0.0631862 -0.309649 -0.472334 -0.0697578 -0.107694 
+	0.553676 0.306581 
+
+#Tag 14856
+#frame_len	72 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	99022.6 
+#lpc_power	13454.2 
+#p_pulse_len	72 
+#spec_param	0.79277 0.219486 0.0789914 -0.247174 -0.410793 -0.397331 0.0220832 -0.0085596 
+	0.616322 0.225549 
+
+#Tag 14928
+#frame_len	72 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	81642.5 
+#lpc_power	11092.8 
+#p_pulse_len	72 
+#spec_param	0.79277 0.219486 0.0789914 -0.247174 -0.410793 -0.397331 0.0220832 -0.0085596 
+	0.616322 0.225549 
+
+#Tag 15000
+#frame_len	74 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	63565.4 
+#lpc_power	8636.63 
+#p_pulse_len	74 
+#spec_param	0.79277 0.219486 0.0789914 -0.247174 -0.410793 -0.397331 0.0220832 -0.0085596 
+	0.616322 0.225549 
+
+#Tag 15074
+#frame_len	74 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	77073.9 
+#lpc_power	7687.83 
+#p_pulse_len	74 
+#spec_param	0.86225 0.149121 -0.0229761 -0.280576 -0.465043 -0.378179 0.12574 0.127469 
+	0.573395 0.102613 
+
+#Tag 15148
+#frame_len	74 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	54920.6 
+#lpc_power	5478.12 
+#p_pulse_len	74 
+#spec_param	0.86225 0.149121 -0.0229761 -0.280576 -0.465043 -0.378179 0.12574 0.127469 
+	0.573395 0.102613 
+
+#Tag 15222
+#frame_len	25 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	127661 
+#lpc_power	8681.29 
+#p_pulse_len	25 
+#spec_param	0.907175 0.0707569 -0.0814912 -0.296713 -0.492235 -0.34775 0.264154 0.239507 
+	0.516322 -0.0716532 
+
+#Tag 15247
+#frame_len	50 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	14687.3 
+#lpc_power	998.775 
+#p_pulse_len	50 
+#spec_param	0.907175 0.0707569 -0.0814912 -0.296713 -0.492235 -0.34775 0.264154 0.239507 
+	0.516322 -0.0716532 
+
+#Tag 15297
+#frame_len	75 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	51985.1 
+#lpc_power	3535.12 
+#p_pulse_len	75 
+#spec_param	0.907175 0.0707569 -0.0814912 -0.296713 -0.492235 -0.34775 0.264154 0.239507 
+	0.516322 -0.0716532 
+
+#Tag 15372
+#frame_len	76 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	44328.1 
+#lpc_power	4100.36 
+#p_pulse_len	76 
+#spec_param	0.842311 0.326223 0.0889659 -0.180583 -0.434706 -0.528951 0.0473585 0.207673 
+	0.575013 0.0732998 
+
+#Tag 15448
+#frame_len	76 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	38733.9 
+#lpc_power	3582.89 
+#p_pulse_len	76 
+#spec_param	0.842311 0.326223 0.0889659 -0.180583 -0.434706 -0.528951 0.0473585 0.207673 
+	0.575013 0.0732998 
+
+#Tag 15524
+#frame_len	76 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	34259.1 
+#lpc_power	2953.75 
+#p_pulse_len	76 
+#spec_param	0.822966 0.509335 0.0784004 -0.263644 -0.40462 -0.537931 0.0586817 0.224665 
+	0.544154 0.120532 
+
+#Tag 15600
+#frame_len	32 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	60980.4 
+#lpc_power	5257.61 
+#p_pulse_len	32 
+#spec_param	0.822966 0.509335 0.0784004 -0.263644 -0.40462 -0.537931 0.0586817 0.224665 
+	0.544154 0.120532 
+
+#Tag 15632
+#frame_len	45 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	6007.67 
+#lpc_power	517.969 
+#p_pulse_len	45 
+#spec_param	0.822966 0.509335 0.0784004 -0.263644 -0.40462 -0.537931 0.0586817 0.224665 
+	0.544154 0.120532 
+
+#Tag 15677
+#frame_len	25 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	69797.5 
+#lpc_power	4356.78 
+#p_pulse_len	25 
+#spec_param	0.834541 0.636948 0.0539325 -0.370496 -0.385239 -0.530354 0.128135 0.298837 
+	0.513149 0.0636194 
+
+#Tag 15702
+#frame_len	51 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	9380.33 
+#lpc_power	585.522 
+#p_pulse_len	51 
+#spec_param	0.834541 0.636948 0.0539325 -0.370496 -0.385239 -0.530354 0.128135 0.298837 
+	0.513149 0.0636194 
+
+#Tag 15753
+#frame_len	73 
+#num_pulses	1 
+#frame_type	VOICED 
+#voiced_fraction	1 
+#raw_power	20103.2 
+#lpc_power	1254.85 
+#p_pulse_len	73 
+#spec_param	0.834541 0.636948 0.0539325 -0.370496 -0.385239 -0.530354 0.128135 0.298837 
+	0.513149 0.0636194 

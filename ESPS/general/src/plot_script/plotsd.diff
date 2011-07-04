@@ -1,0 +1,372 @@
+.\" Copyright (c) 1987,1988,1989, 1990 Entropic Speech, Inc.; All rights reserved
+.mc |
+.\" @(#)plotsd.1	3.22	03 Apr 1997	ESI
+.TH PLOTSD 1\-ESPS 03 Apr 1997
+.mc
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+plotsd \- plot real sampled data from single-channel FEA_SD files
+.SH SYNOPSIS
+.B plotsd
+[
+.BI \-{prs} " range"
+] [
+.BI \-t " text"
+] . . .  [
+.BI \-x " level"
+] [
+.BI \-y " range"
+] [
+.BI \-E " expansion"
+]
+.br
+[
+.BI \-M " maxpnts"
+] [
+.mc |
+.BI \-T " device"
+] [
+.mc
+.BI \-Y " range"
+] [
+.BI \-W " generic window system options"
+]
+.I file
+.SH DESCRIPTION
+.PP
+.I Plotsd
+plots a portion of an ESPS sampled data file
+.I file.   
+The file must be a single-channel file.  If the file is complex, only
+the real part is plotted.  For multi-channel or complex files,
+consider using \fIdemux\fP (1\-\s-1ESPS\s+1) together with
+.mc |
+\fIplotsd\fP, or \fIgenplot\fP (1\-\s-1ESPS\s+1) to plot directly.
+.mc
+.PP
+If
+.I file
+is "\-", the standard input is read.
+.mc |
+By default,
+the output is in Unix GPS (``Graphics Primitive String'') format
+and is displayed on the Masscomp or Sun display (using \fImcd\fR), 
+but with the
+.B \-T
+option, this may be sent to the standard output,
+obtained in Tektronix format rather than GPS,
+or plotted on a hardcopy device.
+.mc
+.PP
+.mc |
+
+.mc
+.PP
+.mc *
+.mc
+If the \fB\-p\fP option is omitted, then the \fIrange\fP is computed
+from the parameter and common files; otherwise the entire contents
+of 
+.I file 
+is used as the default range.  
+.PP
+.I Plotsd
+finds the maximum and  minimum values in the specified range 
+and computes appropriate scales for the 
+.IR x -
+and 
+.IR y -axes.
+These automatic values can be overriden by the 
+.B \-y
+or
+.B \-Y 
+options.  
+.PP
+When displayed on the screen (see EXAMPLES, below), the plots
+will take a long time if every point is plotted.  For this reason, 
+.I plotsd
+plots a maximum of approximately 3000 points across the range 
+specified by the user (intermediate points are skipped).  This behavior
+can be changed by means of the 
+.B \-M 
+option. 
+.PP
+.I Plotsd
+will run faster if the 
+.B \-Y
+option is used, especially in the case of large files.  
+.mc |
+.PP
+On Masscomp workstations the color and line style of output 
+to ``gps'' or ``mcd'' depend on the
+environment variable BUNDLE.  The default is GPS bundle number 20, which
+gives solid lines on monochrome displays.
+.mc
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-p " first:last"
+.TP
+.BI \-p " first:+incr
+.TP
+.BI \-r " first:last"
+.TP
+.BI \-r " first:+incr
+Determines the range of points to be plotted.  In the first form
+(first:last), a pair of unsigned integers gives the first and last
+points of the range.  If
+.I first
+is omitted, 1 is used.  If 
+.I last 
+is omitted, the last point in the file is used.  The second form
+(first:+incr) is equivalent to the first with
+.I "last = first + incr".  
+The \fB-r\fP is a synonym for \fB-p\fP.  
+.TP
+.BI \-s " range"
+Select a range of points to be plotted in seconds. For compatibility with
+DSC LISTEN, the beginning of the file is 0.
+.TP
+.BI \-t " text"
+A line of text to be printed below the plot.  
+Up to ten
+.B \-t
+options may be specified; they are printed as text lines in order below the
+plot.
+.TP
+.BI \-x " level"
+If
+.I level
+is nonzero, debugging information is written to the standard error output.
+Default is 0 (no debugging output).
+.TP
+.BI \-y " low:high"
+Specifies approximate lower and upper limits for the 
+.IR y -axis.
+The values are adjusted by 
+.I plotsd
+in an attempt to make an esthetically pleasing plot.  
+.TP
+.BI \-E " expansion"
+The range selected by the
+.B \-p
+option or by the parameter and common files is shown in a context
+consisting of additional points at each end.
+The selected range is expanded by a fraction given by the argument
+.I expansion
+plus an additional amount chosen to make the endpoints round numbers.
+The expanded range is plotted, and the ends of the actually chosen range are
+flagged with vertical lines labeled with the
+.IR x- coordinate
+values.
+.TP
+.BI \-M " maxpnts\fR [3000]\fP"
+Specifies that 
+.I plotsd
+plot up to an approximate maximum of 
+.I maxpnts 
+points.  If the total number of points in the 
+.I range
+exceeds 
+.I maxpnts,
+points are skipped evenly throughout.
+As a special case,
+.I maxpnts
+= 0 specifies that no points are to be skipped.
+.TP
+.mc |
+.BI \-T " device"
+.I Device
+may be
+.BR gps ,
+.BR mcd ,
+.BR tek ,
+.BR suntools ,
+or
+.BR hardcopy .
+The default is
+.BR \-Tmcd,
+which displays the output on the Sun or Masscomp screen by piping it through
+.I mcd 
+(on Masscomp systems \fImcd\fR is supplied by Masscomp, on Suns,
+it is supplied by ESI).
+Specifying
+.B \-Tgps
+sends output to the standard output in Masscomp Unix GPS format.
+Specifying
+.B \-Ttek
+causes output to be sent to the standard output in Tektronix 4000-series
+format.
+If
+.B \-Tsuntools
+is used, then the display will be forced to use \fIsuntools\fR window
+system (on Suns and Solbournes only), even if ESPS has been configured
+to use the X window system.   If ESPS is built for X, then it uses X for
+plotting by default.
+If
+.B \-Tmcd
+is used on a Masscomp and ESPS has been configured to use X windows,
+then the old SP-40 \fImcd\fR is used instead of X windows.
+Specifying
+.B \-Thardcopy
+plots it on a hardcopy device, if one was set up in the installation
+script.  Note that the word \fIimagen\fR was used for this option in
+previous versions.   It is still accepted, but \fIhardcopy\fR is meant
+to be more general.
+.TP
+.mc
+.BI \-Y " low:high"
+Specifies exact lower and upper limits for the 
+.IR y -axis.
+.TP
+.BI \-W
+This option is followed by a character
+.mc |
+string consisting of the generic window system options.   These options are
+passed onto \fImcd\fR or \fIxmcd\fR.   
+This option is used to pass along generic X window
+arguments to \fIxmcd\fR or Suntool arguments to \fImcd\fR on Suns.  This
+option might not have an effect on all systems.   For example, on a
+.mc
+system running X windows, to cause the plot to appear at a particular
+screen location the following command could be used: 
+.mc *
+.mc
+.br
+\fIplotsd -W "=300x250+50+200" file\fR.
+.mc |
+.br
+See \fImcd(1\-ESPS)\fR and \fIxmcd(1\-ESPS)\fR for details.
+.pp
+.mc
+If the file to be plotted contains data of a single value, then the
+horizontal grid is suppressed.  Otherwise the horizontal plot tends to
+get lost on top of a grid line.
+.SH EXAMPLE
+.IP
+.BI "plotsd " "<options> <filename>"
+.mc |
+.PP
+is equivalent to
+.IP
+.BI "plotsd \-Tgps " "<options> <filename> " "| mcd"
+.PP
+The second form may be used if nondefault options for
+.I mcd
+are desired.
+.PP
+For Sun systems, this program will plot under either X windows, or
+Suntools.   By default, if the \fB-T\fR option is not used, it will 
+expect X windows.   To plot under Suntools you can use the \fB-Tsuntools\fR
+option.    If you always use Suntools, you can avoid using the \fB-T\fR
+option by defining the environment variable \fBEPLOTDEV\fR to be
+\fIsuntools\fR.  This will make the Suntools window system the default.
+This variable is ignored if the machine type is not Sun4, SUN3, or
+SUN386i.
+.mc
+.SH "ESPS PARAMETERS"
+No ESPS parameter file is read.
+.SH "ESPS COMMON"
+The following items are read from the ESPS Common file.  The values for
+start and nan are not used if a range is specified on the command line or
+if the input file is not the same file identified in the
+Common file by the "filename" symbol. 
+.IP
+.I "start - integer"
+.IP
+This is the starting point in the sampled data file to begin
+plotting. If it is zero, the beginning of the file is used.
+.sp
+.I "nan - integer"
+.IP
+This is the number of points (starting at 
+.IR start )
+to plot.
+If it is zero, the entire file is used as the default.  
+.sp
+.I "filename - string"
+.IP
+This is the name of the file to be displayed if \fIfile\fP is omitted
+from the command line.
+.PP
+The following items are written into the ESPS Common file:
+.IP
+.I "start - integer"
+.IP
+The left point in the range selected.
+.sp
+.I "nan - integer"
+.IP
+The number of points in the selected range.
+.sp
+.I "beginplot - integer"
+.IP
+The origin of the graph
+.RI ( x -coordinate).
+.sp
+.I "endplot - integer"
+.IP
+The end point of the graph
+.RI ( x -coordinate).
+.sp
+.I "prog - string"
+.IP
+This is the name of the program (\fIplotsd\fP in this case).
+.sp
+.I "filename - string"
+.IP
+This is the name of the file to be displayed.
+The program terminates if \fIfilename\fP does not exist when \fIfile\fP
+is not specified on the command line.
+.PP 
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.SH "ESPS HEADERS"
+.PP
+.I Plotsd
+reads the following field from the SD file header:
+.I common.type.
+.SH DIAGNOSTICS
+.PP
+.I Plotsd
+complains if there is no such file, if the file is not a sampled data
+file, or if the file is a mutli-channel file.  
+.SH WARNING
+Discarding points when more than
+.I maxpoints
+points are to be plotted can produce misleading results.
+In particular, aliasing is possible if the data has periodic components
+with periods comparable to or less than the spacing between the selected
+points.
+.SH EXPECTED CHANGES
+.PP
+Many more options may be added.
+.SH SEE ALSO
+\fIdemux\fP (1\-\s-1ESPS\s+1), \fImlplot\fP (1\-\s-1ESPS\s+1),
+\fIgenplot\fP (1\-\s-1ESPS\s+1), 
+.br
+\fIscatplot\fP (1\-\s-1ESPS\s+1),
+\fIplotspec\fP (1\-\s-1ESPS\s+1), \fIaplot\fP (1\-\s-1ESPS\s+1),
+.br
+FEA_SD (5\-\s-1ESPS\s+1)
+.SH AUTHOR
+.PP
+.nf
+Joseph T. Buck, Entropic Speech, Inc.
+Adapted from a program by Shankar Narayan.
+Converted by Rod Johnson to read new ESPS format.
+Modified for ESPS Common by Ajaipal S. Virdy.
+Modified for \-y, \-Y, and \-M by John Shore.
+Manual page revised by John Shore.
+.mc |
+\-T and \-E options added by Rod Johnson.
+SunView changes by Alan Parker
+.mc
+.fi

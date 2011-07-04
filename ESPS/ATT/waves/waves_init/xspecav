@@ -1,0 +1,92 @@
+#!/bin/sh  
+# @(#)xspecav	1.5 5/8/98 ERL
+# this script assumes that the input file is a FEA_SPEC file; it 
+# produces another FEA_SPEC file with average spectra -- each output spectrum
+# is a block average, i.e., the average of the block_size spectra prior
+# to the corresponding record in the input. 
+# $1 = range
+# $2 = input file
+# $3 = output file
+# set -x 
+
+
+range=$1
+infile=$2
+outfile=$3
+#!!!!!!!!!!!!! Switch to below if there is a space between -r and ranges
+#range=$1 $2
+#infile=$3
+#outfile=$4
+
+if test x$ESPS_TEMP_PATH = x
+then
+ av_temp=/usr/tmp
+else
+ av_temp=$ESPS_TEMP_PATH
+fi
+
+ctmp=$av_temp/specav$$.coef
+ftmp=$av_temp/specav$$.filt
+stmp=$av_temp/specav$$.sd
+ptmp=$av_temp/Pxspecav$$
+ttmp=$av_temp/ttemp$$
+
+exprompt -P$ESPS_BASE/lib/params/Pxspecav $ptmp
+
+n=`getparam -P $ptmp -p block_size` 
+filter_type=`getparam -P $ptmp -p filter_type` 
+
+sf=`hditem -i sf $infile`
+delay=`echo "scale=1;n=$n; n/2" | bc`
+
+case $filter_type in
+	WT_RECT)
+	num_file=`echo "scale=18; n=$n; n; for(i=0; i<n; i++) 1.0/n" | bc`
+	echo $num_file >> $ctmp
+	atofilt -c comment $ctmp $ftmp
+	;;
+	WT_HAMMING)
+	num_file=`echo "scale=18; a=0; n=$n; m=n-1; n; for(i=0; i<n; i++) \
+	a=a+0.54-0.46*c(2*3.14159*i/m); for(i=0; i<n; i++) \
+	(0.54-0.46*c(2*3.14159*i/m))/a" | bc -l`
+	echo $num_file >> $ctmp
+	atofilt -c comment $ctmp $ftmp
+	;;
+	WT_HANNING)
+	num_file=`echo "scale=18; a=0; n=$n; m=n-1; n; for(i=0; i<n; i++) \
+	a=a+0.5-0.5*c(2*3.14159*i/m); for(i=0; i<n; i++) \
+	(0.5-0.5*c(2*3.14159*i/m))/a" | bc -l`
+	echo $num_file >> $ctmp
+	atofilt -c comment $ctmp $ftmp
+	;;
+esac
+
+case "`fea_element -f re_spec_val -n $infile | awk '{print $2}'`"
+in
+BYTE)
+tofeasd $range -fre_spec_val $infile - \
+	| feafunc -f samples -f- -tFLOAT -g 0.2302585092994045 - - \
+	| feafunc  -f samples -f- -Fexp - - \
+	| addgen -g delay_samples -v $delay -t DOUBLE - -\
+	| filter2 -F $ftmp -z - - \
+	| feafunc -fsamples -f- -Flog10 -g 10.0 -d -64 - $stmp
+;;
+FLOAT)
+tofeasd $range -fre_spec_val $infile - \
+	| feafunc -f samples -f- -tFLOAT -g 0.2302585092994045 - - \
+	| feafunc  -f samples -f- -Fexp - - \
+	| addgen -g delay_samples -v $delay -t DOUBLE - -\
+	| filter2 -F $ftmp -z - - \
+	| feafunc -fsamples -f- -Flog10 -g 10.0 - $stmp
+;;
+*)
+echo "FEA_SPEC file is of a non-supported data type."
+echo "Please convert to BYTE or FLOAT and try again"
+exit 1
+;;
+esac
+
+tofspec -S -f samples -s $sf $stmp $outfile
+
+rm $ftmp $stmp $ptmp $ctmp
+

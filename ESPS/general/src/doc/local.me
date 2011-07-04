@@ -1,0 +1,173 @@
+.lo
+.SJ "Adding Local Functions to ESPS"
+.AU "Alan Parker"
+.TM ETM-S-88-W1 1.2 6/27/88
+.*R
+ETM-S-86-14, Entropic Signal Processing System (ESPS) Programming Guidelines
+.*R
+ETM-S-87-29, Installation Instructions for the Entropic Signal
+Processing System (ESPS)
+.sh 1 Introduction
+.lp
+The document describes the procedure for adding local functions to ESPS.
+It should be read after the above references.  It is suggested that the
+first time ESPS is installed, it should be a normal installation; that
+is, installed as shipped, without any local modifications.
+.lp
+ESPS has been designed to easily support the addition of local library
+functions, file types, and programs.   This is accomplished by having
+the installation script support the notion of a local source
+directory, from which it will run a installation script.  This script is like
+the primary installation script.   This mechanism can also support
+\fIoverloading\fR standard ESPS programs or library functions, which
+modified ones.  
+.sh 1 "The ESPS Source Directories"
+.lp
+All of the standard ESPS programs and functions are under the directory
+\fIgeneral\fR.   
+For details of the directory structure, see reference (1).
+If you have a local section, you would place these
+programs under another directory (any name will do) that is a peer of
+\fIgeneral\fR and has a structure like that of
+\fIgeneral\fR.    A skeleton local directory, \fIlocal.skel\fR 
+is provided on the
+ESPS distribution to aid in building your local directory.  Its
+structure is show here:
+.(b
+.ft CW
+.nf
+
+                |-h-------------
+                |
+                |               |-man1----------
+|-local.skel----|-man-----------|-man3----------
+                |               |-man5----------
+                |
+                |-src-----------|-example-------
+                                |-lib-----------
+.fi
+.)b
+.ft LR
+In the local directory, there is a installation script, that is called
+by the primary installation script.
+.sh 1 "Specific Directions to Create Local Functions or Programs"
+.lp
+To create either one or more local library functions, programs, or both,
+the first thing to do is to create your local directory.   The easiest
+way to do this is to simply rename \fIlocal.skel\fR to \fIlocal.XXX\fR,
+where XXX is something reasonable for your site.     You must also edit
+the primary installation script \fIgeneral/install\fR.   There are three
+defines in the primary installations script that control the compilation
+of local items.  They are: \fBDOLOCAL\fR, \fBLOCALDIR\fR, and
+\fBLOCAL\fR.   \fBDOLOCAL\fR is set to y (yes) or n (no) to indicate
+whether the local part of ESPS should be installed when the script is
+run.   If you want to install your local part, this variable must be y.
+\fBLOCALDIR\fR is set to the name of the local directory (default to
+local.skel).  \fBLOCAL\fR is set to the a symbol that you wish to define
+with the \fIcc\fR \fB-D\fR option for your local part.  It must be
+defined even if you do not need such a symbol.  For example, we use
+\fB-DESI\fR for our local part.
+.lp
+In the following descriptions, where the name \fIlocal.skel\fR is used
+you should substitute you own directory name if you changed it.
+.sh 2 "Creating Local Library Functions"
+.lp
+Local library functions are handled by creating a separate local library
+(normally called \fIlibespsl.a\fR) in the ESPS \fIlib\fR directory.   The
+sources for the local library functions are in \fIlocal.skel/src/lib\fR.
+This directory also contains the library makefile and lint library source.
+.lp
+To create a local library (with one or more functions) add the .c file
+that implements this function to this directory and add the correct
+instructions to the makefile in this directory.   Use the sample file as
+a model, or consult the \fIgeneral/src/lib\fR directory for more complex
+examples.  For the first file you add to the local library, replace the
+sample file, \fIfoo.c\fR with your C file.   It is a good idea, but not
+mandatory, to add the new function to the lint library source file.  Use
+the standard lint library source file as an example, or consult the
+\fImake\fR manual page.
+.lp
+If you also are adding any local header files (.h) these should be added
+to the directory \fIlocal.skel/h\fR.   The makefile in this directory
+must also be updated.  There is an empty example file in that directory
+to show how the entry goes into the makefile.   
+.sh 2 "Creating Local Programs"
+.lp
+Local user-level programs are handled by creating a source directory for
+the new program under the \fIlocal.skel/src\fR directory.   There is a
+trivial example directory there to provide some guidance.  This source
+directory must contain all of the source files and a ESPS compatible
+makefile.  Use the one in \fIlocal.skel/src/example\fR as a prototype.
+The name of the source directory (usually the same as the program) must
+be added to the local installation script (\Ilocal.skel/install\fR).
+Search for the shell variable \fBDIRS\fR and add the directory name 
+to the list there.
+.lp
+Note that a local program might be one of the standard ESPS programs
+with some local changes.   If you want to change a standard ESPS program
+it is best to copy it into the local section and then make your changes.
+Unless you want both versions of the binary avaialble to your users, you
+do not need to change the name.   Assuming the user's search path is set
+up correctly (described below), the local version will be found before
+the the standard version.   If you use this procedure when you need to
+modify one of the standard programs, you will not run the risk of losing
+changes when you receive an update to ESPS.  (Of course, copying general
+programs to the local directory and making modifications does not change
+the proprietary nature of Entropic's source code and the modified code
+is still subject to the license agreement that your organization
+signed.)
+.sh 2 "Compiling the Local Section"
+.lp
+After the new programs have been added to the \fIlocal.skel\fR directory
+as described above, the primary installation script must be rerun to execute
+the local script.   Change to the \fIgeneral\fR directory and give the
+command \fBinstall none\fR.   The argument to the install command tells
+it a directory (in \fIgeneral/src\fR) to install; the default if nothing is
+given is to install all programs.    The directory \fInone\fR is an
+empty directory in \fIgeneral\fR that can serve as the target for an
+install command without really doing anything.
+.lp
+This command will run the general installation script and then run the
+local installation script, which should install all of your local
+programs.
+.lp
+After the local installation script has been run one time, you can use
+the programs \fIlemake\fR and \fIlecc\fR to compile local programs.
+These are scripts, generated by the local installation script, that
+define the ESPS local compilation environment and then run regular Unix
+\fImake\fR or \fIcc\fR.   So to recompile the local library later, you can
+just change into \fIlocal.skel/src/lib\fR and type \fBlemake
+install\fR.
+.sh 1 "Making Private Local Programs"
+.lp
+Private copies of ESPS programs can be maintained in a user's directory
+by using the ESPS scripts \fIemake\fR and \fIecc\fR.  These are scripts
+that define the ESPS compilation environment (header file and library
+location, floating point option, and binary directory) and call the Unix
+compilation tools.    If the private program uses features that are only
+in your location section (either local header files, or a local library
+function), then you should use \fIlemake\fR and \fIlecc\fR.  The only
+difference between \fIlemake\fR and \fIemake\fR is that \fIlemake\fR
+defines the local library and header files.   The local library and
+header files are searched first, so a local library function by the same
+name as a general function well be used instead.
+.sh 1 "A Word about Search Paths"
+.lp
+Of course, the ESPS binary directory must be on your user's search path
+in order for them to have easy access to the ESPS programs.   Normally
+the ESPS binaries go into the directory \fIbin\fR of the ESPS target
+directory (normally \fI/usr/esps\fR, but controlled by parameters in the
+primary installation script).   Local programs go into \fIbin.local\fR.
+So \fIbin.local\fR and \fIbin\fR must both on the user's path.  The
+correct thing to do is to put \fIbin.local\fR on the path first, so that
+if there is a program by the same name in the local part and the general
+part, the user will get the local version by default.
+.lp
+For example a typical path statement might be:
+.(b
+.ft CW
+.nf
+set path=(. /usr/esps/bin.local /usr/esps/bin /usr/local /usr/bin /bin)
+.fi
+.)b
+.ft LR

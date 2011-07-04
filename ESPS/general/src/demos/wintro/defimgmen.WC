@@ -1,0 +1,13 @@
+delete_all_items menu spect
+add_waves builtin "window ahead" menu spect
+add_waves builtin "window back" menu spect
+add_waves builtin "align & rescale" menu spect
+add_waves builtin "bracket markers" menu spect
+add_waves builtin "zoom in" menu spect
+add_waves builtin "zoom out" menu spect
+add_waves builtin "zoom full out" menu spect
+add_waves builtin "kill window" menu spect
+add_espst menu spect name "Show segment data" command epsps -H
+return
+
+# @(#)defimgmen.WC	1.2 2/5/92 ERL 

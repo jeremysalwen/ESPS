@@ -1,0 +1,74 @@
+#! /bin/sh
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1991  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)xrefcof	1.6	6/29/93	ERL
+# 
+# Written by:  John Shore
+# Checked by:
+# Revised by:
+# 
+# Brief description: X cover for refcof
+
+# This script computes and plots a maximum entropy spectrum, with 
+# interactive (X-Windows) prompting for the analysis parameters
+#
+# The script takes two arguments:
+#
+#	$1 = standard ESPS range argument (e.g., -r100:2000)
+#       $2 = name of ESPS sampled data file
+#
+# exprompt is used to fill out a form specifying the analysis method 
+# and related parameters; the reflection coefficients are computed 
+# and displayed, and a maximum entropy spectrum is plotted. 
+#
+# It is often useful to add this to a xwaves+ menu via 
+#
+# add_espsn name xrefcof command xrefcof
+
+#set -x 
+
+TEMP_DIR=$ESPS_TEMP_PATH
+
+if test x$TEMP_DIR = x
+  then 
+    TEMP_DIR=/usr/tmp
+fi
+
+# define temp files for parameters and reflection coefficients
+
+params=$TEMP_DIR/xref$$.prm
+
+rc=$TEMP_DIR/xref$$.rc
+
+case $# in
+0|3|4|5)
+	echo "Usage: xrefcof [-{pr} range] input.sd"
+	exit 1;;
+esac
+
+# prompt for parameters (except start, nan, frame_len, and step) 
+
+#exprompt -h refcof -P`get_esps_base`/lib/params/PWrefcof $params
+
+exprompt -h refcof -P PWrefcof $params
+
+# compute and plot results
+
+refcof -P$params $1 $2 $rc
+
+me_spec -P/dev/null $rc - | plotspec -  &
+
+xtext epsps -l $rc
+
+rm -f $params $rc
+
+

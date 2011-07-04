@@ -1,0 +1,115 @@
+#! /bin/sh
+#
+# initwtut: WAVES+ tutorial initialization script. 
+# @(#)initwtut	1.10 9/28/98 ERL 
+#
+
+#
+# decide what the symbol ESPS should be
+#
+SPSDIR=`get_esps_base`
+if test \( -d $SPSDIR \)
+then
+	ESPS=$SPSDIR
+elif test \( -d /files/esps \)
+then 
+	ESPS=/files/esps
+else
+	echo "ERROR: the \"esps\" directory doesn't seem to exist."
+	echo "Please consult your sysytem manager."
+	echo "WAVES+ tutorial initialization aborted."
+	exit
+fi
+
+#
+echo \
+"initwtut: Initialize a WAVES+ tutorial directory. @(#)initwtut	1.10 9/28/98"
+
+#
+if test ! \( -d $ESPS/demo \)
+then	{
+	echo "ERROR: the ESPS directory $ESPS/demo doesn't seem to exist."
+	echo "Please consult your system manager."
+	echo "WAVES+ tutorial initialization aborted."
+	exit
+	}
+
+fi
+
+#
+if test ! \( -f $ESPS/demo/speech.sd \)
+then	{
+	echo "ERROR: the WAVES+ tutorial file $ESPS/demo/speech.sd"
+	echo "doesn't seem to exist.  Please consult your system manager."
+	echo "WAVES+ tutorial initialization aborted."
+	exit
+	}
+fi
+#
+cp $ESPS/demo/speech.sd .
+
+
+#
+if test \( -d $ESPS/lib/waves \)
+then	{
+	echo
+	echo "NOTE: the WAVES+ library directory path is:"
+	echo
+	echo "		$ESPS/lib/waves"
+	echo
+	}
+else	{
+	echo "ERROR: the ESPS directory $ESPS/lib/waves doesn't seem to exist."
+	echo "Please consult your system manager."
+	echo "WAVES+ tutorial initialization aborted."
+	exit
+	}
+fi
+
+#
+# add current directory and ESPS/bin to PATH
+PATH=.:$ESPS/bin:$PATH;export PATH
+
+
+# Check if xwaves programs are on the PATH
+if test ! -x $ESPS/bin/xwaves
+then
+	{
+	echo "ERROR: the executable program  \"xwaves\" doesn't"
+	echo "seem to exist in $ESPS/bin.  Please consult your system manager."
+	echo "WAVES+ tutorial initialization aborted."
+	exit
+	}
+fi
+
+#
+# Make demo scripts
+#
+	echo "waves set colormap $ESPS/lib/waves/colormaps/greymap" > demow
+	echo "waves set ref_start 0 ref_size 10" >> demow
+	echo "waves make name speech file speech.sd loc_x 0 loc_y 300 height 550 width 1100" >> demow
+	echo "waves sleep seconds 2.5" >> demow
+	echo "speech marker time .50" >>  demow
+	echo "speech marker time .75 do_left 0" >>  demow
+	echo "waves sleep seconds 3" >>  demow
+	echo "speech bracket file speech.sd" >>  demow
+	echo "waves set xspectrum_datwin_x 50" >> demow
+	echo "waves set xspectrum_datwin_y 500" >> demow
+	echo "waves attach function xspectrum" >>  demow
+	echo "waves send make name speech file speech.sd time .67" >>  demow
+	echo "waves sleep seconds 6" >>  demow
+	echo "waves detach" >> demow
+	echo "waves quit" >> demow
+
+
+#
+echo " "
+echo " "
+echo "WAVES+ tutorial initialization complete."
+echo " "
+echo " "
+echo "To see a brief demo of xwaves, type \"xwaves demow\"  "
+echo "When it exits, you may continue with the tutorial."
+
+
+

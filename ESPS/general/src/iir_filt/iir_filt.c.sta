@@ -1,0 +1,1534 @@
+/*********************************************************
+*
+  This material contains proprietary software of Entropic Speech, Inc.   
+  Any reproduction, distribution, or publication without the the prior	   
+  written permission of Entropic Speech, Inc. is strictly prohibited.
+  Any public distribution of copies of this work authorized in writing by
+  Entropic Speech, Inc. must bear the notice			
+ 								
+      "Copyright (c) 1988 Entropic Speech, Inc.; All rights reserved"
+ 				
+
+ 	
+*
+*  Module Name: iir_filt.c
+*
+*  Written By:   David Burton
+*  Checked by: 
+*
+*  DESCRIPTION:  This program designs a recursive filter.
+*		 Only Butterworth and Chebyshev1 filters 
+*		 are supported at this time.
+*		 
+*
+*
+*********************************************************/
+
+static char *sccs_id = "@(#)iir_filt.c	1.2 6/6/88 ESI";
+
+char *Version = "1.2", *Date="6/6/88";
+
+/*
+ * System Includes
+*/
+# include <stdio.h>
+# include <math.h>
+
+/* 
+ * ESPS Includes
+*/
+# include <esps/esps.h>
+# include <esps/filt.h>
+# include <esps/unix.h>
+# include <esps/constants.h>
+
+/* 
+ * Defines
+*/
+# define SYNTAX	USAGE ("iir_filt [-P param_file][-x debug_level] filt_file");
+# define SQRD(x) (x)*(x)
+# define ARCSINH(x) log((x)+sqrt(SQRD(x)+1))
+
+/* 
+* ESPS Functions
+*/
+    char *get_cmd_line();
+    double_cplx cdiv(), cmult(), cadd(), csub(), realmult(), csqrt();
+    double modul();
+    char *calloc();
+    int pz_to_co();
+
+/*
+ * Globals
+*/
+    extern char *optarg;
+    extern optind;
+
+
+main (argc, argv)
+int argc;
+char *argv[];
+    {
+    
+    FILE *fpout=NULL;		    /*output stream pointer*/
+    struct header *oh=NULL;		    /*output file header pointer*/
+    struct filt_data *frec=NULL;	    /*output data rescord structure*/
+    char *param_file = "params";    /*parameter file name*/
+    char *filt_file = NULL;	    /*output file name*/
+
+    int debug_level = 0;
+    short order;		    /*holds final filter order*/
+    int nroots_num, nroots_den;	    /*# roots in final filter*/
+
+    float *num_coeff=NULL, *den_coeff=NULL;   /*holds designed coefficients*/
+    double *r_pole=NULL, *r_zero=NULL, *i_pole=NULL, *i_zero=NULL;
+    float gain = 1.0;		    /*scaling gain*/
+    float sf = 8000;		    /*sampling frequency*/
+    char *filt_mthd = NULL;	    /*filter polynomial type*/
+    int filter_poly = 0;	    /* integer representation of type*/
+    char *filt_resp_type =  NULL;   /*filter response type*/
+    int filter_response = 0;	     /* integer representation of type*/
+    char *tmp = NULL;		    /* temporary character ptr*/
+
+    int i, c;
+    int filter_order = 0;	    /* filter polynomial order */
+    float three_dBs[2];		    /* holds 3 dB values */
+    float warped_3dBs[3];	    /* holds prewarped 3 dB values*/
+    int num_of_3dBs;		    /* number of 3 dB values*/
+    float band_edges[4];	    /* holds band edges for ELLIPTICAL*/
+    float warped_edges[4];	    /* holds prewarped edges for ELLIPTICAL*/
+    int num_of_band_edges;	    /*number of band edge freqs*/
+    float pass_loss=0;		    /*max. pass band loss*/
+    float stop_loss=0;		    /*min. stop band loss*/
+    short num_num_co, num_den_co;   /* number of filter coeffs*/
+    float gain_factor;		    /*values used to scale numerator coeffs*/
+
+    float prewarp();
+    void low_pass_proto();
+    void poles_and_zeros();
+    void elliptical_p_and_z();
+    void freq_xfrm();
+    void blt();
+    void pz_to_filt_co();
+    void set_gain();
+    double sqrt(), pow(), tan(), cos(), atan2();
+    double sin(), atof(), sinh(), cosh(), fabs();
+
+
+/* Check the command line options. */
+
+    while ((c = getopt (argc, argv, "P:x:")) != EOF)
+	{
+	switch (c)
+	    {
+	    case 'P':
+		param_file = optarg;
+		break;
+	    case 'x':
+		debug_level = atoi(optarg);
+		break;
+	    default:
+		SYNTAX
+	    }
+	}
+
+
+/* allocate space for filt_resp_type */
+
+    filt_resp_type = (char *) calloc((unsigned)8, sizeof(char));
+
+
+/* Get the output filter filename */
+
+    if (optind < argc)
+	{
+	filt_file = argv [optind];
+	if (strcmp (filt_file, "-") == 0) 
+	    {
+	    filt_file = "<stdout>";
+	    fpout = stdout;
+	    }
+	else TRYOPEN("iir_filt", filt_file, "w", fpout);
+	if (debug_level) 
+	    Fprintf (stderr,"iir_filt: Output file is %s\n", filt_file);
+	}
+    else
+	{
+	Fprintf (stderr,"iir_filt: No output file specified.\n");
+	SYNTAX
+	exit (1);
+	}
+
+/* Read parameter file and get design parameters */
+
+    if (debug_level)
+	Fprintf (stderr,"iir_filt: Reading parameter file %s\n", param_file);
+
+    if (read_params (param_file, SC_NOCOMMON, (char *)NULL) != 0)
+	{
+	Fprintf (stderr, 
+    "iir_filt: read_params could not read the params file (%s) - exiting.\n",
+		param_file);
+        exit(1);
+	}
+
+
+	if(symtype("filt_order") != ST_UNDEF){
+	    filter_order = getsym_i("filt_order");
+	}
+	else{
+	    Fprintf(stderr,	
+           "irr_filt: Filt_order not specified in params file - exiting.\n");
+	    exit(1);
+	}
+
+	
+	if (symtype("samp_freq") != ST_UNDEF)
+	    sf = (float)getsym_d ("samp_freq");
+	else{
+	    Fprintf(stderr, 
+    "iir_filt: Sampling frequency not specified in params file - exiting\n");
+	    exit(1);
+	}
+
+	if (symtype("gain") != ST_UNDEF)
+	    gain = (float)getsym_d ("gain");
+	else{
+	    Fprintf(stderr, 
+    "iir_filt: Pass band gain not specified in params file - exiting\n");
+	    exit(1);
+	}
+
+	if (symtype("filt_method") != ST_UNDEF)
+	    filt_mthd = getsym_s ("filt_method");
+	else{
+	    Fprintf(stderr, 
+    "iir_filt: Filt_method not specified in params file - exiting\n");
+	    exit(1);
+	}
+
+
+	if (symtype("filt_type") != ST_UNDEF){
+	    tmp = getsym_s ("filt_type");
+	    /* add FILT_ prefix*/
+	    (void)strcat(filt_resp_type, "FILT_");
+	    (void)strcat(filt_resp_type, tmp);
+	}
+	else{
+	    Fprintf(stderr, 
+    "iir_filt: Filt_type not specified in params file - exiting\n");
+	    exit(1);
+	}
+
+/* convert character strings to symbolic constants*/
+
+    if((filter_response = lin_search(filt_type, filt_resp_type)) == -1){
+       Fprintf(stderr, 
+       "iir_filt: Invalid filt_type (%s) specified - exiting.\n", 
+	tmp);
+       exit(1);
+    }
+
+    if((filter_poly = lin_search(filt_method, filt_mthd)) == -1){
+	Fprintf(stderr, 
+	    "iir_filt: Invalid filt_method (%s) specified - exiting.\n",
+	    filt_mthd);
+	exit(1);
+    }
+
+	
+/* Get filter design parameters - 
+    params values depend on filter polynomial type */
+
+    if(filter_poly == ELLIPTICAL || filter_poly == CHEBYSHEV2){
+	Fprintf(stderr, 
+  "iir_filt: %s filters not supported at this time - exiting.\n", filt_mthd);
+	exit(1);
+    }
+    switch(filter_poly){
+	case BUTTERWORTH:
+	    if(symtype("three_dB_freqs") != ST_UNDEF){
+		num_of_3dBs = getsym_fa("three_dB_freqs", three_dBs, (int)2);
+	    }
+	    else{
+		Fprintf(stderr,
+		    "iir_filt: three_db_freqs not specified - exiting.\n");
+		exit(1);
+	    }
+	    break;
+
+	case CHEBYSHEV1:
+	    if(symtype("three_dB_freqs") != ST_UNDEF){
+		num_of_3dBs = getsym_fa("three_dB_freqs", three_dBs, (int)2);
+	    }
+	    else{
+		Fprintf(stderr,
+		    "iir_filt: three_db_freqs not specified - exiting.\n");
+		exit(1);
+	    }
+
+	    if(symtype("pass_band_loss") != ST_UNDEF)
+		pass_loss = (float)getsym_d("pass_band_loss");
+	    else{
+		Fprintf(stderr,
+		    "iir_filt: Pass_band_loss not specified - exiting.\n");
+		exit(1);
+	    }
+
+	    if( pass_loss <= 0.){
+		Fprintf(stderr, 
+		    "iir_filt: Pass band loss must be > 0 - exiting.\n");
+		exit(1);
+	    }
+
+	    break;
+
+	case CHEBYSHEV2:
+	    if(symtype("three_dB_freqs") != ST_UNDEF){
+		num_of_3dBs = getsym_fa("three_dB_freqs", three_dBs, (int)2);
+	    }
+	    else{
+		Fprintf(stderr,
+		    "iir_filt: three_db_freqs not specified - exiting.\n");
+		exit(1);
+	    }
+
+
+	    if(symtype("stop_band_loss") != ST_UNDEF)
+		stop_loss = (float)getsym_d("stop_band_loss");
+	    else{
+		Fprintf(stderr,
+		    "iir_filt: Stop_band_loss not specified - exiting.\n");
+		exit(1);
+	    }
+
+	    if( stop_loss <= 0.){
+		Fprintf(stderr, 
+		    "iir_filt: stop band loss must be > 0 - exiting.\n");
+		exit(1);
+	    }
+
+	    break;
+
+	case ELLIPTICAL:
+	    if(symtype("band_edges") != ST_UNDEF){
+	       num_of_band_edges = getsym_fa("band_edges",band_edges,(int)4);
+	    }
+	    else{
+		Fprintf(stderr,
+	        "iir_filt: band_edges not specified - exiting.\n");
+		exit(1);
+	    }
+
+	    if(symtype("pass_band_loss") != ST_UNDEF)
+		pass_loss = (float)getsym_d("pass_band_loss");
+	    else{
+		Fprintf(stderr,
+		    "iir_filt: Pass_band_loss not specified - exiting.\n");
+		exit(1);
+	    }
+
+	    if( pass_loss <= 0.){
+		Fprintf(stderr, 
+		    "iir_filt: Pass band loss must be > 0 - exiting.\n");
+		exit(1);
+	    }
+
+	    if(symtype("stop_band_loss") != ST_UNDEF)
+		stop_loss = (float)getsym_d("stop_band_loss");
+	    else{
+		Fprintf(stderr,
+		    "iir_filt: Stop_band_loss not specified - exiting.\n");
+		exit(1);
+	    }
+
+	    if( stop_loss <= 0.){
+		Fprintf(stderr, 
+		    "iir_filt: stop band loss must be > 0 - exiting.\n");
+		exit(1);
+	    }
+
+	    break;
+	default:
+	    Fprintf(stderr, 
+"iir_filt: Invalid filter design method (%s) specified - exiting\n", 
+	    filt_mthd);
+	    exit(1);
+    }
+
+/* Sanity check on specified parameters */
+
+
+	if(sf <= 0.){
+	    Fprintf(stderr, "iir_filt: Sampling Frequency must be > 0.\n");
+	    exit(1);
+	}
+
+	switch(filter_poly){
+	    int num_of_freqs;
+
+	    case BUTTERWORTH:
+	    case CHEBYSHEV1:
+	    case CHEBYSHEV2:
+
+		num_of_freqs = 2;
+		if(filter_response == FILT_HP || filter_response == FILT_LP)
+		    num_of_freqs = 1;
+
+		for(i = 0;  i < num_of_freqs; i++){
+		    if(three_dBs[i] >= sf/2){
+			Fprintf(stderr, 
+"iir_filt: Critical frequency (%g Hz) >= (sampling frequency)/2 - exiting\n",
+			three_dBs[i]);
+			exit(1);
+		    }
+		}
+
+		for(i = 0; i < num_of_freqs; i++){
+		    if(three_dBs[i] <= 0.){
+			Fprintf(stderr,
+     "iir_filt: Critical frequency (%g Hz) <= 0 - exiting.\n", three_dBs[i]);
+			exit(1);
+		    }
+		}
+		break;
+
+	    case ELLIPTICAL:
+
+		num_of_freqs = 4;
+		if(filter_response == FILT_HP || filter_response == FILT_LP)
+		    num_of_freqs = 2;
+
+
+		for(i = 0;  i < num_of_freqs; i++){
+		    if(band_edges[i] >= sf/2){
+			Fprintf(stderr, 
+"iir_filt: Critical frequency (%g Hz) >= (sampling frequency)/2 - exiting\n",
+			band_edges[i]);
+			exit(1);
+		    }
+		}
+
+		for(i = 0;  i < num_of_freqs; i++){
+		    if(band_edges[i] <= 0.){
+			Fprintf(stderr, 
+     "iir_filt: Critical frequency (%g Hz) <= 0 - exiting\n", band_edges[i]);
+			exit(1);
+		    }
+		}
+		break;
+	    default:
+		Fprintf(stderr, 
+	           "iir_filt: Invalid filter design type (%s)\n", filt_mthd);
+		exit(1);
+	}
+
+	if(gain <= 0){
+	    Fprintf(stderr, "iir_filt: Gain must be > 0 - exiting.\n");
+	    exit(1);
+	}
+
+	if(filter_order <= 0){
+          Fprintf(stderr, "iir_filt: Filter order must be > 0 - exiting.\n");
+	    exit(1);
+	}
+
+	switch(filter_response){
+	    case FILT_LP:
+	    case FILT_HP:
+		switch(filter_poly){
+		    case ELLIPTICAL:
+			if(band_edges[1] <= band_edges[0]){
+			    Fprintf(stderr,
+"iir_filt: Band edges must be ordered from smallest to largest - exiting.\n");
+			    exit(1);
+			}
+
+			break;
+		    case BUTTERWORTH:
+		    case CHEBYSHEV1:
+		    case CHEBYSHEV2:
+			break;
+		    default:
+			break;
+		}
+		break;
+	    case FILT_BP:
+	    case FILT_BS:
+		switch(filter_poly){
+		    case ELLIPTICAL:
+			if(band_edges[1] <= band_edges[0]  ||
+			    band_edges[2] <= band_edges[1] ||
+			    band_edges[2] <= band_edges[3]){
+				Fprintf(stderr,
+"iir_filt: Band edges must be ordered from smallest to largest - exiting.\n");
+			    exit(1);
+			 }
+			 break;
+		    case BUTTERWORTH:
+		    case CHEBYSHEV1:
+		    case CHEBYSHEV2:
+			if(three_dBs[1] <= three_dBs[0]){
+			    Fprintf(stderr,
+"iir_filt: Band edges must be ordered from smallest to largest - exiting.\n");
+			    exit(1);
+			}
+			break;
+		    default:
+			break;
+		}
+		break;
+	    default:
+		break;
+	}
+
+
+/*DEBUG*/
+    if(debug_level > 0){
+	Fprintf(stderr, "\n");
+	Fprintf(stderr, "\tiir_filt: LISTING OF SPECIFIED PARAMETERS\n\n");
+	Fprintf(stderr, 
+	    "\n\niir_filt: Samp. freq. = %f, pass band gain = %f\n",
+	    sf, gain);
+	Fprintf(stderr, 
+	    "iir_filt: filt_method = %s, filt_type = %s\n",
+	    filt_mthd, filt_resp_type);
+        Fprintf(stderr,
+		"\niir_filt: order = %d, 3 dB freqs = %f and %f\n",
+		filter_order, three_dBs[0], three_dBs[1]);
+        Fprintf(stderr,
+"iir_filt: pass band loss = %f dB,\nband edges = %f, %f, %f and %f Hz\n",
+    pass_loss, band_edges[0], band_edges[1], band_edges[2], band_edges[3]);
+	    Fprintf(stderr,"iir_filt: stop band loss = %f dB\n", stop_loss);
+    }
+/*END DEBUG*/
+
+
+
+/* Create output header */
+
+    oh = new_header (FT_FILT);
+
+/* Allocate space for filter data record */
+
+
+
+/*********** Start the filter design processs ***********/
+
+    /* 
+    The basic design process is the following:
+
+	A. Prewarp the critical frequencies to the analog frequency
+	    domain - this is done by prewarp().
+
+	B. Find find critical frequencies for analog low pass
+	    prototype filter - this is done by low_pass_proto().
+
+	C. Find the poles and zeros for the prototype low pass
+	    filter - this is done by poles_and_zeros() for 
+	    BUTTERWORTH, CHEBYSHEV1, and CHEBYSHEV2 filters and by
+	    elliptical_p_and_z() for ELLIPTICAL fitlers.
+
+	D. Find the poles and zeros of the analog version of the
+	    desired filter type (LP, HP, BP, or BS) - this is done
+	    by freq_xfrm().
+
+	E. Find the corresponding poles and zeros in digital frequency
+	    domain -  this is done by blt().
+
+	F. Find the numerator and demoninator coeffs corressponding to
+	    the poles and zeros - this is done by pz_to_filt_co().
+
+	G. Modify the numerator coefficients so that the gain equal
+	    to the value specified - this is done by set_gain().
+
+	H. Write out the appropriate generics and the data record.
+
+    */
+
+
+/* prewarp frequencies */
+    /*Convert digital frequencies (Hz.) to analog frequencies (radians)*/
+
+    switch(filter_poly){
+	case BUTTERWORTH:
+	case CHEBYSHEV1:
+	case CHEBYSHEV2:
+	    for(i=0; i<num_of_3dBs; i++)
+		warped_3dBs[i] = prewarp(2*PI*three_dBs[i], sf);
+	    break;
+	case ELLIPTICAL:
+	    Fprintf(stderr, 
+	       "iir_filt: Elliptical filters not supported yet - exiting\n");
+	    exit(1);
+/*	    for(i=0; i<num_of_band_edges; i++)
+		warped_edges[i] = prewarp(2*PI*band_edges[i], sf);
+	    break;*/
+	default:
+	    /*should never get here*/
+	    Fprintf(stderr,"iir_filt: Invalid filt_method\n");
+	    exit(1);
+    }
+
+
+/*DEBUG*/
+    if (debug_level == 1 || debug_level > 9){
+	Fprintf(stderr, "\n\t\tPREWARP FREQUENCIES\n");
+	Fprintf(stderr, 
+	"iir_filt: Convert from Digital to Analog Frequency Domain\n");
+	if(filter_poly == ELLIPTICAL)
+	    for(i=0;i<num_of_band_edges; i++)
+		    Fprintf(stderr, 
+    "iir_filt: critical freq[%d] = %f Hz, warped freq[%d] = %f radians\n",
+		     i, band_edges[i], i, warped_edges[i]);
+	else
+	    for(i=0; i<num_of_3dBs; i++)
+		Fprintf(stderr,
+		"critical freq[%d] = %f Hz., warped freq[%d] = %f radians\n",
+		    i, three_dBs[i], i, warped_3dBs[i]);
+    }
+/*END DEBUG*/
+
+
+/* compute low pass prototype 3 dB frequency */
+
+    low_pass_proto(warped_3dBs, warped_edges, filter_response, filter_poly);
+
+/*DEBUG*/
+    if(debug_level == 2 || debug_level >9){
+	Fprintf(stderr, 
+		"\n\niir_filt: ANALOG LOWPASS PROTOTYPE FREQUENCIES\n");
+	if(filter_poly == ELLIPTICAL)
+	    Fprintf(stderr,"pass freq = %g radian, stop freq = %g radian\n",
+		warped_edges[0], warped_edges[1]);
+	else
+	    Fprintf(stderr,"pass freq = %f radian, stop freq = %f radian\n",
+		warped_3dBs[0], warped_3dBs[1]);
+    }
+/*END DEBUG*/
+
+
+
+/* Allocate space for pole and zero coefficients - real and imaginary parts*/
+
+    r_pole = (double *)calloc((unsigned)2*(filter_order)+4, sizeof(double));
+    spsassert(r_pole != NULL,
+			"Couldn't allocate space for real part poles\n");
+    r_zero = (double *)calloc((unsigned)2*(filter_order)+4, sizeof(double));
+    spsassert(r_zero != NULL,
+			"Couldn't allocate space for real part zeros\n");
+    i_pole = (double *)calloc((unsigned)2*(filter_order)+4, sizeof(double));
+    spsassert(i_pole != NULL,
+			"Couldn't allocate space for imag part poles\n");
+    i_zero = (double *)calloc((unsigned)2*(filter_order)+4, sizeof(double));
+    spsassert(i_zero != NULL,
+			"Couldn't allocate space for imag part zeros\n");
+
+/* find poles and zeros for prototype low pass filter */
+
+    switch(filter_poly){
+	case BUTTERWORTH:
+	case CHEBYSHEV1:
+	case CHEBYSHEV2:
+poles_and_zeros(r_pole, r_zero, i_pole, i_zero, warped_3dBs,filter_order, pass_loss, stop_loss, filter_poly);
+	    break;
+	case ELLIPTICAL:
+elliptical_p_and_z(r_pole, r_zero, i_pole, i_zero, warped_edges,filter_order, pass_loss, stop_loss);
+	    break;
+	default:
+	    Fprintf(stderr, "iir_filt: Invalid filter polynomial type\n");
+	    exit(1);
+    }
+
+/*DEBUG*/
+    if(debug_level == 3 || debug_level >9){
+	Fprintf(stderr, 
+	    "\n\niir_filt: ANALOG LOW PASS PROTOTYPE POLES AND ZEROS\n\n");
+	for(i=0; i<=(filter_order+1)/2; i++)
+	    Fprintf(stderr, 
+    "Index %d\treal_p = %lf, imag_p = %lf\n\treal_z = %lf, imag_z = %lg\n\n",
+		i, r_pole[i], i_pole[i], r_zero[i], i_zero[i]);
+    }
+/*END DEBUG*/
+
+
+/* transform low pass prototype to required response type*/
+
+    switch(filter_poly){
+	case ELLIPTICAL:
+	/*first zeros */
+   freq_xfrm(filter_response, r_zero, i_zero, warped_edges[3], filter_order);
+	/* now poles*/
+   freq_xfrm(filter_response, r_pole, i_pole, warped_edges[3], filter_order);
+	    break;
+	case BUTTERWORTH:
+	case CHEBYSHEV1:
+	case CHEBYSHEV2:
+	/* first zeros */
+    freq_xfrm(filter_response, r_zero, i_zero, warped_3dBs[2], filter_order);
+	/* now poles*/
+    freq_xfrm(filter_response, r_pole, i_pole, warped_3dBs[2], filter_order);
+	    break;
+	default:
+	    Fprintf(stderr, "iir_filt: Invalid filter polynomial type\n");
+	    exit(1);
+    }
+
+/*DEBUG*/
+    if(debug_level == 4 || debug_level > 9){
+	Fprintf(stderr, 
+	    "\n\niir_filt: Desired Response type = %s\n", filt_resp_type);
+	Fprintf(stderr, "Poles and Zeros for ANALOG Filter\n\n");
+	for(i=0; i<=filter_order+1; i++)
+	    Fprintf(stderr,
+   "Index = %d, real_p = %lf, imag_p = %lf,\n\treal_z = %lf, imag_z = %lg\n",
+		i, r_pole[i], i_pole[i], r_zero[i], i_zero[i]);
+    }
+/*END DEBUG*/
+
+
+/* Warp the frequencies back to the digital domain */
+/* This is done by using the digital bilinear transform*/
+
+    /*first zeros*/
+    blt(filter_order, filter_response, sf, r_zero, i_zero);
+
+    /*now poles*/
+    blt(filter_order, filter_response, sf, r_pole, i_pole);
+
+/*DEBUG*/
+    if(debug_level == 5 || debug_level >9){
+	Fprintf(stderr, "\n\nPoles and ZEROS for DIGITAL FILTER\n\n");
+	Fprintf(stderr, "\tFirst Poles:\n");
+	for(i=0; i< 2*((filter_order+1)/2); i++)
+	    Fprintf(stderr,
+  "Index = %d:\treal_pole = %lf, imag_pole = %lf\n",i, r_pole[i], i_pole[i]);
+	    Fprintf(stderr, "\nNow Zeros:\n");
+	    for(i=0; i< 2*((filter_order+1)/2); i++)
+		Fprintf(stderr,
+  "Index = %d:\treal_zero = %lf, imag_zero = %lf\n",i, r_zero[i], i_zero[i]);
+    }
+/*END DEBUG*/
+
+
+/* Convert poles and zeros into numerator and denominator polynomials*/
+
+/* Allocate space for numerator and denominator coefficients*/
+
+    num_coeff = (float *)calloc((unsigned)2*filter_order+4, sizeof(float));
+    spsassert(num_coeff != NULL, "Couldn't allocate space for numerator");
+    den_coeff = (float *)calloc((unsigned)2*filter_order+4, sizeof(float));
+    spsassert(den_coeff != NULL, "Couldn't allocate space for denominator");
+
+
+    nroots_num = (filter_order+1)/2;
+    nroots_den = (filter_order+1)/2;
+    if(filter_response == FILT_BP || filter_response == FILT_BS){
+	nroots_num = filter_order;
+	nroots_den = nroots_num;
+    }
+
+/* Convert from pole and zeros to filter cooefficients */
+
+    (void)pz_to_filt_co(filter_response, filter_order, nroots_num, 
+	    nroots_den, r_zero, i_zero, r_pole, i_pole, &num_den_co, 
+	    den_coeff, &num_num_co, num_coeff);
+
+/* set gain factor */
+
+    (void)set_gain(filter_response, gain, num_num_co, num_coeff, num_den_co,
+    den_coeff, &gain_factor, three_dBs, band_edges, sf, filter_poly);
+
+/*DEBUG*/
+    if(debug_level == 6 || debug_level >9){
+	Fprintf(stderr, "\n\niir_filt: Gain factor = %f\n\n", gain_factor);
+	Fprintf(stderr, "\t\tNumerator and Denominator Coefficients\n\n");
+	Fprintf(stderr, "Numerator Coefficients\n");
+	for(i=0; i<num_num_co; i++)
+	    Fprintf(stderr, "\tnum_coeff[%d] = %f\n", i, num_coeff[i]);
+	Fprintf(stderr, "\nDenominator Coefficients\n");
+	for(i=0; i<num_den_co; i++)
+	    Fprintf(stderr, "\tden_coeff[%d] = %f\n", i, den_coeff[i]);
+    }
+/*END DEBUG*/
+
+/* set key values in output header. */
+
+    oh->common.tag = NO;
+    oh->hd.filt->max_num = (short)(2*filter_order+4);
+    oh->hd.filt->max_den = (short)(2*filter_order+4);
+    oh->hd.filt->func_spec = (short)IIR;
+    oh->hd.filt->type = filter_response;
+    oh->hd.filt->method = filter_poly;
+
+    (void)strcpy (oh->common.prog, "iir_filt");
+    (void)strcpy (oh->common.vers, Version);
+    (void)strcpy (oh->common.progdate, Date);
+    (void)add_comment(oh, get_cmd_line(argc, argv));/*store command line*/
+
+
+
+/*
+ * Add generic header items: samp_freq, notch_freq, and band_width
+*/
+
+    (void)add_genhd_f("samp_freq", &sf, 1, oh);
+    order = filter_order;
+    if(filter_response == FILT_BS || filter_response == FILT_BP)
+	order = 2*order;
+    (void)add_genhd_s("filt_order", &order, 1, oh);
+    switch(filter_poly){
+	case BUTTERWORTH:
+	    (void)add_genhd_f("3dB_freqs", three_dBs, (int)2, oh);
+	    break;
+	case CHEBYSHEV1:
+	    (void)add_genhd_f("3dB_freqs", three_dBs, (int)2, oh);
+	    (void)add_genhd_f("pass_band_loss", &pass_loss, 1, oh);
+	    break;
+	case CHEBYSHEV2:
+	    (void)add_genhd_f("3dB_freqs", three_dBs, (int)2, oh);
+	    (void)add_genhd_f("stop_band_loss", &stop_loss, 1, oh);
+	    break;
+	case ELLIPTICAL:
+	    (void)add_genhd_f("3dB_freqs", band_edges, (int)4, oh);
+	    (void)add_genhd_f("pass_band_loss", &pass_loss, 1, oh);
+	    (void)add_genhd_f("stop_band_loss", &stop_loss, 1, oh);
+	    break;
+    }
+
+/*
+ * Warn if filter order is too high
+*/
+    if(order >= 14)
+	Fprintf(stderr, 
+"iir_filt: Filter design order probably too large to reliably design a\nfilter; please check filter design by plotting response.\n");
+
+    write_header (oh, fpout);
+    frec = allo_filt_rec (oh);
+
+/* Write the data to the output file. */
+
+    frec->filt_func.nsiz = num_num_co;
+    frec->filt_func.dsiz = num_den_co;
+    frec->filt_func.zeros = num_coeff;
+    frec->filt_func.poles  = den_coeff;
+
+    put_filt_rec (frec, oh, fpout);
+
+    (void) fclose (fpout);
+    exit(0);
+    /*NOTREACHED*/
+}
+
+
+float
+prewarp(rad_freq, samp_freq)
+/*assumes that frequencies are expressed in radians/sec*/
+/*implements Eqn. 7.112 in DFD by Parks and Burrus*/
+
+float rad_freq;
+float samp_freq;
+{
+    return((float)(2.*samp_freq*tan((double)(rad_freq/(2*samp_freq)))));
+}
+
+void
+low_pass_proto(three_dBs, b_edges, filter_response, filter_poly)
+/* find critical low pass frequencies corresponding to filter specification*/
+float *three_dBs;	    /*cut off frequencies*/
+float *b_edges;		    /*band edges for elliptical filter*/
+int filter_response;	    /* filter response type*/
+int filter_poly;	    /* filter design polynomial*/
+{
+    float ctr;
+
+    switch(filter_response){
+	case FILT_LP:
+	    /*low pass cutoff already defined*/
+	    three_dBs[1] = three_dBs[0];
+	    break;
+	case FILT_HP:
+	    /* replace S by 1/S */
+	    if(filter_poly == ELLIPTICAL){
+		b_edges[0] = 1./b_edges[0];
+		b_edges[1] = 1./b_edges[1];
+	    }
+	    else{ /*BUTTERWORTH, CHEBYSHEV1, or CHEBYSHEV2*/
+		three_dBs[0] = 1./three_dBs[0];	    
+		three_dBs[1] = three_dBs[0];
+	    }
+	    break;
+	case FILT_BP:
+	    /* use Eqn 7.97 to get center freq (ctr) 
+		and Eqn. 7.98 to get cutoff freq */
+	    
+	    if(filter_poly == ELLIPTICAL){
+		ctr = (float)sqrt((double)(b_edges[1]*b_edges[2]));
+		b_edges[1] = (SQRD(b_edges[2]) - SQRD(ctr))/b_edges[2];
+		b_edges[2] = (SQRD(b_edges[3]) - SQRD(ctr))/b_edges[3];
+		b_edges[3] = (SQRD(ctr) - SQRD(b_edges[0]))/b_edges[0];
+		if(b_edges[3] < b_edges[2])
+			b_edges[2] = b_edges[3];
+		/*shift all the values circularly around one place*/
+		b_edges[0] = b_edges[1];
+		b_edges[1] = b_edges[2];
+		b_edges[2] = b_edges[3];
+		b_edges[3] = ctr;
+	    }
+	    else{/* everything else*/
+		ctr = (float)sqrt((double)(three_dBs[0] * three_dBs[1]));
+             three_dBs[0] = (SQRD(three_dBs[1]) -ctr*ctr)/three_dBs[1];
+		three_dBs[1] = three_dBs[0];
+		three_dBs[2] = ctr;
+	    }
+	    break;
+	case FILT_BS:
+	    /* use Eqn. 7.97 to get center freq (ctr) and Eqn. 7.100
+		to get the cutoff frequency */
+
+	    if(filter_poly == ELLIPTICAL){
+		ctr = (float)sqrt((double)(b_edges[0]*b_edges[3]));
+		b_edges[0] = b_edges[0]/(ctr*ctr - SQRD(b_edges[0]));
+		b_edges[1] = b_edges[1]/(ctr*ctr - SQRD(b_edges[1]));
+		b_edges[2] = b_edges[2]/(SQRD(b_edges[2]) - ctr*ctr);
+		b_edges[3] = ctr;
+		if(b_edges[2] < b_edges[1])
+		    b_edges[1] = b_edges[2];
+	    }
+	    else{/*do the rest*/
+		ctr = sqrt(three_dBs[0]*three_dBs[1]);
+		three_dBs[0] = three_dBs[1]/(SQRD(three_dBs[1]) - SQRD(ctr));
+		three_dBs[1] = three_dBs[0];
+		three_dBs[2] = ctr;
+	    }
+	    break;
+	default:
+	    Fprintf(stderr, "iir_filt: Invalid filter response type.\n");
+	    exit(1);
+    }
+}
+
+void
+poles_and_zeros(r_p, r_z, i_p, i_z, cut_freq, order, p_loss, s_loss, type)
+/* find poles and zeros corresponding to low pass response*/
+double *r_p, *r_z, *i_p, *i_z;	/*real and imag poles and zeros*/
+float *cut_freq;		/*cutoff frequency*/
+int order;			/*desired filter order*/
+float p_loss;			/* pass band loss*/
+float s_loss;			/*stop band loss*/
+int type;			/*filter polynomial type*/
+{
+    int count, i, half_order;
+    double arg, temp_r, temp_i;
+
+    half_order = (order+1)/2; /* take advantage of integer division*/
+
+    if (2*half_order == order)
+	count = 1;
+    else
+	count = 0;
+
+    switch(type){
+	case BUTTERWORTH:
+	    /* Use Eqn. 7.13 for poles; zeros are at frequency = infinity*/
+
+	    for(i = 0; i < half_order; i++){
+		arg = (PI/2.)*count/order;
+		count += 2;
+		r_z[i] = 0.;
+		i_z[i] = FLT_MAX;
+		r_p[i] = cut_freq[0]*-cos(arg);
+		i_p[i] = cut_freq[0]*sin(arg);
+	    }
+	break;
+	case CHEBYSHEV1:
+	    /* Use Eqn. 7.36 to calculate epsilon, eqn 7.29 to
+		calculate v, and 7.33 to calculate poles.
+		The zeros all occur at infinity. */
+
+	    {
+	    double epsilon, v, sinhm, coshm;
+	    epsilon = sqrt(pow((double)10., (.1*p_loss)) - 1);
+	    v = ARCSINH(1./epsilon)/order;
+	    sinhm = sinh(v);
+	    coshm = cosh(v);
+	    for(i = 0; i < half_order; i++){
+		arg = (PI/2.)*count/order;
+		count += 2;
+		r_z[i] = 0.;
+		i_z[i] = FLT_MAX;
+		r_p[i] = cut_freq[0]*sinhm*-cos(arg);
+		i_p[i] = cut_freq[0]*coshm*sin(arg);
+	    }
+	    }
+	    break;
+	case CHEBYSHEV2:
+	    {
+	    double epsilon, v, sinhm, coshm;
+	    epsilon = sqrt(pow((double)10., (.1*s_loss)) - 1);
+	    v = ARCSINH(1./epsilon)/order;
+	    sinhm = sinh(v);
+	    coshm = cosh(v);
+	    for(i = 0; i < half_order; i++){
+		arg = (PI/2.)*count/order;
+		count += 2;
+
+		r_z[i] = 0.;
+		if(count != 0)
+		    i_z[i] = cut_freq[1]/sin(arg);
+		else
+		    i_z[i] = FLT_MAX;
+
+		temp_r = sinhm*-cos(arg);
+		temp_i = coshm*sin(arg);
+
+		r_p[i] = cut_freq[1]*temp_r/(SQRD((temp_r)+SQRD(temp_i)));
+		i_p[i] = cut_freq[1]*temp_i/(SQRD((temp_r)+SQRD(temp_i)));
+	    }
+	    }
+	    break;
+    }
+}
+
+
+
+
+
+void
+elliptical_p_and_z(r_p, r_z, i_p, i_z, b_edges, order, p_loss, s_loss)
+double *r_p, *r_z, *i_p, *i_z;	/*real and imag poles and zeros*/
+float *b_edges;			/*pass and stop band frequencies*/
+int order;			/*desired filter order*/
+float p_loss;			/* pass band loss*/
+float s_loss;			/*stop band loss*/
+{
+    return;
+}
+
+
+void
+freq_xfrm(type, Real, Imag, cntr, order)
+/* change low pass prototype to desired response type*/
+int type;	    /* filter response type */
+double Real[];	    /*real part of coefficients*/
+double Imag[];	    /*imaginary part of coefficients*/
+float cntr;	    /*warped geometric center frequency*/
+int order;	    /*desired filter order */
+{
+    int i, upper_order;
+    double_cplx a, b, c;
+
+
+    upper_order = 2*((order-1)/2)+1;
+    switch(type){
+	case FILT_LP:
+	/* No transformation needed - input is low pass */
+	break;
+	case FILT_HP:
+	    /* zeros at infinity end up at zero frequency,
+		and poles get inverted (S becomes 1/S)*/
+
+	    for(i = 0; i < (order+1)/2; i++){
+		if(Imag[i] > 1e20){
+		    Real[i] = 0.;
+		    Imag[i] = 0;
+		}
+		else{
+		    a.real = Real[i];
+		    a.imag = Imag[i];
+		    b.real = 1.;
+		    b.imag = 0.;
+		    if(a.real == 0. && a.imag == 0.){
+			Fprintf(stderr, 
+   "iir_filt: freq_xfrm: HP: real_pole[%d] = %lf and imag_pole[%d] = %lf\n", 
+					i, Real[i], i, Imag[i]);
+			exit(1);
+		    }
+		    b = cdiv(b,a);
+		    Real[i] = -fabs(b.real);
+		    Imag[i] = fabs(b.imag);
+		}
+	    }
+	    break;
+	case FILT_BP:
+	    /*zero at imfinity becomes one at zero frequency and
+		one at infinity. 
+	      Use Eqn 7.99 to get the poles*/
+
+	    for(i = 0; i < (order+1)/2; i++){
+		if(Imag[i] > 1e20){
+		    Real[i] = 0.;
+		    Real[upper_order-i] = 0.;
+		    Imag[i] = 1e20;
+		    Imag[upper_order-i] = 0.;
+		}
+		else{
+double_cplx aa,bb,cc;
+		    c.real = 4.*cntr*cntr;
+		    c.imag = 0;
+		    a.real = Real[i];
+		    a.imag = Imag[i];
+aa.real = a.real * a.real - a.imag * a.imag;
+aa.imag = a.real * a.imag + a.imag * a.real;
+bb.real = aa.real - c.real;
+bb.imag = aa.imag - c.imag;
+{
+    double angle, magnitude;
+    double_cplx y;
+
+    if (bb.imag == 0.0 && bb.real == 0.0) {
+                cc.real = 0.;
+                cc.imag = 0.;
+    }
+    else {
+    angle = atan2(bb.imag, bb.real);
+    magnitude = sqrt(modul(bb));
+
+    cc.real = magnitude*cos(angle/2);
+    cc.imag = magnitude*sin(angle/2);
+    }
+
+}
+b.real = a.real - cc.real;
+b.imag = a.imag - cc.imag;
+/*
+		    b = csub(a, csqrt( csub(cmult(a, a), c)));
+*/
+		    Real[i] = -fabs(b.real)/2.;
+		    Imag[i] = fabs(b.imag)/2.;
+aa.real = a.real * a.real - a.imag * a.imag;
+aa.imag = a.real * a.imag + a.imag * a.real;
+bb.real = aa.real - c.real;
+bb.imag = aa.imag - c.imag;
+{
+    double angle, magnitude;
+    double_cplx y;
+
+    if (bb.imag == 0.0 && bb.real == 0.0) {
+                cc.real = 0.;
+                cc.imag = 0.;
+    }
+    else {
+    angle = atan2(bb.imag, bb.real);
+    magnitude = sqrt(modul(bb));
+
+    cc.real = magnitude*cos(angle/2);
+    cc.imag = magnitude*sin(angle/2);
+    }
+
+}
+b.real = a.real + cc.real;
+b.imag = a.imag + cc.imag;
+/*
+		    b = cadd(a, csqrt( csub(cmult(a, a), c)));
+*/
+		    Real[upper_order-i] = -fabs(b.real)/2.;
+		    Imag[upper_order-i] = fabs(b.imag)/2.;
+		}
+	    }
+	    break;
+	case FILT_BS:
+	    /* Zeros at infinity become double zeros at the center
+		frequency (cntr). Use Eqn. 7.101 for the poles*/
+
+	    for(i = 0; i < (order+1)/2; i++){
+		if(Imag[i] > 1e20){
+		    Real[i] = 0.;
+		    Real[upper_order-i] = 0.;
+		    Imag[i] = cntr;
+		    Imag[upper_order-i] = cntr;
+		}
+		else{
+double_cplx aa,bb,cc;
+c.real = 4.0*cntr*cntr;
+		    c.imag = 0.;
+		    a.real = Real[i];
+		    a.imag = Imag[i];
+		    b.real = 1.;
+		    b.imag = 0.;
+/*
+	            a = cdiv(b, a);
+*/
+{
+    double  mody, modul ();
+    mody = modul (a);           /* |y| */
+    if (mody <= 0.0){
+        (void) fprintf (stderr,
+                        "cdiv: can't do a complex division by 0.0\n");
+        exit(-1);
+    }
+    mody = 1.0 / mody;
+    mody *= mody;               /* mody = 1.0/(|y|**2) */
+    a.real = (b.real * a.real + b.imag * a.imag) * mody;
+    a.imag = (b.imag * a.real - b.real * a.imag) * mody;
+}
+aa.real = a.real * a.real - a.imag * a.imag;
+aa.imag = a.real * a.imag + a.imag * a.real;
+bb.real = aa.real - c.real;
+bb.imag = aa.imag - c.imag;
+{
+    double angle, magnitude;
+    double_cplx y;
+
+    if (bb.imag == 0.0 && bb.real == 0.0) {
+                cc.real = 0.;
+                cc.imag = 0.;
+    }
+    else {
+    angle = atan2(bb.imag, bb.real);
+    magnitude = sqrt(modul(bb));
+
+    cc.real = magnitude*cos(angle/2);
+    cc.imag = magnitude*sin(angle/2);
+    }
+
+}
+b.real = a.real - cc.real;
+b.imag = a.imag - cc.imag;
+
+/*
+		    b = csub(a, csqrt( csub(cmult(a, a), c)));
+*/
+		    Real[i] = -fabs(b.real)/2.;
+		    Imag[i] = fabs(b.imag)/2.;
+aa.real = a.real * a.real - a.imag * a.imag;
+aa.imag = a.real * a.imag + a.imag * a.real;
+bb.real = aa.real - c.real;
+bb.imag = aa.imag - c.imag;
+{
+    double angle, magnitude;
+    double_cplx y;
+
+    if (bb.imag == 0.0 && bb.real == 0.0) {
+                cc.real = 0.;
+                cc.imag = 0.;
+    }
+    else {
+    angle = atan2(bb.imag, bb.real);
+    magnitude = sqrt(modul(bb));
+
+    cc.real = magnitude*cos(angle/2);
+    cc.imag = magnitude*sin(angle/2);
+    }
+
+}
+b.real = a.real + cc.real;
+b.imag = a.imag + cc.imag;
+/*
+		    b = cadd(a, csqrt( csub( cmult(a, a), c ) ));
+*/
+		    Real[upper_order-i] = -fabs(b.real)/2.;
+		    Imag[upper_order-i] = fabs(b.imag)/2.;
+		}
+	    }
+	    break;
+	default:
+	    Fprintf(stderr, "iir_filt: Invalid filter reponse type.\n");
+	    exit(1);
+    }
+}
+
+
+void
+blt(order, type, sf, real, imag)
+/*transform frequencies back to digital domain*/
+/* Use Eqn 7.108*/
+
+int type;	    /*frequency response type - i.e LP, HP, etc.*/
+int order;	    /*desired filter order*/
+float sf;	    /*sampling frequency*/
+double *real;	    /*real coefficients*/
+double *imag;	    /*imaginary coefficients*/
+{
+    int i;
+    double temp;
+
+    order = (order+1)/2;
+    if(type == FILT_BS || type == FILT_BP)
+	order = 2*order;
+
+    for(i = 0; i < order; i++){
+	if(fabs(imag[i]) > 1e15 || fabs(real[i]) > 1e15){
+	    real [i] = -1.;
+	    imag[i] = 0.;
+	}
+	else{
+	    temp = SQRD(2*sf - real[i]) + SQRD(imag[i]);
+	    real[i] = (SQRD(2*sf) - SQRD(real[i]) - SQRD(imag[i]))/temp;
+	    imag[i] = 4.*sf*imag[i]/temp;
+	}
+    }
+}
+
+
+void
+pz_to_filt_co(response_type, order, nroots_num, nroots_den, r_zero, i_zero, 
+	    r_pole, i_pole, num_den_co, den_coeff, num_num_co, num_coeff)
+
+int response_type;  /*LP, HP, BP, or BS*/
+int order;	    /*desired filter order*/
+int nroots_num;	    /* # of numerator roots*/
+int nroots_den;	    /* # of denominator roots*/
+double *r_zero;	    /*real part of zero coefficients*/
+double *i_zero;	    /*imag part of zero coefficients*/
+double *r_pole;	    /*real part of pole coefficients*/
+double *i_pole;	    /*imag part of pole coefficients*/
+short *num_den_co;    /*ptr to # coeffs in denominator polynomial*/
+short *num_num_co;    /*ptr to # coeffs in numerator polynomial*/
+float *num_coeff;   /*returned array of numerator polynomial coefficients*/
+float *den_coeff;   /*returned array of denominator ploynomial coefficients*/
+
+{
+
+	/* this should be rethought to see if a more elegant and
+	    transparent way of getting the numerator and 
+	    denominator coefficients can be found*/
+
+    int i, c;
+
+    /*fix up real roots in the denominator*/
+    
+    if( order != 2*(order/2) && i_pole[0] == 0 &&
+	(response_type == FILT_BP || response_type == FILT_BS))
+	    nroots_den++;
+
+    /*get denominator coefficients*/
+
+    (void)pz_to_co(nroots_den, r_pole, i_pole, num_den_co, den_coeff);
+
+
+    /* fix up the number of real zeros */
+
+    c = 0;
+    switch(response_type){
+	case FILT_LP:
+	    if(order != 2*(order/2)){/*order is odd*/
+		r_zero[0] = -1.;
+		for (i = 1; i < nroots_num; i++){
+		    if(i_zero[i] == 0.){
+			r_zero[nroots_num + i -1] = r_zero[i];
+			c++;
+		    }
+		}
+	    }
+	    else{/* order is even*/
+		for(i = 0; i < nroots_num; i++)
+		    if(i_zero[i] == 0.){
+			r_zero[nroots_num + i] = r_zero[i];
+			c++;
+		    }
+	    }
+	    break;
+	case FILT_HP:
+	    if(order != 2*(order/2)){/*order is odd*/
+		r_zero[0] = 1.;
+		for (i = 1; i < nroots_num; i++){
+		    if(i_zero[i] == 0.){
+			r_zero[nroots_num + i -1] = r_zero[i];
+			c++;
+		    }
+		}
+	    }
+	    else{/*order is even*/
+		for(i = 0; i < nroots_num; i++){
+		    if(i_zero[i] == 0.){
+			r_zero[nroots_num + i] = r_zero[i];
+			c++;
+		    }
+		}
+	    }
+	    break;
+	case FILT_BS:
+	{
+	    int num;
+	    num = order;
+    	    for(i = 0; i < order; i++){
+		if(i_zero[i] == 0.)
+		    r_zero[num++] = r_zero[i];
+	    }
+	    nroots_num = num;
+	    break;
+	}
+
+	case FILT_BP:
+	{
+	    int num;
+
+	    num = order;
+	    if(order == 2*(order/2)){/*order is even*/
+		if(i_zero[0] == 0.)
+		    r_zero[num++] = r_zero[0];
+	    }
+	    else{/*order is odd*/
+		r_zero[0] = 1.;
+		r_zero[num++] = -1.;
+	    }
+	    
+	    for(i = 1; i < order; i++){
+		if(i_zero[i] == 0.)
+		    r_zero[num++] = r_zero[i];
+	    }
+	    nroots_num = num;
+	    break;
+	}
+	default:
+	    Fprintf(stderr, 
+		"iir_filt: Invalid filter response type - exiting\n");
+	    exit(1);
+    }
+
+    /* get nunerator coefficients*/
+
+    nroots_num = nroots_num + c;
+    (void)pz_to_co(nroots_num, r_zero, i_zero, num_num_co, num_coeff);
+}
+
+
+void
+set_gain(response_type, gain, num_num_co, num_coeff, num_den_co, den_coeff, 
+	    gain_factor, cutoff1, cutoff2, sf, poly)
+
+/* This module works correctly for BUTTERWORTH filters only. For
+    CHEBYSHEV1 filters, the specified gain is somewhere between the
+    minimum and the maximum of the ripples */
+
+int response_type;	/*LP, HP, BP, or BS*/
+short num_num_co;	/* number of numerator coefficients*/
+float *num_coeff;	/* numerator coefficient values*/
+short num_den_co;	/* number of denominator coefficients*/
+float *den_coeff;	/* denominator coefficient values*/
+float gain;		/* desired pass band gain */
+float *gain_factor;	/* computed gain factor*/
+float *cutoff1;		/*BW, CH1, and CH2 critical frequencies*/
+float *cutoff2;		/*ELLIPTICAL critical frequencies*/
+float sf;		/* sampling frequency*/
+int poly;		/* filter polynomial type - BW, CH!, CH2, etc*/
+
+{
+
+	int i;
+	float num_gain = 0;
+	float den_gain = 0;
+    
+    switch(response_type){
+	
+	case FILT_LP:
+	case FILT_BS:
+	    /* evaluate at 0 frequency and use to set gain*/
+	    for(i = 0; i < num_num_co; i++)
+		num_gain += num_coeff[i];
+	    for(i = 0; i < num_den_co; i++)
+		den_gain += den_coeff[i];
+	    *gain_factor = gain*den_gain/num_gain;
+	    for(i = 0; i < num_num_co; i++)
+		num_coeff[i] = num_coeff[i]*(*gain_factor);
+	    break;
+	
+	case FILT_HP:
+	    /* evaluate at samp_freq/2 and use to set gain*/
+	    for(i = 0; i < num_num_co; i++)
+		num_gain += (float)pow((double)-1., (double)i)*num_coeff[i];
+	    for(i = 0; i < num_den_co; i++)
+		den_gain += (float)pow((double)-1., (double)i)*den_coeff[i];
+	    *gain_factor = gain*den_gain/num_gain;
+	    for(i = 0; i < num_num_co; i++)
+		num_coeff[i] = num_coeff[i]*(*gain_factor);
+	    break;
+
+	case FILT_BP:
+	    { /* evaluate at center frequency and use to set gain*/
+		double_cplx a, b, cc, d, aa;
+		double W0, temp;
+		W0 = (cutoff1[0]+cutoff1[1])/(2*sf);
+		if(poly == ELLIPTICAL)
+		    W0 = (cutoff2[1] + cutoff2[2])/(2*sf);
+
+		a.real = cos(2*PI*W0);
+		a.imag = -sin(2*PI*W0);
+
+		b.real = 1.;
+		b.imag = 0.;
+		cc.real = 1.;
+		cc.imag = 0.;
+		for(i = 1; i < num_num_co; i++){
+/*
+b = cmult(b, a);
+*/
+
+aa.real = b.real * a.real - b.imag * a.imag;
+aa.imag = b.real * a.imag + b.imag * a.real;
+b.real = aa.real;
+b.imag = aa.imag;
+ 
+aa.real = b.real * num_coeff[i];
+aa.imag = b.imag * num_coeff[i];
+
+cc.real = cc.real + aa.real;
+cc.imag = cc.imag + aa.imag;
+
+/*
+		    cc = cadd(cc, realmult(b, (double)num_coeff[i]));
+*/
+		}
+
+		b.real = 1.;
+		b.imag = 0.;
+		d.real = 1.;
+		d.imag = 0.;
+		for(i = 1; i < num_den_co; i++){
+/*
+		    b = cmult(b, a);
+*/
+aa.real = b.real * a.real - b.imag * a.imag;
+aa.imag = b.real * a.imag + b.imag * a.real;
+b.real = aa.real;
+b.imag = aa.imag;
+ 
+aa.real = b.real * den_coeff[i];
+aa.imag = b.imag * den_coeff[i];
+
+d.real = d.real + aa.real;
+d.imag = d.imag + aa.imag;
+
+/*
+		    d = cadd(d, realmult(b, (double)den_coeff[i]));
+*/
+		}
+		
+/*
+		*gain_factor = gain/modul(cdiv(cc, d));
+*/
+{
+    double_cplx r;
+    double  mody, modul ();
+/*
+    mody = modul (d); 
+*/
+    mody = sqrt(d.real*d.real + d.imag*d.imag);
+    if (mody <= 0.0){
+        (void) fprintf (stderr,
+                        "cdiv: can't do a complex division by 0.0\n");
+        exit(-1);
+    }
+    mody = 1.0 / mody;
+    mody *= mody;               /* mody = 1.0/(|y|**2) */
+    aa.real = (cc.real * d.real + cc.imag * d.imag) * mody;
+    aa.imag = (cc.imag * d.real - cc.real * d.imag) * mody;
+}
+
+    temp = aa.real*aa.real + aa.imag*aa.imag;
+    *gain_factor = gain/sqrt(temp);
+
+
+
+		for(i = 0; i < num_num_co; i++)
+		    num_coeff[i] = num_coeff[i]*(*gain_factor);
+		break;
+	    }
+	default:		
+	    Fprintf(stderr,
+		"iir_filt: Invalid filter response type - exiting\n");
+	    exit(1);
+    }
+}
+

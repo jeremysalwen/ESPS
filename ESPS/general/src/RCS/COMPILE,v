@@ -1,0 +1,230 @@
+head	1.2;
+access;
+symbols;
+locks
+	stepheni:1.2; strict;
+comment	@# @;
+
+
+1.2
+date	2009.02.08.16.33.41;	author stepheni;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2006.09.03.18.03.27;	author stepheni;	state Exp;
+branches;
+next	;
+
+
+desc
+@COMPILE script for esps
+@
+
+
+1.2
+log
+@works as of 8 Feb, '09, about to add code for 'clean' option
+@
+text
+@#! /bin/sh
+echo Compiled on `uname -a` >$ESPS_BASE/bin/compiled
+date >>$ESPS_BASE/bin/compiled
+set -x
+ua=`uname -a`
+if echo $ua | grep -q -s "[Ll]inux" ; then export ARCH=linux
+elif echo $ua | egrep -q -s "[Dd]arwin|[Mm]ac" ; then export ARCH=mac
+fi
+current_dir=`pwd`
+cd $current_dir/../h; emake clean; emake install; cd $current_dir
+if test x$1 = xlibs
+ then
+  cd ../../ATT/sigproc; emake clean install; cd $current_dir
+  cd ../../ATT/libsig; emake clean install; cd $current_dir
+  cd lib; emake clean; emake install; cd $current_dir
+  cd lib_header/sphere2.6; make clean depend install PROJDIR=`pwd`; \
+	cd $current_dir
+  cd lib_header; emake clean; emake install; cd $current_dir
+  cd lib_sp; emake clean; emake install; cd $current_dir
+  cd libxv; emake clean; emake install; cd $current_dir
+fi
+cd utils; emake clean; emake install; cd $current_dir
+cd $current_dir/../man;  emake install
+cd $current_dir
+
+AUDIO=none
+case `mach_type` in
+	SUN4) 	AUDIO=s16audio ;;
+	HP700) 	AUDIO=hpaudio ;;
+	SG)	AUDIO=sgaudio ;;
+esac
+# HERE IS WHERE XWAVES, ETC. GET MADE....
+cd ../../ATT ; emake clean install;  cd $current_dir
+cd ${ARCH}_audio; emake clean; emake install; cd $current_dir
+cd acf; emake clean; emake install; cd $current_dir
+cd addclass; emake clean; emake install; cd $current_dir
+cd addfea; emake clean; emake install; cd $current_dir
+cd addfeahd; emake clean; emake install; cd $current_dir
+cd addgen; emake clean; emake install; cd $current_dir
+cd addsd; emake clean; emake install; cd $current_dir
+cd atofilt; emake clean; emake install; cd $current_dir
+cd auto; emake clean; emake install; cd $current_dir
+cd bhd; emake clean; emake install; cd $current_dir
+cd btosps; emake clean; emake install; cd $current_dir
+cd cbkd; emake clean; emake install; cd $current_dir
+cd cbkedit; emake clean; emake install; cd $current_dir
+cd classify; emake clean; emake install; cd $current_dir
+cd clip; emake clean; emake install; cd $current_dir
+cd cnvlab; emake clean; emake install; cd $current_dir
+cd comment; emake clean; emake install; cd $current_dir
+cd copysd; emake clean; emake install; cd $current_dir
+cd copysps; emake clean; emake install; cd $current_dir
+cd cross_cor; emake clean; emake install; cd $current_dir
+cd demo; emake clean; emake install; cd $current_dir
+cd demux; emake clean; emake install; cd $current_dir
+cd distort; emake clean; emake install; cd $current_dir
+cd dither; emake clean; emake install; cd $current_dir
+cd dtw; emake clean; emake install; cd $current_dir
+cd dtw_rec; emake clean; emake install; cd $current_dir
+#cd echeckout; emake clean; emake install; cd $current_dir
+cd eparam; emake clean; emake install; cd $current_dir
+cd ereverse; emake clean; emake install; cd $current_dir
+cd erlsupport; emake clean; emake install; cd $current_dir
+cd esps2mu; emake clean; emake install; cd $current_dir
+cd eversion; emake clean; emake install; cd $current_dir
+cd exprompt; emake clean; emake install; cd $current_dir
+cd expromptrun; emake clean; emake install; cd $current_dir
+cd fbuttons; emake clean; emake install; cd $current_dir
+cd fea2mat; emake clean; emake install; cd $current_dir
+cd fea_deriv; emake clean; emake install; cd $current_dir
+cd fea_edit; emake clean; emake install; cd $current_dir
+cd fea_element; emake clean; emake install; cd $current_dir
+cd fea_print; emake clean; emake install; cd $current_dir
+cd fea_stats; emake clean; emake install; cd $current_dir
+cd feafunc; emake clean; emake install; cd $current_dir
+cd featosd; emake clean; emake install; cd $current_dir
+cd featospec; emake clean; emake install; cd $current_dir
+cd fft; emake clean; emake install; cd $current_dir
+cd fft_filter; emake clean; emake install; cd $current_dir
+cd fftcep; emake clean; emake install; cd $current_dir
+cd fftinv; emake clean; emake install; cd $current_dir
+cd filtconvert; emake clean; emake install; cd $current_dir
+cd filtspec; emake clean; emake install; cd $current_dir
+cd find_ep; emake clean; emake install; cd $current_dir
+cd findespsfile; emake clean; emake install; cd $current_dir
+cd frame; emake clean; emake install; cd $current_dir
+cd genplot; emake clean; emake install; cd $current_dir
+cd get_esps_base; emake clean; emake install; cd $current_dir
+cd getparam; emake clean; emake install; cd $current_dir
+cd gpstohp; emake clean; emake install; cd $current_dir
+cd hditem; emake clean; emake install; cd $current_dir
+cd hdshrink; emake clean; emake install; cd $current_dir
+cd his; emake clean; emake install; cd $current_dir
+cd igenplot; emake clean; emake install; cd $current_dir
+cd iir_filt; emake clean; emake install; cd $current_dir
+cd image; emake clean; emake install; cd $current_dir
+cd imlplot; emake clean; emake install; cd $current_dir
+cd impulse_rs; emake clean; emake install; cd $current_dir
+cd larcbk2rc; emake clean; emake install; cd $current_dir
+cd lloydcbk; emake clean; emake install; cd $current_dir
+cd lpcana; emake clean; emake install; cd $current_dir
+cd lpcsynt; emake clean; emake install; cd $current_dir
+cd make_sd; emake clean; emake install; cd $current_dir
+cd mat2fea; emake clean; emake install; cd $current_dir
+cd mbrot; emake clean; emake install; cd $current_dir
+cd mbuttons; emake clean; emake install; cd $current_dir
+cd me_sgram; emake clean; emake install; cd $current_dir
+cd me_spec; emake clean; emake install; cd $current_dir
+cd mergefea; emake clean; emake install; cd $current_dir
+cd misc; emake clean; emake install; cd $current_dir
+cd mlplot; emake clean; emake install; cd $current_dir
+cd mu2esps; emake clean; emake install; cd $current_dir
+cd mux; emake clean; emake install; cd $current_dir
+cd notch_filt; emake clean; emake install; cd $current_dir
+cd pen; emake clean; emake install; cd $current_dir
+cd playtest; emake clean; emake install; cd $current_dir
+cd plot3d; emake clean; emake install; cd $current_dir
+cd plotfield; emake clean; emake install; cd $current_dir
+cd pplain; emake clean; emake install; cd $current_dir
+cd psps; emake clean; emake install; cd $current_dir
+cd pwr; emake clean; emake install; cd $current_dir
+cd randplay; emake clean; emake install; cd $current_dir
+cd refcof; emake clean; emake install; cd $current_dir
+cd rem_dc; emake clean; emake install; cd $current_dir
+cd sdcomp; emake clean; emake install; cd $current_dir
+cd sdtofea; emake clean; emake install; cd $current_dir
+# cd select; emake clean; emake install; cd $current_dir
+cd send_xwaves; emake clean; emake install; cd $current_dir
+cd setmax; emake clean; emake install; cd $current_dir
+cd setrange; emake clean; emake install; cd $current_dir
+cd sfconvert; emake clean; emake install; cd $current_dir
+cd sgram; emake clean; emake install; cd $current_dir
+# cd showras; emake clean; emake install; cd $current_dir
+cd spectofea; emake clean; emake install; cd $current_dir
+cd spectrans; emake clean; emake install; cd $current_dir
+cd plotsgram; emake clean; emake install; cd $current_dir
+cd spscvt; emake clean; emake install; cd $current_dir
+cd stats; emake clean; emake install; cd $current_dir
+cd testsd; emake clean; emake install; cd $current_dir
+cd toep_solv; emake clean; emake install; cd $current_dir
+cd tofeasd; emake clean; emake install; cd $current_dir
+cd tofspec; emake clean; emake install; cd $current_dir
+cd transpec; emake clean; emake install; cd $current_dir
+cd vq; emake clean; emake install; cd $current_dir
+cd vqclassify; emake clean; emake install; cd $current_dir
+cd vqdst; emake clean; emake install; cd $current_dir
+cd window; emake clean; emake install; cd $current_dir
+cd wmse_filt; emake clean; emake install; cd $current_dir
+cd wsystem; emake clean; emake install; cd $current_dir
+cd xacf; emake clean; emake install; cd $current_dir
+#cd xpz; emake clean; emake install; cd $current_dir
+cd xtext; emake clean; emake install; cd $current_dir
+cd zcross; emake clean; emake install; cd $current_dir
+cd zero_pole; emake clean; emake install; cd $current_dir
+cd zero_pad; emake clean; emake install; cd $current_dir
+cd e2sphere; emake clean; emake install; cd $current_dir
+cd filter2; emake clean; emake install; cd $current_dir
+cd formsy; emake clean; emake install; cd $current_dir
+cd ps_ana; emake clean; emake install; cd $current_dir
+cd epochs; emake clean; emake install; cd $current_dir
+cd feaop; emake clean; emake install; cd $current_dir
+cd lp_syn; emake clean; emake install; cd $current_dir
+cd ps2frame; emake clean; emake install; cd $current_dir
+cd spec_subr; emake clean; emake install; cd $current_dir
+cd mask; emake clean; emake install; cd $current_dir
+cd get_f0; emake clean; emake install; cd $current_dir
+cd pkmc_filt; emake clean; emake install; cd $current_dir
+cd cb_filt; emake clean; emake install; cd $current_dir
+cd win_filt; emake clean; emake install; cd $current_dir
+# cd meter; emake clean; emake install; cd $current_dir
+cd get_resid; emake clean; emake install; cd $current_dir
+cd zst; emake clean; emake install; cd $current_dir
+cd xfir_filt; emake clean; emake install; cd $current_dir
+cd ebanner; emake clean; emake install; cd $current_dir
+# cd rasta_plp; emake clean; emake install; cd $current_dir
+cd cepsyn; emake clean; emake install; cd $current_dir
+cd cepanal; emake clean; emake install; cd $current_dir
+cd fea2esig; emake clean; emake install; cd $current_dir
+cd esig2fea; emake clean; emake install; cd $current_dir
+cd featohtk; emake clean; emake install; cd $current_dir
+cd barkspec; emake clean; emake install; cd $current_dir
+# cd tk_plot_tools; emake clean; emake install; cd $current_dir
+cd bs_dist; emake clean; emake install; cd $current_dir
+cd melspec; emake clean; emake install; cd $current_dir
+cd mbs_dist; emake clean; emake install; cd $current_dir
+cd einfo; emake clean; emake install; cd $current_dir
+echo Compile finished >>$ESPS_BASE/bin/compiled
+date >>$ESPS_BASE/bin/compiled
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d5 4
+d34 1
+a34 1
+# cd $AUDIO; emake clean; emake install; cd $current_dir
+@

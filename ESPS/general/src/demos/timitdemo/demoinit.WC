@@ -1,0 +1,35 @@
+waves delete_all_items menu all
+# configure the menus
+# @(#)demoinit.WC	1.5 11/17/92 ERL
+add_waves menu all builtin "bracket markers" 
+add_waves menu all builtin "zoom in" 
+add_waves menu all builtin "zoom out" 
+add_waves menu all builtin "zoom full out" 
+add_waves menu all builtin "window ahead" 
+add_waves menu all builtin "window back"
+add_waves menu all builtin "align & rescale" 
+add_waves menu all builtin "play between marks" 
+add_waves menu all builtin "play window contents" 
+add_waves menu all builtin "play entire file" 
+add_espst menu all name "Show segment data" command epsps -l
+add_waves menu wave builtin "spectrogram (W.B.)" 
+add_waves menu wave builtin "spectrogram (N.B.)" 
+add_espsf menu wave name "Custom FFT spectrogram" command expromptrun -h sgram -P params.sgram sgram 
+add_espsf menu wave name "MAXENT spectrogram" command me_sgram -m wb 
+add_espst menu all name "Segment statistics" command fea_stats
+add_espsn menu spect name "3D Plot" command plot3d -w -o R
+add_waves menu all builtin "kill window" 
+
+sleep seconds .2
+
+# invoke a misc control panel based on the one from waves/lib/commands
+# but put it up in a new place
+
+waves make_panel name misc columns 3 title "Miscellaneous xwaves+ Controls" icon_title Controls file dcontrols.WM loc_x 410 loc_y 0
+
+#make sure control panel has time to come up
+
+sleep seconds .2
+
+return
+

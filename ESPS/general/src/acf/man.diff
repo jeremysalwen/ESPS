@@ -1,0 +1,547 @@
+.\" Copyright (c) 1987, 1990 Entropic Speech, Inc.; All rights reserved
+.\" @(#)acf.1	1.6 4/4/97 ERL
+.TH ACF \1-ESPS 11/10/90
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+.nf 
+acf \- Transforms a data sequence into a set of acoustic features.
+.sp
+.SH "SYNOPSIS"
+.PP
+.B acf 
+[
+.BI \-P " param"
+] [
+.BI \-{r,s} " range"
+][
+.BI \-x " debug_level"
+]
+.I sd_file
+.I fea_file
+.sp
+.SH "DESCRIPTION"
+.PP
+\fIAcf\fP takes a single channel FEA_SD file, reads
+frames of data,
+and produces acoustic features based on each
+frame. The following acoustic features are supported:
+power, zero crossings, Fast Fourier Transform (FFT), autocorrelation, 
+reflection coefficients, 
+linear prediction coefficients (LPCs), cepstral coefficients derived from 
+LPCs and directly from the FFT, log area ratios, and line spectral frequencies.
+Mel-warped cepstral features can be generated using the 
+bilinear Z-transform.
+Parameters are read by
+\fIacf\fP from the default parameter file, \fIparams\fP,
+or the file specified by the \fB\-P\fP option. 
+.PP
+The initial point of the first frame is determined by 
+the \fB\-r\fP option or by \fIstart\fP in the parameter file.  
+The number of data points in each frame is \fIframe_len\fP and the 
+initial points of any subsequent frames follow at equal intervals
+.I step.
+Thus the 3 cases
+.IR step " < " frame_len,
+.IR step " = " frame_len,
+and
+.IR step " > " frame_len,
+correspond to overlapping frames, exactly abutted frames,
+and frames separated by gaps.
+.PP
+The number of frames extracted
+is the minimum sufficient to cover a specified range of
+\fInan\fP points, given \fIframe_len\fP and \fIstep\fP.
+.PP
+The sampled data in each frame optionally may be windowed using a
+window function specified by \fIwindow_type\fP 
+in the parameter file.  It is possible to store the windowed data 
+frame can be stored in one of the fields in the FEA file.
+.PP
+The acoustic features used to form the records in 
+\fIfea_file\fP are selected by the \fIflag\fP parameters in 
+the parameter file.  If a flag is set, e.g. an entry \fB int pwr_flag = 1;\fP
+appears in the parameter file, then the corresponding feature, in this case the
+power in each frame, is computed and stored in \fIfea_file\fP.  Full description
+of the flag parameters appears below.  Features are stored in separate fields 
+in the FEA file, which are defined only for the selected features.
+.PP
+The output file, \fIfea_file\fP, is a tagged FEA file.  If the Fast Fourier Transform  
+is to be computed, \fIfea_file\fP is of feature-file subtype FEA_SPEC. The tags in
+each record give the starting point of the frame in \fisd_file\fP.
+.PP
+If \fIsd_file\fP is "\-" then the input is read from the standard input and if
+\fIoutput\fP is "\-" then the output is directed to the standard output.
+.PP
+Note that the menu-based X Windows program \fIxacf\fP(1-ESPS) 
+provides an easy to use interface to \fIacf\fP.
+.sp
+.SH "OPTIONS"
+.PP
+.TP 
+.BI \-P " param"
+Uses the parameter file \fIparam\fP rather than the default, 
+which is \fIparams\fP.
+.TP
+.BI \-{r,s} " first":"last"
+.TP
+.BI \-{r,s} " first\-last"
+.TP
+.BI \-{r,s} " first" :+ "incr" 
+The \fB\-r\fP and \fB\-s\fP options specify the range of data to process.
+Only one of the two may be used. If \fB\-r\fP is used, the
+arguments are in numbers of samples. If \fB\-s\fP is used, the 
+arguments are in seconds.
+In the first two forms, a pair of positive numbers specifies the range of
+sampled data to analyze.  If 
+.IR last " = " first " + " incr,
+the third form (with the plus sign) specifies the same range as the
+first two forms.  If \fIfirst\fP
+is omitted, the default is to begin processing at the first point in the
+file.  If \fIlast\fP
+is omitted, then the entire file is processed; \fIlast\fP cannot be
+omitted if reading from standard input.
+If the specified range contains points not in the input file, zeros
+are appended. Both forms of the option override the values of 
+\fIstart\fP and \fInan\fP
+in the parameter file or ESPS Common file.  If these options are not
+used, the range is determined from the ESPS Parameter or Common file if the
+appropriate parameters are present.  If the \fB\-s\fP option is used,
+the field \fIrecord_freq\fP in the input header is used to translate the units
+in seconds to numbers of samples. If \fB\-s\fP is used and 
+\fIrecord_freq\fP is undefined, or is 0, \fIacf\fP warns and exits.
+.TP
+.BI \-x " debug_level" " \fR [0]"
+A positive value specifies
+that debugging output be printed on the standard error output.
+Larger values result in more output.
+The default is 0, for no output.
+.sp
+.SH "ESPS PARAMETERS"
+.PP
+\fIAcf\fP requires that a parameter file be present.  If \fIacf\fP
+is called without the \fB\-P\fP option, the file \fIparams\fP must
+be present.  If the \fB\-P\fP option is used, the specified file must
+be present.  If the appropriate parameter file exists, the 
+parameters listed below are read from it .  
+.PP
+Note that some integer parameters
+are flags, e.g. \fIsd_flag\fP, \fIpwr_flag\fP.  These flags determine which
+acoustic features are stored in \fIfea_file\fP. If the value assigned to a
+flag parameter is \fB1\fP, the associated acoustic field is computed and
+stored in a field in the output record. If any value
+other than \fB1\fP is assigned to a flag parameter, the acoustic
+feature associated with the flag is not stored in \fIfea_file\fP. By
+default, no flags are set, so if a flag is not set explicitly in the
+parameter file, the associated acoustic feature will not be stored in
+\fIfea_file\fp .
+.PP
+There are default field names for all the acoustic featues. These can
+all be changed using the field name parameters, e.g. \fIsd_fname\fP,
+\fIpwr_fname\fP. Unless otherwise noted, acoustic features have data type
+REAL and dimension 1. 
+.PP
+The following parameters are read from the appropriate parameter file: 
+.TP
+.I "sd_field_name \- string"
+.IP
+Specifies the name of the field in the input file \fIsd_file\fP which
+contains the sampled data.  The default field name is "sd".
+.TP
+.I "units \- string"
+.IP
+Specifies whether the units of the parameters \fIstart\fP, \fInan\fP,
+\fIframe_len\fP, and \fIstep\fP are in seconds or samples.  There
+are two valid values for \fIunits\fP: "seconds" or "samples". If
+"seconds" is specified, the header item \fIrecord_freq\fP is used
+to convert the specified values in seconds to an equivalent number of
+samples.  If "seconds" is specified and the field \fIrecord_freq\fP is 
+not defined in the input header, or is 0, \fIacf\fP warns and exits.  
+The default value is "samples". This parameter is not read if
+the \fB\-r\fP or the \fB\-s\fP option is used.
+.TP
+.I "start \- float"
+.IP
+The first point in the input sampled data file that is processed.  The
+first sample in the file is denoted by 1 if \fIunits="samples"\fP or
+by 0 if \fIunits="seconds"\fP.
+If it is not in the parameter
+(or Common) file, the default is to begin processing at the begining
+of the file. 
+This parameter is not read if 
+the \fB\-r\fP or the \fB\-s\fP option is used.
+.TP
+.I "nan - float"
+.IP
+The total amount of data to process.  If 
+.I nan
+is 0 and the input is not a pipe, the whole file is processed.
+If \fInan\fP
+is 0 and the input is a pipe, \fIacf\fP warns and 
+exits.  If \fInan\fP is not specified, the value 0 is used as its
+default.
+\fINan\fP
+is not read if the \fB\-r\fP or \fB\-s\fP option is used.  
+.TP
+.I "frame_len \- float"
+.IP
+The length of each frame.  
+A value of 0 indicates that a single frame of length
+.I nan
+is processed; this is also the default value in case
+.I frame_len
+is not specified in the parameter file. 
+.TP
+.I "step \- float"
+.IP
+Initial points of consecutive frames are separated by this amount.
+If the option is omitted and no value is found in the parameter file,
+a default equal to
+.I frame_len
+is used (resulting in exactly abutted frames).  
+.TP
+.I "preemphasis \- float"
+.IP
+If \fIpreemphasis\fP is not equal 0.0, the first order preemphasis
+filter
+.br 
+(1 - (\fIpreemphasis\fP) z^(-1)) is applied to the data.  The
+preemphasis factor must be between 0 and 1; if not, \fIacf\fP warns
+and exits.
+.TP
+.I "window_type \- string"
+.IP
+The data window to apply to the data.
+If the option is omitted and if no value is found in the parameter file,
+the default used is "RECT", for a rectangular window with amplitude one.
+Other acceptable values include
+"HAMMING", for Hamming, and "TRIANG", for triangular;
+see the window(3-ESPS) manual page for the complete list.
+.TP
+.I "sd_flag \- integer" 
+.TP
+.I "sd_fname \- string"
+.IP
+If \fIsd_flag\fP is set to 1, the frame of windowed data is stored 
+in the output records of \fIfea_file\fP; by default, this is not done.
+If \fIsd_fname\fP is defined in the parameter file,
+its value specifies the name of the field in which the windowed data
+is stored.  The default field name is "sd".
+.TP
+.I "pwr_flag \- integer"
+.TP
+.I "pwr_fname \- string"
+.IP
+If \fIpwr_flag\fP is set to 1, the power in each windowed frame of data
+is computed and stored in \fIfea_file\fP.  The
+power is the sum of the squared values of the windowed data divided by
+the number of points in the current frame.  The power of each frame is
+stored in the field "power", unless \fIpwr_fname\fP is assigned a
+different name.
+.TP
+.I "zc_flag \- integer"
+.TP
+.I "zc_fname \- string"
+.IP 
+If \fIzc_flag\fP is set to 1, the zero-crossings in each windowed
+frame of data are computed and stored in \fIfea_file\fP.  The
+zero-crossings are computed as in the program \fIzcross\fP(1-ESPS).
+The number of zero-crossings in each frame is  stored in the field
+"zero_crossing", unless 
+\fIzc_fname\fP is assigned a different name.
+.TP
+.I "ac_flag \- integer"
+.TP 
+.I "ac_fname \- string"
+.TP
+.I "ac_order \- int"
+.IP
+If \fIac_flag\fP is set to 1, the sample autocorrelation of the
+windowed data 
+frame for lags 0,...,\fIac_order\fP is found using \fIget_auto\fP
+(3-ESPS).  The data is stored in the field "auto_corr", unless
+\fIac_fname\fP is assigned a different name.  The output field has
+data type REAL and dimension \fIac_order\fP+1. If \fIac_order\fP=0,
+a warning message is printed.
+.TP
+.I "rc_flag \- integer"
+.TP
+.I "rc_fname \- string"
+.IP
+If \fIrc_flag\fP is set to 1, reflection coefficients are
+found from the sample autocorrelation of the windowed data frame 
+using \fIget_atal\fP(3-ESPS). 
+The parameter \fIac_order\fP determines the number of reflection
+coefficients which are computed. If \fIac_order\fP=0, a warning
+message is printed.  The reflection coefficients are stored in the
+field "refcof", unless \fIrc_fname\fP is assigned a different name.
+The field has data type REAL and dimension \fIac_order\fP.
+.TP 
+.I "lpc_flag \- integer"
+.TP
+.I "lpc_fname \- string"
+.IP
+If \fIlpc_flag\fP is set to 1, linear prediction coefficients
+are found from the sample autocorrelation of the windowed data frame
+using \fIget_atal\fP(3-ESPS). 
+The parameter \fIac_order\fP determines the number of prediction 
+coefficients which are computed. If \fIac_order\fP=0, a warning
+message is printed.  The coefficients are stored in the
+field "lpc_coeffs", unless \fIlpc_fname\fP is assigned a different name.
+The field has data type REAL and dimension \fIac_order\fP.
+.TP 
+.I "lpccep_flag \- integer"
+.TP
+.I "lpccep_fname \- string"
+.TP
+.I "lpccep_order \- integer"
+.TP
+.I "lpccep_deriv \- string"
+.IP
+If \fIlpccep_flag\fP is set to 1, cepstral coefficients
+are computed from reflection coefficients found from the windowed
+data frame. 
+The program \fIget_atal\fP(3-ESPS) is used to compute \fIac_order\fP 
+reflection coefficients; 
+\fIlpccep_order\fP cepstral coefficients are obtained using 
+\fIrc_reps\fP(3-ESPS).
+If \fIac_order\fP is not defined or is 0, it is set to \fIlpc_order\fP;
+if \fIlpccep_order\fP is zero, it is set to \fIac_order\fP.
+If \fIac_order\fP < \fIlpccep_order\fP, 
+the reflection coefficients are padded with
+\fIlpccep_order\fP\-\fIac_order\fP zeros 
+before the cepstral coefficients are computed.
+If \fIlpccep_order\fP < \fIac_order\fP, \fIacf\fP sets 
+\fIlpccep_order\fP to \fIac_order\fP.
+
+The cepstral coefficients are stored in the
+field "lpc_cepstrum", unless \fIlpccep_fname\fP is assigned a
+different name. The field has data type REAL and, if 
+\fIlpccep_deriv\fP 
+is not specified, has dimension \fIlpccep_order\fP. If the string 
+\fIlpccep_deriv\fP is defined, the routine
+\fIgrange_switch\fP(3-ESPS) is used to to parse the string to determine
+which elements of the \fIlpccep_order\fP cepstral coefficients are
+to form the output field. For example if the entry 
+.br
+\fBstring lpccep_deriv = "0,11:20";\fP
+.br
+appears in the parameter file,
+the output field has 21 elements taken from positions 0, and 11 through
+20 in the cepstral sequence.  If \fIlpccep_deriv\fP specifies 
+points outside the range [0:\fIlpccep_order\fP-1], \fIacf\fP 
+prints a warning and exits.
+.TP
+.I "lar_flag \- integer"
+.TP
+.I "lar_fname \- string"
+.IP
+If \fIlar_flag\fP is set to 1, log area ratios (LARs)
+are computed from the reflection coefficients found from the windowed
+data frame. The reflection coefficients are found as above, and the 
+LARs are obtained using \fIrc_reps\fP(3-ESPS).
+The parameter \fIac_order\fP determines the number of 
+LARs which are computed. If \fIac_order\fP=0, a
+warning message is printed.  The LARs are stored in the
+field "log_area_ratio", unless \fIlar_fname\fP is assigned a
+different name. The field has data type REAL and dimension
+\fIac_order\fP. 
+.TP
+.I "lsf_flag \- integer"
+.TP
+.I "lsf_freq_res \- float"
+.TP
+.I "lsf_fname \- string"
+.IP
+If \fIlsf_flag\fP is set to 1, line spectral frequencies
+(LSFs) 
+are computed from the reflection coefficients found from the windowed
+data frame. The reflection coefficients are found as above, and the 
+LSFs are obtained using \fIrc_reps\fP(3-ESPS).
+The parameter \fIac_order\fP determines the number of 
+LSFs which are computed. If \fIac_order\fP=0, a
+warning message is printed.  The LSFs are stored in the
+field "line_spec_freq", unless \fIlsf_fname\fP is assigned a
+different name. The field has data type REAL and dimension
+\fIac_order\fP. The parameter \fIlsf_freq_res\fP has default value
+10.0 (see \fIrc_reps\fP(3-ESPS)).
+.TP
+.I "fftcep_flag \- integer"
+.TP
+.I "fftcep_fname \- string"
+.TP
+.I "fftcep_order \- integer"
+.TP
+.I "fftcep_deriv \- string"
+.IP
+If \fIfftcep_flag\fP is set to 1, the FFT cepstrum is 
+computed from the windowed data frame using the routine
+\fIfft_cepstrum_r\fP(3-ESPS). 
+The cepstral data is stored in the
+field "fft_cepstrum", unless \fIfftcep_fname\fP is assigned a
+different name.
+The parameter \fIfftcep_order\fP determines the order of the FFT, i.e.
+the FFT produces 2^\fIfftcep_order\fP frequencies.
+If \fIfftcep_order\fP=0, a
+warning message is printed.  The field has data type REAL and, if 
+\fIfftcep_deriv\fP 
+is not specified, has dimension 2^\fIfftcep_order\fP. If the string 
+\fIfftcep_deriv\fP is defined, the routine
+\fIgrange_switch\fP(3-ESPS) is used to to parse the string to determine
+which elements of the 2^\fIfftcep_order\fP cepstral coefficients are
+to form the output field. For example if the entry 
+.br
+\fBstring fftcep_deriv = "0,11:20";\fP 
+.br
+appears in the parameter file,
+the output field has 21 elements taken from positions 0, and 11 through
+20 in the cepstral sequence.  If \fIfftcep_deriv\fP specifies 
+points outside the range (0:2^(\fIfftcep_order\fP)-1), \fIacf\fP 
+prints a warning and exits.
+.TP
+.I "fft_flag \- integer"
+.TP
+.I "fft_order \- integer"
+.IP
+If the flag \fIfft_flag\fP is set to 1, the FFT of the windowed data
+frame is stored in \fIfea_file\fP.  The order of the FFT is
+\fIfft_order\fP, i.e. 2^\fIfft_order\fP negative and positive
+frequencies are computed.  If \fIfft_flag\fP is set, \fIfea_file\fP
+has FEA subtype FEA_SPEC, and the data format is SPFMT_SYM_EDGE, 
+and is stored in decibels (log power) (see FEA_SPEC(5-ESPS)).
+If \fIfft_order\fP = 0, a warning message is printed; the default
+values of \fIfft_order\fP is 10.
+.TP
+.I "warp_param \- float"
+.IP
+If \fIwarp_param\fP is not 0.0, the bilinear transform routine
+\fIblt\fP(3-ESPS) is applied to the 
+lpc cepstrum and FFT cepstrum
+using the parameter
+\fIwarp_param\fP. 
+Warping is performed before elements are extracted from the cepstral
+sequences (see parameters \fIlpccep_deriv\fP and \fIfftcep_deriv\fP).
+If the parameter is outside the range (-1,1),
+\fIacf\fP warns and exits.
+.PP
+The values of parameters obtained from the parameter file are printed
+if the environment variable ESPS_VERBOSE is 3 or greater.  The default
+value is 0.
+.sp
+.SH ESPS COMMON
+.PP
+ESPS Common is read provided that Common processing is enabled and 
+that the 
+.I filename
+entry in Common matches 
+.I sd_file,
+in which case parameters present in Common override values from
+the parameter file, which in turn may be overriden by command
+line options (see the discussion in ESPS PARAMETERS and under
+each option).   
+Common is not read if 
+.I input
+is standard input.  
+If 
+.I output
+is not standard output and 
+.I input
+is not standard input, the Common parameters 
+\fIfilename\fP (= sd_file), \fIprog\fP (= acf), 
+.I start,
+and
+.I nan
+are written to ESPS Common.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback
+of Common processing is determined by the environment variable
+ESPS_VERBOSE, with 0 causing no feedback and increasing levels causing
+increasingly detailed feedback.  If ESPS_VERBOSE is not defined, a
+default value of 0 is assumed.
+.sp
+.SH ESPS HEADER
+.PP
+A new file header is created for the FEA file \fIfea_file\fP.  If the FFT is
+computed, the header is of FEA subtype FEA_SPEC.  
+The sampled data header
+from the input header is added as a source in the output file header, and
+the command line is added as a comment. The input file \fIinput\fP is
+set as the reference header for tags.
+.PP
+The program writes the usual values into the common part of the
+output header.  \fIAcf\fP creates and writes the following generic
+items in the output file:
+.nf
+.sp
+start = \fIstart\fP (LONG)
+nan = \fInan\fP (LONG)
+frmlen = \fIframe_len\fP (LONG)
+src_sf = sample frequency of \fIinput\fP (FLOAT)
+step = \fIstep\fP (LONG)
+window_type = \fIwindow_type\fP (CODED) (not written for RECT window)
+warp_param = \fIwarp_param\fP (FLOAT)
+preemphasis = \fIpreemphasis\fP (FLOAT)
+start_time (DOUBLE)
+record_freq (DOUBLE)
+.fi
+.PP
+The value written for \fIstart_time\fP is computed by taking the
+\fIstart_time\fP value from the header of the input file (or zero, if
+such a header item doesn't exist) and adding to it the relative time
+from the first record in the file to the first record processed.  The
+generic header item \fIrecord_freq\fP is the number of output records
+per second of input.
+.PP
+The following generic header items are created based 
+on entries in the parameter file:
+.nf
+.sp
+source_field_name = \fIsd_field_name\fP (STRING)
+sd_flag = \fIsd_flag\fP (SHORT)
+sd_fname = \fIsd_fname\fP (STRING)
+pwr_flag = \fIpwr_flag\fP (SHORT)
+pwr_fname = \fIpwr_fname\fP (STRING)
+zc_flag = \fIzc_flag\fP (SHORT)
+zc_fname = \fIzc_fname\fP (STRING)
+ac_flag = \fIac_flag\fP (SHORT)
+ac_fname = \fIac_fname\fP (STRING)
+ac_order = \fIac_order\fP (STRING)
+rc_flag = \fIrc_flag\fP (SHORT)
+rc_fname = \fIrc_fname\fP (STRING)
+lpc_flag = \fIlpc_flag\fP (SHORT)
+lpf_fname = \fIlp_fname\fP (STRING)
+lpccep_flag = \fIlpccep_flag\fP (SHORT)
+lpccep_fname = \fIlpccep_fname\fP (STRING)
+lpccep_order = \fIlpccep_order\fP (STRING)
+lpccep_deriv = \fIlpccep_deriv\fP (STRING)
+lar_flag = \fIlar_flag\fP (SHORT)
+lar_fname = \fIlar_fname\fP (STRING)
+lsf_flag = \fIlsf_flag\fP (SHORT)
+lsf_fname = \fIlsf_fname\fP (STRING)
+lsf_freq_res = \fIlsf_freq_res\fP (FLOAT)
+fftcep_flag = \fIfftcep_flag\fP (SHORT)
+fftcep_fname = \fIfftcep_fname\fP (STRING)
+fftcep_order = \fIfftcep_order\fP (SHORT)
+fftcep_deriv = \fIfftcep_deriv\fP (STRING)
+fft_flag = \fIfft_flag\fP (SHORT)
+fft_order = \fIfft_order\fP (SHORT)
+.fi
+.sp
+.SH SEE ALSO
+.PP
+.nf
+\fIframe\fP(1-ESPS), \fIpwr\fP(1-ESPS), \fIrefcof\fP(1-ESPS), \fIsgram\fP(1-ESPS), 
+\fIzcross\fP(1-ESPS), \fIget_rfft\fP(3-ESPS), \fIfft_cepstrum_r\fP(3-ESPS), 
+\fIget_auto\fP(3-ESPS), \fIget_atal\fP(3-ESPS), \fIrc_reps\fP(3-ESPS),
+\fIgrange_switch\fP(3-ESPS), FEA(5-ESPS), FEA_SPEC(5-ESPS)
+.fi
+.sp
+.SH BUGS
+.sp
+.SH FUTURE CHANGES
+.sp
+.SH AUTHOR
+.PP
+Man page and program by Bill Byrne (based on frame.c by John Shore).

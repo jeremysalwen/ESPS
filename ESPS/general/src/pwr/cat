@@ -1,0 +1,264 @@
+
+
+
+PWR(1-ESPS)                                 ENTROPIC RESEARCH LAB
+
+
+
+NNNNAAAAMMMMEEEE
+     pwr - computes power of sampled data in FEA records
+
+SSSSYYYYNNNNOOOOPPPPSSSSIIIISSSS
+     ppppwwwwrrrr [ ----llll ] [ ----PPPP _p_a_r_a_m_s ] [ ----ffff _s_d__f_i_e_l_d [ ----ffff _p_o_w_e_r__f_i_e_l_d ]] [
+     ----rrrr _r_a_n_g_e ] [ ----xxxx _d_e_b_u_g__l_e_v_e_l ] _i_n_p_u_t _o_u_t_p_u_t
+
+DDDDEEEESSSSCCCCRRRRIIIIPPPPTTTTIIIIOOOONNNN
+     _P_w_r accepts a FEA file _i_n_p_u_t containing  a  vector  sampled-
+     data  field  in  each  record  (there may be other fields as
+     well).  It produces a FEA file _o_u_t_p_u_t with records  contain-
+     ing  the  raw  power  (or log raw power) of the sampled-data
+     field from that record.  Each field of sampled data  may  be
+     thought  of  as  a  separate frame of data, such as might be
+     produced by _f_r_a_m_e (1-ESPS).  The default name for  the  sam-
+     pled data field in _i_n_p_u_t is _s_d, and the default name for the
+     power field in _o_u_t_p_u_t is _r_a_w__p_o_w_e_r (_l_o_g__p_o_w_e_r if  ----llll  option
+     used).  Both  defaults  can  be  changed  by means of the ----ffff
+     option.  If _i_n_p_u_t is "-", standard input  is  used  for  the
+     input  file.   If  _o_u_t_p_u_t is "-", standard input is used for
+     the output file.
+
+     The power is computed by summing the squares of the  sampled
+     data  values  and  dividing  by  the number of points in the
+     frame.  If _i_n_p_u_t is not a segment-labelled FEA file (see FEA
+     (5 - ESPS)),  the frame is considered to comprise all of the
+     points in the sampled data field, so the frame length  is  a
+     constant  set  to  the size of the sampled data field (which
+     can be determined  from  the  file  header).   If  _i_n_p_u_t  is
+     segment-labelled,  the  size  of  the  sampled data field is
+     really a maximum size, and the frame size for  a  particular
+     record  is  given by the _s_e_g_m_e_n_t__l_e_n_g_t_h field (this field is
+     always  present  in  segment-labelled  files).   Thus,   for
+     segment-labelled  files,  the frame from any input record is
+     the first _s_e_g_m_e_n_t__l_e_n_g_t_h points of the sampled data field.
+
+     If the ----llll is used, the (base 10) log of  the  raw  power  is
+     stored  in  the output file instead of the raw power itself.
+     To avoid computational overflow,  logs  are  not  taken  for
+     power  values  less  than 10/DBL_MAX; in these cases the log
+     power stored is log10(10/DBL_MAX),  which  is  approximately
+     -307.55.
+
+OOOOPPPPTTTTIIIIOOOONNNNSSSS
+     The following options are supported:
+
+     ----llll    Specifies that the log (base 10) of the raw  power  be
+          computed  instead  of the raw power.  If this option is
+          used, the default name for the output  power  field  is
+          _l_o_g__p_o_w_e_r; this name can be changed via the ----ffff option.
+
+     ----PPPP _p_a_r_a_m [params]
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 1G1        1
+
+
+
+
+
+
+PWR(1-ESPS)                                 ENTROPIC RESEARCH LAB
+
+
+
+          Specifies the name of the parameter file.
+
+     ----rrrr _s_t_a_r_t::::_l_a_s_t [1:(last in file)]
+
+     ----rrrr _s_t_a_r_t::::++++_n_a_n
+          In the first form, a pair of unsigned  integers  speci-
+          fies  the  range  of  records  to be processed.  Either
+          _s_t_a_r_t or _l_a_s_t may be omitted; then the default value is
+          used.  If _l_a_s_t = _s_t_a_r_t + _n_a_n, the second form (with the
+          plus sign) specifies the same range as the first.   The
+          ---- rrrr  overrides  the  values  of  _s_t_a_r_t and _n_a_n from the
+          parameter file.
+
+     ----ffff _f_i_e_l_d__n_a_m_e
+          If this option is used once, it specifies the  name  of
+          the  sampled data field in _i_n_p_u_t.  If it is used twice,
+          the second time it specifies  the  name  of  the  power
+          field  in  _o_u_t_p_u_t.   The default names for these fields
+          are "sd"  and  "raw_power",  respectively.  If  the  ----llll
+          option is used, the default name for the power field is
+          "log_power".
+
+EEEESSSSPPPPSSSS PPPPAAAARRRRAAAAMMMMEEEETTTTEEEERRRRSSSS
+     The parameter file does not have to be  present,  since  all
+     the  parameters  have default values.  The following parame-
+     ters are read, if present, from the parameter file:
+
+          _s_d__f_i_e_l_d__n_a_m_e - _s_t_r_i_n_g
+
+          This is the name of the sampled data  field  in  _i_n_p_u_t.
+          The  default  is  "sd".   A  paramter  file  value  (if
+          present) is overidden by  the  first  use  of  the  ---- ffff
+          option.
+
+          _p_o_w_e_r__f_i_e_l_d__n_a_m_e - _s_t_r_i_n_g
+
+          This is the name of the raw power field in _o_u_t_p_u_t.  The
+          default  is  "raw_power".   A  parameter file value (if
+          present) is overidden by the  second  use  of  the  ---- ffff
+          option.
+
+          _p_o_w_e_r__f_u_n_c_t_i_o_n - _s_t_r_i_n_g
+
+          This is the function to apply to value of the raw power
+          before  storing  in  the  output  file.  The default is
+          "none", which means that the output file is to  contain
+          the  raw  power value.  The only other recognized value
+          is "log", which means that the output file is  to  con-
+          tain the log of the raw power.
+
+          _s_t_a_r_t - _i_n_t_e_g_e_r
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 2G2        2
+
+
+
+
+
+
+PWR(1-ESPS)                                 ENTROPIC RESEARCH LAB
+
+
+
+          This is the first record  of  _i_n_p_u_t  to  process.   The
+          default is 1.  It is not read if the ----rrrr option is used.
+
+          _n_a_n - _i_n_t_e_g_e_r
+
+          This is the number of records to process.   It  is  not
+          read  if  the ----rrrr option is used.  A value of zero means
+          all  subsequent  records  in  the  file;  this  is  the
+          default.
+
+     Remember that command line option values override  parameter
+     file values.
+
+EEEESSSSPPPPSSSS CCCCOOOOMMMMMMMMOOOONNNN
+     ESPS Common  processing  may  be  disabled  by  setting  the
+     environment  variable USE_ESPS_COMMON to "off".  The default
+     ESPS Common file is .espscom in the user's  home  directory.
+     This  may  be  overidden by setting the environment variable
+     ESPSCOM to the desired path.  User feedback of  Common  pro-
+     cessing   is   determined   by   the   environment  variable
+     ESPS_VERBOSE, with 0 causing no feedback and increasing lev-
+     els causing increasingly detailed feedback.  If ESPS_VERBOSE
+     is not defined, a default value of 3 is assumed.
+
+     ESPS Common is not processed by _p_w_r  if  _i_n_p_u_t  is  standard
+     input.   Otherwise,  provided  that the Common file is newer
+     than the parameter file,  and  provided  that  the  _f_i_l_e_n_a_m_e
+     entry  in  Common matches _i_n_p_u_t, the Common values for _s_t_a_r_t
+     and _n_a_n override those that may be present in the  parameter
+     file.
+
+     The following items are written into the  ESPS  Common  file
+     provided that _o_u_t_p_u_t is not <stdout>.
+
+          _s_t_a_r_t - _i_n_t_e_g_e_r
+
+          The starting record from the input file.
+
+          _n_a_n - _i_n_t_e_g_e_r
+
+          The number of records in the selected range.
+
+          _p_r_o_g - _s_t_r_i_n_g
+
+          This is the name of the program (_p_w_r in this case).
+
+          _f_i_l_e_n_a_m_e - _s_t_r_i_n_g
+
+          The name of the input file _i_n_p_u_t.
+
+EEEESSSSPPPPSSSS HHHHEEEEAAAADDDDEEEERRRRSSSS
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 3G3        3
+
+
+
+
+
+
+PWR(1-ESPS)                                 ENTROPIC RESEARCH LAB
+
+
+
+     The _o_u_t_p_u_t header is a new FEA file header.  If the  generic
+     header item _s_r_c__s_f exists in the input file, it is copied to
+     the output file.  The items _s_t_a_r_t and  _n_a_n  are  written  to
+     contain  the  starting  record  number and number of records
+     processed.
+
+     The size of the input sampled data field is written  to  the
+     generic _f_r_m_l_e_n.
+
+     The generic header item _s_t_a_r_t__t_i_m_e is written in the  output
+     file.    The   value  written  is  computed  by  taking  the
+     _s_t_a_r_t__t_i_m_e value from the header of the input file (or zero,
+     if such a header item doesn't exist), adding to it the rela-
+     tive time from the first record in the  file  to  the  first
+     record processed, and adding a displacement corresponding to
+     half of _f_r_m_l_e_n.  The computation of  _s_t_a_r_t__t_i_m_e  depends  on
+     the  value  of  the  generic header item _s_r_c__s_f in the input
+     file (which is assumed to be the sampling rate of the actual
+     data   in  each  field).   If  this  item  is  not  present,
+     _s_t_a_r_t__t_i_m_e is just copied from the input file to the  output
+     file.
+
+     As usual, the command line is added as  a  comment  and  the
+     header  of  _i_n_p_u_t  is  added  as  a  source  file to _o_u_t_p_u_t.
+     Another comment gives the name of the field added by _p_w_r.
+
+FFFFUUUUTTTTUUUURRRREEEE CCCCHHHHAAAANNNNGGGGEEEESSSS
+     Control over the type of the output power field.
+
+SSSSEEEEEEEE AAAALLLLSSSSOOOO
+     _f_r_a_m_e (1-ESPS), FEA (5-ESPS), _f_e_a__s_t_a_t_s (1-ESPS),
+     _s_t_a_t_s (1-ESPS)
+
+WWWWAAAARRRRNNNNIIIINNNNGGGGSSSS AAAANNNNDDDD DDDDIIIIAAAAGGGGNNNNOOOOSSSSTTTTIIIICCCCSSSS
+     _p_w_r will exit with an error message if any of the  following
+     are  true:  _i_n_p_u_t does not exist or is not an ESPS FEA file;
+     the sampled-data field does not exist in  _i_n_p_u_t;  the  power
+     field already exists in _i_n_p_u_t.
+
+BBBBUUUUGGGGSSSS
+     None known.
+
+AAAAUUUUTTTTHHHHOOOORRRR
+     Manual page by John Shore.  Program by Rodney Johnson.
+
+
+
+
+
+
+
+
+
+
+
+        Copyright Entropic Research Laboratory, Inc. 4G4        4
+
+
+

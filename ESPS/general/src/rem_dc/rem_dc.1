@@ -1,0 +1,141 @@
+.\" Copyright (c) 1989 Entropic Speech, Inc.; All rights reserved
+.\" @(#)rem_dc.1	3.6	1/4/93 ESI
+.TH REM_DC 1\-ESPS 1/4/93
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+rem_dc \- remove the DC component from an ESPS sampled data file.
+.SH SYNOPSIS
+.B rem_dc
+[
+.BI \-x " debug_level"
+]
+[
+.BI \-r "r range"
+]
+[
+.BI \-p " xrange"
+]
+[
+.BI \-l " yrange"
+]
+[
+.BI \-a " offset"
+]
+.I in_file out_file
+.SH DESCRIPTION
+.PP
+The program
+.I rem_dc
+takes the ESPS sampled data file
+.I in_file,
+computes the DC offset of the data, subtracts it from each data point,
+and places the resulting data in
+.I out_file.
+The program can optionally adjust the DC offset to a user specified value.
+The program enters the total adjustment in the header of
+.I out_file.  A temporary file is created (and removed) in the directory
+specified by the environment variable ESPS_TEMP_PATH (default /usr/tmp).  
+.PP
+If 
+.I in_file
+is "\-", 
+then the standard input is read.  If
+.I out_file
+is "\-", the program writes to standard output.
+.SH OPTIONS
+The following options are supported:
+.TP
+.BI \-x " debug_level"
+A value of 0 (the default value) will cause
+.I rem_dc
+to do its work silently, unless there is an error.
+A nonzero value will cause various parameters to be printed out
+during program initialization.
+.br
+.TP
+.BI \-p " xrange"
+The range of points to compute the DC value over, remove the DC
+value from, and copy to the output file.  The
+.I xrange
+argument is a text string which obeys all the conventions used by the
+.I range_switch (3-ESPSu)
+function.  The default values for the beginning and ending points of 
+.I xrange
+are the first and last data points in the file.
+.br
+.TP
+.BI \-r " xrange"
+\fB\-r\fP is a synonym for \fB-p\fP.
+.br
+.TP
+.BI \-l " yrange"
+Only data points whose values fall in the specified range will be used to compute
+the DC component.  This allows the user to use only small magnitude numbers, for
+example, to obtain a more accurate result.  The 
+.I yrange
+argument is a text string which obeys all of the conventions used by the
+.I frange_switch (3-ESPSu)
+function.  The default values for the upper and lower limits of
+.I yrange
+are the maximum and minimum values in the file.
+.br
+.TP
+.BI \-a " offset"
+The DC component is adjusted to
+.I offset.
+The default value for
+.I offset 
+is 0.0.
+.br
+.SH ESPS PARAMETERS
+The parameter file is not accessed.
+.SH ESPS COMMON
+If standard input is not specified, the following items are read from 
+ESPS Common:
+.IP \fIfilename - string\fR
+This is the name of the input file. If no input file is specified on the
+command line, \fIfilename\fR is taken to be the input file name.
+If an input file is specified on the command line,
+the input file name must match \fIfilename\fR
+or other items (below) are not read from Common.
+.IP \fIstart - integer\fR
+This is the starting point in the input file to begin processing.
+It is not read if the \fB\-p\fR option is used.
+.IP \fInan - integer\fR
+This is the number of points to process. It is not read if the
+\fB\-p\fR option is used.
+.PP
+If \fIstart\fR and/or \fInan\fR are not given in the Common file,
+then \fIstart\fR defaults to the beginning of the file and
+\fInan\fR defaults to the number of points in the file.
+.PP
+If standard output is not specified,
+the following items are written to the ESPS Common:
+.IP \fIstart - integer\fR
+One is written to the Common file.
+.IP \fInan -integer\fR
+The number of points processed by \fIrem_de\fR is written
+to the ESPS Common.
+.IP \fIfilename - string\fR
+The name of the output file is written to ESPS Common.
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.SH ESPS HEADER
+All appropriate input file header items are copied to the output file header.
+Also,
+the \fIdc_removed\fP (type DOUBLE) and \fIstart_time\fP (type DOUBLE)
+are also added or updated.
+A \fImax_value\fP generic header item is added by 
+\fIrem_dc\fP (1\-\s-1ESPS\s+1).
+.SH BUGS
+.PP
+None known.
+.SH AUTHOR
+Brian Sublett; modified for ESPS by David Burton.

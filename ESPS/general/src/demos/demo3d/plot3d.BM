@@ -1,0 +1,8 @@
+"About the demo..."  xtext -Wp 1 1 -F README -t "About the plot3d demo"
+
+"See Demo Scripts and files"   mbuttons -q 1 -X0 -Y 400 -w"Demo Configuration Files" -i"demo" -b1 demofiles.BM
+
+# @(#)plot3d.BM	1.3 3/16/92 ERL
+
+
+

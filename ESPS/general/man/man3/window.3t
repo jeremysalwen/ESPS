@@ -1,0 +1,175 @@
+.\" Copyright (c) 1987\-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1990\-1997 Entropic Research Laboratory, Inc.
+.\" All rights reserved.
+.\" @(#)window.3t	1.10 01 Oct 1998 ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH WINDOW 3\-ESPSsp 01 Oct 1998
+.SH NAME
+
+window \- window a data array.
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/windows.h>
+#include <esps/window.h>
+.sp
+int 
+window(nsamp, x, y, type, p)
+    long nsamp;
+    float *x, *y;
+    int type;
+    double *p;
+.sp
+int 
+windowd(nsamp, x, y, type, p)
+    long nsamp;
+    double *x, *y;
+    int type;
+    double *p;
+.sp
+int 
+windowcf(nsamp, x, y, type, p)
+    long nsamp;
+    float_cplx *x, *y;
+    int type;
+    float_cplx *p;
+.sp
+int 
+windowcd(nsamp, x, y, type, p)
+    long nsamp;
+    double_cplx *x, *y;
+    int type;
+    double_cplx *p;
+.sp
+char *window_types[];
+.sp
+int
+win_type_from_name(name);
+    char *name;
+.ft
+.fi
+.SH DESCRIPTION
+The four functions
+.I window,
+.I windowd,
+.I windowcf,
+and
+.I windowcd
+each take an array of 
+.I nsamp
+inputs in 
+.I x,
+window it with the data window indicated by
+.I type,
+and return the 
+.I nsamp
+outputs in the
+.I y
+array.
+They differ only in the data types on which they operate.
+.PP
+The argument
+.I p
+can be used in two ways.
+Either it is a pointer to
+parameters needed for the specification of the window,
+or it can also be used to specify an arbitrary
+user-defined window type.
+For example
+if a Kaiser window was specified,
+.I p
+would be a one element vector that contained 
+the shape parameter.
+In supported window types,
+the size of the 
+.I p
+array is a function of the window type.
+In the other case,
+.I p
+is a vector containing the weighting
+function values; it is assumed that
+.I p
+contains \fInsamp\fP values.
+Note that 
+.I x
+and 
+.I y
+may be the same array.
+.PP
+Currently implemented window types are the following:
+.sp
+.TS
+center, tab($), allbox;
+c s
+c|c
+c|n.
+WINDOW FUNCTIONS
+Type$P Dimension
+rectangular (WT_RECT)$0
+Hamming (WT_HAMMING)$0
+triangular (WT_TRIANG)$0
+Hanning (WT_HANNING)$0
+Kaiser (WT_KAISER)$1
+cos**4 (WT_COS4)$0
+arbitrary (WT_ARB)$nsamp
+.TE
+.sp .35
+.PP
+When \fIp\fR has dimension zero,
+the appropriately cast NULL 
+should be passed to the function (see the example below).
+.PP
+Note that window(3\-ESPS) defines a string array
+\fIwindow_types\fR that contains the names of all legal
+window functions. The include file \fIwindow.h\fR contains
+numerical equivalents for the all these names, and
+it also declares the \fIwindow_types\fR array for the user.
+.PP
+The function
+.I win_type_from_name
+takes a window-type name without the "WT_" prefix (e.g. "HAMMING") and
+returns the corresponding numeric code (e.g. WT_HAMMING).
+The function is case-insensitive, so it would also return WT_HAMMIN
+for the input "Hamming" or "hamming".
+It returns the value of the constant WT_NONE if the input is not
+one of the recognized window type names.
+See the example below.
+.SH EXAMPLE
+.nf
+#include <esps/window.h>
+
+float x[100], y[100];
+long nsamp = 100;
+int data_window;
+char *window_func = "HAMMING";   /* Use Hamming window*/
+
+FILE *fpin;		/* input file stream pointer */
+struct header *ih;		/* input sampled data file header*/
+
+
+/* get window type from string */
+
+    if ((data_window = win_type_from_name(window_func)) == WT_NONE)
+	ERROR_EXIT("Invalid window function specified.");
+
+/* get sampled data */
+
+    get_sd_recf(x, nsamp, ih, fpin);
+
+/* window data */
+
+    if ((window(nsamp, x, y, data_window, (double *) NULL)) != 0)
+	ERROR_EXIT("Error in window function");
+
+.fi
+.SH DIAGNOSTICS
+The windowing functions return 0 if the windowing was done successfully.
+.SH BUGS
+None known.
+.SH SEE ALSO
+auto(1\-ESPS), fft(1\-ESPS), refcof(1\-ESPS), 
+.br
+cross_cor(1\-ESPS)
+.SH AUTHOR
+Manual page and code by D. Burton.  Complex functions added by B. Byrne.
+

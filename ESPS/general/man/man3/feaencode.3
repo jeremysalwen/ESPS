@@ -1,0 +1,48 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)feaencode.3	1.5 06 May 1997 ESI
+.TH FEA_ENCODE 3\-ESPSu 06 May 1997
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+fea_encode \- get code corresponding to string for coded field in ESPS FEA file
+.SH SYNOPSIS
+.nf
+.ft B
+#include <esps/esps.h>
+#include <esps/fea.h>
+
+short
+fea_encode(str, name, hd)
+char *str;
+char *name;
+struct header *hd;
+.fi
+.ft
+.SH DESCRIPTION
+.I fea_encode
+returns the numeric value corresponding to the character string
+\fIstr\fR in the value space of Feature file field \fIname\fR in the
+header pointed to by \fIhd\fR.   If \fIstr\fR is not a possible value
+for \fIname\fR then -1 is returned.
+If \fIname\fR is not defined as a CODED field in \fIhd\fR then -2 is
+returned.
+.SH EXAMPLE
+.PP
+Assume field name \fIzeta\fR was created as a field of type coded with
+possible values "ZA", "ZB", and "ZC" in ESPS feature file \fIhd\fR.   
+"ZA" corresponds to a value of
+0, "ZB" corresponds to a value of 1, and "ZC" corresponds to a value of
+2.    Calling:
+.PP
+.nf
+
+value = fea_encode("ZB","zeta",hd);
+.fi
+.PP
+will return 1.
+.SH "SEE ALSO"
+.PP
+.nf
+allo_fea_rec(3\-ESPSu), add_fea_fld(3\-ESPSu), get_fea_deriv(3\-ESPSu),
+get_fea_ptr(3\-ESPSu), fea_decode(3\-ESPSu), set_fea_deriv(3\-ESPSu), 
+FEA(5\-ESPS)
+.fi

@@ -1,0 +1,48 @@
+#!/bin/csh -f
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1990-1996  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)ps_ana.test	1.2	1/24/97	ERL
+# 
+# Written by:  Derek Lin
+# Checked by:
+# Revised by:
+# 
+# Brief description: test script for ps_ana
+# 
+
+setenv USE_ESPS_COMMON off
+setenv ESPS_VERBOSE 0
+
+copysd $ESPS_BASE/demo/speech.sd s.d
+get_f0 s.d s.f0
+set nsamp = `hditem -i ndrec s.d`
+echo "computing RC..."
+refcof -wHANNING -l160 -S80 -o 10 -e0.95 -p1:$nsamp -z -Z s.d s.cof  
+get_resid -a1 s.d s.cof s.if  
+echo "computing epochs..."
+epochs s.if s.pe  
+mask s.f0 s.pe s.out
+ps_ana -s0.03:1 -i0.001 -f s.f0p s.d s.out s.rc  
+
+cat > ref << EOD
+-0.133733 -0.210268 0.311498 0.116287 0.164168 -0.331708 0.0461531 -0.72777 -0.306658 0.0220728 
+129.032 1 840.305 
+EOD
+
+pplain -r100:100 s.rc > test
+pplain -r100:100 s.f0p >> test
+
+diff ref test
+echo "producing diff output - there should be small or no numerical difference"
+
+rm s.d s.f0 s.cof s.if s.pe s.out s.rc s.f0p test ref
+

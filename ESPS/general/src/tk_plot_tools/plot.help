@@ -1,0 +1,44 @@
+			HELP FILE FOR PLOT TOOLS
+			------------------------
+
+
+The plot tool has two menus for interacting with the plotted data: the File 
+menu and the Views menu. The plot tool also supports text annotation 
+of the plot, via mouse-button invoked control panels.
+
+
+FILE MENU
+---------
+
+You can print and quit from the File menu. Selecting "Print..."
+pops up a print configuration dialog box, which allows you to 
+select the characteristics of the PostScript output and the output
+destination.
+
+VIEWS MENU
+----------
+
+You turn on and off the the plot background elements by using the Views 
+menu. The background elements include such things as tick marks, horizontal
+grid, vertical grid, etc. When you turn these off, they disappear from the
+on-screen display and the PostScript output. To put these elements back on the
+displayed plot, you must enable them via the check boxes and select 
+"Redraw Current" from the menu.
+
+ON SCREEN ANNOTATION
+--------------------
+
+You add text to the plot by positioning the mouse cursor just below and
+to the left of where you want the text placed and clicking the left 
+mouse button. A text-entry dialog pops up in which you type your 
+annotation. To adjust the position of the annotation, click on the
+annotation text with the right mouse button, hold the button down, and 
+drag the text to the desired location. To delete annotation text, place the
+mouse cursor over the test and click the middle mouse button. A dialog
+box asks you to confirm the deletion.
+
+
+
+@(#)plot.help	1.3 10/1/97	ERL
+
+

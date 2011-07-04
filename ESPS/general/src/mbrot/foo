@@ -1,0 +1,191 @@
+<HTML>
+<BODY>
+<PRE>
+
+</PRE>
+<H2>NAME</H2><PRE>
+     mbrot - compute elements of Mandelbrot set
+
+
+</PRE>
+<H2>SYNOPSIS</H2><PRE>
+     <STRONG>mbrot</STRONG> [ <STRONG>-b</STRONG> <EM>bottom</EM>_<EM>edge</EM> ] [ <STRONG>-t</STRONG> <EM>top</EM>_<EM>edge</EM> ] [ <STRONG>-l</STRONG> <EM>left</EM>_<EM>edge</EM> ] [
+     <STRONG>-r</STRONG> <EM>right</EM>_<EM>edge</EM> ] [ <STRONG>-c</STRONG> <EM>confidence</EM> ] [ <STRONG>-g</STRONG> <EM>grid</EM>_<EM>pts</EM> ] [ <STRONG>-C</STRONG> ] [ <STRONG>-</STRONG>
+     <STRONG>x</STRONG> ] <EM>output</EM>_<EM>file</EM>
+
+
+</PRE>
+<H2>DESCRIPTION</H2><PRE>
+     <EM>Mbrot</EM> computes points that are in the Mandelbrot set.   This
+     is  the set of all points <EM>Z</EM> in the complex plane such that C
+     = C * C + <EM>Z</EM> stays bounded as it is recursively repeated.
+
+     <EM>Mbrot</EM> produces an ESPS feature file, <STRONG><A HREF="../man5.html/FEA.5.html">FEA(5-ESPS)</A></STRONG>, that  con-
+     tains  two  fields:  <EM>X</EM>_<EM>pos</EM>  (  type  DOUBLE) and <EM>mbrot</EM> (type
+     SHORT).  <EM>X</EM>_<EM>pos</EM> is a scalar variable and is the x-axis  coor-
+     dinate  of  the  vertical  data  vector  stored in the <EM>mbrot</EM>
+     field.  <EM>mbrot</EM> is a vector of size <EM>grid</EM>_<EM>pts</EM> + 1 (see <STRONG>-g</STRONG>); the
+     zeroth  element  of the <EM>mbrot</EM> field has y-axis coordinate of
+     <EM>bottom</EM>_<EM>edge</EM> (see <STRONG>-b</STRONG>).  If " - "  is  supplied  in  place  of
+     <EM>output</EM>_<EM>file</EM>, then standard output is used.
+
+
+</PRE>
+<H2>OPTIONS</H2><PRE>
+     The following options are supported:
+
+     <STRONG>-b</STRONG> <EM>bottom</EM>_<EM>edge</EM> [-1.]
+          Specifies the lower edge of the region over  which  the
+          Mandelbrot set is computed.
+
+     <STRONG>-t</STRONG> <EM>top</EM>_<EM>edge</EM> [1.]
+          Specifes the upper edge of the region  over  which  the
+          Mandelbrot set is computed.
+
+     <STRONG>-l</STRONG> <EM>left</EM>_<EM>edge</EM> [-1.9]
+          Specifies the left edge of the region  over  which  the
+          Mandelbrot set is computed.
+
+     <STRONG>-r</STRONG> <EM>right</EM>_<EM>edge</EM> [.6]
+          Specifies the right edge of the region over  which  the
+          Mandelbrot set is computed.
+
+     <STRONG>-c</STRONG> <EM>confidence</EM> [342]
+          Specifies the  number  of  iterations  used  to  decide
+          whether  the point is in the set.  That is, if after <STRONG>-c</STRONG>
+          specified iterations of  the  recursion  the  point  is
+          still  bounded (real and imaginary parts less than 2 in
+          magnitude), then the point is considered to be  in  the
+          set.  The larger the <EM>confidence</EM> factor, the sharper the
+          set boundaries become (and often the  more  interesting
+          the image looks).
+
+     <STRONG>-g</STRONG> <EM>grid</EM>_<EM>pts</EM> [100]
+          Specifies the number of grid cells to use  in  dividing
+          the region of interest. Often, the larger the number of
+          <EM>grid</EM>_<EM>pts</EM>, the more interesting the image looks.
+
+     <STRONG>-C</STRONG>    By default, <EM>mbrot</EM> returns 0 if the point is not in the
+          set  and 1 if the point is in the set.  By specifying <STRONG>-</STRONG>
+          <STRONG>C</STRONG>, each point is assigned a value between -64  and  50.
+          Points  in the set get 50.  Proportionally lower values
+          are given to all other points based on how close  there
+          are to being in the set. For example, if the <EM>confidence</EM>
+          factor is 114 and the point falls out of the set  after
+          90  iterations, the value given this point is 26 ( = 90
+          - 64 ). To make full use of the <EM>xwaves</EM> colormaps,  make
+          sure that the <STRONG>-c</STRONG> specified value is an integer multiple
+          of 114.
+
+     <STRONG>-x</STRONG>    If specified, debug information is printed to stderr.
+
+
+</PRE>
+<H2>ESPS PARAMETERS</H2><PRE>
+     The parameter file is not processed.
+
+
+</PRE>
+<H2>ESPS COMMON</H2><PRE>
+     ESPS Common is not read by <EM>mbrot</EM>.
+
+
+</PRE>
+<H2>ESPS HEADERS</H2><PRE>
+     In addition to the usual header values  for  <STRONG><A HREF="../man5.html/FEA.5.html">FEA  (5 - ESPS)</A></STRONG>
+     files,  <EM>mbrot</EM>  writes  the  following  values:  <EM>num</EM>_<EM>grid</EM>_<EM>pts</EM>
+     (LONG),   <EM>num</EM>_<EM>iterations</EM>   (LONG),    <EM>left</EM>_<EM>edge</EM>    (DOUBLE),
+     <EM>right</EM>_<EM>edge</EM>  (DOUBLE),  <EM>bottom</EM>_<EM>edge</EM>  (DOUBLE), <EM>top</EM>_<EM>edge</EM> (DOU-
+     BLE), <EM>X</EM>_<EM>inc</EM> (DOUBLE), <EM>Y</EM>_<EM>inc</EM> (DOUBLE),
+
+
+</PRE>
+<H2>FUTURE CHANGES</H2><PRE>
+     Parameter file processing will be added.
+
+
+</PRE>
+<H2>EXAMPLES</H2><PRE>
+     By default, <STRONG><A HREF="../man1.html/mbrot.1.html">mbrot (1-ESPS)</A></STRONG> produces the classical fuzzy bug.
+     Try the following:
+
+          %mbrot - |  image -embrot -S500:400 -
+
+
+     For a more interesting display, try
+
+          %mbrot -C -l-1.254 -r-1.2536 -b.0234 -t.0238  - g800  -
+          c798 - |
+          tofspec -fmbrot - mbrot.fspec&amp;
+
+     This will take a while to complete, but when it is done  use
+     <EM>xwaves</EM> to view the <STRONG><A HREF="../man5.html/FEA_SPEC.5.html">FEA_SPEC (5-ESPS)</A></STRONG> file.
+
+     In general, the more interesting images  are  found  on  the
+     edges of the set.
+
+
+</PRE>
+<H2>SEE ALSO</H2><PRE>
+     <STRONG><A HREF="../man1.html/image.1.html">image (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/xwaves.1.html">xwaves (1-ESPS)</A></STRONG>, <STRONG><A HREF="../man1.html/tofspec.1.html">tofspec (1-ESPS)</A></STRONG>
+
+
+</PRE>
+<H2>WARNINGS AND DIAGNOSTICS</H2><PRE>
+
+</PRE>
+<H2>BUGS</H2><PRE>
+     None known.
+
+
+</PRE>
+<H2>REFERENCES</H2><PRE>
+     James Gleick, <EM>CHAOS</EM>,  New York, PENGUIN BOOKS, 1987
+
+
+</PRE>
+<H2>AUTHOR</H2><PRE>
+     Program and manual page by David Burton
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,56 @@
+.\" @(#)esps2lwb.1	1.3
+.TH ESPS2LWB 1\-ESPS 2/16/90
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+esps2lwb \- convert an ESPS sampled data file to Laboratory Work Bench
+data files
+.SH SYNOPSIS
+.B esps2lwb
+[
+.BI \-x " debug_level"
+]
+.I infile 
+.I outfile
+.SH DESCRIPTION
+.PP
+.I Esps2lwb
+converts an ESPS sampled data file to a Laboratory Work Bench (LWB)
+data file.
+.I Esps2lwb 
+actually produces two ascii files:
+.I outfile.H
+and
+.I outfile.D.
+.PP
+If \fIinfile\fR is replaced by  "\-",
+.I esps2lwb
+will read from standard input.
+.PP
+.I Esps2lwb
+correctly handles multiplexed
+files.
+.I Esps2lwb.
+.SH ESPS HEADER
+.PP
+\fIrecord_freq\fP and \fPnum_channels\fP
+are read from the input file.
+.SH ESPS PARAMETERS
+.PP
+This program does not access the parameter file.
+.SH ESPS COMMON
+.PP
+This program does not access common.
+.SH DIAGNOSTICS
+.PP
+.I Esps2lwb
+informs the user and quits if the input file does not exist or is not an ESPS
+sampled data
+file.
+.SH SE ALSO
+lwb2esps (1-ESPS)
+.SH BUGS
+.PP
+None known.
+.SH AUTHOR
+.PP
+Manual page and code by David Burton

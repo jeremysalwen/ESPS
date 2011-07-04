@@ -1,0 +1,125 @@
+.\" Copyright (c) 1991, Entropic Research Lab, Inc.
+.\" @(#)sendwaves.3	1.3 06 Jun 1995 ERL
+.TH "SEND_XWAVES" 3\-ESPSu 06 Jun 1995
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+open_xwaves \- open a socket connection to an \fIxwaves+\fR server
+.br
+send_xwaves \- send a command to an \fIxwaves+\fR server
+.br
+close_xwaves \- close a socket connection to an \fIxwaves+\fR server
+.br
+send_xwaves2 \- send a single command to an \fIxwaves+\fR server without a separate open and close
+.SH "SYNOPSIS"
+.ft B
+#include <esps/esps.h>
+#include <esps/ss.h>
+.sp
+.nf
+SOCKET *
+open_xwaves(host, port, verbose)
+char *host;
+int port, verbose;
+.sp
+int
+send_xwaves(sp, str)
+SOCKET *sp;
+char *str;
+.sp
+void
+close_xwaves(sp)
+SOCKET *sp;
+.sp
+int
+send_xwaves2(host, port, str, verbose)
+open_xwaves(host, port, verbose)
+char *host, *str;
+int port, verbose;
+.fi
+.ft R
+.sp
+.SH "DESCRIPTION"
+.PP
+These functions are used to communicate with an \fIxwaves+\fR program
+running in server mode.  For more details on this mode of \fIxwaves+\fR
+see \fIxwaves+\fR\(\-1\s-1ESPS\s+1).
+.PP
+The functions \fIopen_xwaves\fR, \fIsend_xwaves\fR, and
+\fIclose_xwaves\fR are used in cases where a program is going to send
+more than one command to an \fIxwaves+\fR server.   In this case, a
+socket connection is maintained open, so that an arbitrary number of
+commands can be sent over it.   When the connection is no longer needed,
+it is closed.
+.PP
+The function \fIsend_xwaves2\fR is used in cases where only a single
+command is going to be sent.  It combines the open and close function
+into a single call.   It should not be used to send a large number of
+commands, however, due to the overhead of opening and closing the
+connection.
+.PP
+.I open_xwaves
+attempts to open a socket connection to an \fIxwaves+\fR server.  If
+\fIhost\fR is non-NULL, then the connection is attempted on the machine
+with the hostname of \fIhost\fR.   If \fIhost\fR is NULL and the
+environment variable \fBWAVES_HOST\fR is defined, then the connection is
+attempted to a server on the hostname specified by \fBWAVES_HOST\fR.
+If \fBWAVES_HOST\fR is not defined, then the connection is attempted to
+a server on the same has as is running this function (i.e.
+\fIlocalhost\fR).   If \fIport\fR is non-zero, then its value is used as
+the socket port for the connection attempt.   If \fIport\fR is zero and
+the environment variable \fBWAVES_PORT\fR is defined, then the port
+specified in \fBWAVES_PORT\fR is used for the attempt.   If
+\fBWAVES_PORT\fR is not defined then an ESPS default value (given in
+\fIesps.h\fR is used instead).   If \fIverbose\fR is non-zero, then
+a message is printed if the connection cannot be opened, mentioning the
+hostname and port number.   If \fIverbose\fR is zero, no message is
+printed and only a status value is returned.   The return value of the
+function is the SOCKET pointer value for success and NULL for failure.
+.PP
+.I send_xwaves
+sends a command to an \fIxwaves+\fR running in server mode.   The value
+for \fIsp\fR must be a socket pointer previously returned by
+\fIopen_xwaves\fR.   \fIstr\fR is a pointer to the command to send and
+must be non-NULL and terminated with a newline character.  
+The function returns zero for success and -1 for
+failure to communicate.
+.PP
+.I close_xwaves
+closes an existing socket connection to an \fIxwaves+\fR server.   The
+value of \fIsp\fR is a socket pointer to a previously opened
+\fIxwaves+\fR server.
+.PP
+.I send_xwaves2
+combines the above functions into a single function, to open a server
+connection, send a command, and then close a connection.   This is
+convienent when only a single command is being sent.   The arguments
+\fIhost\fR, \fIport\fR, \fIstr\fR, and \fIverbose\fR have the 
+same meaning as with the above functions. \fIstr\fR is a pointer 
+to the command to send and must be non-NULL and terminated with a
+newline character.  
+.SH "EXAMPLE"
+.nf
+\fI/* Open a connection */\fR
+SOCKET *sp;
+char buffer[100];
+
+sp = open_xwaves(host, port, 1);
+if (sp == NULL)
+ \fIerror...\fR
+
+sprintf(buffer,"make file %s\n",filename);
+if (send_xwaves(sp, buffer) == -1)
+ \fIerror...\fR
+
+close_xwaves(sp);
+.fi
+.SH DIAGNOSTICS
+.PP
+An assertion failure occurs if \fIstr\fR or \fIsp\fR is NULL.
+.SH "SEE ALSO"
+.PP
+send_xwaves(1\-\s-1ESPS\s+1), waves_show_sd(3-ESPS)
+.SH "AUTHOR"
+.PP
+Alan Parker, based upon the Simple Socket Library by Mat Watson and
+Hubert Bartels.  Used with permission.

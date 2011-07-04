@@ -1,0 +1,14 @@
+#@(#)Pwmse_filt	1.3 7/16/93 ERL
+float samp_freq ?= 8000: "Sampling frequency:";
+int filt_length ?= 201: "filter length - odd:";
+int nbands ?= 3: "Number of bands:";
+float band_edge1 ?= 0;
+float band_edge2 ?= 1000;
+float band_edge3 ?= 2000;
+float band_edge4 ?= 4000;
+float band1_des ?= 0: "desired value for band1:";
+float band2_des ?= 1: "desired value for band2:";
+float band3_des ?= 0: "desired value for band3:";
+float band1_wt ?= 1: "weighting value for band1:";
+float band2_wt ?= 1: "weighting value for band2:";
+float band3_wt ?= 1: "weighting value for band3:";

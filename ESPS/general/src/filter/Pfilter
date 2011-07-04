@@ -1,0 +1,8 @@
+#@(#)Pfilter	3.3	2/7/90 ESI
+# Default params file for filter
+int start ?= 1;
+int nan ?= 20;
+int filter_nsiz ?= 3;
+int filter_dsiz ?= 3;
+float filter_num ?= {1, 2, 3};
+float filter_den ?= {3, 2, 1};

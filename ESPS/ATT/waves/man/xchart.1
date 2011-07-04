@@ -1,0 +1,657 @@
+.\" Copyright (c) 1987-1990 AT&T, Inc.
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1990-1997 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)xchart.1	1.7 10/3/97 ATT/ESI/ERL
+.ds ]W (c) 1997 Entropic Research Laboratory, Inc.
+.TH XCHART 1\-ESPS 10/3/97
+.if t .ds - \(em\h'-0.5m'\(em
+.if n .ds - ---
+.if n .ds lq \&"\"
+.if t .ds lq \&``
+.if n .ds rq \&"\"
+.if t .ds rq \&''
+.de qI
+.ie '\\$2'' \&\\*(lq\fI\\$1\fP\\*(rq
+.el \&\\*(lq\fI\\$1\fP \\$2\\*(rq
+..
+.ds wD \fIwaves+ Manual\fP
+.ds wR \fIwaves+ Reference\fP
+.ds wT \fIIntroducing waves+\fP
+.ad l
+.SH "NAME"
+xchart \-  time-series segment lattice display attachment for xwaves 
+.SH "SYNOPSIS"
+.B xchart
+[
+.BI \-c " host_X_registry"
+] [
+.BI \-n " host_name"
+] [
+.BI \-w " wave_pro"
+]
+.SH "DESCRIPTION"
+.PP
+.I xchart
+is an
+.I attachment
+for the program
+.IR xwaves (1\-ESPS):
+a program that runs in close cooperation with
+.I xwaves
+and provides additional capabilities.
+.I xchart
+is an extension of the attachment
+.IR xlabel (1\-ESPS):
+it provides all the features of
+.I xlabel
+together with an additional display mode
+for presenting collections of signal-segment labels
+called \*(lqcharts\*(rq.
+This manual entry briefly describes
+.I xchart
+but is not intended to be a complete
+.I xchart
+manual.
+For full details of the special features of
+.I xchart,
+see the chapter
+.qI xchart
+in \*(wD
+and the chapters
+.qI xchart "reference"
+and
+.qI xchart "quick reference"
+in \*(wR.
+For details of the features that
+.I xchart
+shares with
+.I xlabel
+see the chapter
+.qI xlabel
+in \*(wD
+and the chapters
+.qI xlabel "reference"
+and
+.qI xlabel "quick reference"
+in \*(wR.
+Also see \*(wD and \*(wR for information about
+.I xwaves.
+.SS "Introduction"
+.PP
+An attachment is a program that extends the capabilities of
+.I xwaves
+while running as a separate UNIX process.
+Attachments exchange information with
+.I xwaves
+by communicating through the X server,
+using a communication protocol that is compatible with Tcl/Tk.
+.PP
+.I xchart,
+an
+.I xwaves
+attachment, is an extended version of the attachment
+.IR xlabel (1\-ESPS)
+that provides the additional capability of manipulating displays of
+.I charts.
+A chart is a collection of possibly overlapping signal-segment labels
+(for example, word hypotheses
+from a speech recognizer's \*(lqfront end\*(rq).
+Each segment label is displayed as horizontal bar,
+indicating the extent of the segment,
+along with an associated character string called a
+.I symbol.
+.I xchart
+displays these segment labels in a window
+that is time-aligned with the corresponding
+.I xwaves
+signal display.
+.PP
+.I xchart
+builds the chart display from a
+.I "chart file"
+that contains segment boundary times, symbols,
+and other information in ASCII form.
+Several chart files can be displayed simultaneously in one
+.I xchart
+window, and
+.I xlabel
+label files can also be displayed in the same window.
+.SS "Starting xchart"
+You can start
+.I xchart
+in various ways.
+The commonest way is to click the
+.B xchart
+button in the
+.B Attach:
+item of the main control panel.
+Another way is to issue the
+.I xwaves
+command
+.I attach.
+.PP
+.I xchart
+and
+.I xlabel
+are actually the same program.
+One executable binary program file can be given several names
+through hard or symbolic links.
+If invoked by the name \*(lqxchart\*(rq,
+the program provides the special
+.I xchart
+features.
+If invoked by another name (such as \*(lqxlabel\*(rq)
+the program makes available only the standard
+.I xlabel
+features.
+.PP
+Once you have started
+.I xchart,
+a
+.I "control panel"
+appears.
+This is similar to the
+.I xlabel
+control panel.
+.PP
+A
+.I "chart window"
+appears when a name is entered in the
+.B "Object:"
+item in the
+.I xchart
+control panel, or when an
+.I xwaves
+data display is created or changed.
+The
+.I "object"
+name should be that of the associated
+.I xwaves
+display ensemble.
+(The
+.B Object:
+item is usually set automatically by
+.IR xwaves .)
+.PP
+A chart file is displayed in the window after the
+.B "Chart File:"
+item is filled in with a chart file name or after a
+.I send make
+command is sent from
+.I xwaves.
+.PP
+All functions normally available in
+.I xwaves
+are active in conjunction with the chart display.
+.PP
+Selecting the
+.B QUIT
+button in the
+.I xchart
+control panel updates and closes all label files
+and disconnects
+.I xchart
+from
+.I xwaves.
+.SS "The control panel"
+.PP
+The
+.I xchart
+control panel is similar to the
+.I xlabel
+panel, but with two more items.
+The following items have the same functions in
+.I xchart
+as in
+.IR "xlabel" :
+.BR "Label File:" ,
+.BR "Object:" ,
+.BR "Active fields:" ,
+.BR "Label Menu File:" ,
+and
+.BR "QUIT" .
+Refer to \*(lqThe labeler control panel\*(rq in the chapter
+.qI xlabel
+of \*(wD for their description.
+Moreover the
+.B "xchart manual"
+button is essentially the same as the
+.I xlabel
+.B "xlabel manual"
+button except that you get
+.I xchart
+documentation instead of
+.I xlabel
+documentation.
+The other two items are the following.
+.TP
+.B "Chart File:"
+Enter the name of an existing chart file in this field
+to display it in the chart/label display window.
+The file must have the format described
+in the section \*(lqChart files\*(rq below;
+also see \*(lqThe chart file\*(rq in the chapter
+.qI xchart
+of \*(wD.
+.TP
+.B "Top Word:"
+The entered symbol is scrolled to the top of its section
+of the display window.
+.SS "The chart/label display window"
+The chart/label display window
+.RI ( "chart window"
+for short)
+can display several chart and label files,
+separated by horizontal lines.
+The label files appear in the top part of the window
+and are displayed in the same way as in
+.I xlabel
+windows.
+.PP
+A segment label is displayed as a horizontal line
+with short vertical strokes at the ends
+to mark the ends of the segment;
+the associated symbol is printed in the middle.
+.I xchart
+devotes one line of text display to each distinct symbol
+in the chart file.
+One symbol may be assigned to any number of segments,
+but they should not overlap in time.
+Segments with different symbols may overlap arbitrarily.
+.PP
+There may be too many symbols for the available vertical space.
+To deal with this situation there are two mechanisms
+for vertically scrolling the chart.
+One is under mouse/menu control as described below.
+The other is to enter the symbol in the 
+.B "Top Word:"
+item in the control panel.
+The (circular) list of segments is then scrolled to
+bring the indicated symbol to the top.
+.PP
+The chart window tries to stay close to the
+.I xwaves
+window to which it is attached,
+which is the most recently created window in the object
+unless the window was created with an
+.I xchart
+.I make
+command specifying a different signal.
+The chart window is automatically resized, rescaled, and scrolled
+to maintain alignment with the window to which it is attached.
+When you move the mouse in the chart window,
+the cursors in all
+.I xwaves
+windows of the same object
+move so as to indicate the same time as the cursor in the chart window.
+.PP
+Clicking the right mouse button in a chart display
+can pop up a menu that lets you select certain operations for execution
+(see \*(lqChart menus\*(rq below or \*(lqThe
+.I xchart
+menu file\*(rq in the chapter
+.qI xchart
+of \*(wD).
+.SS "Chart menus"
+.PP
+The optional menu used in the chart portion of the chart window
+is similar to the regular
+.I xlabel
+menus used in the label portion, but is more limited.
+The menu is specified in an
+.I xchart
+menu file.
+See \*(lqThe
+.I xchart
+menu file\*(rq in the chapter
+.qI xchart
+of \*(wD for an example.
+The first line may contain items
+.I columns
+or
+.I rows
+and
+.I font
+just as in
+.I xlabel
+menu files.
+(See \*(lqMenu file format\*(rq in the chapter
+.qI xlabel
+of \*(wR.)
+The rest of the file contains two items per line.
+The left item appears in the menu,
+while the right item must be one of the following four operations.
+.TP
+.I *UNLOAD*
+unloads the chart under the mouse pointer from the display.
+.TP
+.I *UP*
+scrolls the line under the mouse pointer
+to the top of the chart display.
+.TP
+.I *DOWN*
+scrolls the top line of the chart display
+down to the mouse pointer location.
+.TP
+.I *SHELL*
+takes the left-hand item to be a UNIX command
+(e.g. the name of a program or shell script).
+It executes the command with four arguments:
+.RS
+.IP (1) 5n
+the name of the chartfile under the mouse pointer.
+.IP (2) 5n
+the symbol corresponding to the line in the chart display
+under the mouse pointer.
+.IP (3) 5n
+the time (in seconds) corresponding to the mouse pointer X position.
+.IP (4) 5n
+the name of a temporary file that
+.I xchart
+will try to load (as a chartfile) when the program exits.
+If
+.I xchart
+finds this file, it loads it immediately,
+also maintaining the original display;
+otherwise it does nothing further.
+.RE
+.IP
+Thus the external command might be some operation that simplifies or
+otherwise processes a chart, then redisplays the results.
+Two examples are given under \*(lqUse of the
+.I *SHELL*
+command\*(rq in the chapter
+.qI xchart
+of \*(wD.
+.PP
+The
+.I xchart
+menu can be established by assigning a value to the variable
+.I xchart_chartmenu
+in the
+.I .wave_pro
+file or with the
+.I xchart
+command
+.I make
+or
+.I set
+sent via the
+.I xwaves
+command
+.I send.
+The chart menu should be specified before loading a chart.
+See \*(lqInvoking the
+.I xchart
+menu\*(rq
+in the chapter
+.qI xchart
+of \*(wD for example commands
+and for details of the path used in searching for menu files.
+.SS "Chart files"
+.PP
+The format of the ASCII chart file resembles that of
+.I xlabel
+label files.
+It begins with a header, possibly empty,
+consisting of keyword-value pairs separated by blanks or tabs.
+Next comes a line, always required, starting with a \*(lq#\*(rq sign.
+Then come the segment-label descriptions, one per line.
+Here is an example.
+.LP
+.RS
+.nf
+.if t .ft I
+signal long_utterance.sd
+type 1
+frequency 8000
+color 124
+comment created  Fri Jun  6 17:55:46 1997
+comment ASR-44, version 3.2.1
+font 6x9
+#
+12	0.234	0.456	0.77		foobar
+12	0.567	1.987	0.97		foobar
+15	0.267	1.456	0.27		barfoo
+	.
+	.
+	.
+.if t .ft P
+.fi
+.RE
+.PP
+If the
+.I type
+is 1, segment boundaries in the segment-label lines
+are taken to be times in seconds.
+If
+.I type
+is 2, they are interpreted as sample numbers.
+If
+.I type
+is 2, the sampling frequency should be specified.
+If not, 8000 Hz is assumed.
+.PP
+The keyword
+.I frequency
+indicates the sampling frequency in Hz, used when
+.I type
+is 2.
+.PP
+The
+.I color
+is an integer specifying the colormap table entry
+to use when printing the symbols on the chart.
+.PP
+The
+.I font
+is the name of the character font used to display the chart file.
+If multiple files are displayed, each can have its own font.
+Although you can choose the fonts for the data display window,
+there is currently no way to change the fonts used in the menus.
+.PP
+See \*(lqThe chart file\*(rq in the chapter
+.qI xchart
+of \*(wD for the semantics of
+.I signal
+and
+.I comment.
+.PP
+After the \*(lq#\*(rq line come 5-item lines
+that describe the segment labels.
+Decimal points are optional.
+The number of digits and the spacing between item are arbitrary.
+Columns 1 and 4 are not currently used
+and may have any numerical value.
+Columns 2 and 3 indicate the beginning and end of the segment.
+Column 5 is the symbol that labels the segment.
+Multiple segment assignments for a given symbol
+appear on separate lines,
+which need not be consecutive.
+The ordering of symbols in the chart display
+is their order of first appearance in the chart file.
+.SS "D/A output"
+.PP
+If D/A support is available from
+.I xwaves,
+an additional D/A playback feature is supported by
+.I xchart.
+Pressing the left mouse button
+when the mouse pointer is on a particular segment label
+plays back the corresponding segment
+of a \*(lqplayable\*(rq signal displayed by
+.I xwaves.
+The region played is marked in the
+.I xwaves
+waveform window
+in case you want to perform additional operations on that segment.
+If the cursor is between two segment labels with the same symbol,
+the interval from the end of the first to the beginning of the second
+is played (and marked).
+To the left of the first segment label on a line,
+you get the interval from the beginning of the file
+to the beginning of the segment.
+To the right of the last segment label on a line, you get the interval
+from the end of the segment to the end of the file.
+.SS "Graphics export"
+.PP
+All the
+.I xlabel
+graphics output features are available in
+.I xchart.
+.SS "xchart symbols"
+.PP
+The
+.I xchart
+symbol set is an extension of the
+.I xlabel
+symbol set.
+See
+.qI xlabel "symbols"
+in the chapter
+.qI xlabel "reference"
+of \*(wR
+for the individual
+.I xlabel
+symbols and
+.qI xchart "symbols"
+in the chapter
+.qI xchart "reference"
+of \*(wR
+for the
+.I xchart
+extensions.
+.SS "xchart commands"
+.PP
+The
+.I xchart
+command set is an extension of the
+.I xlabel
+command set.
+See
+.qI xlabel "commands"
+in the chapter
+.qI xlabel "reference"
+of \*(wR
+for the individual
+.I xlabel
+commands and
+.qI xchart "commands"
+in the chapter
+.qI xchart "reference"
+of \*(wR
+for the
+.I xchart
+extensions.
+.qI xchart "command and symbol set"
+in the chapter
+.qI xchart
+of \*(wD contains an example that shows how to use the program
+.IR send_xwaves (1\-ESPS)
+and the
+.I xwaves
+command
+.I send
+to control
+.I xchart
+from a UNIX shell script. 
+.SH "OPTIONS"
+.PP
+.I xchart
+is usually started as a subordinate program by
+.I xwaves.
+In this case, you need not be concerned with the
+command-line options presented below, and you may skip this section.
+However, it is also possible to run
+.I xchart
+(and the other attachments) as sibling UNIX processes,
+in which case it may be necessary
+to specify one or more of the following options.
+These are identical to the options for
+.IR xlabel (1-ESPS).
+.TP
+.BI \-c " host_X_registry"
+This is the name that the host program is registered under
+for X server-based communications.
+This option is intended to be supplied by
+.I xwaves
+when it runs
+.I xchart.
+.TP
+.BI \-n " host_name"
+This is the name of the program object with which
+.I xchart
+will be communicating.
+When the host program is
+.I xwaves,
+this name is always the default value, \*(lqwaves\*(rq.
+.TP
+.BI \-w " wave_pro"
+Specifies the startup profile to read.
+This option is always used
+when
+.I xchart
+is invoked by
+.I xwaves,
+in which case the specified profile
+is a temporary file written by
+.I xwaves
+and containing the current state of the
+.I xwaves
+globals.
+If
+.B \-w
+is not used (only possible if
+.I xchart
+is run from the shell),
+.I xchart
+attempts to read the file
+.I .wave_pro.
+In both cases the search path
+.I $HOME:$ESPS_BASE/lib/waves
+is used.
+The search path used can be overridden
+by setting the UNIX environment variable WAVES_PROFILE_PATH before starting
+.I xwaves.
+.SH "SEE ALSO"
+\*(wD,
+.br
+\*(wR,
+.br
+\*(wT,
+.br
+.IR cnvlab (1\-ESPS),
+.IR formant (1\-ESPS),
+.IR select (1\-ESPS),
+.br
+.IR xcmap (1\-ESPS),
+.IR xlabel (1\-ESPS),
+.IR xmarks (1\-ESPS),
+.br
+.IR xspectrum (1\-ESPS),
+.IR xwaves (1\-ESPS)
+.SH "BUGS"
+.PP
+Occasionally,
+when the vertical size of the label display window is changed manually,
+.I xchart
+insists on returning it to its previous size
+or some other inappropriate height.
+Multiple attempts will usually yield the desired effect.
+This will eventually be fixed.
+.PP
+The chart file does
+.I not
+automatically adjust to time changes
+caused by waveform segment deletion or insertion.
+It is recommended that no waveform editing be performed
+on files being viewed with
+.I xchart.
+.SH "AUTHOR"
+Program by David Talkin at Entropic Research Laboratory,
+based on his program
+.IR xlabel (1\-ESPS).
+This manual page largely extracted by Rod Johnson from
+\*(wD,
+derived ultimately from Talkin's original documentation
+with contributions from others at Entropic.

@@ -1,0 +1,9 @@
+# @(#)Ptranspec	1.3	3/27/90	ESI
+# default parameter file for spectrans
+string input_field ?= "spec_param": "Field name for input spectral parameters";
+string source_rep ?= "RC": "Input spectral representation": {"AUTO", "RC", "AFC", "LAR", "CEP", "LSF"};
+string target_rep ?= "RC": "Output spectral representation": {"AUTO", "RC", "AFC", "LAR", "CEP", "LSF"};
+string output_field ?= "": "Field name for output spectral parameters";
+# string samp_freq_name ?= "src_sf": "Header item name for sampling frequency";
+float samp_freq ?= 8000.0: "Sampling frequency";
+float grid_width ?= 4.0: "Grid spacing (Hz) when searching for LSFs";

@@ -1,0 +1,12 @@
+get attributes global output $HOME/.wave_pro_new
+save_add_ops output $HOME/.w_add_op.WC
+save_menus output $HOME/.w_menus.WC
+save_panels output $HOME/.w_panels.WC
+save_keymaps output $HOME/.w_keymap.WC
+shell fix_wavepro.sh
+return
+# @(#)save_pro.WC	1.3 9/9/93
+
+
+
+

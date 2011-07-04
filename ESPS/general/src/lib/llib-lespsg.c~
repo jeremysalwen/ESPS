@@ -1,0 +1,1719 @@
+/* LINTLIBRARY */
+/*
+ * This material contains unpublished, proprietary software of 
+ * Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+ * or publication of this work must be authorized in writing by Entropic 
+ * Research Laboratory, Inc., and must bear the notice: 
+ *
+ *    "Copyright (c) 1986-1990  Entropic Speech, Inc. 
+ *    "Copyright (c) 1990-1993  Entropic Research Laboratory, Inc. 
+ *                   All rights reserved"
+ *
+ * The copyright notice above does not evidence any actual or intended 
+ * publication of this source code.     
+ *
+ * Written by:  
+ * Checked by:
+ * Revised by:
+ *
+ * Brief description:
+ * This is the lint library for type checking against the ESPS library.
+ */
+
+/* @(#)llib-lespsg.c	1.48 6/28/93 ESI */
+
+#include <stdio.h>
+#include <esps/esps.h>
+#include <esps/sd.h>
+#include <esps/spec.h>
+#include <esps/filt.h>
+#include <esps/scbk.h>
+#include <esps/fea.h>
+#include <esps/anafea.h>
+#include <esps/vq.h>
+#include <esps/feastat.h>
+#include <esps/feaspec.h>
+#include <esps/feasd.h>
+#include <esps/feadst.h>
+#include <esps/feafilt.h>
+#include <esps/ss.h>
+
+void add_source_file(hd,name,src_hd) 
+	struct header *hd,*src_hd; char *name; 
+	{return;}
+void add_comment(hd,text) 
+	struct header *hd; char *text; 
+	{return;}
+int atoh(s) 
+	char *s; 
+	{ return 0;}
+char *arr_func(func, num, src, src_type, dest, dest_type)
+	int func; long num; char *src;
+	int src_type; char *dest; int dest_type;
+	{return (char *) NULL;}
+char *arr_op(op, num, src1, src1_type, src2, src2_type, dest, dest_type)
+	int op; long num; char *src1; int src1_type;
+	char *src2; int src2_type; char *dest; int dest_type;
+	{return (char *) NULL;}
+struct header *copy_header(h) 
+	struct header *h; 
+	{ return (struct header *) NULL;}
+void d_copy(out,in,n) 
+	double *out,*in; 
+	{return;}
+void f_copy(out,in,n) 
+	float *out,*in; 
+	{ return;}
+double **d_mat_alloc(nr,nc) 
+	{ return (double **)NULL;}
+float **f_mat_alloc(nr,nc) 
+	unsigned nr, nc;
+	{ return (float **)NULL;}
+int d_mat_free(mat,nr) 
+	double **mat; 
+	{ return;}
+int f_mat_free(mat,nr) 
+	float **mat; 
+	{ return;}
+int emphasis(x,n,p,z,state) 
+	double *x,*p,*z,*state; 
+	{ return 0;}
+faterr(sub,txt,n) 
+	char *sub,*txt; 
+	{ return;}
+void frange_switch(txt,ps,pe) 
+	char *txt; double *ps, *pe; 
+	{ return;}
+long fstatsiz(fd) 
+	FILE *fd; 
+	{return 0L;}
+int get_ddata(fd,typ,x,n) 
+	FILE *fd; double *x; 
+	{ return;}
+int get_fdata(fd,typ,x,n) 
+	FILE *fd; float *x; 
+	{ return;}
+int getopt(ac,av,opts) 
+	char **av, *opts; 
+	{ return 0;}
+char getsym_c(name) 
+	char *name; 
+	{ return 'y';}
+double getsym_d(name) 
+	char *name; 
+	{return 0.0;}
+int getsym_da(name,arr,l) 
+	char *name; double *arr; 
+	{return l;}
+int getsym_i(name) 
+	char *name; 
+	{return 0;}
+int getsym_ia(name,arr,l) 
+	char *name; int *arr; 
+	{return l;}
+char *getsym_s(name) 
+	char *name; 
+	{return (char *) NULL;}
+void init_table() 
+	{ return;}
+void lrange_switch(txt,ps,pe,us) 
+	char *txt; long *ps,*pe; int us; 
+	{ return;}
+int make_symbol(name,val,typ,pr,s) 
+	char *name,*s; YYSTYPE val; 
+	{ return 0;}
+struct header *new_header(type) 
+	int type; 
+	{ return (struct header *) NULL;};
+struct zfunc *new_zfunc(ns,ds,n,d) 
+	float *n,*d; 
+	{ return (struct zfunc *) NULL;}
+struct zfunc *copy_zfunc(src) 
+	struct zfunc *src; 
+	{ return (struct zfunc *) NULL;}
+int print_arr(array,form,siz,fname) 
+	char *fname,*array,*form; 
+	{ return 0;}
+int print_mat(mat,size) 
+	double **mat; 
+	{ return 0;}
+int printarr(array,form,siz,fname) 
+	char *fname,*array,*form; 
+	{ return 0;}
+int put_ddata(fd,type,x,n) 
+	FILE *fd; double *x; 
+	{ return;}
+int put_fdata(fd,type,x,n) 
+	FILE *fd; float *x; 
+	{ return;}
+void range_switch(txt,ps,pe,us) 
+	char *txt; int *ps, *pe; int us; 
+	{return;}
+int rd_array(arr,elt_siz,maxsiz,file) 
+	char *file,*arr; 
+	{ return 0;}
+int rd_plot(arr,maxsiz,file) 
+	double *arr; char *file; 
+	{return 0;}
+struct header *read_header(fd) 
+	FILE *fd; 
+	{ return (struct header *) NULL;}
+int read_params(a,b,c) 
+	char *a; int b; char *c; 
+	{ return 0;}
+char *savestring(s) 
+	char *s; 
+	{ return s;}
+int scan_arr(arr,form,maxsiz,file) 
+	char *arr,*form,*file; 
+	{ return 0;}
+int scanarr(arr,form,siz,file) 
+	char *arr,*form,*file; 
+	{ return 0;}
+void symerr_exit() 
+	{ return;}
+int shift3(a,b,c,n) 
+	double *a,*b,*c; 
+	int n;
+	{ return;}
+int size_rec(h) 
+	struct header *h; 
+	{ return 1;}
+void skiprec(fd,nr,siz) 
+	long nr;
+	int siz;
+	FILE *fd; 
+	{ return;}
+long statsiz(name) 
+	char *name; 
+	{ return 0L;}
+int symsize(name)
+	char *name;
+	{ return 0;}
+int symtype(s) char *s; 
+	{ return 0;}
+int typesiz(type)
+	int type;
+	{ return 0;}
+void trange_switch(text, hd, startp, endp)
+	char *text; struct header *hd; long *startp, *endp;
+	{ return;}
+int wr_array(arr,elt_siz,ar_siz,file) 
+	char *file,*arr; 
+	{ return 0;}
+int wr_plot(arr,ar_siz,filnam) 
+	double *arr; char *filnam; 
+	{ return 0;}
+int wrarray(arr,elt_siz,ar_siz,file) 
+	char *file,*arr; 
+	{ return 0;}
+void write_header(h,fd) 
+	struct header *h; FILE *fd; 
+	{ return;}
+int zerpolfil(x,n,p,z,size,state) 
+	double *x,*p,*z,*state; 
+	{ return 0;}
+struct spec_data *allo_spec_rec(hd) 
+	struct header *hd; 
+	{return (struct spec_data *) NULL; }
+int get_sd_type(hd) 
+	struct header *hd; 
+	{return 0;}
+void set_sd_type(hd,type) 
+	struct header *hd; short type; 
+	{return;}
+int get_sd_recsize(hd) 
+	struct header *hd; 
+	{return 0;}
+int get_sd_recf(buf,ns,hd,file) 
+	float *buf; int ns; struct header *hd; FILE *file; 
+	{return 0;}
+int get_sd_recd(buf,ns,hd,file) 
+	double *buf; int ns; struct header *hd; FILE *file; 
+	{return 0;}
+int get_sd_recs(buf,ns,hd,file) 
+	short *buf; int ns; struct header *hd; FILE *file; 
+	{return 0;}
+void put_sd_recf(buf,ns,hd,file) 
+	float *buf; int ns; struct header *hd; FILE *file; 
+	{return;}
+void put_sd_recd(buf,ns,hd,file) 
+	double *buf; int ns; struct header *hd; FILE *file; 
+	{return;}
+void put_sd_recs(buf,ns,hd,file) 
+	short *buf; int ns; struct header *hd; FILE *file; 
+	{return;}
+int get_gen_recd(d,t,h,f) 
+	double *d; long *t; struct header *h; FILE *f; 
+	{return 0;}
+int get_spec_rec(d,h,f) 
+	struct spec_data *d; struct header *h; FILE *f; 
+	{return 0;}
+int idx_ok(i,a) 
+	int i; char **a; 
+	{return 0;}
+int lin_search(a,t) 
+	char *t, *a[]; 
+	{return 0;}
+int lin_search2(a,t) 
+	char *t, *a[]; 
+	{return 0;}
+void print_spec_rec(d,h,f) 
+	struct spec_data *d; struct header *h; FILE *f; 
+	{return;}
+void put_spec_rec(d,h,f) 
+	struct spec_data *d; struct header *h; FILE *f; 
+	{return;}
+interp_filt (n, x, y, pzfunc, init_state, up, down, poutflag, preturn)
+	int n, up, down, *poutflag, *preturn;
+	float *x, *y, *init_state;
+	struct zfunc *pzfunc;
+	{return 0;}
+block_filter(n,x,y,p,i) 
+	int n; float *x,*y,*i; struct zfunc *p; 
+	{return 0;}
+struct filt_data *allo_filt_rec(h) 
+	struct header *h; 
+	{return (struct filt_data *)NULL;}
+void set_filt_type(hd)
+	struct header *hd;
+	{return;}
+get_filt_rec(r,h,f) 
+	struct filt_data *r; struct header *h; FILE *f;
+	{return 0;}
+void put_filt_rec(r,h,f) 
+	struct filt_data *r; struct header *h; FILE *f;
+	{return;}
+void print_filt_rec(r,h,f) 
+	struct filt_data *r; struct header *h; FILE *f;
+	{return;}
+void set_scbk_type(hd) 
+	struct header *hd; 
+	{return;}
+get_scbk_rec(r,h,f) 
+	struct scbk_data *r; struct header *h; FILE *f;
+	{return 0;}
+void put_scbk_rec(r,h,f) 
+	struct scbk_data *r; struct header *h; FILE *f;
+	{return;}
+void print_scbk_rec(r,h,f) 
+	struct scbk_data *r; struct header *h; FILE *f;
+	{return;}
+struct scbk_data *allo_scbk_rec(h) 
+	struct header *h; 
+	{return (struct scbk_data *)NULL;}
+int putsym_f(s,v) 
+	char *s; float v; 
+	{return 0;}
+int putsym_i(s,v) 
+	char *s; int v; 
+	{return 0;}
+int putsym_s(s,v) 
+	char *s,*v; 
+	{return 0;}
+int rc_to_lar(rc,lar) 
+	double rc; float *lar; 
+	{return 0;}
+float lar_to_rc(lar) 
+	double lar; 
+	{return 0;}
+char **genhd_list(i,hd) 
+	int *i; struct header *hd; 
+	{return NULL;}
+char **genhd_codes(name,hd) 
+	char *name; struct header *hd; 
+	{return NULL;}
+int genhd_type(n,s,hd) 
+	char *n; int *s; struct header *hd; 
+	{return NULL;}
+char *get_genhd(n,hd) 
+	char *n; struct header *hd; 
+	{return NULL;}
+char **get_genhd_coded(n,hd)
+	char *n; struct header *hd;
+	{return NULL;}
+char *add_genhd(n,t,s,p,q,hd) 
+	char *n,*p; int t,s; char **q; struct header *hd; 
+	{return NULL;}
+double *add_genhd_d(n,p,s,h) 
+	char *n; double *p; int s; struct header *h; 
+	{return NULL;}
+float *add_genhd_f(n,p,s,h) 
+	char *n; float *p; int s; struct header *h; 
+	{return NULL;}
+long *add_genhd_l(n,p,s,h) 
+	char *n; long *p; int s; struct header *h; 
+	{return NULL;}
+short *add_genhd_s(n,p,s,h) 
+	char *n; short *p; int s; struct header *h; 
+	{return NULL;}
+short *add_genhd_e(n,p,s,q,h) 
+	char *n; short *p; int s; char **q; struct header *h; 
+	{return NULL;}
+char *add_genhd_c(n,p,s,h) 
+	char *n; char *p; int s; struct header *h; 
+	{return NULL;}
+double get_genhd_val(name, hd, def_val)
+	char *name; struct header *hd; double def_val;
+	{return 0.0;}
+int add_fea_fld(n,s,r,d,t,c,h) 
+	char *n,**c; long s,*d; short r,t; struct header *h; 
+	{return 0;}
+struct fea_data *allo_fea_rec(h) 
+	struct header *h; 
+	{return (struct fea_data *)NULL;}
+char *get_fea_ptr(r,n,h) 
+	struct fea_data *r; char *n; struct header *h; 
+	{return (char *)NULL;}
+void put_fea_rec(r,h,f) 
+	struct fea_data *r; struct header *h; FILE *f; 
+	{return;}
+int get_fea_rec(r,h,f) 
+	struct fea_data *r; struct header *h; FILE *f; 
+	{return 0;}
+void print_fea_rec(r,h,f) 
+	struct fea_data *r; struct header *h; FILE *f; 
+	{return;}
+void print_fea_recf(r,h,f,l) 
+	struct fea_data *r; struct header *h; FILE *f; char *l[];
+	{return;}
+long get_fea_siz(n,h,r,d) 
+	char *n; struct header *h; short *r; long **d; 
+	{return 0;}
+void set_seg_lab(hd,f) 
+	struct header *hd; char **f; 
+	{return;}
+short fea_encode(s,n,h) 
+	char *s, *n; struct header *h; 
+	{return 0;}
+short fea_encode_ci(s,n,h) 
+	char *s, *n; struct header *h; 
+	{return 0;}
+char *fea_decode(c,n,h) 
+	short c; char *n; struct header *h; 
+	{return (char *)NULL;}
+void get_fft (x_real, x_imag, log_fft_size)
+	float   x_real[], x_imag[];
+	int     log_fft_size;
+	{return;}
+void get_rfft (real, imag, log_fft_size)
+	float   real[], imag[];
+	int     log_fft_size;
+	{return;}
+void get_fft_inv (x_real, x_imag, log_fft_size)
+	float   x_real[], x_imag[];
+	int     log_fft_size;
+	{return;}
+int init_anafea_hd(h,v,u,p,r,x,n,d) 
+	struct header *h; long v,u,p,r,x; short n,d; 
+	{return 0;}
+struct anafea *allo_anafea_rec(h) 
+	struct header *h; 
+	{return NULL;}
+void put_anafea_rec(r,h,f) 
+	struct anafea *r; struct header *h; FILE *f; 
+	{return;}
+int get_anafea_rec(r,h,f) 
+	struct anafea *r; struct header *h; FILE *f; 
+	{return 0;}
+short get_fea_type(n,h) 
+	char *n; struct header *h; 
+	{return 0;}
+int refl_to_filter (rc, fc, n) 
+	float *rc, *fc; int n; 
+	{return 0;}
+int refl_to_auto (rc, pfe, ac, n) 
+	float *rc, pfe, *ac; int n; 
+	{return 0;}
+double is_dist_td (ac, ac_err, cw, cw_err, n) 
+	float *ac, ac_err, *cw, cw_err; int n; 
+	{return 0.0;}
+double gnis_dist_td (ac, ac_err, cw, n) 
+	float *ac, ac_err, *cw; int n; 
+	{return 0.0;}
+double gois_dist_td (ac, ac_err, cw, n) 
+	float *ac, ac_err, *cw; int n; 
+	{return 0.0;}
+long get_rec_len(h) 
+	struct header *h; 
+	{return 0;}
+long *grange_switch(s,i) 
+	char *s; long *i; 
+	{return 0;}
+char *uniq_name(name,list) 
+	char *name; char **list;
+	{return NULL;}
+int lsf_to_pc(lsf, pc, order, bandwidth)
+	float pc[], bandwidth, lsf[];
+	int  order;
+	{return 0;}
+int get_atal(r,order,c,rc,pgain) 
+	double *r; float *c,*rc,*pgain; int order; 
+	{return 0;}
+int pc_to_lsf(afc, lsf, order, bwidth, frq_res)
+	int order;
+	float *afc, *lsf;
+	float bwidth, frq_res;
+	{return 0;}
+int init_vqfea_hd(hd,r,c) 
+	struct header *hd; long r,c;
+	{return 0;}
+struct vqcbk *allo_vqfea_rec(h) 
+	struct header *h; 
+	{return NULL;}
+void put_vqfea_rec(cdbk,hd,strm) 
+	struct vqcbk *cdbk; 
+	struct header *hd; FILE *strm; 
+	{return;}
+int get_vqfea_rec(cdbk,hd,strm) 
+	struct vqcbk *cdbk; struct header *hd; FILE *strm; 
+	{return 0;}
+int vqdesign(histrm, hdetail, data, len, dim, cbk, enc, init, split_crit, 
+ get_chunk, vec_to_cdwd, distort, split, checkpoint, max_iter)
+	FILE		*histrm;
+	int		hdetail;
+	float		**data;
+	long		len;
+	long		dim;
+	struct vqcbk	*cbk;	
+	long		*enc;
+	int		init;	
+	int		split_crit;
+	long		(*get_chunk)();
+	int		(*vec_to_cdwd)();
+	double		(*distort)();
+	int		(*split)();
+	int		(*checkpoint)();
+	int		max_iter;
+	{return 0;}
+long findmax_f(v,n) 
+	float *v; long n; 
+	{return 0;}
+void vec_add_f(v1,v2,size) 
+	float *v1,*v2; long size; 
+	{return;}
+long vqencode(fea, fea_dim, codebook, cbk_size, cbk_dim, 
+	dist_val, distort, dist_err)
+	float *fea; long fea_dim; float	**codebook; long cbk_size;
+	long cbk_dim; double *dist_val; double	(*distort)(); int *dist_err;
+	{return 0;}
+int pz_to_co(nr,real,imag,pnco,co) 
+	int nr; double *real,*imag; short *pnco; float *co; 
+	{return 0;}
+int init_feastat_hd (hd, statfield, statsize, class_type, covar, 
+	invcovar, eigen)
+	struct	header	*hd; char *statfield; long statsize;
+	char	**class_type; short covar, invcovar, eigen; 
+	{return 0;}
+struct feastat * allo_feastat_rec (hd) 
+	struct header *hd; 
+	{return NULL;}
+void put_feastat_rec (stat_rec, hd, file)
+	struct feastat  *stat_rec; struct header   *hd; FILE *file;
+	{return;}
+int get_feastat_rec (stat_rec, hd, file)
+	struct feastat  *stat_rec; struct header   *hd; FILE *file;
+	{return 0;}
+void add_genzfunc(name, f, hd)
+	char *name; struct zfunc *f; struct header *hd;
+	{return;}
+struct zfunc *get_genzfunc(name,hd)
+	char *name; struct header *hd;
+	{return NULL;}
+int copy_fea_fld(h1,h2,name)
+	struct header *h1, *h2; char *name;
+	{return 0;}
+float gauss()
+	{return 0;}
+int getsym_fa(name,array,maxval)
+	char *name;
+	float array[];
+	int maxval;
+	{return 0;}
+int pef_autorc(order,pef,r,c)
+	int order;
+	double pef[], r[], c[];
+	{return 0;}
+int auto_pefrc(order,r,pef,c)
+	int order;
+	double r[], pef[], c[];
+	{return 0;}
+int rc_autopef(order,c,r,pef)
+	int order;
+	double c[], r[], pef[];
+	{return 0;}
+float *atoarrayf(strm,nval,max)
+	FILE *strm;
+	long *nval;
+	float *max;
+	{return (float *)NULL;}
+char * atoarray(strm, type, nvalues, max)
+	FILE    *strm;
+	int     type;
+	long    *nvalues;
+	double  *max;
+	{return (char *)NULL;}
+double matrix_inv(matin, inv_out, size)
+	float *matin[], *inv_out[];
+	int size;
+	{return 0;}
+int set_fea_deriv (name, srcfield, hd)
+	char   *name;
+	char  **srcfield;
+	struct header  *hd;
+	{return 0;}
+char  ** get_fea_deriv (name, hd)
+	char   *name;
+	struct header  *hd;
+	{return (char **)NULL;}
+char * get_deriv_vec (fields, fea_rec, hd, type, length, vec)
+	char		    **fields;
+	struct fea_data	    *fea_rec;
+	struct header	    *hd;
+	int		    type;
+	long		    *length;
+	char		    *vec;
+	{return (char *)NULL;}
+int rc_reps(rc, output, output_type, size, bwidth, frq_res)
+	float *rc, *output; 
+	int output_type; 
+	float bwidth, frq_res; 
+	int size; 
+	{return 0;}
+int reps_rc(input, input_type, rc, size, bwidth)
+	float *input, *rc;
+	float bwidth;
+	int input_type;
+	int size;
+	{return 0;}
+void get_fftd (x_real, x_imag, log_fft_size)	
+	double x_real[], x_imag[];
+	int     log_fft_size;
+	{return;}
+void set_spec_type(hd)
+	struct header *hd;
+	{return;}
+get_burg (x, lnt, r, order, c, rc, pgain, method)
+	float   x[], c[], rc[], *pgain;
+	double  r[];
+	int     order, lnt;
+	char    method;
+	{return 0;}
+int afc2cep(afc, cep, order)
+	int order;
+	float *afc, *cep;
+	{return 0;}
+int cep2afc(cep, afc, order)
+	int order;
+	float *cep, *afc;
+	{return 0;}
+int classify(feavec, nfea, nclas, means, invcovars, priors, posteriors)
+	float   *feavec;
+	int	    nfea, nclas;
+	float   **means;
+	float   ***invcovars;
+	float   *priors;
+	float   *posteriors;
+	{ return 0; }
+COMPLEX cadd(x, y)
+	COMPLEX x,y;
+	{return x;}
+COMPLEX csub(x, y)
+	COMPLEX x,y;
+	{return x;}
+COMPLEX conj(x)
+	COMPLEX x;
+	{return x;}
+COMPLEX cmult(x, y)
+	COMPLEX x, y;
+	{return x;}
+COMPLEX realmult(x, y)
+	COMPLEX x;
+	double y;
+	{return x;}
+double modul(x)
+	COMPLEX x;
+	{return 0;}
+COMPLEX cdiv(x, y)
+	COMPLEX x,y;
+	{return x;}
+COMPLEX cmultacc(x, y, r)
+	COMPLEX x, y, r;
+	{return x;}
+int convolv (a, a_siz, b, b_siz, c, c_siz)
+	double *a, *b, *c;
+	int     a_siz, b_siz;
+	int    *c_siz;
+	{return 0;}
+auto_convolv (a, a_siz, b, b_siz, c, c_siz)
+	double *a, *b, *c;
+	int     a_siz, b_siz;
+	int    *c_siz;
+	{return 0;}
+void copy_fea_rec(irec, ihd, orec, ohd, fields, trans)
+	struct fea_data *irec;
+	struct header   *ihd;
+	struct fea_data *orec;
+	struct header   *ohd;
+	char    **fields;
+	short   **trans;
+	{return;}
+int covar (data, lnt, c, order, grc, pgain, window_flag)
+	float   data[], c[], grc[], *pgain;
+	int     lnt, order, window_flag;
+	{return 0;}
+double determ(mat, order)
+	float **mat;
+	int order;
+	{return 0;}
+char *eopen(prog_name, file_name, mode, type, subtype, header, stream)
+	char    *prog_name, *file_name, *mode;
+	int	    type, subtype;
+	struct header   **header;
+	FILE    **stream;
+	{return (char *)NULL;}
+int get_arspect (c, order, res_power, samp_freq, y)
+	int     order, samp_freq;
+	float   c[], res_power, y[];
+	{return 0;}
+int get_auto(x, lnt, r, order)
+	float x[];
+	double r[];
+	int lnt,order;
+	{return 0;}
+char *get_cmd_line(argc,argv) 
+	int argc; 
+	char **argv; 
+	{return (char *)NULL; }
+int get_dct(in, out, N)
+	float in[], out[];
+	int N;
+	{return 0;}
+int dct(x, X, N)
+	int N;
+	float x[], X[];
+	{return 0;}
+int idct(X, x, N)
+	short N;
+	float x[], X[];
+	{return 0;}
+int hamm_enc(data, code)
+	int data;
+	short *code;
+	{return 0;}
+int hamm_dec(data, code)
+	int code;
+	short *data;
+	{return 0;}
+int lloyd (data, n, cbk, ncbk_desired, convergence, hstrm, final_dist, cbk_dist, pop)
+	double *data;
+	long n;		
+	double *cbk;
+	unsigned ncbk_desired;
+	double convergence;
+	FILE *hstrm;	
+	double *final_dist;	
+	double *cbk_dist;
+	long *pop;
+	{return 0;}
+long rand_int(max_int)
+	long max_int;
+	{return 0;}
+long rand_intnr(max_int, reset)
+	long max_int;
+	int reset;
+	{return 0;}
+void rc2cep(input, output, size)
+	float *input, *output;
+	int size;
+	{return;}
+void rc2lar(input, output, size)
+	float *input, *output;
+	int size;
+	{return;}
+void rc2afc(input, output, size)
+	float *input, *output;
+	int size;
+	{return;}
+void rc2lsf(input, output, size, bwidth, frq_res)
+	float *input, *output;
+	int size;
+	float bwidth, frq_res;
+	{return;}
+void rc2auto(input, output, size)
+	float *input, *output;
+	int size;
+	{return;}
+long long_reverse(in)
+	long in;
+	{return 0;}
+short short_reverse(in)
+	short in;
+	{return 0;}
+int sizetype(type)
+	char type;
+	{return 0;}
+void rctoc(rc,order,c,pgain)
+	float rc[],c[],*pgain;
+	int order;
+	{return;}
+char *marg_index(arr, rk, dim, typ, lvl)
+	char *arr; int rk; long *dim; int typ, lvl;
+	{return arr;}
+char *arr_alloc(rk, dim, typ, lvl)
+	int rk; long *dim; int typ, lvl;
+	{return "";}
+void arr_free(arr, rk, typ, lvl)
+	char *arr; int rk, typ, lvl;
+	{return;}
+#if defined(M5500) || defined(M5600)
+char *index(s,c)
+	char *s, c;
+	{return (char *)NULL;}
+#endif
+int get_sd_orecd(framebuf, framelen, nmove, first, hd, file)
+	double *framebuf;
+	int framelen, nmove, first;
+	struct header *hd;
+	FILE *file;
+	{return 0;}
+int get_sd_orecf(framebuf, framelen, nmove, first, hd, file)
+	float *framebuf;
+	int framelen, nmove, first;
+	struct header *hd;
+	FILE *file;
+	{return 0;}
+int get_sd_orecs(framebuf, framelen, nmove, first, hd, file)
+	short *framebuf;
+	int framelen, nmove, first;
+	struct header *hd;
+	FILE *file;
+	{return 0;}
+char *get_genhd_c(name,h)
+	char *name;
+	struct header *h;
+	{return NULL;}
+short *get_genhd_s(name,h)
+	char *name;
+	struct header *h;
+	{return NULL;}
+long *get_genhd_l(name,h)
+	char *name;
+	struct header *h;
+	{return NULL;}
+float *get_genhd_f(name,h)
+	char *name;
+	struct header *h;
+	{return NULL;}
+double *get_genhd_d(name,h)
+	char *name;
+	struct header *h;
+	{return NULL;}
+short *malloc_s(n)
+	unsigned n;
+	{return NULL;}
+int *malloc_i(n)
+	unsigned n;
+	{return NULL;}
+long *malloc_l(n)
+	unsigned n;
+	{return NULL;}
+float *malloc_f(n)
+	unsigned n;
+	{return NULL;}
+double *malloc_d(n)
+	unsigned n;
+	{return NULL;}
+short *calloc_s(n)
+	unsigned n;
+	{return NULL;}
+int *calloc_i(n)
+	unsigned n;
+	{return NULL;}
+long *calloc_l(n)
+	unsigned n;
+	{return NULL;}
+float *calloc_f(n)
+	unsigned n;
+	{return NULL;}
+double *calloc_d(n)
+	unsigned n;
+	{return NULL;}
+void CANTOPEN(prog, file)
+	char *prog, *file;
+	{return;}
+void USAGE(text)
+	char *text;
+	{return;}
+void NOTSPS(prog, bfile)
+	char *prog, *bfile;
+	{return;}
+int BOOL(arg)
+	int arg;
+	{return 0;}
+int window(n, x, y, type, p)
+	long n;
+	float *x, *y;
+	int type;
+	double *p;
+	{return 0;}
+int windowd(n, x, y, type, p)
+	long n;
+	double *x, *y;
+	int type;
+	double *p;
+	{return 0;}
+void copy_fea_fields(dest, src)
+	struct header *dest, *src;
+	{return;}
+
+COMPLEX csqrt(x)
+	COMPLEX x;
+	{COMPLEX y; return(y);}
+
+void addstr(str, arr)
+	char *str;
+	char ***arr;
+	{return;}
+
+long *fld_range_switch(text, name, array_len, hd)
+	char *text;
+	char **name;
+	long *array_len;
+	struct header*hd;
+	{return (long *)NULL;}
+
+long get_fea_element(name, hd)
+	char *name;
+	struct header *hd;
+	{return 0;}
+
+int stsolv(r, v, order, w)
+    double  *r, *v;
+    int	    order;
+    double  *w;
+    {return 0;}
+
+int copy_genhd(dest, src, name)
+    struct header *dest;
+    struct header *src;
+    char *name;
+    {return 0;}
+
+FILE *get_genhd_afile(name, hd)
+    char *name;
+    struct header *hd;
+    {return (FILE *)NULL;}
+
+struct header *get_genhd_efile(name, hd)
+     char *name;
+     struct header *hd;
+     {return (struct header *)NULL;}
+
+char *get_genhd_efile_name(name, hd)
+     char *name;
+     struct header *hd;
+     {return NULL;}
+
+char *get_genhd_afile_name(name, hd)
+     char *name;
+     struct header *hd;
+     {return NULL;}
+
+char *add_genhd_efile(item_name, file_name, hd)
+     char *item_name, *file_name;
+     struct header *hd;
+     {return NULL;}
+
+char *add_genhd_afile(item_name, file_name, hd)
+     char *item_name, *file_name;
+     struct header *hd;
+     {return NULL;}
+
+void update_waves_gen(ih, oh, start, step)
+     struct header *ih, *oh;
+     float start, step;
+     {return;}
+
+int lsq_solv2(a, b, m, n, p, x, eps)
+    double  **a, **b;
+    int	    m, n, p;
+    double  **x, eps;
+    {return 0;}
+
+
+int lsq_solv(a, b, m, n, x, eps)
+    double  **a, *b;
+    int	    m, n;
+    double  *x, eps;
+    {return 0;}
+
+int moore_pen(a, m, n, x, eps)
+    double  **a;
+    int	    m, n;
+    double  **x, eps;
+    {return 0;}
+
+int init_feaspec_hd(hd, def_tot_power, freq_format, spec_type,
+		contin, num_freqs, frame_meth, freqs, sf, frmlen, 
+		re_spec_format)
+    struct header   *hd;	
+    int		    def_tot_power;
+    int		    freq_format; 
+    int		    spec_type;	
+    int		    contin;
+    long	    num_freqs;	
+    int		    frame_meth;	
+    float	    *freqs;
+    double	    sf;	
+    long	    frmlen;	
+    int	    	    re_spec_format;
+    {return 0;}
+
+struct feaspec * allo_feaspec_rec(hd, re_spec_format)
+    struct header   *hd;
+    int	    	    re_spec_format;
+    {return (struct feaspec *) NULL;}
+
+long put_feaspec_rec(spec_rec, hd, file)
+    struct feaspec  *spec_rec;
+    struct header   *hd;
+    FILE            *file;
+    {return 0;}
+
+long get_feaspec_rec(spec_rec, hd, file)
+    struct feaspec  *spec_rec;
+    struct header   *hd;
+    FILE            *file;
+    {return 0;}
+
+void print_feaspec_rec(rec, hd, file)
+    struct feaspec *rec;
+    struct header *hd;
+    FILE *file;
+    {return;}
+
+char **get_feaspec_xfields(hd)
+	struct header *hd;
+	{return (char **)NULL;}
+
+
+char	*spfmt_names[1];
+char	*sptyp_names[1];
+char	*spfrm_names[1];
+
+void inhibit_hdr_date()
+	{return;}
+
+int copy_genhd_uniq (dest, src, name)
+	struct header  *dest, *src;
+	char *name;
+	{return 0;}
+
+
+int miio_get_double(ptr, size, edr_flag, machine, fd)
+	double *ptr;
+	int size, edr_flag, machine;
+	FILE *fd;
+	{return 0;}
+
+int miio_get_float(ptr, size, edr_flag, machine, fd)
+	float *ptr;
+	int size, edr_flag, machine;
+	FILE *fd;
+	{return 0;}
+
+int miio_get_long(ptr, size, edr_flag, machine, fd)
+	long *ptr;
+	int size, edr_flag, machine;
+	FILE *fd;
+	{return 0;}
+
+int miio_get_int(ptr, size, edr_flag, machine, fd)
+	int *ptr;
+	int size, edr_flag, machine;
+	FILE *fd;
+	{return 0;}
+
+int miio_get_short(ptr, size, edr_flag, machine, fd)
+	short *ptr;
+	int size, edr_flag, machine;
+	FILE *fd;
+	{return 0;}
+
+int miio_get_char(ptr, size, edr_flag, machine, fd)
+	char *ptr;
+	int size, edr_flag, machine;
+	FILE *fd;
+	{return 0;}
+
+int miio_get_byte(ptr, size, edr_flag, machine, fd)
+	char *ptr;
+	int size, edr_flag;
+	FILE *fd;
+	{return 0;}
+
+int miio_put_double(ptr, size, edr_flag, fd)
+	double *ptr;
+	int size, edr_flag;
+	FILE *fd;
+	{return 0;}
+
+int miio_put_float(ptr, size, edr_flag, fd)
+	float *ptr;
+	int size, edr_flag;
+	FILE *fd;
+	{return 0;}
+
+int miio_put_int(ptr, size, edr_flag, fd)
+	int *ptr;
+	int size, edr_flag;
+	FILE *fd;
+	{return 0;}
+
+int miio_put_short(ptr, size, edr_flag, fd)
+	short *ptr;
+	int size, edr_flag;
+	FILE *fd;
+	{return 0;}
+
+int miio_put_long(ptr, size, edr_flag, fd)
+	long *ptr;
+	int size, edr_flag;
+	FILE *fd;
+	{return 0;}
+
+int miio_put_char(ptr, size, edr_flag, fd)
+	char *ptr;
+	int size, edr_flag;
+	FILE *fd;
+	{return 0;}
+
+int miio_put_byte(ptr, size, edr_flag, fd)
+	char *ptr;
+	int size, edr_flag;
+	FILE *fd;
+	{return 0;}
+
+void free_fea_rec(rec)
+	struct fea_data *rec;
+	{return;}
+
+int miio_get_dcplx(ptr, n, flag, mach, fp)
+	double_cplx *ptr;
+	int n;
+	int flag;
+	int mach;
+	FILE *fp;
+	{return 0;}
+
+int miio_get_fcplx(ptr, n, flag, mach, fp)
+	float_cplx *ptr;
+	int n;
+	int flag;
+	int mach;
+	FILE *fp;
+	{return 0;}
+
+int miio_get_lcplx(ptr, n, flag, mach, fp)
+	long_cplx *ptr;
+	int n;
+	int flag;
+	int mach;
+	FILE *fp;
+	{return 0;}
+
+int miio_get_scplx(ptr, n, flag, mach, fp)
+	short_cplx *ptr;
+	int n;
+	int flag;
+	int mach;
+	FILE *fp;
+	{return 0;}
+
+int miio_get_bcplx(ptr, n, flag, mach, fp)
+	byte_cplx *ptr;
+	int n;
+	int flag;
+	int mach;
+	FILE *fp;
+	{return 0;}
+
+int miio_put_dcplx(ptr, n, flag, fp)
+	double_cplx *ptr;
+	int n;
+	int flag;
+	FILE *fp;
+	{return 0;}
+
+int miio_put_fcplx(ptr, n, flag, fp)
+	float_cplx *ptr;
+	int n;
+	int flag;
+	FILE *fp;
+	{return 0;}
+
+int miio_put_lcplx(ptr, n, flag, fp)
+	long_cplx *ptr;
+	int n;
+	int flag;
+	FILE *fp;
+	{return 0;}
+
+int miio_put_scplx(ptr, n, flag, fp)
+	short_cplx *ptr;
+	int n;
+	int flag;
+	FILE *fp;
+	{return 0;}
+
+int miio_put_bcplx(ptr, n, flag, fp)
+	byte_cplx *ptr;
+	int n;
+	int flag;
+	FILE *fp;
+	{return 0;}
+
+int init_feasd_hd(hd, data_type, num_channels, start_time, mult_st_t, record_freq)
+	struct header   *hd;
+	int             data_type, num_channels;
+	double          *start_time;
+	int             mult_st_t;
+	double          record_freq;
+	{return 0;}
+
+struct feasd * allo_feasd_recs(hd, data_type, num_records, data, make_ptrs)
+	struct header   *hd;
+	int             data_type;
+	long            num_records;
+	char            *data;
+	int             make_ptrs;
+	{return (struct feasd *)NULL;}
+
+long get_feasd_recs(data, start, num_records, hd, file)
+	struct feasd    *data;
+	long            start, num_records;
+	struct header   *hd;
+	FILE            *file;
+	{return 0;}
+
+long get_feasd_orecs(data, start, framelen, step, hd, file)
+	struct feasd    *data;
+	long            start, framelen, step;
+	struct header   *hd;
+	FILE            *file;
+	{return 0;}
+
+int put_feasd_recs(data, start, num_records, hd, file)
+	struct feasd    *data;
+	long            start, num_records;
+	struct header   *hd;
+	FILE            *file;
+	{return 0;}
+
+double min_rel_ent(p, c, q, beta, m, n, maxit, thresh)
+	double  *p, **c, *q, *beta;
+	int     m, n, maxit;
+	double  thresh;
+	{return 0;}
+
+double rel_ent(q, p, n)
+	double  *q, *p;
+	int     n;
+	{return 0;}
+
+char * zero_fill(num, type, buf)
+	long    num;
+	int     type;
+	char    *buf;
+	{return (char *)NULL;}
+
+char * type_convert(num, source, src_type, destination, dest_type, clip_action)
+    long    num;
+    char    *source;
+    int	    src_type;
+    char    *destination;
+    int	    dest_type;
+    void    (*clip_action)();
+    {return (char *)NULL;}
+
+int is_file_complex(h)
+	struct header *h;
+	{return 0;}
+
+int is_field_complex(h,name)
+	struct header *h;
+	char *name;
+	{return 0;}
+
+int is_type_complex(type)
+	int type;
+	{return 0;}
+
+short cover_type(t1, t2)
+	short t1, t2;
+	{return 0;}
+int is_type_numeric(type)
+	int type;
+	{return 0;}
+
+long get_fea_elem_count(name,hd)
+	char *name;
+	struct header *hd;
+	{return 0;}
+
+int linear_to_mu(input, output, size)
+	short input[];    /*PCM input*/
+	char output[];    /*mu encoded output*/
+	long size;        /*number of points in input*/
+	{return 0;}
+
+int mu_to_linear(in, out, size)
+	char in[];        /*input mu-coded values (bit inverted)*/
+	short out[];      /*output linear values*/
+	long size;        /*number of items in the input array*/
+	{return 0;}
+
+int del_fea_fld(name, hd)
+	char *name;
+	struct header *hd;
+	{return 0;}
+
+int set_lock(wait, prefix)
+	int     wait;
+	char    *prefix;
+	{return 0;}
+
+
+int rem_lock(prefix)
+	char    *prefix;
+	{return 0;}
+   
+int fea_compat(ihd, ohd, fields, trans)
+	struct header   *ihd, *ohd;
+	char    **fields;
+	short   ***trans;
+	{return 0;}
+
+char *build_filename(into_string,filename,dirname)
+char *into_string;
+char *filename;
+char *dirname;
+   {return (char *) NULL;}
+
+char *find_esps_file(fullpath,filename,defpath,env_var_name)
+char* fullpath;
+char* filename;
+char *defpath;
+char *env_var_name;
+     {return (char *) NULL;}
+
+char *get_esps_base(base_name)
+     char *base_name;
+     {return (char *) NULL;}
+
+char *e_temp_name(template)
+     char       *template;
+     {return (char *) NULL;}
+
+int init_feadst_hd(hd, max_num_sects)
+	struct header *hd;
+	long max_num_sects;
+	{return 0;}
+
+struct feadst *allo_feadst_rec(hd)
+	struct header *hd;
+	{return (struct feadst *) NULL;}
+
+void put_feadst_rec(dst_rec, hd, file)
+	struct feadst *dst_rec;
+	struct header *hd;
+	FILE *file;
+	{return;}
+
+int get_feadst_rec(dst_rec, hd, file)
+	struct feadst *dst_rec;
+	struct header *hd;
+	FILE *file;
+	{return 0;}
+
+int is_esps_file(name)
+	char *name;
+	{return 0;}
+
+void pr_farray(arr, size, title)
+	float  *arr;
+	long    size;
+	char    *title;
+	{return;}
+
+SOCKET *open_xwaves(host, port, verbose)
+	char *host;
+	int port,verbose;
+	{return (SOCKET *) NULL;}
+
+
+int send_xwaves(sp, str)
+	SOCKET *sp;
+	char *str;
+	{return 0;}
+
+
+void close_xwaves(sp)
+	SOCKET *sp;
+	{return;}
+
+int send_xwaves2(host, port, str, verbose)
+	char *host, *str;
+	int port, verbose;
+	{return 0;}
+
+int init_feafilt_hd(hd, max_num, max_denom, fdp)
+     struct header   *hd;
+     long max_num;
+     long max_denom;
+     filtdesparams   *fdp;
+     {return 0;}
+
+struct feafilt *allo_feafilt_rec(hd)
+     struct header *hd;
+     {return (struct feafilt *) NULL;}
+
+void put_feafilt_rec(feafilt_rec, hd, file)
+    struct feafilt  *feafilt_rec;
+    struct header   *hd;
+    FILE            *file;
+    {return;}
+
+int get_feafilt_rec(feafilt_rec, hd, file)
+	struct feafilt  *feafilt_rec;
+	struct header   *hd;
+	FILE            *file;
+	{return 0;}
+
+struct zfunc feafilt_to_zfunc( feafiltrec )
+	struct feafilt *feafiltrec;
+	{return; }
+
+
+int convertlab(file_in, file_out, sf, mode, lab_color, unl_color)
+	char *file_in;                  /* input file name */
+	char *file_out;                 /* output file name */
+	int mode;               /* whether or not to include both endpoints*/
+				/* mode == 2 for both; mode == 1 for end */
+	int  lab_color;                 /* color for labels */
+	int  unl_color;                 /* color for UNL marks */
+	double sf;                      /* sampling rate */
+	{return 0;}
+
+
+void blt( seq, dim, param)
+	int dim;
+	float *seq, param;
+	{return;}
+
+void stage1(in, out, dim, param)
+	int dim;
+	float *in, *out, param;
+	{return;}
+
+void stage2(in, out, dim, param)
+	int dim;
+	float *in, *out, param;
+	{return;}
+
+void stageN(in, out, dim, param)
+	int dim;
+	float *in, *out, param;
+	{return;}
+
+/* fft_cepstrum */
+
+double modulf(data)
+	float_cplx data;
+	{return 0.0;}
+
+void fft_cepstrum( data, order)
+	float_cplx *data;
+	long order;
+	{return;}
+
+void fft_cepstrum_r( data_r, data_i, order)
+	float *data_r, *data_i;
+	long order;
+	{return;}
+
+void fft_ccepstrum( data, order)
+	float_cplx *data;
+	long order;
+	{return;}
+
+void unwrap( phase, length)
+	float *phase;
+	int length;
+	{return;}
+
+void unwrapc( data, length)
+	float_cplx *data;
+	long length;
+	{return;}
+
+
+double dtw_tl(test, ref, N, M, dim, delta, bsofar, mapping, dist_tbl)
+	long N, M, dim, delta, *mapping;
+	long *test, *ref;
+	double *bsofar, **dist_tbl;
+	{return 0.0;}
+
+
+double tl_dist (v1, v2, dim, table)
+	long v1, v2;
+	long dim;
+	double **table;
+	{return 0.0;}
+
+
+double dtw_l2(test, ref, N, M, dim, delta, bsofar, mapping, dist_fn)
+	long N, M, dim, delta, *mapping;
+	float ** test, ** ref;
+	double *bsofar, (*dist_fn)();
+	{return 0.0;}
+
+double l2_dist (v1, v2, dim)
+	float *v1, *v2;
+	long dim;
+	{return 0.0;}
+
+genburg(sigma_in,isigma_in,qd,pdist,sigma_out,isigma_out,c_flag, monitor_flag, returnflag,R_out,iR_out,init_flg, anderson)
+   double *sigma_in,*isigma_in,*pdist,*sigma_out,*isigma_out;
+   double *R_out,*iR_out;
+   int *qd,*returnflag,c_flag,monitor_flag,init_flg,anderson;
+   {return 0;}
+
+
+void get_vburg (x, lnt, r, order, c, rc, pgain, matsiz)
+	float   x[], c[], rc[], *pgain;
+	double  r[];
+	int     order, lnt, matsiz;
+	{return;}
+
+void get_fburg (x, lnt, a, order, rc, pgain)
+	float   x[], a[], rc[], *pgain;
+	int     lnt, order;
+	{return;}
+
+void strcov_auto (data, lnt, R, order, matsiz, window_flag, alg, conv_test, max_iter)
+	int     lnt, order, matsiz, window_flag;
+	float   *data;
+	double  *R;
+	char    alg;
+	double  conv_test;
+	int     max_iter;
+	{return;}
+
+void estimate_covar (data, lnt, Sxx, matsiz, window_flag)
+	int     lnt, matsiz, window_flag;
+	float   *data;
+	double  *Sxx;
+	{return;}
+
+int struct_cov (S, R, distance, size, cvgtst, max_iter)
+	double **S, *R, *distance, cvgtst; /* convergence criterion */
+	int     size;
+	int     max_iter;
+	{return 0;}
+
+
+int compute_rc(sdata, sdata_size, method, dcrem, win_type, order, sincn, sc_iter, sc_conv, rc, r, gain) float  *sdata;
+	int    sdata_size;
+	int    method;
+	int    dcrem;
+	int    win_type;
+	int    order;
+	int    sincn;
+	int    sc_iter;
+	double sc_conv;
+	float  *rc;
+	double  *r;
+	float  *gain;
+	{return 0;}
+
+
+
+
+
+
+
+
+
+
+/* Simple Sockets stuff... */
+
+SOCKET *AcceptSock( ssp )
+	SOCKET *ssp;               /* Server Socket Pointer */
+	{return (SOCKET *) NULL;}
+
+void AddSock( sp, sap )
+	SOCKET *sp;
+	SOCKARRAY *sap;
+	{return;}
+
+SOCKET *ConnectSock( hostname, port_number )
+	char *hostname;
+	unsigned port_number;
+        {return (SOCKET *) NULL;}
+
+int IsExceptSet( sp )
+	SOCKET *sp;
+	{return 0;}
+
+int IsReadSet( sp )
+	SOCKET *sp;
+	{return 0;}
+
+int IsWriteSet( sp )
+	SOCKET *sp;
+	{return 0;}
+
+void RemoveSock( sp )
+	SOCKET *sp;
+	{return;}
+
+SOCKET *ServerSock( port_number )
+	unsigned port_number;
+	{return (SOCKET *) NULL;}
+
+void SockArrayInit( sap )
+	SOCKARRAY *sap;
+	{return;}
+
+int SockClose(sp)
+	SOCKET *sp;
+	{return 0;}
+
+int _SockFilbuf(sp)
+	SOCKET *sp;
+	{return 0;}
+
+int _SockFlsbuf(x,sp)
+	char x;
+	{return 0;}
+
+int SockFlush(sp)
+	SOCKET *sp;
+	{return 0;}
+
+
+char *SockGets(s, n, sp)
+	char *s;
+	int n;
+	SOCKET *sp;
+	{return (char *) NULL;}
+
+int SockIndex( sp, sap )
+	SOCKET *sp;
+	SOCKARRAY *sap;
+	{return 0;}
+
+void SockInit( c )
+	char c;
+	{return;}
+
+
+int SockIsRead( sp )
+	SOCKET *sp;
+	{return 0;}
+
+int SockIsWrite( sp )
+	SOCKET *sp;
+	{return 0;}
+
+int SockPuts(s, sp)
+	SOCKET *sp;
+	char *s;
+	{return 0;}
+
+int SockSelect( timeout, flag )
+	double timeout;
+	char *flag;
+	{return 0;}
+
+void SockSignal( sig )
+	int sig;
+	{return;}
+
+int SockWrites(s, sp)
+	SOCKET *sp;
+	char *s;
+	{return 0;}
+
+void sserror( mesg, code )
+	char * mesg;
+	int code;
+	{ return ; }
+
+
+
+
+/* These functions are not really esps functions, but are defined here
+   since they are missing from the Unix lint library
+*/
+
+int rename(from,to)
+	char *from, *to;
+	{return 0;}
+
+char *getwd(pathname)
+	char *pathname;
+	{return NULL;}
+
+int   bcopy(b1, b2, length)
+	char *b1, *b2;
+	int length;
+	{return 0;}
+
+int   gethostname(name, namelen)
+	char *name;
+	int namelen;
+	{return 0;}
+
+
+char *equip_codes[1]; 		/* D/A codes */
+char *quant_methods[1]; 	/* quantization methods */
+char *win_type_codes[1]; 	/* window types */
+char *window_types[1];		/* window types */
+char *coh_est_methods[1]; 	/* coherence estimation methods */
+char *spec_ana_methods[1];	/* spectrum analysis methods */
+char *pitch_methods[1]; 	/* pitch detection methods */
+char *synt_methods[1];		/* synthesis methods */
+char *excit_methods[1];		/* synthesis excitation methods */
+char *synt_inter_methods[1];	/* synthesis interpolation methods */
+char *synt_ref_methods[1];	/* reflection coefficient computation method */
+char *synt_pwr_codes[1]; 	/* synthesis power source */
+char *coh_data_codes[1]; 	/* values for coh_data */
+char *spec_an_methods[1];	/* values for:  spec_an_meth */
+char *post_proc_codes[1];	/* values for:  post_proc */
+char *frame_methods[1];	 	/* values for: frame_meth */
+char *freq_format_codes[1];	/* values for: freq_format */
+char *spec_type_codes[1];	/* values for: spec_type */
+char *ros_q_method[1];
+char *ros_tf_method[1];
+char *filt_func_spec[1];
+char *scbk_distortion[1];
+char *scbk_codebook_type[1];
+char *filt_type[1];
+char *filt_method[1];
+char *fea_file_type[1];
+char *file_type[1];
+char *type_codes[1];
+char *dist_types[1];
+char *cbk_structs[1];
+char *vq_cbk_types[1];
+char *vq_returns[1];
+char *vq_init[1];
+char *frame_types[1];
+char *spec_reps[1];
+char *noyes[1];
+char *machine_codes[1];
+char *function_types[1];
+char *operation_names[1];

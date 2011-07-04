@@ -1,0 +1,195 @@
+.\" Copyright (c) 1993 Entropic Research Laboratory, Inc. All rights reserved.
+.\" @(#)specsubr.1	1.3 3/28/97 ERL
+.ds ]W (c) 1993 Entropic Research Laboratory, Inc.
+.if n .ds - ---
+.if t .ds - \(em\h'-0.2m'\(em
+.TH SPEC_SUBR  1\-ESPS 3/28/97
+.SH NAME
+
+.nf
+spec_subr \- Select subrange of frequencies in FEA_SPEC file
+.fi
+.SH SYNOPSIS
+.B
+spec_subr
+.BI \-b " band"
+[
+.BI \-r " range"
+] [
+.BI \-x " debug_level"
+]
+.I in.spec
+.I out.spec
+.SH DESCRIPTION
+.PP
+Given an ESPS spectrum (FEA_SPEC) file
+.I spec_subr
+selects the spectrum data corresponding to frequencies in a specified band
+and writes the result to an output FEA_SPEC file (see
+.IR FEA_SPEC (5\-ESPS)).
+The output file is in ``ARB_FIXED'' format,
+meaning that the header contains an explicit list of the selected frequencies.
+``Extraneous'' input fields (those not part of the FEA_SPEC specification)
+are ignored.
+.SH OPTIONS
+.PP
+The following options are supported:
+.TP
+.BI \-b " low" : "high" "\fR [(none)]"
+.TP
+.BI \-b " low" :+ "width"
+This ``option'' is required; there are no default values.
+The first form specifies the selected band of frequencies
+by giving the upper and lower limits as a pair of real number.
+The second for (with the plus sign)
+specifies the band by its lower limit and width.
+Thus, if
+.IR high " = " low " + " width,
+the two forms specify the same frequency band.
+.TP
+.BI \-r " start" : "last" "\fR [1:(last in file)]"
+.TP
+.BI \-r " start" :+ "incr"
+.TP
+.BI \-r " start"
+In the first form, a pair of unsigned integers specifies the range
+of records to be processed.
+Either
+.I start
+or
+.I last
+may be omitted; then the default value is used.
+If
+.IR last " = " start " + " incr,
+the second form (with the plus sign) specifies the same range as the first.
+The third form (omitting the colon) specifies a single record.
+.TP
+.BI \-x " debug_level \fR[0]\fP"
+If
+.I debug_level
+is positive,
+.I testsd
+prints debugging messages and other information on the standard error
+output.  The messages proliferate as the
+.I debug_level
+increases.  If \fIdebug_level\fP is 0 (the default), no messages are
+printed.
+.SH ESPS PARAMETERS
+.PP
+No ESPS parameter file is accessed.
+.SH ESPS COMMON
+.PP
+The ESPS common file is not accessed.
+.SH ESPS HEADERS
+.PP
+The program reads the header items
+.I freq_format,
+.I spec_type,
+.I contin,
+.I num_freqs,
+and
+.I frame_meth
+in the header of the input file.
+It also checks for the presence of the field
+.I tot_power
+in the input to decide whether to create the same field is the output.
+.PP
+The header of the output file is a newly created FEA_SPEC header
+containing the required generic header items and field definitions (see
+.IR FEA_SPEC (5\-ESPS)).
+The value of
+.I freq_format
+in the output is ARB_FIXED, regardless of the value in the input
+(which must not be ARB_VAR, however).
+The values of
+.I spec_type,
+.I contin,
+and
+.I frame_meth
+are copied from the input, and so is
+.I frmlen
+if
+.I frame_meth
+is FIXED.
+The value of
+.I num_freqs
+is the number of frequencies represented in the output, and the header item
+.I freqs
+lists the frequencies.
+.PP
+If the input file is tagged, then so is the output.
+In that case either
+.I src_sf
+or
+.I sf
+is copied from the input header\*-\c
+.I src_sf
+if present and
+.I sf
+otherwise.
+The generic header item
+.I start_time
+is written with a value computed by taking the
+.I start_time
+from the input header (or zero, if the item doesn't exist) and adding to it
+the relative time from the first record in the input file
+to the first record processed.
+The computation of
+.I start_time
+depends on the value of the generic header item
+.I record_freq
+in input.
+If that item isn't present,
+.I start_time
+is just copied from the input to the output.
+.PP
+The items
+.I start
+and
+.I nan
+are written to contain the starting record number
+and the number of records to be processed
+(with 0 implying all records up to the end of the file).
+As usual, the command line is added as a comment,
+and the header of the input file is added as a source file to the output.
+.PP
+Items
+.I band_low
+and
+.I band
+in the output header record the lower limit and the bandwidth
+of the band specified with
+.BR \-b .
+.SH FUTURE CHANGES
+.PP
+Parameter-file processing.
+.SH EXAMPLES
+.PP
+.SH ERRORS AND DIAGNOSTICS
+.PP
+If an unknown option is specified, or if the number of file names is wrong,
+.I spec_subr
+prints a synopsis of command-line usage and exits.
+The program exits with an error message if any of the following are true:
+.B \-r
+specifies an empty range or a starting record number of 0 or less,
+.BR \-b
+is lacking or specifies a bandwidth of 0 or less,
+no frequencies of the input file lie in the given range,
+or the input file has a
+.I freq_format
+of ARB_VAR.
+A warning message is issued if a tagged input file contains neither
+.I src_sf
+nor
+.I sf.
+.SH BUGS
+.PP
+None known.
+.SH REFERENCES
+.PP
+.SH "SEE ALSO"
+.PP
+.IR FEA_SPEC (5\-ESPS)).
+.SH AUTHOR
+.PP

@@ -1,0 +1,82 @@
+#! /bin/sh
+# @(#)guess_audio	1.3 9/30/93 ERL
+#link in the right play program based on what devices we see
+#the argument $1 to this script is the directory in which the link
+#can be put (which of course should be on the path) 
+
+ebin=`get_esps_base`/bin
+
+dbin=$1
+
+arch=`$ebin/mach_type`
+
+#no_play - the default
+    rm -f $dbin/play
+    ln -s bin/null_play $dbin/play
+
+if test $arch = "SUN4"
+then
+#Ariel S-Bus board on a sparcstation
+
+	if test -c /dev/s32c0 
+	then
+	    rm -f $dbin/play
+	    ln -s $ebin/s32cplay $dbin/play
+	    exit
+	fi
+
+#LSI C30 Board on a sparcstation
+
+	if test -c /dev/LSIsdsp30
+	then
+	    rm -f $dbin/play
+	    ln -s $ebin/c30play $dbin/play
+	    exit
+	fi
+
+#AT&T Fab2, AT&T/Heurikon Surf
+
+	if test -c /dev/dsp3 -o -c /dev/dc0
+	then
+	    rm -f $dbin/play
+	    ln -s $ebin/v32play $dbin/play
+	    exit
+	fi
+
+#Sparcstation codec
+
+	if test -c /dev/audio 
+	then
+	    rm -f $dbin/play
+	    ln -s $ebin/splay $dbin/play
+	    exit
+	fi
+fi
+
+
+if test $arch = "SG"
+then
+
+#SGI Indigo workstation with built-in I/O
+
+	if test -c /dev/hdsp/hdsp0master 
+	then
+	    rm -f $dbin/play
+	    ln -s $ebin/sgplay $dbin/play
+	    exit
+	fi
+
+fi
+
+if test $arch = HP700
+then
+
+#HP  700
+
+	if test -c /dev/audio
+	then
+	    rm -f $dbin/play
+	    ln -s $ebin/hpplay $dbin/play
+	    exit
+	fi
+fi

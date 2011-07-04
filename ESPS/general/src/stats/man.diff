@@ -1,0 +1,164 @@
+.\" Copyright (c) 1986-1990 Entropic Speech, Inc.
+.\" Copyright (c) 1991 Entropic Research Laboratory, Inc.; All rights reserved
+.\" @(#)stats.1t	3.7 9/21/98 ESI/ERL
+.ds ]W (c) 1991 Entropic Research Laboratory, Inc.
+.TH STATS 1\-ESPS 9/21/98 
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH NAME
+stats \- compute and print statistics from ESPS files
+.SH SYNOPSIS
+.B stats
+[
+.BI \-x " debug_level"
+] [
+.BI \-r " rec_range"
+] [
+.BI \-e " el_range"
+] [
+.BI \-m " magnitude"
+] [
+.B \-n
+] [
+.I files
+]
+.SH DESCRIPTION
+.PP
+.I Stats
+considers an ESPS file to be a series of vectors, without interpretation.
+For sampled data files, the vector has only one element.
+For each element of the vector,
+it computes the mean, standard deviation, maximum value, minimum value,
+and normalized sum of squares (power, in the case of sampled data).
+It also determines the record number containing
+the maximum and minimum values for each element. 
+.PP
+Multiple input files can be specified.
+If \fIfile\fR is 
+replaced by "\-", standard input is read. Here is a sample report:
+.sp
+.TS
+tab(;);
+c c c c c c c c
+c r c r c r r r.
+Element;Minimum;at;Maximum;at;Mean;Std. Dev;Power
+1;0;1;0;1;0;0;0
+2;206473;38;308032;36;252034;25381.8;6.41491e+10
+3;188656;4;292531;36;239113;26128;5.78405e+10
+4;0;1;0;1;0;0;0
+5;-0.18445;23;0.22058;32;0.003445;0.0908386;0.0080572
+6;-0.17256;13;0.11549;10;-0.01800;0.0637209;0.0042829
+7;-0.14009;16;0.21232;15;-0.006345;0.0807433;0.0063967
+8;-0.18138;4;0.15088;33;-0.01136;0.0684622;0.0046990
+9;-0.14938;29;0.13558;7;0.006582;0.0733889;0.0052946
+10;-0.17833;38;0.12441;34;-0.01014;0.0719774;0.0051542
+11;-0.16354;40;0.075922;18;-0.01929;0.0590158;0.0037681
+12;-0.18323;36;0.12243;30;-0.01526;0.0745529;0.0056522
+13;-0.12229;8;0.21907;9;-0.003307;0.0708732;0.0049083
+14;-0.12212;23;0.17454;19;-0.0004953;0.070706;0.0048746
+15;200;1;200;1;200;1.5091e-06;40000
+16;0;1;0;1;0;0;0
+17;0;1;0;1;0;0;0
+.TE
+.sp
+.PP
+By default, all records in the file, and every element in each record,
+are processed.
+.SH OPTIONS
+.TP
+.BI \-x
+A value greater than zero turns on debugging output from \fBstats\f and
+any \fBESPS\f library routines that are called from \fBstats\f .
+.TP
+.BI \-r
+Allows a specified range of records to be processed.
+.TP
+.BI \-e
+Allows a specified range of elements to be processed.
+As is usual
+for ESPS programs, a range consists of two integers separated by colons,
+a single integer (a range consisting of one value),
+an integer followed by a colon (the number of records in the file, or the
+number of elements in the vector, determines the end of the range),
+or a colon followed by an integer (the default is to start the range at 1).
+.TP
+.BI -m
+Computes the average adjusted magnitude (1/N  {sum from 1 to N} | x \- m |
+where m is the average value) for each element
+in the specified element range.
+The information is printed in place of power.
+This option cannot be used if the
+input is from a pipe.
+.TP
+.BI \-n
+Suppresses the text header line; only the values are printed.
+This may make it easier to use \s-1UNIX\s+1 tools to process the output.
+.SH ESPS COMMON
+.PP
+ESPS Common processing may be disabled by setting the environment variable
+USE_ESPS_COMMON to "off".  The default ESPS Common file is .espscom 
+in the user's home directory.  This may be overidden by setting
+the environment variable ESPSCOM to the desired path.  User feedback of
+Common processing is determined by the environment variable ESPS_VERBOSE,
+with 0 causing no feedback and increasing levels causing increasingly
+detailed feedback.  If ESPS_VERBOSE is not defined, a default value of 3 is
+assumed.
+.PP
+The following items are read from the ESPS Common File provided that
+standard input isn't used.  
+.IP
+.I "filename - string"
+.IP
+This is the name of the input file.  If no input file is 
+specified on the command line, \fIfilename\fP is taken to be the
+input file.  If an input file is specified on the command line, 
+that input file name must match \fIfilename\fP or the other 
+items (below) are not read from Common. 
+.IP
+.I "start - integer"
+.IP
+This is the starting record in the input file to begin.  It 
+is not read if the \fB\-r\fP option is used.  
+.sp
+.I "nan - integer"
+.IP
+This is the number of records to process from the input file.  It is not
+read if the \fB\-r\fP option is used.  A value of zero means the last
+record in the file.
+.sp
+.PP
+Again, the values of \fIstart\fR and \fInan\fR are only used if the
+input file on the command line is the same as \fIfilename\fP in the
+common file, or if no input file was given on the command line.  If
+\fIstart\fR and/or \fInan\fR are not given in the common file, or if
+the common file can't be opened for reading, then \fIstart\fR
+defaults to the beginning of the file and \fInan\fR defaults to the
+number of records in the file.
+.PP
+The following items are written into the ESPS Common file:
+.IP
+.I "start - integer"
+.IP
+The starting record from the input file.
+.sp
+.I "nan - integer"
+.IP
+The number of records in the selected range.
+.sp
+.I "prog - string"
+.IP
+This is the name of the program (\fIstats\fP in this case).
+.sp
+.I "filename - string"
+.IP
+The name of the input file. 
+.SH DIAGNOSTICS
+.PP
+A fatal error occurs if the input file does not exist or is not an ESPS
+file.
+.PP
+This program does not work correctly for all types of sphere files,
+and it warns and exits on them. Use \fIfea_stats\fP(1-ESPS) on sphere
+format files.
+.SH AUTHORS
+Joe Buck; Alan Parker; Dave Burton
+

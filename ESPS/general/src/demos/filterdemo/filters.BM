@@ -1,0 +1,28 @@
+"About the demo..."  xtext -Wp 0 180 -F README -t "About the filters demo"
+
+"Setup Audio Output" MENU
+
+ "Setup SPARCStation Output" DEFAULT 	rm -f $EDEMO_TEMP/play; ln -s `get_esps_base`/bin/splay $EDEMO_TEMP/play
+
+ "Setup Ariel S32C Output"	rm -f $EDEMO_TEMP/play; ln -s `get_esps_base`/bin/s32cplay $EDEMO_TEMP/play
+
+ "Setup LSI C30 Output"	rm -f $EDEMO_TEMP/play; ln -s `get_esps_base`/bin/c30play $EDEMO_TEMP/play
+
+ "Setup AT&T/Heurikon Surf or FAB2 Output"     rm -f $EDEMO_TEMP/play; ln -s `get_esps_base`/bin/v32play $EDEMO_TEMP/play
+
+ "Setup SGI Indigo Output"     rm -f $EDEMO_TEMP/play; ln -s `get_esps_base`/bin/sgplay $EDEMO_TEMP/play
+
+ "Setup HP700 Output"     rm -f $EDEMO_TEMP/play; ln -s `get_esps_base`/bin/hpplay $EDEMO_TEMP/play
+
+ "Setup generic output"		rm -f $EDEMO_TEMP/play
+
+ "Setup no output"		rm -f $EDEMO_TEMP/play; ln -s `pwd`/bin/null_play $EDEMO_TEMP/play
+
+"See Demo Scripts and Files"   mbuttons -q 1 -X0 -Y 350 -w"Demo Configuration Files" -i"demo" -b1 demofiles.BM
+
+# @(#)filters.BM	1.5 9/30/93 ERL
+
+
+
+
+

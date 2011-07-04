@@ -1,0 +1,73 @@
+#!/bin/csh -f
+# This material contains unpublished, proprietary software of 
+# Entropic Research Laboratory, Inc. Any reproduction, distribution, 
+# or publication of this work must be authorized in writing by Entropic 
+# Research Laboratory, Inc., and must bear the notice: 
+#
+#    "Copyright (c) 1994-1996  Entropic Research Laboratory, Inc. 
+#                   All rights reserved"
+#
+# The copyright notice above does not evidence any actual or intended 
+# publication of this source code.     
+#
+# @(#)lp_syn.test	1.2	1/22/97	ERL
+# 
+# Written by:  Derek Lin
+# Checked by:
+# Revised by:
+# 
+# Brief description: test script for lp_syn
+# 
+
+setenv USE_ESPS_COMMON off
+setenv ESPS_VERBOSE 0
+
+copysd $ESPS_BASE/demo/speech.sd s.d
+get_f0 s.d s.f0
+set nsamp = `hditem -i ndrec s.d`
+echo "computing RC..."
+refcof -wHANNING -l160 -S80 -o 10 -e0.95 -p1:$nsamp -z -Z s.d s.cof  
+get_resid -a1 s.d s.cof s.if  
+echo "computing epochs..."
+epochs s.if s.pe  
+mask s.f0 s.pe s.out
+ps_ana -f s.f0p s.d s.out s.rc  
+
+lp_syn -t0.2 -f1.2 -u2 s.rc s.f0p s.syn  
+
+cat > ref <<EOD
+1346 
+1513 
+1256 
+1364 
+706 
+726 
+387 
+378 
+-352 
+-463 
+-997 
+-1176 
+-1267 
+-1450 
+-1514 
+-1736 
+-1514 
+-1726 
+-1152 
+-1302 
+-1010 
+EOD
+
+pplain -r56000:56020 s.syn > test
+diff test ref
+
+echo "diff output for 20 numbers:  there should be little or no difference"
+rm s.d s.f0 s.cof s.if s.pe s.out s.rc s.f0p s.syn test ref
+
+# 1/15/94
+# At least on sparc and sgi, ONLY on unvoiced regions, the final 
+#    synthesized speech signals have opposite signs, but with same magnitude.
+#    Perhaps somewhere in the code something is compared with 0.00000000 which
+#    sign machine dependent.
+

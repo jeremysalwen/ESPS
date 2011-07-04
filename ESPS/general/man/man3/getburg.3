@@ -1,0 +1,66 @@
+.\" Copyright (c) 1987 Entropic Speech, Inc.; All rights reserved
+.\" @(#)getburg.3	1.7 03 Mar 1989 ESI
+.TH GET_BURG 3\-ESPSsp 03 Mar 1989
+.ds ]W "Entropic Speech, Inc.
+.SH NAME
+get_burg \- compute reflection coefficients using standard Burg and modified Bu
+rg methods.
+.SH SYNOPSIS
+.ft B
+get_burg (x, lnt, r, order, c, rc, pgain, method)
+.br
+float   x[], c[], rc[], *pgain;
+.br
+double  r[];
+.br
+int     order, lnt;
+.br
+char    method;
+.SH DESCRIPTION
+This routine computes the reflection coefficients and the lpc
+filter coefficients directly from the data using Burg ( or modified
+Burg) method.
+
+.PP
+get_burg function takes data of size
+.B lnt
+in array
+.B x[]
+as input and computes
+.B order
+reflection coefficients,
+.B rc[1]
+to
+.B rc[order],
+.B
+order
+lpc filter coefficients,
+.B c[1]
+to 
+.B c[order],
+lpc filter gain,
+.B *pgain,
+and signal energy (sum of squares),
+.B r[0],
+using Burg method (
+.B method = 'b'
+)
+or modified Burg method (
+.B method = 'm'
+).
+For more information on modified Burg method, refer to [2].
+.SH BUGS
+None
+.SH SEE ALSO
+.SH REFERENCES
+[1] L. R. Rabiner and R. W. Schafer,
+.I
+Digital Processing of Speech Signals.
+Prentice-Hall, NJ. 1978.
+.br
+[2] ETM-S-86-49:ssn,
+.I
+Spectrum Analysis of periodic data,
+by Shankar Narayan.
+.SH AUTHOR
+Shankar Narayan

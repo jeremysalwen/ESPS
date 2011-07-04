@@ -1,0 +1,416 @@
+.\" Copyright (c) 1987,1988,1989 Entropic Speech, Inc.; All rights reserved
+.mc |
+.\" @(#)mlplot.1	3.14	25 Sep 1997	ESI
+.TH MLPLOT 1\-ESPS 25 Sep 1997
+.mc
+.ds ]W "\fI\s+4\ze\h'0.05'e\s-4\v'-0.4m'\fP\(*p\v'0.4m'\ Entropic Speech, Inc.
+.SH "NAME"
+mlplot \- plot single-channel sampled data files in multiline format
+.SH "SYNOPSIS"
+.B mlplot
+[
+.BI \-l " int"
+] [
+.BR \-m { cpv }
+] [
+.BI \-n
+] [
+.BI \-o " outdir"
+] [
+.BI \-{pr} " range"
+] [
+.BI \-s " int"
+]
+.br
+[
+.BI \-t " text"
+] [
+.BI \-x " debug level"
+] [
+.BI \-y " range"
+] [
+.B \-z
+] [
+.BI \-L " file.esps"
+] [
+.BI \-N
+]
+.br
+[
+.BI \-T " device"
+] [
+.BI \-V " text"
+] [
+.BI \-X " scale"
+] [
+.BI \-W " generic window system options"
+] [
+.I file1.sd file2.sd . . . filen.sd
+]
+.SH "DESCRIPTION"
+.PP
+.I Mlplot
+reads
+.I n
+ESPS sampled data files
+.I file1.sd
+to
+.I filen.sd
+and produces an
+.IR xy- plot
+of sample value
+.I vs.
+sample number.
+.PP
+The input files must be single-channel files.  If any of them are 
+complex, only the real part is plotted.  For multi-channel or 
+complex files, consider using \fIdemux\fP (1\-\s-1ESPS\s+1) together
+with \fImlplot\fP, or \fIgenplot\fP (1\-\s-1ESPS\s+1) to plot
+directly.  
+.PP
+If
+.I file1.sd
+is ``\-'', the standard input is read along with any other file names
+specified.
+If no input file names are specified, but an ESPS
+file containing tags is given with the
+.B \-L
+option, then the first source file named in its header
+is used as an input Sampled Data file.
+.PP
+By default,
+the output is in Unix GPS (``Graphics Primitive String'') format
+and is displayed on the workstation graphics display, but with the
+.B \-T
+option, this may be sent to the standard output,
+obtained in Tektronix format rather than GPS,
+or plotted on a hardcopy device.
+.PP
+The abscissas are scaled so that the spacing between plotted points
+is an exact integer number of device resolution units in the
+horizontal direction.
+If the required number of points will not fit
+in the available width of the page, the plot is continued on a second
+``line'':  a second set of axes lined up below the first.
+If more
+continuation lines are needed than will fit on one page, the plot is
+continued on additional pages.
+.PP
+If the graph is to be displayed on a \s-1MASSCOMP\s+1 or Sun display, then
+a page corresponds to a \fIregion\fP in \s-1MASSCOMP\s+1 GPS universe 
+coordinates
+and up to 25 regions can be displayed simultaneously on the screen.
+If the \fB\-o\fP option is specified, then a directory is created
+with the name given by \fIoutdir\fP and a file is created for each
+page (region) generated.
+Note, the \fB\-o\fP option only applies if
+the device name specified is ``gps'' or ``mcd'' (the default) and the output is
+\fIalso\fP sent to standard output or displayed on the screen unless
+the \fB\-n\fP option is chosen.   The program \fImcd\fR is supplied by
+\s-1MASSCOMP\s+1 on their systems, and by \s-1ESI\s+1 on Suns.
+.PP
+On \s-1MASSCOMP\s+1 workstations the color and line style of output 
+to ``gps'' or ``mcd'' depend on the
+environment variable BUNDLE.  The default is GPS bundle number 20, which
+gives solid lines on monochrome displays.
+.PP
+On a Sun workstation (not running X windows), 
+this program must be run from within the
+\fISuntools\fR window system.  The plot will appear in a new window,
+which can be moved, resized, closed (reduced to an icon), and removed by
+using the functions on the \fISuntools\fR menu.   To get this menu, move
+the mouse cursor to the title bar of the plot window and press the right
+mouse button.
+.SH "ESPS PARAMETERS"
+.PP
+This program does not access the parameter file.
+.SH "ESPS COMMON"
+.PP
+This program does not access the ESPS common file.
+.SH "ESPS HEADERS"
+The following items of the input sampled-data file header are
+accessed:  
+.I common.type,
+.I common.ndrec,
+.I common.ndouble,
+.I common.nfloat,
+.I common.nlong,
+.I common.nshort,
+.I common.nchar,
+and
+.I common.tag.
+If the
+.B \-L
+option is specified, the following items of the file
+header are accessed:  
+.IR variable.source [0]
+and
+.I common.tag. 
+.SH "OPTIONS"
+The following options are suported.
+Values in brackets are defaults. 
+.TP
+.BI \-l " int" "\fR [100]"
+Number of samples per labeled tic mark on the
+.IR x- axis.
+.TP
+.BR \-m { pvc "} [c]"
+``Mode.''  Selects one of 3 styles.
+.RS
+.TP
+.B c
+Connected.
+Successive data points are connected by straight lines.
+.TP
+.B p
+Point.
+Individual data points are plotted without connecting lines.
+.TP
+.B v
+Vertical line.
+Each point is connected to the 
+.IR x- "axis (" y "=0)"
+by a vertical line.
+.RE
+.TP
+.BI \-n
+Suppress output to screen or stdout when writing into a directory with the
+\fB\-o\fP option.
+.TP
+.BI \-o " outdir" "\fR [(none)]"
+Create a directory named \fIoutdir\fP and write output pages (regions)
+into files named \fIpage1, page2, page3,\fP etc.  This option is only
+valid if the output device is gps or mcd.
+.TP
+.BI \-{pr} " first" : "last" "\fR [(first in file):(last in file)]"
+.TP
+.BI \-{pr} " first" :+ "incr"
+In the first form, a pair of unsigned integers specifies the range of
+samples to be plotted.  Either
+.I first
+or
+.I last
+may be omitted; then the default value is used.
+If 
+.IR last " = " first " + " incr,
+the second form (with the plus sign) specifies the same range as the
+first.  If the specified range contains points not in the file, the
+range is reduced as necessary.  Note that the options \fB-p\fP and
+\fB-r\fP are synonymous.
+.TP
+.BI \-s " int" "\fR [1]"
+Samples in the input file are numbered starting with the given integer,
+rather than 1, for the first sample.
+This option may be specified
+.I m
+times, where
+.I m
+is less than or equal to the number of files to be plotted.
+Only the first
+.I m
+files will be affected by this option.
+.TP
+.BI \-t " text" "\fR [(none)]"
+Title to be printed at the bottom of each page.
+.TP
+.BI \-x " debug level" "\fR [0]"
+Print diagnostic messages as program runs (for debugging purposes
+only).
+.TP
+.BI \-y " upper" ":" "lower"
+.TP
+.BI \-y " limit"
+Amplitude range.
+Specifies sample values for the upper and lower
+.IR y- axis
+limits.
+The second form is equivalent to
+.BI \-y " \-limit" ":" "limit."
+If the option is omitted, or if both limits are omitted,
+.RB ( \-y: )
+then a default range for each file is computed from the data.
+If one limit is omitted,
+a default limit for each file is computed from the data.
+.TP
+.B \-z
+Do not draw the
+.IR x- "axis (" y "=0)."
+.TP
+.BI \-L " file" "\fR [(no tagged file)]"
+Mark tag locations given in the named file.
+This option only applies to the first input file specifed or,
+if none are given,
+to the first source file of the file specified with this option.
+Any additional files are plotted without any
+tag markings.
+.TP
+.BI \-N
+If this option is specified, then the sample values are plotted
+starting with the range given by the
+.BI \-p
+option.
+Otherwise, the plots are plotted by an offset determined by
+the number of horizontal resolution units.
+.TP
+.BI \-T " device" "\fR [gps]"
+.I Device
+may be
+.BR gps ,
+.BR mcd ,
+.BR tek ,
+.BR suntools ,
+.BR hp ,
+or
+.BR hardcopy .
+The default is
+.BR \-Tmcd,
+which displays the output on the \s-1MASSCOMP\s+1 screen by piping it through
+.IR mcd.
+Specifying
+.B \-Tgps
+sends output to the standard output in \s-1MASSCOMP\s+1 Unix GPS format.
+Specifying
+.B \-Ttek
+causes output to be sent to the standard output in Tektronix 4000-series
+format.
+If
+.B \-Tsuntools
+is used, then the display will be forced to use \fIsuntools\fR window
+system (on Suns and Solbournes only), even if ESPS has been configured
+to use the X window system.   If ESPS is built for X, then it uses X for
+plotting by default.
+If
+.B \-Tmcd
+is used on a Masscomp and ESPS has been configured to use X windows,
+then the old SP-40 \fImcd\fR is used instead of X windows.
+Specifying
+.B \-Thardcopy
+plots it on a hardcopy device, if one was set up in the installation
+script.  Note that the word \fIimagen\fR was used for this option in
+previous versions.   It is still accepted, but \fIhardcopy\fR is meant
+to be more general.
+.B \-Thp
+produces output for an HP LaserJet printer.   Note that the output is
+produced on standard out and it is not spooled to the printer by this
+command.   Use of this option will result in about 750K bytes of output
+per page.   If the link to your LaserJet is slow, it might take
+several minutes to send it to the printer.    
+In a later version, this will be merged with the
+\fIhardcopy\fR option above for direct spooling.
+.TP
+.BI \-V " text" "\fR [(none)]"
+Title to be printed along the left edge of each page (running upward).
+.TP
+.BI \-X " scale" "\fR [4]"
+Number of resolution units along the
+.IR x- axis
+between plotted samples.
+Must be an integer.
+.TP
+.BI \-W
+This option is followed by a character
+string consisting of the generic window system options.   These options are
+passed onto \fImcd\fR or \fIxmcd\fR.   
+This option is used to pass along generic X window
+arguments to \fIxmcd\fR or Suntool arguments to \fImcd\fR on Suns.  This
+option might not have an effect on all systems.   For example, on a
+system running X windows, to cause the plot to appear at a particular
+screen location the following command could be used: 
+.br
+\fImlplot -W "=300x250+50+200" file\fR.
+.br
+See \fIxmcd(1\-ESPS)\fR for details.
+.SH "EXAMPLES"
+.PP
+%
+.B mlplot
+.BR \-T " hardcopy " \-p " 4555:9000 " \-N " flute.sd jesdec.sd"
+.br
+# begin plot at sample 4555 and send output to be printed
+.br
+# on a laser printer.
+
+%
+.B mlplot
+.BR  \-T " hardcopy " \-X " 1 " \-l " 300 file1.sd file2.sd"
+.nf
+# Plot two sampled data files on the hardcopy device
+# with 1 pixel per point resolution and tic marks every 300 samples.
+.fi
+
+%
+.B mlplot
+.BR  \-T " gps " \-o " FLUTE " \-n " flute.sd "
+.br
+.nf
+# create a directory called FLUTE to which to send the output, and
+# suppress output to stdout (\fB\-n\fP option).
+The files generated will
+# correspond to pages generated by the first example above.
+# To view the second page on a \s-1MASSCOMP\s+1 Graphics terminal,
+# type the following:
+
+.fi
+%
+.BI mcd " FLUTE/page2"
+.br
+# or
+.br
+%
+.BI ged " FLUTE/page2"
+.br
+.nf
+
+# The latter command allows you to zoom into various parts of the
+graph; see the DATA PRESENTATION APPLICATION PROGRAMMING MANUAL for
+more information concerning \fIged\fP.
+.PP
+For Sun systems, this program will plot under either X windows, or
+Suntools.   By default, if the \fB-T\fR option is not used, it will 
+expect X windows.   To plot under Suntools you can use the \fB-Tsuntools\fR
+option.    If you always use Suntools, you can avoid using the \fB-T\fR
+option by defining the environment variable \fBEPLOTDEV\fR to be
+\fIsuntools\fR.  This will make the Suntools window system the default.
+This variable is ignored if the machine type is not Sun4, SUN3, or
+SUN386i.
+.fi
+.SH "FILES"
+.PP
+None.
+.SH "SEE ALSO"
+.PP
+\fIdemux\fP (1\-\s-1ESPS\s+1), \fIgenplot\fP (1\-\s-1ESPS\s+1),
+\fIgenplot\fP (1\-\s-1ESPS\s+1), 
+.br
+\fIxmcd\fP (1\-\s-1ESPS\s+1),
+\fIscatplot\fP (1\-\s-1ESPS\s+1),
+.br
+\fIplotspec\fP (1\-\s-1ESPS\s+1), \fIaplot\fP (1\-\s-1ESPS\s+1)
+.SH "DIAGNOSTICS"
+.PP
+.nf
+mlplot: unknown option \-\fIletter\fP
+Usage: mlplot [\-l int][\-m{cpv}][\-n][\-o outdir][\-p range][\-s start]
+	[\-t title][\-x debug level][\-y range][\-z][\-L file.esps][\-N]
+	[\-T device][\-V text][\-X scale][file1.sd ...]
+mlplot: can't allocate memory for \fIn\fP points
+mlplot: can't open \fIfilename\fP: \fIreason\fP
+mlplot: \fIfilename\fP is not an ESPS file
+mlplot: \fIfilename\fP is not a sampled-data file.
+mlplot: \fIfilename\fP is not tagged.
+mlplot: empty amplitude range specified.
+.SH "FUTURE CHANGES"
+Options to allow more control over format.
+More intelligent choice
+of axis subdivisions.
+Selection
+of default \fIy\fP-axis limits according to header information.
+.SH "BUGS"
+Default for the
+.B \-l
+option should depend on the 
+.IR x- scale
+.RB ( \-X " option)."
+.br
+.SH "AUTHOR"
+Rodney W. Johnson and Ajaipal S. Virdy, Entropic Speech, Inc.

@@ -1,0 +1,46 @@
+.lo
+.ce 3
+\fBRelease Notes for \fIwaves\fP+ Version 1.1a\fR
+
+Document version 1.1 3/27/89
+.sp 3
+.lp
+This document describes the changes from \fIwaves\fP+ Version 1.1 to 
+Version 1.1a, as well as known problems with 1.1a.
+.uh "Bug Fixes"
+.np
+Fixes in label and waves+ to avoid following a null pointer.
+.np
+Fixed a bug that could cause attachments to hang.
+.np
+Fixed the scaling of mouse positions to threshold values for
+move-contour.
+The feature did not work properly in small windows.
+.uh "Other Changes"
+.lp
+.np
+Changed .wave_pro (default) to look for nb_params and
+wb_params instead of nb_spect_params, etc.
+.np
+The default labelmenu (/usr/esps/lib/waves/labelmenu) changed to use the
+ASCII symbols used in the DARPA TIMIT continuous speech
+database.
+.np
+Label man page updated.   The addition of a labelmenu that contains
+the ASCII symbols used in the DARPA TIMIT continuous speech
+database labeling has been documented.
+.uh "Known Problems"
+.lp
+.np
+\fIWaves\fP+ and its attachments sometimes look for files in ESPS/lib
+instead of ESPS/lib/waves.  This is always harmless.  In specific
+cases, you might want to put a copy of the relevant file into
+ESPS/lib.  
+.np
+Play commands issued from the file browser menu are wired to \fIplay\fR
+and are not affected by the global \fBplay_prog\fR.
+.np
+Default \fI.wave_pro\fR and \fIlabelmenu\fR are not picked up from
+\fI/usr/esps/lib/waves\fR.  Copy the default \fI.wave_pro\fR to your
+home directory and the default \fIlabelmenu\fR to your working
+directory.
